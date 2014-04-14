@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Bitwise" APIVersion="6" Name="PackageDemo2" Description="Just a little Addon that provides version 2 of DemoPkg." Version="">
+    <Script Name="PackageDemo2.lua"/>
+    <Form Name="PackageDemo2.xml"/>
+    <Script Name="DemoPkg.lua"/>
+</Addon>

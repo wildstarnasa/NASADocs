@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Forms>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="362" TAnchorPoint="0" TAnchorOffset="268" RAnchorPoint="0" RAnchorOffset="730" BAnchorPoint="0" BAnchorOffset="458" RelativeToClient="1" Font="Default" Text="" Template="CRB_HologramFramedThin" Name="PackageDemo2Form" Border="1" Picture="0" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Tooltip="" UseTemplateBG="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="31" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-41" BAnchorPoint="0" BAnchorOffset="33" RelativeToClient="1" Font="CRB_InterfaceMedium" Template="Default" Name="Title" BGColor="ffffffff" TextColor="ffc0c0c0" DT_VCENTER="1" DT_CENTER="1" NewControlDepth="2" TextId="" Text="Package Demo 2!" TooltipColor=""/>
+        <Control Class="Button" Base="CRB_UIKitSprites:btn_square_LARGE_Red" Font="CRB_InterfaceMedium" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="27" TAnchorPoint="1" TAnchorOffset="-61" RAnchorPoint="0.5" RAnchorOffset="147" BAnchorPoint="1" BAnchorOffset="-20" DT_VCENTER="1" DT_CENTER="1" Name="GoAway" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="2" WindowSoundTemplate="TogglePhys03" TextId="" Text="Go away" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff">
+            <Event Name="ButtonSignal" Function="OnCancel"/>
+        </Control>
+        <Control Class="Button" Base="CRB_UIKitSprites:btn_square_LARGE_Green" Font="CRB_InterfaceMedium" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="-147" TAnchorPoint="1" TAnchorOffset="-60" RAnchorPoint="0.5" RAnchorOffset="-27" BAnchorPoint="1" BAnchorOffset="-19" DT_VCENTER="1" DT_CENTER="1" Name="CallPkg" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="2" WindowSoundTemplate="TogglePhys02" TextId="" Text="Call Package Fn" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff">
+            <Event Name="ButtonSignal" Function="OnCallPackageFn"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="23" TAnchorPoint="0" TAnchorOffset="31" RAnchorPoint="1" RAnchorOffset="-24" BAnchorPoint="1" BAnchorOffset="-64" RelativeToClient="1" Font="Default" Text="" Template="CRB_HologramFramedThin" TooltipType="OnCursor" Name="Results" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Border="1" IgnoreMouse="1" UseTemplateBG="1"/>
+    </Form>
+</Forms>
