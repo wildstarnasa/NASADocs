@@ -1,0 +1,2464 @@
+<Documentation Id="1">
+    <Global Id="10">
+        <Event Name="HousingBuildStarted" Incomplete="true" Id="6663"/>
+        <Event Name="HousingBuildComplete" Incomplete="true" Id="6664"/>
+        <Event Name="ChangeWorld" Incomplete="true" Id="6665"/>
+        <Event Name="ShowInstanceGameModeDialog" Incomplete="true" Id="6666"/>
+        <Event Name="ShowInstanceWaitingDialog" Incomplete="true" Id="6667"/>
+        <Event Name="HideInstanceGameModeDialog" Incomplete="true" Id="6668"/>
+        <Event Name="ForceResurrect" Incomplete="true" Id="6669"/>
+        <Event Name="ToggleCodex" Incomplete="true" Id="6670"/>
+        <Event Name="ToggleGroupFinder" Incomplete="true" Id="6671"/>
+        <Event Name="QuestCalloutToggle" Incomplete="true" Id="6672"/>
+        <Event Name="QuestStateChanged" Incomplete="true" Id="6673"/>
+        <Event Name="QuestObjectiveUpdated" Incomplete="true" Id="6674"/>
+        <Event Name="QuestInit" Incomplete="true" Id="6675"/>
+        <Event Name="QuestGetCurrentQuestId" Incomplete="true" Id="6676"/>
+        <Event Name="Dialog_QuestShare" Incomplete="true" Id="6677"/>
+        <Event Name="PrereqFailureMessage" Incomplete="true" Id="6678"/>
+        <Event Name="AchievementGranted" Incomplete="true" Id="6679"/>
+        <Event Name="DatacubeUpdated" Incomplete="true" Id="6680"/>
+        <Event Name="ChallengeFailTime" Incomplete="true" Id="6681"/>
+        <Event Name="ChallengeFailArea" Incomplete="true" Id="6682"/>
+        <Event Name="ChallengeFailGeneric" Incomplete="true" Id="6683"/>
+        <Event Name="ChallengeCooldownActive" Incomplete="true" Id="6684"/>
+        <Event Name="ChallengeAreaRestriction" Incomplete="true" Id="6685"/>
+        <Event Name="ChallengeRewardReady" Incomplete="true" Id="6686"/>
+        <Event Name="ChallengeRewardListReady" Incomplete="true" Id="6687"/>
+        <Event Name="ChallengeTierAchieved" Incomplete="true" Id="6688"/>
+        <Event Name="ChallengeCompletedSound" Incomplete="true" Id="6689"/>
+        <Event Name="ChallengeFailSound" Incomplete="true" Id="6690"/>
+        <Event Name="ChallengeUpdated" Incomplete="true" Id="6691"/>
+        <Event Name="HazardEnabled" Incomplete="true" Id="6692"/>
+        <Event Name="HazardRemoved" Incomplete="true" Id="6693"/>
+        <Event Name="HazardUpdated" Incomplete="true" Id="6694"/>
+        <Event Name="HazardShowMinimapUnit" Incomplete="true" Id="6695"/>
+        <Event Name="HazardRemoveMinimapUnit" Incomplete="true" Id="6696"/>
+        <Event Name="DatacubePlaybackEnded" Incomplete="true" Id="6697"/>
+        <Event Name="ActionBarDescriptionSpell" Incomplete="true" Id="6698"/>
+        <Event Name="StartSpellThreshold" Incomplete="true" Id="6699"/>
+        <Event Name="ClearSpellThreshold" Incomplete="true" Id="6700"/>
+        <Event Name="UpdateSpellThreshold" Incomplete="true" Id="6701"/>
+        <Event Name="ApplyCCState" Incomplete="true" Id="6702"/>
+        <Event Name="RemoveCCState" Incomplete="true" Id="6703"/>
+        <Event Name="ActivateCCStateStun" Incomplete="true" Id="6704"/>
+        <Event Name="UpdateCCStateStun" Incomplete="true" Id="6705"/>
+        <Event Name="RemoveCCStateStun" Incomplete="true" Id="6706"/>
+        <Event Name="MapHexesRevealed" Incomplete="true" Id="6707"/>
+        <Event Name="ShowLocOnWorldMap" Incomplete="true" Id="6708"/>
+        <Event Name="ZoneMapPing" Incomplete="true" Id="6709"/>
+        <Event Name="ZoneMapUpdateHexGroup" Incomplete="true" Id="6710"/>
+        <Event Name="AbilitiesWindowClose" Incomplete="true" Id="6711"/>
+        <Event Name="MannequinWindowOpen" Incomplete="true" Id="6712"/>
+        <Event Name="MannequinWindowClose" Incomplete="true" Id="6713"/>
+        <Event Name="ShowBank" Incomplete="true" Id="6714"/>
+        <Event Name="HideBank" Incomplete="true" Id="6715"/>
+        <Event Name="ShowDye" Incomplete="true" Id="6716"/>
+        <Event Name="HideDye" Incomplete="true" Id="6717"/>
+        <Event Name="UpdateGearScore" Incomplete="true" Id="6718"/>
+        <Event Name="ResourceConversionOpen" Incomplete="true" Id="6719"/>
+        <Event Name="ResourceConversionClose" Incomplete="true" Id="6720"/>
+        <Event Name="InvokeTradeskillTrainerWindow" Incomplete="true" Id="6721"/>
+        <Event Name="CloseTradeskillTrainerWindow" Incomplete="true" Id="6722"/>
+        <Event Name="InvokeCraftingWindow" Incomplete="true" Id="6723"/>
+        <Event Name="CloseCraftingWindow" Incomplete="true" Id="6724"/>
+        <Event Name="FlightPathUpdate" Incomplete="true" Id="6725"/>
+        <Event Name="InvokeTaxiWindow" Incomplete="true" Id="6726"/>
+        <Event Name="TaxiWindowClose" Incomplete="true" Id="6727"/>
+        <Event Name="InvokeShuttlePrompt" Incomplete="true" Id="6728"/>
+        <Event Name="ShuttlePromptClose" Incomplete="true" Id="6729"/>
+        <Event Name="ReputationChanged" Incomplete="true" Id="6730"/>
+        <Event Name="Group_Join" Incomplete="true" Id="6731"/>
+        <Event Name="Group_Add" Incomplete="true" Id="6732"/>
+        <Event Name="Group_Remove" Incomplete="true" Id="6733"/>
+        <Event Name="Group_Left" Incomplete="true" Id="6734"/>
+        <Event Name="Group_MemberFlagsChanged" Incomplete="true" Id="6735"/>
+        <Event Name="Group_MemberPromoted" Incomplete="true" Id="6736"/>
+        <Event Name="Group_Operation_Result" Incomplete="true" Id="6737"/>
+        <Event Name="Group_Updated" Incomplete="true" Id="6738"/>
+        <Event Name="Group_UpdatePosition" Incomplete="true" Id="6739"/>
+        <Event Name="Group_ReadyCheck" Incomplete="true" Id="6740"/>
+        <Event Name="Group_Mentor" Incomplete="true" Id="6741"/>
+        <Event Name="Group_SetMark" Incomplete="true" Id="6742"/>
+        <Event Name="GuildResult" Incomplete="true" Id="6743"/>
+        <Event Name="GuildInvite" Incomplete="true" Id="6744"/>
+        <Event Name="GuildRoster" Incomplete="true" Id="6745"/>
+        <Event Name="GuildMemberChange" Incomplete="true" Id="6746"/>
+        <Event Name="GuildEmblem" Incomplete="true" Id="6747"/>
+        <Event Name="GuildStandard" Incomplete="true" Id="6748"/>
+        <Event Name="GuildInfluenceAndMoney" Incomplete="true" Id="6749"/>
+        <Event Name="GuildWarCoinsChanged" Incomplete="true" Id="6750"/>
+        <Event Name="GuildChange" Incomplete="true" Id="6751"/>
+        <Event Name="GuildNameplateChange" Incomplete="true" Id="6752"/>
+        <Event Name="GuildRegistrarOpen" Incomplete="true" Id="6753"/>
+        <Event Name="GuildRegistrarClose" Incomplete="true" Id="6754"/>
+        <Event Name="WarPartyRegistrarOpen" Incomplete="true" Id="6755"/>
+        <Event Name="WarPartyRegistrarClose" Incomplete="true" Id="6756"/>
+        <Event Name="GuildBankerOpen" Incomplete="true" Id="6757"/>
+        <Event Name="GuildBankerClose" Incomplete="true" Id="6758"/>
+        <Event Name="WarPartyBankerOpen" Incomplete="true" Id="6759"/>
+        <Event Name="WarPartyBankerClose" Incomplete="true" Id="6760"/>
+        <Event Name="GuildBankTab" Incomplete="true" Id="6761"/>
+        <Event Name="WarPartyBattleOpen" Incomplete="true" Id="6762"/>
+        <Event Name="WarPartyBattleClose" Incomplete="true" Id="6763"/>
+        <Event Name="WarPartyBossTokensUpdated" Incomplete="true" Id="6764"/>
+        <Event Name="GuildBankItem" Incomplete="true" Id="6765"/>
+        <Event Name="GuildBankTabCount" Incomplete="true" Id="6766"/>
+        <Event Name="GuildBankTabRename" Incomplete="true" Id="6767"/>
+        <Event Name="GuildName" Incomplete="true" Id="6768"/>
+        <Event Name="GuildFlags" Incomplete="true" Id="6769"/>
+        <Event Name="GuildRankChange" Incomplete="true" Id="6770"/>
+        <Event Name="GuildBankWithdraw" Incomplete="true" Id="6771"/>
+        <Event Name="GuildPvp" Incomplete="true" Id="6772"/>
+        <Event Name="GuildPerkUnlocked" Incomplete="true" Id="6773"/>
+        <Event Name="GuildPerkActivated" Incomplete="true" Id="6774"/>
+        <Event Name="GuildPerkDeactivated" Incomplete="true" Id="6775"/>
+        <Event Name="GuildMessageOfTheDay" Incomplete="true" Id="6776"/>
+        <Event Name="FriendshipResult" Incomplete="true" Id="6777"/>
+        <Event Name="FriendshipLoaded" Incomplete="true" Id="6778"/>
+        <Event Name="FriendshipAdd" Incomplete="true" Id="6779"/>
+        <Event Name="FriendshipUpdate" Incomplete="true" Id="6780"/>
+        <Event Name="FriendshipUpdateOnline" Incomplete="true" Id="6781"/>
+        <Event Name="FriendshipRemove" Incomplete="true" Id="6782"/>
+        <Event Name="FriendshipLocation" Incomplete="true" Id="6783"/>
+        <Event Name="FriendshipRequest" Incomplete="true" Id="6784"/>
+        <Event Name="FriendshipRequestWithdrawn" Incomplete="true" Id="6785"/>
+        <Event Name="FriendshipSuggestedAdd" Incomplete="true" Id="6786"/>
+        <Event Name="FriendshipSuggestedUpdate" Incomplete="true" Id="6787"/>
+        <Event Name="FriendshipSuggestedRemove" Incomplete="true" Id="6788"/>
+        <Event Name="UpdateInventory" Incomplete="true" Id="6789"/>
+        <Event Name="ItemModified" Incomplete="true" Id="6790"/>
+        <Event Name="ItemDurabilityUpdate" Incomplete="true" Id="6791"/>
+        <Event Name="LootRollSelected" Incomplete="true" Id="6792"/>
+        <Event Name="LootRollPassed" Incomplete="true" Id="6793"/>
+        <Event Name="LootRoll" Incomplete="true" Id="6794"/>
+        <Event Name="LootRollWon" Incomplete="true" Id="6795"/>
+        <Event Name="LootRollAllPassed" Incomplete="true" Id="6796"/>
+        <Event Name="ItemAdded" Incomplete="true" Id="6797"/>
+        <Event Name="ItemRemoved" Incomplete="true" Id="6798"/>
+        <Event Name="ItemSentToCrate" Incomplete="true" Id="6799"/>
+        <Event Name="SplitItemStack" Incomplete="true" Id="6800"/>
+        <Event Name="DashCastFail" Incomplete="true" Id="6801"/>
+        <Event Name="CombatLogAbsorption" Incomplete="true" Id="6802"/>
+        <Event Name="CombatLogCCState" Incomplete="true" Id="6803"/>
+        <Event Name="CombatLogCCStateBreak" Incomplete="true" Id="6804"/>
+        <Event Name="CombatLogDamage" Incomplete="true" Id="6805"/>
+        <Event Name="CombatLogDelayDeath" Incomplete="true" Id="6806"/>
+        <Event Name="CombatLogDispel" Incomplete="true" Id="6807"/>
+        <Event Name="CombatLogHeal" Incomplete="true" Id="6808"/>
+        <Event Name="CombatLogModifyInterruptArmor" Incomplete="true" Id="6809"/>
+        <Event Name="CombatLogTransference" Incomplete="true" Id="6810"/>
+        <Event Name="CombatLogVitalModifier" Incomplete="true" Id="6811"/>
+        <Event Name="CombatLogDeflect" Incomplete="true" Id="6812"/>
+        <Event Name="CombatLogImmunity" Incomplete="true" Id="6813"/>
+        <Event Name="CombatLogInterrupted" Incomplete="true" Id="6814"/>
+        <Event Name="CombatLogKillStreak" Incomplete="true" Id="6815"/>
+        <Event Name="CombatLogKillPVP" Incomplete="true" Id="6816"/>
+        <Event Name="CombatLogDeath" Incomplete="true" Id="6817"/>
+        <Event Name="CombatLogResurrect" Incomplete="true" Id="6818"/>
+        <Event Name="CombatLogStealth" Incomplete="true" Id="6819"/>
+        <Event Name="CombatLogMount" Incomplete="true" Id="6820"/>
+        <Event Name="CombatLogPet" Incomplete="true" Id="6821"/>
+        <Event Name="CombatLogExperience" Incomplete="true" Id="6822"/>
+        <Event Name="CombatLogEndGameCurrencies" Incomplete="true" Id="6823"/>
+        <Event Name="CombatLogLoot" Incomplete="true" Id="6824"/>
+        <Event Name="CombatLogCrafting" Incomplete="true" Id="6825"/>
+        <Event Name="CombatLogExtracting" Incomplete="true" Id="6826"/>
+        <Event Name="CombatLogModifying" Incomplete="true" Id="6827"/>
+        <Event Name="CombatLogDurabilityLoss" Incomplete="true" Id="6828"/>
+        <Event Name="CombatLogItemDestroy" Incomplete="true" Id="6829"/>
+        <Event Name="CombatMomentum" Incomplete="true" Id="6830"/>
+        <Event Name="CombatLogString" Incomplete="true" Id="6831"/>
+        <Event Name="ElderPointsGained" Incomplete="true" Id="6832"/>
+        <Event Name="GameClickProp" Incomplete="true" Id="6833"/>
+        <Event Name="GameClickUnit" Incomplete="true" Id="6834"/>
+        <Event Name="GameClickWorld" Incomplete="true" Id="6835"/>
+        <Event Name="UI_EffectiveLevelChanged" Incomplete="true" Id="6836"/>
+        <Event Name="HousingResult" Incomplete="true" Id="6837"/>
+        <Event Name="HousingRealtorOpen" Incomplete="true" Id="6838"/>
+        <Event Name="HousingNeighborsLoaded" Incomplete="true" Id="6839"/>
+        <Event Name="HousingNeighborUpdate" Incomplete="true" Id="6840"/>
+        <Event Name="HousingNeighborInviteRecieved" Incomplete="true" Id="6841"/>
+        <Event Name="HousingNeighborInviteAccepted" Incomplete="true" Id="6842"/>
+        <Event Name="HousingNeighborInviteDeclined" Incomplete="true" Id="6843"/>
+        <Event Name="HousingPrivacyUpdated" Incomplete="true" Id="6844"/>
+        <Event Name="HousingRandomResidenceListRecieved" Incomplete="true" Id="6845"/>
+        <Event Name="DecorPreviewOpen" Incomplete="true" Id="6846"/>
+        <Event Name="DecorPreviewClose" Incomplete="true" Id="6847"/>
+        <Event Name="PetCustomizationFailed" Incomplete="true" Id="6848"/>
+        <Event Name="PetCustomizationUpdated" Incomplete="true" Id="6849"/>
+        <Event Name="PetFlairCleared" Incomplete="true" Id="6850"/>
+        <Event Name="PetFlairUnlocked" Incomplete="true" Id="6851"/>
+        <Event Name="KeyBindingKeyChanged" Incomplete="true" Id="6852"/>
+        <Event Name="AcceptProgressInput" Incomplete="true" Id="6853"/>
+        <Event Name="HighlightProgressOption" Incomplete="true" Id="6854"/>
+        <Event Name="ToggleMarketplaceWindow" Incomplete="true" Id="6855"/>
+        <Event Name="MarketplaceWindowClose" Incomplete="true" Id="6856"/>
+        <Event Name="CommodityInfoResults" Incomplete="true" Id="6857"/>
+        <Event Name="OwnedCommodityOrders" Incomplete="true" Id="6858"/>
+        <Event Name="PostCommodityOrderResult" Incomplete="true" Id="6859"/>
+        <Event Name="CommodityAuctionRemoved" Incomplete="true" Id="6860"/>
+        <Event Name="ToggleAuctionWindow" Incomplete="true" Id="6861"/>
+        <Event Name="AuctionWindowClose" Incomplete="true" Id="6862"/>
+        <Event Name="OwnedItemAuctions" Incomplete="true" Id="6863"/>
+        <Event Name="ItemAuctionSearchResults" Incomplete="true" Id="6864"/>
+        <Event Name="ItemAuctionOutbid" Incomplete="true" Id="6865"/>
+        <Event Name="ItemAuctionWon" Incomplete="true" Id="6866"/>
+        <Event Name="ItemAuctionExpired" Incomplete="true" Id="6867"/>
+        <Event Name="ItemCancelResult" Incomplete="true" Id="6868"/>
+        <Event Name="PostItemAuctionResult" Incomplete="true" Id="6869"/>
+        <Event Name="ItemAuctionBidResult" Incomplete="true" Id="6870"/>
+        <Event Name="PlayerPathMissionUnlocked" Incomplete="true" Id="6871"/>
+        <Event Name="PlayerPathMissionUnlockedSound" Incomplete="true" Id="6872"/>
+        <Event Name="PlayerPathMissionComplete" Incomplete="true" Id="6873"/>
+        <Event Name="PlayerPathMissionCompleteSound" Incomplete="true" Id="6874"/>
+        <Event Name="PlayerPathRewardAvailable" Incomplete="true" Id="6875"/>
+        <Event Name="InvokeScientistExperimentation" Incomplete="true" Id="6876"/>
+        <Event Name="ScientistExperimentationResult" Incomplete="true" Id="6877"/>
+        <Event Name="PublicEventStart" Incomplete="true" Id="6878"/>
+        <Event Name="PublicEventUpdate" Incomplete="true" Id="6879"/>
+        <Event Name="PublicEventObjectiveUpdate" Incomplete="true" Id="6880"/>
+        <Event Name="PublicEventLiveStatsUpdate" Incomplete="true" Id="6881"/>
+        <Event Name="PublicEventStatsUpdate" Incomplete="true" Id="6882"/>
+        <Event Name="PublicEventEnd" Incomplete="true" Id="6883"/>
+        <Event Name="PublicEventLocationAdded" Incomplete="true" Id="6884"/>
+        <Event Name="PublicEventLocationRemoved" Incomplete="true" Id="6885"/>
+        <Event Name="PublicEventObjectiveLocationAdded" Incomplete="true" Id="6886"/>
+        <Event Name="PublicEventObjectiveLocationRemoved" Incomplete="true" Id="6887"/>
+        <Event Name="PublicEventInitiateVote" Incomplete="true" Id="6888"/>
+        <Event Name="PublicEventVoteTallied" Incomplete="true" Id="6889"/>
+        <Event Name="PublicEventVoteEnded" Incomplete="true" Id="6890"/>
+        <Event Name="PlayerPathMissionUpdate" Incomplete="true" Id="6891"/>
+        <Event Name="PlayerPathMissionAdvanced" Incomplete="true" Id="6892"/>
+        <Event Name="PlayerPathRefresh" Incomplete="true" Id="6893"/>
+        <Event Name="PlayerPathAdd" Incomplete="true" Id="6894"/>
+        <Event Name="PlayerPathExplorerScavengerHuntStarted" Incomplete="true" Id="6895"/>
+        <Event Name="PlayerPathExplorerPowerMapStarted" Incomplete="true" Id="6896"/>
+        <Event Name="PlayerPathExplorerPowerMapWaiting" Incomplete="true" Id="6897"/>
+        <Event Name="PlayerPathExplorerPowerMapFailed" Incomplete="true" Id="6898"/>
+        <Event Name="PlayerPathExplorerPowerMapEntered" Incomplete="true" Id="6899"/>
+        <Event Name="PlayerPathExplorerPowerMapExited" Incomplete="true" Id="6900"/>
+        <Event Name="SettlerHubReward" Incomplete="true" Id="6901"/>
+        <Event Name="PlayerPathScientistScanBotDeployed" Incomplete="true" Id="6902"/>
+        <Event Name="PlayerPathScientistScanBotDespawned" Incomplete="true" Id="6903"/>
+        <Event Name="PlayerPathScientistScanBotCooldown" Incomplete="true" Id="6904"/>
+        <Event Name="SoldierHoldoutStatus" Incomplete="true" Id="6905"/>
+        <Event Name="SoldierHoldoutNextWave" Incomplete="true" Id="6906"/>
+        <Event Name="UpdateSoldierBuild" Incomplete="true" Id="6907"/>
+        <Event Name="SoldierHoldoutEnd" Incomplete="true" Id="6908"/>
+        <Event Name="SettlerHubUpdated" Incomplete="true" Id="6909"/>
+        <Event Name="InvokeSoldierBuild" Incomplete="true" Id="6910"/>
+        <Event Name="SettlerInfrastructureAdvanced" Incomplete="true" Id="6911"/>
+        <Event Name="SettlerInfrastructureComplete" Incomplete="true" Id="6912"/>
+        <Event Name="SettlerInfrastructureStarted" Incomplete="true" Id="6913"/>
+        <Event Name="SettlerInfrastructureUpdated" Incomplete="true" Id="6914"/>
+        <Event Name="SettlerNotifyUse" Incomplete="true" Id="6915"/>
+        <Event Name="InvokeSettlerBuild" Incomplete="true" Id="6916"/>
+        <Event Name="SettlerBuildResult" Incomplete="true" Id="6917"/>
+        <Event Name="SettlerBuildStatusUpdate" Incomplete="true" Id="6918"/>
+        <Event Name="SettlerHubClose" Incomplete="true" Id="6919"/>
+        <Event Name="SplineHintObjectEnd" Incomplete="true" Id="6920"/>
+        <Event Name="TradeSkills_Learned" Incomplete="true" Id="6921"/>
+        <Event Name="UnitTextBubbleCreate" Incomplete="true" Id="6922"/>
+        <Event Name="UnitTextBubblesDestroyed" Incomplete="true" Id="6923"/>
+        <Event Name="UnitGuildNameplateChanged" Incomplete="true" Id="6924"/>
+        <Event Name="UnitMemberOfGuildChange" Incomplete="true" Id="6925"/>
+        <Event Name="UnitGroupChanged" Incomplete="true" Id="6926"/>
+        <Event Name="UnitTitleChanged" Incomplete="true" Id="6927"/>
+        <Event Name="UnitLevelChanged" Incomplete="true" Id="6928"/>
+        <Event Name="GalacticArchiveArticleAdded" Incomplete="true" Id="6929"/>
+        <Event Name="GalacticArchiveEntryAdded" Incomplete="true" Id="6930"/>
+        <Event Name="GalacticArchiveRefresh" Incomplete="true" Id="6931"/>
+        <Event Name="GalacticArchiveLinkClick" Incomplete="true" Id="6932"/>
+        <Event Name="PlayerChanged" Incomplete="true" Id="6933"/>
+        <Event Name="CharacterCreated" Incomplete="true" Id="6934"/>
+        <Event Name="MouseOverUnitChanged" Incomplete="true" Id="6935"/>
+        <Event Name="AlternateTargetUnitChanged" Incomplete="true" Id="6936"/>
+        <Event Name="TargetedByUnit" Incomplete="true" Id="6937"/>
+        <Event Name="UnTargetedByUnit" Incomplete="true" Id="6938"/>
+        <Event Name="TargetThreatListUpdated" Incomplete="true" Id="6939"/>
+        <Event Name="LogOut" Incomplete="true" Id="6940"/>
+        <Event Name="ChatZoneChange" Incomplete="true" Id="6941"/>
+        <Event Name="ChatFlag" Incomplete="true" Id="6942"/>
+        <Event Name="ChatResult" Incomplete="true" Id="6943"/>
+        <Event Name="ChatTellFailed" Incomplete="true" Id="6944"/>
+        <Event Name="GMChatTellFailed" Incomplete="true" Id="6945"/>
+        <Event Name="ChatJoin" Incomplete="true" Id="6946"/>
+        <Event Name="ChatJoinResult" Incomplete="true" Id="6947"/>
+        <Event Name="ChatLeave" Incomplete="true" Id="6948"/>
+        <Event Name="ChatList" Incomplete="true" Id="6949"/>
+        <Event Name="ChatBanList" Incomplete="true" Id="6950"/>
+        <Event Name="ChatAction" Incomplete="true" Id="6951"/>
+        <Event Name="WhoResponse" Incomplete="true" Id="6952"/>
+        <Event Name="P2PTradeCommit" Incomplete="true" Id="6953"/>
+        <Event Name="MatchingLeaveQueue" Incomplete="true" Id="6954"/>
+        <Event Name="MatchingJoinQueue" Incomplete="true" Id="6955"/>
+        <Event Name="MatchingGameReady" Incomplete="true" Id="6956"/>
+        <Event Name="MatchingGamePendingUpdate" Incomplete="true" Id="6957"/>
+        <Event Name="MatchingCancelPendingGame" Incomplete="true" Id="6958"/>
+        <Event Name="MatchingAverageWaitTimeUpdated" Incomplete="true" Id="6959"/>
+        <Event Name="MatchingRoleCheckStarted" Incomplete="true" Id="6960"/>
+        <Event Name="MatchingRoleCheckHidden" Incomplete="true" Id="6961"/>
+        <Event Name="MatchingRoleCheckCanceled" Incomplete="true" Id="6962"/>
+        <Event Name="MatchEntered" Incomplete="true" Id="6963"/>
+        <Event Name="MatchFinished" Incomplete="true" Id="6964"/>
+        <Event Name="MatchExited" Incomplete="true" Id="6965"/>
+        <Event Name="MatchLeft" Incomplete="true" Id="6966"/>
+        <Event Name="MatchJoined" Incomplete="true" Id="6967"/>
+        <Event Name="MatchVoteKickBegin" Incomplete="true" Id="6968"/>
+        <Event Name="MatchVoteKickEnd" Incomplete="true" Id="6969"/>
+        <Event Name="MatchLookingForReplacements" Incomplete="true" Id="6970"/>
+        <Event Name="MatchStoppedLookingForReplacements" Incomplete="true" Id="6971"/>
+        <Event Name="PVPMatchStateUpdated" Incomplete="true" Id="6972"/>
+        <Event Name="PVPMatchFinished" Incomplete="true" Id="6973"/>
+        <Event Name="PVPDeathmatchPoolUpdated" Incomplete="true" Id="6974"/>
+        <Event Name="PVPMatchTeamInfoUpdated" Incomplete="true" Id="6975"/>
+        <Event Name="UnitPvpFlagsChanged" Incomplete="true" Id="6976"/>
+        <Event Name="PvpRatingUpdated" Incomplete="true" Id="6977"/>
+        <Event Name="AvailableMail" Incomplete="true" Id="6978"/>
+        <Event Name="AlertMailInfo" Incomplete="true" Id="6979"/>
+        <Event Name="UnavailableMail" Incomplete="true" Id="6980"/>
+        <Event Name="RefreshMail" Incomplete="true" Id="6981"/>
+        <Event Name="Vacuum" Incomplete="true" Id="6982"/>
+        <Event Name="FactionFloater" Incomplete="true" Id="6983"/>
+        <Event Name="QuestFloater" Incomplete="true" Id="6984"/>
+        <Event Name="RecallShardChanged" Incomplete="true" Id="6985"/>
+        <Event Name="CraftingSchematicList" Incomplete="true" Id="6986"/>
+        <Event Name="ProfessionsLoaded" Incomplete="true" Id="6987"/>
+        <Event Name="ProfessionUpdated" Incomplete="true" Id="6988"/>
+        <Event Name="CraftingSchematicLearned" Incomplete="true" Id="6989"/>
+        <Event Name="CraftingSchematicComplete" Incomplete="true" Id="6990"/>
+        <Event Name="CraftingDiscoveryHotCold" Incomplete="true" Id="6991"/>
+        <Event Name="CraftingSchematicInfoReceived" Incomplete="true" Id="6992"/>
+        <Event Name="CraftingUpdateCurrent" Incomplete="true" Id="6993"/>
+        <Event Name="TradeskillAchievementComplete" Incomplete="true" Id="6994"/>
+        <Event Name="TradeskillAchievementUpdate" Incomplete="true" Id="6995"/>
+        <Event Name="ShowItemInDressingRoom" Incomplete="true" Id="6996"/>
+        <Event Name="CraftingModItem" Incomplete="true" Id="6997"/>
+        <Event Name="CraftingExtractItem" Incomplete="true" Id="6998"/>
+        <Event Name="ShowTutorial" Incomplete="true" Id="6999"/>
+        <Event Name="LootRollUpdate" Incomplete="true" Id="7000"/>
+        <Event Name="MasterLootUpdate" Incomplete="true" Id="7001"/>
+        <Event Name="PendingLootInteract" Incomplete="true" Id="7002"/>
+        <Event Name="MapTrackedUnitUpdate" Incomplete="true" Id="7003"/>
+        <Event Name="MapTrackedUnitDisable" Incomplete="true" Id="7004"/>
+        <Event Name="NextFrame" Incomplete="true" Id="7005"/>
+        <Event Name="WindowGainedFocus" Incomplete="true" Id="7006"/>
+        <Event Name="WindowLostFocus" Incomplete="true" Id="7007"/>
+        <Event Name="ColorChanged" Incomplete="true" Id="7008"/>
+        <Event Name="DialogClosing" Incomplete="true" Id="7009"/>
+        <Event Name="ReadyToEnter" Incomplete="true" Id="7010"/>
+        <Event Name="ShowHello" Incomplete="true" Id="7011"/>
+        <Event Name="TriggerDemoOptions" Incomplete="true" Id="7012"/>
+        <Event Name="EnteredCombat" Incomplete="true" Id="7013"/>
+        <Event Name="RealmListChanged" Incomplete="true" Id="7014"/>
+        <Event Name="ScriptResurrect" Incomplete="true" Id="8124"/>
+        <Event Name="GuildQueueStateChanged" Incomplete="true" Id="8125"/>
+        <Event Name="DuelAccepted" Incomplete="true" Id="8126"/>
+        <Event Name="CharacterFlagsUpdated" Incomplete="true" Id="8127"/>
+    </Global>
+    <Library Name="Apollo" Incomplete="true" Id="267">
+        <Function Name="LinkAddon" Desc="(lives in UiModuleManager of UiModule.cpp)
+Runs pModuleToLink&apos;s AddPodInfo specified with nLuaHandlerRef." Incomplete="true" Id="372"/>
+        <Function Name="GetObjectize" Desc="(lives in LuaObjectizer of UiModule.cpp)
+Does a lua_pushnumber of pObject&apos;s size." Incomplete="true" Id="375"/>
+        <Function Name="LoadForm" Desc="Loads a window insided the specified form file" Id="316" NeedProofread="true" Example="self.wndMain = Apollo.LoadForm(&quot;SampleAddon.xml&quot;, &quot;SampleAddonForm&quot;, nil, self)    
+self.wndMain:Show(false)"/>
+        <Function Name="GetMouseTargetWindow" Incomplete="true" Id="3264"/>
+        <Function Name="GetTextWidth" Incomplete="true" Id="4387"/>
+        <Function Name="IsCapsLockOn" Incomplete="true" Id="5677"/>
+        <Function Name="GetAddonInfo" Incomplete="true" Id="5678"/>
+        <Function Name="AlertAppWindow" Incomplete="true" Id="7015"/>
+        <Function Name="SetMaxResolutionWidth" Incomplete="true" Id="7016"/>
+        <Function Name="GetMaxResolutionWidth" Incomplete="true" Id="7017"/>
+        <Function Name="SetMinResolutionWidth" Incomplete="true" Id="7018"/>
+        <Function Name="GetMinResolutionWidth" Incomplete="true" Id="7019"/>
+        <EnumSet Name="DragDropQueryResult" Incomplete="true" Id="7020">
+            <Enum Name="PassOn" Id="7021"/>
+            <Enum Name="Ignore" Id="7022"/>
+            <Enum Name="Accept" Id="7023"/>
+            <Enum Name="Invalid" Id="7024"/>
+        </EnumSet>
+        <EnumSet Name="DragDropCancelReason" Incomplete="true" Id="7025">
+            <Enum Name="EscapeKey" Id="7026"/>
+            <Enum Name="DroppedOnNothing" Id="7027"/>
+            <Enum Name="ClickedOnNothing" Id="7028"/>
+            <Enum Name="ClickedOnWorld" Id="7029"/>
+            <Enum Name="WindowMove" Id="7030"/>
+        </EnumSet>
+    </Library>
+    <Library Name="AbilityBook" Incomplete="true" Id="377">
+        <Function Name="GetAbilitiesList" Desc="Returns a table with information on each of the character&apos;s abilities" Incomplete="true" Id="378"/>
+        <Function Name="CanTrainTier" Desc="Returns a bool that indicates if training is possible" Incomplete="true" Id="379"/>
+        <Function Name="TrainTier" Desc="Attempts to train the next tier of the ability with the corresponding ID" Incomplete="true" Id="380"/>
+        <Function Name="GetExplorerRelicList" Incomplete="true" Id="3094" Desc="Creates an array of Spells obtained via Explorer Relics"/>
+        <Function Name="ActivateSpell" Incomplete="true" Id="3269" Desc="Activates the spell with the selected id.  ">
+            <Param Name="idSpell" Desc="The id for the ability being activated" Type="Integer" Id="4368"/>
+            <Param Name="bActive" Desc="Whether the ability is currently active" Type="Boolean" Id="4369"/>
+            <ReturnValue Type="Boolean" Desc="Returns a boolean stating whether or not the spell was successfully activated" Id="4370"/>
+        </Function>
+    </Library>
+    <Library Name="CombatFloater" Incomplete="true" Id="476">
+        <EnumSet Name="CodeEnumCombatMomentum" Incomplete="true" Id="3282">
+            <Enum Name="Impulse" Id="6473"/>
+            <Enum Name="KillingPerformance" Id="6474"/>
+            <Enum Name="KillChain" Id="6475"/>
+            <Enum Name="Evade" Id="6476"/>
+            <Enum Name="Interrupt" Id="6477"/>
+            <Enum Name="CCBreak" Id="6478"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumCCStateApplyRulesResult" Incomplete="true" Id="3289">
+            <Enum Name="Ok" Id="6479"/>
+            <Enum Name="InvalidCCState" Id="6480"/>
+            <Enum Name="NoTargetSpecified" Id="6481"/>
+            <Enum Name="Target_Immune" Id="6482"/>
+            <Enum Name="Target_InfiniteInterruptArmor" Id="6483"/>
+            <Enum Name="Target_InterruptReduced" Id="6484"/>
+            <Enum Name="Stacking_DoesNotStack" Id="6485"/>
+            <Enum Name="Stacking_ShorterDuration" Id="6486"/>
+            <Enum Name="Target_InterruptArmorReduced" Id="7031"/>
+            <Enum Name="Target_InterruptArmorBlocked" Id="7032"/>
+        </EnumSet>
+        <Event Name="DamageOrHealingDone" Incomplete="true" Id="7033"/>
+    </Library>
+    <Library Name="GameLib" Incomplete="true" Id="537">
+        <Function Name="IsControlledUnit" Desc="Does a lua_pushboolean whether pUnit is equal to GetControlledUnit.
+Parameter:
+unitToCheck: CUnit" Incomplete="true" Id="553"/>
+        <Function Name="RecallShardBind" Desc="not implemented
+bind should receive an id of a shard location" Incomplete="true" Id="604"/>
+        <EnumSet Name="CodeEnumDamageType" Incomplete="true" Id="2134">
+            <Enum Name="HealShields" Id="6487"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumMapObjectType" Incomplete="true" Id="3302">
+            <Enum Name="Unit" Id="6488"/>
+            <Enum Name="Object" Id="6489"/>
+            <Enum Name="PathObjective" Id="6490"/>
+            <Enum Name="QuestObjective" Id="3283"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumAddonSaveLevel" Incomplete="true" Id="3307">
+            <Enum Name="General" Id="3284"/>
+            <Enum Name="Account" Id="3285"/>
+            <Enum Name="Realm" Id="3286"/>
+            <Enum Name="Character" Id="3287"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumStoryPanel" Incomplete="true" Id="3312">
+            <Enum Name="Default" Id="3288"/>
+            <Enum Name="Low" Id="6491"/>
+            <Enum Name="Center" Id="3290"/>
+            <Enum Name="FullScreen" Id="3291"/>
+            <Enum Name="Whiteout" Id="3292"/>
+            <Enum Name="Urgent" Id="3293"/>
+            <Enum Name="FullScreenBlackNoFlash" Id="3294"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumStoryPanelStyle" Incomplete="true" Id="3320">
+            <Enum Name="Default" Id="3295"/>
+            <Enum Name="Paper" Id="3296"/>
+            <Enum Name="Electronic" Id="3297"/>
+            <Enum Name="Eldan" Id="6492"/>
+            <Enum Name="Arcane" Id="6493"/>
+            <Enum Name="Natural" Id="6494"/>
+            <Enum Name="Exile" Id="6495"/>
+            <Enum Name="Dominion" Id="6496"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumTutorialAnchor" Incomplete="true" Id="3329">
+            <Enum Name="Codex" Id="3303"/>
+            <Enum Name="Inventory" Id="3304"/>
+            <Enum Name="CharacterPanel" Id="3305"/>
+            <Enum Name="AbilityWindow" Id="3306"/>
+            <Enum Name="None" Id="3330"/>
+            <Enum Name="Codex" Id="3331"/>
+            <Enum Name="Abilities" Id="3332"/>
+            <Enum Name="Character" Id="3333"/>
+            <Enum Name="Mail" Id="6497"/>
+            <Enum Name="GalacticArchive" Id="3335"/>
+            <Enum Name="Social" Id="3336"/>
+            <Enum Name="GroupFinder" Id="3337"/>
+            <Enum Name="Challenge" Id="3338"/>
+            <Enum Name="Datachron" Id="3339"/>
+            <Enum Name="Inventory" Id="3340"/>
+            <Enum Name="AbilityBar" Id="3341"/>
+            <Enum Name="MiniMap" Id="3342"/>
+            <Enum Name="QuestTracker" Id="3343"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumClass" Incomplete="true" Id="3334">
+            <Enum Name="Warrior" Id="7034"/>
+            <Enum Name="Engineer" Id="7035"/>
+            <Enum Name="Esper" Id="7036"/>
+            <Enum Name="Medic" Id="7037"/>
+            <Enum Name="Stalker" Id="7038"/>
+            <Enum Name="Corrupted" Id="7039"/>
+            <Enum Name="Spellslinger" Id="7040"/>
+            <Enum Name="DarkWeaver" Id="7041"/>
+            <Enum Name="Charmer" Id="7042"/>
+            <Enum Name="TempWarrior1" Id="7043"/>
+            <Enum Name="TempWarrior2" Id="7044"/>
+            <Enum Name="TempWarrior3" Id="7045"/>
+            <Enum Name="TempEsper1" Id="7046"/>
+            <Enum Name="TempEsper2" Id="7047"/>
+            <Enum Name="TempSpellslinger1" Id="7048"/>
+            <Enum Name="TempSpellslinger2" Id="7049"/>
+            <Enum Name="TempMedic1" Id="7050"/>
+            <Enum Name="TempMedic2" Id="7051"/>
+            <Enum Name="TempBeserker1" Id="7052"/>
+            <Enum Name="TempBeserker2" Id="7053"/>
+            <Enum Name="TempStalker1" Id="7054"/>
+            <Enum Name="TempStalker2" Id="7055"/>
+        </EnumSet>
+        <Function Name="CodeEnumGenericError" Incomplete="true" Id="3364">
+            <Enum Name="Ok" Id="6498"/>
+            <Enum Name="Params" Id="6499"/>
+            <Enum Name="PlayerBusy" Id="6500"/>
+            <Enum Name="UnknownTargetUnit" Id="6501"/>
+            <Enum Name="TargetFaction" Id="6502"/>
+            <Enum Name="DbFailure" Id="6503"/>
+            <Enum Name="Item_BadId" Id="6504"/>
+            <Enum Name="Vendor_StackSize" Id="6505"/>
+            <Enum Name="Vendor_SoldOut" Id="6506"/>
+            <Enum Name="Vendor_UnknownItem" Id="6507"/>
+            <Enum Name="Vendor_FailedPreReq" Id="6508"/>
+            <Enum Name="Vendor_NotAVendor" Id="6509"/>
+            <Enum Name="Vendor_TooFar" Id="6510"/>
+            <Enum Name="Vendor_BadItemRec" Id="6511"/>
+            <Enum Name="Vendor_NotEnoughToFillQuantity" Id="6512"/>
+            <Enum Name="Vendor_NotEnoughCash" Id="6513"/>
+            <Enum Name="Vendor_UniqueConstraint" Id="6514"/>
+            <Enum Name="Vendor_ItemLocked" Id="6515"/>
+            <Enum Name="Vendor_IWontBuyThat" Id="6516"/>
+            <Enum Name="Vendor_NoQuantity" Id="6517"/>
+            <Enum Name="Vendor_BagIsNotEmpty" Id="6518"/>
+            <Enum Name="Item_OverFlowChestCreated" Id="6519"/>
+            <Enum Name="Item_InventoryFull" Id="6520"/>
+            <Enum Name="Item_UnknownItem" Id="6521"/>
+            <Enum Name="Item_QuestViolation" Id="6522"/>
+            <Enum Name="Item_Unique" Id="6523"/>
+            <Enum Name="Item_NotValidforSlot" Id="6524"/>
+            <Enum Name="Item_Locked" Id="6525"/>
+            <Enum Name="Item_AlreadyEquipped" Id="6526"/>
+            <Enum Name="Item_NotEquipped" Id="6527"/>
+            <Enum Name="Item_BagMustBeEmpty" Id="6528"/>
+            <Enum Name="Item_CannotFindBag" Id="6529"/>
+            <Enum Name="Item_BagToSmall" Id="6530"/>
+            <Enum Name="Item_CantPutBagInItself" Id="6531"/>
+            <Enum Name="Item_WrongRace" Id="6532"/>
+            <Enum Name="Item_WrongClass" Id="6533"/>
+            <Enum Name="Item_FailedProficiency" Id="6534"/>
+            <Enum Name="Item_LevelToLow" Id="6535"/>
+            <Enum Name="Embark_PlayerAlreadyinSeat" Id="6536"/>
+            <Enum Name="Embark_PlayerUnableToEmbark" Id="6537"/>
+            <Enum Name="Embark_InvalidVehicleUnit" Id="6538"/>
+            <Enum Name="Embark_NoSplineForTaxi" Id="6539"/>
+            <Enum Name="Embark_VehicleIsBroken" Id="6540"/>
+            <Enum Name="Embark_InvalidSeat" Id="6541"/>
+            <Enum Name="Embark_SeatTaken" Id="6542"/>
+            <Enum Name="Embark_SeatEmpty" Id="6543"/>
+            <Enum Name="Embark_NotInRange" Id="6544"/>
+            <Enum Name="Embark_CannotDoWhileOnTaxi" Id="6545"/>
+            <Enum Name="Mail_CannotFindPlayer" Id="3413"/>
+            <Enum Name="Mail_FailedToCreate" Id="3414"/>
+            <Enum Name="Vendor_CuratorOnlyBuysRelics" Id="3415"/>
+            <Enum Name="Vendor_CannotBuyRelics" Id="3416"/>
+            <Enum Name="Player_CantDoWhileDead" Id="3417"/>
+            <Enum Name="Vendor_NoBuyer" Id="3418"/>
+            <Enum Name="Vendor_NoVendor" Id="3419"/>
+            <Enum Name="Vendor_Buyer_NoActionCC" Id="3420"/>
+            <Enum Name="Vendor_Vendor_NoActionCC" Id="3421"/>
+            <Enum Name="Vendor_Vendor_Disposition" Id="6546"/>
+            <Enum Name="Player_CannotWhileInCombat" Id="3423"/>
+            <Enum Name="Mail_Busy" Id="3424"/>
+            <Enum Name="Mail_MailBoxOutOfRange" Id="3425"/>
+            <Enum Name="Mail_NoAttachment" Id="3426"/>
+            <Enum Name="Mail_InsufficientFunds" Id="6547"/>
+            <Enum Name="Mail_InvalidInventorySlot" Id="3428"/>
+            <Enum Name="Mail_UniqueExists" Id="3429"/>
+            <Enum Name="Mail_CannotDelete" Id="3430"/>
+            <Enum Name="Mail_DoesNotExist" Id="3431"/>
+            <Enum Name="Item_CannotBeSalvaged" Id="3432"/>
+            <Enum Name="Conversion_BadConversionRec" Id="6548"/>
+            <Enum Name="Conversion_CannotRemoveSource" Id="3434"/>
+            <Enum Name="Conversion_CannotAddTarget" Id="3435"/>
+            <Enum Name="Faction_NotEnoughRep" Id="3436"/>
+            <Enum Name="Item_NoItems" Id="3437"/>
+            <Enum Name="Craft_TierTooLow" Id="3438"/>
+            <Enum Name="Craft_MissingMaterials" Id="3439"/>
+            <Enum Name="Craft_IncompleteCircuit" Id="3440"/>
+            <Enum Name="Craft_SocketNotModdable" Id="3441"/>
+            <Enum Name="Craft_DuplicateChip" Id="3442"/>
+            <Enum Name="DisEmbark_PlayerNotInWorld" Id="3443"/>
+            <Enum Name="Item_NeedsRepair" Id="3444"/>
+            <Enum Name="Craft_TooManyAdditives" Id="3445"/>
+            <Enum Name="Item_SlotDisabled" Id="3446"/>
+            <Enum Name="Matching_NoRoleSelected" Id="3447"/>
+            <Enum Name="Instance_NotFound" Id="3448"/>
+            <Enum Name="Mail_CannotTransferItem" Id="6549"/>
+            <Enum Name="Mail_InvalidText" Id="3450"/>
+            <Enum Name="Mail_CanNotHaveCoDAndGift" Id="3451"/>
+        </Function>
+        <EnumSet Name="CodeEnumRecallCommand" Incomplete="true" Id="3344">
+            <Enum Name="BindPoint" Id="7056"/>
+            <Enum Name="House" Id="7057"/>
+            <Enum Name="Warplot" Id="7058"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumPetStance" Incomplete="true" Id="3347">
+            <Enum Name="Assist" Id="7059"/>
+            <Enum Name="Stay" Id="7060"/>
+            <Enum Name="Passive" Id="7061"/>
+            <Enum Name="Defensive" Id="7062"/>
+            <Enum Name="Aggressive" Id="7063"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumUserText" Incomplete="true" Id="3353">
+            <Enum Name="CharacterName" Id="7064"/>
+            <Enum Name="ScientistScanbotName" Id="7065"/>
+            <Enum Name="GuildName" Id="7066"/>
+            <Enum Name="GuildRankName" Id="7067"/>
+            <Enum Name="GuildBankTabName" Id="7068"/>
+            <Enum Name="HousingResidenceName" Id="7069"/>
+            <Enum Name="Chat" Id="7070"/>
+            <Enum Name="MailSubject" Id="7071"/>
+            <Enum Name="MailBody" Id="7072"/>
+            <Enum Name="ChatCustomChannelName" Id="7073"/>
+            <Enum Name="FriendshipNote" Id="7074"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumExitEvent" Incomplete="true" Id="3452">
+            <Enum Name="None" Id="7075"/>
+            <Enum Name="Camp" Id="7076"/>
+            <Enum Name="Quit" Id="7077"/>
+        </EnumSet>
+        <Function Name="GetNextBankBagCost" Incomplete="true" Id="3456"/>
+        <Function Name="HasBindPoint" Incomplete="true" Id="6550"/>
+        <Function Name="SetDefaultRecallCommand" Incomplete="true" Id="6551"/>
+        <Function Name="GetDefaultRecallCommand" Incomplete="true" Id="6552"/>
+        <Function Name="GetTutorialPopupContext" Incomplete="true" Id="6553"/>
+        <Function Name="GetGameExitInfo" Incomplete="true" Id="6554"/>
+        <Function Name="IsTextValid" Incomplete="true" Id="6555"/>
+        <Function Name="SetInstanceSettings" Incomplete="true" Id="6556"/>
+        <Function Name="OnClosedInstanceSettings" Incomplete="true" Id="6557"/>
+        <EnumSet Name="CodeEnumTutorial" Incomplete="true" Id="4422">
+            <Enum Name="Codex" Id="7078"/>
+            <Enum Name="Inventory" Id="7079"/>
+            <Enum Name="CharacterPanel" Id="7080"/>
+            <Enum Name="AbilityWindow" Id="7081"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumGenericError" Incomplete="true" Id="4427">
+            <Enum Name="Ok" Id="7082"/>
+            <Enum Name="Params" Id="7083"/>
+            <Enum Name="PlayerBusy" Id="7084"/>
+            <Enum Name="UnknownTargetUnit" Id="7085"/>
+            <Enum Name="TargetFaction" Id="7086"/>
+            <Enum Name="DbFailure" Id="7087"/>
+            <Enum Name="Item_BadId" Id="7088"/>
+            <Enum Name="Vendor_StackSize" Id="7089"/>
+            <Enum Name="Vendor_SoldOut" Id="7090"/>
+            <Enum Name="Vendor_UnknownItem" Id="7091"/>
+            <Enum Name="Vendor_FailedPreReq" Id="7092"/>
+            <Enum Name="Vendor_NotAVendor" Id="7093"/>
+            <Enum Name="Vendor_TooFar" Id="7094"/>
+            <Enum Name="Vendor_BadItemRec" Id="7095"/>
+            <Enum Name="Vendor_NotEnoughToFillQuantity" Id="7096"/>
+            <Enum Name="Vendor_NotEnoughCash" Id="7097"/>
+            <Enum Name="Vendor_UniqueConstraint" Id="7098"/>
+            <Enum Name="Vendor_ItemLocked" Id="7099"/>
+            <Enum Name="Vendor_IWontBuyThat" Id="7100"/>
+            <Enum Name="Vendor_NoQuantity" Id="7101"/>
+            <Enum Name="Vendor_BagIsNotEmpty" Id="7102"/>
+            <Enum Name="Item_OverFlowChestCreated" Id="7103"/>
+            <Enum Name="Item_InventoryFull" Id="7104"/>
+            <Enum Name="Item_UnknownItem" Id="7105"/>
+            <Enum Name="Item_QuestViolation" Id="7106"/>
+            <Enum Name="Item_Unique" Id="7107"/>
+            <Enum Name="Item_NotValidforSlot" Id="7108"/>
+            <Enum Name="Item_Locked" Id="7109"/>
+            <Enum Name="Item_AlreadyEquipped" Id="7110"/>
+            <Enum Name="Item_NotEquipped" Id="7111"/>
+            <Enum Name="Item_BagMustBeEmpty" Id="7112"/>
+            <Enum Name="Item_CannotFindBag" Id="7113"/>
+            <Enum Name="Item_BagToSmall" Id="7114"/>
+            <Enum Name="Item_CantPutBagInItself" Id="7115"/>
+            <Enum Name="Item_WrongRace" Id="7116"/>
+            <Enum Name="Item_WrongClass" Id="7117"/>
+            <Enum Name="Item_FailedProficiency" Id="7118"/>
+            <Enum Name="Item_LevelToLow" Id="7119"/>
+            <Enum Name="Embark_PlayerAlreadyinSeat" Id="7120"/>
+            <Enum Name="Embark_PlayerUnableToEmbark" Id="7121"/>
+            <Enum Name="Embark_InvalidVehicleUnit" Id="7122"/>
+            <Enum Name="Embark_NoSplineForTaxi" Id="7123"/>
+            <Enum Name="Embark_VehicleIsBroken" Id="7124"/>
+            <Enum Name="Embark_InvalidSeat" Id="7125"/>
+            <Enum Name="Embark_SeatTaken" Id="7126"/>
+            <Enum Name="Embark_SeatEmpty" Id="7127"/>
+            <Enum Name="Embark_NotInRange" Id="7128"/>
+            <Enum Name="Embark_CannotDoWhileOnTaxi" Id="7129"/>
+            <Enum Name="Mail_CannotFindPlayer" Id="7130"/>
+            <Enum Name="Mail_FailedToCreate" Id="7131"/>
+            <Enum Name="Vendor_CuratorOnlyBuysRelics" Id="7132"/>
+            <Enum Name="Vendor_CannotBuyRelics" Id="7133"/>
+            <Enum Name="Player_CantDoWhileDead" Id="7134"/>
+            <Enum Name="Vendor_NoBuyer" Id="7135"/>
+            <Enum Name="Vendor_NoVendor" Id="7136"/>
+            <Enum Name="Vendor_Buyer_NoActionCC" Id="7137"/>
+            <Enum Name="Vendor_Vendor_NoActionCC" Id="7138"/>
+            <Enum Name="Vendor_Vendor_Disposition" Id="7139"/>
+            <Enum Name="Player_CannotWhileInCombat" Id="7140"/>
+            <Enum Name="Mail_Busy" Id="7141"/>
+            <Enum Name="Mail_MailBoxOutOfRange" Id="7142"/>
+            <Enum Name="Mail_NoAttachment" Id="7143"/>
+            <Enum Name="Mail_InsufficientFunds" Id="7144"/>
+            <Enum Name="Mail_InvalidInventorySlot" Id="7145"/>
+            <Enum Name="Mail_UniqueExists" Id="7146"/>
+            <Enum Name="Mail_CannotDelete" Id="7147"/>
+            <Enum Name="Mail_DoesNotExist" Id="7148"/>
+            <Enum Name="Item_CannotBeSalvaged" Id="7149"/>
+            <Enum Name="Conversion_BadConversionRec" Id="7150"/>
+            <Enum Name="Conversion_CannotRemoveSource" Id="7151"/>
+            <Enum Name="Conversion_CannotAddTarget" Id="7152"/>
+            <Enum Name="Faction_NotEnoughRep" Id="7153"/>
+            <Enum Name="Item_NoItems" Id="7154"/>
+            <Enum Name="Craft_TierTooLow" Id="7155"/>
+            <Enum Name="Craft_MissingMaterials" Id="7156"/>
+            <Enum Name="Craft_IncompleteCircuit" Id="7157"/>
+            <Enum Name="Craft_SocketNotModdable" Id="7158"/>
+            <Enum Name="Craft_DuplicateChip" Id="7159"/>
+            <Enum Name="DisEmbark_PlayerNotInWorld" Id="7160"/>
+            <Enum Name="Item_NeedsRepair" Id="7161"/>
+            <Enum Name="Craft_TooManyAdditives" Id="7162"/>
+            <Enum Name="Item_SlotDisabled" Id="7163"/>
+            <Enum Name="Matching_NoRoleSelected" Id="7164"/>
+            <Enum Name="Instance_NotFound" Id="7165"/>
+            <Enum Name="Mail_CannotTransferItem" Id="7166"/>
+            <Enum Name="Mail_InvalidText" Id="7167"/>
+            <Enum Name="Mail_CanNotHaveCoDAndGift" Id="7168"/>
+        </EnumSet>
+        <Function Name="GetAccountRealmCharacter" Incomplete="true" Id="4515"/>
+        <Function Name="IsKeyBindable" Incomplete="true" Id="4906"/>
+        <Function Name="GetGearScore" Incomplete="true" Id="4907"/>
+        <Function Name="GetTargetMarkerIcon" Incomplete="true" Id="4908"/>
+        <Function Name="ClearAllTargetMarkers" Incomplete="true" Id="4909"/>
+        <Function Name="GetAllTutorials" Incomplete="true" Id="7169"/>
+        <Function Name="GetTutorialsForCategory" Incomplete="true" Id="7170"/>
+        <Function Name="IsTutorialViewed" Incomplete="true" Id="7171"/>
+        <Function Name="MarkTutorialViewed" Incomplete="true" Id="7172"/>
+        <EnumSet Name="CodeEnumCombatResult" Incomplete="true" Id="7173">
+            <Enum Name="Avoid" Id="7174"/>
+            <Enum Name="Critical" Id="7175"/>
+            <Enum Name="Hit" Id="7176"/>
+            <Enum Name="NeedsTelegraphEvaluation" Id="7177"/>
+            <Enum Name="OutsideTelegraph" Id="7178"/>
+            <Enum Name="OutsideTelegraphInvalid" Id="7179"/>
+            <Enum Name="InsideTelegraph" Id="7180"/>
+            <Enum Name="NeedsHitResultCalc" Id="7181"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumVital" Incomplete="true" Id="7182">
+            <Enum Name="Invalid" Id="7183"/>
+            <Enum Name="Health" Id="7184"/>
+            <Enum Name="Breath" Id="7185"/>
+            <Enum Name="ShieldCapacity" Id="7186"/>
+            <Enum Name="KineticCell" Id="7187"/>
+            <Enum Name="Resource0" Id="7188"/>
+            <Enum Name="Resource1" Id="7189"/>
+            <Enum Name="Resource2" Id="7190"/>
+            <Enum Name="Resource3" Id="7191"/>
+            <Enum Name="Resource4" Id="7192"/>
+            <Enum Name="Resource5" Id="7193"/>
+            <Enum Name="Resource6" Id="7194"/>
+            <Enum Name="StalkerA" Id="7195"/>
+            <Enum Name="StalkerB" Id="7196"/>
+            <Enum Name="StalkerC" Id="7197"/>
+            <Enum Name="Mana" Id="7198"/>
+            <Enum Name="Resource7" Id="7199"/>
+            <Enum Name="MedicCore" Id="7200"/>
+            <Enum Name="SpellSurge" Id="7201"/>
+            <Enum Name="InterruptArmor" Id="7202"/>
+            <Enum Name="Absorption" Id="7203"/>
+            <Enum Name="PublicResource0" Id="7204"/>
+            <Enum Name="PublicResource1" Id="7205"/>
+            <Enum Name="PublicResource2" Id="7206"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumTutorialCategory" Incomplete="true" Id="7207">
+            <Enum Name="General" Id="7208"/>
+            <Enum Name="Beginner" Id="7209"/>
+            <Enum Name="Combat" Id="7210"/>
+            <Enum Name="PVP" Id="7211"/>
+            <Enum Name="Housing" Id="7212"/>
+            <Enum Name="Challenges" Id="7213"/>
+            <Enum Name="PublicEvents" Id="7214"/>
+            <Enum Name="Adventures" Id="7215"/>
+            <Enum Name="Path_Soldier" Id="7216"/>
+            <Enum Name="Path_Settler" Id="7217"/>
+            <Enum Name="Path_Scientist" Id="7218"/>
+            <Enum Name="Path_Explorer" Id="7219"/>
+            <Enum Name="Class_Warrior" Id="7220"/>
+            <Enum Name="Class_Esper" Id="7221"/>
+            <Enum Name="Class_Spellslinger" Id="7222"/>
+            <Enum Name="Class_Stalker" Id="7223"/>
+            <Enum Name="Class_Medic" Id="7224"/>
+            <Enum Name="Class_Engineer" Id="7225"/>
+            <Enum Name="Class_Charmer" Id="7226"/>
+            <Enum Name="Tradeskill_Outfitter" Id="7227"/>
+            <Enum Name="Tradeskill_Tailor" Id="7228"/>
+            <Enum Name="Tradeskill_Architect" Id="7229"/>
+            <Enum Name="Tradeskill_Miner" Id="7230"/>
+            <Enum Name="Tradeskill_Augmentor" Id="7231"/>
+            <Enum Name="Tradeskill_Survivalist" Id="7232"/>
+            <Enum Name="Tradeskill_Farmer" Id="7233"/>
+            <Enum Name="Tradeskill_Weaponsmith" Id="7234"/>
+            <Enum Name="Tradeskill_Armorer" Id="7235"/>
+        </EnumSet>
+        <Function Name="GetTutorialVisibilityFlags" Incomplete="true" Id="8128"/>
+        <Function Name="ResetTutorials" Incomplete="true" Id="8129"/>
+        <Function Name="ToggleTutorialVisibilityFlags" Incomplete="true" Id="8130"/>
+        <Function Name="IsTutorialNoPageAlert" Incomplete="true" Id="8131"/>
+        <Function Name="InitiateDuel" Incomplete="true" Id="8132"/>
+        <Function Name="AcceptDuel" Incomplete="true" Id="8133"/>
+        <Function Name="DeclineDuel" Incomplete="true" Id="8134"/>
+        <Function Name="ForfeitDuel" Incomplete="true" Id="8135"/>
+        <Function Name="GetDuelOpponent" Incomplete="true" Id="8136"/>
+        <Function Name="IsIgnoringDuelRequests" Incomplete="true" Id="8137"/>
+        <Function Name="SetIgnoreDuelRequests" Incomplete="true" Id="8138"/>
+        <Function Name="CanDisembarkVehicle" Incomplete="true" Id="8139"/>
+        <EnumSet Name="CodeEnumInputModifierScancode" Incomplete="true" Id="8140">
+            <Enum Name="LeftShift" Id="8141"/>
+            <Enum Name="LeftCtrl" Id="8142"/>
+            <Enum Name="LeftAlt" Id="8143"/>
+            <Enum Name="RightShift" Id="8144"/>
+            <Enum Name="RightCtrl" Id="8145"/>
+            <Enum Name="RightAlt" Id="8146"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumDuelState" Incomplete="true" Id="8147">
+            <Enum Name="None" Id="8148"/>
+            <Enum Name="Pending" Id="8149"/>
+            <Enum Name="WaitingToAccept" Id="8150"/>
+            <Enum Name="Dueling" Id="8151"/>
+        </EnumSet>
+    </Library>
+    <Library Name="GroupLib" Incomplete="true" Id="606">
+        <EnumSet Name="Result" Incomplete="true" Id="2160">
+            <Enum Name="RoleFull" Id="4910"/>
+            <Enum Name="NoInvitingSelf" Id="7236"/>
+        </EnumSet>
+        <EnumSet Name="LootThreshold" Incomplete="true" Id="3412">
+            <Enum Name="Average" Id="7237"/>
+            <Enum Name="Good" Id="7238"/>
+            <Enum Name="Excellent" Id="7239"/>
+            <Enum Name="Superb" Id="7240"/>
+            <Enum Name="Exquisite" Id="7241"/>
+            <Enum Name="Phenomenal" Id="7242"/>
+            <Enum Name="Extraordinary" Id="7243"/>
+            <Enum Name="Legendary" Id="7244"/>
+            <Enum Name="Inferior" Id="7245"/>
+        </EnumSet>
+        <EnumSet Name="LootRule" Incomplete="true" Id="3422">
+            <Enum Name="FreeForAll" Id="7246"/>
+            <Enum Name="RoundRobin" Id="7247"/>
+            <Enum Name="NeedBeforeGreed" Id="7248"/>
+            <Enum Name="Master" Id="7249"/>
+        </EnumSet>
+        <EnumSet Name="RemoveReason" Incomplete="true" Id="3427">
+            <Enum Name="Left" Id="7250"/>
+            <Enum Name="Kicked" Id="7251"/>
+            <Enum Name="Disconnected" Id="7252"/>
+            <Enum Name="Disband" Id="7253"/>
+            <Enum Name="RemovedByServer" Id="7254"/>
+            <Enum Name="VoteKicked" Id="7255"/>
+        </EnumSet>
+        <EnumSet Name="ActionResult" Incomplete="true" Id="3433">
+            <Enum Name="LeaveSuccess" Id="7256"/>
+            <Enum Name="LeaveFailed" Id="7257"/>
+            <Enum Name="DisbandSuccess" Id="7258"/>
+            <Enum Name="DisbandFailed" Id="7259"/>
+            <Enum Name="KickSuccess" Id="7260"/>
+            <Enum Name="KickFailed" Id="7261"/>
+            <Enum Name="PromoteSuccess" Id="7262"/>
+            <Enum Name="PromoteFailed" Id="7263"/>
+            <Enum Name="FlagsSuccess" Id="7264"/>
+            <Enum Name="FlagsFailed" Id="7265"/>
+            <Enum Name="MemberFlagsSuccess" Id="7266"/>
+            <Enum Name="MemberFlagsFailed" Id="7267"/>
+            <Enum Name="NotInGroup" Id="7268"/>
+            <Enum Name="ChangeSettingsFailed" Id="7269"/>
+            <Enum Name="ChangeSettingsSuccess" Id="7270"/>
+            <Enum Name="MentoringInvalidMentor" Id="7271"/>
+            <Enum Name="MentoringInvalidMentee" Id="7272"/>
+            <Enum Name="InvalidGroup" Id="7273"/>
+            <Enum Name="MentoringSelf" Id="7274"/>
+            <Enum Name="ReadyCheckFailed" Id="7275"/>
+            <Enum Name="MentoringNotAllowed" Id="7276"/>
+            <Enum Name="MarkingNotPermitted" Id="7277"/>
+            <Enum Name="InvalidMarkIndex" Id="7278"/>
+            <Enum Name="InvalidMarkTarget" Id="7279"/>
+            <Enum Name="MentoringInCombat" Id="7280"/>
+            <Enum Name="MentoringLowestLevel" Id="7281"/>
+            <Enum Name="MentoringNoAction" Id="7282"/>
+        </EnumSet>
+        <EnumSet Name="GameMode" Incomplete="true" Id="3449">
+            <Enum Name="Normal" Id="7283"/>
+            <Enum Name="SpeedRun" Id="7284"/>
+            <Enum Name="CompletionRun" Id="7285"/>
+            <Enum Name="Nightmare" Id="7286"/>
+        </EnumSet>
+        <EnumSet Name="Difficulty" Incomplete="true" Id="3454">
+            <Enum Name="Normal" Id="6558"/>
+            <Enum Name="Veteran" Id="6559"/>
+        </EnumSet>
+        <Function Name="AcceptMentoring" Incomplete="true" Id="6560"/>
+        <Function Name="CancelMentoring" Incomplete="true" Id="6561"/>
+        <Function Name="GetMentoringList" Incomplete="true" Id="6562"/>
+        <Function Name="SetReady" Incomplete="true" Id="6563"/>
+        <Function Name="SetRoleDPS" Incomplete="true" Id="6564"/>
+        <Function Name="SetRoleHealer" Incomplete="true" Id="6565"/>
+        <Function Name="SetRoleTank" Incomplete="true" Id="6566"/>
+        <Function Name="SetRaidAssistant" Incomplete="true" Id="3522"/>
+        <Function Name="SetMainTank" Incomplete="true" Id="3523"/>
+        <Function Name="SetMainAssist" Incomplete="true" Id="3524"/>
+        <Function Name="SetRoleLocked" Incomplete="true" Id="3525"/>
+        <Function Name="SetCanMark" Incomplete="true" Id="3526"/>
+        <Function Name="ReadyCheck" Incomplete="true" Id="3527"/>
+        <Function Name="ConvertToRaid" Incomplete="true" Id="3528"/>
+        <Function Name="InInstance" Incomplete="true" Id="4960"/>
+        <Function Name="CloseMentoringDialog" Incomplete="true" Id="7287"/>
+    </Library>
+    <Library Name="MailSystemLib" Incomplete="true" Id="707">
+        <Function Name="GetItemFromInventoryId" Desc="Returns a new instance of an item that is a copy of an Inventory item specified by nSlot.
+// NOTE: This function should be moved to a LuaGameLibrary_InventorySystem" Incomplete="true" Id="710"/>
+        <Function Name="GetSendCost" Incomplete="true" Id="7288"/>
+        <Method Name="TakeMoney" Incomplete="true" Id="7289"/>
+        <Method Name="PayCoD" Incomplete="true" Id="7290"/>
+    </Library>
+    <Library Name="MessageManagerLib" Incomplete="true" Id="737">
+        <Event Name="MessageManager_DisplayStoryPanel" Incomplete="true" Id="7291"/>
+        <Event Name="MessageManager_HideStoryPanel" Incomplete="true" Id="7292"/>
+    </Library>
+    <Library Name="PlayerPathLib" Incomplete="true" Id="767">
+        <Function Name="GetPathLevel" Desc="Returns the character&apos;s current path level
+
+" Incomplete="true" Id="783"/>
+        <Function Name="GetPathXP" Desc="Returns the total path XP that the player has earned" Incomplete="true" Id="784"/>
+        <Function Name="GetPathXPAtLevel" Desc="Returns the amount of path XP needed to reach a given path level
+
+" Incomplete="true" Id="785"/>
+        <Function Name="GetPathXPForLevel" Desc="Returns the amount of path XP the player has earned during the current path level" Incomplete="true" Id="786"/>
+        <Function Name="GetPathLevelData" Desc="Does a lua_newtable with level, xp, and the rewards specified at nLevel, or nil if null." Incomplete="true" Id="788" InternalNotes="note!" Example="test usage" Remarks="a remark!"/>
+        <Function Name="GetEpisodes" Desc="Returns a table with all of the PathEpisodes where the player has unlocked at least one PathMission
+" Incomplete="true" Id="792"/>
+        <Function Name="GetCurrentEpisode" Desc="Returns the PathEpisode that is currently active for the player
+
+" Incomplete="true" Id="793"/>
+        <Function Name="ExplorerShowHint" Incomplete="true" Id="2531" Desc="Displays a hint for the passed path mission"/>
+    </Library>
+    <Object Name="DialogResponse" Incomplete="true" Id="802" Prefix="dr"/>
+    <Object Name="Episode" Incomplete="true" Id="809" Prefix="epi"/>
+    <Object Name="Item" Incomplete="true" Id="828" Prefix="item">
+        <Method Name="GetGenericString" Desc="Does a lua_pushwstring of a formatted string (to &apos;$1c $1n&apos;) with an actor corresponding to strName and fVal.
+uses as library" Incomplete="true" Id="837"/>
+        <Method Name="GetCompareString" Desc="Does a lua_pushwstring of a CompareString of strName, fBefore, and fAfter.
+uses as library" Incomplete="true" Id="840"/>
+        <Method Name="CanEquip" Desc="Does a lua_pushboolean if itemId can be equipped.
+uses as library" Incomplete="true" Id="844"/>
+        <Method Name="GetConsumable" Desc="Does a lua_pushwstring of &apos;Consumable&apos; if applicable to itemData, or nil if null." Incomplete="true" Id="868">
+            <ReturnValue Type="Item" Desc="this is an item" Id="6455"/>
+        </Method>
+        <EnumSet Name="CodeEnumItemUpdateReason" Incomplete="true" Id="3531">
+            <Enum Name="StackSplit" Id="7293"/>
+            <Enum Name="ConsumeCharge" Id="7294"/>
+            <Enum Name="SpellReagent" Id="7295"/>
+            <Enum Name="Transform" Id="7296"/>
+            <Enum Name="Cheat" Id="7297"/>
+            <Enum Name="Salvage" Id="7298"/>
+            <Enum Name="Extract" Id="7299"/>
+            <Enum Name="Vendor" Id="7300"/>
+            <Enum Name="Quest" Id="7301"/>
+            <Enum Name="SpellEffect" Id="7302"/>
+            <Enum Name="Script" Id="7303"/>
+            <Enum Name="PathReward" Id="7304"/>
+            <Enum Name="ResourceConversion" Id="7305"/>
+            <Enum Name="Auction" Id="7306"/>
+            <Enum Name="MaterialBagConversion" Id="7307"/>
+            <Enum Name="Loot" Id="7308"/>
+            <Enum Name="Buyback" Id="7309"/>
+            <Enum Name="Crafting" Id="7310"/>
+            <Enum Name="NewCharacter" Id="7311"/>
+            <Enum Name="PublicEvent" Id="7312"/>
+            <Enum Name="Mail" Id="7313"/>
+            <Enum Name="PlayerRequested" Id="7314"/>
+            <Enum Name="GuildBank" Id="7315"/>
+            <Enum Name="Trade" Id="7316"/>
+            <Enum Name="HousingCrate" Id="7317"/>
+            <Enum Name="None" Id="7318"/>
+        </EnumSet>
+        <Method Name="GetHousingDecorInfoId" Incomplete="true" Id="3557"/>
+        <EnumSet Name="CodeEnumMicrochipType" Incomplete="true" Id="4990">
+            <Enum Name="PowerSource" Id="7319"/>
+            <Enum Name="Stat" Id="7320"/>
+            <Enum Name="PowerUp" Id="7321"/>
+            <Enum Name="Special" Id="7322"/>
+            <Enum Name="Set" Id="7323"/>
+            <Enum Name="Omni" Id="7324"/>
+        </EnumSet>
+        <Method Name="IsEquippable" Incomplete="true" Id="4997"/>
+        <Method Name="IsCommodity" Incomplete="true" Id="4998"/>
+        <Method Name="IsAuctionable" Incomplete="true" Id="4999"/>
+        <Method Name="GetDurationTotal" Incomplete="true" Id="8152"/>
+        <Method Name="GetDurationRemaining" Incomplete="true" Id="8153"/>
+        <Method Name="IsDestroyOnLogout" Incomplete="true" Id="8154"/>
+        <Method Name="IsDestroyOnZone" Incomplete="true" Id="8155"/>
+    </Object>
+    <Object Name="Money" Incomplete="true" Id="885" Prefix="mon">
+        <EnumSet Name="CodeEnumCurrencyType" Incomplete="true" Id="3503">
+            <Enum Name="Credits" Id="4567"/>
+            <Enum Name="Renown" Id="4568"/>
+            <Enum Name="ElderGems" Id="4569"/>
+            <Enum Name="CraftingVouchers" Id="5000"/>
+            <Enum Name="Prestige" Id="5001"/>
+        </EnumSet>
+    </Object>
+    <Object Name="Quest" Incomplete="true" Id="914" Prefix="que">
+        <Method Name="GetEpisode" Incomplete="true" Id="3561"/>
+        <Method Name="GetMinLevel" Incomplete="true" Id="5002"/>
+        <Method Name="GetTradeskillSchematicsRequired" Incomplete="true" Id="5003"/>
+    </Object>
+    <Object Name="Spell" Incomplete="true" Id="975" Prefix="spl">
+        <EnumSet Name="CombatMessageType" Incomplete="true" Id="3521">
+            <Enum Name="General" Id="7325"/>
+            <Enum Name="Experience" Id="7326"/>
+            <Enum Name="QuestUpdate" Id="7327"/>
+            <Enum Name="LocationChange" Id="7328"/>
+            <Enum Name="Combat_Damage_Done" Id="7329"/>
+            <Enum Name="Combat_Damage_Done_Critical" Id="7330"/>
+            <Enum Name="Combat_Damage_Taken" Id="7331"/>
+            <Enum Name="Combat_Damage_Taken_Critical" Id="7332"/>
+            <Enum Name="Combat_Healing_Done" Id="7333"/>
+            <Enum Name="Combat_Healing_Done_Critical" Id="7334"/>
+            <Enum Name="Combat_Healing_Taken" Id="7335"/>
+            <Enum Name="Combat_Healing_Taken_Critical" Id="7336"/>
+            <Enum Name="Combat_Block_Taken" Id="7337"/>
+            <Enum Name="Combat_Block_Done" Id="7338"/>
+            <Enum Name="Combat_Parry_Taken" Id="7339"/>
+            <Enum Name="Combat_Parry_Done" Id="7340"/>
+            <Enum Name="Combat_Dodge_Taken" Id="7341"/>
+            <Enum Name="Combat_Dodge_Done" Id="7342"/>
+            <Enum Name="Combat_NoEffect_Taken" Id="7343"/>
+            <Enum Name="Combat_NoEffect_Done" Id="7344"/>
+            <Enum Name="Combat_Shallow_Taken" Id="7345"/>
+            <Enum Name="Combat_Shallow_Done" Id="7346"/>
+            <Enum Name="Combat_Falling_Damage_Done" Id="7347"/>
+            <Enum Name="Combat_Death" Id="7348"/>
+            <Enum Name="Error" Id="7349"/>
+            <Enum Name="SpellFailure" Id="7350"/>
+            <Enum Name="UNUSED00" Id="7351"/>
+            <Enum Name="UNUSED01" Id="7352"/>
+            <Enum Name="Faction" Id="7353"/>
+            <Enum Name="LootBase" Id="7354"/>
+            <Enum Name="LootAverage" Id="7355"/>
+            <Enum Name="LootGood" Id="7356"/>
+            <Enum Name="LootExcellent" Id="7357"/>
+            <Enum Name="LootSuperb" Id="7358"/>
+            <Enum Name="LootExquisite" Id="7359"/>
+            <Enum Name="LootPhenomenal" Id="7360"/>
+            <Enum Name="LootExtraordinary" Id="7361"/>
+            <Enum Name="LootLegendary" Id="7362"/>
+            <Enum Name="LootQuestActivation" Id="7363"/>
+            <Enum Name="Achievement" Id="7364"/>
+            <Enum Name="Experience_KillCreature" Id="7365"/>
+            <Enum Name="Experience_ClusterBonus" Id="7366"/>
+            <Enum Name="Experience_Quest" Id="7367"/>
+            <Enum Name="Absorption_Taken" Id="7368"/>
+            <Enum Name="Absorption_Done" Id="7369"/>
+            <Enum Name="Transference_Taken" Id="7370"/>
+            <Enum Name="Transference_Done" Id="7371"/>
+            <Enum Name="SpellFailure_Long" Id="7372"/>
+            <Enum Name="SpellFailure_Medium" Id="7373"/>
+            <Enum Name="SpellFailure_Short" Id="7374"/>
+            <Enum Name="SpellFailure_Target_Head" Id="7375"/>
+            <Enum Name="SpellFailure_Target_Feet" Id="7376"/>
+            <Enum Name="Special_Done" Id="7377"/>
+            <Enum Name="Special_Taken" Id="7378"/>
+            <Enum Name="UNUSED02" Id="7379"/>
+            <Enum Name="PlayerPath" Id="7380"/>
+            <Enum Name="KillPerformanceReward" Id="7381"/>
+            <Enum Name="MultiKillReward" Id="7382"/>
+            <Enum Name="KillingSpreeReward" Id="7383"/>
+            <Enum Name="LootInferior" Id="7384"/>
+            <Enum Name="TelegraphEvadeReward" Id="7385"/>
+            <Enum Name="TelegraphInterruptReward" Id="7386"/>
+            <Enum Name="RestedReward" Id="7387"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumSpellClass" Incomplete="true" Id="6567">
+            <Enum Name="BuffDispellable" Id="7388"/>
+            <Enum Name="BuffNonDispellable" Id="7389"/>
+            <Enum Name="DebuffDispellable" Id="7390"/>
+            <Enum Name="DebuffNonDispellable" Id="7391"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumCastResult" Incomplete="true" Id="5071">
+            <Enum Name="Ok" Id="7392"/>
+            <Enum Name="UnableToCreateSpell" Id="7393"/>
+            <Enum Name="MovingToCast" Id="7394"/>
+            <Enum Name="PendingSpellCast" Id="7395"/>
+            <Enum Name="SpellUnkown" Id="7396"/>
+            <Enum Name="SpellBad" Id="7397"/>
+            <Enum Name="SpellCancelled" Id="7398"/>
+            <Enum Name="SpellMaxChannel" Id="7399"/>
+            <Enum Name="SpellRemoved" Id="7400"/>
+            <Enum Name="SpellCountered" Id="7401"/>
+            <Enum Name="SpellCastingInterrupts" Id="7402"/>
+            <Enum Name="SpellInterrupted" Id="7403"/>
+            <Enum Name="SpellCombatModeActiveCount" Id="7404"/>
+            <Enum Name="SpellAlreadyCasting" Id="7405"/>
+            <Enum Name="SpellGlobalCooldown" Id="7406"/>
+            <Enum Name="SpellCooldown" Id="7407"/>
+            <Enum Name="SpellGroupCooldown" Id="7408"/>
+            <Enum Name="SpellPreRequisites" Id="7409"/>
+            <Enum Name="ActionBarSetDisallows" Id="7410"/>
+            <Enum Name="DamageInterrupts" Id="7411"/>
+            <Enum Name="InvalidInventoryIndex" Id="7412"/>
+            <Enum Name="ItemUnknown" Id="7413"/>
+            <Enum Name="ItemBad" Id="7414"/>
+            <Enum Name="ItemNoSpellId" Id="7415"/>
+            <Enum Name="ItemUnEquipped" Id="7416"/>
+            <Enum Name="ItemCharges" Id="7417"/>
+            <Enum Name="ItemTooHighLevel" Id="7418"/>
+            <Enum Name="ItemAchievmentComplete" Id="7419"/>
+            <Enum Name="ItemQuestRequirementsNotMet" Id="7420"/>
+            <Enum Name="ItemObjectiveComplete" Id="7421"/>
+            <Enum Name="CasterUnknown" Id="7422"/>
+            <Enum Name="CasterMustHaveTarget" Id="7423"/>
+            <Enum Name="CasterCannotBePrimaryTarget" Id="7424"/>
+            <Enum Name="CasterNotIncontrolOfSelf" Id="7425"/>
+            <Enum Name="CasterMovement" Id="7426"/>
+            <Enum Name="CasterMaxCast" Id="7427"/>
+            <Enum Name="CCStun" Id="7428"/>
+            <Enum Name="CCSleep" Id="7429"/>
+            <Enum Name="CCRoot" Id="7430"/>
+            <Enum Name="CCDisarm" Id="7431"/>
+            <Enum Name="CCSilence" Id="7432"/>
+            <Enum Name="CCPolymorph" Id="7433"/>
+            <Enum Name="CCFear" Id="7434"/>
+            <Enum Name="CCHold" Id="7435"/>
+            <Enum Name="CasterVitalCostHealth" Id="7436"/>
+            <Enum Name="CasterVitalCostXp" Id="7437"/>
+            <Enum Name="CasterVitalCostMoney" Id="7438"/>
+            <Enum Name="CasterVitalCostCurrency1" Id="7439"/>
+            <Enum Name="CasterVitalCostCurrency2" Id="7440"/>
+            <Enum Name="CasterVitalCostCurrency3" Id="7441"/>
+            <Enum Name="CasterVitalCostResource0" Id="7442"/>
+            <Enum Name="CasterVitalCostResource1" Id="7443"/>
+            <Enum Name="CasterVitalCostResource2" Id="7444"/>
+            <Enum Name="CasterVitalCostResource3" Id="7445"/>
+            <Enum Name="CasterVitalCostResource4" Id="7446"/>
+            <Enum Name="CasterVitalCostResource5" Id="7447"/>
+            <Enum Name="CasterVitalCostResource6" Id="7448"/>
+            <Enum Name="Caster_CannotBeDead" Id="7449"/>
+            <Enum Name="Caster_MustBeDead" Id="7450"/>
+            <Enum Name="Caster_CannotBeInCombatPVE" Id="7451"/>
+            <Enum Name="Caster_MustBeInCombatPVE" Id="7452"/>
+            <Enum Name="Caster_CannotBe_InCombatPVP" Id="7453"/>
+            <Enum Name="Caster_MustBe_InCombatPVP" Id="7454"/>
+            <Enum Name="Caster_CannotBe_Moving" Id="7455"/>
+            <Enum Name="Caster_MustBe_Moving" Id="7456"/>
+            <Enum Name="Caster_CannotBe_Stealth" Id="7457"/>
+            <Enum Name="Caster_MustBe_Stealth" Id="7458"/>
+            <Enum Name="Caster_CannotBe_Piloting" Id="7459"/>
+            <Enum Name="Caster_MustBe_Piloting" Id="7460"/>
+            <Enum Name="Caster_CannotBe_Embarked" Id="7461"/>
+            <Enum Name="Caster_MustBe_Embarked" Id="7462"/>
+            <Enum Name="Caster_CannotBe_Taxi" Id="7463"/>
+            <Enum Name="Caster_MustBe_Taxi" Id="7464"/>
+            <Enum Name="Caster_CannotBe_Stun" Id="7465"/>
+            <Enum Name="Caster_MustBe_Stun" Id="7466"/>
+            <Enum Name="Caster_CannotBe_Sleep" Id="7467"/>
+            <Enum Name="Caster_MustBe_Sleep" Id="7468"/>
+            <Enum Name="Caster_CannotBe_Root" Id="7469"/>
+            <Enum Name="Caster_MustBe_Root" Id="7470"/>
+            <Enum Name="Caster_CannotBe_Disarm" Id="7471"/>
+            <Enum Name="Caster_MustBe_Disarm" Id="7472"/>
+            <Enum Name="Caster_CannotBe_Silence" Id="7473"/>
+            <Enum Name="Caster_MustBe_Silence" Id="7474"/>
+            <Enum Name="Caster_CannotBe_Pacify" Id="7475"/>
+            <Enum Name="Caster_MustBe_Pacify" Id="7476"/>
+            <Enum Name="Caster_CannotBe_Fear" Id="7477"/>
+            <Enum Name="Caster_MustBe_Fear" Id="7478"/>
+            <Enum Name="Caster_CannotBe_Confuse" Id="7479"/>
+            <Enum Name="Caster_MustBe_Confuse" Id="7480"/>
+            <Enum Name="TargetGroup" Id="7481"/>
+            <Enum Name="TargetUnknown" Id="7482"/>
+            <Enum Name="NoTarget" Id="7483"/>
+            <Enum Name="Target_ImmuneToSpellType" Id="7484"/>
+            <Enum Name="Target_ImmuneToSpell" Id="7485"/>
+            <Enum Name="Target_ImmuneToSpellGroupList" Id="7486"/>
+            <Enum Name="Target_ImmuneToSpellGroup" Id="7487"/>
+            <Enum Name="Target_Invulnerable" Id="7488"/>
+            <Enum Name="TargetMaxTarget" Id="7489"/>
+            <Enum Name="TargetVital" Id="7490"/>
+            <Enum Name="TargetFaction" Id="7491"/>
+            <Enum Name="TargetIsNotUseable" Id="7492"/>
+            <Enum Name="TargetOrientation" Id="7493"/>
+            <Enum Name="TargetCannotBePlayer" Id="7494"/>
+            <Enum Name="TargetCannotBeNpc" Id="7495"/>
+            <Enum Name="TargetRangeMin" Id="7496"/>
+            <Enum Name="TargetRangeMax" Id="7497"/>
+            <Enum Name="Target_CannotBeDead" Id="7498"/>
+            <Enum Name="Target_MustBeDead" Id="7499"/>
+            <Enum Name="Target_CannotBeInCombatPVE" Id="7500"/>
+            <Enum Name="Target_MustBeInCombatPVE" Id="7501"/>
+            <Enum Name="Target_CannotBe_InCombatPVP" Id="7502"/>
+            <Enum Name="Target_MustBe_InCombatPVP" Id="7503"/>
+            <Enum Name="Target_CannotBe_Moving" Id="7504"/>
+            <Enum Name="Target_MustBe_Moving" Id="7505"/>
+            <Enum Name="Target_CannotBe_Stealth" Id="7506"/>
+            <Enum Name="Target_MustBe_Stealth" Id="7507"/>
+            <Enum Name="Target_CannotBe_Piloting" Id="7508"/>
+            <Enum Name="Target_MustBe_Piloting" Id="7509"/>
+            <Enum Name="Target_CannotBe_Embarked" Id="7510"/>
+            <Enum Name="Target_MustBe_Embarked" Id="7511"/>
+            <Enum Name="Target_CannotBe_Taxi" Id="7512"/>
+            <Enum Name="Target_MustBe_Taxi" Id="7513"/>
+            <Enum Name="Target_CannotBe_Stun" Id="7514"/>
+            <Enum Name="Target_MustBe_Stun" Id="7515"/>
+            <Enum Name="Target_CannotBe_Sleep" Id="7516"/>
+            <Enum Name="Target_MustBe_Sleep" Id="7517"/>
+            <Enum Name="Target_CannotBe_Root" Id="7518"/>
+            <Enum Name="Target_MustBe_Root" Id="7519"/>
+            <Enum Name="Target_CannotBe_Disarm" Id="7520"/>
+            <Enum Name="Target_MustBe_Disarm" Id="7521"/>
+            <Enum Name="Target_CannotBe_Silence" Id="7522"/>
+            <Enum Name="Target_MustBe_Silence" Id="7523"/>
+            <Enum Name="Target_CannotBe_Pacify" Id="7524"/>
+            <Enum Name="Target_MustBe_Pacify" Id="7525"/>
+            <Enum Name="Target_CannotBe_Fear" Id="7526"/>
+            <Enum Name="Target_MustBe_Fear" Id="7527"/>
+            <Enum Name="Target_CannotBe_Confuse" Id="7528"/>
+            <Enum Name="Target_MustBe_Confuse" Id="7529"/>
+            <Enum Name="Target_CannotBe_Swimming" Id="7530"/>
+            <Enum Name="Target_MustBe_Swimming" Id="7531"/>
+            <Enum Name="InWrongWorldZone" Id="7532"/>
+            <Enum Name="DuelOver" Id="7533"/>
+            <Enum Name="UNUSED142" Id="7534"/>
+            <Enum Name="UNUSED143" Id="7535"/>
+            <Enum Name="MissingResult" Id="7536"/>
+            <Enum Name="IsP2PTrading" Id="7537"/>
+            <Enum Name="ClientSideInteractionFail" Id="7538"/>
+            <Enum Name="StackingRefreshExistingSpell" Id="7539"/>
+            <Enum Name="StackingTargetHasMorePowerfulSpells" Id="7540"/>
+            <Enum Name="StackingCasterHasMorePowerfulSpells" Id="7541"/>
+            <Enum Name="StackingError" Id="7542"/>
+            <Enum Name="Prereq_CasterCast" Id="7543"/>
+            <Enum Name="CCKnockdown" Id="7544"/>
+            <Enum Name="CCVulnerability" Id="7545"/>
+            <Enum Name="Target_MustBe_Knockdown" Id="7546"/>
+            <Enum Name="Target_MustBe_Vulnerability" Id="7547"/>
+            <Enum Name="Caster_MustBe_Vulnerability" Id="7548"/>
+            <Enum Name="Caster_MustBe_Knockdown" Id="7549"/>
+            <Enum Name="Caster_CannotBe_Knockdown" Id="7550"/>
+            <Enum Name="Caster_CannotBe_Vulnerability" Id="7551"/>
+            <Enum Name="Target_CannotBe_Vulnerability" Id="7552"/>
+            <Enum Name="Target_CannotBe_Knockdown" Id="7553"/>
+            <Enum Name="MissingReagent_Item" Id="7554"/>
+            <Enum Name="MissingReagent_ItemFamily" Id="7555"/>
+            <Enum Name="MissingReagent_ItemCategory" Id="7556"/>
+            <Enum Name="MissingReagent_ItemType" Id="7557"/>
+            <Enum Name="Caster_Needs_LoS" Id="7558"/>
+            <Enum Name="CasterVitalCostMana" Id="7559"/>
+            <Enum Name="TargetImmuneToSpellEffect" Id="7560"/>
+            <Enum Name="WeaponSlot" Id="7561"/>
+            <Enum Name="Caster_MustBe_Jumping" Id="7562"/>
+            <Enum Name="Caster_CannotBe_Jumping" Id="7563"/>
+            <Enum Name="Target_CannotBe_Jumping" Id="7564"/>
+            <Enum Name="Target_MustBe_Jumping" Id="7565"/>
+            <Enum Name="InvalidPosition" Id="7566"/>
+            <Enum Name="CasterVitalCost" Id="7567"/>
+            <Enum Name="CasterVitalCostShieldCapacity" Id="7568"/>
+            <Enum Name="CasterVitalCostResource7" Id="7569"/>
+            <Enum Name="FailSpecialRestrictions" Id="7570"/>
+            <Enum Name="NoValidActivateSpell" Id="7571"/>
+            <Enum Name="SchematicAlreadyKnown" Id="7572"/>
+            <Enum Name="TradeskillTier" Id="7573"/>
+            <Enum Name="SpellNoCharges" Id="7574"/>
+            <Enum Name="TargetRangeVertical" Id="7575"/>
+            <Enum Name="StackingDuplicateDurationalSpell" Id="7576"/>
+            <Enum Name="SpellMaxPhaseReached" Id="7577"/>
+            <Enum Name="CCVulnerabilityWithAct" Id="7578"/>
+            <Enum Name="CCDisorient" Id="7579"/>
+            <Enum Name="CCDisable" Id="7580"/>
+            <Enum Name="CCTaunt" Id="7581"/>
+            <Enum Name="CCDeTaunt" Id="7582"/>
+            <Enum Name="CCBlind" Id="7583"/>
+            <Enum Name="CCKnockback" Id="7584"/>
+            <Enum Name="CCPushback" Id="7585"/>
+            <Enum Name="CCPull" Id="7586"/>
+            <Enum Name="CCPositionSwitch" Id="7587"/>
+            <Enum Name="CCTether" Id="7588"/>
+            <Enum Name="CCSnare" Id="7589"/>
+            <Enum Name="Caster_MustBe_Polymorph" Id="7590"/>
+            <Enum Name="Target_MustBe_Polymorph" Id="7591"/>
+            <Enum Name="Caster_CannotBe_Polymorph" Id="7592"/>
+            <Enum Name="Target_CannotBe_Polymorph" Id="7593"/>
+            <Enum Name="Caster_MustBe_Hold" Id="7594"/>
+            <Enum Name="Target_MustBe_Hold" Id="7595"/>
+            <Enum Name="Caster_CannotBe_Hold" Id="7596"/>
+            <Enum Name="Target_CannotBe_Hold" Id="7597"/>
+            <Enum Name="Caster_MustBe_Disorient" Id="7598"/>
+            <Enum Name="Target_MustBe_Disorient" Id="7599"/>
+            <Enum Name="Caster_CannotBe_Disorient" Id="7600"/>
+            <Enum Name="Target_CannotBe_Disorient" Id="7601"/>
+            <Enum Name="Caster_MustBe_Disable" Id="7602"/>
+            <Enum Name="Target_MustBe_Disable" Id="7603"/>
+            <Enum Name="Caster_CannotBe_Disable" Id="7604"/>
+            <Enum Name="Target_CannotBe_Disable" Id="7605"/>
+            <Enum Name="Caster_MustBe_Taunt" Id="7606"/>
+            <Enum Name="Target_MustBe_Taunt" Id="7607"/>
+            <Enum Name="Caster_CannotBe_Taunt" Id="7608"/>
+            <Enum Name="Target_CannotBe_Taunt" Id="7609"/>
+            <Enum Name="Caster_MustBe_DeTaunt" Id="7610"/>
+            <Enum Name="Target_MustBe_DeTaunt" Id="7611"/>
+            <Enum Name="Caster_CannotBe_DeTaunt" Id="7612"/>
+            <Enum Name="Target_CannotBe_DeTaunt" Id="7613"/>
+            <Enum Name="Caster_MustBe_Blind" Id="7614"/>
+            <Enum Name="Target_MustBe_Blind" Id="7615"/>
+            <Enum Name="Caster_CannotBe_Blind" Id="7616"/>
+            <Enum Name="Target_CannotBe_Blind" Id="7617"/>
+            <Enum Name="Caster_MustBe_Knockback" Id="7618"/>
+            <Enum Name="Target_MustBe_Knockback" Id="7619"/>
+            <Enum Name="Caster_CannotBe_Knockback" Id="7620"/>
+            <Enum Name="Target_CannotBe_Knockback" Id="7621"/>
+            <Enum Name="Caster_MustBe_Pushback" Id="7622"/>
+            <Enum Name="Target_MustBe_Pushback" Id="7623"/>
+            <Enum Name="Caster_CannotBe_Pushback" Id="7624"/>
+            <Enum Name="Target_CannotBe_Pushback" Id="7625"/>
+            <Enum Name="Caster_MustBe_Pull" Id="7626"/>
+            <Enum Name="Target_MustBe_Pull" Id="7627"/>
+            <Enum Name="Caster_CannotBe_Pull" Id="7628"/>
+            <Enum Name="Target_CannotBe_Pull" Id="7629"/>
+            <Enum Name="Caster_MustBe_PositionSwitch" Id="7630"/>
+            <Enum Name="Target_MustBe_PositionSwitch" Id="7631"/>
+            <Enum Name="Caster_CannotBe_PositionSwitch" Id="7632"/>
+            <Enum Name="Target_CannotBe_PositionSwitch" Id="7633"/>
+            <Enum Name="Caster_MustBe_Tether" Id="7634"/>
+            <Enum Name="Target_MustBe_Tether" Id="7635"/>
+            <Enum Name="Caster_CannotBe_Tether" Id="7636"/>
+            <Enum Name="Target_CannotBe_Tether" Id="7637"/>
+            <Enum Name="Caster_MustBe_Snare" Id="7638"/>
+            <Enum Name="Target_MustBe_Snare" Id="7639"/>
+            <Enum Name="Caster_CannotBe_Snare" Id="7640"/>
+            <Enum Name="Target_CannotBe_Snare" Id="7641"/>
+            <Enum Name="CasterVitalCostInterruptArmor" Id="7642"/>
+            <Enum Name="CCNoAbilities" Id="7643"/>
+            <Enum Name="Blacklisted" Id="7644"/>
+            <Enum Name="TargetCannotBePickup" Id="7645"/>
+            <Enum Name="CasterVitalCostAbsorption" Id="7646"/>
+            <Enum Name="Target_MustBe_CastersPet" Id="7647"/>
+            <Enum Name="Target_MustBe_CastersMaster" Id="7648"/>
+            <Enum Name="CCInterrupt" Id="7649"/>
+            <Enum Name="Caster_MustBe_Interrupt" Id="7650"/>
+            <Enum Name="Target_MustBe_Interrupt" Id="7651"/>
+            <Enum Name="Caster_CannotBe_Interrupt" Id="7652"/>
+            <Enum Name="Target_CannotBe_Interrupt" Id="7653"/>
+            <Enum Name="CSICooldown" Id="7654"/>
+            <Enum Name="CCDaze" Id="7655"/>
+            <Enum Name="Caster_MustBe_Daze" Id="7656"/>
+            <Enum Name="Target_MustBe_Daze" Id="7657"/>
+            <Enum Name="Caster_CannotBe_Daze" Id="7658"/>
+            <Enum Name="Target_CannotBe_Daze" Id="7659"/>
+            <Enum Name="CCSubdue" Id="7660"/>
+            <Enum Name="Caster_MustBe_Subdue" Id="7661"/>
+            <Enum Name="Target_MustBe_Subdue" Id="7662"/>
+            <Enum Name="Caster_CannotBe_Subdue" Id="7663"/>
+            <Enum Name="Target_CannotBe_Subdue" Id="7664"/>
+            <Enum Name="Target_CannotBe_Evading" Id="7665"/>
+            <Enum Name="Target_StructuredPlugBenefitRestricted" Id="7666"/>
+            <Enum Name="CasterVitalCostPublicResource0" Id="7667"/>
+            <Enum Name="CasterVitalCostPublicResource1" Id="7668"/>
+            <Enum Name="CasterVitalCostPublicResource2" Id="7669"/>
+            <Enum Name="InactiveInnateAbilitySpell" Id="7670"/>
+            <Enum Name="Caster_CannotBe_Swimming" Id="7671"/>
+            <Enum Name="Caster_MustBe_Swimming" Id="7672"/>
+            <Enum Name="Prereq_TargetCast" Id="7673"/>
+            <Enum Name="Prereq_CasterPersistence" Id="7674"/>
+            <Enum Name="Prereq_TargetPersistence" Id="7675"/>
+            <Enum Name="Prereq_Trap" Id="7676"/>
+            <Enum Name="IllegalSpellCast" Id="7677"/>
+            <Enum Name="TargetNotInSameGroup" Id="7678"/>
+            <Enum Name="BossToken_Permission" Id="7679"/>
+            <Enum Name="BossToken_NotReady" Id="7680"/>
+            <Enum Name="CCGrounded" Id="8156"/>
+            <Enum Name="Caster_MustBe_Grounded" Id="8157"/>
+            <Enum Name="Target_MustBe_Grounded" Id="8158"/>
+            <Enum Name="Caster_CannotBe_Grounded" Id="8159"/>
+            <Enum Name="Target_CannotBe_Grounded" Id="8160"/>
+        </EnumSet>
+        <Method Name="GetThresholdTime" Incomplete="true" Id="7681"/>
+        <Method Name="GetRequiredLevel" Incomplete="true" Id="7682"/>
+        <Method Name="IsSelfSpell" Incomplete="true" Id="7683"/>
+        <Method Name="IsFreeformTarget" Incomplete="true" Id="7684"/>
+        <Method Name="IsMovingInterrupted" Incomplete="true" Id="7685"/>
+        <Method Name="IsBeneficial" Incomplete="true" Id="7686"/>
+        <EnumSet Name="CodeEnumSpellEffectType" Incomplete="true" Id="7687">
+            <Enum Name="UnitPropertyModifier" Id="7688"/>
+            <Enum Name="VitalModifier" Id="7689"/>
+            <Enum Name="SpellCounter" Id="7690"/>
+            <Enum Name="ForcedMove" Id="7691"/>
+            <Enum Name="CCStateSet" Id="7692"/>
+            <Enum Name="Transference" Id="7693"/>
+            <Enum Name="SummonVehicle" Id="7694"/>
+            <Enum Name="Activate" Id="7695"/>
+            <Enum Name="Damage" Id="7696"/>
+            <Enum Name="FactionSet" Id="7697"/>
+            <Enum Name="Heal" Id="7698"/>
+            <Enum Name="Harvest" Id="7699"/>
+            <Enum Name="DistanceDependentDamage" Id="7700"/>
+            <Enum Name="Script" Id="7701"/>
+            <Enum Name="Proc" Id="7702"/>
+            <Enum Name="UnitStateSet" Id="7703"/>
+            <Enum Name="Resurrect" Id="7704"/>
+            <Enum Name="Fluff" Id="7705"/>
+            <Enum Name="Scale" Id="7706"/>
+            <Enum Name="ProxyLinearAE" Id="7707"/>
+            <Enum Name="SummonCreature" Id="7708"/>
+            <Enum Name="HousingTeleport" Id="7709"/>
+            <Enum Name="ActionBarSet" Id="7710"/>
+            <Enum Name="ForcedAction" Id="7711"/>
+            <Enum Name="ProxyChannel" Id="7712"/>
+            <Enum Name="Proxy" Id="7713"/>
+            <Enum Name="CCStateBreak" Id="7714"/>
+            <Enum Name="ForceFacing" Id="7715"/>
+            <Enum Name="Absorption" Id="7716"/>
+            <Enum Name="SapVital" Id="7717"/>
+            <Enum Name="Disguise" Id="7718"/>
+            <Enum Name="SpellImmunity" Id="7719"/>
+            <Enum Name="DistributedDamage" Id="7720"/>
+            <Enum Name="ChangePhase" Id="7721"/>
+            <Enum Name="NpcExecutionDelay" Id="7722"/>
+            <Enum Name="SummonMount" Id="7723"/>
+            <Enum Name="ReputationModify" Id="7724"/>
+            <Enum Name="GiveSchematic" Id="7725"/>
+            <Enum Name="ModifySchematic" Id="7726"/>
+            <Enum Name="TradeSkillProfession" Id="7727"/>
+            <Enum Name="QuestAdvanceObjective" Id="7728"/>
+            <Enum Name="GiveItemToPlayer" Id="7729"/>
+            <Enum Name="GiveLootTableToPlayer" Id="7730"/>
+            <Enum Name="NpcLootTableModify" Id="7731"/>
+            <Enum Name="ThreatModification" Id="7732"/>
+            <Enum Name="ThreatTransfer" Id="7733"/>
+            <Enum Name="WarplotTeleport" Id="7734"/>
+            <Enum Name="CraftItem" Id="7735"/>
+            <Enum Name="ItemBreakdown" Id="7736"/>
+            <Enum Name="SpellForceRemoveChanneled" Id="7737"/>
+            <Enum Name="ModifyInterruptArmor" Id="7738"/>
+            <Enum Name="SpellDispel" Id="7739"/>
+            <Enum Name="TradeSkillProfessionXp" Id="7740"/>
+            <Enum Name="ModifySpell" Id="7741"/>
+            <Enum Name="ModifySpellEffect" Id="7742"/>
+            <Enum Name="AddSpell" Id="7743"/>
+            <Enum Name="AddSpellEffect" Id="7744"/>
+            <Enum Name="SuppressSpellEffect" Id="7745"/>
+            <Enum Name="CharmCreature" Id="7746"/>
+            <Enum Name="NpcSetAIState" Id="7747"/>
+            <Enum Name="VacuumLoot" Id="7748"/>
+            <Enum Name="RecalculateSpellModifications" Id="7749"/>
+            <Enum Name="ShieldOverload" Id="7750"/>
+            <Enum Name="Teleport" Id="7751"/>
+            <Enum Name="TitleGrant" Id="7752"/>
+            <Enum Name="TitleRevoke" Id="7753"/>
+            <Enum Name="VendorPriceModifier" Id="7754"/>
+            <Enum Name="GrantCharmerPet" Id="7755"/>
+            <Enum Name="RechargeItemBatteries" Id="7756"/>
+            <Enum Name="FacilityModification" Id="7757"/>
+            <Enum Name="PetAIStanceSet" Id="7758"/>
+            <Enum Name="ModifySpellCooldown" Id="7759"/>
+            <Enum Name="FinishingMove" Id="7760"/>
+            <Enum Name="ChangeIcon" Id="7761"/>
+            <Enum Name="ItemVisualSwap" Id="7762"/>
+            <Enum Name="AggroImmune" Id="7763"/>
+            <Enum Name="HobbyWrangleCreature" Id="7764"/>
+            <Enum Name="SpellEffectImmunity" Id="7765"/>
+            <Enum Name="SpellForceRemove" Id="7766"/>
+            <Enum Name="RavelSignal" Id="7767"/>
+            <Enum Name="ChangeDisplayName" Id="7768"/>
+            <Enum Name="Stealth" Id="7769"/>
+            <Enum Name="RemoveStealth" Id="7770"/>
+            <Enum Name="PathActionExplorerDig" Id="7771"/>
+            <Enum Name="HazardEnable" Id="7772"/>
+            <Enum Name="HazardModify" Id="7773"/>
+            <Enum Name="HazardSuspend" Id="7774"/>
+            <Enum Name="NpcForceFacing" Id="7775"/>
+            <Enum Name="DEPRECATED01" Id="7776"/>
+            <Enum Name="DEPRECATED02" Id="7777"/>
+            <Enum Name="AchievementAdvance" Id="7778"/>
+            <Enum Name="PathXpModify" Id="7779"/>
+            <Enum Name="ProxyChannelVariableTime" Id="7780"/>
+            <Enum Name="FullScreenEffect" Id="7781"/>
+            <Enum Name="ProxyRandomExclusive" Id="7782"/>
+            <Enum Name="DespawnUnit" Id="7783"/>
+            <Enum Name="SummonPet" Id="7784"/>
+            <Enum Name="MimicDisplayName" Id="7785"/>
+            <Enum Name="MimicDisguise" Id="7786"/>
+            <Enum Name="GrantXP" Id="7787"/>
+            <Enum Name="DatacubeUpdate" Id="7788"/>
+            <Enum Name="DatacubeVolumeUpdate" Id="7789"/>
+            <Enum Name="SettlerCampfire" Id="7790"/>
+            <Enum Name="SummonTrap" Id="7791"/>
+            <Enum Name="SetBusy" Id="7792"/>
+            <Enum Name="CooldownReset" Id="7793"/>
+            <Enum Name="RestedXpDecorBonus" Id="7794"/>
+            <Enum Name="LearnDyeColor" Id="7795"/>
+            <Enum Name="PetCastSpell" Id="7796"/>
+            <Enum Name="DisguiseOutfit" Id="7797"/>
+            <Enum Name="RewardBuffModifier" Id="7798"/>
+            <Enum Name="HousingEscape" Id="7799"/>
+            <Enum Name="NPCForceAIMovement" Id="7800"/>
+            <Enum Name="HealShields" Id="7801"/>
+            <Enum Name="PathMissionIncrement" Id="7802"/>
+            <Enum Name="GrantLevelScaledXP" Id="7803"/>
+            <Enum Name="DelayDeath" Id="7804"/>
+            <Enum Name="GrantLevelScaledPrestige" Id="7805"/>
+            <Enum Name="UnlockPetFlair" Id="7806"/>
+            <Enum Name="WarplotPlugUpgrade" Id="7807"/>
+            <Enum Name="SetMatchingEligibility" Id="7808"/>
+        </EnumSet>
+    </Object>
+    <Object Name="Talent" Incomplete="true" Id="1028" Prefix="tal"/>
+    <Object Name="TalentPool" Incomplete="true" Id="1049" Prefix="pool"/>
+    <Object Name="Unit" Incomplete="true" Id="1058" Prefix="unit">
+        <EnumSet Name="CodeEnumCCState" Incomplete="true" Id="2348" Desc="Represents the various CC States a unit can be in">
+            <Enum Name="Stun" Id="2349"/>
+            <Enum Name="Polymorph" Id="2354"/>
+            <Enum Name="Hold" Id="2356"/>
+            <Enum Name="VulnerabilityWithAct" Id="3587"/>
+            <Enum Name="Disorient" Id="3588"/>
+            <Enum Name="Disable" Id="3589"/>
+            <Enum Name="Taunt" Id="3590"/>
+            <Enum Name="Detaunt" Id="3591"/>
+            <Enum Name="Blind" Id="3592"/>
+            <Enum Name="Knockback" Id="3593"/>
+            <Enum Name="Pushback" Id="3594"/>
+            <Enum Name="Pull" Id="3595"/>
+            <Enum Name="PositionSwitch" Id="3596"/>
+            <Enum Name="Tether" Id="3597"/>
+            <Enum Name="Snare" Id="3598"/>
+            <Enum Name="Interrupt" Id="3599"/>
+            <Enum Name="Daze" Id="3600"/>
+            <Enum Name="Subdue" Id="3601"/>
+            <Enum Name="Grounded" Id="5353"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumEliteness" Incomplete="true" Id="2359" Desc="Represents the estimated group size needed to kill the NPC"/>
+        <EnumSet Name="CodeEnumRank" Incomplete="true" Id="2363" Desc="Represents the difficulty of an NPC">
+            <Enum Name="Fodder" Id="2364"/>
+            <Enum Name="Minion" Id="2365"/>
+            <Enum Name="Standard" Id="2366"/>
+            <Enum Name="Champion" Id="3606"/>
+            <Enum Name="Standard" Id="3607" Deleted="true"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumCastBarType" Incomplete="true" Id="2367" Desc="Represents the type of cast bar being shown"/>
+        <EnumSet Name="CodeEnumVital" Incomplete="true" Id="2372" Desc="Represents the basic stats of HP, Mana, and Class Resources"/>
+        <EnumSet Name="CodeEnumProperties" Incomplete="true" Id="2390" Desc="Represents different unit properties">
+            <Enum Name="BaseHealth" Id="2396"/>
+            <Enum Name="ManaPerFiveSeconds" Id="2397"/>
+            <Enum Name="HealthRegenMultiplier" Id="2398"/>
+            <Enum Name="ResourceMax_0" Id="2399"/>
+            <Enum Name="ResourceMax_1" Id="2400"/>
+            <Enum Name="ResourceMax_2" Id="2401"/>
+            <Enum Name="ResourceMax_3" Id="2402"/>
+            <Enum Name="ResourceMax_4" Id="2403"/>
+            <Enum Name="ResourceMax_5" Id="2404"/>
+            <Enum Name="ResourceMax_6" Id="2405"/>
+            <Enum Name="ResourceRegenMultiplier_0" Id="2406"/>
+            <Enum Name="ResourceRegenMultiplier_1" Id="2407"/>
+            <Enum Name="ResourceRegenMultiplier_2" Id="2408"/>
+            <Enum Name="ResourceRegenMultiplier_3" Id="2409"/>
+            <Enum Name="ResourceRegenMultiplier_4" Id="2410"/>
+            <Enum Name="ResourceRegenMultiplier_5" Id="2411"/>
+            <Enum Name="ResourceRegenMultiplier_6" Id="2412"/>
+            <Enum Name="AbilityPowerBase" Id="2413"/>
+            <Enum Name="AbilityPowerBaseRanged" Id="2414"/>
+            <Enum Name="AbilityPowerBaseSpell" Id="2415"/>
+            <Enum Name="ResistPhysical" Id="2416"/>
+            <Enum Name="ResistTech" Id="2417"/>
+            <Enum Name="ResistMagic" Id="2419"/>
+            <Enum Name="StalkerWoundMultiplier" Id="2420"/>
+            <Enum Name="KillingSpreeOutOfCombatGracePeriodMS" Id="2421"/>
+            <Enum Name="Rating_AvoidReduce" Id="2425"/>
+            <Enum Name="Rating_AvoidIncrease" Id="2426"/>
+            <Enum Name="Rating_CritChanceIncrease" Id="2452"/>
+            <Enum Name="AssaultPower" Id="2453"/>
+            <Enum Name="SupportPower" Id="2454"/>
+            <Enum Name="ResourceMax_7" Id="2455"/>
+            <Enum Name="ResourceRegenMultiplier_7" Id="2456"/>
+            <Enum Name="Stamina" Id="2457"/>
+            <Enum Name="ShieldCapacityMax" Id="2458"/>
+            <Enum Name="Armor" Id="2459"/>
+            <Enum Name="Rating_CritChanceDecrease" Id="2460"/>
+            <Enum Name="InterruptArmor_Threshold" Id="2461"/>
+            <Enum Name="InterruptArmor_RechargeTime" Id="2462"/>
+            <Enum Name="InterruptArmor_RechargeCount" Id="2463"/>
+            <Enum Name="RatingCritSeverityIncrease" Id="2464"/>
+            <Enum Name="MoveSpeedMultiplier" Id="2465"/>
+            <Enum Name="BaseAvoidChance" Id="2466"/>
+            <Enum Name="BaseCritChance" Id="2467"/>
+            <Enum Name="RegenManaInCombat" Id="2468"/>
+            <Enum Name="RegenManaNonCombat" Id="2469"/>
+            <Enum Name="PvPOffenseRating" Id="2470"/>
+            <Enum Name="PvPDefenseRating" Id="2471"/>
+            <Enum Name="PvPPrestigeMultiplier" Id="2472"/>
+            <Enum Name="PvPXPMultiplier" Id="2473"/>
+            <Enum Name="BreathDecay" Id="2474"/>
+            <Enum Name="CCPower" Id="2475"/>
+            <Enum Name="CriticalHitSeverityMultiplier" Id="2476"/>
+            <Enum Name="Health_Total_Multiplier" Id="2477"/>
+            <Enum Name="JumpHeight" Id="2478"/>
+            <Enum Name="GravityMultiplier" Id="2479"/>
+            <Enum Name="XpMultiplier" Id="2480"/>
+            <Enum Name="ThreatMultiplier" Id="2481"/>
+            <Enum Name="AutoAttackDelayMultiplier" Id="2482"/>
+            <Enum Name="FallingDamageMultiplier" Id="2483"/>
+            <Enum Name="AbilityMultiplierBase" Id="2484"/>
+            <Enum Name="AbilityPowerMultiplierWeapon" Id="2485"/>
+            <Enum Name="AbilityPowerMultiplierAttributes" Id="2486"/>
+            <Enum Name="DamageDealtMultiplierMelee" Id="2487"/>
+            <Enum Name="DamageDealtMultiplierRanged" Id="2488"/>
+            <Enum Name="DamageDealtMultiplierSpell" Id="2489"/>
+            <Enum Name="DamageDealtMultiplierPhysical" Id="2490"/>
+            <Enum Name="DamageDealtMultiplierTech" Id="2491"/>
+            <Enum Name="DamageDealtMultiplierMagic" Id="2492"/>
+            <Enum Name="DamageTakenOffsetPhysical" Id="2493"/>
+            <Enum Name="DamageTakenOffsetTech" Id="2494"/>
+            <Enum Name="DamageTakenOffsetMagic" Id="2495"/>
+            <Enum Name="DamageTakenMultiplierPhysical" Id="2496"/>
+            <Enum Name="DamageTakenMultiplierTech" Id="2497"/>
+            <Enum Name="DamageTakenMultiplierMagic" Id="2498"/>
+            <Enum Name="HealingMultiplierOutgoing" Id="2499"/>
+            <Enum Name="HealingMultiplierIncoming" Id="2500"/>
+            <Enum Name="ExecutingEnergyRateMultiplier" Id="2501"/>
+            <Enum Name="CCDurationModifier" Id="2502"/>
+            <Enum Name="FinalAbilityPowerOffset" Id="2503"/>
+            <Enum Name="FinalAbilityPowerMultiplier" Id="2504"/>
+            <Enum Name="ResistPhysicalMitigationMultiplier" Id="3614"/>
+            <Enum Name="ResistTechMitigationMultiplier" Id="3615"/>
+            <Enum Name="ResistMagicMitigationMultiplier" Id="3616"/>
+            <Enum Name="KillSpreeCCVMulitplier" Id="3617"/>
+            <Enum Name="ManaFinalMultiplier" Id="3618"/>
+            <Enum Name="ReputationMultiplier" Id="3619"/>
+            <Enum Name="ShieldMitigationMin" Id="3620"/>
+            <Enum Name="ShieldMitigationMax" Id="3621"/>
+            <Enum Name="ShieldRegenPct" Id="3622"/>
+            <Enum Name="ShieldDamageTypes" Id="3623"/>
+            <Enum Name="SlowFallMultiplier" Id="3624"/>
+            <Enum Name="PathXpMultiplier" Id="3625"/>
+            <Enum Name="ScientistScanBotThoroughnessMultiplier" Id="3626"/>
+            <Enum Name="ScientistScanBotScanTimeMultiplier" Id="3627"/>
+            <Enum Name="ScientistScanBotRangeMultiplier" Id="3628"/>
+            <Enum Name="ScientistScanBotHealthMultiplier" Id="3629"/>
+            <Enum Name="ScientistScanBotHealtRegenhMultiplier" Id="3630"/>
+            <Enum Name="ScientistScanBotSpeedMultiplier" Id="3631"/>
+            <Enum Name="SettlerImprovementTimeMultiplier" Id="3632"/>
+            <Enum Name="CreatureScientistScanMultiplier" Id="3633"/>
+            <Enum Name="DamageTakenOffsetPhysical" Id="3634" Deleted="true"/>
+            <Enum Name="DamageTakenOffsetTech" Id="3635" Deleted="true"/>
+            <Enum Name="DamageTakenOffsetMagic" Id="3636" Deleted="true"/>
+            <Enum Name="DamageTakenMultiplierTech" Id="3637" Deleted="true"/>
+            <Enum Name="DamageTakenMultiplierMagic" Id="3638" Deleted="true"/>
+            <Enum Name="CCDurationModifier" Id="3639" Deleted="true"/>
+            <Enum Name="ResistTechMitigationMultiplier" Id="3640" Deleted="true"/>
+            <Enum Name="ResistMagicMitigationMultiplier" Id="3641" Deleted="true"/>
+            <Enum Name="ReputationMultiplier" Id="3642" Deleted="true"/>
+            <Enum Name="SlowFallMultiplier" Id="3643" Deleted="true"/>
+            <Enum Name="PathXpMultiplier" Id="3644" Deleted="true"/>
+            <Enum Name="ScientistScanBotThoroughnessMultiplier" Id="3645" Deleted="true"/>
+            <Enum Name="ScientistScanBotScanTimeMultiplier" Id="3646" Deleted="true"/>
+            <Enum Name="ScientistScanBotRangeMultiplier" Id="3647" Deleted="true"/>
+            <Enum Name="ScientistScanBotHealthMultiplier" Id="3648" Deleted="true"/>
+            <Enum Name="ScientistScanBotHealtRegenhMultiplier" Id="3649" Deleted="true"/>
+            <Enum Name="ScientistScanBotSpeedMultiplier" Id="3650" Deleted="true"/>
+            <Enum Name="SettlerImprovementTimeMultiplier" Id="3651" Deleted="true"/>
+            <Enum Name="CreatureScientistScanMultiplier" Id="3652" Deleted="true"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumResourceConversionType" Incomplete="true" Id="2513" Desc="Represents the various types of resource conversion"/>
+        <EnumSet Name="CodeEnumFlightPathType" Incomplete="true" Id="3112" Desc="Represents the types of flight paths a player can take"/>
+        <EnumSet Name="GetSupportPower" Incomplete="true" Id="3654">
+            <Enum Name="Grey" Id="6568"/>
+            <Enum Name="Green" Id="6569"/>
+            <Enum Name="Cyan" Id="6570"/>
+            <Enum Name="Blue" Id="6571"/>
+            <Enum Name="White" Id="6572"/>
+            <Enum Name="Yellow" Id="6573"/>
+            <Enum Name="Orange" Id="6574"/>
+            <Enum Name="Red" Id="6575"/>
+            <Enum Name="Magenta" Id="6576"/>
+        </EnumSet>
+        <EnumSet Name="GetTargetOfTarget" Incomplete="true" Id="3664">
+            <Enum Name="DominionPlayer" Id="6577"/>
+            <Enum Name="ExilesPlayer" Id="6578"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumGender" Incomplete="true" Id="3667" Desc="Represents a unit&apos;s gender">
+            <Enum Name="Male" Id="6579"/>
+            <Enum Name="Female" Id="6580"/>
+            <Enum Name="Uni" Id="6581"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumSpellMechanic" Incomplete="true" Id="3671" Desc="Represents different types of spell mechanics">
+            <Enum Name="None" Id="6582"/>
+            <Enum Name="Focus" Id="6583"/>
+            <Enum Name="MedicCore" Id="6584"/>
+            <Enum Name="Empathy" Id="6585"/>
+            <Enum Name="SpellSurge" Id="6586"/>
+            <Enum Name="Kinetic" Id="5356"/>
+            <Enum Name="Volatility" Id="5357"/>
+        </EnumSet>
+        <Method Name="GetUnitRaceId" Incomplete="true" Id="6587"/>
+        <Method Name="GetAssaultPower" Incomplete="true" Id="6588"/>
+        <Method Name="GetAssaultAndSupportPowerSoftcap" Incomplete="true" Id="3655"/>
+        <Method Name="GetStrikethroughChance" Incomplete="true" Id="3656"/>
+        <Method Name="GetCritChance" Incomplete="true" Id="3657"/>
+        <Method Name="GetCritSeverity" Incomplete="true" Id="3658"/>
+        <Method Name="GetDeflectChance" Incomplete="true" Id="3659"/>
+        <Method Name="GetDeflectCritChance" Incomplete="true" Id="3660"/>
+        <Method Name="GetPhysicalMitigation" Incomplete="true" Id="3661"/>
+        <Method Name="GetTechMitigation" Incomplete="true" Id="3662"/>
+        <Method Name="GetMagicMitigation" Incomplete="true" Id="3663"/>
+        <Method Name="GetAlternateTarget" Incomplete="true" Id="3665"/>
+        <Method Name="IsScaled" Incomplete="true" Id="3666"/>
+        <EnumSet Name="CodeEnumLevelDifferentialAttribute" Incomplete="true" Id="4640" Desc="Represents the different colors used to show level difference between a unit and the player">
+            <Enum Name="Grey" Id="7813"/>
+            <Enum Name="Green" Id="7814"/>
+            <Enum Name="Cyan" Id="7815"/>
+            <Enum Name="Blue" Id="7816"/>
+            <Enum Name="White" Id="7817"/>
+            <Enum Name="Yellow" Id="7818"/>
+            <Enum Name="Orange" Id="7819"/>
+            <Enum Name="Red" Id="7820"/>
+            <Enum Name="Magenta" Id="7821"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumFaction" Incomplete="true" Id="4650" Desc="Represents the different player factions">
+            <Enum Name="DominionPlayer" Id="7822"/>
+            <Enum Name="ExilesPlayer" Id="7823"/>
+        </EnumSet>
+        <Method Name="GetSupportPower" Incomplete="true" Id="4653"/>
+        <Method Name="GetTargetOfTarget" Incomplete="true" Id="4654"/>
+        <Method Name="GetInfo" Incomplete="true" Id="5369"/>
+        <Method Name="GetPvPDefenseRating" Incomplete="true" Id="5370"/>
+        <Method Name="GetPvPOffenseRating" Incomplete="true" Id="5371"/>
+        <Method Name="GetPvPDefensePercent" Incomplete="true" Id="5372"/>
+        <Method Name="GetPvPOffensePercent" Incomplete="true" Id="5373"/>
+        <Method Name="SetAlternateTarget" Incomplete="true" Id="5374"/>
+        <Method Name="IsMyGhost" Incomplete="true" Id="5375"/>
+        <Method Name="ShouldShowLevel" Incomplete="true" Id="5376"/>
+        <Method Name="GetCommodityItems" Incomplete="true" Id="5377"/>
+        <Method Name="GetAuctionableItems" Incomplete="true" Id="5378"/>
+        <Method Name="IsIgnored" Incomplete="true" Id="5379"/>
+        <Method Name="IsNeighbor" Incomplete="true" Id="5380"/>
+        <Method Name="IsRival" Incomplete="true" Id="5381"/>
+        <Method Name="IsFriend" Incomplete="true" Id="5382"/>
+        <Method Name="IsVisibleOnCurrentZoneMinimap" Incomplete="true" Id="5383"/>
+        <Method Name="SetTargetMarker" Incomplete="true" Id="5384"/>
+        <Method Name="GetTargetMarker" Incomplete="true" Id="5385"/>
+        <Method Name="ClearTargetMarker" Incomplete="true" Id="5386"/>
+        <Method Name="IsMounted" Incomplete="true" Id="7824"/>
+        <Method Name="GetMountMaxHealth" Incomplete="true" Id="7825"/>
+        <Method Name="GetMountHealth" Incomplete="true" Id="7826"/>
+        <Method Name="GetHeading" Incomplete="true" Id="8161"/>
+        <Method Name="GetFacing" Incomplete="true" Id="8162"/>
+    </Object>
+    <WindowControl Name="Button" Incomplete="true" Id="1213">
+        <Method Name="SetInnerMargin" Incomplete="true" Id="5387"/>
+        <Event Name="QueryBeginDragDrop" Incomplete="true" Id="7827"/>
+    </WindowControl>
+    <WindowControl Name="GridWindow" Incomplete="true" Id="1277">
+        <Method Name="EnsureCellVisible" Desc="Insures the right, left, bottom, and top of the caller&apos;s cell at iRow and iCol are visible in the clip area.
+Updates the HScrollPos and VScrollPos." Incomplete="true" Id="1308"/>
+        <Event Name="QueryBeginClickStick" Incomplete="true" Id="7828"/>
+        <Event Name="QueryBeginDragDrop" Incomplete="true" Id="7829"/>
+    </WindowControl>
+    <WindowControl Name="SliderBar" Incomplete="true" Id="1432">
+        <Method Name="IsThumbDragging" Incomplete="true" Id="7830"/>
+    </WindowControl>
+    <WindowControl Name="TreeControl" Incomplete="true" Id="1472">
+        <Method Name="AddNode" Desc="Adds a node to the caller. If newLuaData is set, this will push it on the stack and ref it as well.
+Does a lua_pushinteger of the node&apos;s handle back on the stack as an integer." Incomplete="true" Id="1486"/>
+        <Method Name="HitTest" Desc="Does a lua_pushinteger of the node&apos;s ID at iXpos and iYpos as an integer.
+Does a lua_pushboolean of the test&apos;s result if a button was hit as a boolean." Incomplete="true" Id="1515"/>
+        <Method Name="NodeHasChildren" Desc="Does a lua_pushboolean of the node&apos;s HasChildren corresponding to hNodeHandle.
+Paramaters:
+hNodeHandle: Integer" Incomplete="true" Id="1518"/>
+        <Event Name="QueryBeginDragDrop" Incomplete="true" Id="7831"/>
+        <Event Name="QueryBeginClickStick" Incomplete="true" Id="7832"/>
+    </WindowControl>
+    <WindowControl Name="Window" Incomplete="true" Id="1536" Prefix="wnd">
+        <Method Name="FindChild" Desc="Search for the child window with the specified name" Id="1634" Example="self.wndMain = Apollo.LoadForm(&quot;WindowForms.xml&quot;, &quot;MainWindow&quot;, nil, self)
+self.wndChild = self.wndAbilities:FindChild(&quot;ChildWindow&quot;)
+self.wndChild:Show(false)" NeedProofread="true"/>
+        <Method Name="GetFrame" Incomplete="true" Id="6589"/>
+        <Method Name="IsMouseTarget" Incomplete="true" Id="3668"/>
+        <Method Name="IsChildOfMouseTarget" Incomplete="true" Id="3669"/>
+        <Method Name="IsParentOfMouseTarget" Incomplete="true" Id="3670"/>
+        <Method Name="AddPixie" Incomplete="true" Id="6590"/>
+        <Method Name="UpdatePixie" Incomplete="true" Id="3672"/>
+        <Method Name="GetPixieInfo" Incomplete="true" Id="3673"/>
+        <Method Name="DestroyPixie" Incomplete="true" Id="3674"/>
+        <Method Name="DestroyAllPixies" Incomplete="true" Id="3675"/>
+        <Method Name="RestartPixieSprite" Incomplete="true" Id="7833"/>
+    </WindowControl>
+    <WindowControl Name="AbilityItemWindow" Incomplete="true" Id="1836">
+        <Event Name="AbilitySelected" Incomplete="true" Id="7834"/>
+    </WindowControl>
+    <WindowControl Name="BagWindow" Incomplete="true" Id="1845">
+        <Method Name="SetCannotUseSprite" Incomplete="true" Id="3676"/>
+        <Method Name="SetCannotUseColor" Incomplete="true" Id="5388"/>
+    </WindowControl>
+    <WindowControl Name="BuffWindow" Incomplete="true" Id="1885">
+        <Event Name="BuffRemoved" Incomplete="true" Id="7835"/>
+    </WindowControl>
+    <WindowControl Name="CashWindow" Incomplete="true" Id="1888">
+        <Event Name="CashWindowAmountChanged" Incomplete="true" Id="7836"/>
+    </WindowControl>
+    <WindowControl Name="CostumeWindow" Incomplete="true" Id="1911">
+        <Method Name="SetCostumeToGuildStandard" Incomplete="true" Id="7837"/>
+        <Method Name="SetGuildStandardPart" Incomplete="true" Id="7838"/>
+        <Method Name="SetItem" Incomplete="true" Id="7839"/>
+        <Method Name="SetItemDye" Incomplete="true" Id="7840"/>
+    </WindowControl>
+    <WindowControl Name="MiniMapWindow" Incomplete="true" Id="1950">
+        <Method Name="AddObject" Desc="Does a lua_pushinteger describing the result of the AddObject call." Incomplete="true" Id="1951">
+            <Param Name="eType" Type="Integer" Id="1952"/>
+            <Param Name="tLoc" Type="Table" Id="1953" Desc="Contains the x, y, and z coordinates for the object to be placed">
+                <Item Name="nX" Type="Integer" Desc="The X coordinate where the object will be placed" Id="8170"/>
+                <Item Name="nY" Type="Integer" Desc="The Y coordinate where the object will be placed" Id="8171"/>
+                <Item Name="nZ" Type="Integer" Desc="The Z coordinate where the object will be placed" Id="8172"/>
+            </Param>
+            <Param Name="strName" Type="String" Id="1954" Desc="The name of the object"/>
+            <Param Name="tInfo" Type="MMODisplayInfo" Desc="Determines what the object will look like on the minimap" Id="1955"/>
+            <Param Name="tFlags" Type="Table" Desc="A set of flags determining how the object should be drawn" Id="8173"/>
+            <Param Name="oUnit" Desc="The game object that is tied to the object on the minimap" Type="Object" Id="8174"/>
+        </Method>
+    </WindowControl>
+    <WindowControl Name="ZoneMapWindow" Incomplete="true" Id="1982">
+        <EnumSet Name="CodeEnumDisplayMode" Incomplete="true" Id="3768">
+            <Enum Name="SuperPanning" Id="6591"/>
+            <Enum Name="Panning" Id="6592"/>
+            <Enum Name="Scaled" Id="6593"/>
+            <Enum Name="Continent" Id="6594"/>
+            <Enum Name="World" Id="6595"/>
+            <Enum Name="SolarSystem" Id="6596"/>
+        </EnumSet>
+        <Method Name="GetContinentZoneInfo" Incomplete="true" Id="6597"/>
+        <Method Name="GetAllNemesisRegionInfo" Incomplete="true" Id="6598"/>
+        <Method Name="GetNemesisRegionInfo" Incomplete="true" Id="6599"/>
+        <Event Name="ZoneMapWindowModeChange" Incomplete="true" Id="7841"/>
+        <Event Name="ZoneMapWindowChange" Incomplete="true" Id="7842"/>
+    </WindowControl>
+    <Library Name="ICCommLib" Incomplete="true" Id="683">
+        <Method Name="SendPrivateMessage" Incomplete="true" Id="7843"/>
+    </Library>
+    <WindowControl Name="ActionBarButton" Incomplete="true" Id="2629">
+        <Method Name="Enable" Incomplete="true" Id="5389"/>
+    </WindowControl>
+    <Library Name="CraftingLib" Incomplete="true" Id="2672">
+        <Function Name="GetKnownTradeskills" Incomplete="true" Id="3137" Desc="Returns a table with the id numbers and names of the tradeskills known by the character"/>
+        <Function Name="GetTradeskillInfo" Incomplete="true" Id="3138" Desc="Returns a table with info about the chosen tradeskill"/>
+        <EnumSet Name="CodeEnumTradeskill" Incomplete="true" Id="3802">
+            <Enum Name="Weaponsmith" Id="6600"/>
+            <Enum Name="Cooking" Id="6601"/>
+            <Enum Name="Armorer" Id="6602"/>
+            <Enum Name="Mining" Id="6603"/>
+            <Enum Name="Outfitter" Id="6604"/>
+            <Enum Name="Survivalist" Id="6605"/>
+            <Enum Name="Augmentor" Id="6606"/>
+            <Enum Name="Architect" Id="6607"/>
+            <Enum Name="Relic_Hunter" Id="6608"/>
+            <Enum Name="Fishing" Id="6609"/>
+            <Enum Name="Farmer" Id="6610"/>
+            <Enum Name="Tailor" Id="6611"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumTradeskillTier" Incomplete="true" Id="3815">
+            <Enum Name="Novice" Id="6612"/>
+            <Enum Name="Apprentice" Id="6613"/>
+            <Enum Name="Journeyman" Id="6614"/>
+            <Enum Name="Expert" Id="6615"/>
+            <Enum Name="Artisan" Id="6616"/>
+        </EnumSet>
+        <Function Name="LearnTradeskill" Incomplete="true" Id="3821" Desc="Grants the character the chosen tradeskill.  If the character is already at the maximum number of tradeskills allowed, this function also drops a chosen tradeskill.">
+            <Param Name="tradeskillId" Desc="The ID number for the tradeskill that will be granted to the player" Type="Integer" Id="4756"/>
+            <Param Name="tradeskillIdToDrop" Desc="The ID for the tradeskill that the character will drop in order to learn a new one.  If the character is already at the maximum number of tradeskills learned and the tradeskill being learned is not a hobby, this value is required.  If this value must be the ID of a tradeskill currently active for the character." Type="Integer" Id="4757"/>
+            <ReturnValue Type="Integer" Desc="Returns 0 if the tradeskillId is not a valid tradeskill.  Otherwise, returns 1." Id="4758"/>
+        </Function>
+        <Function Name="ForgetTradeskill" Incomplete="true" Id="3822" NotImplemented="true"/>
+        <Function Name="GetSchematicCraftableCount" Incomplete="true" Id="6618"/>
+        <Function Name="BotchCraft" Incomplete="true" Id="6619"/>
+        <Function Name="IsAtCraftingStation" Incomplete="true" Id="6620"/>
+        <Function Name="GetTradeskillTalents" Incomplete="true" Id="6621"/>
+        <Function Name="PickTradeskillTalent" Incomplete="true" Id="6622"/>
+        <Function Name="ResetTradeskillTalents" Incomplete="true" Id="6623"/>
+        <Function Name="GetTradeskillTierXp" Incomplete="true" Id="6617" Desc="Returns the amount of XP required to reach a specified tier in a tradeskill"/>
+        <Function Name="AddCatalyst" Incomplete="true" Id="5390"/>
+        <Function Name="GetTradeskillTalentRespecCost" Incomplete="true" Id="5391"/>
+        <Function Name="GetAvailableAdditives" Incomplete="true" Id="5392"/>
+        <Function Name="GetAvailableCatalysts" Incomplete="true" Id="5393"/>
+        <Function Name="GetRelearnCooldown" Incomplete="true" Id="5394"/>
+        <Function Name="GetRelearnCost" Incomplete="true" Id="5395"/>
+    </Library>
+    <Library Name="CSIsLib" Incomplete="true" Id="2686">
+        <Function Name="GetActiveCSI" Incomplete="true" Id="2687" Desc="Returns a table containing information on the current Client Side Interaction minigame.  Returns nil if there is no Client Side Interaction taking place.">
+            <ReturnValue Type="Table" Desc="A table containing information on the current Client Side Interaction.  " Id="6456">
+                <Item Name="type" Desc="The type of Client Side Interaction being returned" Type="CSIsLib.ClientSideInteractionType" Id="6457" CodeMissing="true"/>
+                <Item Name="context" Desc="A string containing the text that should be displayed for the current Client Side Interaction" Type="String" Id="6458" CodeMissing="true"/>
+                <Item Name="threshold" Desc="The number of misses allowed for this Client Side Interaction before the user fails.  This variable only exists when for Metronome CSIs" Type="Integer" Id="6459" CodeMissing="true"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="StartActiveCSI" Incomplete="true" Id="2688" Desc="Starts the current Client Side Interaction"/>
+        <Function Name="CancelActiveCSI" Incomplete="true" Id="2689" Desc="Stops the current Client Side Interaction"/>
+        <Function Name="IsCSIRunning" Incomplete="true" Id="2690" Desc="Determines if a Client Side Interaction is currently running">
+            <ReturnValue Type="Boolean" Id="6469"/>
+        </Function>
+        <Function Name="CSIProcessInteraction" Incomplete="true" Id="2691" Desc="Processes the user&apos;s input for the Client Side Interaction.  Different types of Client Side Interactions behave differently">
+            <Param Name="mouseDown" Desc="Determines how to update the Client Side Interaction.
+For Yes/No Interactions:  true indicates that the user clicked yes, false indicates no
+For PressAndHold:  true indicates that the button was pressed down, false indicates that the button is up
+For RapidTapping: true indicates that the button was pressed down
+" Type="Boolean" Id="6470"/>
+        </Function>
+        <Function Name="SelectCSIOption" Incomplete="true" Id="3835" Desc="Enters the user&apos;s input for the current Client Side Interaction.  This includes final keypad entries for the Keypad interactions and the Id of the buttons pressed in Memory interactions">
+            <Param Name="option" Desc="The number that was input for the Client Side Interaction.  This includes the number for keypad entries and the Id number for Memory selections" Type="Integer" Id="6472"/>
+        </Function>
+        <Function Name="GetTimeRemainingForActiveCSI" Incomplete="true" Id="3836" Desc="Returns the time remaining before the user fails the current Client Side Interaction">
+            <ReturnValue Type="Float" Desc="The time remaining before the user fails, in seconds" Id="6471"/>
+        </Function>
+        <EnumSet Name="ClientSideInteractionType" Incomplete="true" Desc="An enumeration identifying the different types of Client Side Interactions" Id="6460">
+            <Enum Name="PressAndHold" Id="6461" CodeMissing="true"/>
+            <Enum Name="RapidTapping" Id="6462" CodeMissing="true"/>
+            <Enum Name="RapidTappingInverse" Id="6463" CodeMissing="true"/>
+            <Enum Name="PrecisionTapping" Id="6464" CodeMissing="true"/>
+            <Enum Name="Metronome" Id="6465" CodeMissing="true"/>
+            <Enum Name="YesNo" Id="6466" CodeMissing="true"/>
+            <Enum Name="Memory" Id="6467" CodeMissing="true"/>
+            <Enum Name="Keypad" Id="6468" CodeMissing="true"/>
+        </EnumSet>
+    </Library>
+    <Library Name="DatacubeLib" Incomplete="true" Id="2692">
+        <Function Name="GetTotalDatacubesForZone" Incomplete="true" Id="8163"/>
+        <Function Name="GetTotalJournalsForZone" Incomplete="true" Id="8164"/>
+        <Function Name="GetTotalTalesForZone" Incomplete="true" Id="8165"/>
+    </Library>
+    <Object Name="CharacterTitle" Incomplete="true" Id="2722" Prefix="title"/>
+    <Object Name="GalacticArchiveArticle" Incomplete="true" Id="2737" Prefix="art"/>
+    <Object Name="GalacticArchiveEntry" Incomplete="true" Id="2757" Prefix="ent"/>
+    <Object Name="PathMission" Incomplete="true" Id="2771" Prefix="pm">
+        <Method Name="GetScientistExperimentationCurrentPatterns" Incomplete="true" Id="6624"/>
+    </Object>
+    <Object Name="PublicEvent" Incomplete="true" Id="2802" Prefix="pe"/>
+    <Object Name="PublicEventObjective" Incomplete="true" Id="2815" Prefix="peo">
+        <Method Name="ShouldShowOnMinimapEdge" Incomplete="true" Id="6625"/>
+    </Object>
+    <WindowControl Name="ComboBox" Incomplete="true" Id="2865">
+        <Event Name="ComboBoxSelectionChanging" Incomplete="true" Id="7844"/>
+        <Event Name="ComboBoxSelectionChanged" Incomplete="true" Id="7845"/>
+    </WindowControl>
+    <Object Name="AaRect" Incomplete="true" Id="2946" Prefix="arect">
+        <Function Name="New" Incomplete="true" Id="2974" Desc="Creates a new AaRect">
+            <Param Type="Vector2" Desc="An array containing two Vector2s.
+The first  is the point in the upper left corner of the rect.
+The second is the lower right corner of the rect" Array="true" Id="8187"/>
+            <ReturnValue Type="AaRect" Id="8191"/>
+        </Function>
+    </Object>
+    <WindowControl Name="ModelWindow" Incomplete="true" Id="3025">
+        <Method Name="SetDecorInfo" Incomplete="true" Id="7846"/>
+        <Method Name="ToggleLeftSpin" Incomplete="true" Id="7847"/>
+        <Method Name="ToggleRightSpin" Incomplete="true" Id="7848"/>
+        <Method Name="ResetSpin" Incomplete="true" Id="7849"/>
+    </WindowControl>
+     <Object Name="XmlDoc" Incomplete="true" Id="3042">
+        <Function Name="CreateFromFile" Incomplete="true" Id="7850"/>
+    </Object>
+    <Object Name="ScreenModelActor" Incomplete="true" Id="3061">
+        <Event Name="AnimationFinished" Incomplete="true" Id="7851"/>
+    </Object>
+    <Library Name="HousingLib" Incomplete="true" Id="3153">
+        <EnumSet Name="CodeEnumDecorHookType" Incomplete="true" Id="3154">
+            <Enum Name="WarplotFreePlace" Id="7852"/>
+        </EnumSet>
+        <Function Name="GetPlotContributions" Incomplete="true" Id="3945">
+            <Param Name="idPlot" Desc="The id of the plot being polled" Type="Integer" Id="8175"/>
+            <ReturnValue Type="Table" Id="8176">
+                <Item Name="name" Desc="The name of the plug" Type="String" Id="8177"/>
+                <Item Name="type" Desc="An enum representing the type of contribution" Type="HousingContributionType" Id="8178"/>
+                <Item Name="plotInfoId" Desc="The ID of the plot" Type="Integer" Id="8179"/>
+                <Item Name="requiredPoints" Desc="The number of contribution points required to complete the upgrade" Type="Integer" Id="8180"/>
+                <Item Name="currentPoints" Desc="The current progress towards an upgrade" Type="Integer" Id="8181"/>
+                <Item Type="Table" Desc="Contains item contribution info.  Only created if type == HousingContributionType_Item" Array="true" Id="8182">
+                    <Item Name="source" Desc="The item used to contribute to the upgrade" Type="Item" Id="8183"/>
+                    <Item Name="availableCount" Desc="The number of the item that the owner holds" Type="Integer" Id="8184"/>
+                    <Item Name="PointValue" Desc="The amount each item contributes towards the upgrade" Type="Integer" Id="8185"/>
+                </Item>
+                <Item Name="pointValue" Desc="Defines how much each unit of money contributes to the upgrade.  Only used with HousingContributionType_Money or HousingContributionType_WarCoins" Type="Integer" Id="8186"/>
+            </ReturnValue>
+        </Function>
+        <EnumSet Name="HousingUpkeepType" Incomplete="true" Id="6626">
+            <Enum Name="Permanent" Id="7853"/>
+            <Enum Name="Timed" Id="7854"/>
+            <Enum Name="Charged" Id="7855"/>
+            <Enum Name="TimedCharged" Id="7856"/>
+            <Enum Name="Decay" Id="7857"/>
+            <Enum Name="StructurePoints" Id="7858"/>
+        </EnumSet>
+        <Function Name="GetPropertyName" Incomplete="true" Id="6627"/>
+        <Function Name="RenameProperty" Incomplete="true" Id="6628"/>
+        <Function Name="GetPlugItem" Incomplete="true" Id="6629"/>
+        <Function Name="ValidateDecorPlacement" Incomplete="true" Id="6630"/>
+        <Function Name="RepairPlot" Incomplete="true" Id="6631"/>
+        <EnumSet Name="NeighborPermissionLevel" Incomplete="true" Id="5407">
+            <Enum Name="Normal" Id="7859"/>
+            <Enum Name="Roommate" Id="7860"/>
+        </EnumSet>
+        <Function Name="IsResidenceOwner" Incomplete="true" Id="5410"/>
+        <Function Name="IsOnMyResidence" Incomplete="true" Id="5411"/>
+        <Function Name="IsWarplotResidence" Incomplete="true" Id="5412"/>
+        <Function Name="GetNeighborList" Incomplete="true" Id="5413"/>
+        <Function Name="NeighborInviteByName" Incomplete="true" Id="5414"/>
+        <Function Name="NeighborEvict" Incomplete="true" Id="5415"/>
+        <Function Name="NeighborInviteAccept" Incomplete="true" Id="5416"/>
+        <Function Name="NeighborInviteDecline" Incomplete="true" Id="5417"/>
+        <Function Name="NeighborSetPermission" Incomplete="true" Id="5418"/>
+        <Function Name="VisitNeighborResidence" Incomplete="true" Id="5419"/>
+        <Function Name="DestroyDecorFromCrate" Incomplete="true" Id="5420"/>
+        <Function Name="RequestRandomResidenceList" Incomplete="true" Id="6275"/>
+        <Function Name="RequestRandomVisit" Incomplete="true" Id="6276"/>
+        <Function Name="GetRandomResidenceList" Incomplete="true" Id="6277"/>
+        <Function Name="IsResidencePrivate" Incomplete="true" Id="6278"/>
+        <Function Name="SetResidencePrivate" Incomplete="true" Id="6279"/>
+        <Function Name="IsHousingWorld" Incomplete="true" Id="7861"/>
+        <Function Name="GetResidencePrivileges" Incomplete="true" Id="7862"/>
+        <Function Name="GetRemodelSkyExteriorList" Incomplete="true" Id="7863"/>
+        <Function Name="GetDecorCrateListWarplot" Incomplete="true" Id="7864"/>
+        <Function Name="GetDecorListWarplot" Incomplete="true" Id="7865"/>
+        <Function Name="GetDecorTypeListWarplot" Incomplete="true" Id="7866"/>
+        <Function Name="GetPlacedDecorListWarplot" Incomplete="true" Id="7867"/>
+        <EnumSet Name="ResidencePrivileges" Incomplete="true" Id="7868">
+            <Enum Name="None" Id="7869"/>
+            <Enum Name="Owner" Id="7870"/>
+            <Enum Name="Roommate" Id="7871"/>
+        </EnumSet>
+    </Library>
+    <Object Name="Challenges" Incomplete="true" Id="3226" Prefix="chal">
+        <Method Name="GetDisplayTier" Incomplete="true" Id="6632"/>
+    </Object>
+    <WindowControl Name="WorldFixedWindow" Incomplete="true" Id="3247">
+        <Event Name="UnitOcclusionChanged" Incomplete="true" Id="7872"/>
+        <Event Name="WorldLocationOnScreen" Incomplete="true" Id="7873"/>
+    </WindowControl>
+    <Library Name="ActionSetLib" Incomplete="true" Id="3963">
+        <EnumSet Name="CodeEnumLimitedActionSetResult" Incomplete="true" Id="6633">
+            <Enum Name="Ok" Id="7874"/>
+            <Enum Name="SlotUnlockPrereqFalse" Id="7875"/>
+            <Enum Name="UnknownSpellId" Id="7876"/>
+            <Enum Name="UnknownClassId" Id="7877"/>
+            <Enum Name="UnknownSpellActionSetCategoryGroupPlacement" Id="7878"/>
+            <Enum Name="UnknownSlotActionSetCategoryGroupAllowed" Id="7879"/>
+            <Enum Name="InvalidSpellActionSetCategoryGroupPlacement" Id="7880"/>
+            <Enum Name="InvalidSlotActionSetCategoryGroupAllowed" Id="7881"/>
+            <Enum Name="SlotSpellAnyMatchFail" Id="7882"/>
+            <Enum Name="SlotSpellAllMatchFail" Id="7883"/>
+            <Enum Name="SlotSpellNoneMatchFail" Id="7884"/>
+            <Enum Name="UnknownSpellActionSetGroupMatchType" Id="7885"/>
+            <Enum Name="DuplicateSpell" Id="7886"/>
+            <Enum Name="SpellActionSetPrereqFalse" Id="7887"/>
+            <Enum Name="SpellDependencyAnyMatchFail" Id="7888"/>
+            <Enum Name="SpellDependencyAllMatchFail" Id="7889"/>
+            <Enum Name="SpellDependencyNoneMatchFail" Id="7890"/>
+            <Enum Name="BadSpellInActionSet" Id="7891"/>
+            <Enum Name="ActionSetRequirementAnyMatchFail" Id="7892"/>
+            <Enum Name="ActionSetRequirementAllMatchFail" Id="7893"/>
+            <Enum Name="ActionSetRequirementNoneMatchFail" Id="7894"/>
+            <Enum Name="InvalidActionSetSize" Id="7895"/>
+            <Enum Name="InvalidUnit" Id="7896"/>
+            <Enum Name="InvalidSlot" Id="7897"/>
+            <Enum Name="InvalidActionSetTable" Id="7898"/>
+            <Enum Name="SpellDependencyMaxMatchFail" Id="7899"/>
+            <Enum Name="RestrictedInPVP" Id="7900"/>
+        </EnumSet>
+        <Function Name="IsSlotUnlocked" Incomplete="true" Id="3756"/>
+        <Function Name="IsSpellCompatibleWithSlot" Incomplete="true" Id="3757"/>
+        <Function Name="IsSpellCompatibleWithActionSet" Incomplete="true" Id="3758"/>
+        <Function Name="RequestActionSetChanges" Incomplete="true" Id="3759"/>
+        <Function Name="DoesActionSetMeetRequirements" Incomplete="true" Id="3760"/>
+    </Library>
+    <Library Name="AttributeMilestonesLib" Incomplete="true" Id="3997">
+        <EnumSet Name="CodeEnumAttributeMilestoneResult" Incomplete="true" Id="3761">
+            <Enum Name="Ok" Id="7901"/>
+            <Enum Name="InvalidUnit" Id="7902"/>
+            <Enum Name="UnknownClassId" Id="7903"/>
+        </EnumSet>
+        <Function Name="GetAttributeMilestoneInfo" Incomplete="true" Id="6634"/>
+    </Library>
+    <Object Name="Achievement" Incomplete="true" Id="4015" Prefix="ach">
+        <Method Name="GetId" Incomplete="true" Id="6635" Desc="Returns the achievement&apos;s ID number" Example="function Example::GetAchievement(idSource)
+    local tAchievements = AchievementsLib.GetAchievements()
+    for idx = 1, #tAchievements do
+        achCurrent = tAchievements[idx]
+        if achCurrent:GetId() == idSource then
+            return achCurrent
+        end
+    end">
+            <ReturnValue Type="Integer" Desc="The ID number of the Achievement" Id="8193"/>
+        </Method>
+        <Method Name="GetName" Incomplete="true" Id="6636" Desc="Returns the name of the achievement" Example="function Example::DisplayNames()
+local tAchievements = AchievementsLib.GetAchievements()
+for idx = 1, #tAchievements do
+    local achCurrent = tAchievements[idx]
+    Print(achCurrent:GetName()
+end">
+            <ReturnValue Type="String" Desc="The name of the achievement calling this function" Id="8195"/>
+        </Method>
+        <Method Name="GetDescription" Incomplete="true" Id="6637" Desc="Returns the text for the achievement when it is completed.    This function is not to be confused with Achievement:GetProgressText(), which returns the text for the achievement before it is complete" Example="function Example:PrintAchievementText(achSource)
+    if achSource:IsComplete() then
+        Print(achSource:GetDescription())
+    else
+        Print(achSource:GetProgressText())
+    end
+end">
+            <ReturnValue Type="String" Desc="The text for the completed achievement" Id="8196"/>
+        </Method>
+        <Method Name="GetProgressText" Incomplete="true" Id="3769" Desc="Returns the text that the achievement shows when it is not complete.  This function is not to be confused with Achievement:GetDescription(), which returns the text for the achievement when it is complete" Example="function Example:PrintAchievementText(achSource)
+    if achSource:IsComplete() then
+        Print(achSource:GetDescription())
+    else
+        Print(achSource:GetProgressText())
+    end
+end">
+            <ReturnValue Type="String" Desc="The text for the incomplete achievement" Id="8197"/>
+        </Method>
+        <Method Name="GetCategory" Incomplete="true" Id="3770" Desc="Returns the name of the achievement&apos;s category" Example="function Example:IsTradeskillAchievement(achSource)
+    strCategoryName = achSource:GetCagetory() or &quot;&quot;
+    if strCategoryName == &quot;Tradeskill&quot; or strCategoryName == &quot;Hobby&quot; then
+        return true
+    else
+        return false
+    end
+end">
+            <ReturnValue Type="String" Desc="The name of the achievement&apos;s parent category" Id="8198"/>
+        </Method>
+        <Method Name="GetCategoryFullName" Incomplete="true" Id="3771"/>
+        <Method Name="GetCategoryId" Incomplete="true" Id="3772" Desc="Returns the category Id for the Achievement&apos;s category">
+            <ReturnValue Type="Integer" Desc="The Id number for the Achievement&apos;s category" Id="8199"/>
+        </Method>
+        <Method Name="GetGroup" Incomplete="true" Id="3773"/>
+        <Method Name="GetSubGroup" Incomplete="true" Id="3774" Desc="Returns the name of the subgroup that the achievement belongs to">
+            <ReturnValue Type="String" Desc="The name of the subgroup that the achievement belongs to" Id="8200"/>
+        </Method>
+        <Method Name="GetTradeskillLayout" Incomplete="true" Id="6638" Desc="Returns the position information for ">
+            <ReturnValue Type="Table" Desc="A table containing the position of the X and its parents" Id="8205">
+                <Item Name="nX" Desc="The X coordinate of the " Type="Integer" Id="8206"/>
+                <Item Name="nY" Desc="The Y coordinate of the" Type="Integer" Id="8207"/>
+                <Item Name="tParents" Desc="The position of the parent" Type="Table" Array="true" Id="8208"/>
+            </ReturnValue>
+        </Method>
+        <Method Name="IsComplete" Incomplete="true" Id="6639"/>
+        <Method Name="GetDateCompleted" Incomplete="true" Id="6640"/>
+        <Method Name="GetPoints" Incomplete="true" Id="6641"/>
+        <Method Name="GetParentTier" Incomplete="true" Id="6642"/>
+        <Method Name="GetChildTier" Incomplete="true" Id="6643"/>
+        <Method Name="GetWorldZoneId" Incomplete="true" Id="6644"/>
+        <Method Name="GetNumCompleted" Incomplete="true" Id="6645"/>
+        <Method Name="GetNumNeeded" Incomplete="true" Id="6646"/>
+        <Method Name="IsChecklist" Incomplete="true" Id="6647"/>
+        <Method Name="GetChecklistItems" Incomplete="true" Id="6648"/>
+        <Method Name="IsTimed" Incomplete="true" Id="6649"/>
+        <Method Name="GetBestTime" Incomplete="true" Id="6650"/>
+        <Method Name="GetTimeNeeded" Incomplete="true" Id="6651"/>
+        <Method Name="GetRewards" Incomplete="true" Id="6652"/>
+        <Method Name="GetTradeskillRewards" Incomplete="true" Id="6653"/>
+        <Method Name="GetTradeskillSchematicsRequired" Incomplete="true" Id="6654"/>
+        <Function Name="is" Incomplete="true" Id="6655"/>
+        <Method Name="IsGuildAchievement" Incomplete="true" Id="7904"/>
+    </Object>
+    <Object Name="HexGroups" Incomplete="true" Id="4043" Prefix="hex">
+        <Method Name="GetId" Incomplete="true" Id="6656"/>
+        <Method Name="IsVisible" Incomplete="true" Id="6657"/>
+        <Method Name="GetHexes" Incomplete="true" Id="6658"/>
+        <Method Name="GetTooltip" Incomplete="true" Id="6659"/>
+        <Method Name="GetColor" Incomplete="true" Id="6660"/>
+        <Function Name="is" Incomplete="true" Id="6661"/>
+    </Object>
+    <Object Name="MatchingGame" Incomplete="true" Id="4050" Prefix="match">
+        <Method Name="GetName" Incomplete="true" Id="7905"/>
+        <Method Name="GetDescription" Incomplete="true" Id="7906"/>
+        <Method Name="IsRandom" Incomplete="true" Id="7907"/>
+        <Method Name="IsQueued" Incomplete="true" Id="7908"/>
+        <Method Name="Queue" Incomplete="true" Id="7909"/>
+        <Method Name="QueueAsGroup" Incomplete="true" Id="7910"/>
+        <Method Name="DoesGroupMeetRequirements" Incomplete="true" Id="7911"/>
+        <Function Name="is" Incomplete="true" Id="7912"/>
+        <Function Name="GetAvailableMatchingGames" Incomplete="true" Id="7913"/>
+        <Function Name="LeaveMatchingQueue" Incomplete="true" Id="7914"/>
+        <Function Name="LeaveMatchingQueueAsGroup" Incomplete="true" Id="7915"/>
+        <Function Name="IsQueuedForMatching" Incomplete="true" Id="7916"/>
+        <Function Name="IsQueuedAsGroup" Incomplete="true" Id="7917"/>
+        <Function Name="RespondToPendingGame" Incomplete="true" Id="7918"/>
+        <Function Name="IsInMatchingGame" Incomplete="true" Id="7919"/>
+        <Function Name="IsInPVPGame" Incomplete="true" Id="7920"/>
+        <Function Name="IsInMatchingInstance" Incomplete="true" Id="7921"/>
+        <Function Name="GetPVPMatchState" Incomplete="true" Id="7922"/>
+        <Function Name="LeaveMatchingGame" Incomplete="true" Id="7923"/>
+        <Function Name="TransferIntoMatchingGame" Incomplete="true" Id="7924"/>
+        <Function Name="IsGamePending" Incomplete="true" Id="7925"/>
+        <Function Name="GetPendingInfo" Incomplete="true" Id="7926"/>
+        <Function Name="CanQueueAsGroup" Incomplete="true" Id="7927"/>
+        <Function Name="CanLeaveQueueAsGroup" Incomplete="true" Id="7928"/>
+        <Function Name="GetAverageWaitTime" Incomplete="true" Id="7929"/>
+        <Function Name="GetTimeInQueue" Incomplete="true" Id="7930"/>
+        <Function Name="GetEligibleRoles" Incomplete="true" Id="7931"/>
+        <Function Name="GetSelectedRoles" Incomplete="true" Id="7932"/>
+        <Function Name="SelectRole" Incomplete="true" Id="7933"/>
+        <Function Name="IsRoleCheckActive" Incomplete="true" Id="7934"/>
+        <Function Name="ConfirmRole" Incomplete="true" Id="7935"/>
+        <Function Name="DeclineRoleCheck" Incomplete="true" Id="7936"/>
+        <Function Name="GetPvpRating" Incomplete="true" Id="7937"/>
+        <Function Name="IsVoteKickActive" Incomplete="true" Id="7938"/>
+        <Function Name="CastVoteKick" Incomplete="true" Id="7939"/>
+        <Function Name="InitiateVoteToKick" Incomplete="true" Id="7940"/>
+        <Function Name="CanLookForReplacements" Incomplete="true" Id="7941"/>
+        <Function Name="IsLookingForReplacements" Incomplete="true" Id="7942"/>
+        <Function Name="LookForReplacements" Incomplete="true" Id="7943"/>
+        <Function Name="StopLookingForReplacements" Incomplete="true" Id="7944"/>
+        <EnumSet Name="MatchType" Incomplete="true" Id="7945">
+            <Enum Name="Battleground" Id="7946"/>
+            <Enum Name="Dungeon" Id="7947"/>
+            <Enum Name="Adventure" Id="7948"/>
+            <Enum Name="Arena" Id="7949"/>
+            <Enum Name="Warplot" Id="7950"/>
+            <Enum Name="RatedBattleground" Id="7951"/>
+            <Enum Name="OpenArena" Id="7952"/>
+        </EnumSet>
+        <EnumSet Name="PVPGameState" Incomplete="true" Id="7953">
+            <Enum Name="Preparation" Id="7954"/>
+            <Enum Name="InProgress" Id="7955"/>
+            <Enum Name="Finished" Id="7956"/>
+        </EnumSet>
+        <EnumSet Name="Team" Incomplete="true" Id="7957">
+            <Enum Name="Team1" Id="7958"/>
+            <Enum Name="Team2" Id="7959"/>
+        </EnumSet>
+        <EnumSet Name="Winner" Incomplete="true" Id="7960">
+            <Enum Name="Team1" Id="7961"/>
+            <Enum Name="Team2" Id="7962"/>
+            <Enum Name="Draw" Id="7963"/>
+        </EnumSet>
+        <EnumSet Name="MatchEndReason" Incomplete="true" Id="7964">
+            <Enum Name="Completed" Id="7965"/>
+            <Enum Name="Forfeit" Id="7966"/>
+            <Enum Name="TimeExpired" Id="7967"/>
+        </EnumSet>
+        <EnumSet Name="Rules" Incomplete="true" Id="7968">
+            <Enum Name="Default" Id="7969"/>
+            <Enum Name="DeathmatchPool" Id="7970"/>
+            <Enum Name="WaveRespawn" Id="7971"/>
+        </EnumSet>
+        <EnumSet Name="Roles" Incomplete="true" Id="7972">
+            <Enum Name="Tank" Id="7973"/>
+            <Enum Name="Healer" Id="7974"/>
+            <Enum Name="DPS" Id="7975"/>
+        </EnumSet>
+        <EnumSet Name="RatingType" Incomplete="true" Id="7976">
+            <Enum Name="Arena2v2" Id="7977"/>
+            <Enum Name="Arena3v3" Id="7978"/>
+            <Enum Name="Arena5v5" Id="7979"/>
+            <Enum Name="RatedBattleground" Id="7980"/>
+        </EnumSet>
+        <Method Name="GetType" Incomplete="true" Id="8166"/>
+        <Function Name="IsWarpartyQueued" Incomplete="true" Id="8167"/>
+        <Function Name="DoesRequestWarplotInit" Incomplete="true" Id="8168"/>
+    </Object>
+    <Object Name="PathEpisode" Incomplete="true" Id="4109" Prefix="pe">
+        <Method Name="GetName" Incomplete="true" Id="7981"/>
+        <Method Name="GetSummary" Incomplete="true" Id="7982"/>
+        <Method Name="GetWorldZone" Incomplete="true" Id="7983"/>
+        <Method Name="IsComplete" Incomplete="true" Id="7984"/>
+        <Method Name="GetNumCompleted" Incomplete="true" Id="7985"/>
+        <Method Name="GetMissions" Incomplete="true" Id="7986"/>
+        <Method Name="GetRewards" Incomplete="true" Id="7987"/>
+        <Function Name="is" Incomplete="true" Id="7988"/>
+    </Object>
+    <Object Name="SettlerImprovement" Incomplete="true" Id="4199" Prefix="set">
+        <Method Name="GetName" Incomplete="true" Id="6662" Desc="Returns the name for the improvement"/>
+        <Method Name="GetContributionValue" Incomplete="true" Id="4008" Desc="Returns the amount the improvement advances it&apos;s avenue"/>
+        <Method Name="GetRemainingTime" Incomplete="true" Id="4009" Desc="The amount of time before a built improvement despawns"/>
+        <Method Name="IsInfiniteDuration" Incomplete="true" Id="4010" Desc="Returns whether or not an improvment has an infinite duration"/>
+        <Method Name="GetCurrentTier" Incomplete="true" Id="4011" Desc="Returns the tier of the currently built version of an improvement"/>
+        <Method Name="GetAvenueType" Incomplete="true" Id="4012" Desc="Returns an integer representing the avenue that the improvement contributes to.  0 = Economy  1 = Security  2 = Quality of Life"/>
+        <Method Name="GetPosition" Incomplete="true" Id="4007" Desc="Returns a table containing the position of the improvement.  If the object does not exist or the location is invalid, this function will return nil."/>
+        <Method Name="GetImprovements" Incomplete="true" Id="7989"/>
+        <Method Name="BuildTier" Incomplete="true" Id="7990"/>
+        <Function Name="is" Incomplete="true" Id="7991"/>
+    </Object>
+    <Object Name="SoldierImprovement" Incomplete="true" Id="4289" Prefix="sol">
+        <Method Name="GetName" Incomplete="true" Id="7992"/>
+        <Method Name="GetPosition" Incomplete="true" Id="7993"/>
+        <Method Name="GetCost" Incomplete="true" Id="7994"/>
+        <Method Name="IsBuilt" Incomplete="true" Id="7995"/>
+        <Method Name="Build" Incomplete="true" Id="7996"/>
+        <Method Name="GetEvent" Incomplete="true" Id="7997"/>
+        <Method Name="GetImprovementType" Incomplete="true" Id="7998"/>
+        <Function Name="is" Incomplete="true" Id="7999"/>
+    </Object>
+    <Object Name="SoldierEvent" Incomplete="true" Id="4379" Prefix="se">
+        <Method Name="GetType" Incomplete="true" Id="8000"/>
+        <Method Name="IsBoss" Incomplete="true" Id="8001"/>
+        <Method Name="GetState" Incomplete="true" Id="8002"/>
+        <Method Name="GetElapsedTime" Incomplete="true" Id="8003"/>
+        <Method Name="GetMaxTime" Incomplete="true" Id="8004"/>
+        <Method Name="IsDefendType" Incomplete="true" Id="8005"/>
+        <Method Name="IsTimedType" Incomplete="true" Id="8006"/>
+        <Method Name="GetDefendHealth" Incomplete="true" Id="8007"/>
+        <Method Name="GetAuxiliaryHealth" Incomplete="true" Id="8008"/>
+        <Method Name="GetMaxDefendHealth" Incomplete="true" Id="8009"/>
+        <Method Name="GetMaxAuxiliaryHealth" Incomplete="true" Id="8010"/>
+        <Method Name="GetEscapingUnits" Incomplete="true" Id="8011"/>
+        <Method Name="GetWaveCount" Incomplete="true" Id="8012"/>
+        <Method Name="GetWavesReleased" Incomplete="true" Id="8013"/>
+        <Method Name="GetDefendUnits" Incomplete="true" Id="8014"/>
+        <Method Name="GetAuxiliaryUnits" Incomplete="true" Id="8015"/>
+        <Method Name="GetBuildCredits" Incomplete="true" Id="8016"/>
+        <Method Name="GetImprovements" Incomplete="true" Id="8017"/>
+        <Function Name="is" Incomplete="true" Id="8018"/>
+    </Object>
+    <Object Name="ScientistScanBotProfile" Incomplete="true" Id="4469" Prefix="sbp">
+        <Method Name="GetName" Incomplete="true" Id="8019"/>
+        <Method Name="GetScanTime" Incomplete="true" Id="8020"/>
+        <Method Name="GetMinCooldown" Incomplete="true" Id="8021"/>
+        <Method Name="GetMaxCooldown" Incomplete="true" Id="8022"/>
+        <Method Name="GetSocketCount" Incomplete="true" Id="8023"/>
+        <Method Name="GetAOERange" Incomplete="true" Id="8024"/>
+        <Method Name="GetMaxSeekDistance" Incomplete="true" Id="8025"/>
+        <Method Name="GetSpeedMultiplier" Incomplete="true" Id="8026"/>
+        <Method Name="GetScanMultiplier" Incomplete="true" Id="8027"/>
+        <Method Name="GetHealthMultiplier" Incomplete="true" Id="8028"/>
+        <Function Name="is" Incomplete="true" Id="8029"/>
+    </Object>
+    <Object Name="QuestCategory" Incomplete="true" Id="4559" Prefix="qc">
+        <Method Name="GetId" Incomplete="true" Id="5487"/>
+        <Method Name="GetTitle" Incomplete="true" Id="5488"/>
+        <Method Name="GetEpisodes" Incomplete="true" Id="5489"/>
+        <Function Name="is" Incomplete="true" Id="5490"/>
+    </Object>
+    <Object Name="ApolloColor" Incomplete="true" Id="4564">
+        <Function Name="new" Incomplete="true" Id="5491"/>
+        <Function Name="is" Incomplete="true" Id="5492"/>
+        <Function Name="SetColor" Incomplete="true" Id="5493"/>
+        <Method Name="IsSameColorAs" Incomplete="true" Id="5494"/>
+        <Method Name="ToTable" Incomplete="true" Id="5495"/>
+        <Method Name="IsLinked" Incomplete="true" Id="5496"/>
+    </Object>
+    <WindowControl Name="TickerWnd" Incomplete="true" Id="4571">
+        <Method Name="AddTickerForm" Incomplete="true" Id="5497"/>
+        <Method Name="SetTickerSpeed" Incomplete="true" Id="5498"/>
+    </WindowControl>
+    <WindowControl Name="BuffContainerWindow" Incomplete="true" Id="4327">
+        <Method Name="SetUnit" Incomplete="true" Id="8030"/>
+    </WindowControl>
+    <Library Name="MarketplaceLib" Incomplete="true" Id="4330">
+        <Function Name="GetCommodityFamilies" Incomplete="true" Id="8031"/>
+        <Function Name="GetCommodityCategories" Incomplete="true" Id="8032"/>
+        <Function Name="GetCommodityTypes" Incomplete="true" Id="8033"/>
+        <Function Name="GetCommodityItems" Incomplete="true" Id="8034"/>
+        <Function Name="SearchCommodityItems" Incomplete="true" Id="8035"/>
+        <Function Name="RequestCommodityInfo" Incomplete="true" Id="8036"/>
+        <Function Name="RequestOwnedCommodityOrders" Incomplete="true" Id="8037"/>
+        <Function Name="GetAuctionableFamilies" Incomplete="true" Id="8038"/>
+        <Function Name="GetAuctionableCategories" Incomplete="true" Id="8039"/>
+        <Function Name="GetAuctionableTypes" Incomplete="true" Id="8040"/>
+        <Function Name="GetAuctionableItems" Incomplete="true" Id="8041"/>
+        <Function Name="SearchAuctionableItems" Incomplete="true" Id="8042"/>
+        <Function Name="RequestItemAuctionsByFamily" Incomplete="true" Id="8043"/>
+        <Function Name="RequestItemAuctionsByCategory" Incomplete="true" Id="8044"/>
+        <Function Name="RequestItemAuctionsByType" Incomplete="true" Id="8045"/>
+        <Function Name="RequestItemAuctionsByItems" Incomplete="true" Id="8046"/>
+        <Function Name="RequestOwnedItemAuctions" Incomplete="true" Id="8047"/>
+        <Function Name="PostItemAuction" Incomplete="true" Id="8048"/>
+        <EnumSet Name="AuctionEventType" Incomplete="true" Id="8049">
+            <Enum Name="Post" Id="8050"/>
+            <Enum Name="Bid" Id="8051"/>
+            <Enum Name="Fill" Id="8052"/>
+            <Enum Name="Expire" Id="8053"/>
+            <Enum Name="Cancel" Id="8054"/>
+        </EnumSet>
+        <EnumSet Name="AuctionPostResult" Incomplete="true" Id="8055">
+            <Enum Name="Ok" Id="8056"/>
+            <Enum Name="DbFailure" Id="8057"/>
+            <Enum Name="Item_BadId" Id="8058"/>
+            <Enum Name="NotReady" Id="8059"/>
+            <Enum Name="CannotFillOrder" Id="8060"/>
+            <Enum Name="TooManyOrders" Id="8061"/>
+            <Enum Name="OrderTooBig" Id="8062"/>
+            <Enum Name="NotFound" Id="8063"/>
+            <Enum Name="BidTooLow" Id="8064"/>
+            <Enum Name="OwnItem" Id="8065"/>
+            <Enum Name="BidTooHigh" Id="8066"/>
+            <Enum Name="AlreadyHasBid" Id="8067"/>
+        </EnumSet>
+        <EnumSet Name="AuctionSort" Incomplete="true" Id="8068">
+            <Enum Name="MinBid" Id="8069"/>
+            <Enum Name="Buyout" Id="8070"/>
+            <Enum Name="TimeLeft" Id="8071"/>
+            <Enum Name="Property0" Id="8072"/>
+            <Enum Name="Property1" Id="8073"/>
+            <Enum Name="Property2" Id="8074"/>
+            <Enum Name="Property3" Id="8075"/>
+            <Enum Name="Property4" Id="8076"/>
+        </EnumSet>
+    </Library>
+    <Object Name="CommodityOrder" Incomplete="true" Id="4349" Prefix="order">
+        <Method Name="GetItem" Incomplete="true" Id="8077"/>
+        <Method Name="GetCount" Incomplete="true" Id="8078"/>
+        <Method Name="GetPricePerUnit" Incomplete="true" Id="8079"/>
+        <Method Name="GetReservePricePerUnit" Incomplete="true" Id="8080"/>
+        <Method Name="GetListTime" Incomplete="true" Id="8081"/>
+        <Method Name="GetExpirationTime" Incomplete="true" Id="8082"/>
+        <Method Name="IsBuy" Incomplete="true" Id="8083"/>
+        <Method Name="IsForceImmediate" Incomplete="true" Id="8084"/>
+        <Method Name="SetCount" Incomplete="true" Id="8085"/>
+        <Method Name="SetPrices" Incomplete="true" Id="8086"/>
+        <Method Name="SetForceImmediate" Incomplete="true" Id="8087"/>
+        <Method Name="IsPosted" Incomplete="true" Id="8088"/>
+        <Method Name="CanPost" Incomplete="true" Id="8089"/>
+        <Method Name="Post" Incomplete="true" Id="8090"/>
+        <Method Name="Cancel" Incomplete="true" Id="8091"/>
+        <Function Name="is" Incomplete="true" Id="8092"/>
+        <Function Name="newBuyOrder" Incomplete="true" Id="8093"/>
+        <Function Name="newSellOrder" Incomplete="true" Id="8094"/>
+    </Object>
+    <Library Name="GuildLib" Id="4764" Desc="This library contains functions and enumerations having to do with guilds and arena teams"/>
+    <Library Name="PetCustomizationLib" Incomplete="true" Id="5570">
+        <Function Name="GetUnlockedPetFlairByType" Incomplete="true" Id="8095"/>
+    </Library>
+    <Object Name="ItemAuction" Incomplete="true" Id="5572" Prefix="auct">
+        <Method Name="GetItem" Incomplete="true" Id="8096"/>
+        <Method Name="GetItemModdableData" Incomplete="true" Id="8097"/>
+        <Method Name="GetCount" Incomplete="true" Id="8098"/>
+        <Method Name="GetMinBid" Incomplete="true" Id="8099"/>
+        <Method Name="GetBuyoutPrice" Incomplete="true" Id="8100"/>
+        <Method Name="GetCurrentBid" Incomplete="true" Id="8101"/>
+        <Method Name="GetExpirationTime" Incomplete="true" Id="8102"/>
+        <Method Name="IsOwned" Incomplete="true" Id="8103"/>
+        <Method Name="Bid" Incomplete="true" Id="8104"/>
+        <Method Name="Buyout" Incomplete="true" Id="8105"/>
+        <Method Name="Cancel" Incomplete="true" Id="8106"/>
+        <Function Name="is" Incomplete="true" Id="8107"/>
+    </Object>
+    <Object Name="PetFlair" Incomplete="true" Id="5584">
+        <Method Name="GetName" Incomplete="true" Id="8108"/>
+        <Method Name="GetDescription" Incomplete="true" Id="8109"/>
+        <Method Name="GetIconPath" Incomplete="true" Id="8110"/>
+        <Method Name="GetFlairType" Incomplete="true" Id="8111"/>
+        <Function Name="is" Incomplete="true" Id="8112"/>
+    </Object>
+    <Object Name="PetCustomization" Incomplete="true" Id="5596">
+        <Method Name="GetPetType" Incomplete="true" Id="8113"/>
+        <Method Name="GetObjectId" Incomplete="true" Id="8114"/>
+        <Method Name="GetNumSlots" Incomplete="true" Id="8115"/>
+        <Method Name="GetSlotFlair" Incomplete="true" Id="8116"/>
+        <Method Name="CanSetFlairInSlot" Incomplete="true" Id="8117"/>
+        <Method Name="SetFlairInSlot" Incomplete="true" Id="8118"/>
+        <Function Name="is" Incomplete="true" Id="8119"/>
+    </Object>
+    <WindowControl Name="SendEmailButton" Incomplete="true" Id="5608">
+        <Method Name="SetMessageInfo" Incomplete="true" Id="8120"/>
+        <Method Name="SetMessageAttachments" Incomplete="true" Id="8121"/>
+        <Method Name="SetMessageGift" Incomplete="true" Id="8122"/>
+        <Event Name="EmailSent" Incomplete="true" Id="8123"/>
+    </WindowControl>
+    <WindowControl Name="TradeCommitButton" Incomplete="true" Id="5612"/>
+    <Object Name="Guild" Prefix="guild" Id="8169"/>
+</Documentation>
