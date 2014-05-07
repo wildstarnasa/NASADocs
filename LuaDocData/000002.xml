@@ -1,0 +1,578 @@
+<Documentation Id="1">
+    <Library Name="Apollo" Incomplete="true" Id="267">
+        <Function Name="GetTextWidth" Incomplete="true" Id="3264" />
+        <Function Name="GetMouse" Incomplete="true" Id="3265" />
+        <Function Name="GetDisplaySize" Incomplete="true" Id="3266" />
+        <Function Name="DisableAddon" Incomplete="true" Id="3267" />
+        <Function Name="UnlinkAddon" Incomplete="true" Id="3268" />
+    </Library>
+    <Library Name="AbilityBook" Incomplete="true" Id="377">
+        <Function Name="ActivateSpell" Incomplete="true" Id="3269" />
+    </Library>
+    <Library Name="AchievementsLib" Incomplete="true" Id="382">
+        <Function Name="GetAchievements" Incomplete="true" Id="3270" />
+        <Function Name="GetAchievementsForCategory" Incomplete="true" Id="3271" />
+        <Function Name="GetTradeskillAchievements" Incomplete="true" Id="3272" />
+        <Function Name="GetAchievementCategoryTree" Incomplete="true" Id="3273" />
+        <Function Name="GetTradeskillAchievementCategoryTree" Incomplete="true" Id="3274" />
+        <Function Name="GetTradeskillAchievementLayout" Incomplete="true" Id="3275" />
+        <Function Name="GetAchievementPoints" Incomplete="true" Id="3276" />
+    </Library>
+    <Library Name="ChallengesLib" Incomplete="true" Id="390">
+        <Function Name="GenerateRewardList" Incomplete="true" Id="3277" />
+        <Function Name="ShowHintArrow" Incomplete="true" Id="3278" />
+    </Library>
+    <Library Name="CombatFloater" Incomplete="true" Id="476">
+        <EnumSet Name="CodeEnumExpReason" Incomplete="true" Id="2086">
+            <Enum Name="Rested" Id="3279" />
+            <Enum Name="PublicEvent" Id="3280" />
+            <Enum Name="DailyQuest" Id="3281" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumCombatMomentum" Incomplete="true" Id="3282" />
+        <EnumSet Name="CodeEnumCCStateApplyRulesResult" Incomplete="true" Id="3289" />
+    </Library>
+    <Library Name="CommunicatorLib" Incomplete="true" Id="497">
+        <Function Name="GetPathMissionDelivered" Incomplete="true" Id="3298" />
+    </Library>
+    <Library Name="GameLib" Incomplete="true" Id="537">
+        <EnumSet Name="CodeEnumDamageType" Incomplete="true" Id="2134">
+            <Enum Name="Physical" Id="3299" />
+            <Enum Name="Tech" Id="3300" />
+            <Enum Name="Magic" Id="3301" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumMapObjectType" Incomplete="true" Id="3302" />
+        <EnumSet Name="CodeEnumAddonSaveLevel" Incomplete="true" Id="3307" />
+        <EnumSet Name="CodeEnumStoryPanel" Incomplete="true" Id="3312" />
+        <EnumSet Name="CodeEnumStoryPanelStyle" Incomplete="true" Id="3320" />
+        <EnumSet Name="CodeEnumTutorial" Incomplete="true" Id="3329" />
+        <EnumSet Name="CodeEnumClass" Incomplete="true" Id="3334" />
+        <Function Name="GetWorldDifficulty" Incomplete="true" Id="3357" />
+        <Function Name="GetWorldGameMode" Incomplete="true" Id="3358" />
+        <Function Name="Disembark" Incomplete="true" Id="3359" />
+        <Function Name="GetPlayerGenericVehicleUnit" Incomplete="true" Id="3360" />
+        <Function Name="GetUnitById" Incomplete="true" Id="3361" />
+        <Function Name="GetClassInnateAbility" Incomplete="true" Id="3362" />
+        <Function Name="GetSpell" Incomplete="true" Id="3363" />
+        <Function Name="GetAccountRealmCharacter" Incomplete="true" Id="3364" />
+        <Function Name="GetPlayerUnitByName" Incomplete="true" Id="3365" />
+        <Function Name="GetPlayerPets" Incomplete="true" Id="3366" />
+        <Function Name="GetNumBankBagSlots" Incomplete="true" Id="3367" />
+        <Function Name="BuyBankBagSlot" Incomplete="true" Id="3368" />
+        <Function Name="GetSpellThresholdTimePrcntLeft" Incomplete="true" Id="3369" />
+        <Function Name="CanRepairAll" Incomplete="true" Id="3370" />
+        <Function Name="GetRepairAllCost" Incomplete="true" Id="3371" />
+        <Function Name="GetKnownDyes" Incomplete="true" Id="3372" />
+        <Function Name="GetDyeCost" Incomplete="true" Id="3373" />
+        <Function Name="DyeItems" Incomplete="true" Id="3374" />
+        <Function Name="GetPendingTutorials" Incomplete="true" Id="3375" />
+        <Function Name="DisableTutorialType" Incomplete="true" Id="3376" />
+        <Function Name="GetCostumeIndex" Incomplete="true" Id="3377" />
+        <Function Name="SetCostumeIndex" Incomplete="true" Id="3378" />
+        <Function Name="GetCostumeItemIcon" Incomplete="true" Id="3379" />
+        <Function Name="SetCostumeItem" Incomplete="true" Id="3380" />
+        <Function Name="IsCostumeSlotVisible" Incomplete="true" Id="3381" />
+        <Function Name="SetCostumeSlotVisible" Incomplete="true" Id="3382" />
+        <Function Name="GetReputationInfo" Incomplete="true" Id="3383" />
+        <Function Name="GetReputationLevels" Incomplete="true" Id="3384" />
+        <Function Name="GetAbilityPoints" Incomplete="true" Id="3385" />
+        <Function Name="GetAttributePoints" Incomplete="true" Id="3386" />
+        <Function Name="SpendAttributePoints" Incomplete="true" Id="3387" />
+        <Function Name="ResetAttributePoints" Incomplete="true" Id="3388" />
+        <Function Name="GetLootRolls" Incomplete="true" Id="3389" />
+        <Function Name="RollOnLoot" Incomplete="true" Id="3390" />
+        <Function Name="PassOnLoot" Incomplete="true" Id="3391" />
+        <Function Name="GetMasterLoot" Incomplete="true" Id="3392" />
+        <Function Name="AssignMasterLoot" Incomplete="true" Id="3393" />
+        <Function Name="GetErrorCategories" Incomplete="true" Id="3394" />
+        <Function Name="ReportBug" Incomplete="true" Id="3395" />
+        <Function Name="GetCCStateStunTimeRemaining" Incomplete="true" Id="3396" />
+        <Function Name="IsPvpFlagged" Incomplete="true" Id="3397" />
+        <Function Name="GetPvpFlagInfo" Incomplete="true" Id="3398" />
+        <Function Name="TogglePvpFlags" Incomplete="true" Id="3399" />
+        <Function Name="ShowUI" Incomplete="true" Id="3400" />
+    </Library>
+    <Library Name="GroupLib" Incomplete="true" Id="606">
+        <EnumSet Name="Result" Incomplete="true" Id="2160">
+            <Enum Name="Sent" Id="3401" />
+            <Enum Name="Accepted" Id="3402" />
+            <Enum Name="Declined" Id="3403" />
+            <Enum Name="NoPermissions" Id="3404" />
+            <Enum Name="Grouped" Id="3405" />
+            <Enum Name="Pending" Id="3406" />
+            <Enum Name="ExpiredInviter" Id="3407" />
+            <Enum Name="ExpriedInvitee" Id="3408" />
+            <Enum Name="IsInvited" Id="3409" />
+            <Enum Name="InvitedYou" Id="3410" />
+            <Enum Name="Full" Id="3411" />
+        </EnumSet>
+        <EnumSet Name="LootThreshold" Incomplete="true" Id="3412" />
+        <EnumSet Name="LootRule" Incomplete="true" Id="3422" />
+        <EnumSet Name="RemoveReason" Incomplete="true" Id="3427" />
+        <EnumSet Name="ActionResult" Incomplete="true" Id="3433" />
+        <EnumSet Name="GameMode" Incomplete="true" Id="3449" />
+        <EnumSet Name="Difficulty" Incomplete="true" Id="3454" />
+        <Function Name="InRaid" Incomplete="true" Id="3457" />
+        <Function Name="GetInvite" Incomplete="true" Id="3458" />
+        <Function Name="DeclineInvite" Incomplete="true" Id="3459" />
+        <Function Name="SetKickPermission" Incomplete="true" Id="3460" />
+        <Function Name="SetInvitePermission" Incomplete="true" Id="3461" />
+        <Function Name="CanLeave" Incomplete="true" Id="3462" />
+        <Function Name="SetLootRules" Incomplete="true" Id="3463" />
+        <Function Name="GetLootRules" Incomplete="true" Id="3464" />
+        <Function Name="GetInstanceDifficulty" Incomplete="true" Id="3465" />
+        <Function Name="SetInstanceDifficulty" Incomplete="true" Id="3466" />
+        <Function Name="GetInstanceGameMode" Incomplete="true" Id="3467" />
+        <Function Name="SetInstanceGameMode" Incomplete="true" Id="3468" />
+        <Function Name="GetMemberQuests" Incomplete="true" Id="3469" />
+        <Function Name="RequestQuest" Incomplete="true" Id="3470" />
+    </Library>
+    <Library Name="PlayerPathLib" Incomplete="true" Id="767">
+        <Function Name="GetCurrentSettlerHubMission" Incomplete="true" Id="3471" />
+        <Function Name="GetCurrentSettlerInfrastructure" Incomplete="true" Id="3472" />
+        <Function Name="GetInfrastructureStatusForMission" Incomplete="true" Id="3473" />
+        <Function Name="PathAction2" Incomplete="true" Id="3474" />
+        <Function Name="SetScannerName" Incomplete="true" Id="3475" />
+    </Library>
+    <Object Name="Episode" Incomplete="true" Id="809">
+        <Method Name="GetCategories" Incomplete="true" Id="3476" />
+        <Method Name="GetAllQuests" Incomplete="true" Id="3477" />
+    </Object>
+    <Object Name="Item" Incomplete="true" Id="828">
+        <EnumSet Name="CodeEnumItemType" Incomplete="true" Id="2176">
+            <Enum Name="WeaponMHShockPaddles" Id="3478" />
+        </EnumSet>
+        <Method Name="GetItemPower" Incomplete="true" Id="3479" />
+        <Method Name="GetBaseItemPower" Incomplete="true" Id="3480" />
+        <Method Name="GetAmplifierPower" Incomplete="true" Id="3481" />
+        <Method Name="GetRequiredItemPower" Incomplete="true" Id="3482" />
+        <Method Name="GetRequiredSocketPower" Incomplete="true" Id="3483" />
+        <Method Name="GetArmor" Incomplete="true" Id="3484" />
+        <Method Name="GetMicrochipInfo" Incomplete="true" Id="3485" />
+        <Method Name="GetMicrochipSpells" Incomplete="true" Id="3486" />
+        <Method Name="CanAutoSalvage" Incomplete="true" Id="3487" />
+        <Method Name="CanMod" Incomplete="true" Id="3488" />
+        <Method Name="CanExtract" Incomplete="true" Id="3489" />
+        <Method Name="CanMoveToSupplySatchel" Incomplete="true" Id="3490" />
+        <Method Name="MoveToSupplySatchel" Incomplete="true" Id="3491" />
+        <Method Name="CanTakeFromSupplySatchel" Incomplete="true" Id="3492" />
+        <Method Name="TakeFromSupplySatchel" Incomplete="true" Id="3493" />
+        <Method Name="GetItemChallenges" Incomplete="true" Id="3494" />
+        <Method Name="GetAdditiveInfo" Incomplete="true" Id="3495" />
+        <Method Name="GetBagSlots" Incomplete="true" Id="3496" />
+        <Method Name="GetMaxDurability" Incomplete="true" Id="3497" />
+        <Method Name="GetDurability" Incomplete="true" Id="3498" />
+        <Method Name="GetRepairCost" Incomplete="true" Id="3499" />
+        <Method Name="GetSetBonuses" Incomplete="true" Id="3500" />
+        <Method Name="GetEmptySockets" Incomplete="true" Id="3501" />
+        <Function Name="GetVirtualItems" Incomplete="true" Id="3502" />
+    </Object>
+    <Object Name="Money" Incomplete="true" Id="885">
+        <EnumSet Name="CodeEnumCurrencyType" Incomplete="true" Id="3503" />
+    </Object>
+    <Object Name="Quest" Incomplete="true" Id="914">
+        <Method Name="GetIntroductionText" Incomplete="true" Id="3507" />
+        <Method Name="GetMoreInfoText" Incomplete="true" Id="3508" />
+        <Method Name="IsMoreInfoNonSequential" Incomplete="true" Id="3509" />
+        <Method Name="GetCompletionObjectiveShortText" Incomplete="true" Id="3510" />
+        <Method Name="GetCompletionObjectiveText" Incomplete="true" Id="3511" />
+        <Method Name="IsPathQuest" Incomplete="true" Id="3512" />
+        <Method Name="GetPathQuestType" Incomplete="true" Id="3513" />
+        <Method Name="GetEpisodes" Incomplete="true" Id="3514" />
+        <Method Name="GetCategory" Incomplete="true" Id="3515" />
+    </Object>
+    <Object Name="Spell" Incomplete="true" Id="975">
+        <EnumSet Name="CodeEnumCastMethod" Incomplete="true" Id="2319">
+            <Enum Name="PressHold" Id="3516" />
+            <Enum Name="RapidTap" Id="3517" />
+            <Enum Name="ChargeRelease" Id="3518" />
+            <Enum Name="Multiphase" Id="3519" />
+            <Enum Name="Transactional" Id="3520" />
+        </EnumSet>
+        <EnumSet Name="CombatMessageType" Incomplete="true" Id="3521" />
+        <Method Name="GetId" Incomplete="true" Id="3585" />
+        <Method Name="GetAbilityCharges" Incomplete="true" Id="3586" />
+    </Object>
+    <Object Name="Unit" Incomplete="true" Id="1058">
+        <EnumSet Name="CodeEnumCCState" Incomplete="true" Id="2348">
+            <Enum Name="Stun" Id="3587" />
+            <Enum Name="Polymorph" Id="3588" />
+            <Enum Name="Hold" Id="3589" />
+            <Enum Name="VulnerabilityWithAct" Id="3590" />
+            <Enum Name="Disorient" Id="3591" />
+            <Enum Name="Disable" Id="3592" />
+            <Enum Name="Taunt" Id="3593" />
+            <Enum Name="DeTaunt" Id="3594" />
+            <Enum Name="Blind" Id="3595" />
+            <Enum Name="Knockback" Id="3596" />
+            <Enum Name="Pushback" Id="3597" />
+            <Enum Name="Pull" Id="3598" />
+            <Enum Name="PositionSwitch" Id="3599" />
+            <Enum Name="Tether" Id="3600" />
+            <Enum Name="Snare" Id="3601" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumEliteness" Incomplete="true" Id="2359">
+            <Enum Name="Solo" Id="3602" />
+            <Enum Name="Group" Id="3603" />
+            <Enum Name="SmallRaid" Id="3604" />
+            <Enum Name="LargeRaid" Id="3605" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumRank" Incomplete="true" Id="2363">
+            <Enum Name="Fodder" Id="3606" />
+            <Enum Name="Standard" Id="3607" />
+            <Enum Name="Superior" Id="3608" />
+            <Enum Name="Elite" Id="3609" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumVital" Incomplete="true" Id="2372">
+            <Enum Name="MedicCore" Id="3610" />
+            <Enum Name="SpellSurge" Id="3611" />
+            <Enum Name="InterruptArmor" Id="3612" />
+            <Enum Name="Absorption" Id="3613" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumProperties" Incomplete="true" Id="2390">
+            <Enum Name="ResistTech" Id="3614" />
+            <Enum Name="ResistMagic" Id="3615" />
+            <Enum Name="AssaultPower" Id="3616" />
+            <Enum Name="SupportPower" Id="3617" />
+            <Enum Name="ResourceMax_7" Id="3618" />
+            <Enum Name="ResourceRegenMultiplier_7" Id="3619" />
+            <Enum Name="Stamina" Id="3620" />
+            <Enum Name="Armor" Id="3621" />
+            <Enum Name="Rating_CritChanceDecrease" Id="3622" />
+            <Enum Name="InterruptArmor_Threshold" Id="3623" />
+            <Enum Name="InterruptArmor_RechargeTime" Id="3624" />
+            <Enum Name="InterruptArmor_RechargeCount" Id="3625" />
+            <Enum Name="BaseAvoidChance" Id="3626" />
+            <Enum Name="BaseCritChance" Id="3627" />
+            <Enum Name="AbsorptionMax" Id="3628" />
+            <Enum Name="RegenManaInCombat" Id="3629" />
+            <Enum Name="RegenManaNonCombat" Id="3630" />
+            <Enum Name="DamageDealtMultiplierPhysical" Id="3631" />
+            <Enum Name="DamageDealtMultiplierTech" Id="3632" />
+            <Enum Name="DamageDealtMultiplierMagic" Id="3633" />
+            <Enum Name="DamageTakenOffsetPhysical" Id="3634" />
+            <Enum Name="DamageTakenOffsetTech" Id="3635" />
+            <Enum Name="DamageTakenOffsetMagic" Id="3636" />
+            <Enum Name="DamageTakenMultiplierTech" Id="3637" />
+            <Enum Name="DamageTakenMultiplierMagic" Id="3638" />
+            <Enum Name="CCDurationModifier" Id="3639" />
+            <Enum Name="ResistTechMitigationMultiplier" Id="3640" />
+            <Enum Name="ResistMagicMitigationMultiplier" Id="3641" />
+            <Enum Name="ReputationMultiplier" Id="3642" />
+            <Enum Name="SlowFallMultiplier" Id="3643" />
+            <Enum Name="PathXpMultiplier" Id="3644" />
+            <Enum Name="ScientistScanBotThoroughnessMultiplier" Id="3645" />
+            <Enum Name="ScientistScanBotScanTimeMultiplier" Id="3646" />
+            <Enum Name="ScientistScanBotRangeMultiplier" Id="3647" />
+            <Enum Name="ScientistScanBotHealthMultiplier" Id="3648" />
+            <Enum Name="ScientistScanBotHealtRegenhMultiplier" Id="3649" />
+            <Enum Name="ScientistScanBotSpeedMultiplier" Id="3650" />
+            <Enum Name="SettlerImprovementTimeMultiplier" Id="3651" />
+            <Enum Name="CreatureScientistScanMultiplier" Id="3652" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumResourceConversionType" Incomplete="true" Id="2513">
+            <Enum Name="Prereq2Rep" Id="3653" />
+        </EnumSet>
+        <EnumSet Name="CodeEnumLevelDifferentialAttribute" Incomplete="true" Id="3654" />
+        <EnumSet Name="CodeEnumFaction" Incomplete="true" Id="3664" />
+        <EnumSet Name="CodeEnumGender" Incomplete="true" Id="3667" />
+        <EnumSet Name="CodeEnumSpellMechanic" Incomplete="true" Id="3671" />
+        <Method Name="GetGender" Incomplete="true" Id="3677" />
+        <Method Name="GetManaRegenInCombat" Incomplete="true" Id="3678" />
+        <Method Name="GetManaRegenNonCombat" Incomplete="true" Id="3679" />
+        <Method Name="GetAbsorptionValue" Incomplete="true" Id="3680" />
+        <Method Name="GetAbsorptionMax" Incomplete="true" Id="3681" />
+        <Method Name="GetMedicCoreInfo" Incomplete="true" Id="3682" />
+        <Method Name="GetGroupValue" Incomplete="true" Id="3683" />
+        <Method Name="GetClusterContributionValue" Incomplete="true" Id="3684" />
+        <Method Name="GetAchievementPoints" Incomplete="true" Id="3685" />
+        <Method Name="HasTextBubble" Incomplete="true" Id="3686" />
+        <Method Name="AddTextBubble" Incomplete="true" Id="3687" />
+        <Method Name="IsOccluded" Incomplete="true" Id="3688" />
+        <Method Name="GetCCStateTimeRemaining" Incomplete="true" Id="3689" />
+        <Method Name="GetBuffs" Incomplete="true" Id="3690" />
+        <Method Name="GetInterruptArmorValue" Incomplete="true" Id="3691" />
+        <Method Name="GetInterruptArmorMax" Incomplete="true" Id="3692" />
+        <Method Name="ShouldShowAbsorptionBar" Incomplete="true" Id="3693" />
+        <Method Name="ShouldShowNamePlate" Incomplete="true" Id="3694" />
+        <Method Name="GetVendorGroups" Incomplete="true" Id="3695" />
+        <Method Name="GetRepTurninItems" Incomplete="true" Id="3696" />
+        <Method Name="GetTrainerTradeskills" Incomplete="true" Id="3697" />
+        <Method Name="GetCraftingStationTradeskills" Incomplete="true" Id="3698" />
+        <Method Name="GetLevelDifferential" Incomplete="true" Id="3699" />
+        <Method Name="GetConValue" Incomplete="true" Id="3700" />
+        <Method Name="GetInventoryItems" Incomplete="true" Id="3701" />
+        <Method Name="LockInventorySlot" Incomplete="true" Id="3702" />
+        <Method Name="UnlockInventorySlot" Incomplete="true" Id="3703" />
+        <Method Name="IsInventorySlotLocked" Incomplete="true" Id="3704" />
+        <Method Name="UnlockAllInventorySlots" Incomplete="true" Id="3705" />
+        <Method Name="GetSupplySatchelItems" Incomplete="true" Id="3706" />
+        <Method Name="ShowHintArrow" Incomplete="true" Id="3707" />
+        <Method Name="IsPublicEventHub" Incomplete="true" Id="3708" />
+        <Method Name="GetGuildName" Incomplete="true" Id="3709" />
+        <Method Name="GetGuildType" Incomplete="true" Id="3710" />
+        <Method Name="GetGuildEmblemSprite" Incomplete="true" Id="3711" />
+        <Method Name="GetGuildEmblemColor" Incomplete="true" Id="3712" />
+        <Method Name="IsInYourGroup" Incomplete="true" Id="3713" />
+        <Method Name="IsPvpFlagged" Incomplete="true" Id="3714" />
+        <Method Name="IsTagged" Incomplete="true" Id="3715" />
+        <Method Name="IsTaggedByMe" Incomplete="true" Id="3716" />
+        <Method Name="IsSoftKill" Incomplete="true" Id="3717" />
+    </Object>
+    <WindowControl Name="Button" Incomplete="true" Id="1213">
+        <Method Name="AttachWindow" Incomplete="true" Id="3718" />
+    </WindowControl>
+    <WindowControl Name="EditBox" Incomplete="true" Id="1252">
+        <Method Name="InsertText" Incomplete="true" Id="3719" />
+    </WindowControl>
+    <WindowControl Name="GridWindow" Incomplete="true" Id="1277">
+        <Method Name="GetSortColumn" Incomplete="true" Id="3720" />
+        <Method Name="GetCellData" Incomplete="true" Id="3721" />
+        <Method Name="GetCellText" Incomplete="true" Id="3722" />
+        <Method Name="IsSortAscending" Incomplete="true" Id="3723" />
+        <Method Name="SetColumnWidth" Incomplete="true" Id="3724" />
+        <Method Name="SetCellImageColor" Incomplete="true" Id="3725" />
+        <Method Name="SetCellSortText" Incomplete="true" Id="3726" />
+        <Method Name="SetCellBGBase" Incomplete="true" Id="3727" />
+        <Method Name="SetSortColumn" Incomplete="true" Id="3728" />
+        <Method Name="SetHeaderBGBase" Incomplete="true" Id="3729" />
+    </WindowControl>
+    <WindowControl Name="ProgressBar" Incomplete="true" Id="1406">
+        <Method Name="SetRadialMin" Incomplete="true" Id="3730" />
+        <Method Name="SetRadialMax" Incomplete="true" Id="3731" />
+    </WindowControl>
+    <WindowControl Name="Window" Incomplete="true" Id="1536">
+        <Method Name="FindChildByUserData" Incomplete="true" Id="3732" />
+        <Method Name="GetChildren" Incomplete="true" Id="3733" />
+        <Method Name="IsValid" Incomplete="true" Id="3734" />
+        <Method Name="RecalculateContentExtents" Incomplete="true" Id="3735" />
+    </WindowControl>
+    <WindowControl Name="BagWindow" Incomplete="true" Id="1845">
+        <Method Name="StartSplitStack" Incomplete="true" Id="3736" />
+        <Method Name="GetBagItem" Incomplete="true" Id="3737" />
+    </WindowControl>
+    <WindowControl Name="BuffWindow" Incomplete="true" Id="1885">
+        <Method Name="GetBuffTooltip" Incomplete="true" Id="3738" />
+    </WindowControl>
+    <WindowControl Name="ItemSlotWindow" Incomplete="true" Id="1946">
+        <Method Name="GetItem" Incomplete="true" Id="3762" />
+    </WindowControl>
+    <WindowControl Name="MiniMapWindow" Incomplete="true" Id="1950">
+        <Method Name="CreateOverlayType" Incomplete="true" Id="3764" />
+        <Method Name="RemoveObjectByType" Incomplete="true" Id="3765" />
+        <Method Name="RemoveAllObjects" Incomplete="true" Id="3766" />
+        <Method Name="RemoveObjectByUserData" Incomplete="true" Id="3767" />
+    </WindowControl>
+    <WindowControl Name="ZoneMapWindow" Incomplete="true" Id="1982">
+        <EnumSet Name="CodeEnumDisplayMode" Incomplete="true" Id="3768" />
+        <Method Name="IsShowPlayerOn" Incomplete="true" Id="3775" />
+        <Method Name="CenterOnPlayer" Incomplete="true" Id="3776" />
+        <Method Name="ShowPlayer" Incomplete="true" Id="3777" />
+        <Method Name="GetAllSubZoneInfo" Incomplete="true" Id="3778" />
+        <Method Name="GetAllZoneInfo" Incomplete="true" Id="3779" />
+        <Method Name="CanZoomZone" Incomplete="true" Id="3780" />
+        <Method Name="SetMinDisplayMode" Incomplete="true" Id="3781" />
+        <Method Name="SetMaxDisplayMode" Incomplete="true" Id="3782" />
+        <Method Name="SetObjectRadius" Incomplete="true" Id="3783" />
+        <Method Name="GetObjectRadius" Incomplete="true" Id="3784" />
+        <Method Name="RemoveObjectByType" Incomplete="true" Id="3785" />
+        <Method Name="RemoveObjectByUserData" Incomplete="true" Id="3786" />
+        <Method Name="AddRegion" Incomplete="true" Id="3787" />
+        <Method Name="GetHexGroupHexes" Incomplete="true" Id="3788" />
+        <Method Name="RemoveRegion" Incomplete="true" Id="3789" />
+        <Method Name="RemoveRegionByType" Incomplete="true" Id="3790" />
+        <Method Name="RemoveRegionByUserData" Incomplete="true" Id="3791" />
+        <Method Name="SelectRegionDisplay" Incomplete="true" Id="3792" />
+        <Method Name="SelectRegionDisplayByType" Incomplete="true" Id="3793" />
+        <Method Name="SelectRegionDisplayByUserData" Incomplete="true" Id="3794" />
+        <Method Name="CreateOverlayType" Incomplete="true" Id="3795" />
+    </WindowControl>
+    <WindowControl Name="ActionBarButton" Incomplete="true" Id="2629">
+        <Method Name="GetContent" Incomplete="true" Id="3796" />
+        <Method Name="NextActionBar" Incomplete="true" Id="3797" />
+        <Method Name="PreviousActionBar" Incomplete="true" Id="3798" />
+    </WindowControl>
+    <WindowControl Name="IconButton" Incomplete="true" Id="2661">
+        <Method Name="SetXpInfo" Incomplete="true" Id="3799" />
+        <Method Name="SetTradeSkillXpInfo" Incomplete="true" Id="3800" />
+        <Method Name="SetTradeSkillInfo" Incomplete="true" Id="3801" />
+    </WindowControl>
+    <Library Name="CraftingLib" Incomplete="true" Id="2672">
+        <EnumSet Name="CodeEnumTradeskill" Incomplete="true" Id="3802" />
+        <EnumSet Name="CodeEnumTradeskillTier" Incomplete="true" Id="3815" />
+        <Function Name="LearnTradeskill" Incomplete="true" Id="3821" />
+        <Function Name="ForgetTradeskill" Incomplete="true" Id="3822" />
+        <Function Name="GetValidSocketItems" Incomplete="true" Id="3823" />
+        <Function Name="GetValidSocketModItems" Incomplete="true" Id="3824" />
+        <Function Name="ExtractChip" Incomplete="true" Id="3825" />
+        <Function Name="GetPreviewInfo" Incomplete="true" Id="3826" />
+        <Function Name="GetPreviewModInfo" Incomplete="true" Id="3827" />
+        <Function Name="GetProficiencies" Incomplete="true" Id="3828" />
+        <Function Name="GetCurrentCraft" Incomplete="true" Id="3829" />
+        <Function Name="AddAdditive" Incomplete="true" Id="3830" />
+        <Function Name="CompleteCraft" Incomplete="true" Id="3831" />
+        <Function Name="ShowTradeskillTutorial" Incomplete="true" Id="3832" />
+        <Function Name="GetAchievementCategoryForTier" Incomplete="true" Id="3833" />
+        <Function Name="GetTierForAchievementCategory" Incomplete="true" Id="3834" />
+    </Library>
+    <Library Name="CSIsLib" Incomplete="true" Id="2686">
+        <Function Name="SelectCSIOption" Incomplete="true" Id="3835" />
+        <Function Name="GetTimeRemainingForActiveCSI" Incomplete="true" Id="3836" />
+    </Library>
+    <Library Name="DatacubeLib" Incomplete="true" Id="2692">
+        <Function Name="GetJournalsForZone" Incomplete="true" Id="3837" />
+        <Function Name="GetTalesForZone" Incomplete="true" Id="3838" />
+        <Function Name="GetTales" Incomplete="true" Id="3839" />
+        <Function Name="GetZonesWithJournals" Incomplete="true" Id="3840" />
+        <Function Name="GetZonesWithTales" Incomplete="true" Id="3841" />
+    </Library>
+    <Object Name="GalacticArchiveEntry" Incomplete="true" Id="2757">
+        <Method Name="GetProgress" Incomplete="true" Id="3842" />
+    </Object>
+    <Object Name="PathMission" Incomplete="true" Id="2771">
+        <Method Name="GetWorldZone" Incomplete="true" Id="3843" />
+        <Method Name="GetMissions" Incomplete="true" Id="3844" />
+        <Method Name="GetRewards" Incomplete="true" Id="3845" />
+        <Method Name="IsInArea" Incomplete="true" Id="3846" />
+        <Method Name="GetMapRegions" Incomplete="true" Id="3847" />
+        <Method Name="GetUnlockString" Incomplete="true" Id="3848" />
+        <Method Name="GetCompletedString" Incomplete="true" Id="3849" />
+        <Method Name="GetScientistFieldStudy" Incomplete="true" Id="3850" />
+        <Method Name="GetScientistSpecimenSurvey" Incomplete="true" Id="3851" />
+        <Method Name="GetScientistDatacubeDiscoveryZone" Incomplete="true" Id="3852" />
+        <Method Name="GetScientistExperimentationInfo" Incomplete="true" Id="3853" />
+        <Method Name="AttemptScientistExperimentation" Incomplete="true" Id="3854" />
+        <Method Name="RefreshScientistExperimentation" Incomplete="true" Id="3855" />
+        <Method Name="GetExplorerHuntSprite" Incomplete="true" Id="3856" />
+        <Method Name="GetExplorerClueType" Incomplete="true" Id="3857" />
+        <Method Name="GetExplorerPowerMapReadyText" Incomplete="true" Id="3858" />
+        <Method Name="GetExplorerPowerMapInfo" Incomplete="true" Id="3859" />
+        <Method Name="IsExplorerPowerMapActive" Incomplete="true" Id="3860" />
+        <Method Name="IsExplorerPowerMapReady" Incomplete="true" Id="3861" />
+        <Method Name="ShowExplorerClueHintArrow" Incomplete="true" Id="3862" />
+        <Method Name="GetSettlerMayorInfo" Incomplete="true" Id="3863" />
+        <Method Name="GetSettlerSheriffInfo" Incomplete="true" Id="3864" />
+        <Method Name="GetSettlerScoutInfo" Incomplete="true" Id="3865" />
+        <Method Name="GetSettlerResourceRegions" Incomplete="true" Id="3866" />
+        <Method Name="GetSoldierHoldout" Incomplete="true" Id="3867" />
+        <Method Name="GetPosition" Incomplete="true" Id="3868" />
+        <Method Name="GetContributionValue" Incomplete="true" Id="3869" />
+        <Method Name="GetRemainingTime" Incomplete="true" Id="3870" />
+        <Method Name="IsInfiniteDuration" Incomplete="true" Id="3871" />
+        <Method Name="GetCurrentTier" Incomplete="true" Id="3872" />
+        <Method Name="GetAvenueType" Incomplete="true" Id="3873" />
+        <Method Name="GetImprovements" Incomplete="true" Id="3874" />
+        <Method Name="BuildTier" Incomplete="true" Id="3875" />
+        <Method Name="GetCost" Incomplete="true" Id="3876" />
+        <Method Name="IsBuilt" Incomplete="true" Id="3877" />
+        <Method Name="Build" Incomplete="true" Id="3878" />
+        <Method Name="GetEvent" Incomplete="true" Id="3879" />
+        <Method Name="GetImprovementType" Incomplete="true" Id="3880" />
+        <Method Name="IsBoss" Incomplete="true" Id="3881" />
+        <Method Name="GetState" Incomplete="true" Id="3882" />
+        <Method Name="GetElapsedTime" Incomplete="true" Id="3883" />
+        <Method Name="GetMaxTime" Incomplete="true" Id="3884" />
+        <Method Name="IsDefendType" Incomplete="true" Id="3885" />
+        <Method Name="IsTimedType" Incomplete="true" Id="3886" />
+        <Method Name="GetDefendHealth" Incomplete="true" Id="3887" />
+        <Method Name="GetAuxiliaryHealth" Incomplete="true" Id="3888" />
+        <Method Name="GetMaxDefendHealth" Incomplete="true" Id="3889" />
+        <Method Name="GetMaxAuxiliaryHealth" Incomplete="true" Id="3890" />
+        <Method Name="GetEscapingUnits" Incomplete="true" Id="3891" />
+        <Method Name="GetWaveCount" Incomplete="true" Id="3892" />
+        <Method Name="GetWavesReleased" Incomplete="true" Id="3893" />
+        <Method Name="GetDefendUnits" Incomplete="true" Id="3894" />
+        <Method Name="GetAuxiliaryUnits" Incomplete="true" Id="3895" />
+        <Method Name="GetBuildCredits" Incomplete="true" Id="3896" />
+        <Method Name="GetScanTime" Incomplete="true" Id="3897" />
+        <Method Name="GetMinCooldown" Incomplete="true" Id="3898" />
+        <Method Name="GetMaxCooldown" Incomplete="true" Id="3899" />
+        <Method Name="GetSocketCount" Incomplete="true" Id="3900" />
+        <Method Name="GetAOERange" Incomplete="true" Id="3901" />
+        <Method Name="GetMaxSeekDistance" Incomplete="true" Id="3902" />
+        <Method Name="GetSpeedMultiplier" Incomplete="true" Id="3903" />
+        <Method Name="GetScanMultiplier" Incomplete="true" Id="3904" />
+        <Method Name="GetHealthMultiplier" Incomplete="true" Id="3905" />
+    </Object>
+    <Object Name="PublicEvent" Incomplete="true" Id="2802">
+        <Method Name="GetMapRegions" Incomplete="true" Id="3906" />
+        <Method Name="GetTrackedUnits" Incomplete="true" Id="3907" />
+        <Method Name="GetLiveStats" Incomplete="true" Id="3908" />
+        <Method Name="HasLiveStats" Incomplete="true" Id="3909" />
+        <Method Name="GetMyStats" Incomplete="true" Id="3910" />
+        <Method Name="GetTrackedSpawns" Incomplete="true" Id="3911" />
+        <Method Name="GetEventType" Incomplete="true" Id="3912" />
+        <Method Name="GetParentEvent" Incomplete="true" Id="3913" />
+        <Method Name="GetRewardType" Incomplete="true" Id="3914" />
+        <Method Name="GetRewardThreshold" Incomplete="true" Id="3915" />
+        <Function Name="GetActiveVote" Incomplete="true" Id="3916" />
+        <Function Name="CastVote" Incomplete="true" Id="3917" />
+        <Function Name="CanVote" Incomplete="true" Id="3918" />
+    </Object>
+    <Object Name="PublicEventObjective" Incomplete="true" Id="2815">
+        <Method Name="GetNotificationMode" Incomplete="true" Id="3919" />
+        <Method Name="ShowHealthBar" Incomplete="true" Id="3920" />
+        <Method Name="GetOwningTeam" Incomplete="true" Id="3921" />
+        <Method Name="GetMapRegions" Incomplete="true" Id="3922" />
+        <Method Name="GetEvent" Incomplete="true" Id="3923" />
+        <Method Name="IsBusy" Incomplete="true" Id="3924" />
+        <Method Name="ShouldShowOnMinimap" Incomplete="true" Id="3925" />
+        <Method Name="GetTrackedUnits" Incomplete="true" Id="3926" />
+        <Method Name="IsHidden" Incomplete="true" Id="3927" />
+        <Method Name="GetCategory" Incomplete="true" Id="3928" />
+        <Method Name="ShouldShowRequiredCount" Incomplete="true" Id="3929" />
+        <Method Name="GetParentObjective" Incomplete="true" Id="3930" />
+        <Method Name="GetContestedAreaOwningTeam" Incomplete="true" Id="3931" />
+        <Method Name="GetContestedAreaRatio" Incomplete="true" Id="3932" />
+        <Method Name="GetVirtualDepotItems" Incomplete="true" Id="3933" />
+    </Object>
+    <Object Name="ScreenModelManager" Incomplete="true" Id="3072">
+        <Method Name="SetCameraFoVNearFar" Incomplete="true" Id="3934" />
+        <Method Name="SetMap" Incomplete="true" Id="3935" />
+        <Method Name="RemoveAllActors" Incomplete="true" Id="3936" />
+        <Method Name="SetMapTimeOfDay" Incomplete="true" Id="3937" />
+    </Object>
+    <Library Name="HousingLib" Incomplete="true" Id="3153">
+        <Function Name="JoinNeighborhood" Incomplete="true" Id="3938" />
+        <Function Name="LeaveNeighborhood" Incomplete="true" Id="3939" />
+        <Function Name="CreateGuildNeighborhood" Incomplete="true" Id="3940" />
+        <Function Name="GetCommunityPlotCount" Incomplete="true" Id="3941" />
+        <Function Name="GetNumPlacedInteriorDecor" Incomplete="true" Id="3942" />
+        <Function Name="GetMaxPlacedInteriorDecor" Incomplete="true" Id="3943" />
+        <Function Name="GetCommunityPlot" Incomplete="true" Id="3944" />
+        <Function Name="GetPlotContributions" Incomplete="true" Id="3945" />
+        <Function Name="GetPlotUpkeepContributions" Incomplete="true" Id="3946" />
+        <Function Name="GetPlugUpgradeList" Incomplete="true" Id="3947" />
+        <Function Name="GetDecorCrateListInterior" Incomplete="true" Id="3948" />
+        <Function Name="GetDecorCrateListExterior" Incomplete="true" Id="3949" />
+        <Function Name="GetNeighborhoodList" Incomplete="true" Id="3950" />
+        <Function Name="GetMyNeighborhoodList" Incomplete="true" Id="3951" />
+        <Function Name="AddItemToCrate" Incomplete="true" Id="3952" />
+        <Function Name="SetEditMode" Incomplete="true" Id="3953" />
+        <Function Name="UpdatePlotContributions" Incomplete="true" Id="3954" />
+        <Function Name="UpdatePlotUpkeep" Incomplete="true" Id="3955" />
+    </Library>
+    <Object Name="Challenges" Incomplete="true" Id="3226">
+        <Method Name="NeedsHintArrow" Incomplete="true" Id="3956" />
+        <Method Name="GetMapStartLocation" Incomplete="true" Id="3957" />
+        <Method Name="GetMapStartRegions" Incomplete="true" Id="3958" />
+        <Method Name="GetMapLocation" Incomplete="true" Id="3959" />
+        <Method Name="GetMapRegions" Incomplete="true" Id="3960" />
+    </Object>
+    <WindowControl Name="WorldFixedWindow" Incomplete="true" Id="3247">
+        <Method Name="GetUnit" Incomplete="true" Id="3961" />
+        <Method Name="IsOccluded" Incomplete="true" Id="3962" />
+    </WindowControl>
+    <Library Name="ActionSetLib" Incomplete="true" Id="3963" />
+    <Library Name="AttributeMilestonesLib" Incomplete="true" Id="3997" />
+    <Object Name="Achievement" Incomplete="true" Id="4015" />
+    <Object Name="HexGroups" Incomplete="true" Id="4043" />
+    <Object Name="MatchingGame" Incomplete="true" Id="4050" />
+    <Object Name="PathEpisode" Incomplete="true" Id="4109" />
+    <Object Name="SettlerImprovement" Incomplete="true" Id="4199" />
+    <Object Name="SoldierImprovement" Incomplete="true" Id="4289" />
+    <Object Name="SoldierEvent" Incomplete="true" Id="4379" />
+    <Object Name="ScientistScanBotProfile" Incomplete="true" Id="4469" />
+    <Object Name="QuestCategory" Incomplete="true" Id="4559" />
+    <Object Name="ApolloColor" Incomplete="true" Id="4564" />
+    <WindowControl Name="TickerWnd" Incomplete="true" Id="4571" />
+</Documentation>
