@@ -1,0 +1,4 @@
+<Addon Name="Cinematics" Version="1">
+    <Script Name="Cinematics.lua" />
+    <Form Name="Cinematics.xml" />
+</Addon>

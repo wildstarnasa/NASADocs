@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="" APIVersion="3" Name="GuildBank" Description="">
+    <Script Name="GuildBank.lua" />
+    <Form Name="GuildBank.xml" />
+</Addon>

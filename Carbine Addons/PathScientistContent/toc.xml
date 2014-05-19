@@ -1,0 +1,8 @@
+<Addon Name="PathScientistContent" Version="1">
+    <Script Name="PathScientistContent.lua" />
+    <Form Name="PathScientistExperimentation.xml" />
+    <Script Name="PathScientistExperimentation.lua" />
+    <Form Name="PathScientistContent.xml" />
+    <Script Name="PathScientistCustomize.lua" />
+    <Form Name="PathScientistCustomize.xml" />
+</Addon>

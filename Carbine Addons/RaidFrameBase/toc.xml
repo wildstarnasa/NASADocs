@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="Carbine" APIVersion="1" Name="RaidFrameBase" Description="">
+    <Form Name="RaidFrameBase.xml" />
+	<Script Name="RaidFrameBase.lua" />
+</Addon>

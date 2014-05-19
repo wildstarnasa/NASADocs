@@ -1,0 +1,4 @@
+<Addon Name="GuildContentRoster" APIVersion="1">
+    <Script Name="GuildRoster.lua" />
+    <Form Name="GuildRoster.xml" />
+</Addon>

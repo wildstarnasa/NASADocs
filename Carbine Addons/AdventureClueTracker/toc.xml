@@ -1,0 +1,4 @@
+<Addon Name="AdventureClueTracker" Version="1">
+    <Script Name="AdventureClueTracker.lua" />
+    <Form Name="AdventureClueTracker.xml" />
+</Addon>

@@ -1,0 +1,5 @@
+<Addon Name="TargetFrame" Version="1">
+    <Script Name="TargetFrame.lua" />
+    <Form Name="TargetFrame.xml" />
+    <Form Name="TargetRewardPanel.xml" />
+</Addon>

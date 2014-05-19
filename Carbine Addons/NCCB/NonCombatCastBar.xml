@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<Forms>
+    <Form Class="Window" Name="NonCombatCastBar" LAnchorPoint=".5" LAnchorOffset="-120" TAnchorPoint="1" TAnchorOffset="-210" RAnchorPoint=".5" RAnchorOffset="120" BAnchorPoint="1" BAnchorOffset="-172" Sprite="SpellChargeHuddie" Picture="1" Moveable="1">
+        <Control Class="ProgressBar" Name="CastingProgress" PosX="12" PosY="12" Width="217" Height="16" ProgressFull="SpellChargeFull" ProgressEdgeGlow="SpellChargeEdgeGlow" EdgeGlowOn="1" AutoSetText="0" DrawTicks="1" TickOn="ProgressBarTickOn" TickOff="ProgressBarTickOff" />
+        <Control Class="Window" Name="CastingProgressText" Font="Thick" DT_CENTER="1" PosX="12" PosY="12" Width="217" Height="16" />
+        <Control Class="Window" Name="Box1" PosX="0" PosY="0" Width="0" Height="38" Sprite="sprTapBlock" NoClip="1" Picture="1" />
+        <Control Class="Window" Name="Box2" PosX="0" PosY="0" Width="0" Height="38" Sprite="sprTapLayer" NoClip="1" Picture="1" />
+        <Control Class="Window" Name="Box3" PosX="0" PosY="0" Width="0" Height="38" Sprite="sprTapBlock" NoClip="1" Picture="1" />
+        <Control Class="Window" Name="Box4" PosX="0" PosY="0" Width="0" Height="38" Sprite="sprTapLayer" NoClip="1" Picture="1" />
+        <Control Class="Window" Name="Box5" PosX="0" PosY="0" Width="0" Height="38" Sprite="sprTapLayer" NoClip="1" Picture="1" />
+    </Form>
+    <Form Class="Window" Name="NonCombatTestMenu" LAnchorPoint=".29" LAnchorOffset="0" TAnchorPoint=".72" TAnchorOffset="0" RAnchorPoint=".29" RAnchorOffset="150" BAnchorPoint=".72" BAnchorOffset="60" Border="0" Picture="0" Sprite="GreyBevMiddle" BGColor="0xffffffff" SwallowMouseClicks="1" Escapable="1" Template="GreyBev" Moveable="1">
+        <Control Class="Button" Name="ChannelBtn" ButtonType="PushButton" Font="Default" TextColor="ffffb000" DT_VCENTER="1" DT_CENTER="1" Base="YellowButton" RelativeToClient="1" PosX="0" PosY="0" Width="100" Height="24" TextId="CRB_Channel">
+            <Event Name="ButtonSignal" Function="ActivateChannelButton" />
+        </Control>
+        <Control Class="Button" Name="DrainBtn" ButtonType="PushButton" Font="Default" TextColor="ffffb000" DT_VCENTER="1" DT_CENTER="1" Base="YellowButton" RelativeToClient="1" PosX="0" PosY="0" Width="100" Height="24" TextId="CRB_Drain">
+            <Event Name="ButtonSignal" Function="ActivateDrainButton" />
+        </Control>
+        <Control Class="Button" Name="TapBtn" ButtonType="PushButton" Font="Default" TextColor="ffffb000" DT_VCENTER="1" DT_CENTER="1" Base="YellowButton" RelativeToClient="1" PosX="0" PosY="0" Width="100" Height="24" TextId="CRB_Tap">
+            <Event Name="ButtonSignal" Function="ActivateTapBar" />
+        </Control>
+        <Control Class="Button" Name="LayeredTapBtn" ButtonType="PushButton" Font="Default" TextColor="ffffb000" DT_VCENTER="1" DT_CENTER="1" Base="YellowButton" RelativeToClient="1" PosX="0" PosY="0" Width="100" Height="24" TextId="CRB_Layered_Tap">
+            <Event Name="ButtonSignal" Function="ActivateLayeredTapBar" />
+        </Control>
+        <Control Class="Button" Name="HoldBtn" ButtonType="PushButton" Font="Default" TextColor="ffffb000" DT_VCENTER="1" DT_CENTER="1" Base="YellowButton" RelativeToClient="1" PosX="0" PosY="0" Width="100" Height="24" TextId="CRB_Hold">
+            <Event Name="ButtonDown" Function="PressHoldButton" />
+            <zzEvent Name="ButtonUp" Function="ReleaseHoldButton" />
+        </Control>
+        <Control Class="Button" Name="RapidBtn" ButtonType="PushButton" Font="Default" TextColor="ffffb000" DT_VCENTER="1" DT_CENTER="1" Base="YellowButton" RelativeToClient="1" PosX="0" PosY="0" Width="100" Height="24" TextId="CRB_Rapid">
+            <Event Name="ButtonDown" Function="PressRapidButton" />
+        </Control>
+    </Form>
+</Forms>

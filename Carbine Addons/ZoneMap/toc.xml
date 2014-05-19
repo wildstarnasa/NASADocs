@@ -1,0 +1,4 @@
+<Addon Name="ZoneMap" Version="1">
+  <Form Name="ZoneMapForms.xml"/>
+  <Script Name="ZoneMap.lua"/>
+</Addon>

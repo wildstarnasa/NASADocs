@@ -1,0 +1,4 @@
+<Addon Name="Nameplates" Version="1">
+    <Script Name="Nameplates.lua" />
+    <Form Name="Nameplates.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Author="Carbine" APIVersion="3" Name="ActionBarFrame" Description="">
+    <Script Name="ActionBarFrame.lua" />
+    <Form Name="ActionBarFrame.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="AbilityVendor"  Version="1">
+    <Script Name="AbilityVendor.lua" />
+    <Form Name="AbilityVendor.xml" />
+</Addon>

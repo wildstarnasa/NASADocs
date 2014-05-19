@@ -1,0 +1,4 @@
+<Addon Name="Util" Version="1">
+  <Script Name="Util.lua"/>
+  <Script Name="ItemWindowSubclass.lua"/>
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="GuildDesigner" APIVersion="2">
+    <Script Name="GuildDesigner.lua" />
+    <Form Name="GuildDesigner.xml" />
+</Addon>

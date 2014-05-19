@@ -1,0 +1,4 @@
+<Addon Name="Achievements" APIVersion="2">
+    <Script Name="Achievements.lua" />
+    <Form Name="Achievements.xml" />
+</Addon>

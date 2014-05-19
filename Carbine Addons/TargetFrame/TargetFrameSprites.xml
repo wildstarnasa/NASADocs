@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="TargetFrame_Base" Cycle="1">
+        <Frame Texture="UI_bTargetPortraitBaseTexture.tga" Left="0" Top="0" Width="250" Height="91" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+	
+	<Sprite Name="TargetFrame_ResourceTint" Cycle="1">
+        <Frame Texture="UI_aTargetPortraitBluebar.tga" Left="0" Top="0" Width="136" Height="15" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+	
+	<Sprite Name="TargetFrame_HealthTint" Cycle="1">
+        <Frame Texture="UI_aTargetPortraitRedbar.tga" Left="0" Top="0" Width="136" Height="15" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+	
+	<Sprite Name="TargetFrame_PortraitMask" Cycle="1">
+        <Frame Texture="UI_aTargetPortraitRedbar.tga" Left="0" Top="0" Width="84" Height="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+	
+	<Sprite Name="TargetFrame_WhiteLine" Cycle="1">
+        <Frame Texture="UI_cTargetPortraitWhiteLine.tga" Left="0" Top="0" Width="18" Height="21" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+	
+	<Sprite Name="TargetFrame_ClassFrame" Cycle="1">
+        <Frame Texture="UI_cTargetPortraitClassCircle.tga" Left="0" Top="0" Width="47" Height="45" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

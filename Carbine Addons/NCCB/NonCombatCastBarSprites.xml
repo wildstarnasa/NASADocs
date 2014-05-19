@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprTapBlock" Cycle="1">
+        <Frame Texture="UI_GrayBorder.tga" Left="0" Top="0" Width="202" Height="35" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+	<Sprite Name="sprTapLayer" Cycle="1">
+        <Frame Texture="UI_GreenBorder.tga" Left="0" Top="0" Width="202" Height="35" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

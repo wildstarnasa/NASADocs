@@ -1,0 +1,4 @@
+<Addon APIVersion="3" Name="RecallFrame">
+    <Script Name="RecallFrame.lua" />
+    <Form Name="RecallFrame.xml" />
+</Addon>

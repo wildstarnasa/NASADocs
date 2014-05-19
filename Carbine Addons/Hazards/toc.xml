@@ -1,0 +1,4 @@
+<Addon Name="Hazards" Version="3">
+    <Script Name="hazards.lua" />
+	<Form Name="Hazards.xml" />
+</Addon>

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="Medic_BarFill" Cycle="1">
+        <Frame Texture="UI\Medic\UI_MedicThirdResource.tga" x0="34" x1="34" x2="105" x3="105" x4="105" x5="105" y0="44" y1="44" y2="113" y3="113" y4="113" y5="113" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Medic_AmmoBar" Cycle="1">
+        <Frame Texture="UI\Medic\UI_MedicThirdResource.tga"  Left="0" Top="152" Width="246" Height="23" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Medic_Counter" Cycle="1">
+        <Frame Texture="UI\Medic\UI_MedicThirdResource.tga" x0="125" x1="125" x2="125" x3="246" x4="246" x5="246" y0="79" y1="79" y2="79" y3="136" y4="136" y5="136" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Medic_DefaultIcon" Cycle="1">
+        <Frame Texture="UI\Medic\UI_MedicThirdResource.tga" x0="175" x1="175" x2="175" x3="197" x4="197" x5="197" y0="28" y1="28" y2="28" y3="54" y4="54" y5="54" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Medic_CellBase" Cycle="1">
+        <Frame Texture="UI\Medic\UI_MedicThirdResource.tga" x0="26" x1="26" x2="26" x3="116" x4="116" x5="116" y0="120" y1="120" y2="120" y3="136" y4="136" y5="136" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Medic_CellTop" Cycle="1">
+        <Frame Texture="UI\Medic\UI_MedicThirdResource.tga" x0="30" x1="30" x2="30" x3="107" x4="107" x5="107" y0="0" y1="0" y2="0" y3="32" y4="32" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

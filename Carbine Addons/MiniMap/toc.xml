@@ -1,0 +1,4 @@
+<Addon Name="MiniMap" Version="1">
+    <Script Name="MiniMap.lua" />
+    <Form Name="MiniMap.xml" />
+</Addon>

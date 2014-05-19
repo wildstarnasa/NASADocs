@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon APIVersion="3" Name="InstanceSettings" Description="" Version="">
+    <Script Name="InstanceSettings.lua" />
+    <Form Name="InstanceSettings.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="MatchMaker" APIVersion="1">
+    <Script Name="MatchMaker.lua"/>
+    <Form Name="MatchMaker.xml"/>
+</Addon>

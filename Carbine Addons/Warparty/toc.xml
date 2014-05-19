@@ -1,0 +1,8 @@
+<Addon Name="Warparty" APIVersion="2">
+    <Script Name="Warparty.lua"/>
+    <Form Name="Warparty.xml"/>
+    <Script Name="WarpartyRegister.lua"/>
+    <Form Name="WarpartyRegister.xml"/>
+    <Script Name="WarpartyBattle.lua"/>
+    <Form Name="WarpartyBattle.xml"/>
+</Addon>

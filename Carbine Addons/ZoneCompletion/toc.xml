@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="Josh Thomas" APIVersion="3" Name="ZoneCompletion" Description="Zone and World Completion UI">
+    <Script Name="ZoneCompletion.lua" />
+    <Form Name="ZoneCompletion.xml" />
+</Addon>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="Carbine" APIVersion="3" Name="Runecrafting" Description="">
+    <Script Name="Runecrafting.lua"/>
+    <Form Name="Runecrafting.xml"/>
+</Addon>

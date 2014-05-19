@@ -1,0 +1,4 @@
+<Addon Name="MatchTracker" APIVersion="2">
+    <Script Name="MatchTracker.lua" />
+    <Form Name="MatchTracker.xml" />
+</Addon>

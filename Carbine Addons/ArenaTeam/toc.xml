@@ -1,0 +1,6 @@
+<Addon Name="ArenaTeam" APIVersion="2">
+    <Script Name="ArenaTeam.lua" />
+    <Form Name="ArenaTeam.xml" />
+    <Script Name="ArenaTeamRegister.lua" />
+    <Form Name="ArenaTeamRegister.xml" />	
+</Addon>

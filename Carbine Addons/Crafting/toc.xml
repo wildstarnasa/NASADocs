@@ -1,0 +1,5 @@
+<Addon Name="Crafting" Version="1">
+    <Script Name="Crafting.lua" />
+    <Script Name="CircuitBoardSchematic.lua" />
+    <Form Name="Crafting.xml" />
+</Addon>

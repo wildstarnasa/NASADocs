@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<Forms>
+    <!-- This window complex acts as a container for the portrait forms.  The lua script hooks them up. -->
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="0" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ErrorMessage" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="7f000000" TextColor="ffffffff" TooltipColor="" Tooltip="" Sprite="WhiteFill" NewWindowDepth="1" Visible="1">
+        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-400" TAnchorPoint=".5" TAnchorOffset="-200" RAnchorPoint=".5" RAnchorOffset="400" BAnchorPoint=".5" BAnchorOffset="200" RelativeToClient="1" Font="CRB_HeaderGigantic_O" Text="" Template="Default" TooltipType="OnCursor" Name="ErrorMessageText" BGColor="ffffffff" TextColor="AddonWarning" TooltipColor="" DT_VCENTER="1" DT_CENTER="1" TextId="" DT_WORDBREAK="1" Sprite=""/>
+    </Form>
+</Forms>

@@ -1,0 +1,4 @@
+<Addon Name="PlayerPath" Version="1">
+    <Script Name="PlayerPath.lua" />
+    <Form Name="PlayerPath.xml" />
+</Addon>

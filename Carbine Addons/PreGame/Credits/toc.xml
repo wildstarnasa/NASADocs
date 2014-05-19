@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Bitwise" APIVersion="7" Name="Credits" Description="">
+    <Script Name="Credits.lua"/>
+    <Form Name="Credits.xml"/>
+</Addon>

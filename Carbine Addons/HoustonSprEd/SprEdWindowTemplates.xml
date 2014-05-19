@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<WindowTemplates>
+    <WindowTemplate Name="SpredDefault" SingleBorderFrame="UI_BK3_Holo_InsetFramed" UseMargins="1" TopMargin="4" LeftMargin="4" RightMargin="4" BottomMargin="4" ResizeNS="UI\Cursors\resizeNS.dds" ResizeEW="UI\Cursors\resizeEW.dds" ResizeNESW="UI\Cursors\resizeNESW.dds" ResizeNWSE="UI\Cursors\resizeNWSE.dds">
+        <HScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_RightSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_LeftSmall"/>
+            <Thumb Normal="DefaultHScrollThumb" Pressed="DefaultHScrollThumbPressed" Flyby="DefaultHScrollThumb" PressedFlyby="DefaultHScrollThumbPressed" Auto="CRB_Basekit:kitBtn_ScrollHolo_HorzBarSmall"/>
+        </HScroll>
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpSmall"/>
+        </VScroll>
+        <BlankButton Auto="CRB_DatachronSprites:btnDCM_DataMenu"/>
+        <CheckButton Auto="BK3:btnHolo_Check"/>
+        <RadioButton Auto="BK3:btnHolo_Radio_Small"/>
+    </WindowTemplate>
+    <WindowTemplate Name="SpredControl" SingleBorderFrame="Spred_Holo_Snippet" UseMargins="1" TopMargin="2" LeftMargin="2" RightMargin="2" BottomMargin="2" ResizeNS="UI\Cursors\resizeNS.dds" ResizeEW="UI\Cursors\resizeEW.dds" ResizeNESW="UI\Cursors\resizeNESW.dds" ResizeNWSE="UI\Cursors\resizeNWSE.dds">
+        <HScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_RightSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_LeftSmall"/>
+            <Thumb Normal="DefaultHScrollThumb" Pressed="DefaultHScrollThumbPressed" Flyby="DefaultHScrollThumb" PressedFlyby="DefaultHScrollThumbPressed" Auto="CRB_Basekit:kitBtn_ScrollHolo_HorzBarSmall"/>
+        </HScroll>
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpSmall"/>
+        </VScroll>
+        <BlankButton Auto="CRB_DatachronSprites:btnDCM_DataMenu"/>
+        <CheckButton Auto="BK3:btnHolo_Check"/>
+        <RadioButton Auto="BK3:btnHolo_Radio_Small"/>
+    </WindowTemplate>
+</WindowTemplates>

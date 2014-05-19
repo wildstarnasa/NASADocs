@@ -1,0 +1,6 @@
+<Addon Name="PathSoldierContent" Version="1">
+  <Form Name="PathSoldierMain.xml"/>
+  <Script Name="PathSoldierMain.lua"/>
+  <Form Name="PathSoldierMissions.xml"/>
+  <Script Name="PathSoldierMissions.lua"/>
+</Addon>

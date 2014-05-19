@@ -1,0 +1,4 @@
+<Addon Name="ToolTips" Version="1">
+    <Script Name="ToolTips.lua"/>
+    <Form Name="TooltipsForms.xml"/>
+</Addon>

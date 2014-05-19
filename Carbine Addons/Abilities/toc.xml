@@ -1,0 +1,4 @@
+<Addon Name="Abilities" Version="1">
+    <Script Name="AbilitiesBuilder.lua" />
+    <Form Name="AbilitiesBuilder.xml" />
+</Addon>

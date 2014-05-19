@@ -1,0 +1,4 @@
+<Addon Name="Character" Version="1">
+  <Script Name="Character.lua"/>
+  <Form Name="Character.xml"/>
+</Addon>

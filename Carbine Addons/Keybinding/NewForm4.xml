@@ -1,0 +1,8 @@
+<Forms>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="0" RAnchorOffset="843" BAnchorPoint="0" BAnchorOffset="581" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="Form1" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff">
+        <Control Class="Button" Base="" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="200" TAnchorPoint="0" TAnchorOffset="189" RAnchorPoint="0" RAnchorOffset="616" BAnchorPoint="0" BAnchorOffset="411" DT_VCENTER="1" DT_CENTER="1" Name="Button1" BGColor="ffffffff" TextColor="ffffffff">
+            <Event Name="ButtonSignal" Function="YourFunctionName" />
+        </Control>
+    </Form>
+    <SpriteFile Name="..\NewModule\NewForm3.xml" />
+</Forms>

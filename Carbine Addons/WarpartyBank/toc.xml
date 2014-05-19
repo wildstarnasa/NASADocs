@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Carbine" APIVersion="3" Name="WarpartyBank" Description="">
+    <Script Name="WarpartyBank.lua"/>
+    <Form Name="WarpartyBank.xml"/>
+</Addon>

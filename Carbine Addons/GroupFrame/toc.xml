@@ -1,0 +1,6 @@
+<Addon Name="GroupDisplay" Version="1">
+  <Script Name="GroupDisplay.lua"/>
+  <Form Name="GroupDisplay.xml"/>
+  <Script Name="GroupDisplayOptions.lua"/>
+  <Form Name="GroupDisplayOptions.xml"/>
+</Addon>

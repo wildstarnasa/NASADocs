@@ -1,0 +1,4 @@
+<Addon Name="CSI" APIVersion="2">
+    <Script Name="CSI.lua" />
+    <Form Name="CSI.xml" />
+</Addon>

@@ -1,0 +1,6 @@
+<Addon Name="HUDAlerts" Version="1">
+    <Script Name="HUDAlerts.lua" />
+    <Form Name="HUDAlerts.xml" />
+    <Script Name="HUDInteract.lua" />
+    <Form Name="HUDInteract.xml" />
+</Addon>

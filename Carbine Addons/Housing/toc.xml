@@ -1,0 +1,26 @@
+<Addon Name="Housing" Version="1">
+    <Script Name="HousingDecorate.lua" />
+    <FormXMLFile Name="HousingDecorate.xml" />
+    <Script Name="HousingRemodel.lua" />
+    <FormXMLFile Name="HousingRemodel.xml" />
+    <Script Name="HousingLandscape.lua" />
+    <FormXMLFile Name="HousingLandscape.xml" />
+    <Script Name="HousingList.lua" />
+    <FormXMLFile Name="HousingList.xml" />
+    <Script Name="DecorPreview.lua" />
+    <FormXMLFile Name="DecorPreview.xml" />    
+	<Script Name="PlugPreview.lua" />
+    <FormXMLFile Name="PlugPreview.xml" />
+	<Script Name="Mannequin.lua" />
+    <FormXMLFile Name="Mannequin.xml" />
+    <Script Name="HousingDatachron.lua" />
+    <FormXMLFile Name="HousingDatachron.xml" />
+    <Form Name="HousingDecorate.xml" />
+    <Form Name="HousingRemodel.xml" />
+    <Form Name="HousingLandscape.xml" />
+    <Form Name="HousingList.xml" />
+    <Form Name="DecorPreview.xml" />
+    <Form Name="PlugPreview.xml" />
+    <Form Name="Mannequin.xml" />
+    <Form Name="HousingDatachron.xml" />
+</Addon>

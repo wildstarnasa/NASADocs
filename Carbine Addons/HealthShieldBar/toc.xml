@@ -1,0 +1,4 @@
+<Addon Name="HealthShieldBar" Version="1">
+    <Script Name="HealthShieldBar.lua" />
+    <Form Name="HealthShieldBar.xml" />
+</Addon>

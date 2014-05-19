@@ -1,0 +1,4 @@
+<Addon Name="LootNotificationWindow" Version="1">
+    <Script Name="LootStack.lua" />
+    <Form Name="LootStack.xml" />
+</Addon>

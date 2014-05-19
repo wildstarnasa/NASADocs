@@ -1,0 +1,6 @@
+<Addon Name="GuildRegistration" APIVersion="2">
+    <Script Name="GuildRegistration.lua" />
+    <Form Name="GuildRegistration.xml" />
+	<Script Name="CircleRegistration.lua" />
+    <Form Name="CircleRegistration.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="AdventureWhitevale" Version="1" APIVersion="2">
+    <Script Name="AdventureWhitevale.lua" />
+    <Form Name="WhitevaleAdventure.xml" />
+</Addon>

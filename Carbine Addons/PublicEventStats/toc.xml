@@ -1,0 +1,4 @@
+<Addon Name="PublicEventStats" Author="" APIVersion="2">
+    <Script Name="PublicEventStats.lua" />
+    <Form Name="PublicEventStats.xml" />
+</Addon>

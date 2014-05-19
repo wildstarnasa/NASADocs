@@ -1,0 +1,4 @@
+<Addon Name="Circles" APIVersion="1">
+    <Script Name="CirclesMain.lua" />
+    <Form Name="CirclesMain.xml" />
+</Addon>

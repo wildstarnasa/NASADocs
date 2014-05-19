@@ -1,0 +1,4 @@
+<Addon Name="ErrorDialog" Version="1">
+    <Script Name="ErrorDialog.lua" />
+    <Form Name="ErrorDialog.xml" />
+</Addon>

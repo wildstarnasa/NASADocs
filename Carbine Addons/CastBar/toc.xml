@@ -1,0 +1,4 @@
+<Addon Name="CastBar" Version="1">
+    <Script Name="CastBar.lua" />
+    <Form Name="CastBar.xml" />
+</Addon>

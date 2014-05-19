@@ -1,0 +1,4 @@
+<Addon Name="ProgressLog" Version="1">
+    <Script Name="ProgressLog.lua" />
+    <Form Name="ProgressLog.xml" />
+</Addon>

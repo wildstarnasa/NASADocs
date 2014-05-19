@@ -1,0 +1,4 @@
+<Addon Name="CharacterSelection" Version="1" FrontEndScreen="1">
+  <Script Name="CharacterSelect.lua"/>
+  <Form Name="CharacterSelection.xml" /> 
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="Guild" APIVersion="1">
+    <Script Name="GuildMain.lua" />
+    <Form Name="GuildMain.xml" />
+</Addon>

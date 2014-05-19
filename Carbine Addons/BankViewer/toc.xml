@@ -1,0 +1,4 @@
+<Addon Author="" APIVersion="3" Name="BankViewer" Description="">
+    <Script Name="BankViewer.lua" />
+    <Form Name="BankViewer.xml" />
+</Addon>

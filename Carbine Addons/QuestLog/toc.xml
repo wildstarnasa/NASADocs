@@ -1,0 +1,4 @@
+<Addon Name="QuestLog" Author="" APIVersion="2">
+    <Script Name="QuestLog.lua" />
+    <Form Name="QuestLog.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="AdventureMalgrave" Version="1">
+    <Script Name="AdventureMalgrave.lua" />
+    <Form Name="AdventureMalgrave.xml" />
+</Addon>

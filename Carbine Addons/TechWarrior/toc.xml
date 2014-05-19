@@ -1,0 +1,4 @@
+<Addon Name="WarriorResource" Version="1">
+    <Script Name="WarriorResource.lua" />
+    <Form Name="WarriorResource.xml" />
+</Addon>
