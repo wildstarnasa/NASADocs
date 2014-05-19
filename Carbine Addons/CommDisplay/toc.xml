@@ -1,0 +1,4 @@
+<Addon Name="CommDisplay" Version="1">
+    <Script Name="CommDisplay.lua" />
+    <Form Name="CommDisplay.xml" />
+</Addon>

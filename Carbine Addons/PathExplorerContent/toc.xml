@@ -1,0 +1,6 @@
+<Addon Name="PathExplorerContent" Version="1">
+    <Script Name="PathExplorerMain.lua" />
+    <Script Name="PathExplorerMissions.lua" />
+    <Form Name="PathExplorerMain.xml" />
+    <Form Name="PathExplorerMissions.xml" />
+</Addon>

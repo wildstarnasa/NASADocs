@@ -1,0 +1,4 @@
+<Addon Name="Medic" APIVersion="2">
+    <Script Name="Medic.lua" />
+    <Form Name="Medic.xml" />
+</Addon>

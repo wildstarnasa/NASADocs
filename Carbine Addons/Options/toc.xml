@@ -1,0 +1,4 @@
+<Addon Name="Options" Version="1" OptionsScreen="1">
+    <Script Name="Options.lua" />
+    <Form Name="OptionsForms.xml" />
+</Addon>

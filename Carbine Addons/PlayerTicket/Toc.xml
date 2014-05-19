@@ -1,0 +1,4 @@
+<Addon Name="PlayerTicket" Version="1">
+    <Script Name="PlayerTicket.lua" />
+    <Form Name="PlayerTicket.xml" />
+</Addon>

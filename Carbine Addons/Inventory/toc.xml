@@ -1,0 +1,8 @@
+<Addon Name="Inventory" Version="1">
+    <Script Name="InventoryBag.lua" />
+    <Script Name="ItemPreview.lua" />
+    <Script Name="ImprovedSalvage.lua" />
+    <Form Name="InventoryBag.xml" />
+    <Form Name="ItemPreview.xml" />
+    <Form Name="ImprovedSalvage.xml" />
+</Addon>

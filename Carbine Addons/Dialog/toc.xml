@@ -1,0 +1,4 @@
+<Addon Name="Dialog" Version="1">
+    <Script Name="Dialog.lua" />
+    <Form Name="Dialog.xml" />
+</Addon>

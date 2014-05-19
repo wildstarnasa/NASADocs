@@ -1,0 +1,4 @@
+<Addon Name="QuestTracker" Version="1">
+    <Script Name="QuestTracker.lua" />
+    <Form Name="QuestTracker.xml" />
+</Addon>

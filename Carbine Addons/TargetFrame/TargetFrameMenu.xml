@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<Menus>
+	<Menu Name="TargetPopupPlayer" Template="OldMetalControl" Font="CRB_InterfaceLarge">
+		<MenuItem TextId="CRB_Invite_To_Group" Id="InviteToGroup"/>
+		<MenuItem TextId="CRB_Invite_To_Trade" Id="InviteToTrade"/>
+		<MenuItem TextId="ChatType_Tell" Id="Whisper"/>
+		<MenuItem TextId="CRB_Duel" Id="Duel"/>
+	</Menu>
+	
+</Menus>

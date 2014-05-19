@@ -1,0 +1,4 @@
+<Addon Name="CombatLog" Version="1">
+   <Script Name="CombatLog.lua"/>
+   <Form Name="CombatLog.xml" /> 
+</Addon>

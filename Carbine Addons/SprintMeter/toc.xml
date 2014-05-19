@@ -1,0 +1,4 @@
+<Addon Author="Carbine" Name="SprintMeter" APIVersion="3" Version="1">
+  <Script Name="SprintMeter.lua"/>
+  <Form Name="SprintMeter.xml"/>
+</Addon>

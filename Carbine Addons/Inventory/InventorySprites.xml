@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="spr_basetexture" Cycle="1">
+        <Frame Texture="UI\Textures\UI_PlayerBagIcon.tga" x0="0" x1="33" x2="36" x3="211" x4="215" x5="255" y0="81" y1="210" y2="218" y3="342" y4="349" y5="431" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <AutoButton Name="btn_lootIcon" Texture="UI\Textures\UI_PlayerBagIcon.tga" x0="0" x1="79" x2="79" x3="79" x4="79" x5="79" y0="0" y1="79" y2="79" y3="79" y4="79" y5="79" StateBits="31" Direction="Across" />
+    <Sprite Name="spr_flashiconopen" Cycle="1">
+        <Frame Texture="UI\Textures\UI_PlayerBagIcon.tga" x0="158" x1="158" x2="237" x3="237" x4="237" x5="237" y0="0" y1="0" y2="79" y3="79" y4="79" y5="79" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff" />
+        <Frame Texture="UI\Textures\UI_PlayerBagIcon.tga" x0="158" x1="158" x2="237" x3="237" x4="237" x5="237" y0="0" y1="0" y2="79" y3="79" y4="79" y5="79" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

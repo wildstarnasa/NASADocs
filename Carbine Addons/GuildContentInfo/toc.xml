@@ -1,0 +1,4 @@
+<Addon Name="GuildContentInfo" APIVersion="1">
+    <Script Name="GuildInfo.lua" />
+    <Form Name="GuildInfo.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="Datachron" Version="1">
+    <Script Name="Datachron.lua" />
+    <Form Name="Datachron.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="Warplots" Version="1">
+    <Script Name="Warplots.lua"/>
+    <Form Name="Warplots.xml"/>
+</Addon>

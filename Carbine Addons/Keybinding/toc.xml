@@ -1,0 +1,4 @@
+<Addon Name="Keybind" Version="1" APIVersion="2">
+    <Script Name="Keybind.lua" />
+    <Form Name="KeybindingForms.xml" />
+</Addon>

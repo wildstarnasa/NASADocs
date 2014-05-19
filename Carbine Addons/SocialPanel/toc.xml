@@ -1,0 +1,4 @@
+<Addon Name="SocialPanel" Author="" APIVersion="2">
+    <Script Name="SocialPanel.lua" />
+    <Form Name="SocialPanel.xml" />
+</Addon>

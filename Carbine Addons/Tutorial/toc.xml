@@ -1,0 +1,6 @@
+<Addon Name="Tutorial" Version="1">
+    <Script Name="TutorialMenu.lua" />
+    <Form Name="TutorialMenu.xml" />    
+	<Script Name="TutorialPrompts.lua" />
+    <Form Name="TutorialPrompts.xml" />
+</Addon>

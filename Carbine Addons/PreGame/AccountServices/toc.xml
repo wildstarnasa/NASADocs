@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Carbine" APIVersion="8" Name="AccountServices" Description="">
+    <Script Name="AccountServices.lua"/>
+    <Form Name="AccountServices.xml"/>
+</Addon>

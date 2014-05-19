@@ -1,0 +1,4 @@
+<Addon Name="CrowdControlGameplay" APIVersion="2">
+    <Script Name="CrowdControlGameplay.lua" />
+    <Form Name="CrowdControlGameplay.xml" />
+</Addon>

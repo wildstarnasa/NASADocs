@@ -1,0 +1,4 @@
+<Addon Name="Macros" Version="1">
+    <Script Name="Macros.lua" />
+    <Form Name="Macros.xml" />
+</Addon>

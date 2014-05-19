@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="" APIVersion="3" Name="LoreWindow" Description="">
+    <Script Name="LoreWindow.lua" />
+    <Form Name="LoreWindow.xml" />
+</Addon>

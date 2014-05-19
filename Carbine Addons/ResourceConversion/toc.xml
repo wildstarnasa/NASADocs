@@ -1,0 +1,4 @@
+<Addon Name="ResourceConversion" Version="1" >
+    <Script Name="ResourceConversion.lua" />
+    <Form Name="ResourceConversion.xml" />
+</Addon>

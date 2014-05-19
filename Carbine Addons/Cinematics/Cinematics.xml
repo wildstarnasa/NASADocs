@@ -1,0 +1,11 @@
+<Forms>
+    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-201" TAnchorPoint=".5" TAnchorOffset="-80" RAnchorPoint=".5" RAnchorOffset="199" BAnchorPoint=".5" BAnchorOffset="18" RelativeToClient="1" Font="Default" Text="" Template="CRB_NormalFramedThin" Name="CinematicsWindow" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" UseTemplateBG="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="38" RelativeToClient="1" Font="Default" Template="CRB_InnerWindow" Name="Message" BGColor="ffffffff" TextColor="ffffffff" Border="1" UseTemplateBG="1" DT_WORDBREAK="1" DT_VCENTER="1" DT_CENTER="1" TextId="CRB_There_is_a_cinematic_available" />
+        <Control Class="Button" Base="" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-150" TAnchorPoint="1" TAnchorOffset="-42" RAnchorPoint=".5" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="-12" DT_VCENTER="1" DT_CENTER="1" Name="Play" BGColor="ffffffff" TextColor="ffffffff" TextId="CRB_Play" RelativeToClient="1">
+            <Event Name="ButtonSignal" Function="OnPlay" />
+        </Control>
+        <Control Class="Button" Base="" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="10" TAnchorPoint="1" TAnchorOffset="-42" RAnchorPoint=".5" RAnchorOffset="150" BAnchorPoint="1" BAnchorOffset="-12" DT_VCENTER="1" DT_CENTER="1" Name="Cancel" BGColor="ffffffff" TextColor="ffffffff" TextId="CRB_Cancel" RelativeToClient="1">
+            <Event Name="ButtonSignal" Function="OnCancel" />
+        </Control>
+    </Form>
+</Forms>

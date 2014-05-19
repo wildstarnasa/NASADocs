@@ -1,0 +1,4 @@
+<Addon Name="NeedVsGreed" Author="" APIVersion="2">
+    <Script Name="NeedVsGreed.lua" />
+    <Form Name="NeedVsGreed.xml" />
+</Addon>

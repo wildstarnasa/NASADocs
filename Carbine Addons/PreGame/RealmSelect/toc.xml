@@ -1,0 +1,4 @@
+<Addon Name="RealmSelect" Version="1" FrontEndScreen="1">
+    <Script Name="RealmSelect.lua" />
+    <Form Name="RealmSelect.xml" />
+</Addon>

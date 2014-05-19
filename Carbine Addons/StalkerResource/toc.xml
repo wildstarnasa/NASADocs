@@ -1,0 +1,4 @@
+<Addon Name="StalkerResource" Version="1">
+    <Script Name="StalkerResource.lua" />
+    <Form Name="StalkerResource.xml" />
+</Addon>

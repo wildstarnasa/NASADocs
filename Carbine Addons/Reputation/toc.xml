@@ -1,0 +1,4 @@
+<Addon Name="Reputation" APIVersion="1">
+    <Script Name="Reputation.lua" />
+    <Form Name="Reputation.xml" />
+</Addon>

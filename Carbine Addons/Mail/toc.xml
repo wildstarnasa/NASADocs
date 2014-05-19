@@ -1,0 +1,4 @@
+<Addon Name="Mail" Version="1">
+    <Script Name="Mail.lua"/>
+    <Form Name="MailForms.xml"/>
+</Addon>

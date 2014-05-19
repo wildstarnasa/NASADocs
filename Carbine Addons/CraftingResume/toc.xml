@@ -1,0 +1,4 @@
+<Addon Name="CraftingResume" Version="1">
+    <Script Name="CraftingResume.lua" />
+    <Form Name="CraftingResume.xml" />
+</Addon>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="Doug Koup" APIVersion="3" Name="Stuck" Description="The interface for /stuck.">
+    <Script Name="Stuck.lua"/>
+    <Form Name="Stuck.xml"/>
+</Addon>

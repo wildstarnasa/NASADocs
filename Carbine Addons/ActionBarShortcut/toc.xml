@@ -1,0 +1,4 @@
+<Addon Name="ActionBarShortcut" Version="1">
+    <Script Name="ActionBarShortcut.lua" />
+    <Form Name="ActionBarShortcut.xml" />
+</Addon>

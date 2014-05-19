@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<Menus>
+  <!-- forms go here -->
+  <!-- form -->
+  <Menu Name="SprEd">
+    <MenuItem Text="File">
+      <MenuItem Text="New" Id="File.New"/>
+      <MenuItem Text="Open" Id="File.Open"/>
+      <MenuItem Text="Save" Id="File.Save"/>
+      <MenuItem Text="Save As" Id="File.SaveAs"/>
+      <MenuItem Text="Exit" Id="File.Exit"/>
+    </MenuItem>
+    <MenuItem Text="Sprite">
+      <MenuItem Text="Browser" Id="Sprite.Browser"/>
+      <MenuItem Text="Add Sprite" Id="Sprite.AddSprite"/>
+      <MenuItem Text="Add Button" Id="Sprite.AddButton"/>
+      <MenuItem Text="Add Composite" Id="Sprite.AddComposite"/>
+      <MenuItem Text="Add Icon Button" Id="Sprite.AddIconButton"/>
+      <MenuItem Text="Add Folder" Id="Sprite.AddFolder"/>
+      <MenuItem Text="Edit" Id="Sprite.Edit"/>
+      <MenuItem Text="Delete" Id="Sprite.Delete"/>
+    </MenuItem>
+  </Menu>
+</Menus>

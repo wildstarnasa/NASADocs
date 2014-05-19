@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="jjustice" APIVersion="3" Name="LevelUpUnlocks" Description="Temp slash-command UI for testing Level Up Unlock system">
+    <Script Name="LevelUpUnlocks.lua" />
+    <Form Name="LevelUpUnlocks.xml" />
+</Addon>

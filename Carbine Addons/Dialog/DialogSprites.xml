@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="Icon_QuestIncomplete" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_OptionIcons_Updated.tga" x0="70" x1="70" x2="104" x3="104" x4="104" x5="104" y0="0" y1="0" y2="40" y3="40" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Icon_QuestComplete" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_OptionIcons_Updated.tga" x0="0" x1="0" x2="34" x3="34" x4="34" x5="34" y0="0" y1="0" y2="40" y3="40" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Icon_Goodbye" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_OptionIcons_Updated.tga" x0="105" x1="105" x2="139" x3="139" x4="139" x5="139" y0="0" y1="0" y2="40" y3="40" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Icon_QuestRepeat" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_QuestingOptions_Buttons.tga" x0="174" x1="174" x2="232" x3="232" x4="232" x5="232" y0="198" y1="198" y2="256" y3="256" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Icon_QuestNewEpisode" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_OptionIcons_Updated.tga" x0="140" x1="140" x2="174" x3="174" x4="174" x5="174" y0="0" y1="0" y2="40" y3="40" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Icon_QuestContinueEpisode" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_OptionIcons_Updated.tga" x0="35" x1="35" x2="69" x3="69" x4="69" x5="69" y0="0" y1="0" y2="40" y3="40" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="Icon_Vendor" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_QuestingOptions_Buttons.tga" x0="348" x1="348" x2="406" x3="406" x4="406" x5="406" y0="198" y1="198" y2="256" y3="256" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="NPCDialogBkgdRight" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_NPCBubble.tga" x0="0" x1="50" x2="165" x3="165" x4="165" x5="228" y0="0" y1="31" y2="92" y3="92" y4="92" y5="144" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="NPCDialogBkgdLeft" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_NPCBubble_NewFlipped.tga" x0="0" x1="74" x2="169" x3="169" x4="169" x5="228" y0="0" y1="35" y2="85" y3="85" y4="85" y5="144" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="NPCDialogBkgdCentered" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_NPCBubbleCenterTail.tga" x0="0" x1="45" x2="105" x3="157" x4="182" x5="228" y0="0" y1="23" y2="100" y3="100" y4="100" y5="144" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="DatachronSpamBubble" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_DatachronAlertBubble.tga" x0="0" x1="82" x2="283" x3="283" x4="283" x5="358" y0="0" y1="57" y2="192" y3="192" y4="192" y5="242" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="PlayerDialogBkgd2" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_TextBubbleForPlayerNEW.tga" x0="0" x1="75" x2="365" x3="365" x4="365" x5="421" y0="0" y1="44" y2="166" y3="166" y4="166" y5="208" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="ItemQuestDialogBkgd" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_InventoryBubble.tga" x0="3" x1="49" x2="140" x3="140" x4="265" x5="311" y0="3" y1="21" y2="21" y3="21" y4="150" y5="167" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="DatachronSpamBubbleUp" Cycle="1">
+        <Frame Texture="UI\Dialog\UI_DatachronAlertBubbleUp.tga" x0="0" x1="80" x2="281" x3="281" x4="281" x5="358" y0="0" y1="57" y2="192" y3="192" y4="192" y5="242" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <AutoButton Name="DialogResponseBtn" Texture="UI\Dialog\UI_SlectionOverlay_WholePiece.tga" x0="0" x1="15" x2="20" x3="20" x4="25" x5="40" y0="0" y1="8" y2="30" y3="30" y4="39" y5="46" StateBits="7" Direction="Down" />
+</Sprites>

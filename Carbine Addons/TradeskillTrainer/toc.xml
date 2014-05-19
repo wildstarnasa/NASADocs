@@ -1,0 +1,4 @@
+<Addon Name="TradeskillTrainer" APIVersion="1">
+    <Script Name="TradeskillTrainer.lua" />
+    <Form Name="TradeskillTrainer.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="StoryPanel" Version="1">
+    <Script Name="StoryPanel.lua" />
+    <Form Name="StoryPanel.xml" />
+</Addon>

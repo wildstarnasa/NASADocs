@@ -1,0 +1,4 @@
+<Addon Name="TaxiMap" Version="1">
+    <Script Name="TaxiMap.lua" />
+    <Form Name="TaxiMap.xml" />
+</Addon>

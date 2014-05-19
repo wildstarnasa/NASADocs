@@ -1,0 +1,3 @@
+<Addon Name="MessageManager" Version="1">
+  <Script Name="MessageManager.lua"/>
+</Addon>

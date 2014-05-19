@@ -1,0 +1,4 @@
+<Addon Name="GalacticArchive" Version="1">
+    <Script Name="GalacticArchive.lua" />
+    <Form Name="GalacticArchive.xml" />
+</Addon>

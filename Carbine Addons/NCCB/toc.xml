@@ -1,0 +1,4 @@
+<Addon Name="NonCombatCastBar" Version="1">
+    <Script Name="NonCombatCastBar.lua" />
+    <Form Name="NonCombatCastBar.xml" />
+</Addon>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Carbine" APIVersion="7" Name="RuneSets" Description="">
+    <Script Name="RuneSets.lua"/>
+    <Form Name="RuneSets.xml"/>
+</Addon>

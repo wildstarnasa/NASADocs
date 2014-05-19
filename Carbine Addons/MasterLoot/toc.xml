@@ -1,0 +1,4 @@
+<Addon Name="MasterLoot" Version="1">
+    <Script Name="MasterLoot.lua" />
+    <Form Name="MasterLoot.xml" />
+</Addon>

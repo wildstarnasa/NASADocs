@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<Forms>
+    <Form Class="Window" Name="ActionBarShortcut" LAnchorPoint="0.5" LAnchorOffset="-182" TAnchorPoint="1" TAnchorOffset="-308" RAnchorPoint="0.5" RAnchorOffset="182" BAnchorPoint="1" BAnchorOffset="-246" Border="0" Picture="1" BGColor="white" Sprite="CRB_Basekit:kitBase_HoloBlue_InsetBorder_Thin" Scale="1.0" NoClip="0" TextColor="white" Moveable="1" Overlapped="1" SwallowMouseClicks="1" IgnoreMouse="1" Visible="0" TransitionShowHide="1" RelativeToClient="1" TooltipColor="" Font="Default">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="-10" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ActionBarContainer" BGColor="white" TextColor="white" Sprite="" Picture="1" IgnoreMouse="1" Overlapped="1" NewControlDepth="1" TooltipColor=""/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="36" BAnchorPoint="0" BAnchorOffset="42" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ActionBarShortcutItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1">
+        <Control Class="ActionBarButton" Name="ActionBarShortcutBtn" ContentType="SBar" ContentId="0" Base="CRB_DEMO_WrapperSprites:btnDemo_CharInvisible" RelativeToClient="1" IfHoldNoSignal="1" DT_VCENTER="1" DT_CENTER="1" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="32" BAnchorPoint="0" BAnchorOffset="42" NeverBringToFront="1" Picture="0" WindowSoundTemplate="ActionBarButton" BGColor="white" TextColor="white" IgnoreMouse="1" TooltipType="OnCursor" IgnoreTooltipDelay="1" TooltipColor="" DrawShortcutBottom="1">
+            <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
+        </Control>
+    </Form>
+</Forms>

@@ -1,0 +1,4 @@
+<Addon Name="SupplySatchel" Author="" APIVersion="2">
+    <Script Name="SupplySatchel.lua" />
+    <Form Name="SupplySatchel.xml" />
+</Addon>

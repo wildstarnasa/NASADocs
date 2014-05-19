@@ -1,0 +1,4 @@
+<Addon Name="Trading" Version="1">
+    <Script Name="Trading.lua" />
+    <Form Name="TradingForms.xml" />
+</Addon>

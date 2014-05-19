@@ -1,0 +1,4 @@
+<Addon Name="ChatLog" Version="1">
+  <Script Name="ChatLog.lua"/>
+  <Form Name="ChatLog.xml" />
+</Addon>

@@ -1,0 +1,4 @@
+<Addon Name="Login" Version="1" FrontEndScreen="1">
+    <Script Name="Login.lua" />
+    <Form Name="Login.xml" />
+</Addon>

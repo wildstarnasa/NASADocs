@@ -1,0 +1,4 @@
+<Addon Name="AdventureNorthernWilds" Version="1">
+    <Script Name="AdventureNorthernWilds.lua" />
+    <Form Name="AdventureNorthernWilds.xml" />
+</Addon>

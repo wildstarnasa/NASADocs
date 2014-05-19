@@ -1,0 +1,4 @@
+<Addon Name="Vendor" Version="2">
+  <Script Name="Vendor.lua"/>
+  <Form Name="Vendor.xml"/>
+</Addon>

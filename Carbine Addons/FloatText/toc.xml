@@ -1,0 +1,6 @@
+<Addon Name="FloatText" Version="1">
+    <Script Name="FloatText.lua" />
+    <Script Name="FloatTextPanel.lua" />
+    <Form Name="TestFloatTextForms.xml" />
+    <Form Name="FloatTextPanel.xml" />
+</Addon>

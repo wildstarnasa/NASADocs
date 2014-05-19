@@ -1,0 +1,4 @@
+<Addon Name="Death" Version="1">
+    <Script Name="Death.lua" />
+    <Form Name="Death.xml" />
+</Addon>

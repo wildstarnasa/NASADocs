@@ -1,0 +1,4 @@
+<Addon Name="PublicEventVote" APIVersion="2">
+    <Script Name="PublicEventVote.lua" />
+    <Form Name="PublicEventVote.xml" />
+</Addon>
