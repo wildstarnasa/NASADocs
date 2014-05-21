@@ -10,8 +10,8 @@ require "ChatSystemLib"
 require "FriendshipLib"
 require "MatchingGame"
 
-local knXCursorOffset = 62;
-local knYCursorOffset = 15;
+local knXCursorOffset = 10
+local knYCursorOffset = 25
 
 local ContextMenuPlayer = {}
 local ktSortOrder =
@@ -49,8 +49,6 @@ local ktSortOrder =
 		-- 8 Markers
 		-- BtnMarkClear
 	["BtnMarkTarget"] 		= 12,
-	["BtnGotoGroup"]		= 13,
-
 }
 
 local kstrRaidMarkerToSprite =
@@ -82,7 +80,7 @@ function ContextMenuPlayer:OnLoad()
 end
 
 function ContextMenuPlayer:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	Apollo.RegisterEventHandler("GenericEvent_NewContextMenuPlayer", 			"Initialize", self) -- 2 args + 1 optional
@@ -101,14 +99,14 @@ function ContextMenuPlayer:SharedInitialize(wndParent)
 		self.wndMain:Destroy()
 	end
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ContextMenuPlayerForm", wndParent, self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ContextMenuPlayerForm", "TooltipStratum", self)
 	self.wndMain:Invoke()
 
 	self.bSortedAndSized = false
 	self.tPlayerFaction = self.tPlayerFaction or GameLib.GetPlayerUnit():GetFaction()
 
-	local tCursor = wndParent:GetMouse()
-	self.wndMain:Move(tCursor.x - knXCursorOffset, tCursor.y - knYCursorOffset, self.wndMain:GetWidth(), self.wndMain:GetHeight ())
+	local tCursor = Apollo.GetMouse()
+	self.wndMain:Move(tCursor.x - knXCursorOffset, tCursor.y - knYCursorOffset, self.wndMain:GetWidth(), self.wndMain:GetHeight())
 end
 
 function ContextMenuPlayer:InitializeFriend(wndParent, nFriendId)
@@ -136,6 +134,9 @@ function ContextMenuPlayer:RedrawAllFriend()
 
 	local strTarget = self.strTarget
 	local unitTarget = self.unitTarget
+	if unitTarget == nil and self.tFriend ~= nil then
+		unitTarget = FriendshipLib.GetUnitById(self.tFriend.nId)
+	end
 	local tFriend = self.tFriend
 	local tAccountFriend = self.tAccountFriend
 	local wndButtonList = self.wndMain:FindChild("ButtonList")
@@ -162,8 +163,9 @@ function ContextMenuPlayer:RedrawAllFriend()
 		self:HelperBuildRegularButton(wndButtonList, "BtnAccountWhisper", Apollo.GetString("ContextMenu_AccountWhisper"))
 	end
 
-	if (not bInGroup or GroupLib.GetGroupMember(1).bCanInvite) and bCanWhisper and self.unitTarget and not self.unitTarget:IsInYourGroup() then
-		self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
+	if not bInGroup or (GroupLib.GetGroupMember(1).bCanInvite and bCanWhisper) then 
+	--In SocialPanel, we don't care if they are part of a group, because we can't reliably test it.
+	self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
 	end
 
 	local btnSocialList = self:FactoryProduce(wndButtonList, "BtnSocialList", "BtnSocialList")
@@ -206,13 +208,13 @@ function ContextMenuPlayer:RedrawAllFriend()
 	if tAccountFriend ~= nil and bIsAccountFriend then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnUnaccountFriend", Apollo.GetString("ContextMenu_UnaccountFriend"))
 	end
-	
+
 	if tFriend and tFriend.bIgnore then
 		self:HelperBuildRegularButton(wndButtonList, "BtnUnignore", Apollo.GetString("ContextMenu_Unignore"))
-	else
+	elseif tAccountFriend == nil or tAccountFriend.fLastOnline == 0 then
 		self:HelperBuildRegularButton(wndButtonList, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
 	end
-	
+
 	self:ResizeAndRedraw()
 end
 
@@ -425,10 +427,6 @@ function ContextMenuPlayer:RedrawAll()
 		end
 
 		if tTargetGroupData then
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnGotoGroup", Apollo.GetString("CRB_GotoGroup"))
-		end
-
-		if tTargetGroupData then
 			self:HelperBuildRegularButton(wndGroupListItems, "BtnLocate", Apollo.GetString("ContextMenu_Locate"))
 		end
 
@@ -498,6 +496,10 @@ end
 
 function ContextMenuPlayer:ResizeAndRedraw()
 	local wndButtonList = self.wndMain:FindChild("ButtonList")
+	if next(wndButtonList:GetChildren()) == nil then
+		self.wndMain:Destroy()
+		return
+	end
 
 	if not self.bSortedAndSized then
 		self.bSortedAndSized = true
@@ -520,7 +522,7 @@ function ContextMenuPlayer:ResizeAndRedraw()
 			self.wndMain:FindChild("MarkerListPopoutItems"):ArrangeChildrenTiles(0)
 		end
 	end
-	
+
 	self:CheckWindowBounds()
 end
 
@@ -531,13 +533,13 @@ function ContextMenuPlayer:CheckWindowBounds()
 	local nHeight = self.wndMain:GetHeight()
 
 	local nMaxScreenWidth, nMaxScreenHeight = Apollo.GetScreenSize()
-	local nNewX = nWidth + tMouse.x - knXCursorOffset;
-	local nNewY = nHeight + tMouse.y - knYCursorOffset;
+	local nNewX = nWidth + tMouse.x - knXCursorOffset
+	local nNewY = nHeight + tMouse.y - knYCursorOffset
 
 	local bSafeX = true
 	local bSafeY = true
 
-	if nNewX > nMaxScreenWidth then 
+	if nNewX > nMaxScreenWidth then
 		bSafeX = false
 	end
 
@@ -546,19 +548,17 @@ function ContextMenuPlayer:CheckWindowBounds()
 	end
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-		
-
 	if bSafeX == false then
-		local nRightOffset = nNewX - nMaxScreenWidth;
-		nLeft = nLeft- nRightOffset
-		nRight = nRight- nRightOffset
+		local nRightOffset = nNewX - nMaxScreenWidth
+		nLeft = nLeft - nRightOffset
+		nRight = nRight - nRightOffset
 	end
 
 	if bSafeY == false then
 		nBottom = nTop + knYCursorOffset
 		nTop = nBottom - nHeight
 	end
-	
+
 	if bSafeX == false or bSafeY == false then
 		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom)
 	end
@@ -681,8 +681,6 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 		GroupLib.AcceptMentoring(unitTarget)
 	elseif eButtonType == "BtnStopMentor" then
 		GroupLib.CancelMentoring()
-	elseif eButtonType == "BtnGotoGroup" then
-		GroupLib.GotoGroupInstance()
 	elseif eButtonType == "BtnReportChat" and self.nReportId then
 		local tResult = ChatSystemLib.PrepareInfractionReport(self.nReportId)
 		self:BuildReportConfirmation(tResult.strDescription, tResult.bSuccess)
@@ -809,8 +807,6 @@ function ContextMenuPlayer:ReportChat_YesPicked(wndHandler, wndControl)
 	ChatSystemLib.SendInfractionReport()
 	self:ClearReportConfirmation()
 end
-
-
 
 local ContextMenuPlayerInst = ContextMenuPlayer:new()
 ContextMenuPlayerInst:Init()

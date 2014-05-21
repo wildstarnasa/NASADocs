@@ -21,6 +21,7 @@ function InstanceSettings:new(o)
     setmetatable(o, self)
     self.__index = self
 	
+	self.bHidingInterface = false
 	self.bNormalIsAllowed = false
 	self.bVeteranIsAllowed = false
 
@@ -75,7 +76,7 @@ function InstanceSettings:OnDocumentReady()
 	end
 	Apollo.RegisterEventHandler("ShowInstanceGameModeDialog", "OnShowDialog", self)
 	Apollo.RegisterEventHandler("ShowInstanceRestrictedDialog", "OnShowRestricted", self)
-	Apollo.RegisterEventHandler("HideInstanceGameModeDialog", "OnCancel", self)
+	Apollo.RegisterEventHandler("HideInstanceGameModeDialog", "OnHideDialog", self)
 	Apollo.RegisterEventHandler("OnInstanceResetResult", "OnInstanceResetResult", self)
 	Apollo.RegisterEventHandler("PendingWorldRemovalWarning", "OnPendingWorldRemovalWarning", self)
 	Apollo.RegisterEventHandler("PendingWorldRemovalCancel", "OnPendingWorldRemovalCancel", self)
@@ -104,6 +105,7 @@ function InstanceSettings:OnShowDialog(tData)
 	self.bScalingIsAllowed = tData.bFlagsScaling
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc , "InstanceSettingsForm", nil, self)
+	self.bHidingInterface = false
 		
 	-- we never want to show this "error" initially
 	self.wndMain:FindChild("ErrorWindow"):Show(false)
@@ -139,13 +141,8 @@ function InstanceSettings:OnShowDialog(tData)
 		end
 
 		self.wndMain:FindChild("DifficultyButton1"):Enable(false)
-		self.wndMain:FindChild("CheckboxDifficultyButton1"):Show(tData.nExistingDifficulty == GroupLib.Difficulty.Normal)
-
 		self.wndMain:FindChild("DifficultyButton2"):Enable(false)
-		self.wndMain:FindChild("CheckboxDifficultyButton2"):Show(tData.nExistingDifficulty == GroupLib.Difficulty.Veteran)
-		
 		self.wndMain:FindChild("LevelScalingButton"):Enable(false)
-		self.wndMain:FindChild("CheckboxLevelScaling"):Show(tData.bExistingScaling)
 
 		self.wndMain:FindChild("ExistingFrame"):Show(true)
 		self.wndMain:FindChild("ResetInstanceButton"):Show(true)
@@ -237,27 +234,21 @@ function InstanceSettings:OnNoExistingInstance()
 		self.wndMain:FindChild("LevelScalingButton"):Enable(true)
 		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
 	else
+		self.wndMain:FindChild("LevelScalingButton"):Enable(false)
 		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
 	end
 
 	-- turn on the enter button
 	self.wndMain:FindChild("EnterButton"):Enable(true)
 
-	-- turn all "existing instance" stuff off
-	self.wndMain:FindChild("CheckboxDifficultyButton1"):Show(false)
-	self.wndMain:FindChild("CheckboxDifficultyButton2"):Show(false)
-	self.wndMain:FindChild("CheckboxLevelScaling"):Show(false)
-
 	self.wndMain:FindChild("ResetInstanceButton"):Show(false)
 	self.wndMain:FindChild("ExistingFrame"):Show(false)
 	self.wndMain:FindChild("Divider"):Show(false)
 	
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 485)
+	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 425)
 
 end
-
-
 
 function InstanceSettings:OnOK()
 	local eDifficulty = nil
@@ -277,9 +268,16 @@ function InstanceSettings:OnReset()
 	GameLib.ResetSingleInstance()
 end
 
+function InstanceSettings:OnHideDialog(bNeedToNotifyServer)
+	if self.bHidingInterface == false then
+		self.bHidingInterface = true
+		GameLib.OnClosedInstanceSettings(bNeedToNotifyServer)
+		self:DestroyAll()
+	end
+end
+
 function InstanceSettings:OnCancel()
-	GameLib.OnClosedInstanceSettings() -- let the server know to remove us from the instance portal queue
-	self:DestroyAll()
+	self:OnHideDialog(true) -- we must tell the server about this 
 end
 
 function InstanceSettings:OnChangeWorld()

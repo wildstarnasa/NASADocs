@@ -29,6 +29,8 @@ local kstrDialogFontRP 		= "CRB_Dialog_I"
 local kstrGMIcon 		= "Icon_Windows_UI_GMIcon"
 local knChannelListHeight = 500
 
+local knWindowStayOnScreenOffset = 50
+
 local knSaveVersion = 2
 
 local karEvalColors =
@@ -308,6 +310,9 @@ function ChatLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayedTime",					"OnPlayedtime", self)
 	Apollo.RegisterEventHandler("ChatReply",					"OnGenericEvent_ChatLogWhisper", self)
 	Apollo.RegisterEventHandler("CombatLogLoot", 				"OnCombatLogLoot", self)
+	
+	Apollo.RegisterEventHandler("ResolutionChanged", 			"OnResolutionChanged", self)
+	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", "OnApplicationWindowSizeChanged", self)
 
 	Apollo.RegisterEventHandler("GenericEvent_LootChannelMessage", 		"OnGenericEvent_LootChannelMessage", self)
 	Apollo.RegisterEventHandler("GenericEvent_SystemChannelMessage", 	"OnGenericEvent_SystemChannelMessage", self)
@@ -362,6 +367,8 @@ function ChatLog:OnDocumentReady()
 	self.tLinks 			= {}
 	self.nNextLinkIndex 	= 1
 	self.nMaxChatLines 		= 256
+	
+	self.twndItemLinkTooltips = {}
 
 	---------------OPTIONS---------------
 	self.wndChatOptions = Apollo.LoadForm(self.xmlDoc, "ChatOptionsForm", nil, self)
@@ -995,18 +1002,42 @@ function ChatLog:OnNodeClick(wndHandler, wndControl, strNode, tAttributes, eMous
 				end
 			else
 				if self.tLinks[nIndex].uItem then
-
-					itemCurr = self.tLinks[nIndex].uItem
-					wndControl:SetTooltipDoc(nil)
-
-					local itemEquipped = itemCurr:GetEquippedItemForItemType()
-					Tooltip.GetItemTooltipForm(self, wndHandler, itemCurr, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
-					--if itemEquipped ~= nil then -- OLD
-					--	Tooltip.GetItemTooltipForm(self, wndControl, itemEquipped, {bPrimary = false, bSelling = false, itemCompare = itemCurr})
-					--end
+					
+					local bWindowExists = false
+					for idx, wndCur in pairs(self.twndItemLinkTooltips or {}) do
+						if wndCur:GetData() == self.tLinks[nIndex].uItem then
+							bWindowExists = true
+							break
+						end
+					end
+				
+					if bWindowExists == false then
+						local wndChatItemToolTip = Apollo.LoadForm("ChatLog.xml", "TooltipWindow", nil, self)
+						wndChatItemToolTip:SetData(self.tLinks[nIndex].uItem)
+						
+						table.insert(self.twndItemLinkTooltips, wndChatItemToolTip)
+						
+						local itemEquipped = self.tLinks[nIndex].uItem:GetEquippedItemForItemType()
+						
+						local wndLink = Tooltip.GetItemTooltipForm(self, wndControl, self.tLinks[nIndex].uItem, {bPermanent = true, wndParent = wndChatItemToolTip, bSelling = false, bNotEquipped = true})
+						
+						local nLeftWnd, nTopWnd, nRightWnd, nBottomWnd = wndChatItemToolTip:GetAnchorOffsets()
+						local nLeft, nTop, nRight, nBottom = wndLink:GetAnchorOffsets()
+						
+						wndChatItemToolTip:SetAnchorOffsets(nLeftWnd, nTopWnd, nLeftWnd + nRight + 15, nBottom + 75)
+						
+						if itemEquipped then
+							wndChatItemToolTip:SetTooltipDoc(nil)
+							Tooltip.GetItemTooltipForm(self, wndChatItemToolTip, itemEquipped, {bPrimary = true, bSelling = false, bNotEquipped = false})
+						end
+					end
+					
 				elseif self.tLinks[nIndex].uQuest then
 					Event_FireGenericEvent("ShowQuestLog", wndHandler:GetData()) -- Codex (todo: deprecate this)
 					Event_FireGenericEvent("GenericEvent_ShowQuestLog", self.tLinks[nIndex].uQuest)
+				elseif self.tLinks[nIndex].uArchiveArticle then
+					Event_FireGenericEvent("HudAlert_ToggleLoreWindow")
+					Event_FireGenericEvent("GenericEvent_ShowGalacticArchive", self.tLinks[nIndex].uArchiveArticle)
 				end
 			end
 		end
@@ -1015,6 +1046,18 @@ function ChatLog:OnNodeClick(wndHandler, wndControl, strNode, tAttributes, eMous
 	return false
 end
 
+function ChatLog:OnCloseItemTooltipWindow(wndHandler, wndControl)
+	local wndParent = wndControl:GetParent()
+	local itemData = wndParent:GetData()
+	
+	for idx, wndCur in pairs(self.twndItemLinkTooltips) do
+		if wndCur:GetData() == itemData then
+			table.remove(self.twndItemLinkTooltips, idx)
+		end
+	end
+	
+	wndParent:Destroy()
+end
 
 function ChatLog:OnEvent_EngageAccountWhisper(strDisplayName, strCharacterName, strRealmName)
 	local wndEdit = self:HelperGetCurrentEditbox()
@@ -1085,18 +1128,27 @@ function ChatLog:OnEmoteCheck(wndHandler, wndControl)
 		wndContainer:ArrangeChildrenVert()
 	end
 
-	wndEmotes:Show(wndHandler:IsChecked())
+	
+	wndEmotes:GetParent():FindChild("CloseBtn"):Enable(not wndHandler:IsChecked())
+	if wndHandler:IsChecked() then
+		wndEmotes:Invoke()
+	else
+		wndEmotes:Close()
+	end
 end
 
 function ChatLog:OnEmoteMenuClosed(wndHandler, wndControl)
-	wndHandler:GetParent():FindChild("EmoteBtn"):SetCheck(false)
-	wndHandler:Show(false)
+	local wndParent = wndHandler:GetParent()
+	wndParent:FindChild("EmoteBtn"):SetCheck(false)
+	wndParent:FindChild("CloseBtn"):Enable(true)
+	wndHandler:Close()
 end
 
 function ChatLog:OnEmoteMenuClose(wndHandler, wndControl)
-	local wndToggle = wndControl:GetParent():GetParent():FindChild("EmoteBtn")
-	wndToggle:SetCheck(false)
-	wndControl:GetParent():Show(false)
+	local wndGrandparent = wndControl:GetParent():GetParent()
+	wndGrandparent:FindChild("EmoteBtn"):SetCheck(false)
+	wndGrandparent:FindChild("CloseBtn"):Enable(true)
+	wndControl:GetParent():Close()
 end
 
 function ChatLog:OnEmoteMenuEntry(wndHandler, wndControl)
@@ -1293,7 +1345,9 @@ end
 
 function ChatLog:OnAddWindow(wndHandler, wndControl)
 	local wndForm = wndControl:GetParent() -- TODO refactor
-	local bShown = wndForm:FindChild("AddTabSubForm"):IsShown()
+	local wndAdd = wndForm:FindChild("AddTabSubForm")
+	local bShown = wndAdd:IsShown()
+	
 
 	for key, wndChat in pairs(self.tChatWindows) do
 		if wndChat:FindChild("AddTabSubForm"):IsShown() then
@@ -1301,23 +1355,33 @@ function ChatLog:OnAddWindow(wndHandler, wndControl)
 		end
 	end
 
-	wndForm:FindChild("AddTabSubForm"):Show(not bShown)
+	if not bShown then
+		wndAdd:Invoke()
+	else
+		wndAdd:Close()
+	end
 end
 
 function ChatLog:OnAddTabSubFormClose(wndHandler, wndControl)
 	local wndForm = wndControl:GetParent() -- TODO refactor
-	wndForm:FindChild("AddTabSubForm"):Show(false)
+	wndForm:FindChild("AddTabSubForm"):Close()
 end
 
 function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; each is its own window
-	wndControl:GetParent():Show(false)
+	wndControl:GetParent():Close()
 
 	local wndForm = wndControl:GetParent():GetParent() -- TODO refactor
 	local tData = wndForm:GetData()
 	local bLocked = wndForm:FindChild("LockBtn"):IsChecked()
 	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("CRB_Chat"))
 
-	local tChannelsToView = tData.tViewedChannels
+	local tChannelsToView = {}
+	if tData.bCombatLog then
+		tChannelsToView = ktDefaultChannels
+	else
+		tChannelsToView = tData.tViewedChannels
+	end
+	
 	-- needs to take it from the main form of toggled from a combat window (idx == 1)
 	if wndForm:FindChild("BGArt_ChatBackerIcon"):IsShown() then
 		for idx, wndChat in pairs(self.tChatWindows) do
@@ -1340,7 +1404,7 @@ function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; 
 end
 
 function ChatLog:OnAddNewTabCombat(wndHandler, wndControl) -- this is when a tab; each is its own window
-	wndControl:GetParent():Show(false)
+	wndControl:GetParent():Close()
 
 	local wndForm = wndControl:GetParent():GetParent()
 	local tData = wndForm:GetData()
@@ -1677,7 +1741,12 @@ function ChatLog:OnInputTypeCheck(wndHandler, wndControl)
 	local wndParent = wndControl:GetParent()
 	local wndMenu = wndParent:FindChild("InputWindow")
 
-	wndMenu:Show(wndHandler:IsChecked())
+	if wndHandler:IsChecked() then
+		wndMenu:Invoke()
+	else
+		wndMenu:Close()
+	end
+
 	if wndHandler:IsChecked() then
 		self:BuildInputTypeMenu(wndParent)
 	end
@@ -1815,7 +1884,11 @@ function ChatLog:OnAddJoinCustomChannel(wndHandler, wndControl)
 	end
 
 	local wndHeader = wndControl:GetParent()
-	wndHeader:FindChild("AddJoinForm"):Show(wndControl:IsChecked())
+	if wndControl:IsChecked() then
+		wndHeader:FindChild("AddJoinForm"):Invoke()
+	else
+		wndHeader:FindChild("AddJoinForm"):Close()
+	end
 end
 
 function ChatLog:OnAddJoinInputChanging(wndHandler, wndControl)
@@ -1847,7 +1920,7 @@ function ChatLog:OnAddJoinFormClose(wndHandler, wndControl)
 	end
 	wndControl:FindChild("AddJoinConfirmBtn"):Enable(false)
 	wndControl:FindChild("AddJoinInput"):SetText("")
-	wndControl:Show(false)
+	wndControl:Close()
 end
 
 function ChatLog:OnAddJoinConfirmBtn(wndHandler, wndControl)
@@ -2105,8 +2178,8 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 			elseif tSegment.uArchiveArticle ~= nil then -- archive article
 				-- replace me with correct colors
 				strText = String_GetWeaselString(Apollo.GetString("CRB_Brackets"), tSegment.uArchiveArticle:GetTitle())
-				crChatText = ApolloColor.new("cyan")
-				crBubbleText = ApolloColor.new("cyan")
+				crChatText = ApolloColor.new("ffb7a767")
+				crBubbleText = ApolloColor.new("ffb7a767")
 
 				tLink.strText = strText
 				tLink.uArchiveArticle = tSegment.uArchiveArticle
@@ -2289,6 +2362,10 @@ function ChatLog:HelperFindAViewedChannel()
 			break
 		end
 	end
+	
+	if nNewChannelIdx == nil then
+		nNewChannelIdx = ChatSystemLib.ChatChannel_Say
+	end
 
 	for idx, channelCurrent in ipairs(tBaseChannels) do
 		if channelCurrent:GetType() == nNewChannelIdx then
@@ -2376,6 +2453,45 @@ function ChatLog:OnTradeSkillSigilResult(eResult)
 	Event_FireGenericEvent("GenericEvent_LootChannelMessage", kstrTradeskillResultTable[eResult])
 end
 
+-----------------------------------------------------------------------------------------------
+-- Window Edge, Resolution and Resize
+-----------------------------------------------------------------------------------------------
+
+function ChatLog:OnWindowMove(wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom)
+
+	local nLeft, nTop, nRight, nBottom = wndHandler:GetRect()
+	local nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
+
+	local nWidth = nRight - nLeft
+	local nHeight = nBottom - nTop
+
+	nLeft = math.max(math.min(nLeft, nScreenWidth - knWindowStayOnScreenOffset), -nWidth + knWindowStayOnScreenOffset)
+	nTop = math.max(math.min(nTop, nScreenHeight - knWindowStayOnScreenOffset), -nHeight + knWindowStayOnScreenOffset)
+
+	wndHandler:Move(nLeft, nTop, nWidth, nHeight)
+
+end
+
+function ChatLog:OnApplicationWindowSizeChanged(tSize)
+	self:OnResolutionChanged(tSize.nWidth, tSize.nHeight)
+end
+
+function ChatLog:OnResolutionChanged(nScreenWidth, nScreenHeight)
+
+	for wndIdx, wndCur in pairs(self.tChatWindows) do
+		local nLeft, nTop, nRight, nBottom = wndCur:GetRect()
+		local nWidth = nRight - nLeft
+		local nHeight = nBottom - nTop
+	
+		nLeft = math.max(math.min(nLeft, nScreenWidth - knWindowStayOnScreenOffset), -nWidth + knWindowStayOnScreenOffset)
+		nTop = math.max(math.min(nTop, nScreenHeight - knWindowStayOnScreenOffset), -nHeight + knWindowStayOnScreenOffset)
+	
+		wndCur:Move(nLeft, nTop, nWidth, nHeight)
+	end
+
+end
+
+-------------------------------------
 
 local ChatLogInstance = ChatLog:new()
 ChatLogInstance:Init()

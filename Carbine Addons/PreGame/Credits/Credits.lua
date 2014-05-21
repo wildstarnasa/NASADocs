@@ -101,7 +101,7 @@ function Credits:NextCredit()
 	local tIdsToDestroy = {}
 	for id,wnd in pairs(self.tWindows) do
 		local loc = wnd:GetTransLocation()
-		if false and loc:ToTable().nOffsets[4] < 0 then
+		if loc:ToTable().nOffsets[4] < 0 then
 			wnd:Destroy()
 			tIdsToDestroy[id] = id
 		end
@@ -126,7 +126,7 @@ function Credits:NextCredit()
 		local tGroupClient = wnd:GetClientRect()
 		
 		local tLocBegin = {fPoints={0,0,1,0}, nOffsets={0, tMainClient.nHeight, 0, tMainClient.nHeight + tGroupClient.nHeight}}
-		local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -200, 0, -200 + tGroupClient.nHeight}}
+		local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -300, 0, -300 + tGroupClient.nHeight}}
 
 		local locBegin = WindowLocation.new(tLocBegin)
 		local locEnd = WindowLocation.new(tLocEnd)
@@ -151,13 +151,20 @@ function Credits:NextCredit()
 	else
 		if tCredit.strImage ~= "" then
 			local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsForm:ImageHolder", self.wndMain, self)
-			local wndImg = wnd:FindChild("Image")
-			wndImg:SetSprite(tCredit.strImage)
+			
+			if tCredit.strImage == "CarbineLogo" then
+				wnd:FindChild("ImageCarbineLogo"):Show(true)
+			elseif tCredit.strImage == "NCSoftLogo" then
+				wnd:FindChild("ImageNCSoftLogo"):Show(true)
+			else
+				local wndImg = wnd:FindChild("Image")
+				wndImg:SetSprite(tCredit.strImage)
+			end
 	
 			local tImageClient = wnd:GetClientRect()
 			
 			local tLocBegin = {fPoints={0,0,1,0}, nOffsets={0, tMainClient.nHeight, 0, tMainClient.nHeight + tImageClient .nHeight}}
-			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -200, 0, -200 + tImageClient .nHeight}}
+			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -300, 0, -300 + tImageClient .nHeight}}
 	
 			local locBegin = WindowLocation.new(tLocBegin)
 			local locEnd = WindowLocation.new(tLocEnd)
@@ -178,13 +185,15 @@ function Credits:NextCredit()
 			local nMaxHeight = wndName:GetLocation():ToTable().nOffsets[4]
 			for idx,strTitle in ipairs(tCredit.arTitles) do
 				local wndTitle = wnd:FindChild("Title"..tostring(idx))
-				wndTitle:SetText(strTitle)
-				nMaxHeight = wndTitle:GetLocation():ToTable().nOffsets[4]
+				if wndTitle ~= nil then
+					wndTitle:SetText(strTitle)
+					nMaxHeight = wndTitle:GetLocation():ToTable().nOffsets[4]
+				end
 			end
 			
 			nMaxHeight = nMaxHeight + 2
 			local tLocBegin = {fPoints={0,0,1,0}, nOffsets={0, tMainClient.nHeight, 0, tMainClient.nHeight + nMaxHeight}}
-			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -200, 0, -200 + nMaxHeight}}
+			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -300, 0, -300 + nMaxHeight}}
 	
 			local locBegin = WindowLocation.new(tLocBegin)
 			local locEnd = WindowLocation.new(tLocEnd)

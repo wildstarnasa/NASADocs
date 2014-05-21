@@ -13,7 +13,7 @@ local InventoryBag = {}
 local knSmallIconOption = 42
 local knLargeIconOption = 48
 local knMaxBags = 4 -- how many bags can the player have
-local knSaveVersion = 2
+local knSaveVersion = 3
 
 local karCurrency =  	-- Alt currency table; re-indexing the enums so they don't have to be in sequence code-side (and removing cash)
 {						-- To add a new currency just add an entry to the table; the UI will do the rest. Idx == 1 will be the default one shown
@@ -22,10 +22,15 @@ local karCurrency =  	-- Alt currency table; re-indexing the enums so they don't
 	{eType = Money.CodeEnumCurrencyType.Prestige, 			strTitle = Apollo.GetString("CRB_Prestige"), 			strDescription = Apollo.GetString("CRB_Prestige_Desc")},
 	{eType = Money.CodeEnumCurrencyType.CraftingVouchers, 	strTitle = Apollo.GetString("CRB_Crafting_Vouchers"), 	strDescription = Apollo.GetString("CRB_Crafting_Voucher_Desc")}
 }
+
 function InventoryBag:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
+	
+	o.bShouldSortItems = false
+	o.nSortItemType = 1
+	
 	return o
 end
 
@@ -34,32 +39,39 @@ function InventoryBag:Init()
 end
 
 function InventoryBag:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
+	if eType == GameLib.CodeEnumAddonSaveLevel.Character then
+		return {
+			nSaveVersion = knSaveVersion,
+			bShouldSortItems = self.bShouldSortItems,
+			nSortItemType = self.nSortItemType,
+		}
 	end
 	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
+	return nil
 end
 
 function InventoryBag:OnRestore(eType, tSavedData)
-	self.tSavedData = tSavedData
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
+	if eType == GameLib.CodeEnumAddonSaveLevel.Account then
+		self.tSavedData = tSavedData
+		
+		if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
+			return
+		end
+	elseif eType == GameLib.CodeEnumAddonSaveLevel.Character  then
+		if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
+			return
+		end
 	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
+		self.bShouldSortItems = tSavedData.bShouldSortItems or false
+		self.nSortItemType = tSavedData.nSortItemType or 1
 		
 		if self.wndMain then
-			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+			self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+			self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+			self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:ItemSortPrompt:IconBtnSortOff"):SetCheck(not self.bShouldSortItems)
+			self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:ItemSortPrompt:IconBtnSortAlpha"):SetCheck(self.bShouldSortItems and self.nSortItemType == 1)
+			self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:ItemSortPrompt:IconBtnSortCategory"):SetCheck(self.bShouldSortItems and self.nSortItemType == 2)
+			self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:ItemSortPrompt:IconBtnSortQuality"):SetCheck(self.bShouldSortItems and self.nSortItemType == 3)
 		end
 	end
 end
@@ -70,14 +82,103 @@ function InventoryBag:OnLoad()
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
--- TODO: Mark items as viewed
+local fnSortItemsByName = function(itemLeft, itemRight)
+	if itemLeft == itemRight then
+		return 0
+	end
+	if itemLeft and itemRight == nil then
+		return -1
+	end
+	if itemLeft == nil and itemRight then
+		return 1
+	end
+	
+	local strLeftName = itemLeft:GetName()
+	local strRightName = itemRight:GetName()
+	if strLeftName < strRightName then
+		return -1
+	end
+	if strLeftName > strRightName then
+		return 1
+	end
+	
+	return 0
+end
 
+local fnSortItemsByCategory = function(itemLeft, itemRight)
+	if itemLeft == itemRight then
+		return 0
+	end
+	if itemLeft and itemRight == nil then
+		return -1
+	end
+	if itemLeft == nil and itemRight then
+		return 1
+	end
+	
+	local strLeftName = itemLeft:GetItemCategoryName()
+	local strRightName = itemRight:GetItemCategoryName()
+	if strLeftName < strRightName then
+		return -1
+	end
+	if strLeftName > strRightName then
+		return 1
+	end
+	
+	local strLeftName = itemLeft:GetName()
+	local strRightName = itemRight:GetName()
+	if strLeftName < strRightName then
+		return -1
+	end
+	if strLeftName > strRightName then
+		return 1
+	end
+	
+	return 0
+end
+
+local fnSortItemsByQuality = function(itemLeft, itemRight)
+	if itemLeft == itemRight then
+		return 0
+	end
+	if itemLeft and itemRight == nil then
+		return -1
+	end
+	if itemLeft == nil and itemRight then
+		return 1
+	end
+	
+	local eLeftQuality = itemLeft:GetItemQuality()
+	local eRightQuality = itemRight:GetItemQuality()
+	if eLeftQuality > eRightQuality then
+		return -1
+	end
+	if eLeftQuality < eRightQuality then
+		return 1
+	end
+	
+	local strLeftName = itemLeft:GetName()
+	local strRightName = itemRight:GetName()
+	if strLeftName < strRightName then
+		return -1
+	end
+	if strLeftName > strRightName then
+		return 1
+	end
+	
+	return 0
+end
+
+local ktSortFunctions = {fnSortItemsByName, fnSortItemsByCategory, fnSortItemsByQuality}
+
+-- TODO: Mark items as viewed
 function InventoryBag:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
 	
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 				"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 					"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleInventory", 			"OnToggleVisibility", self) -- TODO: The datachron attachment needs to be brought over
 	Apollo.RegisterEventHandler("GuildBank_ShowPersonalInventory", 			"OnToggleVisibilityAlways", self)
@@ -159,10 +260,25 @@ function InventoryBag:OnDocumentReady()
 	if self.locSavedWindowLoc then
 		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
+	
+	self.wndMainBagWindow = self.wndMain:FindChild("MainBagWindow")
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortOff"):SetCheck(not self.bShouldSortItems)
+	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortAlpha"):SetCheck(self.bShouldSortItems and self.nSortItemType == 1)
+	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortCategory"):SetCheck(self.bShouldSortItems and self.nSortItemType == 2)
+	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortQuality"):SetCheck(self.bShouldSortItems and self.nSortItemType == 3)
+	
+	self.wndIconBtnSortDropDown = self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown")
+	self.wndIconBtnSortDropDown:AttachWindow(self.wndIconBtnSortDropDown:FindChild("ItemSortPrompt"))
 end
 
 function InventoryBag:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Inventory"), {"InterfaceMenu_ToggleInventory", "Inventory", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Inventory"), {"InterfaceMenu_ToggleInventory", "Inventory", "Icon_Windows32_UI_CRB_InterfaceMenu_Inventory"})
+end
+
+function InventoryBag:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Inventory")})
 end
 	
 function InventoryBag:OnCharacterCreated()
@@ -246,18 +362,17 @@ function InventoryBag:UpdateBagSlotItems() -- update our bag display
 
 	for idx = 1, knMaxBags do
 		local itemBag = self.wndMain:FindChild("MainBagWindow"):GetBagItem(idx)
-
+		local wndCtrl = self.wndMain:FindChild("BagBtn"..idx)
 		if itemBag then
 			self.tBagCounts[idx]:SetText("+" .. itemBag:GetBagSlots())
-			self.wndMain:FindChild("BagBtn"..idx):FindChild("RemoveBagIcon"):Show(true)
-			self:OnRemoveIconExit(self.wndMain:FindChild("BagBtn"..idx):FindChild("RemoveBagIcon"), self.wndMain:FindChild("BagBtn"..idx):FindChild("RemoveBagIcon"))
-			self.wndMain:FindChild("BagBtn"..idx):FindChild("RemoveBagIcon"):SetData(itemBag)
-			self.wndMain:FindChild("BagBtn"..idx):SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"white\">%s</T>", strEmptyBag))
+			wndCtrl:FindChild("RemoveBagIcon"):Show(true)
+			wndCtrl:FindChild("RemoveBagIcon"):SetData(itemBag)
 			self.nEquippedBagCount = self.nEquippedBagCount + 1
+			Tooltip.GetItemTooltipForm(self, self.wndMain:FindChild("BagBtn"..idx), itemBag, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
 		else
 			self.tBagCounts[idx]:SetText("")
-			self.wndMain:FindChild("BagBtn"..idx):SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"white\">%s</T>", strEmptyBag))
-			self.wndMain:FindChild("BagBtn"..idx):FindChild("RemoveBagIcon"):Show(false)
+			wndCtrl:SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"white\">%s</T>", strEmptyBag))
+			wndCtrl:FindChild("RemoveBagIcon"):Show(false)
 		end
 	end
 
@@ -266,17 +381,10 @@ function InventoryBag:UpdateBagSlotItems() -- update our bag display
 	end
 end
 
-function InventoryBag:OnRemoveIconEnter(wndHandler, wndCtrl)
-	if wndHandler ~= wndCtrl then return end
-	wndCtrl:SetSprite("ClientSprites:LootCloseBox")
-	wndCtrl:SetTooltipDoc(nil)
-	Tooltip.GetItemTooltipForm(self, wndCtrl, wndCtrl:GetData(), {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
+function InventoryBag:OnBagBtnMouseEnter(wndHandler, wndControl)	
 end
 
-function InventoryBag:OnRemoveIconExit(wndHandler, wndCtrl)
-	if wndHandler ~= wndCtrl then return end
-	wndCtrl:SetTooltipDoc(nil)
-	wndCtrl:SetSprite("")
+function InventoryBag:OnBagBtnMouseExit(wndHandler, wndControl)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -572,6 +680,40 @@ function InventoryBag:OnSystemEndDragDrop(strType, iData)
 	self.wndMain:FindChild("TextActionPrompt_Salvage"):Show(false)
 	self:UpdateSquareSize()
 	Sound.Play(Sound.PlayUI46PlaceVirtual)
+end
+
+-----------------------------------------------------------------------------------------------
+-- Item Sorting
+-----------------------------------------------------------------------------------------------
+
+function InventoryBag:OnOptionsSortItemsOff(wndHandler, wndControl)
+	self.bShouldSortItems = false
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndIconBtnSortDropDown:SetCheck(false)
+end
+
+function InventoryBag:OnOptionsSortItemsName(wndHandler, wndControl)
+	self.bShouldSortItems = true
+	self.nSortItemType = 1
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndIconBtnSortDropDown:SetCheck(false)
+end
+
+function InventoryBag:OnOptionsSortItemsByCategory(wndHandler, wndControl)
+	self.bShouldSortItems = true
+	self.nSortItemType = 2
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndIconBtnSortDropDown:SetCheck(false)
+end
+
+function InventoryBag:OnOptionsSortItemsByQuality(wndHandler, wndControl)
+	self.bShouldSortItems = true
+	self.nSortItemType = 3
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndIconBtnSortDropDown:SetCheck(false)
 end
 
 -----------------------------------------------------------------------------------------------

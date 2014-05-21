@@ -149,10 +149,12 @@ function HousingDecorate:OnLoad()
 	
 	self.wndListView:SetColumnText(1, Apollo.GetString("HousingDecorate_Decor"))
 	self.wndListView:SetColumnText(2, Apollo.GetString("HousingDecorate_Owned"))
+	self.wndListView:SetColumnText(3, Apollo.GetString("CombatFloaterType_Beneficial"))
 	
 	self.wndVendorList = self.wndDecorate:FindChild("VendorList")
 	self.wndVendorList:SetColumnText(1, Apollo.GetString("HousingDecorate_Upgrade"))
 	self.wndVendorList:SetColumnText(2, Apollo.GetString("HousingDecorate_Cost"))
+	self.wndVendorList:SetColumnText(3, Apollo.GetString("CombatFloaterType_Beneficial"))
 	
 	self.wndCrateFrame = self.wndDecorate:FindChild("BGC_ListWindow")
 	self.wndVendorFrame = self.wndDecorate:FindChild("BGV_ListWindow")
@@ -304,6 +306,7 @@ function HousingDecorate:OnHousingButtonOpenCrate(bIsVendor)
 		self.wndDecorate:ToFront()
 		
         Event_FireGenericEvent("HousingEnterEditMode")
+		HousingLib.SetEditMode(true)
 	else
 	    self:OnCloseHousingDecorateWindow()
 	end

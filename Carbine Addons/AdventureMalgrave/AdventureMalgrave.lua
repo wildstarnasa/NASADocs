@@ -33,11 +33,8 @@ function MalgraveAdventureResources:OnSave(eType)
 		return false
 	end
 	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
 	local tSave = 
 	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
 		tAdventureInfo = self.tAdventureInfo,
 		nSaveVersion = knSaveVersion,
 	}
@@ -62,9 +59,7 @@ function MalgraveAdventureResources:OnRestore(eType, tSavedData)
 			break
 		end
 	end
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
+	
 	self.tAdventureInfo = {}
 	if bIsMalgraveAdventure and tSavedData and tSavedData.tAdventureInfo.bIsShown then
 		self:Initialize()
@@ -101,6 +96,8 @@ end
 function MalgraveAdventureResources:Initialize()
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "MalgraveAdventureResourcesForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Lore_Malgrave")})
+		
 		Apollo.RegisterTimerHandler("MaxProgressFlashIcon", "OnMaxProgressFlashIcon", self)
 		Apollo.CreateTimer("MaxProgressFlashIcon", 8, false)
 
@@ -109,16 +106,11 @@ function MalgraveAdventureResources:Initialize()
 	
 		self.wndMain:Show(true)
 		self.tAdventureInfo.bIsShown = true
-		
-		if self.locSavedWindowLoc then
-			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-		end
 	end
 end
 
 function MalgraveAdventureResources:OnHide()
 	if self.wndMain then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.tAdventureInfo.bIsShown = false
 	end
@@ -148,7 +140,6 @@ function MalgraveAdventureResources:OnUpdate(nFatigue, nFood, nWater, nFodder, n
 			end
 		end
 	end
-
 
 	local nFatiguePercent = ((nFatigue / self.nFatigueMax) * 100)
 	self:SetBarValueAndData(wndFoodContainer:FindChild("FoodProgressBar"), nFood, self.nFoodMax)

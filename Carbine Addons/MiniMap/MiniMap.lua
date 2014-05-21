@@ -17,6 +17,7 @@ require "Unit"
 require "PublicEvent"
 require "PublicEventObjective"
 require "FriendshipLib"
+require "CraftingLib"
 
 -- TODO: Distinguish markers for different nodes from each other
 local kstrMiningNodeIcon = "IconSprites:Icon_MapNode_Map_Node_Mining"
@@ -52,7 +53,7 @@ local ktInstanceSettingTypeStrings =
 }
 
 
-local knSaveVersion = 2
+local knSaveVersion = 4
 
 local MiniMap = {}
 
@@ -97,11 +98,22 @@ function MiniMap:CreateOverlayObjectTypes()
 	self.eObjectTypeRival	 			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeTrainer	 			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeGroupMember			= self.wndMiniMap:CreateOverlayType()
+	self.eObjectPvPMarkers				= self.wndMiniMap:CreateOverlayType()
 end
 
 function MiniMap:BuildCustomMarkerInfo()
 	self.tMinimapMarkerInfo =
 	{
+		PvPExileCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCarry",			bFixedSizeMedium = true	},
+		PvPDominionCarry		= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCarry",			bFixedSizeMedium = true	},
+		PvPNeutralCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCarry",			bFixedSizeMedium = true	},
+		PvPExileCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",			bFixedSizeMedium = true	},
+		PvPDominionCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",			bFixedSizeMedium = true	},
+		PvPNeutralCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCap",			bFixedSizeMedium = true	},
+		PvPExileCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",			bFixedSizeMedium = true	},
+		PvPDominionCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",			bFixedSizeMedium = true	},
+		PvPNeutralCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCap",			bFixedSizeMedium = true	},
+		PvPBattleAlert			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_BattleAlert",	bFixedSizeMedium = true	},
 		IronNode				= { nOrder = 100, 	objectType = self.eObjectTypeMiningNode,		strIcon = kstrMiningNodeIcon,	crObject = kcrMiningNode, 	crEdge = kcrMiningNode },
 		TitaniumNode			= { nOrder = 100, 	objectType = self.eObjectTypeMiningNode,		strIcon = kstrMiningNodeIcon,	crObject = kcrMiningNode, 	crEdge = kcrMiningNode },
 		ZephyriteNode			= { nOrder = 100, 	objectType = self.eObjectTypeMiningNode,		strIcon = kstrMiningNodeIcon,	crObject = kcrMiningNode, 	crEdge = kcrMiningNode },
@@ -161,8 +173,8 @@ function MiniMap:BuildCustomMarkerInfo()
 		HalonRingTreeNode		= { nOrder = 100, 	objectType = self.eObjectTypeSurvivalistNode,	strIcon = kstrSurvivalNodeIcon,	crObject = kcrSurvivalNode, crEdge = kcrSurvivalNode },
 		GrimvaultTreeNode		= { nOrder = 100, 	objectType = self.eObjectTypeSurvivalistNode,	strIcon = kstrSurvivalNodeIcon,	crObject = kcrSurvivalNode, crEdge = kcrSurvivalNode },
 		SchoolOfFishNode		= { nOrder = 100, 	objectType = self.eObjectTypeFishingNode,		strIcon = kstrFishingNodeIcon,	crObject = kcrFishingNode,	crEdge = kcrFishingNode },
-		Friend					= { nOrder = 2, 	objectType = self.eObjectTypeFriend, 			strIcon = "IconSprites:Icon_MapNode_Map_Friend",	bNeverShowOnEdge = true, bShown, bFixedSizeSmall = true },
-		Rival					= { nOrder = 3, 	objectType = self.eObjectTypeRival, 			strIcon = "IconSprites:Icon_MapNode_Map_Rival", 	bNeverShowOnEdge = true, bShown, bFixedSizeSmall = true },
+		Friend					= { nOrder = 2, 	objectType = self.eObjectTypeFriend, 			strIcon = "IconSprites:Icon_Windows_UI_CRB_Friend",	bNeverShowOnEdge = true, bShown, bFixedSizeMedium = true },
+		Rival					= { nOrder = 3, 	objectType = self.eObjectTypeRival, 			strIcon = "IconSprites:Icon_MapNode_Map_Rival", 	bNeverShowOnEdge = true, bShown, bFixedSizeMedium = true },
 		Trainer					= { nOrder = 4, 	objectType = self.eObjectTypeTrainer, 			strIcon = "IconSprites:Icon_MapNode_Map_Trainer", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		QuestKill				= { nOrder = 5, 	objectType = self.eObjectTypeQuestKill, 		strIcon = "sprMM_TargetCreature", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		QuestTarget				= { nOrder = 6,		objectType = self.eObjectTypeQuestTarget, 		strIcon = "sprMM_TargetObjective", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
@@ -215,7 +227,7 @@ function MiniMap:BuildCustomMarkerInfo()
 		SettlerImprovement		= { nOrder = 53,	objectType = GameLib.CodeEnumMapOverlayType.PathObjective, strIcon = "CRB_MinimapSprites:sprMM_SmallIconSettler", bNeverShowOnEdge = true },
 		Neutral					= { nOrder = 151,	objectType = self.eObjectTypeNeutral, 			strIcon = "ClientSprites:MiniMapMarkerTiny", 	bNeverShowOnEdge = true, bShown = false, crObject = ApolloColor.new("xkcdBrightYellow") },
 		Hostile					= { nOrder = 150,	objectType = self.eObjectTypeHostile, 			strIcon = "ClientSprites:MiniMapMarkerTiny", 	bNeverShowOnEdge = true, bShown = false, crObject = ApolloColor.new("xkcdBrightRed") },
-		GroupMember				= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", 	bFixedSizeMedium = true },
+		GroupMember				= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", 	bFixedSizeLarge = true },
 		Bank					= { nOrder = 54,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true },
 		GuildBank				= { nOrder = 56,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow") },
 		GuildRegistrar			= { nOrder = 55,	objectType = self.eObjectTypeVendor, 			strIcon = "CRB_MinimapSprites:sprMM_Group", bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow") },
@@ -246,9 +258,12 @@ function MiniMap:OnLoad()
 end
 
 function MiniMap:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 				"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("CharacterCreated", 					"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("OptionsUpdated_QuestTracker", 			"OnOptionsUpdated", self)
 	Apollo.RegisterEventHandler("VarChange_ZoneName", 					"OnChangeZoneName", self)
@@ -316,10 +331,6 @@ function MiniMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 			"OnTutorial_RequestUIAnchor", self)
 
 	self.wndMain 			= Apollo.LoadForm(self.xmlDoc , "Minimap", "FixedHudStratum", self)
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-		
 	self.wndMiniMap 		= self.wndMain:FindChild("MapContent")
 	self.wndZoneName 		= self.wndMain:FindChild("MapZoneName")
 	self.wndPvPFlagName 	= self.wndMain:FindChild("MapZonePvPFlag")
@@ -462,7 +473,6 @@ function MiniMap:OnSave(eType)
 		return
 	end
 
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
 	local tShownUnits = {}
 	local tHiddenUnits = {}
 	
@@ -481,7 +491,6 @@ function MiniMap:OnSave(eType)
 	
 	local tSavedData =
 	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
 		fZoomLevel = self.wndMiniMap:GetZoomLevel(),
 		tToggled = self.tToggledIcons,
 		tSavedShownUnits = tShownUnits,
@@ -498,9 +507,6 @@ function MiniMap:OnRestore(eType, tSavedData)
 		return
 	end
 
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end	
 	if tSavedData.fZoomLevel then
 		self.fSavedZoomLevel = tSavedData.fZoomLevel
 	end
@@ -528,6 +534,10 @@ function MiniMap:OnRestore(eType, tSavedData)
 			end
 		end
 	end
+end
+
+function MiniMap:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MiniMap_Title")})
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -641,6 +651,32 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function MiniMap:OnMenuBtnToggle(wndHandler, wndControl)
+
+	if wndControl:IsChecked() then
+		local bIsMiner, bIsRelicHunter, bIsSurvivalist, bIsFarmer = false, false, false, false
+		
+		for idx, tTradeskill in pairs(CraftingLib.GetKnownTradeskills() or {}) do
+	
+			local tTradeskillInfo = CraftingLib.GetTradeskillInfo(tTradeskill.eId)
+			
+			if (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Mining) and tTradeskillInfo.bIsActive then
+				bIsMiner = true
+			elseif (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Relic_Hunter) and tTradeskillInfo.bIsActive then
+				bIsRelicHunter = true
+			elseif (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Survivalist) and tTradeskillInfo.bIsActive then
+				bIsSurvivalist = true
+			elseif (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Farmer) and tTradeskillInfo.bIsActive then
+				bIsFarmer = true
+			end
+		
+		end
+		
+		self.wndMinimapOptions:FindChild("OptionsBtnMiningNodes"):Enable(bIsMiner)
+		self.wndMinimapOptions:FindChild("OptionsBtnRelicNodes"):Enable(bIsRelicHunter)
+		self.wndMinimapOptions:FindChild("OptionsBtnSurvivalistNodes"):Enable(bIsSurvivalist)
+		self.wndMinimapOptions:FindChild("OptionsBtnFarmingNodes"):Enable(bIsFarmer)
+	end
+
 	self.wndMinimapOptions:Show(wndControl:IsChecked())
 end
 
@@ -1307,14 +1343,6 @@ function MiniMap:OnGenerateTooltip(wndHandler, wndControl, eType, nX, nY)
 	else
 		wndControl:SetTooltipDoc(nil)
 	end
-end
-
-function MiniMap:OnFriendshipAdd(idFriend)
-	self:OnRefreshRadar(FriendshipLib.GetUnitById(idFriend))
-end
-
-function MiniMap:OnFriendshipRemove(idFriend)
-	self:OnRefreshRadar()
 end
 
 function MiniMap:OnFriendshipAccountFriendsRecieved(tFriendAccountList)

@@ -630,6 +630,7 @@ function CircuitBoardSchematic:OnDestroyPropertyPicker(wndHandler, wndControl) -
 		self.wndPropertyPickerWindow:Destroy()
 		self.wndPropertyPickerWindow = nil
 	end
+	self:UpdatePreview() -- This needs to update and re-check CraftBtn's Enable vs Disable, as we temporarily turn it off while property picker is up
 end
 
 function CircuitBoardSchematic:OnBuildPropertyPicker(wndHandler, wndControl) -- wndHandler is CircuitPickerBtn, data is { self.tLayoutIdxToLoc[nSocketIdx], eBrutalityId }
@@ -702,6 +703,9 @@ function CircuitBoardSchematic:OnBuildPropertyPicker(wndHandler, wndControl) -- 
 	local nCapacWidth = self.wndPropertyPickerWindow:FindChild("PropertyPickerCapacitorList"):ArrangeChildrenHorz(0)
 	local nLeft, nTop, nRight, nBottom = self.wndPropertyPickerWindow:GetAnchorOffsets()
 	self.wndPropertyPickerWindow:SetAnchorOffsets(nLeft, nTop, nLeft + math.max(nResistWidth, nInducWidth, nCapacWidth) + 145, nBottom)
+
+	self.wndMain:FindChild("CraftButton"):Enable(false) -- When open, so no one accidentally clicks it. When closed, we'll do UpdatePreview() and re-enable accordingly.
+	self.wndPropertyPickerWindow:Invoke()
 end
 
 function CircuitBoardSchematic:OnPropertyBtn(wndHandler, wndControl) -- PropertyPickerAlphaBtn or PropertyPickerBetaBtn or PropertyPickerGammaBtn
@@ -721,7 +725,6 @@ function CircuitBoardSchematic:OnPropertyBtn(wndHandler, wndControl) -- Property
 	end
 
 	self:OnDestroyPropertyPicker()
-	self:UpdatePreview()
 end
 
 function CircuitBoardSchematic:OnCircuitPickerLeftRight(wndHandler, wndControl) -- CircuitPickerSmallLeft or CircuitPickerSmallRight
@@ -742,7 +745,6 @@ function CircuitBoardSchematic:OnCircuitPickerLeftRight(wndHandler, wndControl) 
 	end
 
 	self:OnDestroyPropertyPicker()
-	self:UpdatePreview()
 end
 
 function CircuitBoardSchematic:OnPowerCoreItemBtn(wndHandler, wndControl) -- PowerCoreItemBtn, data is tCurrentPowerCore

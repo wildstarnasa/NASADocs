@@ -26,14 +26,7 @@ end
 
 function FloatText:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
 	Apollo.RegisterEventHandler("OptionsUpdated_Floaters", 					"OnOptionsUpdated", self)
-end
-
-function FloatText:GetAsyncLoadStatus()
-	if g_InterfaceOptionsLoaded then
-		self:Initialize()
-		return Apollo.AddonLoadStatus.Loaded
-	end
-	return Apollo.AddonLoadStatus.Loading
+	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", 					"Initialize", self)
 end
 
 function FloatText:Initialize()
@@ -712,7 +705,8 @@ function FloatText:OnDamageOrHealing( unitCaster, unitTarget, eDamageType, nDama
 		return
 	end
 
-	if GameLib.IsControlledUnit(unitTarget) or unitTarget:IsMounted() then
+	
+	if GameLib.IsControlledUnit(unitTarget) or unitTarget == GameLib.GetPlayerMountUnit() or GameLib.IsControlledUnit(unitTarget:GetUnitOwner()) then
 		self:OnPlayerDamageOrHealing( unitTarget, eDamageType, nDamage, nShieldDamaged, nAbsorptionAmount, bCritical )
 		return
 	end

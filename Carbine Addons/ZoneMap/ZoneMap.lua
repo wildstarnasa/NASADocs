@@ -64,7 +64,7 @@ local ktGlobalPortalInfo =
 	NorthernWilds		= { unlockEnumId = 118,		worldLocId = 38354 },
 	Galeras				= { unlockEnumId = 169,		worldLocId = 38355 },
 	Whitevale			= { unlockEnumId = 138,		worldLocId = 41168 },
-	Malgrave			= { unlockEnumId = 119,		worldLocId = 41983 }
+	Malgrave			= { unlockEnumId = 119,		worldLocId = 41717 }
 }
 
 -- TODO: Distinguish markers for different nodes from each other
@@ -83,7 +83,7 @@ local kcrSurvivalNode 		= CColor.new(0.2, 1.0, 1.0, 1.0)
 local kstrFishingNodeIcon 	= "IconSprites:Icon_MapNode_Map_Node_Fishing"
 local kcrFishingNode 		= CColor.new(0.2, 1.0, 1.0, 1.0)
 
-local knSaveVersion = 2
+local knSaveVersion = 4
 
 -- ** Add new object types here ** --
 function ZoneMap:CreateOverlayObjectTypes()
@@ -255,7 +255,7 @@ function ZoneMap:BuildCustomMarkerInfo()
 		HalonRingTreeNode			= { nOrder = 100, 	objectType = self.eObjectTypeSurvivalistNode,	strIcon = kstrSurvivalNodeIcon, crObject = kcrSurvivalNode, crEdge = kcrSurvivalNode },
 		GrimvaultTreeNode			= { nOrder = 100, 	objectType = self.eObjectTypeSurvivalistNode,	strIcon = kstrSurvivalNodeIcon, crObject = kcrSurvivalNode, crEdge = kcrSurvivalNode },
 		SchoolOfFishNode			= { nOrder = 100, 	objectType = self.eObjectTypeFishingNode,		strIcon = kstrFishingNodeIcon, 	crObject = kcrFishingNode, 	crEdge = kcrFishingNode },
-		Friend						= { nOrder = 2, 	objectType = self.eObjectTypeFriend, 			strIcon = "IconSprites:Icon_MapNode_Map_Friend",	bNeverShowOnEdge = true, bShown, bFixedSizeSmall = true },
+		Friend						= { nOrder = 2, 	objectType = self.eObjectTypeFriend, 			strIcon = "IconSprites:Icon_Windows_UI_CRB_Friend",	bNeverShowOnEdge = true, bShown, bFixedSizeMedium = true },
 		Rival						= { nOrder = 3, 	objectType = self.eObjectTypeRival, 			strIcon = "IconSprites:Icon_MapNode_Map_Rival", 	bNeverShowOnEdge = true, bShown, bFixedSizeSmall = true },
 		Trainer						= { nOrder = 4, 	objectType = self.eObjectTypeTrainer, 			strIcon = "IconSprites:Icon_MapNode_Map_Trainer", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		QuestKill					= { nOrder = 5, 	objectType = self.eObjectTypeQuestKill, 		strIcon = "sprMM_TargetCreature", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
@@ -307,7 +307,7 @@ function ZoneMap:BuildCustomMarkerInfo()
 		CommodityMarketplace		= { nOrder = 51,	objectType = self.eObjectTypeCommodity, 		strIcon = "IconSprites:Icon_MapNode_Map_CommoditiesExchange", bNeverShowOnEdge = true },
 		ItemAuctionhouse			= { nOrder = 52,	objectType = self.eObjectTypeAuctioneer, 		strIcon = "IconSprites:Icon_MapNode_Map_AuctionHouse", 	bNeverShowOnEdge = true },
 		SettlerImprovement			= { nOrder = 53,	objectType = GameLib.CodeEnumMapOverlayType.PathObjective, strIcon = "CRB_MinimapSprites:sprMM_SmallIconSettler", bNeverShowOnEdge = true },
-		GroupMember					= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", 	bFixedSizeMedium = true },
+		GroupMember					= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", 	bFixedSizeLarge = true },
 		Bank						= { nOrder = 54,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true },
 		GuildBank					= { nOrder = 56,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow") },
 		GuildRegistrar				= { nOrder = 55,	objectType = self.eObjectTypeVendor, 			strIcon = "CRB_MinimapSprites:sprMM_Group", bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow") },
@@ -430,6 +430,7 @@ function ZoneMap:OnSave(eType)
 	{
 		bControlPanelShown = self.bControlPanelShown,
 		tCheckedOptions = self.tButtonChecks,
+		eZoomLevel = self.wndZoneMap and self.wndZoneMap:GetDisplayMode() or self.eDisplayMode,
 		nSaveVersion = knSaveVersion,
 	}
 	return tSavedData
@@ -442,6 +443,9 @@ function ZoneMap:OnRestore(eType, tSavedData)
 	self.bControlPanelShown = tSavedData.bControlPanelShown -- TODO: Not actually a boolean, OnRestore bugged with booleans at the moment
 	if tSavedData.tCheckedOptions then
 		self.tButtonChecks = tSavedData.tCheckedOptions
+	end
+	if tSavedData.eZoomLevel then
+		self.eDisplayMode = tSavedData.eZoomLevel
 	end
 end
 
@@ -638,7 +642,7 @@ function ZoneMap:OnDocumentReady()
 	self.bIgnoreQuestStateChanged = false
 	self.eLastZoomLevel = nil
 	self.idLastCurrentZone = nil
-	self.bControlPanelShown = true -- lives across sessions
+	self.bControlPanelShown = false -- lives across sessions
 
 	-----------------------------------------------------------------------------------------
 
@@ -747,7 +751,7 @@ function ZoneMap:OnDocumentReady()
 end
 
 function ZoneMap:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Map"), {"ToggleZoneMap", "WorldMap", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Map"), {"ToggleZoneMap", "WorldMap", "Icon_Windows32_UI_CRB_InterfaceMenu_Map"})
 end
 
 function ZoneMap:OnOptionsUpdated()
@@ -758,7 +762,7 @@ function ZoneMap:ToggleWindow()
 	if self.wndMain:IsVisible() then
 		Event_FireGenericEvent("GenericEvent_CloseZoneCompletion")
 		self.wndMain:Show(false)
-		self.wndMapControlPanel:Show(false)
+		self.eDisplayMode = self.wndZoneMap:GetDisplayMode()
 		Apollo.StopTimer("MapPulseTimer")
 	else
 		Event_FireGenericEvent("GenericEvent_OpenZoneCompletion", self.wndMain:FindChild("ZoneMapCompletionParent"))
@@ -786,7 +790,8 @@ function ZoneMap:ToggleWindow()
 		self:AddQuestIndicators()
 		self.wndMain:FindChild("ZoneComplexToggle"):SetData(self.idCurrentZone)
 		self.wndZoneMap:SetZone(self.idCurrentZone)
-		self.wndZoneMap:SetDisplayMode(ZoneMapWindow.CodeEnumDisplayMode.Scaled)
+		self.wndZoneMap:SetDisplayMode(self.eDisplayMode)
+		self.wndZoneMap:CenterOnPlayer()
 		self.wndZoneMap:SetMinDisplayMode(ZoneMapWindow.CodeEnumDisplayMode.SuperPanning)
 		self:SetControls()
 
@@ -962,6 +967,7 @@ function ZoneMap:OnCloseBtn()
 	self.wndMain:Show(false)
 	self.wndMapControlPanel:Show(false)
 	self.wndMain:FindChild("ZoneComplexList"):Show(false)
+	self.eDisplayMode = self.wndZoneMap:GetDisplayMode()
 	Apollo.StopTimer("MapPulseTimer")
 	Event_FireGenericEvent("GenericEvent_CloseZoneCompletion")
 end
@@ -1010,16 +1016,27 @@ end
 function ZoneMap:OnToggleControlsOn(wndHandler, wndControl)
 	self.bControlPanelShown = true
 	self.wndMain:FindChild("ZoneMapControlPanelParent"):Show(true)
-	self.wndMapControlPanel:Show(true)
+	self.wndMapControlPanel:Show(true, false)
 	self.wndMain:FindChild("ToggleControlsBtn"):SetCheck(true)
+	self.wndMain:FindChild("GrabberFrame"):Show(false)
+	
+	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("ToggleControlsBtn"):GetAnchorOffsets()
+	self.wndMain:FindChild("ToggleControlsBtn"):SetAnchorOffsets(-418, nTop, -365, nBottom)
+	self.wndMain:FindChild("ToggleControlsBtn"):SetTooltip(Apollo.GetString("CRB_Collapse_zone_selection_controls"))
 end
-
+	
 function ZoneMap:OnToggleControlsOff(wndHandler, wndControl)
 	self.bControlPanelShown = false
 	self.wndMain:FindChild("ZoneMapControlPanelParent"):Show(false)
-	self.wndMapControlPanel:Show(false)
+	self.wndMapControlPanel:Show(false, false)
 	self.wndMain:FindChild("ZoneComplexList"):Show(false)
 	self.wndMain:FindChild("ToggleControlsBtn"):SetCheck(false)
+	self.wndMain:FindChild("GrabberFrame"):Show(true)
+
+	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("ToggleControlsBtn"):GetAnchorOffsets()
+	self.wndMain:FindChild("ToggleControlsBtn"):SetAnchorOffsets(-52, nTop, 1, nBottom)
+	self.wndMain:FindChild("ToggleControlsBtn"):SetTooltip(Apollo.GetString("CRB_Expand_zone_selection_controls"))
+
 end
 
 function ZoneMap:OnResizeOptionsPane()
@@ -1158,7 +1175,7 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 		strZoneMapText = tCurrentInfo.strName
 		-- TODO: strZoneMapText = (tHomeZone and tHomeZone.id ~= tCurrentInfo.id) and tCurrentInfo.strName or tCurrentInfo.strName .. " (Current)"
 	elseif eZoomLevel == tZoneMapEnums.World then
-		strZoneMapText = "World"
+		strZoneMapText = Apollo.GetString("ZoneCompletion_WorldCompletion")
 	elseif eZoomLevel == tZoneMapEnums.Continent and tHomeContinent and tCurrentContinent.id == tHomeContinent.id then
 		strZoneMapText = tCurrentContinent.strName
 	end
@@ -1955,6 +1972,9 @@ end
 function ZoneMap:OnUnitDestroyed(unitDead)
 	self.tUnitsShown[unitDead:GetId()] = nil
 	self.tUnitsHidden[unitDead:GetId()] = nil
+	if unitDead:IsInYourGroup() then
+		self:DrawGroupMembers(unitDead:GetName())
+	end
 end
 
 function ZoneMap:IsTypeCurrentlyHidden(objectType)
@@ -2068,6 +2088,10 @@ function ZoneMap:OnUnitCreated(unitMade)
 
 		self.wndZoneMap:AddUnit(unitMade, objectType, tInfo, tMarkerOptions, self:IsTypeCurrentlyHidden(objectType))
 		self.tUnitsShown[unitMade:GetId()] = { unitValue = unitMade }
+		
+		if objectType == self.eObjectTypeGroupMember then
+			self:DrawGroupMembers()
+		end
 	end
 end
 
@@ -2091,8 +2115,6 @@ function ZoneMap:OnAddChallengeIcon(chalCurrent, strPointIcon)
 	if not self.tToggledIcons.bChallenges then
 		return
 	end
-
-	self:UpdateCurrentZone()
 
 	local idChallenge = chalCurrent:GetId()
 	self:OnRemoveChallengeIcon(idChallenge)
@@ -2206,8 +2228,6 @@ function ZoneMap:OnPlayerPathMissionActivate(pmActivated)
 		return
 	end
 
-	self:UpdateCurrentZone()
-
 	self:OnPlayerPathMissionDeactivate(pmActivated)
 
 	local tRegionList = pmActivated:GetMapRegions()
@@ -2299,8 +2319,6 @@ function ZoneMap:OnPublicEventUpdate(peUpdated)
 	if not self.tToggledIcons.bPublicEvents then
 		return
 	end
-
-	self:UpdateCurrentZone()
 
 	self:OnPublicEventCleared(peUpdated)
 
@@ -2495,13 +2513,13 @@ function ZoneMap:OnGroupUpdatePosition(arMembers)
 	self:DrawGroupMembers()
 end
 
-function ZoneMap:DrawGroupMembers()
+function ZoneMap:DrawGroupMembers(memberName)
 	self:DestroyGroupMarkers()
 
-	local tInfo = {}
 	for idx, tMember in pairs(self.tGroupMembers) do
-		local tInfo = GroupLib.GetGroupMember(idx)
-		if tInfo.bIsOnline then
+		if GroupLib.GetGroupMember(idx).bIsOnline and (memberName == tMember.strName or not GroupLib.GetUnitForGroupMember(idx)) then
+			local tInfo = {}
+			tInfo.strIcon = "IconSprites:Icon_MapNode_Map_GroupMember"
 			local bNeverShowOnEdge = true
 			if tMember.bInCombatPvp then
 				tInfo.strIconEdge	= "sprMM_Group"
@@ -2517,7 +2535,7 @@ function ZoneMap:DrawGroupMembers()
 
 			local strNameFormatted = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff31fcf6\">%s</T>", tMember.strName)
 			strNameFormatted = String_GetWeaselString(Apollo.GetString("ZoneMap_AppendGroupMemberLabel"), strNameFormatted)
-			self.tGroupMemberObjects[idx] = self.wndZoneMap:AddObject(1, tMember.tWorldLoc, strNameFormatted, tInfo, {bNeverShowOnEdge = bNeverShowOnEdge})
+			self.tGroupMemberObjects[idx] = self.wndZoneMap:AddObject(self.eObjectTypeGroupMember, tMember.tWorldLoc, strNameFormatted, tInfo, {bNeverShowOnEdge = bNeverShowOnEdge, bFixedSizeLarge = true})
 		end
 	end
 end
@@ -2527,17 +2545,7 @@ end
 -----------------------------------------------------------------------------------------
 
 function ZoneMap:OnZoneMapButtonDown(wndHandler, wndControl, eButton, nX, nY, bDoubleClick) -- TODO: Bulletproof this
-	local tPoint = self.wndZoneMap:WindowPointToClientPoint(nX, nY)
-	local tWorldLoc = self.wndZoneMap:GetWorldLocAtPoint(tPoint.x, tPoint.y)
-	local nLocX = math.floor(tWorldLoc.x + .5)
-	local nLocZ = math.floor(tWorldLoc.z + .5)
-	local strDesc = string.format("<P Font=\"CRB_InterfaceSmall\">%s</P>", String_GetWeaselString(Apollo.GetString("ZoneMap_LocationXZ"), nLocX, nLocZ))
-
-	wndControl:SetTooltipType(Window.TPT_OnCursor)
-	wndControl:SetTooltip(strDesc)
-
 	local newActiveRegionUserData = nil
-
 	if self.objActiveRegionUserData ~= nil then
 		for hoverIdx, hoverData in pairs(self.arHoverRegionUserDataList) do
 			if self.objActiveRegionUserData == hoverData then
@@ -2555,6 +2563,10 @@ function ZoneMap:OnZoneMapButtonDown(wndHandler, wndControl, eButton, nX, nY, bD
 end
 
 function ZoneMap:OnZoneMapMouseMove(wndHandler, wndControl, nX, nY)
+	if wndHandler ~= wndControl then
+		return
+	end
+
 	self:OnGenerateTooltip(wndHandler, wndControl, Tooltip.TooltipGenerateType_Default, nX, nY)
 
 	if not self.bMapCoordinateDelay then
@@ -2567,6 +2579,14 @@ function ZoneMap:OnZoneMapMouseMove(wndHandler, wndControl, nX, nY)
 		local nLocZ = math.floor(tWorldLoc.z + .5)
 		self.wndMain:FindChild("MapCoordinates"):SetText(String_GetWeaselString(Apollo.GetString("ZoneMap_LocationXZ"), nLocX, nLocZ))
 	end
+	local tHex = self.wndZoneMap:GetHexAtPoint(nX, nY)
+	local strZone = tHex.strZone or ""
+
+	local wndTooltip = self.wndZoneMap:FindChild("ZoneName")
+	wndTooltip:SetText(strZone)	
+	if string.len(strZone) > 0 and tHex.nLabelX ~= nil then
+		wndTooltip:Move(tHex.nLabelX - 150, tHex.nLabelY - 40, 300, 80)
+	end	
 end
 
 function ZoneMap:OnZoneMap_MapCoordinateDelay()

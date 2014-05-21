@@ -14,7 +14,7 @@ require "HousingLib"
 
 local NeighborsList = {}
 
-local kstrClassIcon =
+local ktClassIcon =
 {
 	[GameLib.CodeEnumClass.Medic] 			= "Icon_Windows_UI_CRB_Medic",
 	[GameLib.CodeEnumClass.Esper] 			= "Icon_Windows_UI_CRB_Esper",
@@ -25,7 +25,17 @@ local kstrClassIcon =
 	[5] = "Icon_Windows_UI_CRB_Spellslinger",
 }
 
-local kstrPath =
+local ktClassName =
+{
+	[GameLib.CodeEnumClass.Medic]			= Apollo.GetString("CRB_Medic"),
+	[GameLib.CodeEnumClass.Esper]			= Apollo.GetString("CRB_Esper"),
+	[GameLib.CodeEnumClass.Warrior]			= Apollo.GetString("CRB_Warrior"),
+	[GameLib.CodeEnumClass.Stalker] 		= Apollo.GetString("ClassStalker"),
+	[GameLib.CodeEnumClass.Engineer]		= Apollo.GetString("CRB_Engineer"),
+	[GameLib.CodeEnumClass.Spellslinger]	= Apollo.GetString("CRB_Spellslinger"),
+}
+
+local ktPathName =
 {
 	[PlayerPathLib.PlayerPathType_Soldier] 		= Apollo.GetString("PlayerPathSoldier"),
 	[PlayerPathLib.PlayerPathType_Settler] 		= Apollo.GetString("PlayerPathSettler"),
@@ -167,6 +177,7 @@ function NeighborsList:OnGenericEvent_InitializeNeighbors(wndParent)
 
 	self.wndMain:FindChild("AddMemberCloseBtn"):SetData(self.wndMain:FindChild("AddWindow"))
 	self.wndMain:FindChild("VisitCloseBtn"):SetData(self.wndMain:FindChild("VisitWindow"))
+	self.wndMain:FindChild("VisitNoBtn"):SetData(self.wndMain:FindChild("VisitWindow"))
 	self.wndMain:FindChild("ModifyCloseBtn"):SetData(self.wndMain:FindChild("ModifyWindow"))
 
 	self.wndMain:FindChild("VisitBtn"):AttachWindow(self.wndMain:FindChild("VisitBtn"):FindChild("VisitWindow"))
@@ -203,9 +214,54 @@ function NeighborsList:OnShow()
 end
 
 function NeighborsList:OnChangeWorld()
-
 	self.wndRandomList:Show(false)
-	self.wndMain:Show(false)
+	self.wndMain:Show(true)
+end
+
+function NeighborsList:OnNeighborSortToggle(wndHandler, wndControl)
+	local bChecked = wndHandler:IsChecked()
+	local strLastChecked = wndHandler:GetName()
+	self.fnSort = nil
+	
+	if strLastChecked == "Label_Friend" then
+		if bChecked then
+			self.fnSort = function(a,b) return (a.strCharacterName > b.strCharacterName) end
+		else
+			self.fnSort = function(a,b) return (a.strCharacterName < b.strCharacterName) end
+		end
+	elseif strLastChecked == "Label_Roommate" then
+		if bChecked then
+			self.fnSort = function(a,b) return (a.ePermissionNeighbor > b.ePermissionNeighbor) end
+		else
+			self.fnSort = function(a,b) return (a.ePermissionNeighbor < b.ePermissionNeighbor) end
+		end
+	elseif strLastChecked == "Label_Level" then
+		if bChecked then
+			self.fnSort = function(a,b) return (a.nLevel > b.nLevel) end
+		else
+			self.fnSort = function(a,b) return (a.nLevel < b.nLevel) end
+		end
+	elseif strLastChecked == "Label_Class" then
+		if bChecked then
+			self.fnSort = function(a,b) return (ktClassName[a.nClassId] > ktClassName[b.nClassId]) end
+		else
+			self.fnSort = function(a,b) return (ktClassName[a.nClassId] < ktClassName[b.nClassId]) end
+		end
+	elseif strLastChecked == "Label_Path" then
+		if bChecked then
+			self.fnSort = function(a,b) return (ktPathName[a.nPathId] > ktPathName[b.nPathId]) end
+		else
+			self.fnSort = function(a,b) return (ktPathName[a.nPathId] < ktPathName[b.nPathId]) end
+		end
+	elseif strLastChecked == "Label_LastOnline" then
+		if bChecked then
+			self.fnSort = function(a,b) return (a.fLastOnline < b.fLastOnline) end
+		else
+			self.fnSort = function(a,b) return (a.fLastOnline > b.fLastOnline) end
+		end
+	end
+	
+	self:RefreshList()
 end
 
 function NeighborsList:RefreshList()
@@ -220,12 +276,16 @@ function NeighborsList:RefreshList()
 	self.wndListContainer:DestroyChildren()
 	
 	local tNeighbors = HousingLib.GetNeighborList() or {}
+	
+	if self.fnSort then
+		table.sort(tNeighbors, self.fnSort)
+	end
 
 	for key, tCurrNeighbor in pairs(tNeighbors) do
 		local wndListItem = Apollo.LoadForm(self.xmlDoc, "FriendForm", self.wndListContainer, self)
 		wndListItem:SetData(tCurrNeighbor) -- set the full table since we have no direct lookup for neighbors
 		wndListItem:FindChild("Name"):SetText(tCurrNeighbor.strCharacterName)
-		wndListItem:FindChild("Class"):SetSprite(kstrClassIcon[tCurrNeighbor.nClassId])
+		wndListItem:FindChild("Class"):SetSprite(ktClassIcon[tCurrNeighbor.nClassId])
 		wndListItem:FindChild("Path"):SetSprite(kstrPathIcon[tCurrNeighbor.nPathId])
 		wndListItem:FindChild("Level"):SetText(tCurrNeighbor.nLevel)
 
@@ -346,6 +406,7 @@ end
 function NeighborsList:OnAddMemberYesClick( wndHandler, wndControl )
 	local wndParent = wndControl:GetParent()
 	local strName = wndParent:FindChild("AddMemberEditBox"):GetText()
+
 	if strName ~= nil and strName ~= "" then
 		HousingLib.NeighborInviteByName(strName)
 	end
@@ -438,6 +499,7 @@ end
 
 function NeighborsList:OnTeleportHomeBtn(wndHandler, wndControl)
 	HousingLib.RequestTakeMeHome()
+	Event_FireGenericEvent("ToggleSocialWindow") -- Here to prevent change instance not reloading panel
 end
 
 -----------------------------------------------------------------------------------------------
@@ -620,8 +682,9 @@ function NeighborsList:ShowRandomList()
 end
 
 function NeighborsList:OnRandomResidenceList()
+	self.wndRandomList:FindChild("ListContainer"):DestroyChildren()
+	
 	local arResidences = HousingLib.GetRandomResidenceList()
-
 	for key, tHouse in pairs(arResidences) do
 		local wnd = Apollo.LoadForm(self.xmlDoc, "RandomFriendForm", self.wndRandomList:FindChild("ListContainer"), self)
 		wnd:SetData(tHouse.nId) -- set the full table since we have no direct lookup for neighbors
@@ -640,8 +703,7 @@ end
 function NeighborsList:OnSubCloseBtn(wndHandler, wndControl)
 	local wndParent = wndHandler:GetData()
 	wndParent:Show(false)
-
-	end
+end
 
 function NeighborsList:OnVisitRandomBtn(wndHandler, wndControl)
 	wndControl:FindChild("VisitWindow"):Show(true)

@@ -52,8 +52,6 @@ local ktCommandIds =
 	GameLib.CodeEnumGameCommandType.DashRight
 }
 
-local knSaveVersion = 1
-
 -----------------------------------------------------------------------------------------------
 -- Initialization
 -----------------------------------------------------------------------------------------------
@@ -77,34 +75,6 @@ function NonCombatSpellbook:Init()
     Apollo.RegisterAddon(self)
 end
 
-function NonCombatSpellbook:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSave = 
-	{
-		tLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function NonCombatSpellbook:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocation)
-	end
-
-end
-
-
 -----------------------------------------------------------------------------------------------
 -- NonCombatSpellbook OnLoad
 -----------------------------------------------------------------------------------------------
@@ -114,11 +84,12 @@ function NonCombatSpellbook:OnLoad()
 end
 
 function NonCombatSpellbook:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 	"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 	
 	Apollo.RegisterEventHandler("GenericEvent_OpenNonCombatSpellbook", "OnNonCombatSpellbookOn", self)
 	Apollo.RegisterEventHandler("AbilityBookChange", "OnAbilityBookChange", self)
@@ -126,9 +97,6 @@ function NonCombatSpellbook:OnDocumentReady()
 	-- load our forms
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "NonCombatSpellbookForm", nil, self)
 	self.wndMain:Show(false)
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 	
 	self.wndEntryContainer = self.wndMain:FindChild("EntriesContainer")
 	self.wndEntryContainerMounts = self.wndMain:FindChild("EntriesContainerMounts")
@@ -139,15 +107,19 @@ function NonCombatSpellbook:OnDocumentReady()
 	self.wndTabsContainer:FindChild("BankTabBtnCmd"):SetData(karTabTypes.Cmd)
 end
 
+function NonCombatSpellbook:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_NonCombatAbilities")})
+end
+
 function NonCombatSpellbook:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_NonCombatAbilities"), {"GenericEvent_OpenNonCombatSpellbook", "", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_NonCombatAbilities"), {"GenericEvent_OpenNonCombatSpellbook", "", "Icon_Windows32_UI_CRB_InterfaceMenu_NonCombatAbility"})
 end
 
 function NonCombatSpellbook:OnAbilityBookChange()
 	if self.wndMain == nil or not self.wndMain:IsShown() then
 		return
 	end
-
+	
 	self:Redraw()
 end
 
@@ -159,6 +131,12 @@ function NonCombatSpellbook:OnNonCombatSpellbookOn()
 end
 
 function NonCombatSpellbook:Redraw()
+	local unitPlayer = GameLib.GetPlayerUnit()
+	
+	if not unitPlayer then
+		return
+	end
+	
 	self.arLists[karTabTypes.Mount] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
 	self.arLists[karTabTypes.Misc] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}
 	self.arLists[karTabTypes.Cmd] = {}

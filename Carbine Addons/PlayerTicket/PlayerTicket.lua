@@ -16,8 +16,6 @@ local kstrCellSelectedFocus = "CRB_Basekit:kitBtn_HoloPressedFlyby"
 
 local kstrEnterTicket = Apollo.GetString("PlayerTicket_ChooseCategory")
 
-local knSaveVersion = 2
-
 ---------------------------------------------------------------------------------------------------
 -- PlayerTicketDialog initialization
 ---------------------------------------------------------------------------------------------------
@@ -33,35 +31,8 @@ function PlayerTicketDialog:new(o)
 	return o
 end
 
----------------------------------------------------------------------------------------------------
 function PlayerTicketDialog:Init()
 	Apollo.RegisterAddon(self)
-end
-
-function PlayerTicketDialog:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSave =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function PlayerTicketDialog:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -78,6 +49,7 @@ function PlayerTicketDialog:OnDocumentReady()
 	end
 	
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", "OnWindowManagementReady", self)
 	
 	Apollo.RegisterEventHandler("TogglePlayerTicketWindow", "ToggleWindow", self)
 	Apollo.RegisterEventHandler("PlayerTicketSetSelection", "SelectPlayerTicketType", self)
@@ -102,7 +74,11 @@ function PlayerTicketDialog:OnDocumentReady()
 end
 
 function PlayerTicketDialog:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_SubmitTicket"), {"TogglePlayerTicketWindow", "", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_SubmitTicket"), {"TogglePlayerTicketWindow", "", "Icon_Windows32_UI_CRB_InterfaceMenu_SupportTicket"})
+end
+
+function PlayerTicketDialog:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_SubmitTicket")})
 end
 
 function PlayerTicketDialog:ToggleWindow()

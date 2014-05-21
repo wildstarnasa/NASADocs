@@ -30,22 +30,6 @@ function CraftingSummaryScreen:Init()
     Apollo.RegisterAddon(self)
 end
 
-function CraftingSummaryScreen:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	--[[local tSave =
-	{
-		nSaveVersion = knSaveVersion,
-	}
-	return tSave]]--
-end
-
-function CraftingSummaryScreen:OnRestore(eType, tSavedData)
-	--if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
-	--end
-end
-
 function CraftingSummaryScreen:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CraftingSummaryScreen.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -79,6 +63,7 @@ function CraftingSummaryScreen:OnDocumentReady()
 	self.wndMain:Show(false, true)
 	self.wndCraftingCastBar = nil
 
+	self.itemTooltipOverride = nil
 	self.bBotchCraft = false
 	self.strOnGoingMessage = ""
 end
@@ -110,7 +95,7 @@ end
 -- Step One: Cast Bar
 -----------------------------------------------------------------------------------------------
 
-function CraftingSummaryScreen:OnGenericEvent_StartCraftCastBar(wndParent)
+function CraftingSummaryScreen:OnGenericEvent_StartCraftCastBar(wndParent, itemOutput)
 	if self.wndCraftingCastBar and self.wndCraftingCastBar:IsValid() then
 		self.wndCraftingCastBar:Destroy()
 	end
@@ -125,6 +110,8 @@ function CraftingSummaryScreen:OnGenericEvent_StartCraftCastBar(wndParent)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingSummaryScreenForm", wndParent, self)
 	self.wndMain:Show(false, true)
+
+	self.itemTooltipOverride = itemOutput -- Technically this is the most accurate
 end
 
 function CraftingSummaryScreen:OnGenericEvent_ClearCraftSummary()
@@ -149,10 +136,10 @@ function CraftingSummaryScreen:OnCraftingInterrupted()
 end
 
 function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, nEarnedXp, arMaterialReturnedIds, idSchematicCrafted, idItemCrafted) -- Main starting method
-	if idItemCrafted == 0 then--no item was made
+	if idItemCrafted == 0 then -- No item was made
 		return
 	end
-	
+
 	if self.wndCraftingCastBar then
 		self.wndCraftingCastBar:Destroy()
 		self.wndCraftingCastBar = nil
@@ -172,17 +159,17 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 		return
 	end
 
-	self.wndMain:ToFront()
-	self.wndMain:Show(true)
+	self.wndMain:Invoke()
 	self.wndMain:SetData(idSchematic)
 	self.wndMain:FindChild("CraftingSummaryRecraftBtn"):SetData(idSchematic)
 
 	-- Draw Pass / Fail
 	if tSchemInfo then
-		local itemSchem = tSchemInfo.itemOutput
+		-- self.itemTooltipOverride will cover any modded items so they display correctly, while tSchemInfo.itemOutput covers simple crafts (which won't have an override).
+		local itemSchem = self.itemTooltipOverride or tSchemInfo.itemOutput
 		if bPass then
 			self.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite(itemSchem:GetIcon())
-			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("UI_WindowTitleYellow")
+			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("UI_TextHoloTitle")
 			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftSummary_CraftingSuccess"), itemSchem:GetName()))
 			Tooltip.GetItemTooltipForm(self, self.wndMain:FindChild("CraftingSummaryItemIcon"), itemSchem, {itemCompare = itemSchem:GetEquippedItemForItemType()})
 			Sound.Play(Sound.PlayUICraftingSuccess)
@@ -201,7 +188,7 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 		if nEarnedXp > 0 then -- Assume crafts will always give > 0 xp at non-max tiers
 			local nCurrXP = tTradeskillInfo.nXp
 			local nNextXP = tTradeskillInfo.nXpForNextTier
-			local strProgText = String_GetWeaselString(Apollo.GetString("CraftingSummary_ProgressText"), nEarnedXp, tTradeskillInfo.strName, nCurrXP, nNextXP)
+			local strProgText = String_GetWeaselString(Apollo.GetString("CraftingSummary_ProgressText"), nEarnedXp, tTradeskillInfo.strName, nCurrXP + nEarnedXp, nNextXP)
 			self.wndMain:FindChild("CraftingSummaryXPProgBar"):SetMax(nNextXP)
 			self.wndMain:FindChild("CraftingSummaryXPProgBar"):SetProgress(nCurrXP)
 			self.wndMain:FindChild("CraftingSummaryXPProgBar"):EnableGlow(nCurrXP > 0 and nCurrXP < nNextXP)
@@ -211,7 +198,7 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 	end
 
 	local nLeft, nRight, nTop, nBottom = self.wndMain:FindChild("CraftingSummaryDetailsScroll"):GetAnchorOffsets()
-	self.wndMain:FindChild("CraftingSummaryDetailsScroll"):SetAnchorOffsets(nLeft, nRight, nTop, self.wndMain:FindChild("CraftingSummaryXPProgBG"):IsVisible() and -70 or 0)
+	self.wndMain:FindChild("CraftingSummaryDetailsScroll"):SetAnchorOffsets(nLeft, nRight, nTop, self.wndMain:FindChild("CraftingSummaryXPProgBG"):IsVisible() and -85 or -7)
 
 	-- Summary Detail Messages
 	if arMaterialReturnedIds then
@@ -263,7 +250,7 @@ function CraftingSummaryScreen:OnCraftingSummaryCloseBtn(wndHandler, wndControl)
 end
 
 function CraftingSummaryScreen:OnClose()
-	self.wndMain:Show(false)
+	self.wndMain:Close()
 end
 
 ---------------------------------------------------------------------------------------------------

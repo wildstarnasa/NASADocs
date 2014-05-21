@@ -48,6 +48,7 @@ function ActionBarFrame:OnDocumentReady()
 	Apollo.RegisterEventHandler("StanceChanged", 							"RedrawStances", self)
 	
 	Apollo.RegisterEventHandler("ShowActionBarShortcut", 					"OnShowActionBarShortcut", self)
+	Apollo.RegisterEventHandler("ShowActionBarShortcutDocked", 				"OnShowActionBarShortcutDocked", self)
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 				"OnTutorial_RequestUIAnchor", self)
 	Apollo.RegisterEventHandler("Options_UpdateActionBarTooltipLocation", 	"OnUpdateActionBarTooltipLocation", self)
 	Apollo.RegisterEventHandler("ActionBarNonSpellShortcutAddFailed", 		"OnActionBarNonSpellShortcutAddFailed", self)
@@ -88,6 +89,8 @@ function ActionBarFrame:OnDocumentReady()
 	Apollo.RegisterTimerHandler("ActionBarFrameTimer_DelayedInit", "OnCharacterCreated", self)
 	Apollo.CreateTimer("ActionBarFrameTimer_DelayedInit", 0.5, false)
 	Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
+	
+	g_ActionBarLoaded = true
 
 	if GameLib.GetPlayerUnit() ~= nil then
 		self:OnCharacterCreated()
@@ -103,6 +106,7 @@ function ActionBarFrame:OnSave(eType)
 	{
 		nSelectedMount = self.nSelectedMount,
 		nSelectedPotion = self.nSelectedPotion,
+		tVehicleBar = self.tCurrentVehicleInfo
 	}
 
 	return tSavedData
@@ -120,8 +124,10 @@ function ActionBarFrame:OnRestore(eType, tSavedData)
 	if tSavedData.nSelectedPotion then
 		self.nSelectedPotion = tSavedData.nSelectedPotion
 	end
-
-	g_ActionBarLoaded = true
+	
+	if tSavedData.tVehicleBar then
+		self.tCurrentVehicleInfo = tSavedData.tVehicleBar
+	end
 end
 
 function ActionBarFrame:OnPlayerEquippedItemChanged()
@@ -150,6 +156,7 @@ function ActionBarFrame:OnUnitEnteredCombat(unit)
 	if unit ~= GameLib.GetPlayerUnit() then
 		return
 	end
+	
 	self:RedrawBarVisibility()
 end
 
@@ -262,9 +269,9 @@ function ActionBarFrame:RedrawBarVisibility()
 	elseif nSkillsVisibility == 2 then --always off
 		self.wndMain:Show(false)
 	elseif nSkillsVisibility == 3 then --on in combat
-		self.wndMain:Show(self.unitPlayer:IsInCombat())
+		self.wndMain:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
 	elseif nSkillsVisibility == 4 then --on out of combat
-		self.wndMain:Show(not self.unitPlayer:IsInCombat())
+		self.wndMain:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
 	else
 		self.wndMain:Show(false)
 	end
@@ -280,12 +287,12 @@ function ActionBarFrame:RedrawBarVisibility()
 	elseif nLeftVisibility == 2 then --always off
 		self.wndBar2:Show(false)
 	elseif nLeftVisibility == 3 then --on in combat
-		self.wndBar2:Show(self.unitPlayer:IsInCombat())
+		self.wndBar2:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
 	elseif nLeftVisibility == 4 then --on out of combat
-		self.wndBar2:Show(not self.unitPlayer:IsInCombat())
+		self.wndBar2:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
 	else
 		--NEW Player Experience: Set the bottom left/right bars to Always Show once you've reached level 3
-		if (self.unitPlayer:GetLevel() or 1) > 2 then
+		if self.unitPlayer and (self.unitPlayer:GetLevel() or 1) > 2 then
 			--Trigger a HUD Tutorial
 			Event_FireGenericEvent("OptionsUpdated_HUDTriggerTutorial", "secondaryLeftBarDisplay")
 		end
@@ -298,12 +305,12 @@ function ActionBarFrame:RedrawBarVisibility()
 	elseif nRightVisibility == 2 then --always off
 		self.wndBar3:Show(false)
 	elseif nRightVisibility == 3 then --on in combat
-		self.wndBar3:Show(self.unitPlayer:IsInCombat())
+		self.wndBar3:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
 	elseif nRightVisibility == 4 then --on out of combat
-		self.wndBar3:Show(not self.unitPlayer:IsInCombat())
+		self.wndBar3:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
 	else
 		--NEW Player Experience: Set the bottom left/right bars to Always Show once you've reached level 3
-		if (self.unitPlayer:GetLevel() or 1) > 2 then
+		if self.unitPlayer and (self.unitPlayer:GetLevel() or 1) > 2 then
 			--Trigger a HUD Tutorial
 			Event_FireGenericEvent("OptionsUpdated_HUDTriggerTutorial", "secondaryRightBarDisplay")
 		end
@@ -315,9 +322,9 @@ function ActionBarFrame:RedrawBarVisibility()
 		if nMountVisibility == 2 then --always off
 			self.wndMountFlyout:Show(false)
 		elseif nMountVisibility == 3 then --on in combat
-			self.wndMountFlyout:Show(self.unitPlayer:IsInCombat())
+			self.wndMountFlyout:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
 		elseif nMountVisibility == 4 then --on out of combat
-			self.wndMountFlyout:Show(not self.unitPlayer:IsInCombat())
+			self.wndMountFlyout:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
 		else
 			self.wndMountFlyout:Show(true)
 		end
@@ -326,16 +333,19 @@ function ActionBarFrame:RedrawBarVisibility()
 	end
 
 	local bActionBarShown = self.wndMain:IsShown()
+	local bFloatingActionBarShown = self.wndArt:FindChild("BarFrameShortcut"):IsShown()
 
 	self.wndShadow:SetOpacity(0.5)
 	self.wndShadow:Show(true)
 	self.wndArt:Show(bActionBarShown)
-	self.wndPotionFlyout:Show(self.wndPotionFlyout:IsShown() and not self.unitPlayer:IsInVehicle())
+	self.wndPotionFlyout:Show(self.wndPotionFlyout:IsShown() and self.unitPlayer and not self.unitPlayer:IsInVehicle())
 
 	local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
 
 	if bActionBarShown then
-		g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, -103)
+		local nOffset = bFloatingActionBarShown and -173 or -103
+		
+		g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, nOffset)
 	else
 		g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, -19)
 	end
@@ -525,11 +535,19 @@ end
 
 function ActionBarFrame:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNumShortcuts)
 	if nWhichBar == 0 and self.wndMain and self.wndMain:IsValid() then
-		for idx, wndBtn in pairs(self.arBarButtons) do
-			wndBtn:Enable(not bIsVisible) -- Turn on or off all buttons
+		if self.arBarButtons then
+			for idx, wndBtn in pairs(self.arBarButtons) do
+				wndBtn:Enable(not bIsVisible) -- Turn on or off all buttons
+			end
 		end
+		
 		self:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts) -- show/hide vehicle bar if nWhichBar matches
 	end
+end
+
+function ActionBarFrame:OnShowActionBarShortcutDocked(bVisible)
+	self.wndArt:FindChild("BarFrameShortcut"):Show(bVisible, not bVisible)
+	self:RedrawBarVisibility()
 end
 
 function ActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
@@ -544,6 +562,8 @@ function ActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
 	self.wndMain:FindChild("Bar1ButtonSmallContainer"):Show(not bIsVisible)
 
 	self.wndBar1:Show(not bIsVisible)
+	
+	self.tCurrentVehicleInfo = nil
 
 	if bIsVisible then
 		for idx = 1, 6 do -- TODO hardcoded formatting
@@ -557,11 +577,16 @@ function ActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
 			end
 
 			local nLeft, nTop ,nRight, nBottom = wndVehicleBar:FindChild("VehicleBarFrame"):GetAnchorOffsets() -- TODO SUPER HARDCODED FORMATTING
-			wndVehicleBar:FindChild("VehicleBarFrame"):SetAnchorOffsets(nLeft, nTop, nLeft + (35 * nNumShortcuts) + 66, nBottom)
+			wndVehicleBar:FindChild("VehicleBarFrame"):SetAnchorOffsets(nLeft, nTop, nLeft + (58 * nNumShortcuts) + 66, nBottom)
 		end
 
 		wndVehicleBar:ArrangeChildrenHorz(1)
-		wndVehicleBar:FindChild("ActionBarShortcut.Dismount"):Show(GameLib:CanDisembarkVehicle())
+		
+		self.tCurrentVehicleInfo =
+		{
+			nBar = nWhichBar,
+			nNumShortcuts = nNumShortcuts,
+		}
 	end
 end
 
@@ -656,6 +681,12 @@ function ActionBarFrame:OnCharacterCreated()
 		Apollo.StopTimer("ActionBarFrameTimer_DelayedInit")
 		Event_FireGenericEvent("ActionBarReady", self.wndMain)
 		self:InitializeBars()
+		
+		if self.tCurrentVehicleInfo and self.unitPlayer:IsInVehicle() then
+			self:OnShowActionBarShortcut(self.tCurrentVehicleInfo.nBar, true, self.tCurrentVehicleInfo.nNumShortcuts)
+		else
+			self.tCurrentVehicleInfo = nil
+		end
 	else
 		Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
 	end

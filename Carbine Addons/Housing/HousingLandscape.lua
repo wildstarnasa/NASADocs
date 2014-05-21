@@ -21,6 +21,7 @@ local PlotDetail 				= {}
 -- global
 ---------------------------------------------------------------------------------------------------
 local gidZone = 0
+local knStarterTentPlugItemId = 18
  
 -----------------------------------------------------------------------------------------------
 -- Constants
@@ -414,7 +415,7 @@ function PlotDetail:OnLoad(wndParent)
 	self.wndPlugBuildTimeText 		= wndParent:FindChild("BuildTimeText")
 	self.wndPlugInfoFrame 			= wndParent:FindChild("PlugInfoFrame")
 	self.wndUpgrade 				= wndParent:FindChild("UpgradeBtn")
-	self.wndRepair 					= wndParent:FindChild("RepairBtn")
+	self.wndView 					= wndParent:FindChild("ViewBtn")
 	self.wndRotate 					= wndParent:FindChild("RotateBtn")
 	self.wndFrame 					= wndParent
 	self.nChosenPlot = nil
@@ -436,7 +437,7 @@ function PlotDetail:clear(bResetPlugName)
 	self.wndUpgrade:Enable(false)
 	self.wndUpgrade:SetText(Apollo.GetString("HousingLandscape_NoUpgrade"))
 	self.wndRotate:Enable(false)
-	self.wndRepair:Show(false)
+	self.wndView:Show(false)
 	self.nChosenPlot = nil
 end
 
@@ -459,13 +460,14 @@ function PlotDetail:set(tPlotInfo, iPlot)
 	else
 		if tPlotInfo == nil then
 			self.nChosenPlot = nil
-		return
+		    return
 		end
 	end
 	
 	self.wndPlugName:SetText(tPlotInfo.strName)
-	self.wndRemove:Enable(true)  
+	self.wndRemove:Enable(tPlotInfo.nPlugItemId ~= knStarterTentPlugItemId)  
 	
+	self.wndView:Show(true)
 	if tPlotInfo.bIsBuilding then
 	    self.wndPlugInfoFrameBuilt:Show(false)
 	    self.wndPlugInfoFrameBuilding:Show(true)
@@ -484,14 +486,14 @@ function PlotDetail:set(tPlotInfo, iPlot)
         
         if tPlotInfo.bActive then
             if tPlotInfo.eUpkeepType == HousingLib.HousingUpkeepType.Permanent or tPlotInfo.eUpkeepType == HousingLib.HousingUpkeepType.Decay then
-                self.wndRepair:Show(false)
+                self.wndView:Enable(false)
 				self.wndPlugUpkeepTimeLabel:Show(false)
                 self.wndPlugUpkeepTimeText:Show(false)
                 self.wndPlugUpkeepChargesLabel:Show(false)
                 self.wndPlugUpkeepChargesText:Show(false)
             elseif tPlotInfo.eUpkeepType == HousingLib.HousingUpkeepType.StructurePoints then
-				self.wndRepair:Show(true)
-				self.wndRepair:SetText(Apollo.GetString("HousingLandscape_ViewInfo"))
+				self.wndView:Enable(true)
+				self.wndView:SetText(Apollo.GetString("HousingLandscape_ViewInfo"))
 				self.wndPlugUpkeepTimeLabel:Show(false)
                 self.wndPlugUpkeepTimeText:Show(false)
 				self.wndPlugUpkeepChargesLabel:Show(false)
@@ -500,13 +502,13 @@ function PlotDetail:set(tPlotInfo, iPlot)
                 self.wndPlugUpkeepTimeLabel:Show(true)
                 self.wndPlugUpkeepTimeText:Show(true)
 				self:HelperFormatTimeRemainingString(tPlotInfo.fRemainingHours)
-                self.wndRepair:Show(true)
-				self.wndRepair:SetText(Apollo.GetString("HousingLandscape_ViewInfo"))
+				self.wndView:Enable(true)
+				self.wndView:SetText(Apollo.GetString("HousingLandscape_ViewInfo"))
 				self.wndPlugUpkeepChargesLabel:Show(false)
                 self.wndPlugUpkeepChargesText:Show(false)
             elseif tPlotInfo.eUpkeepType == HousingLib.HousingUpkeepType.Charged or tPlotInfo.eUpkeepType == HousingLib.HousingUpkeepType.TimedCharged then
-                self.wndRepair:Show(true)
-				self.wndRepair:SetText(Apollo.GetString("HousingLandscape_ViewInfo"))
+				self.wndView:Enable(true)
+				self.wndView:SetText(Apollo.GetString("HousingLandscape_ViewInfo"))
 				self.wndPlugUpkeepTimeLabel:Show(false)
                 self.wndPlugUpkeepTimeText:Show(false)
                 self.wndPlugUpkeepChargesLabel:Show(true)
@@ -518,10 +520,12 @@ function PlotDetail:set(tPlotInfo, iPlot)
 				self.wndRotate:Enable(tPlotInfo.bCanBeRotated)
 			end
         else
-            self.wndRepair:Show(true)
-			self.wndRepair:SetText(Apollo.GetString("HousingLandscape_Repair"))
+            self.wndView:Enable(true)
+			self.wndView:SetText(Apollo.GetString("HousingLandscape_Repair"))
 			self.wndPlugUpkeepTimeLabel:Show(true)
             self.wndPlugUpkeepTimeText:Show(true)
+			self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Show(true)
+			self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Enable(true)
 			self.wndPlugUpkeepTimeText:SetText(Apollo.GetString("HousingLandscape_NeedsRepair"))
 			self.wndPlugUpkeepTimeText:SetTextColor(kcrDisabledColor)
             self.wndPlugUpkeepChargesLabel:Show(false)
@@ -541,10 +545,9 @@ function HousingLandscape:HelperClearInfo()
 	self.wndPlugInfoFrame:FindChild("RepairEntryContainer"):DestroyChildren()
 	self.wndPlugInfoFrame:FindChild("CostComplex"):Show(false)	
 	self.wndPlugInfoFrame:FindChild("RepairComplex"):Show(false)	
-	self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Show(false)
-	self.wndPlugInfoFrame:FindChild("InfoUpgradeBtn"):Show(false)	
 	
-	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("PlugInfoFramePanel")
+	
+	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("UpgradePlugFrame")
 	local nPadding = 8 -- how much vert padding between entries
 
 	wndPlugInfoPanel:FindChild("Title"):SetText(Apollo.GetString("HousingLandscape_NoEnhancementFound"))
@@ -589,7 +592,7 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 		return
 	end
 	
-	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("PlugInfoFramePanel")
+	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("ViewPlugInfoFrame")
  	local iPlot = GetSelectedPlotIndex()
 	local tPlotInfo2 = HousingLib.GetPlot(iPlot)
 	local idPlugItem2 = tPlotInfo2.nPlugItemId
@@ -615,7 +618,8 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 	if tPlotInfo.bNeedsRepair then
 		tRepairRequirements = tPlotInfo.tRepairCosts
 	end
-
+	
+	wndRepair:FindChild("RepairEntryContainer"):DestroyChildren()
 	for idx, tCost in ipairs(tRepairRequirements) do
 	    local wndCost = Apollo.LoadForm(self.xmlDoc, "CostEntry", wndRepair:FindChild("RepairEntryContainer"), self)
 		nRepairCount = nRepairCount + 1
@@ -679,6 +683,7 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 	    end
 	end
 	
+	wndRepair:FindChild("RepairEntryContainer"):ArrangeChildrenVert(0)
 	local nRepairLeft, nRepairTop, nRepairRight, nRepairBottom = wndRepair:GetAnchorOffsets()
 	local nLeftDif, nTopDif, nRightDif, nBottomDif = wndRepair:FindChild("RepairEntryContainer"):GetAnchorOffsets()
 	
@@ -690,7 +695,10 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 		local nLeftBtn, nTopBtn, nRightBtn, nBottomBtn = self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):GetAnchorOffsets()
 		self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):SetAnchorOffsets(nLeftBtn, nRepairBottom + 2, nRightBtn, nRepairBottom + 2 + (nBottomBtn - nTopBtn))
 		nRepairLeft, nRepairTop, nRepairRight, nRepairBottom = self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):GetAnchorOffsets()
-		self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Enable((not tPlotInfo.bIsBuilding and not tPlotInfo.bActive and bCanRepair == true) or tPlotInfo.bNeedsRepair )
+		
+		local bEnable = (not tPlotInfo.bIsBuilding and not tPlotInfo.bActive and bCanRepair == true) or tPlotInfo.bNeedsRepair
+	
+		self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Enable(bEnable)
 	else
 		wndRepair:Show(false)
 		nRepairBottom = nDescriptionBottom
@@ -709,7 +717,6 @@ end
 -----------------------------------------------------------------------------------------------
 function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 
-	self:HelperClearInfo()
 
 	if tItemData == nil then 
 		return 
@@ -717,7 +724,7 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 	
 	self.idUniqueItem = tItemData.nId
 	
-	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("PlugInfoFramePanel")	
+	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("UpgradePlugFrame")  
 	local nPadding = 8 -- how much vert padding between entries
 	wndPlugInfoPanel:FindChild("Title"):SetText(String_GetWeaselString(Apollo.GetString("HousingLandscape_UpgradeTitle"), tItemData.strName))
 	wndPlugInfoPanel:FindChild("PlugDescription"):SetText(tItemData.strTooltip)
@@ -762,6 +769,7 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 	local nRepairEntryHeight = 0
 	local wndRepair = wndPlugInfoPanel:FindChild("RepairComplex")
 	
+	wndRepair:FindChild("RepairEntryContainer"):DestroyChildren()
 	for idx, tCost in ipairs(tItemData.tCostRequirements) do
 	    local wndCost = Apollo.LoadForm(self.xmlDoc, "CostEntry", wndRepair:FindChild("RepairEntryContainer"), self)
 		nRepairCount = nRepairCount + 1
@@ -826,7 +834,7 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 	    end
 	end
 	
-	
+	wndRepair:FindChild("RepairEntryContainer"):ArrangeChildrenVert(0)
 	local nLeft4, nTop4, nRight4, nBottom4 = wndRepair:GetAnchorOffsets()
 	local nLeftDif, nTopDif, nRightDif, nRightDif = wndRepair:FindChild("RepairEntryContainer"):GetAnchorOffsets()
 	
@@ -834,12 +842,12 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 		wndRepair:Show(true)
 		wndRepair:SetAnchorOffsets(nLeft4, nBottom2 + nPadding, nRight4, nBottom2 + nPadding + nTopDif + (nRepairEntryHeight*nRepairCount) - nRightDif) -- last one is negative
 		nLeft4, nTop4, nRight4, nBottom4 = wndRepair:GetAnchorOffsets()
-		local wndUpgradeBtn = self.wndPlugInfoFrame:FindChild("InfoUpgradeBtn")
+		local wndUpgradeBtn = self.wndPlugInfoFrame:FindChild("UpgradePlugFrame:InfoUpgradeBtn")
 		wndUpgradeBtn:Show(true)
 		local nLeftBtn, nTopBtn, nRightBtn, nBottomBtn = wndUpgradeBtn:GetAnchorOffsets()
 		wndUpgradeBtn:SetAnchorOffsets(nLeftBtn, nBottom4 + 2, nRightBtn, nBottom4 + 2 + (nBottomBtn - nTopBtn))
 		nLeft4, nTop4, nRight4, nBottom4 = wndUpgradeBtn:GetAnchorOffsets()
-		self.wndPlugInfoFrame:FindChild("InfoUpgradeBtn"):Enable(bCanUpgrade)
+		self.wndPlugInfoFrame:FindChild("UpgradePlugFrame:InfoUpgradeBtn"):Enable(bCanUpgrade)
 	else
 		wndRepair:Show(false)
 		nBottom4 = nBottom1
@@ -853,6 +861,8 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 	local nParentMid = self.wndPlugInfoFrame:GetHeight()/2
 	local nMidDiff = nParentMid - nWndMid
 	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop + nMidDiff - 25, nWndRight, nWndBottom + nMidDiff - 25)
+	wndPlugInfoPanel:Show(true)
+	self.luaLandscapeProposedControl:clear()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1298,6 +1308,7 @@ function HousingLandscape:OnRemoveDestroy()
 	self:RemoveCurrentPlug()
 	self:ResetPopups()
 	self.wndLandscape:Show(true)
+	self.bHasChanged = true
 end
 
 function HousingLandscape:OnRemoveCancel()
@@ -1314,7 +1325,12 @@ function HousingLandscape:OnUpgradeBtn(wndControl, wndHandler)
 	if wndHandler:GetId() ~= wndControl:GetId() then
 		return
 	end
-
+	
+	if self.wndPlugInfoFrame:IsShown() and self.wndPlugInfoFrame:FindChild("UpgradePlugFrame"):IsShown()then
+		self.wndPlugInfoFrame:Show(false)
+		return
+	end
+	
 	local iPlot = GetSelectedPlotIndex()
     local tUpgrade = HousingLib.GetPlugUpgradeList(iPlot)
 	
@@ -1324,7 +1340,7 @@ function HousingLandscape:OnUpgradeBtn(wndControl, wndHandler)
     local tOldItemData = self:GetItem(idPlugItem, tItemList)
 	
 	local bHasUpgrade = false
-	
+	self.wndPlugInfoFrame:FindChild("ViewPlugInfoFrame"):Show(false)
 	for idx = 1, #tUpgrade do --will show incorrectly if there's ever more than one in the table
 		local tItemData = tUpgrade[idx]
 		if self:SelectionMatches(tItemData.eType) then
@@ -1459,12 +1475,22 @@ function HousingLandscape:RotateWndUpdateFacing()
 end
 
 ---------------------------------------------------------------------------------------------------
-function HousingLandscape:OnRepairBtn(wndControl, wndHandler) -- HERE!!
+ function HousingLandscape:OnViewBtn(wndControl, wndHandler)
 	if wndHandler:GetId() ~= wndControl:GetId() then
 		return
 	end
-
-	self.wndPlugInfoFrame:Show(true)
+	if self.wndPlugInfoFrame:IsShown() and self.wndPlugInfoFrame:FindChild("ViewPlugInfoFrame"):IsShown() then
+		self.wndPlugInfoFrame:Show(false)
+	else
+		if self.bHasChanged then
+			local iPlot = GetSelectedPlotIndex()
+			self:DrawInfo(iPlot, self.luaLandscapeCurrentControl.ePlotSelectionType)
+			self.bHasChanged = false
+		end
+		self.wndPlugInfoFrame:Show(true)
+		self.wndPlugInfoFrame:FindChild("UpgradePlugFrame"):Show(false)
+		self.wndPlugInfoFrame:FindChild("ViewPlugInfoFrame"):Show(true)
+	end
  end
 
 ---------------------------------------------------------------------------------------------------
@@ -1482,6 +1508,7 @@ function HousingLandscape:OnRepairConfirmBtn(wndControl, wndHandler)
     HousingLib.RepairPlot(iPlot)
     
     self.wndLandscape:Show(true)
+	self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Enable(false)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1596,6 +1623,7 @@ function HousingLandscape:OnReplaceOldDestroy(wndHandler, wndControl)
 	self:PlaceNewPlug(bUserConfirmed)
 	self:ResetPopups()
 	self.wndLandscape:Show(true)	
+	self.bHasChanged = true
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1605,7 +1633,8 @@ function HousingLandscape:OnReplaceOldPack(wndHandler, wndControl)
 	self:PlaceNewPlug(bUserConfirmed) -- place new
 	--self.wndCrateUnderPopup:Show(false)
 	self:ResetPopups()
-	self.wndLandscape:Show(true)		
+	self.wndLandscape:Show(true)
+	self.bHasChanged = true	
 end
 
 ---------------------------------------------------------------------------------------------------

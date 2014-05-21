@@ -72,7 +72,6 @@ function CombatLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("CombatLogExperience", 				"OnCombatLogExperience", self)
 	Apollo.RegisterEventHandler("CombatLogEndGameCurrencies", 		"OnCombatLogEndGameCurrencies", self)
 	Apollo.RegisterEventHandler("CombatLogElderPointsLimitReached", "OnCombatLogElderPointsLimitReached", self)
-	Apollo.RegisterEventHandler("CombatLogLoot", 					"OnCombatLogLoot", self)
 	Apollo.RegisterEventHandler("CombatLogDurabilityLoss", 			"OnCombatLogDurabilityLoss", self)
 	Apollo.RegisterEventHandler("CombatLogCrafting", 				"OnCombatLogCrafting", self)
 	Apollo.RegisterEventHandler("CombatLogModifying", 				"OnCombatLogModifying", self)
@@ -83,6 +82,7 @@ function CombatLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("CombatLogString", 					"PostOnChannel", self)
 	Apollo.RegisterEventHandler("UpdatePathXp", 					"OnPathExperienceGained", self)
 	Apollo.RegisterEventHandler("FactionFloater", 					"OnFactionFloater", self)
+	Apollo.RegisterEventHandler("CombatLogLifeSteal", 				"OnCombatLogLifeSteal", self)
 
 	Apollo.RegisterEventHandler("ChangeWorld", 						"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("PetSpawned", 						"OnPetStatusUpdated", self)
@@ -383,6 +383,10 @@ end
 -----------------------------------------------------------------------------------------------
 -- Special
 -----------------------------------------------------------------------------------------------
+function CombatLog:OnCombatLogLifeSteal(tEventArgs)
+	local strResult = String_GetWeaselString(Apollo.GetString("CombatLogLifesteal"), tEventArgs.unitCaster:GetName(), tEventArgs.nHealthStolen)
+	self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", self:HelperPickColor(tEventArgs), strResult))
+end
 
 function CombatLog:OnCombatLogTransference(tEventArgs)
 	-- OnCombatLogDamage does exactly what we need so just pass along the tEventArgs
@@ -584,29 +588,6 @@ function CombatLog:OnCombatLogElderPointsLimitReached(tEventArgs)
 	self:PostOnChannel(string.format("<P TextColor=\"%s\">%s</P>", kstrColorCombatLogXP, strResult))
 end
 
-function CombatLog:OnCombatLogLoot(tEventArgs)
-	local strResult = ""
-	if tEventArgs.monLoot then
-		strResult = String_GetWeaselString(Apollo.GetString("CombatLog_LootReceived"), tEventArgs.monLoot:GetMoneyString())
-		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Loot, strResult)
-	end
-
-	if tEventArgs.nItemAmount > 0 and tEventArgs.itemLoot then
-		local strArgItemName = tEventArgs.itemLoot:GetName()
-		local strItemName = Apollo.GetString("CombatLog_SpellUnknown")
-		if strArgItemName and strArgItemName ~= "" then
-			strItemName = strArgItemName
-		end
-
-		if tEventArgs.nItemAmount > 1 then
-			strItemName = String_GetWeaselString(Apollo.GetString("CombatLog_MultiItem"), tEventArgs.nItemAmount, strItemName)
-		end
-
-		strResult = String_GetWeaselString(Apollo.GetString("CombatLog_LootReceived"), strItemName)
-
-		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Loot, strResult)
-	end
-end
 
 function CombatLog:OnCombatLogDurabilityLoss(tEventArgs)
 	if not self.unitPlayer then

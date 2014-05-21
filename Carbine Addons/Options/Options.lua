@@ -62,7 +62,7 @@ local ktVideoSettingLevels =
 {
 	["UltraHigh"] =
 	{
-		["lod.viewDistance"] = 1024,
+		["lod.viewDistance"] = 920,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
 		["lod.textureLodMin"] = 0,
@@ -226,7 +226,7 @@ function OptionsAddon:OnDocumentReady()
 		{wnd = self.wndVideo:FindChild("VerticalSync"), 		consoleVar = "video.verticalSync"},
 		{wnd = self.wndVideo:FindChild("EnableCameraShake"), 	consoleVar = "camera.shake"},
 		{wnd = self.wndVideo:FindChild("EnableFixedCamera"), 	consoleVar = "camera.reorient"},
-		
+
 		-- Combat
 		{wnd = self.wndTargeting:FindChild("UseButtonDownBtn"), 				consoleVar = "spell.useButtonDownForAbilities"},
 		{wnd = self.wndTargeting:FindChild("HoldToContinueCastingBtn"), 		consoleVar = "spell.holdToContinueCasting"},
@@ -361,6 +361,7 @@ function OptionsAddon:OnOptionsCheck()
 		self:OnAddonsCheck(true)
 	elseif nOptions == 4 then
 		self:InitTargetingControls()
+		self:OnMappedOptionsCheckboxHider()
 		self.wndTargeting:SetAnchorOffsets(self.wndTargeting:GetAnchorOffsets())
 	end
 end
@@ -536,6 +537,7 @@ function OptionsAddon:OnAddonsUpdateTimer()
 
 	self:FillConfigureList()
 	self.OptionsDlg:FindChild("Camp"):Enable(IsInGame())
+	self.OptionsDlg:FindChild("Stuck"):Enable(IsInGame())
 
 	if IsInCombat() then
 		self.OptionsDlg:FindChild("OptionsLabel"):SetTextColor(CColor.new(1, 0, 0, 1))
@@ -601,20 +603,14 @@ function OptionsAddon:OnShowErrors(wndHandler, wndControl)
 	end
 
 	wnd:FindChild("ErrorText"):SetText(strError)
+	wnd:FindChild("Button1"):SetActionData(OptionsScreen.CodeEnumConfirmButtonType.CopyToClipboard, strError)
 	wnd:ToFront()
 	self.wndErrorDetail = wnd
-
 end
 
 function OptionsAddon:OnCloseErrorWindow(wndHandler, wndControl)
 	wndHandler:GetParent():Destroy()
 end
-
-function OptionsAddon:OnCopyToClipboard(wndHandler, wndControl)
-	local wnd = wndHandler:GetParent()
-	wnd:FindChild("ErrorText"):CopyTextToClipboard()
-end
-
 
 function OptionsAddon:InvokeAddonLoadOnStartDlg(tAddon)
 	-- TEMPORARY SOLUTION FOR FX-68822
@@ -933,12 +929,15 @@ function OptionsAddon:InitOptionsControls()
 				elseif Apollo.GetConsoleVariable("fxaa.preset") == 3 then
 					self.wndVideo:SetRadioSel(parent.radio, 3)
 					arBtns[3]:SetCheck(true)
-				elseif Apollo.GetConsoleVariable("fxaa.preset") == 1 then
+				elseif Apollo.GetConsoleVariable("fxaa.preset") == 2 then -- Note: There's no Ultra Low/Ultra High setting for 2
 					self.wndVideo:SetRadioSel(parent.radio, 4)
-					arBtns[3]:SetCheck(true)
-				else
-					self.wndVideo:SetRadioSel(parent.radio, 5)
 					arBtns[4]:SetCheck(true)
+				elseif Apollo.GetConsoleVariable("fxaa.preset") == 1 then
+					self.wndVideo:SetRadioSel(parent.radio, 5)
+					arBtns[5]:SetCheck(true)
+				else
+					self.wndVideo:SetRadioSel(parent.radio, 6)
+					arBtns[6]:SetCheck(true)
 				end
 			elseif parent.consoleVar == "world.propScreenHeightPercentMin" then
 				if Apollo.GetConsoleVariable("world.propScreenHeightPercentMin") == 5 then
@@ -994,9 +993,12 @@ function OptionsAddon:InitOptionsControls()
 	end
 
 	self:FillConfigureList()
-	self.OptionsDlg:FindChild("AddonsBtn"):Enable(IsInGame())
-	self.OptionsDlg:FindChild("Camp"):Enable(IsInGame())
-	if not IsInGame() then
+
+	local bIsInGame = IsInGame()
+	self.OptionsDlg:FindChild("AddonsBtn"):Enable(bIsInGame)
+	self.OptionsDlg:FindChild("AddonsBtn"):FindChild("RightArrowArt"):Show(bIsInGame)
+	self.OptionsDlg:FindChild("Camp"):Enable(bIsInGame)
+	if not bIsInGame then
 		self.OptionsDlg:FindChild("AddonsBtn"):SetCheck(false)
 		self.wndAddons:Show(false)
 	end
@@ -1081,8 +1083,6 @@ function OptionsAddon:FillDisplayList()
 		end
 		local str = ""
 		if tMode.bCurrent then
-			str = " >   "
-			self.wndVideo:FindChild("DropToggleExclusive"):SetText(tMode.strDisplay)
 			self.tPrevExcRes = tMode
 		end
 		str = str .. tMode.strDisplay
@@ -1091,12 +1091,36 @@ function OptionsAddon:FillDisplayList()
 	self.bValidResolution = (nSel > 0)
 	self.wndVideo:FindChild("ResolutionParent"):FindChild("Resolution"):SetCurrentRow(nSel)
 	self.wndVideo:FindChild("ResolutionParent"):FindChild("Resolution"):SetVScrollPos(nPos)
+	
+	if not Apollo.GetConsoleVariable("video.exclusive") then
+		self.wndVideo:FindChild("DropToggleExclusive"):Enable(false)
+		self.wndVideo:FindChild("DropToggleExclusive"):SetText("")
+	else
+		self.wndVideo:FindChild("DropToggleExclusive"):Enable(true)
+		local tDisplayMode = Apollo.GetConsoleVariable("video.exclusiveDisplayMode")
+		self.wndVideo:FindChild("DropToggleExclusive"):SetText(tDisplayMode.x .."x".. tDisplayMode.y .."@".. tDisplayMode.z)
+	end
 end
 
 function OptionsAddon:OnMappedOptionsCheckbox(wndHandler, wndControl)
 	Apollo.SetConsoleVariable(wndControl:GetData().consoleVar, wndControl:IsChecked())
 	self:EnableVideoControls()
+	self:OnMappedOptionsCheckboxHider()
 end
+
+function OptionsAddon:OnMappedOptionsCheckboxHider(wndHandler, wndControl)
+	self.wndTargeting:FindChild("EnemyNPCBeneficialDisplayBtn"):Enable(self.wndTargeting:FindChild("EnemyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("EnemyNPCDetrimentalDisplayBtn"):Enable(self.wndTargeting:FindChild("EnemyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("EnemyPlayerBeneficialDisplayBtn"):Enable(self.wndTargeting:FindChild("EnemyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("EnemyPlayerDetrimentalDisplayBtn"):Enable(self.wndTargeting:FindChild("EnemyDisplayBtn"):IsChecked())
+
+	self.wndTargeting:FindChild("PartyAllyDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("AllyNPCBeneficialDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("AllyNPCDetrimentalDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("AllyPlayerBeneficialDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
+	self.wndTargeting:FindChild("AllyPlayerDetrimentalDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
+end
+
 
 function OptionsAddon:OnOptionsSliderChanged(wndHandler, wndControl, fValue, fOldValue)
 	local mapping = wndControl:GetData()
@@ -1158,11 +1182,13 @@ function OptionsAddon:OnFXAARadio(wndHandler, wndControl)
 	elseif ndx == 3 then
 		Apollo.SetConsoleVariable("fxaa.preset", 3)
 	elseif ndx == 4 then
-		Apollo.SetConsoleVariable("fxaa.preset", 1)
+		Apollo.SetConsoleVariable("fxaa.preset", 2)
 	elseif ndx == 5 then
+		Apollo.SetConsoleVariable("fxaa.preset", 1)
+	elseif ndx == 6 then
 		Apollo.SetConsoleVariable("fxaa.preset", 0)
 	end
-	Apollo.SetConsoleVariable("fxaa.enable", ndx ~= 5)
+	Apollo.SetConsoleVariable("fxaa.enable", ndx ~= 6)
 
 	wndControl:GetParent():GetParent():SetText(wndControl:GetText())
 	wndControl:GetParent():Close()
@@ -1494,6 +1520,11 @@ function OptionsAddon:OnVideoPresetSetting(wndHandler, wndControl, eMouseButton)
 	local wndParent = wndControl:GetData()
 	wndParent:SetText(wndControl:GetText())
 	wndParent:FindChild("ChoiceContainer"):Close()
+end
+
+function OptionsAddon:OnStuck(wndHandler, wndControl, eMouseButton)
+	ShowStuckUI()
+	CloseOptions()
 end
 
 ---------------------------------------------------------------------------------------------------

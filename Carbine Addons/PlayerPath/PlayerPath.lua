@@ -128,7 +128,7 @@ function PlayerPath:OnDocumentReady()
 end
 
 function PlayerPath:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_PathLog"), {"PlayerPathShow", "Path", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_PathLog"), {"PlayerPathShow", "Path", "Icon_Windows32_UI_CRB_InterfaceMenu_Path"})
 end
 
 function PlayerPath:OnPathShowFromPL(pepEpisode)

@@ -108,11 +108,8 @@ function RaidFrameTearOff:OnSave(eType)
 		return
 	end
 	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
 	local tSaved = 
 	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
 		tOptions = self.tSavedOptions,
 		nSaveVersion = knSaveVersion,
 	}
@@ -125,11 +122,7 @@ function RaidFrameTearOff:OnRestore(eType, tSavedData)
 		return
 	end
 	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 	self.tSavedOptions = tSavedData.tOptions
-	
 end
 
 function RaidFrameTearOff:OnLoad()
@@ -170,6 +163,7 @@ function RaidFrameTearOff:Initialize(nMemberIdx)
 	else
 		Apollo.StartTimer("MainUpdateTimer")
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "RaidFrameTearOffForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Options")})
 		
 		local wndOptions = self.wndMain:FindChild("RaidTearOffOptions:SelfConfigRaidCustomizeOptions")
 		self.wndMain:FindChild("RaidTearOffOptionsBtn"):AttachWindow(self.wndMain:FindChild("RaidTearOffOptions"))
@@ -188,10 +182,6 @@ function RaidFrameTearOff:Initialize(nMemberIdx)
 		return
 	end
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	self.unitPlayerDisposComparison = GameLib.GetPlayerUnit()
 	self.tTrackedMemberIdx[nMemberIdx] = nMemberIdx -- Add a member to the tracked list TODO: Remove
 	self:MainUpdateTimer()
@@ -367,12 +357,12 @@ end
 function RaidFrameTearOff:OnCloseBtn(wndHandler, wndControl)
 	if self.wndMain and self.wndMain:IsValid() then
 		Apollo.StopTimer("MainUpdateTimer")
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		
 		for nMemberIdx, nValue in pairs(self.tTrackedMemberIdx) do
 			Event_FireGenericEvent("GenericEvent_Raid_ToggleRaidUnTear", nMemberIdx)
 		end
+		
 		self.tTrackedMemberIdx = {}
 	end
 end

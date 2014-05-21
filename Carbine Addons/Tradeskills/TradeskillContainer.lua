@@ -20,33 +20,6 @@ function TradeskillContainer:Init()
     Apollo.RegisterAddon(self)
 end
 
-function TradeskillContainer:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSaved
-end
-
-function TradeskillContainer:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
-
 function TradeskillContainer:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("TradeskillContainer.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -57,7 +30,8 @@ function TradeskillContainer:OnDocumentReady()
 		return
 	end
 
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 	"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("GenericEvent_OpenToSpecificSchematic", "OnOpenToSpecificSchematic", self) -- Not Used Yet
 	Apollo.RegisterEventHandler("GenericEvent_OpenToSpecificTechTree", 	"OnOpenToSpecificTechTree", self)
@@ -88,7 +62,11 @@ function TradeskillContainer:OnDocumentReady()
 end
 
 function TradeskillContainer:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Tradeskills"), {"ToggleTradeskills", "Tradeskills", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Tradeskills"), {"ToggleTradeskills", "Tradeskills", "Icon_Windows32_UI_CRB_InterfaceMenu_Tradeskills"})
+end
+
+function TradeskillContainer:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Tradeskills")})
 end
 
 function TradeskillContainer:OnClose(wndHandler, wndControl)

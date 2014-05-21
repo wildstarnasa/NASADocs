@@ -238,9 +238,14 @@ function Character:OnLoad()
 	Apollo.RegisterEventHandler("OpenCharacterCreateBtn", "OnOpenCharacterCreate", self)
 	Apollo.RegisterEventHandler("Select_SetModel", "OnConfigureModel", self)
 	Apollo.RegisterEventHandler("CharacterCreateFailed", "OnCreateCharacterFailed", self)
+	Apollo.RegisterEventHandler("RealmBroadcast", "OnRealmBroadcast", self)
 
 	Apollo.RegisterTimerHandler("InitialLoadTimer", "OnInitialLoadTimer", self)
 	Apollo.RegisterTimerHandler("CreateFailedTimer", "OnCreateFailedTimer", self)
+	Apollo.RegisterTimerHandler("RealmBroadcastTimer", "OnRealmBroadcastTimer", self)
+	
+	Apollo.CreateTimer("RealmBroadcastTimer", 10.0, false)
+	Apollo.StopTimer("RealmBroadcastTimer")
 
 	--These refer to the global controls that live in this file
 	g_controls = Apollo.LoadForm(self.xmlDoc, "PregameControls", "Navigation", self)
@@ -360,20 +365,18 @@ function Character:OnLoad()
 	self.wndRealmFull:Show(false)
 
 	self.arServerMessages = PreGameLib.GetLastRealmMessages()
-	self.wndServerMessages = Apollo.LoadForm(self.xmlDoc, "RealmMessages", nil, self)
-	local strAllMessage = ""
-	for _, strMessage in ipairs(self.arServerMessages) do
-		strAllMessage = strAllMessage .. strMessage .. "\n"
-	end
-	self.wndServerMessages:SetText(strAllMessage)
-	self.wndServerMessages:Show(true)
+	self.wndServerMessagesContainer = Apollo.LoadForm(self.xmlDoc, "RealmMessagesContainer", nil, self)
+	self.wndServerMessage = self.wndServerMessagesContainer:FindChild("RealmMessage")
+	self:HelperServerMessages()
+	
 
+	self.wndRealmBroadcast = Apollo.LoadForm(self.xmlDoc, "RealmBroadcastMessage", nil, self)
+	self.wndRealmBroadcast:Show(false)
 
 	-- Character Creation objects
 	self.arCustomizeLookOptions = {}
 	self.arCustomizeBoneOptions = {}
 	self.arCustomizeBoneOptionsPrev = {}
-	self.arWndCustomizeLookOptions = {}
 	self.arWndCustomizeBoneOptions = {}
 	self.arCustomizeOptionBtns = {}
 	self.arPreviousCharacterOptions = {}
@@ -430,7 +433,7 @@ function Character:OnCharacterList( arCharacters, arCharacterInWorld )
 		g_arCharacters = arCharacters
 		g_arCharacterInWorld = arCharacterInWorld
 
-		-- TODO: Sound Play here?
+		Sound.Play(Sound.PlayUIQueuePopsAdventure)
 		self:OpenCharacterSelect()
 		return
 	end
@@ -463,6 +466,7 @@ end
 function Character:OpenCharacterSelect()
 	self.wndCharacterListPrompt:Show(false)
 	self:HideCharacterCreate()
+	self.wndServerMessagesContainer:Show(true)
 	g_controls:Show(true)
 	self.wndName:Show(false)
 	self.wndNameEntry:SetText("")
@@ -482,7 +486,7 @@ end
 
 function Character:OnOpenCharacterCreate()
 	g_controls:Show(false)
-
+	self.wndServerMessagesContainer:Show(false)
 	self.characterCreateIndex = 0
 	self:EnableButtons()
 
@@ -514,10 +518,6 @@ function Character:OnBackBtn(wndHandler, wndControl)
 	elseif g_nState == LuaEnumState.Select then
 		CharacterScreenLib.ExitToLogin()
 	elseif g_nState == LuaEnumState.Delete then
-		--[[if g_arActors.primary then
-			g_arActors.primary:Animate(0, knCheerAnimation, 0, false, true)
-		end
-		g_controls:FindChild("ExitForm"):Enable(false)	--]]
 		self:OpenCharacterSelect()
 		PreGameLib.Event_FireGenericEvent("Pregame_CreationToSelection")
 	elseif g_nState == LuaEnumState.Customize then
@@ -637,6 +637,19 @@ function Character:SetCreateForms()
 
 	self.wndInfoPane:Show(true)
 	self.wndCustOptionPanel:Show(false)
+	
+	--Display realm information
+	local tRealmInfo = CharacterScreenLib.GetRealmInfo()
+	local tRealm = {}
+	local strRealm = ""
+	local strRealmName = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBodyHighlight\">%s</T>", tostring(tRealmInfo.strName))
+	local strRealmLabel = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloTitle\">%s</T>", Apollo.GetString("CharacterSelect_RealmLabel"))
+	local strRealmType = tRealmInfo.nRealmPVPType == PreGameLib.CodeEnumRealmPVPType.PVP and Apollo.GetString("RealmSelect_PvP") or Apollo.GetString("RealmSelect_PvE")
+	strRealmType = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBodyHighlight\">%s</T>", "("..strRealmType..")")
+	strRealm = string.format("<P Align=\"Center\">%s %s</P>", strRealmLabel .. "    " .. strRealmName, strRealmType)
+	self.wndCreateFrame:FindChild("RealmLabel"):SetText(strRealm)
+	self.wndCreateFrame:FindChild("RealmNote"):SetText(tRealmInfo.strRealmNote)
+	self.wndCreateFrame:FindChild("RealmNote"):Show(string.len(tRealmInfo.strRealmNote or "") > 0)
 end
 
 function Character:SetVisibleCustomizeForms()
@@ -667,30 +680,15 @@ end
 -- Character Faction Select
 ---------------------------------------------------------------------------------------------------
 function Character:OnSelectDefiance()
-
 	if s_isInSelectButtons then
 		return
 	end
-
-	local tFactionRaceTable = {}
-	tFactionRaceTable[1] = 1
-	tFactionRaceTable[2] = 3
-	tFactionRaceTable[3] = 4
-	tFactionRaceTable[4] = 16
-
-	local options = self:GetSelectedOptionsCopy()
-	options.factionId = PreGameLib.CodeEnumFaction.Exile
-	options.raceId = tFactionRaceTable[math.random(1,4)]
-	local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-
-	-- if we cant find our race/class, then ignore everything and get the best faction guy
-	if possibleCharacterCreateIndex == 0 then
-		options.classId = nil
-		options.raceId = nil
-		options.genderId = nil
-		possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-	end
-
+	
+	local tSelectedOptions = self:GetSelectedOptionsCopy()
+	
+	--lets always do a random race and gender of the correct class
+	local possibleCharacterCreateIndex = self:GetCharacterCreateId(PreGameLib.CodeEnumFaction.Exile, nil, tSelectedOptions.classId, nil)
+	
 	-- dont change if we dont find it
 	if possibleCharacterCreateIndex ~= 0 then
 		self:SetCharacterCreateIndex( possibleCharacterCreateIndex )
@@ -698,10 +696,6 @@ function Character:OnSelectDefiance()
 
 	local strFaction = self.wndRealmName:GetText()
 	strFaction = PreGameLib.String_GetWeaselString(Apollo.GetString("Pregame_FactionListing"), strFaction, string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceLarge_B", "ff32fcf6", "(" .. Apollo.GetString("CRB_Exiles") .. ")"))
-
-	--self.wndRealmName:SetText(strFaction)
-
-	self:HelperVerifyOptions(options, self.arCharacterCreateOptions)
 
 	self:SelectButtons()
 	self:EnableButtons()
@@ -711,31 +705,14 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function Character:OnSelectDominion()
-
-	--Apollo.DPF("In Character:OnSelectDominion")
 	if s_isInSelectButtons then
 		return
 	end
-	--self:SetCreateForms()
-
-	local tFactionRaceTable = {}
-	tFactionRaceTable[1] = 1
-	tFactionRaceTable[2] = 5
-	tFactionRaceTable[3] = 12
-	tFactionRaceTable[4] = 13
-
-	local options = self:GetSelectedOptionsCopy()
-	options.factionId = PreGameLib.CodeEnumFaction.Dominion
-	options.raceId = tFactionRaceTable[math.random(1,4)]
-	local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-
-	-- if we cant find our race/class, then ignore everything and get the best faction guy
-	if possibleCharacterCreateIndex == 0 then
-		options.classId = nil
-		options.raceId = nil
-		options.genderId = nil
-		possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-	end
+	
+	local tSelectedOptions = self:GetSelectedOptionsCopy()
+	
+	--lets always do a random race and gender of the correct class
+	local possibleCharacterCreateIndex = self:GetCharacterCreateId(PreGameLib.CodeEnumFaction.Dominion, nil, tSelectedOptions.classId, nil)
 
 	-- dont change if we dont find it
 	if possibleCharacterCreateIndex ~= 0 then
@@ -743,11 +720,7 @@ function Character:OnSelectDominion()
 	end
 
 	local strFaction = self.wndRealmName:GetText()
-	strFaction = PreGameLib.String_GetWeaselString(Apollo.GetString("Pregame_FactionListing"), strFaction, string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceLarge_B", "ff32fcf6", "(" .. Apollo.GetString("CRB_Dominion") .. ")"))
-
-	--self.wndRealmName:SetText(strFaction)
-
-	self:HelperVerifyOptions(options, self.arCharacterCreateOptions)
+	strFaction = PreGameLib.String_GetWeaselString(Apollo.GetString("Pregame_FactionListing"), strFaction, string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceLarge_B", "ff32fcf6", "(" .. Apollo.GetString("CRB_Exiles") .. ")"))
 
 	self:SelectButtons()
 	self:EnableButtons()
@@ -838,7 +811,6 @@ function Character:EnableButtons()
 			end
 		end
 	end
-
 
 	for raceIdx, races in pairs(self.arRaces2) do
 		races.wnd:Show(enabledRaces[raceIdx] ~= nil)
@@ -995,52 +967,6 @@ function Character:FormatInfoPanel()
 end
 
 ---------------------------------------------------------------------------------------------------
-function Character:FindCharacterCreateOption(key)
-	--Apollo.DPF( "Find key faction =" .. (key.factionId or "nil")  .. " race=" .. (key.raceId or "nil") .. " class=" .. (key.classId or "nil") .. " gender=" .. (key.genderId or "nil") )
-	-- find exact match
-	if key ~= nil and key.genderId ~= nil and key.raceId ~=nil and key.classId ~= nil and key.factionId ~= nil then
-		--Apollo.DPF("in exact")
-		for idx, creation in pairs(self.arCharacterCreateOptions) do
-
-			if c_arAllowedClass[creation.classId] and
-			   c_arAllowedRace[creation.raceId] and
-			   creation.genderId == key.genderId and
-			   creation.raceId == key.raceId and
-			   creation.classId == key.classId and
-			   creation.factionId == key.factionId then
-				--Apollo.DPF( "selection=" .. idx )
-				return idx
-			end
-		end
-		--Apollo.DPF( "selection=0" )
-		return 0
-	else -- find closest match.
-		--Apollo.DPF("in nil")
-		local selectedValue = 0
-		local selectedIndex = 0
-
-		for idx, creation in pairs(self.arCharacterCreateOptions) do
-			if c_arAllowedClass[creation.classId] and c_arAllowedRace[creation.raceId] then
-				local highlightValue = self.arRaces2[creation.raceId].btnIdx + self.arClasses2[creation.classId].btnIdx
-				if key == nil or
-				   ( (creation.genderId == key.genderId or key.genderId == nil) and
-					 (creation.raceId == key.raceId or key.raceId == nil) and
-					 (creation.classId == key.classId or key.classId == nil) and
-					 (creation.factionId == key.factionId or key.factionId == nil) and
-					 (selectedIndex == 0 or ( selectedValue > highlightValue) ) ) then
-					--Apollo.DPF( "value=".. selectedValue .." index=" .. selectedIndex )
-					selectedIndex = idx
-					selectedValue = highlightValue
-				end
-			end
-		end
-		--Apollo.DPF( "selection=" .. selectedIndex .. " id=" .. self.arCharacterCreateOptions[ selectedIndex ].characterCreateId )
-		return selectedIndex
-
-	end
-end
-
----------------------------------------------------------------------------------------------------
 function Character:SetCharacterCreateIndex( characterCreateIndex )
 
 	--Set the main and shadow character. The shadow is used to populate our option lists during customization and is discretely placed waaaaaaaay off into space.
@@ -1163,27 +1089,21 @@ function Character:OnRaceSelectCheckMale(wndHandler, wndControl)
 		return
 	end
 
-	local options = self:GetSelectedOptionsCopy()
-	self.arCharacterCreateOptions = CharacterScreenLib.GetCharacterCreation(self.nCreationTable)
-
-	options.genderId = PreGameLib.CodeEnumGender.Male
-	options.raceId = wndControl:GetData()
-
-	local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-
-	-- if we cant find our race, then ignore class and see what we can come up with.
-	if possibleCharacterCreateIndex == 0 then
-		options.classId = nil
-		possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
+	if not self.mapCharacterCreateOptions then
+		self:BuildOptionsMap()
 	end
+
+	local idGender = PreGameLib.CodeEnumGender.Male
+	local idRace = wndControl:GetData()
+	
+	local tSelectedOptions = self:GetSelectedOptionsCopy()
+
+	local possibleCharacterCreateIndex = self:GetCharacterCreateId(tSelectedOptions.factionId, idRace, tSelectedOptions.classId, idGender)
 
 	-- dont change if we dont find it
 	if possibleCharacterCreateIndex ~= 0 then
 		self:SetCharacterCreateIndex( possibleCharacterCreateIndex )
 	end
-
-	-- verify the combination we have is valid
-	self:HelperVerifyOptions(options, self.arCharacterCreateOptions)
 
 	self:SelectButtons() -- run the populate functions
 	self:EnableButtons()
@@ -1196,27 +1116,21 @@ function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
 		return
 	end
 
-	local options = self:GetSelectedOptionsCopy()
-	self.arCharacterCreateOptions = CharacterScreenLib.GetCharacterCreation(self.nCreationTable)
-
-	options.genderId = PreGameLib.CodeEnumGender.Female
-	options.raceId = wndControl:GetData()
-
-	local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-
-	-- if we cant find our race, then ignore class and see what we can come up with.
-	if possibleCharacterCreateIndex == 0 then
-		options.classId = nil
-		possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
+	if not self.mapCharacterCreateOptions then
+		self:BuildOptionsMap()
 	end
+
+	local idGender = PreGameLib.CodeEnumGender.Female
+	local idRace = wndControl:GetData()
+	
+	local tSelectedOptions = self:GetSelectedOptionsCopy()
+
+	local possibleCharacterCreateIndex = self:GetCharacterCreateId(tSelectedOptions.factionId, idRace, tSelectedOptions.classId, idGender)
 
 	-- dont change if we dont find it
 	if possibleCharacterCreateIndex ~= 0 then
 		self:SetCharacterCreateIndex( possibleCharacterCreateIndex )
 	end
-
-	-- verify the combination we have is valid
-	self:HelperVerifyOptions(options, self.arCharacterCreateOptions)
 
 	self:SelectButtons() -- run the populate functions
 	self:EnableButtons()
@@ -1225,54 +1139,15 @@ function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
 end
 
 ---------------------------------------------------------------------------------------------------
-function Character:HelperVerifyOptions(options, creationOptions)
-	-- verify race/gender first. If we're good here, just set class. If we're not, redo everything.
-	-- demoIndex, factionId, classId, raceId, genderId
-	local tRaceGender = CharacterScreenLib.GetCharacterCreationIdsByValues(0, options.factionId, -1, options.raceId, options.genderId)
-	if #tRaceGender.arEnabledIds <= 0 then
-		-- set race/gender
-		for idxList, creation in pairs(creationOptions) do
-			local tRaceGenderNew = CharacterScreenLib.GetCharacterCreationIdsByValues(0, options.factionId, -1, creation.raceId, creation.genderId)
-			if #tRaceGenderNew.arEnabledIds > 0 then
-				options.raceId = creation.raceId
-				options.genderId = creation.genderId
-				local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-				if possibleCharacterCreateIndex ~= 0 then
-					self:SetCharacterCreateIndex( possibleCharacterCreateIndex )
-				end
-				break
-			end
-		end
-	end
-
-	local tClass = CharacterScreenLib.GetCharacterCreationIdsByValues(0, options.factionId, options.classId, options.raceId, options.genderId)
-	if #tClass.arEnabledIds <= 0 then
-		-- set class
-		for idxList, creation in pairs(creationOptions) do
-			local tClassNew = CharacterScreenLib.GetCharacterCreationIdsByValues(0, options.factionId, creation.classId, options.raceId, options.genderId)
-			if #tClassNew.arEnabledIds > 0 then
-				options.classId = creation.classId
-				local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
-				if possibleCharacterCreateIndex ~= 0 then
-					self:SetCharacterCreateIndex( possibleCharacterCreateIndex )
-				end
-				break
-			end
-		end
-	end
-
-end
-
----------------------------------------------------------------------------------------------------
 function Character:OnClassSelect(wndHandler, wndControl)
-	--Apollo.DPF("In Character:OnClassSelect")
 	if s_isInSelectButtons or wndHandler ~= wndControl then
 		return
 	end
 
-	local options = self:GetSelectedOptionsCopy()
-	options.classId = wndControl:GetData()
-	local possibleCharacterCreateIndex = self:FindCharacterCreateOption(options)
+	local tSelectedOptions = self:GetSelectedOptionsCopy()
+	local idClass = wndControl:GetData()
+	
+	local possibleCharacterCreateIndex = self:GetCharacterCreateId(tSelectedOptions.factionId, tSelectedOptions.raceId, idClass, tSelectedOptions.genderId)
 
 	-- dont change if we dont find it
 	if possibleCharacterCreateIndex ~= 0 then
@@ -1281,6 +1156,14 @@ function Character:OnClassSelect(wndHandler, wndControl)
 
 	self:SelectButtons()
 	self:EnableButtons()
+	
+	if g_arActors.primary then
+		self.arCustomizeLookOptions = g_arActors.primary:GetLooks()
+
+		for i, option in pairs(self.arCustomizeLookOptions) do
+			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
+		end
+	end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1384,7 +1267,7 @@ function Character:OnRandomizeBtn()
 	if g_arActors.primary then
 		self.arCustomizeLookOptions = g_arActors.primary:GetLooks()
 
-		for i, 	option in pairs(self.arCustomizeLookOptions) do
+		for i, option in pairs(self.arCustomizeLookOptions) do
 			option.valueIdx = math.random( 1, option.count );
 			g_arActors.primary:SetLook(option.sliderId, option.values[ option.valueIdx ] )
 			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
@@ -1597,17 +1480,17 @@ function Character:FillCustomizePagination() -- we can assume this only happens 
 
 	self:FillCustomizeBoneOptions() -- set up bone scaling
 
-	for i, wnd in pairs(self.arWndCustomizeLookOptions) do
-		wnd:Destroy()
-	end
-
 	for i, wnd in pairs(self.arCustomizePaginationBtns) do
 		wnd:Destroy()
 	end
+	
+	local arCurrentLooks = g_arActors.primary:GetLooks()
 
 	if self.arCustomizeLookOptions == nil or #self.arCustomizeLookOptions < 1  then
 		self.wndCustOptionPanel:Show(false)
 		return
+	elseif self.arCustomizeLookOptions ~= arCurrentLooks then
+		self.arCustomizeLookOptions = arCurrentLooks
 	end
 
 	local nListHeight = 0
@@ -1713,6 +1596,7 @@ function Character:FillCustomizeOptions(bNoShow)
 	for i = 1, iOption.count do  -- count is the number of choices for an option
 		local wnd = Apollo.LoadForm(self.xmlDoc, "CustomizeOptionEntry", self.wndCustOptionList:FindChild("CustomizeContent"), self)
 		g_arActors.shadow:SetLook(iOption.sliderId, iOption.values[ i ] ) -- set the shadow actor to each option
+		
 		wnd:FindChild("CustomizeEntryPreview"):SetCostumeToActor(g_arActors.shadow) -- set a portrait on each button
 		wnd:FindChild("CustomizeEntryPreview"):SetItemsByCreationId( self.arCharacterCreateOptions[self.characterCreateIndex].characterCreateId )
 
@@ -2134,12 +2018,92 @@ function Character:OnCreateErrorClose(wndHandler, wndCtrl)
 	Apollo.StopTimer("CreateFailedTimer")
 	self.wndCreateFailed:Show(false)
 end
+
+function Character:OnRealmBroadcast(strRealmBroadcast, nTier)
+	self:HelperServerMessages(strRealmBroadcast)
+	if nTier < 2 then
+		Apollo.StopTimer("RealmBroadcastTimer")
+		Apollo.StartTimer("RealmBroadcastTimer")
+		self.wndRealmBroadcast:FindChild("RealmMessage_Body"):SetText(strRealmBroadcast)
+		self.wndRealmBroadcast:Show(true)
+	end
+end
+
+function Character:OnRealmBroadcastTimer()
+	self.wndRealmBroadcast:Show(false)
+end
+
+function Character:OnRealmBroadcastClose( wndHandler, wndControl, eMouseButton )
+	Apollo.StopTimer("RealmBroadcastTimer")
+	self.wndRealmBroadcast:Show(false)
+end
+
+
 ---------------------------------------------------------------------------------------------------
 -- Helpers
 ---------------------------------------------------------------------------------------------------
+function Character:BuildOptionsMap()
+	self.mapCharacterCreateOptions = {}
+	for idx, tCharacterOption in pairs(CharacterScreenLib.GetCharacterCreation(self.nCreationTable)) do
+		if not self.mapCharacterCreateOptions[tCharacterOption.factionId] then
+			self.mapCharacterCreateOptions[tCharacterOption.factionId] = {}
+		end
+		if not self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId] then
+			self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId] = {}
+		end
+		if not self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId][tCharacterOption.classId] then
+			self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId][tCharacterOption.classId] = {}
+		end
+		
+		self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId][tCharacterOption.classId][tCharacterOption.genderId] = idx
+	end
+end
+
+--idFaction is required.  If any of the other variables aren't set, we'll get a random value
+function Character:GetCharacterCreateId(idFaction, idRace, idClass, idGender)
+	if not self.mapCharacterCreateOptions then
+		self:BuildOptionsMap()
+	end
+	
+	--if we pass no race or an invalid one, get a new one
+	if not idRace or not self.mapCharacterCreateOptions[idFaction][idRace] then
+		local tRaces = {}
+		for idx, idOption in pairs(self.mapCharacterCreateOptions[idFaction]) do
+			if not idClass or self.mapCharacterCreateOptions[idFaction][idx][idClass] then
+				table.insert(tRaces, idx)
+			end
+		end
+		idRace = tRaces[math.random(1, #tRaces)]
+	end
+	
+	--if we pass no class or an invalid one, get a new one
+	if not idClass or not self.mapCharacterCreateOptions[idFaction][idRace][idClass] then
+		local tClasses = {}	
+		for idx, idOption in pairs(self.mapCharacterCreateOptions[idFaction][idRace]) do
+			table.insert(tClasses, idx)
+		end
+		
+		idClass = tClasses[math.random(1, #tClasses)]
+	end
+
+	-- if we pass a gender....you get the idea
+	if not idGender or not self.mapCharacterCreateOptions[idFaction][idRace][idClass][idGender] then
+		local tGenders = {}
+		for idx, idOption in pairs(self.mapCharacterCreateOptions[idFaction][idRace][idClass]) do
+			table.insert(tGenders, idx)
+		end
+		
+		idGender = tGenders[math.random(1, #tGenders)]
+	end
+	
+	return self.mapCharacterCreateOptions[idFaction][idRace][idClass][idGender]
+end
+	
+
 function Character:GetSelectedOptionsCopy()
 	if 	self.arCharacterCreateOptions == nil then -- initial load; TODO: helpers would be in here.
 		self.arCharacterCreateOptions = CharacterScreenLib.GetCharacterCreation(self.nCreationTable)
+		self:BuildOptionsMap()
 	end
 
 	local selected = self.arCharacterCreateOptions[self.characterCreateIndex]
@@ -2193,7 +2157,6 @@ function Character:HelperConvertToTime(nArg)
 	local nHours = nMinutes/60
 	local strTime = ""
 
-
 	if nMinutes > 1 then -- at least one minute
 		if nHours > 1 then
 			local nMinutesExcess = nMinutes - math.floor(nHours)*60
@@ -2207,6 +2170,24 @@ function Character:HelperConvertToTime(nArg)
 	end
 
 	return strTime
+end
+
+function Character:HelperServerMessages(strExtra)
+	local strAllMessage = ""
+	for _, strMessage in ipairs(self.arServerMessages) do
+		strAllMessage = strAllMessage .. strMessage .. "\n"
+	end
+	if strExtra ~= nil then
+		strAllMessage = strAllMessage .. strExtra .. "\n"
+	end
+	
+	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
+	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
+	self.wndServerMessage:SetHeightToContentHeight()
+end
+
+function Character:OnRealmBtn(wndHandler, wndControl)
+	CharacterScreenLib.ExitToRealmSelect()
 end
 
 ---------------------------------------------------------------------------------------------------

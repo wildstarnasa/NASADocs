@@ -14,16 +14,14 @@ local kcrPointColorAvailable 	= CColor.new(255/255, 128/255, 0/255, 1.0)
 local kcrLabelColorHighlight 	= CColor.new(255/255, 213/255, 64/255, 1.0)
 local kcrPointColorHighlight 	= CColor.new(255/255, 213/255, 64/255, 1.0)
 
-local knSaveVersion = 1
-
 local karCostumeSlotNames = -- string name, then id, then button art
 {
-	{"Head", 		3, "CharacterWindowSprites:btnCh_Armor_Head",},
-	{"Shoulder", 	4, "CharacterWindowSprites:btnCh_Armor_Shoulder",},
-	{"Chest", 		1, "CharacterWindowSprites:btnCh_Armor_Chest",},
-	{"Hands", 		6, "CharacterWindowSprites:btnCh_Armor_Hands",},
-	{"Legs", 		2, "CharacterWindowSprites:btnCh_Armor_Legs",},
-	{"Feet", 		5, "CharacterWindowSprites:btnCh_Armor_Feet",},
+	{"Head", 		GameLib.CodeEnumItemSlots.Head, "CharacterWindowSprites:btnCh_Armor_Head",},
+	{"Shoulder", 	GameLib.CodeEnumItemSlots.Shoulder, "CharacterWindowSprites:btnCh_Armor_Shoulder",},
+	{"Chest", 		GameLib.CodeEnumItemSlots.Chest, "CharacterWindowSprites:btnCh_Armor_Chest",},
+	{"Hands", 		GameLib.CodeEnumItemSlots.Hands, "CharacterWindowSprites:btnCh_Armor_Hands",},
+	{"Legs", 		GameLib.CodeEnumItemSlots.Legs, "CharacterWindowSprites:btnCh_Armor_Legs",},
+	{"Feet", 		GameLib.CodeEnumItemSlots.Feet, "CharacterWindowSprites:btnCh_Armor_Feet",},
 }
 
 local kstrCostumeEquippedSlot = Apollo.GetString("Character_CostumeSlotShown")
@@ -120,45 +118,24 @@ function Inspect:Init()
 	Apollo.RegisterAddon(self)
 end
 
-function Inspect:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndCharacter and self.wndCharacter:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function Inspect:OnRestore(eType, tSavedData)
-	self.tSavedData = tSavedData
-	if not tSavedData or tSavedData.nSavedVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-		if self.wndCharacter then
-			self.wndCharacter:MoveToLocation(self.locSavedWindowLoc)
-		end
-	end
-end
-
 -- TODO: Refactor, if costumes is enough code it can be separated into another add-on. Also it'll give it more modability anyways.
 function Inspect:OnLoad()
+	self.xmlDoc = XmlDoc.CreateFromFile("Inspect.xml")
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+end
+
+function Inspect:OnDocumentReady()
+	if self.xmlDoc == nil then
+		return
+	end
+	
 	Apollo.RegisterEventHandler("Inspect", "OnInspect", self)
 	Apollo.RegisterEventHandler("UnitTitleChange", "OnUnitTitleChange", self)
-
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 
 	--Apollo.RegisterEventHandler("ShowItemInDressingRoom", "OnShowItemInDressingRoom", self)
 
-	self.wndCharacter = Apollo.LoadForm("Inspect.xml", "CharacterWindow", nil, self)
+	self.wndCharacter = Apollo.LoadForm(self.xmlDoc, "CharacterWindow", nil, self)
 	self.wndCharacter:Show(false)
 	self.wndCostume = self.wndCharacter:FindChild("Costume")
 	self.wndTitleFrame = self.wndCharacter:FindChild("TitleListFrame")
@@ -167,6 +144,9 @@ function Inspect:OnLoad()
 	self.wndCharacter:FindChild("TitleSelectButton"):Show(false)
 	self.wndCharacter:FindChild("SelectCostumeWindowToggle"):Show(false)
 	self.wndCharacter:FindChild("EditCostumeToggle"):Show(false)
+	if self.locSavedWindowLoc then
+		self.wndCharacter:MoveToLocation(self.locSavedWindowLoc)
+	end
 
 	self.bStatsValid = false
 	self.tOffensiveStats = {}
@@ -211,7 +191,7 @@ function Inspect:OnLoad()
 	
 	self.arSlotCoverWindowById = {}
 	for nSlotId, wndSlot in pairs( self.arSlotWindowsById ) do
-		self.arSlotCoverWindowById[nSlotId] = Apollo.LoadForm("Inspect.xml", "InspectCover", wndSlot, self) 		
+		self.arSlotCoverWindowById[nSlotId] = Apollo.LoadForm(self.xmlDoc, "InspectCover", wndSlot, self) 		
 		self.arSlotCoverWindowById[nSlotId]:Show(true)
 		self.arSlotCoverWindowById[nSlotId]:SetData(nSlotId) -- used in GenerateTooltip
 	end
@@ -231,7 +211,7 @@ function Inspect:OnLoad()
 	self.tCostumeSlotOverlays = {}
 
 	for idx, tSlotInfo in ipairs(karCostumeSlotNames) do
-		local wndCostumeEntry = Apollo.LoadForm("Inspect.xml", "CostumeEntryForm", self.wndCostumeFrame:FindChild("CostumeListContainer"), self)
+		local wndCostumeEntry = Apollo.LoadForm(self.xmlDoc, "CostumeEntryForm", self.wndCostumeFrame:FindChild("CostumeListContainer"), self)
 		wndCostumeEntry:FindChild("CostumeSlot"):ChangeArt(tSlotInfo[3])
 		wndCostumeEntry:FindChild("CostumeSlot"):SetData(tSlotInfo[2])
 		wndCostumeEntry:FindChild("VisibleBtn"):SetData(tSlotInfo[2])
@@ -262,13 +242,17 @@ function Inspect:OnLoad()
 	for iSeq = 1, 6 do
 		for idx, tEntry in pairs(self.arMilestones) do
 			if tEntry[3] == iSeq then
-				local wndMilestone = Apollo.LoadForm("Inspect.xml", "AttributeMilestoneEntry", self.wndCharacter:FindChild("MilestoneContainer"), self)
+				local wndMilestone = Apollo.LoadForm(self.xmlDoc, "AttributeMilestoneEntry", self.wndCharacter:FindChild("MilestoneContainer"), self)
 				tEntry[1] = wndMilestone
 			end
 		end
 	end
 
 	self.wndCharacter:FindChild("MilestoneContainer"):ArrangeChildrenVert()
+end
+
+function Inspect:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndCharacter, strName = Apollo.GetString("ContextMenu_Inspect")})
 end
 
 function Inspect:OnInspect(unitInspecting, arItems)
@@ -425,7 +409,7 @@ function Inspect:DrawAttributes()
 	
 	self.wndCharacter:FindChild("AttributeValue2"):SetText(math.floor(self.unitInspecting:GetSupportPower() or 0))
 	self.wndCharacter:FindChild("AttributeValue2"):SetTooltip(Apollo.GetString("Character_SupportTooltip"))
-	self.wndCharacter:FindChild("AttributeName2"):SetTooltip(Apollo.GetString("Character_AssaultTooltip"))
+	self.wndCharacter:FindChild("AttributeName2"):SetTooltip(Apollo.GetString("Character_SupportTooltip"))
 
 	---------- Ratings ------------	
 	-- TODO: Swap to just loading in forms instead of having the 20+ StatValue forms in xml
@@ -640,7 +624,7 @@ function Inspect:UpdateMilestones()
 			for idxMini, tMilestone in pairs(tEntry.tAttributeMilestones) do
 				if tMilestone.bIsMini == true and tMilestone.nRequiredAmount > nRankFloor and tMilestone.nRequiredAmount <= nRankMax then
 					local nPosition = ((tMilestone.nRequiredAmount - nRankFloor) / (nRankMax - nRankFloor)) * nLength
-					local wndMini = Apollo.LoadForm("Inspect.xml", "MiniMilestoneEntry", wndMilestone:FindChild("MiniMilestoneTicks"), self)
+					local wndMini = Apollo.LoadForm(self.xmlDoc, "MiniMilestoneEntry", wndMilestone:FindChild("MiniMilestoneTicks"), self)
 					local nLeft2, nTop2, nRight2, nBottom2 = wndMini:GetAnchorOffsets()
 					local nHalf = (nRight2 - nLeft2) / 2
 					local strReqColor = "ffff5555"
@@ -701,7 +685,7 @@ function Inspect:OnRankDisplayCheck(wndHandler, wndControl)
 		self.wndRankDisplay:Destroy()
 	end
 
-	self.wndRankDisplay = Apollo.LoadForm("Inspect.xml", "RankDisplay", self.wndCharacter:FindChild("RankDisplayHook"), self)
+	self.wndRankDisplay = Apollo.LoadForm(self.xmlDoc, "RankDisplay", self.wndCharacter:FindChild("RankDisplayHook"), self)
 	self.wndRankDisplay:FindChild("AttributeName"):SetText(ktAttributeIconsText[tData.id][2])
 	self.wndRankDisplay:FindChild("AttributeNameIcon"):SetSprite(ktAttributeIconsText[tData.id][1])
 	--wndControl:AttachWindow(self.wndRankDisplay)
@@ -712,7 +696,7 @@ function Inspect:OnRankDisplayCheck(wndHandler, wndControl)
 	local wndSecondaries = self.wndRankDisplay:FindChild("AttributeSecondaries")
 
 	for idx, tValue in pairs(tData.tSecondaries) do
-		local wndSecondary = Apollo.LoadForm("Inspect.xml", "RankSecondaryEntry", wndSecondaries, self)
+		local wndSecondary = Apollo.LoadForm(self.xmlDoc, "RankSecondaryEntry", wndSecondaries, self)
 		local nBonus = (math.floor(tValue.fBonus * 10)) / 10
 		wndSecondary:FindChild("Text"):SetText(String_GetWeaselString(Apollo.GetString("Inspect_StatBonus"), nBonus, ktAttributeIconsText[tValue.eUnitProperty][2]))
 		wndSecondary:FindChild("Text"):SetHeightToContentHeight()
@@ -725,7 +709,7 @@ function Inspect:OnRankDisplayCheck(wndHandler, wndControl)
 	wndSecondaries:ArrangeChildrenVert()
 	nAttributeLeft, nAttributeTop, nAttributeRight, nAttributeBottom = wndSecondaries:GetAnchorOffsets() -- used further down
 
-	local wndDivider = Apollo.LoadForm("Inspect.xml", "RankDivider", self.wndRankDisplay, self)
+	local wndDivider = Apollo.LoadForm(self.xmlDoc, "RankDivider", self.wndRankDisplay, self)
 	local nDividerLeft, nDividerTop, nDividerRight, nDividerBottom = wndDivider:GetAnchorOffsets()
 	wndDivider:SetAnchorOffsets(nDividerLeft, 5 + nAttributeBottom, nDividerRight, 6 + nAttributeBottom + nDividerBottom)
 	nDividerLeft, nDividerTop, nDividerRight, nDividerBottom = wndDivider:GetAnchorOffsets() -- used further down
@@ -745,7 +729,7 @@ function Inspect:OnRankDisplayCheck(wndHandler, wndControl)
 
 	for idx = 1, #tData.tRanks do
 		if tData.tRanks[idx] and tData.tRanks[idx][2] then
-			local wndTier = Apollo.LoadForm("Inspect.xml", "RankTierEntry", wndRankTiers, self)
+			local wndTier = Apollo.LoadForm(self.xmlDoc, "RankTierEntry", wndRankTiers, self)
 			local splMilestone = GameLib.GetSpell(tData.tRanks[idx][2])
 			local strDesc = nil
 			if splMilestone then
@@ -774,7 +758,7 @@ function Inspect:OnRankDisplayCheck(wndHandler, wndControl)
 			end
 
 			if idx == tData.nRank and idx ~= #tData.tRanks then
-				local wndUnlockDiv = Apollo.LoadForm("Inspect.xml", "RankUnlockDivider", wndRankTiers, self)
+				local wndUnlockDiv = Apollo.LoadForm(self.xmlDoc, "RankUnlockDivider", wndRankTiers, self)
 				wndUnlockDiv:FindChild("RankProgLabel"):SetText(String_GetWeaselString(Apollo.GetString("Inspect_Rank"), idx + 1))
 				wndUnlockDiv:FindChild("ProgressBar"):SetFloor(0)
 				wndUnlockDiv:FindChild("ProgressBar"):SetMax(100)
@@ -813,18 +797,18 @@ function Inspect:HelperBuildSecondaryTooltips(idx, arProperties)
 		[4]  = Apollo.GetString("CRB_Technology_Description")
 		[5]  = Apollo.GetString("CRB_Wisdom_Description")
 		[6]  = Apollo.GetString("CRB_Stamina_Description")--]]
-		[7]  = 	"CRB_Health_Description",
-		[8]  = 	"Character_MaxShieldTooltip",
-		[9]  = 	"Character_DeflectTooltip",
-		[10] = 	"Character_StrikethroughTooltip",
-		[11] = 	"Character_CritTooltip",
-		[12] = 	"Character_CritDeflectTooltip",
-		[16] = 	"Character_ArmorTooltip",
-		[17] = 	"Character_PhysMitTooltip",
-		[18] = 	"Character_TechMitTooltip",
-		[19] = 	"Character_MagicMitTooltip",
-		[21] = 	"Character_CritSevTooltip",
-		[22] = 	"Character_CombatRecoveryTooltip",
+		[7]  = Apollo.GetString("CRB_Health_Description"),
+		[8]  = Apollo.GetString("Character_MaxShieldTooltip"),
+		[9]  = Apollo.GetString("Character_DeflectTooltip"),
+		[10] = Apollo.GetString("Character_StrikethroughTooltip"),
+		[11] = Apollo.GetString("Character_CritTooltip"),
+		[12] = Apollo.GetString("Character_CritDeflectTooltip"),
+		[16] = Apollo.GetString("Character_ArmorTooltip"),
+		[17] = Apollo.GetString("Character_PhysMitTooltip"),
+		[18] = Apollo.GetString("Character_TechMitTooltip"),
+		[19] = Apollo.GetString("Character_MagicMitTooltip"),
+		[21] = Apollo.GetString("Character_CritSevTooltip"),
+		[22] = Apollo.GetString("Character_CombatRecoveryTooltip")
 	--	[23] = "Out of Combat Recovery is a measure of how much Mana or Energy you will recover every second while out of combat.\n \nThis value is calculated from your base Out of Combat Recovery rate and your Recovery Rating of %s, and may be subject to diminishing returns."
 	}
 	
@@ -858,12 +842,12 @@ function Inspect:OnGenerateInspectTooltip(wndHandler, wndControl, eToolTipType, 
 	local nSlot = wndControl:GetData()
 	
 	-- the equipment windows are stilpl there, so we will use them to grab our item.
-	local itemInspect
-	if self.arSlotWindowsById[nSlot] then
-		itemInspect = self.arSlotWindowsById[nSlot]:GetItem()
-	end
+	local itemInspect = self.arItemBySlot[nSlot]
 	
-	local itemEquipped = self.arItemBySlot[nSlot]
+	local itemEquipped
+	if self.arSlotWindowsById[nSlot] then
+		itemEquipped = self.arSlotWindowsById[nSlot]:GetItem()
+	end
 	
 	if itemInspect then -- or itemEquipped then	-- OLD	
 		if itemInspect then
@@ -889,8 +873,7 @@ function Inspect:OnUnitTitleChange(unitUpdated)
 	if unitUpdated ~= self.unitInspecting then
 		return
 	end
-
-	self.wndCharacter:FindChild("PlayerName"):SetText(self.unitInspecting:GetTitleOrName())
+	self.wndCharacter:FindChild("PlayerName"):SetText(String_GetWeaselString(Apollo.GetString("Inspect_Inspecting"), self.unitInspecting:GetTitleOrName()))
 end
 
 function Inspect:OnRotateRight()

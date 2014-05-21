@@ -80,43 +80,19 @@ function LoreWindow:Init()
     Apollo.RegisterAddon(self)
 end
 
-function LoreWindow:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion
-	}
-	return tSaved
-end
-
-function LoreWindow:OnRestore(eType, tSavedData)
-	if tSavedData.nSavedVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function LoreWindow:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("LoreWindow.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function LoreWindow:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
-	
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 		"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 		"OnTutorial_RequestUIAnchor", self)
+
 	Apollo.RegisterSlashCommand("compactlore", 						"OnCompactLore", self)
 	Apollo.RegisterEventHandler("DatacubeUpdated", 					"OnDatacubeUpdated", self)
 	Apollo.RegisterEventHandler("HudAlert_ToggleLoreWindow", 		"OnShowLoreWindow", self)
@@ -134,19 +110,17 @@ function LoreWindow:OnDocumentReady()
 end
 
 function LoreWindow:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Lore"), {"InterfaceMenu_ToggleLoreWindow", "Lore", "spr_HUD_MenuIcons_Lore"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Lore"), {"InterfaceMenu_ToggleLoreWindow", "Lore", "Icon_Windows32_UI_CRB_InterfaceMenu_Lore"})
 end
 
 function LoreWindow:Initialize()
 	self.wndColDisplay = nil
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "LoreWindowForm", nil, self)
-	self.wndMain:FindChild("MainNavGA"):AttachWindow(self.wndMain:FindChild("MainGAContainer"))
-	self.wndMain:FindChild("MainNavCol"):AttachWindow(self.wndMain:FindChild("MainColContainer"))
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Lore")})
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
+	self.wndMain:FindChild("MainNavGA"):AttachWindow(self.wndMain:FindChild("MainGAContainer"))
+	self.wndMain:FindChild("MainNavCol"):AttachWindow(self.wndMain:FindChild("MainColContainer"))	
+	
 	local wndMeasure = Apollo.LoadForm(self.xmlDoc, "ColHeader", nil, self)
 	self.knWndHeaderDefaultHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
@@ -272,7 +246,6 @@ function LoreWindow:OnCloseBtn(wndHandler, wndControl)
 	self:OnDestroyColDisplay()
 	Event_FireGenericEvent("GenericEvent_CloseGAReader")
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 end
@@ -414,7 +387,7 @@ function LoreWindow:DrawColHeaderItems(tCurrZone, wndHeader, strHeader)
 			local nMax = tListData.bIsComplete and 1 or tListData.nNumTotal
 			local nComplete = tListData.bIsComplete and 1 or tListData.nNumCompleted
 			local wndCurr = self:FactoryProduce(wndHeader:FindChild("ColHeaderItems"), "ColJournalItem", "Journal"..tListData.nDatacubeId)
-			wndCurr:FindChild("ColListItemText"):SetText(tListData.title)
+			wndCurr:FindChild("ColListItemText"):SetText(tListData.strTitle)
 			wndCurr:FindChild("ColJournalPortrait"):SetCostumeToCreatureId((idx % 2 == 0) and 30728 or 30737) -- TODO Hardcoded
 			wndCurr:FindChild("ColJournalPortrait"):SetModelSequence(150)
 			wndCurr:FindChild("ColJournalProgBar"):SetMax(nMax)
@@ -586,6 +559,20 @@ end
 
 function LoreWindow:OnCompactLore()
 	bDockedOption = not bDockedOption
+end
+
+---------------------------------------------------------------------------------------------------
+-- Tutorial anchor request
+---------------------------------------------------------------------------------------------------
+
+function LoreWindow:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.GalacticArchive or not self.wndMain or not self.wndMain:IsValid() then 
+		return
+	end
+	
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 end
 
 -----------------------------------------------------------------------------------------------

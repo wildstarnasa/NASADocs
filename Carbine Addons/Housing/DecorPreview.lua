@@ -42,6 +42,10 @@ function DecorPreview:OnLoad()
     self.wndModelWindow 	= self.wndDecorPreview:FindChild("ModelWindow")
     self.wndRotateRight 	= self.wndDecorPreview:FindChild("RotateRightButton")
     self.wndRotateLeft 		= self.wndDecorPreview:FindChild("RotateLeftButton")
+	
+	self.wndDecorPreview:SetSizingMinimum(280, 270)
+	self.wndDecorPreview:SetSizingMaximum(800, 700)
+
 end
 
 

@@ -69,7 +69,7 @@ function ChallengeLog:OnDocumentReady()
 end
 
 function ChallengeLog:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ChallengeLog"), {"ToggleChallengesWindow", "Challenges", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ChallengeLog"), {"ToggleChallengesWindow", "Challenges", "Icon_Windows32_UI_CRB_InterfaceMenu_ChallengeLog"})
 end
 
 function ChallengeLog:ToggleWindow()
@@ -154,7 +154,7 @@ function ChallengeLog:Redraw()
 
 		for idx, clgCurrent in pairs(tAllChallenges) do
 			local strChallengeName = clgCurrent:GetName():lower()
-			local bResult = strChallengeName:find(" "..strSearchString) or string.sub(strChallengeName, 0, string.len(strSearchString)) == strSearchString
+			local bResult = strChallengeName:find(" "..strSearchString, 1, true) or string.sub(strChallengeName, 0, string.len(strSearchString)) == strSearchString
 			if bResult then
 				tFilteredChallenges[idx] = clgCurrent
 			end
@@ -379,7 +379,7 @@ end
 -- Draw tier info for the main panel
 function ChallengeLog:DrawTierInfo(wndContainer, clgBeingDrawn)
 	local strFontPathToUse = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">"
-	local strFontPathToUseRight = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"white\" Align=\"Right\">"
+	local strFontPathToUseRight = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\" Align=\"Right\">"
 	local wndListItemDescription = wndContainer:FindChild("ListItemBtn:ListItemDescription")
 	local wndDescriptionTieredObjective = wndContainer:FindChild("TierContainer:DescriptionTieredObjective")
 	wndListItemDescription:SetAML(strFontPathToUse..clgBeingDrawn:GetDescription().."</P>")

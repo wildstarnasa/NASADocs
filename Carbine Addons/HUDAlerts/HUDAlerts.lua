@@ -64,10 +64,7 @@ function HUDAlerts:OnDocumentReady()
 	-- Quest Events
 	Apollo.RegisterEventHandler("QuestStateChanged", 							"RebuildQuestList", self)
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 						"RebuildQuestList", self)
-
-	-- Mail Events
-	Apollo.RegisterEventHandler("AlertMailInfo", 								"OnAlertMailInfo", self)
-	Apollo.RegisterTimerHandler("HUDAlerts_MailAlertExpired",					"OnHUDAlerts_MailAlertExpired", self) -- Timer
+	Apollo.RegisterEventHandler("Communicator_ShowQuestMsg",					"RebuildQuestList", self)
 
 	-- Stun Events
 	Apollo.RegisterEventHandler("ActivateCCStateStun", 							"OnActivateCCStateStun", self)
@@ -86,7 +83,6 @@ function HUDAlerts:OnDocumentReady()
 	self.wndDatacubeAlert 		= self.wndAlertContainer:FindChild("DatacubeAlert")
 	self.wndDurabilityAlert 	= self.wndAlertContainer:FindChild("DurabilityAlert")
 	self.wndQuestCompleteAlert 	= self.wndAlertContainer:FindChild("QuestCompleteAlert")
-	self.wndMailAlert 			= self.wndAlertContainer:FindChild("MailAlert")
 	
 	self.wndLootAlert:Show(false, true)
 	self.wndCallAlert:Show(false, true)
@@ -94,7 +90,6 @@ function HUDAlerts:OnDocumentReady()
 	self.wndDatacubeAlert:Show(false, true)
 	self.wndDurabilityAlert:Show(false, true)
 	self.wndQuestCompleteAlert:Show(false, true)
-	self.wndMailAlert:Show(false, true)
 
 	self.wndHiddenBagWindow		= self.wndAlertContainer:FindChild("HiddenBagWindow")
 	self.wndAlertContainer:FindChild("QuestCompleteMenuBtn"):AttachWindow(self.wndAlertContainer:FindChild("QuestMenuFrame"))
@@ -201,16 +196,6 @@ function HUDAlerts:OnCanVacuumChanged(bCanVacuum)
 	--self.wndLootAlert:FindChild("AlertItemTransition"):SetSprite("sprWinAnim_BirthSmallTemp") -- No Anim for vacuum
 end
 
-function HUDAlerts:OnAlertMailInfo()
-	self:ShowAndInitializeAlert(self.wndMailAlert)
-	Apollo.CreateTimer("HUDAlerts_MailAlertExpired", 60.0, false)
-end
-
-function HUDAlerts:OnHUDAlerts_MailAlertExpired()
-	self.wndMailAlert:Show(false)
-	self.wndAlertContainer:ArrangeChildrenHorz(0)
-end
-
 function HUDAlerts:OnDatachronCallIncoming()
 	local strKeybind = GameLib.GetKeyBinding("Communicator")
 	self.wndCallAlert:FindChild("AlertItemKeybindText"):SetText(strKeybind)
@@ -314,7 +299,6 @@ function HUDAlerts:RebuildQuestList()
 			end
 		end
 	end
-	
 	self:DrawQuestCompleteAlert(tQuestsTracked)
 end
 
@@ -416,15 +400,6 @@ end
 -----------------------------------------------------------------------------------------------
 -- Btn Clicks
 -----------------------------------------------------------------------------------------------
-
-function HUDAlerts:OnMailAlertBtn(wndHandler, wndControl, eMouseButton)
-	Apollo.StopTimer("HUDAlerts_MailAlertExpired")
-	if eMouseButton == GameLib.CodeEnumInputMouse.Left then
-		Event_FireGenericEvent("ToggleMailWindow")
-	end
-	self.wndMailAlert:Show(false)
-	self.wndAlertContainer:ArrangeChildrenHorz(0)
-end
 
 function HUDAlerts:OnChallengeAlertBtn(wndHandler, wndControl, eMouseButton)
 	Apollo.StopTimer("HUDAlerts_ChallengeTimerExpired")

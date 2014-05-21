@@ -9,7 +9,7 @@ require "GameLib"
 
 local LootStack = {}
 
-local knMaxEntryData = 3 -- Previously 3
+local knMaxEntryData = 4 -- Previously 3
 local kfMaxItemTime = 7	-- item display time (seconds)
 local kfTimeBetweenItems = 2 -- Previously .3			-- delay between items; also determines clearing time (seconds)
 
@@ -53,26 +53,18 @@ function LootStack:Init()
     Apollo.RegisterAddon(self)
 end
 
-function LootStack:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
-		return
-	end
-end
-
-function LootStack:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nVersion  == knVersion then
-	end
-end
-
 function LootStack:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("LootStack.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function LootStack:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("LootedItem", 			"OnLootedItem", self)
 	Apollo.RegisterEventHandler("LootedMoney", 			"OnLootedMoney", self)
 
@@ -83,7 +75,7 @@ function LootStack:OnDocumentReady()
 	Apollo.CreateTimer("LootStack_CashTimer", 5.0, false)
 	Apollo.StartTimer("LootStack_CashTimer")
 
-	self.wndLootStack = Apollo.LoadForm(self.xmlDoc, "LootStackForm", "InWorldHudStratum", self)
+	self.wndLootStack = Apollo.LoadForm(self.xmlDoc, "LootStackForm", "FixedHudStratumHigh", self)
 	self.xmlDoc = nil
 	self.wndCashDisplay = self.wndLootStack:FindChild("CashDisplay")
 	self.wndCashComplex = self.wndLootStack:FindChild("CashComplex")
@@ -98,6 +90,10 @@ function LootStack:OnDocumentReady()
 	wndEntry:Show(false, true)
 
 	self:UpdateDisplay()
+end
+
+function LootStack:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndLootStack, strName = Apollo.GetString("HUDAlert_VacuumLoot")})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -231,7 +227,7 @@ function LootStack:UpdateDisplay()
 		end
 	end
 
-	self.wndLootStack:ArrangeChildrenVert(0)
+	self.wndLootStack:ArrangeChildrenVert(2)
 end
 
 local LootStackInst = LootStack:new()

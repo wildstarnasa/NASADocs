@@ -113,7 +113,7 @@ function RecallFrame:RefreshDefaultCommand()
 	elseif GameLib.GetDefaultRecallCommand() == GameLib.CodeEnumRecallCommand.Illium then
 		local bNeedsReset = false
 		for idx, tSpell in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}) do
-			if tSpell.nId == GameLib.GetTeleportIlliumSpell():GetBaseSpellId() then
+			if not tSpell.bIsActive and tSpell.nId == GameLib.GetTeleportIlliumSpell():GetBaseSpellId() then
 				bNeedsReset = true
 			end
 		end
@@ -123,7 +123,7 @@ function RecallFrame:RefreshDefaultCommand()
 	elseif GameLib.GetDefaultRecallCommand() == GameLib.CodeEnumRecallCommand.Thayd then
 		local bNeedsReset = false
 		for idx, tSpell in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}) do
-			if tSpell.nId == GameLib.GetTeleportThaydSpell():GetBaseSpellId() then
+			if not tSpell.bIsActive and tSpell.nId == GameLib.GetTeleportThaydSpell():GetBaseSpellId() then
 				bNeedsReset = true
 			end
 		end
@@ -158,7 +158,7 @@ function RecallFrame:RefreshDefaultCommand()
 		bShowRecallBtn = false
 	end
 	
-	if bShowRecallBtn then	
+	if bShowRecallBtn then
 		--Toggle Visibility based on ui preference
 		local unitPlayer = GameLib.GetPlayerUnit()
 		local nVisibility = Apollo.GetConsoleVariable("hud.SkillsBarDisplay")
@@ -172,6 +172,8 @@ function RecallFrame:RefreshDefaultCommand()
 		else
 			self.wndMain:Show(true)
 		end
+	else
+		self.wndMain:Show(bShowRecallBtn)
 	end
 end
 
@@ -184,6 +186,17 @@ function RecallFrame:ResetDefaultCommand()
 			break
 		end
 	end
+	
+	local bHasIllium = false
+	local bHasThyad = false
+	for idx, tSpell in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}) do
+		if tSpell.bIsActive and tSpell.nId == GameLib.GetTeleportThaydSpell():GetBaseSpellId() then
+			bHasThyad = true
+		end
+		if tSpell.bIsActive and tSpell.nId == GameLib.GetTeleportIlliumSpell():GetBaseSpellId() then
+			bHasIllium = true
+		end
+	end
 
 	if GameLib.HasBindPoint() then 	
 		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.BindPoint)
@@ -191,6 +204,10 @@ function RecallFrame:ResetDefaultCommand()
 		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.House)	
 	elseif bHasWarplot then
 		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.Warplot)
+	elseif bHasIllium then
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.Illium)
+	elseif bHasThyad then
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.Thayd)
 	else
 		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.BindPoint)
 	end

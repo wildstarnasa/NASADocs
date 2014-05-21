@@ -35,14 +35,13 @@ LuaEnumMessageType =
     QuestObjectiveAdvanced 			= 17,
     ReputationIncrease 				= 18,
     SpellCastError 					= 19,
-    StoryPanel 						= 20,
-    SystemMessage 					= 21,
-    XPAwarded 						= 22,
-    ZoneName 						= 23,
-	PathXp 							= 24,
-	TradeskillXp 					= 25,
-	RealmBroadcastTierMedium 		= 26,
-	AlternateCurrency		 		= 27,
+    SystemMessage 					= 20,
+    XPAwarded 						= 21,
+    ZoneName 						= 22,
+	PathXp 							= 23,
+	TradeskillXp 					= 24,
+	RealmBroadcastTierMedium 		= 25,
+	AlternateCurrency		 		= 26,
 }
 
 local LuaEnumMessageField = 
@@ -57,7 +56,6 @@ local LuaEnumMessageDisplayType =
 {
     TextFloater = 1,
     Window = 2,
-    StoryPanel = 3,
 }
 
 local ktMessageSettings = {}  
@@ -92,7 +90,6 @@ ktMessageSettings =
 	[LuaEnumMessageType.QuestObjectiveAdvanced] 		= {eField = LuaEnumMessageField.Upper,	bQueue = true,	nPriority = 2,	bPreempt = false,	bPreemptable = true,	bDestroyable = true,	bReposition = false,},
 	[LuaEnumMessageType.ReputationIncrease] 			= {eField = LuaEnumMessageField.Lower,	bQueue = true,	nPriority = 3,	bPreempt = false,	bPreemptable = false,	bDestroyable = true,	bReposition = false,},
 	[LuaEnumMessageType.SpellCastError] 				= {eField = LuaEnumMessageField.Lower,	bQueue = false,	nPriority = 1,	bPreempt = true,	bPreemptable = false,	bDestroyable = true,	bReposition = false,},
-	[LuaEnumMessageType.StoryPanel] 					= {eField = LuaEnumMessageField.Alert,	bQueue = true,	nPriority = 4,	bPreempt = false,	bPreemptable = false,	bDestroyable = false,	bReposition = false,},
 	[LuaEnumMessageType.SystemMessage] 					= {eField = LuaEnumMessageField.Alert,	bQueue = true,	nPriority = 1,	bPreempt = true,	bPreemptable = false,	bDestroyable = false,	bReposition = false,},
 	[LuaEnumMessageType.XPAwarded] 						= {eField = LuaEnumMessageField.Middle,	bQueue = true,	nPriority = 2,	bPreempt = false,	bPreemptable = true,	bDestroyable = true,	bReposition = false,},
 	[LuaEnumMessageType.ZoneName] 						= {eField = LuaEnumMessageField.Upper,	bQueue = true,	nPriority = 1,	bPreempt = true,	bPreemptable = true,	bDestroyable = true,	bReposition = false,	bRemoveSameTypeInQueue = true},
@@ -126,9 +123,6 @@ end
 function MessageManager:OnLoad()
 	Apollo.RegisterEventHandler("Float_RequestShowTextFloater", 	"RequestShowTextFloater", self )
 	Apollo.RegisterEventHandler("MessageFinished", 					"OnMessageFinished", self )
-	Apollo.RegisterEventHandler("StoryPanel_StoryPanelHidden", 		"OnMessageFinished", self)
-	Apollo.RegisterEventHandler("RequestShowStoryPanel",			"OnRequestShowStoryPanel", self )
-	Apollo.RegisterEventHandler("MessageManager_HideStoryPanel", 	"HideStoryPanels", self)
 	--Apollo.RegisterEventHandler("VarChange_FrameCount", 			"OnFrameUpdate", self)
 	Apollo.RegisterTimerHandler("MessageUpdateTimer", 				"OnFrameUpdate", self)
 	
@@ -291,13 +285,6 @@ function MessageManager:RequestShowAlert(eMessageType, tParams)
     tParams.eDisplayType = LuaEnumMessageDisplayType.Alert 
     self:RequestShowMessage(eMessageType, tParams)
 end
----------------------------------------------------------------------------------------------------
--- use this function to request displaying story panel
--- params are params used in StoryPanel:ShowStoryPanel
-function MessageManager:OnRequestShowStoryPanel(eMessageType, tParams)
-    tParams.eDisplayType = LuaEnumMessageDisplayType.StoryPanel 
-    self:RequestShowMessage(eMessageType, tParams)
-end
 
 ---------------------------------------------------------------------------------------------------
 function MessageManager:RequestShowMessage(eMessageType, tParams)
@@ -400,9 +387,6 @@ function MessageManager:ShowMessage(eMessageType, tParams)
 			oMessage:Reposition()
 		end
         oMessage:Show(true)
-    elseif eDisplayType == LuaEnumMessageDisplayType.StoryPanel then
-        oMessage = LuaEnumMessageType.StoryPanel -- using the type to identify the tMessage
-        MessageManagerLib.DisplayStoryPanel(tParams)
     else 
         Print(Apollo.GetString("MessageManager_UnknownType"))
         return -- nothing is shown
@@ -433,8 +417,6 @@ function MessageManager:HideMessage(eField)
         CombatFloater.HideTextFloater(oMessage)
     elseif eDisplayType == LuaEnumMessageDisplayType.Window then
         oMessage:Show(false)
-    elseif eDisplayType == LuaEnumMessageDisplayType.StoryPanel then
-        MessageManagerLib.HideStoryPanel()
     end
     
     if  ktMessageSettings[eMessageType].bPreemptable == true then
@@ -445,16 +427,6 @@ function MessageManager:HideMessage(eField)
     -- remove the tMessage from the tMessagesOnScreen list
     self:OnMessageFinished( oMessage )
 
-end
----------------------------------------------------------------------------------------------------
-function MessageManager:HideStoryPanels()
-    -- remove all the story panels in the story panel's queue
-    local tDisplayQueue = self.tDisplayQueue[ktMessageSettings[LuaEnumMessageType.StoryPanel].eField]
-    for idx = tDisplayQueue.iLast, tDisplayQueue.iFirst, -1 do -- counting backward from the back
-        if tDisplayQueue:GetItems()[idx].eMessageType == LuaEnumMessageType.StoryPanel then
-			tDisplayQueue:RemoveAbsolute(idx)
-        end
-    end 
 end
 ---------------------------------------------------------------------------------------------------
 function MessageManager:OnHideText() -- for testing

@@ -20,32 +20,6 @@ function Stuck:Init()
     Apollo.RegisterAddon(self)
 end
 
-function Stuck:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function Stuck:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function Stuck:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Stuck.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
@@ -55,6 +29,7 @@ function Stuck:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
+	
     Apollo.RegisterSlashCommand("stuck", 				"OnStuckToggle", self)
 	Apollo.RegisterEventHandler("ToggleStuckWindow", 	"OnStuckToggle", self)
 

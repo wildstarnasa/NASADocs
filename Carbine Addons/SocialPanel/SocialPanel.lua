@@ -8,7 +8,6 @@ require "FriendshipLib"
 
 local SocialPanel = {}
 local knMaxNumberOfCircles = 5
-local knSaveVersion = 0
 
 function SocialPanel:new(o)
     o = o or {}
@@ -19,30 +18,6 @@ end
 
 function SocialPanel:Init()
     Apollo.RegisterAddon(self)
-end
-
-function SocialPanel:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	return tSaved
-end
-
-function SocialPanel:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function SocialPanel:OnLoad()
@@ -56,6 +31,7 @@ function SocialPanel:OnDocumentReady()
 	end
 
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 			"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 		"OnTutorial_RequestUIAnchor", self)
 
 	Apollo.RegisterEventHandler("EventGeneric_OpenSocialPanel", 		"OnToggleSocialWindow", self)
 	Apollo.RegisterEventHandler("ToggleSocialWindow", 					"OnToggleSocialWindow", self)
@@ -76,6 +52,10 @@ function SocialPanel:OnDocumentReady()
 	Apollo.RegisterTimerHandler("RetryLoadingSocialPanel", 				"FullRedrawIfVisible", self)
 	Apollo.CreateTimer("RetryLoadingSocialPanel", 1.0, false)
 	Apollo.StartTimer("RetryLoadingSocialPanel")
+	
+	Apollo.RegisterTimerHandler("RecalculateInvitesTimer",				"CalcFriendInvites", self)
+	Apollo.CreateTimer("RecalculateInvitesTimer", 0.1, false)
+	Apollo.StopTimer("RecalculateInvitesTimer")
 
 	-- Friend Events
 	Apollo.RegisterEventHandler("FriendshipAccountInvitesRecieved",  	"OnFriendshipInviteChange", self)
@@ -139,7 +119,7 @@ end
 
 function SocialPanel:OnFriendshipInviteChange(tInvite)
 	self:FullRedrawIfVisible()
-	self:CalcFriendInvites()
+	Apollo.StartTimer("RecalculateInvitesTimer")
 end
 
 function SocialPanel:FullRedrawIfVisible()
@@ -155,6 +135,8 @@ end
 function SocialPanel:Initialize()
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "SocialPanelForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Social")})
+			
 		self.wndMain:FindChild("SplashFriendsBtnAlert"):Show(false, true)
 
 		self.wndContactsFrame	= self.wndMain:FindChild("ContactsFrame")
@@ -173,6 +155,8 @@ function SocialPanel:Initialize()
 		if self.locSavedWindowLoc then
 			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
 		end
+		
+		self:CalcFriendInvites()
 	end
 end
 
@@ -232,6 +216,7 @@ end
 
 function SocialPanel:OnCloseBtn(wndHandler, wndControl)
 	if wndHandler == wndControl then
+		Apollo.StopTimer("RecalculateInvitesTimer")
 		Apollo.StopTimer("RetryLoadingSocialPanel")
 		Event_FireGenericEvent("SocialWindowHasBeenClosed")
 		self.wndMain:Close()
@@ -288,11 +273,26 @@ function SocialPanel:OnSplashCirclesUncheck( wndHandler, wndControl)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- Tutorial anchor request
+---------------------------------------------------------------------------------------------------
+
+function SocialPanel:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Social or not self.wndMain or not self.wndMain:IsValid() then
+		return 
+	end
+
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	
+	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+end
+
+---------------------------------------------------------------------------------------------------
 -- Interface Menu Interaction
 ---------------------------------------------------------------------------------------------------
 
 function SocialPanel:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Social"), {"ToggleSocialWindow", "Social", "spr_HUD_MenuIcons_Social"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Social"), {"ToggleSocialWindow", "Social", "Icon_Windows32_UI_CRB_InterfaceMenu_Social"})
 	self:CalcFriendInvites()
 end
 
@@ -323,6 +323,12 @@ function SocialPanel:CalcFriendInvites()
 
 	local tParams = nUnseenFriendInviteCount > 0 and {true, nil, nUnseenFriendInviteCount} or {false, nil, nOnlineFriendCount}
 	Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_Social"), tParams)
+	
+	if self.wndMain then
+		local wndFriendInviteCounter = self.wndMain:FindChild("HeaderButtons:SplashFriendsBtn:SplashFriendsBtnAlert")
+		wndFriendInviteCounter:FindChild("SplashFriendsBtnItemCount"):SetText(nUnseenFriendInviteCount)
+		wndFriendInviteCounter:Show(nUnseenFriendInviteCount > 0)
+	end
 
 	return nUnseenFriendInviteCount
 end

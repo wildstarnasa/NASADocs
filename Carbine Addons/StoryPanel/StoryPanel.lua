@@ -13,7 +13,7 @@ local StoryPanel = {}
 local kcrAlertColor = "ffffeba4"
 local kcrInfoColor = "ffffffff"
 local kstrAlertFont = "CRB_HeaderLarge"
-local kstrInfoFont = "CRB_HeaderHuge"
+local kstrInfoFont = "CRB_HeaderLarge"
 
 function StoryPanel:new(o)
 	o = o or {}
@@ -37,55 +37,40 @@ function StoryPanel:OnDocumentReady()
 	end
 	Apollo.RegisterEventHandler("StoryPanelDialog_Show", 			"OnStoryShow", self)
 	Apollo.RegisterEventHandler("StoryPanelDialog_Hide", 			"HideStoryPanel", self)
-	Apollo.RegisterTimerHandler("StoryDisplayLengthTimer", 			"HideStoryPanel", self)
-	Apollo.RegisterEventHandler("MessageManager_HideStoryPanel", 	"HideStoryPanel", self)
-	Apollo.RegisterEventHandler("MessageManager_DisplayStoryPanel", "ShowStoryPanel", self)
 	Apollo.RegisterEventHandler("ChangeWorld",						"HideStoryPanel", self)
 
 	self.tVariants =
 	{
-		[GameLib.CodeEnumStoryPanel.Default] 					= Apollo.LoadForm(self.xmlDoc, "StoryPanelBubble", nil, self),
-		[GameLib.CodeEnumStoryPanel.Low] 						= Apollo.LoadForm(self.xmlDoc, "StoryPanelBubbleLow", nil, self),
-		[GameLib.CodeEnumStoryPanel.Center] 					= Apollo.LoadForm(self.xmlDoc, "StoryPanelBubbleCenter", nil, self),
-		[GameLib.CodeEnumStoryPanel.FullScreen] 				= Apollo.LoadForm(self.xmlDoc, "StoryPanelFullScreen", nil, self),
-		[GameLib.CodeEnumStoryPanel.Whiteout] 					= Apollo.LoadForm(self.xmlDoc, "StoryPanelWhiteout", nil, self),
-		[GameLib.CodeEnumStoryPanel.Urgent] 					= Apollo.LoadForm(self.xmlDoc, "StoryPanelUrgent", nil, self),
-		[GameLib.CodeEnumStoryPanel.FullScreenBlackNoFlash] 	= Apollo.LoadForm(self.xmlDoc, "StoryPanelBlackout", nil, self),
-		[GameLib.CodeEnumStoryPanel.Informational] 				= Apollo.LoadForm(self.xmlDoc, "StoryPanelInformational", nil, self),
+		[GameLib.CodeEnumStoryPanel.Default] 					= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelBubble", nil, self), strCallback = "OnTimerDefault" },
+		[GameLib.CodeEnumStoryPanel.Low] 						= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelBubbleLow", nil, self), strCallback = "OnTimerLow" },
+		[GameLib.CodeEnumStoryPanel.Center] 					= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelBubbleCenter", nil, self), strCallback = "OnTimerCenter" },
+		[GameLib.CodeEnumStoryPanel.FullScreen] 				= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelFullScreen", nil, self), strCallback = "OnTimerFullscreen" },
+		[GameLib.CodeEnumStoryPanel.Whiteout] 					= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelWhiteout", nil, self), strCallback = "OnTimerWhiteout" },
+		[GameLib.CodeEnumStoryPanel.Urgent] 					= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelUrgent", nil, self), strCallback = "OnTimerUrgent" },
+		[GameLib.CodeEnumStoryPanel.FullScreenBlackNoFlash] 	= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelBlackout", nil, self), strCallback = "OnTimerFullScreenBlackNoFlash" },
+		[GameLib.CodeEnumStoryPanel.Informational] 				= { wndStory = Apollo.LoadForm(self.xmlDoc, "StoryPanelInformational", nil, self), strCallback = "OnTimerInformational" },
 	}
 	self.xmlDoc = nil
 
-	for idx, wndCurr in pairs(self.tVariants) do
-		wndCurr:Show(false, true)
+	for idx, tCurr in pairs(self.tVariants) do
+		tCurr.wndStory:Close()
+		tCurr.wndStory:Show(false)
 	end
-
-	self.wndCurrentVariant = nil
 end
 
 function StoryPanel:OnStoryShow(eWindowType, tLines, nDisplayLength)
-	self:ShowStoryPanel(eWindowType, tLines, nDisplayLength)
-	
-	-- Chat Message (if not full screen)
-	if eWindowType ~= GameLib.CodeEnumStoryPanel.FullScreen then
-		local tParams = { iWindowType = eWindowType, tLines = tLines, nDisplayLength = nDisplayLength }
-		Event_FireGenericEvent("RequestShowStoryPanel", LuaEnumMessageType.StoryPanel, tParams)
-	end	
-end
-
-function StoryPanel:ShowStoryPanel(eWindowType, tLines, nDisplayLength, bReposition)
 	if eWindowType > #self.tVariants then
         eWindowType = 1
     end
 
-	self.wndCurrentVariant = self.tVariants[eWindowType]
-	Apollo.StopTimer("StoryDisplayLengthTimer")
-	Apollo.CreateTimer("StoryDisplayLengthTimer", nDisplayLength, false)
-
-	local wndCurr = self.tVariants[eWindowType]
+	local wndCurr = (self.tVariants[eWindowType] and self.tVariants[eWindowType].wndStory or nil)
 	if not wndCurr then
 		return
 	end
-
+	
+	local oTimer = ApolloTimer.Create(nDisplayLength, false, (self.tVariants[eWindowType] and self.tVariants[eWindowType].strCallback or "HideStoryPanel"), self)
+	wndCurr:SetData(oTimer)
+	
 	-- Text if there is text
 	local wndStoryPanelText = wndCurr:FindChild("StoryPanelText")
 	if wndStoryPanelText then
@@ -98,9 +83,9 @@ function StoryPanel:ShowStoryPanel(eWindowType, tLines, nDisplayLength, bReposit
 				if eWindowType == GameLib.CodeEnumStoryPanel.Urgent then
 					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrAlertFont, kcrAlertColor, strCurr)
 				elseif eWindowType == GameLib.CodeEnumStoryPanel.Informational then
-					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrInfoFont, kcrInfoColor, strCurr)
+					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"UI_WindowTitleYellow\">%s</P>", strAMLText, kstrInfoFont, strCurr)
 				else
-					strAMLText = string.format("%s<P Font=\"CRB_InterfaceLarge\" TextColor=\"ff87dedb\">%s</P>", strAMLText, strCurr)
+					strAMLText = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_WindowTitleYellow\">%s</P>", strAMLText, strCurr)
 				end
 			end
 		end
@@ -109,7 +94,7 @@ function StoryPanel:ShowStoryPanel(eWindowType, tLines, nDisplayLength, bReposit
 			wndStoryPanelText:SetAML(strAMLText)
 			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
 			local nTextWidth, nTextHeight = wndStoryPanelText:SetHeightToContentHeight()
-			wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 20) -- Hardcoded size increase
+			wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 70) -- Hardcoded size increase
 
 			if eWindowType == GameLib.CodeEnumStoryPanel.FullScreen or eWindowType == GameLib.CodeEnumStoryPanel.FullScreenBlackNoFlash then
 				wndStoryPanelText:BeginDoogie(200) -- Hardcoded doogie time
@@ -120,12 +105,45 @@ function StoryPanel:ShowStoryPanel(eWindowType, tLines, nDisplayLength, bReposit
 		wndStoryPanelText:ToFront()
 	end
 
-	if bReposition then
-		wndCurr:Reposition()
-	end
-
 	wndCurr:Show(true, eWindowType == GameLib.CodeEnumStoryPanel.Urgent)
 	wndCurr:ToFront()
+end
+
+---------------------------------------------------------------------------------------------------
+-- Story Panel Hide Timers
+-- Callback methods called by ApolloTimer objects specific to each Story Panel type
+---------------------------------------------------------------------------------------------------
+
+function StoryPanel:OnTimerDefault()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.Default].wndStory)
+end
+
+function StoryPanel:OnTimerLow()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.Low].wndStory)
+end
+
+function StoryPanel:OnTimerCenter()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.Center].wndStory)
+end
+
+function StoryPanel:OnTimerFullscreen()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.FullScreen].wndStory)
+end
+
+function StoryPanel:OnTimerWhiteout()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.Whiteout].wndStory)
+end
+
+function StoryPanel:OnTimerUrgent()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.Urgent].wndStory)
+end
+
+function StoryPanel:OnTimerFullScreenBlackNoFlash()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.FullScreenBlackNoFlash].wndStory)
+end
+
+function StoryPanel:OnTimerInformational()
+	self:HideStoryPanel(self.tVariants[GameLib.CodeEnumStoryPanel.Informational].wndStory)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -133,7 +151,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function StoryPanel:OnStoryPanelMouseDown(wndHandler, wndControl, eMouseButton, nX, nY, bDoubleClick)
-	self:HideStoryPanel(true)
+	self:HideStoryPanel(wndHandler)
 	return true -- stop propogation (don't want to accidentally click through it)
 end
 
@@ -143,20 +161,26 @@ end
 
 function StoryPanel:OnStoryPanelMouseEnter(wndHandler, wndControl, nX, nY)
 	if wndHandler == wndControl and wndHandler:FindChild("ClosePrompt") then
-		wndHandler:FindChild("ClosePrompt"):Show(true)
+		wndHandler:FindChild("ClosePrompt"):Invoke()
 	end
 end
 
 function StoryPanel:OnStoryPanelMouseExit(wndHandler, wndControl, nX, nY)
 	if wndHandler == wndControl and wndHandler:FindChild("ClosePrompt") then
-		wndHandler:FindChild("ClosePrompt"):Show(false)
+		wndHandler:FindChild("ClosePrompt"):Close()
 	end
 end
 
-function StoryPanel:HideStoryPanel(bManuallyClosed)
-	if self.wndCurrentVariant then
-		self.wndCurrentVariant:Show(false, bManuallyClosed or false)
-		Event_FireGenericEvent("StoryPanel_StoryPanelHidden", LuaEnumMessageType.StoryPanel)
+function StoryPanel:HideStoryPanel(wndStory)
+	if wndStory then
+		wndStory:Close()
+		wndStory:Show(false)
+		wndStory:SetData(nil)
+	else
+		for idx, tCurr in pairs(self.tVariants) do
+			tCurr.wndStory:Close()
+			tCurr.wndStory:SetData(nil)
+		end
 	end
 end
 

@@ -9,10 +9,6 @@ require "GameLib" -- TODO helen: temp for cinematics stuffs
 local Macros = {}
 
 ---------------------------------------------------------------------------------------------------
--- local constants
----------------------------------------------------------------------------------------------------
-local knSaveVersion = 1
----------------------------------------------------------------------------------------------------
 -- Macros initialization
 ---------------------------------------------------------------------------------------------------
 function Macros:new(o)
@@ -32,38 +28,6 @@ function Macros:Init()
 	Apollo.RegisterAddon(self)
 end
 
-function Macros:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMacros and self.wndMacros:GetLocation() or self.locSavedWindowLoc
-	local locMacroLocation = self.wndEdit and self.wndEdit:GetLocation() or self.locSavedEditLoc
-	
-	local tSave = 
-	{
-		tLocWindow = locWindowLocation and locWindowLocation:ToTable() or nil,
-		tMacroLoc = locMacroLocation and locMacroLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function Macros:OnRestore(eType, tSavedData)
-	if tSavedData.nSavedVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tLocWindow then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocWindow)
-	end
-	
-	if tSavedData.tMacroLoc then
-		self.locSavedEditLoc = WindowLocation.new(tSavedData.tMacroLoc)
-	end
-end
-
 ---------------------------------------------------------------------------------------------------
 -- Macros EventHandlers
 ---------------------------------------------------------------------------------------------------
@@ -79,6 +43,7 @@ function Macros:OnDocumentReady()
 	end
 	
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 	
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleMacro", "OnMacrosOn", self)
 	Apollo.RegisterSlashCommand("macros", "OnMacrosOn", self)
@@ -108,7 +73,11 @@ function Macros:OnDocumentReady()
 end
 
 function Macros:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Macro"), {"InterfaceMenu_ToggleMacro", "", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Macro"), {"InterfaceMenu_ToggleMacro", "", "Icon_Windows32_UI_CRB_InterfaceMenu_Macro"})
+end
+
+function Macros:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMacros, strName = Apollo.GetString("InterfaceMenu_Macro")})
 end
 	
 ---------------------------------------------------------------------------------------------------

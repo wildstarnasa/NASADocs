@@ -40,7 +40,6 @@ function AdventureWhitevale:OnSave(eType)
 	end
 	
 	local tSaveData = self.tAdventureInfo
-	tSaveData.tWindowLocation = self.wnd and self.wnd:GetLocation():ToTable() or self.locSavedWindowLoc:ToTable()
 	tSaveData.nSaveVersion = knSaveVersion
 		
 	return tSaveData
@@ -60,9 +59,6 @@ function AdventureWhitevale:OnRestore(eType, tSavedData)
 		end
 	end
 	
-	if tSavedData.tWindowLocation then
-		self.locSavedLocation = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 	self.tAdventureInfo = {}
 	
 	if bIsWhitevaleAdventure then
@@ -83,6 +79,8 @@ function AdventureWhitevale:OnLoad()
 end
 
 function AdventureWhitevale:OnDocumentReady()
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
     -- Register handlers for events, slash commands and timer, etc.
     -- e.g. Apollo.RegisterEventHandler("KeyDown", "OnKeyDown", self)
     Apollo.RegisterSlashCommand("whitevaleadv", "OnWhitevaleAdventureOn", self)
@@ -125,13 +123,13 @@ function AdventureWhitevale:OnDocumentReady()
 	if not self.tAdventureInfo then 
 		self.tAdventureInfo = {}
 	elseif self.bShow then 
-		if self.locSavedLocation then
-			self.wnd:MoveToLocation(self.locSavedLocation)
-		end
 		self:OnUpdateResource(self.tAdventureInfo.nRep, self.tAdventureInfo.nSons, self.tAdventureInfo.nRollers, self.tAdventureInfo.nGrinders )
 	end
 end
 
+function AdventureWhitevale:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wnd, strName = Apollo.GetString("CRB_AdventureWhitevale")})
+end
 
 -----------------------------------------------------------------------------------------------
 -- AdventureWhitevale Functions

@@ -7,18 +7,19 @@ require "Window"
 require "CraftingLib"
 require "GameLib"
 require "Item"
+local knLevelRequirement = 15
 
 local karSigilElementsToSprite =
 {
-	[Item.CodeEnumSigilType.Air]		= { strBright = "sprRunecrafting_Air",		strFade = "sprRunecrafting_AirFade" },
-	[Item.CodeEnumSigilType.Fire]		= { strBright = "sprRunecrafting_Fire",		strFade = "sprRunecrafting_FireFade" },
-	[Item.CodeEnumSigilType.Water]		= { strBright = "sprRunecrafting_Water",	strFade = "sprRunecrafting_WaterFade" },
-	[Item.CodeEnumSigilType.Earth]		= { strBright = "sprRunecrafting_Earth",	strFade = "sprRunecrafting_EarthFade" },
-	[Item.CodeEnumSigilType.Logic]		= { strBright = "sprRunecrafting_Logic",	strFade = "sprRunecrafting_LogicFade" },
-	[Item.CodeEnumSigilType.Life]		= { strBright = "sprRunecrafting_Life",		strFade = "sprRunecrafting_LifeFade" },
-	[Item.CodeEnumSigilType.Fusion]		= { strBright = "sprRunecrafting_Fusion",	strFade = "sprRunecrafting_FusionFade" },
-	[Item.CodeEnumSigilType.Omni]		= { strBright = "sprRunecrafting_Omni",		strFade = "sprRunecrafting_OmniFade" },
-	--[Item.CodeEnumSigilType.Shadow]	= { "",	"" }
+	[Item.CodeEnumSigilType.Air]		= { strName = Apollo.GetString("CRB_Air"),		strBright = "sprRunecrafting_Air",		strFade = "sprRunecrafting_AirFade" },
+	[Item.CodeEnumSigilType.Fire]		= { strName = Apollo.GetString("CRB_Fire"),		strBright = "sprRunecrafting_Fire",		strFade = "sprRunecrafting_FireFade" },
+	[Item.CodeEnumSigilType.Water]		= { strName = Apollo.GetString("CRB_Water"),	strBright = "sprRunecrafting_Water",	strFade = "sprRunecrafting_WaterFade" },
+	[Item.CodeEnumSigilType.Earth]		= { strName = Apollo.GetString("CRB_Earth"),	strBright = "sprRunecrafting_Earth",	strFade = "sprRunecrafting_EarthFade" },
+	[Item.CodeEnumSigilType.Logic]		= { strName = Apollo.GetString("CRB_Logic"),	strBright = "sprRunecrafting_Logic",	strFade = "sprRunecrafting_LogicFade" },
+	[Item.CodeEnumSigilType.Life]		= { strName = Apollo.GetString("CRB_Life"),		strBright = "sprRunecrafting_Life",		strFade = "sprRunecrafting_LifeFade" },
+	[Item.CodeEnumSigilType.Fusion]		= { strName = Apollo.GetString("CRB_Fusion"),	strBright = "sprRunecrafting_Fusion",	strFade = "sprRunecrafting_FusionFade" },
+	[Item.CodeEnumSigilType.Omni]		= { strName = Apollo.GetString("CRB_Omni"),		strBright = "sprRunecrafting_Omni",		strFade = "sprRunecrafting_OmniFade" },
+	--[Item.CodeEnumSigilType.Shadow]	= { strName = Apollo.GetString(""),	"",	"" }
 }
 
 local karSigilElementsToId = -- TODO: Replace with enums
@@ -65,7 +66,7 @@ local ktAttributeToText =
 	[Unit.CodeEnumProperties.PvPDefensiveRating]			= Apollo.GetString("Tooltip_PvPDefense"),
 }
 
-local knSaveVersion = 1
+local knSaveVersion = 3
 
 local Runecrafting = {}
 
@@ -78,32 +79,6 @@ end
 
 function Runecrafting:Init()
     Apollo.RegisterAddon(self)
-end
-
-function Runecrafting:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSaved
-end
-
-function Runecrafting:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function Runecrafting:OnLoad()
@@ -126,6 +101,10 @@ function Runecrafting:OnDocumentReady()
 	Apollo.CreateTimer("Runecrafting_InitializeDelay", 1, false)
 	Apollo.StopTimer("Runecrafting_InitializeDelay")
 
+	Apollo.RegisterTimerHandler("Runecrafting_ConfirmPopupDelay",				"OnRunecrafting_ConfirmPopupDelay", self)
+	Apollo.CreateTimer("Runecrafting_ConfirmPopupDelay", 0.15, false)
+	Apollo.StopTimer("Runecrafting_ConfirmPopupDelay")
+
 	Apollo.RegisterEventHandler("DragDropSysBegin", 							"OnSystemBeginDragDrop", self)
 	Apollo.RegisterEventHandler("DragDropSysEnd", 								"OnSystemEndDragDrop", self)
 end
@@ -136,14 +115,11 @@ function Runecrafting:Initialize()
 	end
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "RunecraftingForm", nil, self)
+
 	self.wndMain:FindChild("BGFrame"):FindChild("ShowTutorialsBtn"):Enable(false)
 	self.wndMain:FindChild("RuneCreationContainer"):FindChild("RuneCreationCraftBtn"):Enable(false)
 	self.wndMain:FindChild("ToggleRuneCreation"):AttachWindow(self.wndMain:FindChild("RuneCreationContainer"))
 	self.wndMain:FindChild("ToggleEquipRunes"):AttachWindow(self.wndMain:FindChild("EquipRunesContainer"))
-
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 
 	local wndMeasure = Apollo.LoadForm(self.xmlDoc, "EquipmentItem", nil, self)
 	self.knEquipmentItemHeight = wndMeasure:GetHeight()
@@ -154,18 +130,31 @@ function Runecrafting:Initialize()
 	wndMeasure:Destroy()
 
 	-- Variables
+	self.bAllowClicks = true
 	self.bDragging = false
 	self.itemDragging = nil
 	self.wndCurrentConfirmPopup = nil
 
+	local bRequirementMet = true
+	local nPlayerLevel = GameLib.GetPlayerLevel()
+	if nPlayerLevel < knLevelRequirement then
+		self.wndMain:FindChild("RuneCreationItemList"):SetTextColor(ApolloColor.new("UI_WindowTextCraftingRedCapacitor"))
+		self.wndMain:FindChild("RuneCreationItemList"):SetText(String_GetWeaselString(Apollo.GetString("Runecrafting_LevelRequirementNotMet"),  knLevelRequirement))
+		bRequirementMet = false
+	else
+		self.wndMain:FindChild("RuneCreationItemList"):SetTextColor(ApolloColor.new("UI_TextHoloBodyHighlight"))
+		self.wndMain:FindChild("RuneCreationItemList"):SetText(Apollo.GetString("Runecrafting_StartingHelperTip"))
+	end
+
 	-- Initialize Elements
 	local wndParent = self.wndMain:FindChild("RuneCreationElementList")
-	for strName, eElement in pairs(Item.CodeEnumSigilType) do
+	for idx, eElement in pairs(Item.CodeEnumSigilType) do
 		if eElement ~= Item.CodeEnumSigilType.Omni then -- There are no Omni runes, so skip
-			local wndCurr = self:LoadByName("RuneCreationElementItem", wndParent, strName)
+			local wndCurr = self:LoadByName("RuneCreationElementItem", wndParent, idx)
 			wndCurr:FindChild("RuneCreationElementBtn"):SetData(eElement)
+			wndCurr:FindChild("RuneCreationElementBtn"):Enable(bRequirementMet)
 			wndCurr:FindChild("RuneCreationElementIcon"):SetSprite(karSigilElementsToSprite[eElement].strFade)
-			wndCurr:FindChild("RuneCreationElementName"):SetText(strName)
+			wndCurr:FindChild("RuneCreationElementName"):SetText(karSigilElementsToSprite[eElement].strName)
 			wndCurr:FindChild("RuneCreationElementName"):SetTextColor("WindowTitleColor")
 		end
 	end
@@ -174,9 +163,9 @@ end
 
 function Runecrafting:OnClose(wndHandler, wndControl)
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
+
 	Event_CancelEngravingStation()
 end
 
@@ -507,6 +496,10 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Runecrafting:OnSigilLockedSlotBtn(wndHandler, wndControl) -- SigilSlotBtn of SigilLockedSlot
+	if not self.bAllowClicks then
+		return
+	end
+	
 	local nSlotIndex = wndHandler:GetData()[1]
 	local itemSource = wndHandler:GetData()[3]
 	local tEngravingInfo = CraftingLib.GetEngravingInfo(itemSource)
@@ -520,6 +513,10 @@ function Runecrafting:OnSigilLockedSlotBtn(wndHandler, wndControl) -- SigilSlotB
 end
 
 function Runecrafting:OnSigilSlotBtn(wndHandler, wndControl) -- SigilSlotBtn of SigilLockedSlot
+	if not self.bAllowClicks then
+		return
+	end
+	
 	local nSlotIndex = wndHandler:GetData()[1]
 	local tCurrSigil = wndHandler:GetData()[2]
 	local itemSource = wndHandler:GetData()[3]
@@ -602,7 +599,13 @@ function Runecrafting:OnCurrentConfirmPopupClose(wndHandler, wndControl)
 	if self.wndCurrentConfirmPopup and self.wndCurrentConfirmPopup:IsValid() then
 		self.wndCurrentConfirmPopup:Destroy()
 		self.wndCurrentConfirmPopup = nil
+		Apollo.StartTimer("Runecrafting_ConfirmPopupDelay")
+		self.bAllowClicks = false
 	end
+end
+
+function Runecrafting:OnRunecrafting_ConfirmPopupDelay()
+	self.bAllowClicks = true
 end
 
 function Runecrafting:HelperResizeConfirmPopup(wndOrigin)

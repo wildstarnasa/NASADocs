@@ -96,9 +96,12 @@ function QuestTracker:OnLoad()
 end
 
 function QuestTracker:OnDocumentReady()
-	if  self.xmlDoc == nil or not self.xmlDoc:IsLoaded() or not g_InterfaceOptionsLoaded or self.wndMain then
+	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() or not g_InterfaceOptionsLoaded or self.wndMain then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 					"OnWindowManagementReady", self)
+	Apollo.RegisterEventHandler("WindowManagementUpdate", 					"OnWindowManagementUpdate", self)
 	Apollo.RegisterEventHandler("OptionsUpdated_QuestTracker", 				"OnOptionsUpdated", self)
 
 	self.tMinimized =
@@ -107,10 +110,8 @@ function QuestTracker:OnDocumentReady()
 		tEpisode = {},
 	}
 
-    Apollo.RegisterTimerHandler("QuestTrackerMainTimer", 					"OnQuestTrackerMainTimer", self)
 	Apollo.RegisterTimerHandler("QuestTrackerBlinkTimer", 					"OnQuestTrackerBlinkTimer", self)
 
-	Apollo.CreateTimer("QuestTrackerMainTimer", 1, true)
 	Apollo.CreateTimer("QuestTrackerBlinkTimer", 4, false)
 	Apollo.StopTimer("QuestTrackerBlinkTimer")
 
@@ -121,6 +122,7 @@ function QuestTracker:OnDocumentReady()
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 					"OnQuestObjectiveUpdated", self)
 	Apollo.RegisterEventHandler("GenericEvent_QuestLog_TrackBtnClicked", 	"OnDestroyQuestObject", self) -- This is an event from QuestLog
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 				"OnTutorial_RequestUIAnchor", self)
+	Apollo.RegisterEventHandler("Communicator_ShowQuestMsg",				"OnShowCommMsg", self)
 
 	-- Public Events
 	Apollo.RegisterEventHandler("PublicEventEnd", 							"OnPublicEventEnd", self)
@@ -129,14 +131,6 @@ function QuestTracker:OnDocumentReady()
 	Apollo.RegisterEventHandler("PublicEventObjectiveUpdate", 				"OnPublicEventUpdate", self)
 	Apollo.RegisterEventHandler("PVPMatchFinished", 						"OnLeavePvP", self)
 	Apollo.RegisterEventHandler("MatchExited", 								"OnLeavePvP", self)
-
-	-- Legacy, Not sure if all of these are relevant anymore
-	Apollo.RegisterEventHandler("QuestInit", 								"DestroyAndRedraw", self)
-	Apollo.RegisterEventHandler("QuestTrackChanged", 						"OnDestroyQuestObject", self) -- TODO, Investigate if this does anything
-
-	-- Not 100% necessary
-	Apollo.RegisterEventHandler("Communicator_ShowQuestMsg", 				"OnQuestTrackerMainTimer", self)
-	Apollo.RegisterEventHandler("Communicator_UpdateCallback", 				"OnQuestTrackerMainTimer", self)
 
 	-- Formatting events
 	Apollo.RegisterEventHandler("DatachronRestored", 						"OnDatachronRestored", self)
@@ -148,12 +142,16 @@ function QuestTracker:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerResurrected", 						"OnPlayerResurrected", self)
 	Apollo.RegisterEventHandler("ShowResurrectDialog", 						"OnShowResurrectDialog", self)
 
-	Apollo.RegisterTimerHandler("QuestTracker_UpdateInOneSecond", 			"OnQuestTrackerMainTimer")
-	Apollo.CreateTimer("QuestTracker_UpdateInOneSecond", 1, false)
-
+	Apollo.RegisterTimerHandler("QuestTrackerRedrawTimer", 					"RedrawAll", self)
+	Apollo.RegisterTimerHandler("OneSecTimer", 								"RedrawTimed", self)
 	Apollo.RegisterTimerHandler("QuestTracker_EarliestProgBarTimer", 		"OnQuestTracker_EarliestProgBarTimer", self)
+	
+	Apollo.CreateTimer("QuestTrackerRedrawTimer", 0.2, false)
+	Apollo.StopTimer("QuestTrackerRedrawTimer")
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "QuestTrackerForm", "FixedHudStratum", self)
+	self.wndMain:SetSizingMinimum(345, 120)
+	self.bMoveable = self.wndMain:IsStyleOn("Moveable")
 
 	local unitPlayer = GameLib.GetPlayerUnit()
 	self.bQuestTrackerByDistance 		= g_InterfaceOptions.Carbine.bQuestTrackerByDistance
@@ -163,18 +161,54 @@ function QuestTracker:OnDocumentReady()
 	self.bPlayerIsDead 					= unitPlayer and unitPlayer:IsDead() or false
 	self.bDrawPvPScreenOnly 			= false
 	self.bDrawDungeonScreenOnly 		= false
-	self.bPublicEventUpdateTimerStarted = false -- TODO get rid of this
 	self.tZombiePublicEvents 			= {}
 	self.tActiveProgBarQuests 			= {}
 	self.ZombieTimerMax					= 120 -- Time it takes for a zombie PE to dissapear
 	self.tClickBlinkingQuest			= nil
 	self.tHoverBlinkingQuest			= nil
 	self.bMaximized						= false
-
-	self:OnQuestTrackerMainTimer()
+	self.bRedrawQueued					= false
+	self.tQuestsQueuedForDestroy		= {}
+	self.tPublicEventsToRedraw			= {}
+	self.tTimedQuests					= {}
+	self.tTimedObjectives				= {}
+	self.tTimedEvents					= {}
+	self.tTimedEventObjectives			= {}
+	self.tQueuedCommMessages			= {}
+	self.bChallengeVisible				= nil -- TODO: Challenges is firing the toggle event for basically any event that happens regardless of whether or not it toggled. Once this is fixed, we can remove this state storage var.
+	
+	self:InitializeWindowMeasuring()
+	self:RedrawAll()
 end
 
-function QuestTracker:DelayedInitialize_WindowMeasuring() -- Try not to run these OnLoad as they may be expensive
+function QuestTracker:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_QuestTracker")})
+end
+
+function QuestTracker:OnWindowManagementUpdate(tSettings)
+	local bOldHasMoved = self.bHasMoved
+	local bOldMoveable = self.bMoveable
+	
+	if tSettings and tSettings.wnd and tSettings.wnd == self.wndMain then
+		self.bMoveable = self.wndMain:IsStyleOn("Moveable")
+		self.bHasMoved = tSettings.bHasMoved
+		
+		self.wndMain:FindChild("Background"):SetSprite(self.bMoveable and "BK3:UI_BK3_Holo_InsetFlyout" or "")
+		self.wndMain:SetStyle("Sizable", self.bMoveable and self.bHasMoved)
+	end
+	
+	if bOldHasMoved ~= self.bHasMoved then
+		self:RedrawAll()
+		
+		if not bMaximized then
+			self:OnDatachronMinimized(self.nDatachronShift)
+		else
+			self:OnDatachronRestored(self.nDatachronShift)
+		end
+	end
+end
+
+function QuestTracker:InitializeWindowMeasuring() -- Try not to run these OnLoad as they may be expensive
 	local wndMeasure = Apollo.LoadForm(self.xmlDoc, "EpisodeGroupItem", nil, self)
 	self.knInitialEpisodeGroupHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
@@ -211,17 +245,6 @@ function QuestTracker:OnOptionsUpdated()
 	self.bQuestTrackerByDistance = g_InterfaceOptions.Carbine.bQuestTrackerByDistance
 end
 
-function QuestTracker:OnQuestTrackerMainTimer()
-	self.bPublicEventUpdateTimerStarted = false -- TODO get rid of this
-
-	if not self.knInitialEpisodeHeight then
-		self:DelayedInitialize_WindowMeasuring()
-	end
-
-	self:ResizeEpisodes()
-	self:RedrawAll()
-end
-
 function QuestTracker:ResizeEpisodes()
 	-- Sort
 	local function HelperSortEpisodes(a,b)
@@ -245,7 +268,9 @@ function QuestTracker:ResizeEpisodes()
 		end
 	end
 
-	self.wndMain:FindChild("QuestTrackerScroll"):ArrangeChildrenVert(2, function(a,b)
+	local nAlign = self.bHasMoved and 0 or 2
+	
+	self.wndMain:FindChild("QuestTrackerScroll"):ArrangeChildrenVert(nAlign, function(a,b)
 		if a:GetName() == "EpisodeGroupItem" and b:GetName() == "EpisodeGroupItem" then
 			return a:GetData() < b:GetData()
 		elseif b:GetName() == "SwapToQuests" then
@@ -268,33 +293,92 @@ end
 -- Main Redraw Methods
 -----------------------------------------------------------------------------------------------
 
-function QuestTracker:UpdateUIFromXML()
-	self:OnQuestTrackerMainTimer()
+function QuestTracker:QueueQuestForDestroy(queQuest)
+	table.insert(self.tQuestsQueuedForDestroy, queQuest)
+end
+
+function QuestTracker:RequestRedrawAll()
+	if not self.bRedrawQueued then
+		self.bRedrawQueued = true
+		Apollo.StartTimer("QuestTrackerRedrawTimer")
+	end
 end
 
 function QuestTracker:DestroyAndRedraw()
 	self.wndMain:FindChild("QuestTrackerScroll"):DestroyChildren()
-	self:OnQuestTrackerMainTimer()
+	self.tPublicEventsToRedraw = {}
+	self.tTimedQuests = {}
+	self.tTimedObjectives = {}
+	self.tTimedEvents = {}
+	self.tTimedEventObjectives = {}
+	self:RedrawAll()
+end
+
+function QuestTracker:RedrawTimed()
+	for index, tEventInfo in pairs(self.tTimedEvents) do
+		if tEventInfo.peEvent:IsActive() and tEventInfo.wndTitleFrame and tEventInfo.wndTitleFrame:IsValid() then
+			local strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</T>", kstrLightGrey, tEventInfo.peEvent:GetName())
+			strTitle = self:HelperPrefixTimeString(math.max(0, math.floor((tEventInfo.peEvent:GetTotalTime() - tEventInfo.peEvent:GetElapsedTime()) / 1000)), strTitle)
+			tEventInfo.wndTitleFrame:SetAML(strTitle)
+		else
+			table.remove(self.tTimedEvents, index)
+		end
+	end
+	
+	for index, tEventObjectiveInfo in pairs(self.tTimedEventObjectives) do
+		if tEventObjectiveInfo.peEvent:IsActive() and tEventObjectiveInfo.wndObjective and tEventObjectiveInfo.wndObjective:IsValid() and tEventObjectiveInfo.wndObjective:FindChild("QuestObjectiveBtn") ~= nil then
+			tEventObjectiveInfo.wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildEventObjectiveTitleString(tEventObjectiveInfo.peEvent, tEventObjectiveInfo.peoObjective, true))
+			tEventObjectiveInfo.wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildEventObjectiveTitleString(tEventObjectiveInfo.peEvent, tEventObjectiveInfo.peoObjective))
+		else
+			table.remove(self.tTimedEventObjectives, index)
+		end
+	end
+
+	if not self.bDrawPvPScreenOnly and not self.bDrawDungeonScreenOnly then
+		for index, tQuestInfo in pairs(self.tTimedQuests) do
+			if tQuestInfo.wndTitleFrame ~= nil then
+				local strTitle = self:HelperBuildTimedQuestTitle(tQuestInfo.queQuest)
+				tQuestInfo.wndTitleFrame:SetAML(strTitle)
+			else
+				table.remove(self.tTimedQuests, index)
+			end
+		end
+		
+		for index, tObjectiveInfo in pairs(self.tTimedObjectives) do
+			if tObjectiveInfo.wndObjective ~= nil and tObjectiveInfo.wndObjective:FindChild("QuestObjectiveBtn") ~= nil then
+				tObjectiveInfo.wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(tObjectiveInfo.queQuest, tObjectiveInfo.tObjective, true))
+				tObjectiveInfo.wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(tObjectiveInfo.queQuest, tObjectiveInfo.tObjective))
+			else
+				table.remove(self.tTimedObjectives, index)
+			end
+		end
+	end
 end
 
 function QuestTracker:RedrawAll()
+	Apollo.StopTimer("QuestTrackerRedrawTimer")
+	self.bRedrawQueued = false
+	
+	self:HelperFindAndDestroyQuests()
+	
 	if #self.tZombiePublicEvents > 0 then
 		self:DrawPublicEpisodes()
 	elseif #PublicEvent.GetActiveEvents() > 0 then
 		self:DrawPublicEpisodes()
 	elseif self.wndMain:FindChild("QuestTrackerScroll"):FindChildByUserData(kstrPublicEventMarker) then
 		-- Safety (should rarely fire): If we're out of events and the window is still around, switch views.
-		self.wndMain:FindChild("QuestTrackerScroll"):DestroyChildren()
 		self.bDrawDungeonScreenOnly = false
 		self.bDrawPvPScreenOnly = false
+		self:DestroyAndRedraw()
 		return
 	end
 
 	if not self.bDrawPvPScreenOnly and not self.bDrawDungeonScreenOnly then
-		local wndEpisodeGroup = nil
+		local wndEpisodeGroup
 
 		self.nQuestCounting = 0
 		for idx, epiEpisode in pairs(QuestLib.GetTrackedEpisodes(self.bQuestTrackerByDistance)) do
+			wndEpisodeGroup = nil
 			if epiEpisode:IsWorldStory() then
 				wndEpisodeGroup = self:FactoryProduce(self.wndMain:FindChild("QuestTrackerScroll"), "EpisodeGroupItem", "1EGWorld")
 				wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_WorldStory"))
@@ -309,11 +393,10 @@ function QuestTracker:RedrawAll()
 					wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_RegionalStory"))
 				end
 			else -- task
-				wndEpisodeGroup = self:FactoryProduce(self.wndMain:FindChild("QuestTrackerScroll"), "EpisodeGroupItem", "4EGTask")
-				wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Tasks"))
+				local wndTaskGroup = self:FactoryProduce(self.wndMain:FindChild("QuestTrackerScroll"), "EpisodeGroupItem", "4EGTask")
+				wndTaskGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Tasks"))
 
-				self:DrawEpisodeQuests(epiEpisode, wndEpisodeGroup:FindChild("EpisodeGroupContainer"))
-				wndEpisodeGroup = nil
+				self:DrawEpisodeQuests(epiEpisode, wndTaskGroup:FindChild("EpisodeGroupContainer"))
 			end
 
 			if wndEpisodeGroup ~= nil then
@@ -338,6 +421,8 @@ function QuestTracker:RedrawAll()
 			wndEpisodeGroup:Destroy()
 		end
 	end
+	
+	self:ResizeEpisodes()
 end
 
 function QuestTracker:DrawEpisode(idx, epiEpisode, wndParent)
@@ -390,6 +475,126 @@ function QuestTracker:DrawEpisodeQuests(epiEpisode, wndContainer)
 	wndContainer:ArrangeChildrenVert(0, SortQuestTrackerScroll)
 end
 
+function QuestTracker:DrawQuest(nIdx, queQuest, wndParent)
+	local wndQuest = self:FactoryProduce(wndParent, "QuestItem", queQuest)
+	
+	if wndQuest:FindChild("QuestOpenLogBtn"):GetData() then
+		return
+	end
+	
+	-- Quest Title	
+	local strTitle = queQuest:GetTitle()
+	local eQuestState = queQuest:GetState()
+	if eQuestState == Quest.QuestState_Botched then
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrRed, String_GetWeaselString(Apollo.GetString("QuestTracker_Failed"), strTitle))
+	elseif eQuestState == Quest.QuestState_Achieved then
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrGreen,String_GetWeaselString(Apollo.GetString("QuestTracker_Complete"), strTitle))
+	elseif (eQuestState == Quest.QuestState_Accepted or eQuestState == Quest.QuestState_Achieved) and queQuest:IsQuestTimed() then
+		strTitle = self:HelperBuildTimedQuestTitle(queQuest)
+		table.insert(self.tTimedQuests, { queQuest = queQuest, wndTitleFrame = wndQuest:FindChild("TitleText") })
+	else
+		local strColor = self.tActiveProgBarQuests[queQuest:GetId()] and "ffffffff" or kstrLightGrey
+		local crLevelConDiff = ktConToColor[queQuest:GetColoredDifficulty() or 0]
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s </T><T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">[%s]</T>", strColor, strTitle, crLevelConDiff, queQuest:GetConLevel())
+	end
+	
+	wndQuest:FindChild("TitleText"):SetAML(strTitle)
+	wndQuest:FindChild("TitleText"):SetHeightToContentHeight()
+		
+	wndQuest:FindChild("QuestOpenLogBtn"):SetData(queQuest)
+	wndQuest:FindChild("QuestCallbackBtn"):SetData(queQuest)
+	wndQuest:FindChild("ControlBackerBtn"):SetData(wndQuest)
+	wndQuest:FindChild("QuestCloseBtn"):SetData({["wndQuest"] = wndQuest, ["tQuest"] = queQuest})
+	wndQuest:FindChild("MinimizeBtn"):SetData(queQuest:GetId())
+
+	-- Flash if we are told to
+	if self.nFlashThisQuest == queQuest then
+		self.nFlashThisQuest = nil
+		wndQuest:SetSprite("sprWinAnim_BirthSmallTemp")
+	end
+
+	if queQuest:GetId() and self.tMinimized.tQuests[queQuest:GetId()] then
+		wndQuest:FindChild("MinimizeBtn"):SetCheck(true)
+	end
+
+	-- Quest spell
+	if queQuest:GetSpell() then
+		local wndSpellItem = self:FactoryProduce(wndQuest:FindChild("ObjectiveContainer"), "SpellItem", "SpellItem")
+		wndSpellItem:FindChild("SpellItemBtn"):Show(true)
+		wndSpellItem:FindChild("SpellItemBtn"):SetContentId(queQuest) -- GOTCHA: Normally we use the spell id, but here we use the quest object
+		wndSpellItem:FindChild("SpellItemText"):SetText(String_GetWeaselString(Apollo.GetString("QuestTracker_UseQuestAbility"), GameLib.GetKeyBinding("CastObjectiveAbility")))
+	end
+
+	-- Conditional drawing
+	wndQuest:FindChild("QuestNumberUpdateHighlight"):Show(self.tActiveProgBarQuests[queQuest:GetId()] ~= nil)
+	wndQuest:FindChild("QuestNumber"):SetText(nIdx)
+	wndQuest:FindChild("QuestNumber"):SetTextColor(ApolloColor.new("ff31fcf6"))
+	wndQuest:FindChild("QuestCompletedBacker"):Show(false)
+	wndQuest:FindChild("QuestNumberBackerArt"):SetBGColor(CColor.new(1,1,1,1))
+	wndQuest:FindChild("QuestNumberBackerArt"):SetSprite("sprQT_NumBackerNormal")
+	wndQuest:FindChild("ObjectiveContainer"):Show(not wndQuest:FindChild("MinimizeBtn"):IsChecked())
+
+	-- State depending drawing
+	if wndQuest:FindChild("MinimizeBtn"):IsChecked() then
+		wndQuest:FindChild("QuestNumber"):SetTextColor(CColor.new(.5, .5, .5, .8))
+		wndQuest:FindChild("QuestNumberBackerArt"):SetBGColor(CColor.new(.5, .5, .5, .8))
+
+	elseif eQuestState == Quest.QuestState_Botched then
+		self:HelperShowQuestCallbackBtn(wndQuest, queQuest, "sprQT_NumBackerFailed", "CRB_QuestTrackerSprites:btnQT_QuestFailed")
+		wndQuest:FindChild("QuestNumber"):SetTextColor(ApolloColor.new(kstrRed))
+
+	elseif eQuestState == Quest.QuestState_Achieved then
+		self:HelperShowQuestCallbackBtn(wndQuest, queQuest, "sprQT_NumBackerCompleted", "CRB_QuestTrackerSprites:btnQT_QuestRedeem")
+		wndQuest:FindChild("QuestNumber"):SetTextColor(ApolloColor.new("ff7fffb9"))
+
+		-- Achieve objective only has one
+		local wndObjective = self:FactoryProduce(wndQuest:FindChild("ObjectiveContainer"), "QuestObjectiveItem", "ObjectiveCompleted")
+		wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(queQuest, tObjective, true))
+		wndObjective:FindChild("QuestObjectiveBtn"):SetData({["queOwner"] = queQuest, ["nObjectiveIdx"] = nil})
+		wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(queQuest))
+
+	else
+		-- Potentially multiple objectives if not minimized or in the achieved/botched state
+		for idObjective, tObjective in pairs(queQuest:GetVisibleObjectiveData()) do
+			if tObjective.nCompleted < tObjective.nNeeded then
+				local wndObjective = self:FactoryProduce(wndQuest:FindChild("ObjectiveContainer"), "QuestObjectiveItem", idObjective)
+				self:DrawQuestObjective(wndQuest, wndObjective, queQuest, tObjective)
+				
+				if queQuest:IsObjectiveTimed(tObjective.nIndex) then
+					table.insert(self.tTimedObjectives, { queQuest = queQuest, tObjective = tObjective, wndObjective = wndObjective })
+				end
+			end
+		end
+	end
+
+	wndQuest:FindChild("ObjectiveContainer"):ArrangeChildrenVert(0)
+end
+
+function QuestTracker:DrawQuestObjective(wndQuest, wndObjective, queQuest, tObjective)
+	wndObjective:FindChild("QuestObjectiveBtn"):SetData({["queOwner"] = queQuest, ["nObjectiveIdx"] = tObjective.nIndex})
+	wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(queQuest, tObjective, true))
+	wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(queQuest, tObjective))
+
+	-- Progress
+	if self.tActiveProgBarQuests[queQuest:GetId()] and queQuest:DisplayObjectiveProgressBar(tObjective.nIndex) then
+		local wndObjectiveProg = self:FactoryProduce(wndObjective, "QuestProgressItem", "QuestProgressItem")
+		local nCompleted = tObjective.nCompleted
+		local nNeeded = tObjective.nNeeded
+		wndObjectiveProg:FindChild("QuestProgressBar"):SetMax(nNeeded)
+		wndObjectiveProg:FindChild("QuestProgressBar"):SetProgress(nCompleted)
+		wndObjectiveProg:FindChild("QuestProgressBar"):EnableGlow(nCompleted > 0 and nCompleted ~= nNeeded)
+	elseif wndObjective:FindChild("QuestProgressItem") then
+		wndObjective:FindChild("QuestProgressItem"):Destroy()
+		self:RedrawAll() -- TODO: this sucks, we trigger a redraw all while we're in the middle of already redrawing all
+	end
+
+	-- Objective Spell Item
+	if queQuest:GetSpell(tObjective.nIndex) then
+		local wndSpellBtn = self:FactoryProduce(wndObjective, "SpellItemObjectiveBtn", "SpellItemObjectiveBtn"..tObjective.nIndex)
+		wndSpellBtn:SetContentId(queQuest, tObjective.nIndex)
+	end
+end
+
 function QuestTracker:DrawPublicEpisodes()
 	local tPublicEvents = PublicEvent.GetActiveEvents()
 	if self.bDrawPvPScreenOnly or self.bDrawDungeonScreenOnly then
@@ -398,13 +603,13 @@ function QuestTracker:DrawPublicEpisodes()
 		for key, peEvent in pairs(tPublicEvents) do
 			if not self.bDrawPvPScreenOnly and ktPvPEventTypes[peEvent:GetEventType()] then
 				self.bDrawPvPScreenOnly = true
-				self.wndMain:FindChild("QuestTrackerScroll"):DestroyChildren()
+				self:DestroyAndRedraw()
 				self:FactoryProduce(self.wndMain:FindChild("QuestTrackerScroll"), "SwapToQuests", "SwapToQuests")
 				return
 			end
 			if not self.bDrawDungeonScreenOnly and peEvent:GetEventType() == PublicEvent.PublicEventType_Dungeon then
 				self.bDrawDungeonScreenOnly = true
-				self.wndMain:FindChild("QuestTrackerScroll"):DestroyChildren()
+				self:DestroyAndRedraw()
 				self:FactoryProduce(self.wndMain:FindChild("QuestTrackerScroll"), "SwapToQuests", "SwapToQuests")
 				return
 			end
@@ -462,97 +667,14 @@ function QuestTracker:DrawPublicEpisodes()
 	wndEpisode:FindChild("EpisodeQuestContainer"):ArrangeChildrenVert(0, SortEventTrackerScroll)
 end
 
-function QuestTracker:DrawQuest(nIdx, queQuest, wndParent)
-	local wndQuest = self:FactoryProduce(wndParent, "QuestItem", queQuest)
-
-	-- Only once
-	if not wndQuest:FindChild("QuestOpenLogBtn"):GetData() then
-		wndQuest:FindChild("QuestOpenLogBtn"):SetData(queQuest)
-		wndQuest:FindChild("QuestCallbackBtn"):SetData(queQuest)
-		wndQuest:FindChild("ControlBackerBtn"):SetData(wndQuest)
-		wndQuest:FindChild("QuestCloseBtn"):SetData({["wndQuest"] = wndQuest, ["tQuest"] = queQuest})
-		wndQuest:FindChild("MinimizeBtn"):SetData(queQuest:GetId())
-	end
-
-	-- Flash if we are told to
-	if self.nFlashThisQuest == queQuest then
-		self.nFlashThisQuest = nil
-		wndQuest:SetSprite("sprWinAnim_BirthSmallTemp")
-	end
-
-	if queQuest:GetId() and self.tMinimized.tQuests[queQuest:GetId()] then
-		wndQuest:FindChild("MinimizeBtn"):SetCheck(true)
-	end
-
-	-- Quest Title	
-	local strTitle = queQuest:GetTitle()
-	local eQuestState = queQuest:GetState()
-	if eQuestState == Quest.QuestState_Botched then
-		strTitle = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrRed, String_GetWeaselString(Apollo.GetString("QuestTracker_Failed"), strTitle))
-	elseif eQuestState == Quest.QuestState_Achieved then
-		strTitle = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrGreen,String_GetWeaselString(Apollo.GetString("QuestTracker_Complete"), strTitle))
-	elseif (eQuestState == Quest.QuestState_Accepted or eQuestState == Quest.QuestState_Achieved) and queQuest:IsQuestTimed() then
-		strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</T>", kstrLightGrey, strTitle)
-		strTitle = self:HelperPrefixTimeString(math.max(0, math.floor(queQuest:GetQuestTimeRemaining() / 1000)), strTitle)
-	else
-		local strColor = self.tActiveProgBarQuests[queQuest:GetId()] and "ffffffff" or kstrLightGrey
-		local strConDisplay = String_GetWeaselString(Apollo.GetString("QuestTracker_ConDisplay"), strTitle, queQuest:GetConLevel())
-		strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</T>", strColor, strConDisplay)
-	end
-	wndQuest:FindChild("TitleText"):SetAML(strTitle)
-	wndQuest:FindChild("TitleText"):SetHeightToContentHeight()
-
-	-- Quest spell
-	if queQuest:GetSpell() then
-		local wndSpellItem = self:FactoryProduce(wndQuest:FindChild("ObjectiveContainer"), "SpellItem", "SpellItem")
-		wndSpellItem:FindChild("SpellItemBtn"):Show(true)
-		wndSpellItem:FindChild("SpellItemBtn"):SetContentId(queQuest) -- GOTCHA: Normally we use the spell id, but here we use the quest object
-		wndSpellItem:FindChild("SpellItemText"):SetText(String_GetWeaselString(Apollo.GetString("QuestTracker_UseQuestAbility"), GameLib.GetKeyBinding("CastObjectiveAbility")))
-	end
-
-	-- Conditional drawing
-	wndQuest:FindChild("QuestNumberUpdateHighlight"):Show(self.tActiveProgBarQuests[queQuest:GetId()] ~= nil)
-	wndQuest:FindChild("QuestNumber"):SetText(nIdx)
-	wndQuest:FindChild("QuestNumber"):SetTextColor(ApolloColor.new("ff31fcf6"))
-	wndQuest:FindChild("QuestCompletedBacker"):Show(false)
-	wndQuest:FindChild("QuestNumberBackerArt"):SetBGColor(CColor.new(1,1,1,1))
-	wndQuest:FindChild("QuestNumberBackerArt"):SetSprite("sprQT_NumBackerNormal")
-	wndQuest:FindChild("ObjectiveContainer"):Show(not wndQuest:FindChild("MinimizeBtn"):IsChecked())
-
-	-- State depending drawing
-	if wndQuest:FindChild("MinimizeBtn"):IsChecked() then
-		wndQuest:FindChild("QuestNumber"):SetTextColor(CColor.new(.5, .5, .5, .8))
-		wndQuest:FindChild("QuestNumberBackerArt"):SetBGColor(CColor.new(.5, .5, .5, .8))
-
-	elseif eQuestState == Quest.QuestState_Botched then
-		self:HelperShowQuestCallbackBtn(wndQuest, queQuest, "sprQT_NumBackerFailed", "CRB_QuestTrackerSprites:btnQT_QuestFailed")
-		wndQuest:FindChild("QuestNumber"):SetTextColor(ApolloColor.new(kstrRed))
-
-	elseif eQuestState == Quest.QuestState_Achieved then
-		self:HelperShowQuestCallbackBtn(wndQuest, queQuest, "sprQT_NumBackerCompleted", "CRB_QuestTrackerSprites:btnQT_QuestRedeem")
-		wndQuest:FindChild("QuestNumber"):SetTextColor(ApolloColor.new("ff7fffb9"))
-
-		-- Achieve objective only has one
-		local wndObjective = self:FactoryProduce(wndQuest:FindChild("ObjectiveContainer"), "QuestObjectiveItem", "ObjectiveCompleted")
-		wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(queQuest, tObjective, true))
-		wndObjective:FindChild("QuestObjectiveBtn"):SetData({["queOwner"] = queQuest, ["nObjectiveIdx"] = nil})
-		wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(queQuest))
-
-	else
-		-- Potentially multiple objectives if not minimized or in the achieved/botched state
-		for idObjective, tObjective in pairs(queQuest:GetVisibleObjectiveData()) do
-			if tObjective.nCompleted < tObjective.nNeeded then
-				local wndObjective = self:FactoryProduce(wndQuest:FindChild("ObjectiveContainer"), "QuestObjectiveItem", idObjective)
-				self:DrawQuestObjective(wndQuest, wndObjective, queQuest, tObjective)
-			end
-		end
-	end
-
-	wndQuest:FindChild("ObjectiveContainer"):ArrangeChildrenVert(0)
-end
-
 function QuestTracker:DrawEvent(wndParent, peEvent, nAlphabetNumber)
 	local wndEvent = self:FactoryProduce(wndParent, "EventItem", peEvent)
+	
+	if wndEvent:FindChild("ShowEventStatsBtn"):GetData() and not self.tPublicEventsToRedraw[peEvent:GetName()] then
+		return
+	end
+	
+	self.tPublicEventsToRedraw[peEvent:GetName()] = false
 	wndEvent:FindChild("ShowEventStatsBtn"):SetData(peEvent)
 	wndEvent:FindChild("QuestMouseCatcher"):SetData(wndEvent)
 
@@ -560,6 +682,7 @@ function QuestTracker:DrawEvent(wndParent, peEvent, nAlphabetNumber)
 	local strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</T>", kstrLightGrey, peEvent:GetName())
 	if peEvent:GetTotalTime() > 0 and peEvent:IsActive() then
 		strTitle = self:HelperPrefixTimeString(math.max(0, math.floor((peEvent:GetTotalTime() - peEvent:GetElapsedTime()) / 1000)), strTitle)
+		table.insert(self.tTimedEvents, { peEvent = peEvent, wndTitleFrame = wndEvent:FindChild("TitleText") })
 	end
 	wndEvent:FindChild("TitleText"):SetAML(strTitle)
 	wndEvent:FindChild("TitleText"):SetHeightToContentHeight()
@@ -628,36 +751,15 @@ function QuestTracker:DrawZombieEvent(wndParent, tZombieEvent, nAlphabetNumber)
 	end
 end
 
-function QuestTracker:DrawQuestObjective(wndQuest, wndObjective, queQuest, tObjective)
-	wndObjective:FindChild("QuestObjectiveBtn"):SetData({["queOwner"] = queQuest, ["nObjectiveIdx"] = tObjective.nIndex})
-	wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(queQuest, tObjective, true))
-	wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(queQuest, tObjective))
-
-	-- Progress
-	if self.tActiveProgBarQuests[queQuest:GetId()] and queQuest:DisplayObjectiveProgressBar(tObjective.nIndex) then
-		local wndObjectiveProg = self:FactoryProduce(wndObjective, "QuestProgressItem", "QuestProgressItem")
-		local nCompleted = tObjective.nCompleted
-		local nNeeded = tObjective.nNeeded
-		wndObjectiveProg:FindChild("QuestProgressBar"):SetMax(nNeeded)
-		wndObjectiveProg:FindChild("QuestProgressBar"):SetProgress(nCompleted)
-		wndObjectiveProg:FindChild("QuestProgressBar"):EnableGlow(nCompleted > 0 and nCompleted ~= nNeeded)
-	elseif wndObjective:FindChild("QuestProgressItem") then
-		wndObjective:FindChild("QuestProgressItem"):Destroy()
-		self:OnQuestTrackerMainTimer()
-	end
-
-	-- Objective Spell Item
-	if queQuest:GetSpell(tObjective.nIndex) then
-		local wndSpellBtn = self:FactoryProduce(wndObjective, "SpellItemObjectiveBtn", "SpellItemObjectiveBtn"..tObjective.nIndex)
-		wndSpellBtn:SetContentId(queQuest, tObjective.nIndex)
-	end
-end
-
-function QuestTracker:DrawEventObjective(wndObjective, queQuest, idObjective, peoObjective)
+function QuestTracker:DrawEventObjective(wndObjective, peEvent, idObjective, peoObjective)
 	wndObjective:FindChild("QuestObjectiveBtn"):SetData({["peoObjective"] = peoObjective })
-	wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildEventObjectiveTitleString(queQuest, peoObjective, true))
-	wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildEventObjectiveTitleString(queQuest, peoObjective))
+	wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildEventObjectiveTitleString(peEvent, peoObjective, true))
+	wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildEventObjectiveTitleString(peEvent, peoObjective))
 
+	if peoObjective:GetTotalTime() > 0 then
+		table.insert(self.tTimedEventObjectives, { peEvent = peEvent, peoObjective = peoObjective, wndObjective = wndObjective })
+	end
+	
 	-- Progress Bar
 	if peoObjective:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_ContestedArea then
 		local nPercent = peoObjective:GetContestedAreaRatio()
@@ -685,6 +787,13 @@ function QuestTracker:DrawEventObjective(wndObjective, queQuest, idObjective, pe
 	if peoObjective:GetSpell() then
 		local wndSpellBtn = self:FactoryProduce(wndObjective, "SpellItemObjectiveBtn", idObjective)
 		wndSpellBtn:SetContentId(peoObjective)
+	end
+end
+
+function QuestTracker:OnShowCommMsg(idMsg, idCaller, queUpdated, strText)
+	local tCommInfo = self.tQueuedCommMessages and self.tQueuedCommMessages[queUpdated:GetId()] or nil
+	if tCommInfo then
+		self:HelperShowQuestCallbackBtn(tCommInfo.wndQuest, tCommInfo.queQuest, tCommInfo.strNumberBackerArt, tCommInfo.strCallbackBtnArt)
 	end
 end
 
@@ -769,6 +878,7 @@ function QuestTracker:OnResizeQuest(wndQuest)
 			wndObj:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nObjTextHeight)
 			nResult = nResult + nObjTextHeight
 		end
+		wndQuest:FindChild("ObjectiveContainer"):ArrangeChildrenVert(0)
 	elseif wndQuest:FindChild("ObjectiveContainer") then
 		nResult = nResult + 4 -- Minimized needs +4
 	end
@@ -792,7 +902,8 @@ function QuestTracker:OnQuestCloseBtn(wndHandler, wndControl) -- wndHandler is "
 		queQuest:ToggleTracked()
 	end
 	
-	self:HelperFindAndDestroyQuest(queQuest)
+	self:QueueQuestForDestroy(queQuest)
+	self:RedrawAll()
 end
 
 function QuestTracker:OnMinimizedBtnChecked(wndHandler, wndControl, eMouseButton)
@@ -800,7 +911,7 @@ function QuestTracker:OnMinimizedBtnChecked(wndHandler, wndControl, eMouseButton
 		self.tMinimized.tQuests[wndHandler:GetData()] = true
 	end
 
-	self:UpdateUIFromXML()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnMinimizedBtnUnChecked(wndHandler, wndControl, eMouseButton)
@@ -808,7 +919,7 @@ function QuestTracker:OnMinimizedBtnUnChecked(wndHandler, wndControl, eMouseButt
 		self.tMinimized.tQuests[wndHandler:GetData()] = nil
 	end
 
-	self:UpdateUIFromXML()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnEpisodeMinimizedBtnChecked(wndHandler, wndControl, eMouseButton)
@@ -816,7 +927,7 @@ function QuestTracker:OnEpisodeMinimizedBtnChecked(wndHandler, wndControl, eMous
 		self.tMinimized.tEpisode[wndHandler:GetData()] = true
 	end
 
-	self:UpdateUIFromXML()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnEpisodeMinimizedBtnUnChecked(wndHandler, wndControl, eMouseButton)
@@ -824,7 +935,7 @@ function QuestTracker:OnEpisodeMinimizedBtnUnChecked(wndHandler, wndControl, eMo
 		self.tMinimized.tEpisode[wndHandler:GetData()] = nil
 	end
 
-	self:UpdateUIFromXML()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnQuestOpenLogBtn(wndHandler, wndControl) -- wndHandler should be "QuestOpenLogBtn" and its data is tQuest
@@ -845,16 +956,15 @@ function QuestTracker:OnShowEventStatsBtn(wndHandler, wndControl) -- wndHandler 
 end
 
 function QuestTracker:OnEventCallbackBtn(wndHandler, wndControl) -- wndHandler is "QuestCallbackBtn" and its data is wndEvent
+	local wndEvent = wndHandler:GetData()
 	for idx, tZombieEvent in pairs(self.tZombiePublicEvents) do
-		local wndEvent = wndHandler:GetData() -- To destroy later
 		if tZombieEvent.peEvent and tZombieEvent.peEvent == wndEvent:GetData() then
 			if tZombieEvent.peEvent:GetEventType() == PublicEvent.PublicEventType_WorldEvent then
 				Event_FireGenericEvent("GenericEvent_OpenEventStatsZombie", tZombieEvent)
 			end
 
-			wndEvent:Destroy()
-			self.tZombiePublicEvents[idx] = nil
-			self:OnQuestTrackerMainTimer()
+			table.remove(self.tZombiePublicEvents, idx)
+			self:DestroyAndRedraw()
 			return
 		end
 	end
@@ -1001,17 +1111,17 @@ function QuestTracker:OnQuestStateChanged(queQuest, eState)
 		return
 	end
 
-	if eState == Quest.QuestState_Completed or eState == Quest.QuestState_Abandoned or eState == Quest.QuestState_Botched then
-		self:HelperFindAndDestroyQuest(queQuest)
+	if eState == Quest.QuestState_Completed or eState == Quest.QuestState_Abandoned or eState == Quest.QuestState_Botched or eState == Quest.QuestState_Unknown then
+		self:QueueQuestForDestroy(queQuest)
 	else
 		self.nFlashThisQuest = queQuest
 	end
 
-	self:OnQuestTrackerMainTimer()
+	self:RequestRedrawAll()
 end
 
 function QuestTracker:OnQuestObjectiveUpdated(queQuest, nObjective)
-	if not queQuest or queQuest:ObjectiveIsVisible(nObjective) == false then
+	if not queQuest or not queQuest:IsTracked() or queQuest:ObjectiveIsVisible(nObjective) == false then
 		return
 	end
 
@@ -1042,16 +1152,14 @@ end
 
 function QuestTracker:OnDestroyQuestObject(queQuest)
 	self.nFlashThisQuest = queQuest
-	self:HelperFindAndDestroyQuest(queQuest)
-	self:OnQuestTrackerMainTimer()
-
-	if self.wndMain and self.wndMain:IsValid() then -- Do it immediately, so there's no visual delay before a resize
-		self:ResizeEpisodes()
-	end
+	self:QueueQuestForDestroy(queQuest)
+	self:RedrawAll()
 end
 
 function QuestTracker:OnDatachronRestored(nDatachronShift)
-	if not self.wndMain or self.bMaximized then
+	self.nDatachronShift = nDatachronShift
+	
+	if not self.wndMain or self.bMaximized or self.bHasMoved then
 		return
 	end
 
@@ -1059,11 +1167,13 @@ function QuestTracker:OnDatachronRestored(nDatachronShift)
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
 	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - nDatachronShift)
-	self:OnQuestTrackerMainTimer()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnDatachronMinimized(nDatachronShift)
-	if not self.wndMain or not self.bMaximized then
+	self.nDatachronShift = nDatachronShift
+	
+	if not self.wndMain or not self.bMaximized or self.bHasMoved then
 		return
 	end
 
@@ -1071,17 +1181,18 @@ function QuestTracker:OnDatachronMinimized(nDatachronShift)
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
 	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom + nDatachronShift)
-	self:OnQuestTrackerMainTimer()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnGenericEvent_ChallengeTrackerToggled(bVisible)
-	if not self.wndMain then
+	if not self.wndMain or self.bChallengeVisible == bVisible or self.bHasMoved then
 		return
 	end
 
+	self.bChallengeVisible = bVisible
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
 	self.wndMain:SetAnchorOffsets(nLeft, bVisible and 340 or 208, nRight, nBottom)
-	self:OnQuestTrackerMainTimer()
+	self:RedrawAll()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1098,12 +1209,13 @@ function QuestTracker:OnPublicEventStart(peEvent)
 				local wndEvent = wndPublicEvent:FindChildByUserData(peEvent)
 				if wndEvent then
 					wndEvent:Destroy()
+					self:OnEventDestroyed(peEvent)
 				end
 			end
 			break
 		end
 	end
-	self:OnQuestTrackerMainTimer()
+	self:RequestRedrawAll()
 end
 
 function QuestTracker:OnPublicEventEnd(peEvent, eReason, tStats)
@@ -1119,16 +1231,16 @@ function QuestTracker:OnPublicEventEnd(peEvent, eReason, tStats)
 		local wndEvent = wndPublicEvent:FindChildByUserData(peEvent)
 		if wndEvent then
 			wndEvent:Destroy()
+			self:OnEventDestroyed(peEvent)
 		end
 	end
-	self:OnQuestTrackerMainTimer()
+	self:RequestRedrawAll()
 end
 
 function QuestTracker:OnPublicEventUpdate(tObjective)
-	-- TODO Temp gate, in case this gets spammed a billion times a second.
-	if not self.bPublicEventUpdateTimerStarted then
-		self.bPublicEventUpdateTimerStarted = true
-		Apollo.StartTimer("QuestTracker_UpdateInOneSecond")
+	if tObjective:GetEvent() then
+		self.tPublicEventsToRedraw[tObjective:GetEvent():GetName()] = true
+		self:RequestRedrawAll()
 	end
 end
 
@@ -1138,8 +1250,18 @@ end
 
 function QuestTracker:HelperShowQuestCallbackBtn(wndQuest, queQuest, strNumberBackerArt, strCallbackBtnArt)
 	wndQuest:FindChild("QuestNumberBackerArt"):SetSprite(strNumberBackerArt)
-
+	
 	local tContactInfo = queQuest:GetContactInfo()
+	
+	if not queQuest:IsCommunicatorReceived() or queQuest:IsCommunicatorReceivedFromRec() then
+		if not tContactInfo then
+			self.tQueuedCommMessages[queQuest:GetId()] = {wndQuest = wndQuest, queQuest = queQuest, strNumberBackerArt = strNumberBackerArt, strCallbackBtnArt = strCallbackBtnArt}
+			return
+		else
+			self.tQueuedCommMessages[queQuest:GetId()] = nil
+		end
+	end
+	
 	if not tContactInfo or not tContactInfo.strName or string.len(tContactInfo.strName) <= 0 then
 		return
 	end
@@ -1149,6 +1271,14 @@ function QuestTracker:HelperShowQuestCallbackBtn(wndQuest, queQuest, strNumberBa
 	wndQuest:FindChild("QuestCallbackBtn"):ChangeArt(strCallbackBtnArt)
 	wndQuest:FindChild("QuestCallbackBtn"):Enable(not self.bPlayerIsDead)
 	wndQuest:FindChild("QuestCallbackBtn"):SetTooltip(string.format("<P Font=\"CRB_InterfaceMedium\">%s</P>", strName))
+end
+
+function QuestTracker:HelperBuildTimedQuestTitle(queQuest)
+	local strTitle = queQuest:GetTitle()
+	strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</T>", kstrLightGrey, strTitle)
+	strTitle = self:HelperPrefixTimeString(math.max(0, math.floor(queQuest:GetQuestTimeRemaining() / 1000)), strTitle)
+	
+	return strTitle
 end
 
 function QuestTracker:BuildObjectiveTitleString(queQuest, tObjective, bIsTooltip)
@@ -1278,6 +1408,7 @@ function QuestTracker:OnLeavePvP()
 	if self.wndMain:FindChild("SwapToQuests") and self.wndMain:FindChild("SwapToQuests"):IsValid() then
 		self.wndMain:FindChild("SwapToQuests"):Destroy()
 	end
+	self:DestroyAndRedraw()
 end
 
 function QuestTracker:OnSwapToPvPBtn() -- Also from code
@@ -1312,7 +1443,7 @@ function QuestTracker:OnSwapToQuestsBtn()
 	if self.wndMain:FindChild("SwapToQuests") and self.wndMain:FindChild("SwapToQuests"):IsValid() then
 		self.wndMain:FindChild("SwapToQuests"):Destroy()
 	end
-	self:OnQuestTrackerMainTimer() -- GOTCHA: Don't destroy, we check for SwapToPvPBtn being valid later
+	self:RedrawAll() -- GOTCHA: Don't destroy, we check for SwapToPvPBtn being valid later
 end
 
 function QuestTracker:OnGenerateTooltip(wndControl, wndHandler, eType, arg1, arg2)
@@ -1361,35 +1492,84 @@ function QuestTracker:HelperPrefixTimeString(fTime, strAppend, strColorOverride)
 	return String_GetWeaselString(Apollo.GetString("QuestTracker_BuildText"), strPrefix, strAppend)
 end
 
-function QuestTracker:HelperFindAndDestroyQuest(queQuest)
+function QuestTracker:HelperFindAndDestroyQuests()
+	if not #self.tQuestsQueuedForDestroy then
+		return
+	end
+		
 	for idx1, wndEpGroup in pairs(self.wndMain:FindChild("QuestTrackerScroll"):GetChildren()) do
 		if wndEpGroup:GetName() == "EpisodeGroupItem" then
 			for idx2, wndEp in pairs(wndEpGroup:FindChild("EpisodeGroupContainer"):GetChildren()) do
-				if wndEp:GetName() == "EpisodeItem" then
-					local wndQuest = wndEp:FindChild("EpisodeQuestContainer"):FindChildByUserData(queQuest)
-					if wndQuest then
-						wndQuest:Destroy()
-
-						if wndEp:GetData() ~= kstrPublicEventMarker and next(wndEp:GetData():GetTrackedQuests()) == nil then
-							wndEp:Destroy()
+				for key, queQuest in pairs(self.tQuestsQueuedForDestroy) do
+					if wndEp:GetName() == "EpisodeItem" then
+						local wndQuest = wndEp:FindChild("EpisodeQuestContainer"):FindChildByUserData(queQuest)
+						if wndQuest then
+							wndQuest:Destroy()
+	
+							if wndEp:GetData() ~= kstrPublicEventMarker and next(wndEp:GetData():GetTrackedQuests()) == nil then
+								wndEp:Destroy()
+							end
+	
+							if next(wndEpGroup:FindChild("EpisodeGroupContainer"):GetChildren()) == nil then
+								wndEpGroup:Destroy()
+							end
+	
+							table.remove(self.tQuestsQueuedForDestroy, key)
+							if #self.tQuestsQueuedForDestroy == 0 then
+								return
+							end
+							
+							self:OnQuestDestroyed(queQuest)
 						end
-
+					elseif wndEp:GetName() == "QuestItem" and wndEp:GetData() == queQuest then
+						wndEp:Destroy()
+	
 						if next(wndEpGroup:FindChild("EpisodeGroupContainer"):GetChildren()) == nil then
 							wndEpGroup:Destroy()
 						end
-
-						return
+	
+						table.remove(self.tQuestsQueuedForDestroy, key)
+						if #self.tQuestsQueuedForDestroy == 0 then
+							return
+						end
+						
+						self:OnQuestDestroyed(queQuest)
 					end
-				elseif wndEp:GetName() == "QuestItem" and wndEp:GetData() == queQuest then
-					wndEp:Destroy()
-
-					if next(wndEpGroup:FindChild("EpisodeGroupContainer"):GetChildren()) == nil then
-						wndEpGroup:Destroy()
-					end
-
-					return
 				end
 			end
+		end
+	end
+	
+	-- anything left in this list doesn't exist anymore
+	self.tQuestsQueuedForDestroy = {}
+end
+
+function QuestTracker:OnQuestDestroyed(queQuest)
+	for index, tQuestInfo in pairs(self.tTimedQuests) do
+		if tQuestInfo.queQuest == queQuest then
+			table.remove(self.tTimedQuests, index)
+		end
+	end
+	
+	for index, tObjectiveInfo in pairs(self.tTimedObjectives) do
+		if tObjectiveInfo.queQuest == queQuest then
+			table.remove(self.tTimedObjectives, index)
+		end
+	end
+	
+	self.tQueuedCommMessages[queQuest:GetId()] = nil
+end
+
+function QuestTracker:OnEventDestroyed(peEvent)
+	for index, tEventInfo in pairs(self.tTimedEvents) do
+		if tEventInfo.peEvent == peEvent then
+			table.remove(self.tTimedEvents, index)
+		end
+	end
+	
+	for index, tEventObjectiveInfo in pairs(self.tTimedEventObjectives) do
+		if tEventObjectiveInfo.peEvent == peEvent then
+			table.remove(self.tTimedEventObjectives, index)
 		end
 	end
 end

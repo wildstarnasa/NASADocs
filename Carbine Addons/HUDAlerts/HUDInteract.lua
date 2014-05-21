@@ -49,6 +49,8 @@ function HUDInteract:OnDocumentReady()
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "InteractForm", "FixedHudStratum", self)
 	self.xmlDoc = nil
 
+	self.InteractUnit = nil
+	
 	self:OnOptionsUpdated()
 end
 
@@ -83,6 +85,8 @@ function HUDInteract:OnInteractiveUnitChanged(unitArg, strArg)
 		return
 	end
 
+	self.InteractUnit = unitArg
+	
 	-- HUD Alert Interact
 	local bHideLootWhileVacuum = GameLib.CanVacuum() and strArg == Apollo.GetString("HUDAlert_Loot")
 	if bHideLootWhileVacuum or unitArg == nil or strArg == nil then
@@ -161,7 +165,14 @@ function HUDInteract:OnDialog_ShowState(eState, tQuest) -- Hide Interact during 
 end
 
 function HUDInteract:OnDialog_Close() -- Hide Interact during Quest Dialog
+	
 	self.bDialogWindowUp = false
+	
+	if self.InteractUnit ~= nil then
+		self.wndMain:Show(true)
+		self.wndInteractMarkerOnUnit:Show(true)
+	end
+	
 end
 
 -----------------------------------------------------------------------------------------------

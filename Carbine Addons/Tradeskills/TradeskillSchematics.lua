@@ -19,6 +19,23 @@ local karPowerCoreTierToString =
 	[CraftingLib.CodeEnumTradeskillTier.Master] 	= Apollo.GetString("CRB_Tradeskill_Hybrid"),
 }
 
+local kTradeskillIdToIcon =
+{
+	[CraftingLib.CodeEnumTradeskill.Survivalist]	=	"IconSprites:Icon_Achievement_UI_Tradeskills_Survivalist",
+	[CraftingLib.CodeEnumTradeskill.Architect]		=	"IconSprites:Icon_Achievement_UI_Tradeskills_Architect",
+	[CraftingLib.CodeEnumTradeskill.Fishing]		=	"",
+	[CraftingLib.CodeEnumTradeskill.Mining]			=	"IconSprites:Icon_Achievement_UI_Tradeskills_Miner",
+	[CraftingLib.CodeEnumTradeskill.Relic_Hunter]	=	"IconSprites:Icon_Achievement_UI_Tradeskills_RelicHunter",
+	[CraftingLib.CodeEnumTradeskill.Cooking]		=	"IconSprites:Icon_Achievement_UI_Tradeskills_Cooking",
+	[CraftingLib.CodeEnumTradeskill.Outfitter]		=	"IconSprites:Icon_Achievement_UI_Tradeskills_Outfitter",
+	[CraftingLib.CodeEnumTradeskill.Armorer]		=	"IconSprites:Icon_Achievement_UI_Tradeskills_Armorer",
+	[CraftingLib.CodeEnumTradeskill.Farmer]			=	"IconSprites:Icon_Achievement_UI_Tradeskills_Farmer",
+	[CraftingLib.CodeEnumTradeskill.Weaponsmith]	=	"IconSprites:Icon_Achievement_UI_Tradeskills_WeaponCrafting",
+	[CraftingLib.CodeEnumTradeskill.Tailor]			=	"IconSprites:Icon_Achievement_UI_Tradeskills_Tailor",
+	[CraftingLib.CodeEnumTradeskill.Runecrafting]	=	"",
+	[CraftingLib.CodeEnumTradeskill.Augmentor]		=	"IconSprites:Icon_Achievement_UI_Tradeskills_Technologist",
+}
+
 function TradeskillSchematics:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -162,6 +179,7 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 		if tCurrTradeskillInfo.bIsHobby then
 			local wndTop = self:LoadByName("TopLevel", self.wndMain:FindChild("LeftSideScroll"), tCurrTradeskill.eId)
 			wndTop:FindChild("TopLevelBtnText"):SetText(tCurrTradeskill.strName)
+			wndTop:FindChild("TopLevelIcon"):SetSprite(kTradeskillIdToIcon[tCurrTradeskill.eId])
 			wndTop:FindChild("TopLevelBtn"):SetData({ tCurrTradeskill.eId, 0 }) -- ID is needed for GetSchematicList()
 
 		elseif tCurrTradeskillInfo.bIsActive then
@@ -171,6 +189,7 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 					local tTier = tMiddleCategories.tSubGroups[nTierIdx]
 					local wndTop = self:LoadByName("TopLevel", self.wndMain:FindChild("LeftSideScroll"), tTier.nSubGroupId)
 					wndTop:FindChild("TopLevelBtnText"):SetText(tTier.strSubGroupName)
+					wndTop:FindChild("TopLevelIcon"):SetSprite(kTradeskillIdToIcon[tCurrTradeskill.eId])
 					wndTop:FindChild("TopLevelBtn"):SetData({ tCurrTradeskill.eId, nTierIdx }) -- ID is needed for GetSchematicList()
 				end
 			end
@@ -305,9 +324,14 @@ function TradeskillSchematics:OnTimerCraftingStationCheck()
 	end
 
 	local bIsAutoCraft = tSchematicInfo and tSchematicInfo.bIsAutoCraft
+	local bIsAtCraftingStation = CraftingLib.IsAtCraftingStation()
 	self.wndMain:FindChild("RightBottomCraftBtn"):Show(not bIsAutoCraft)
-	self.wndMain:FindChild("RightBottomSimpleCraftBtn"):Show(bIsAutoCraft)
-	--self.wndMain:FindChild("RightBottomCraftPreview"):ArrangeChildrenHorz(1)
+	self.wndMain:FindChild("RightBottomSimpleCraftBtn"):Show(bIsAutoCraft and bIsAtCraftingStation)
+	if not bIsAtCraftingStation and bIsAutoCraft then
+		self.wndMain:FindChild("RightBottomCraftPreview"):SetText(Apollo.GetString("Crafting_NotNearStation"))
+	else
+		self.wndMain:FindChild("RightBottomCraftPreview"):SetText("")
+	end
 end
 
 function TradeskillSchematics:OnTopLevelBtnToggle(wndHandler, wndControl)
@@ -453,9 +477,9 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 
 	-- Three line text
 	local nRequiredLevel = tSchematicInfo.itemOutput:GetRequiredLevel()
-	local strRequiredLevelAppend = nRequiredLevel == 0 and "" or String_GetWeaselString(Apollo.GetString("Tradeskills_RequiredLevel"), nRequiredLevel)
+	local strRequiredLevelAppend = nRequiredLevel == 0 and "" or (String_GetWeaselString(Apollo.GetString("Tradeskills_RequiredLevel"), nRequiredLevel) .." \n")
 	local strNumCraftable = nNumCraftable == 0 and "" or String_GetWeaselString(Apollo.GetString("Tradeskills_MaterialsForX"), nNumCraftable)
-	wndSchem:FindChild("SchematicItemType"):SetText(tSchematic.strItemTypeName.." \n"..strRequiredLevelAppend.." \n"..strNumCraftable)
+	wndSchem:FindChild("SchematicItemType"):SetText(tSchematic.strItemTypeName.." \n"..strRequiredLevelAppend..strNumCraftable)
 
 	-- TODO: Resize depending if there are Subrecipes
 	local nLeft, nTop, nRight, nBottom = wndSchem:FindChild("RightTopBG"):GetAnchorOffsets()
@@ -488,7 +512,12 @@ function TradeskillSchematics:OnRightBottomCraftBtn(wndHandler, wndControl) -- R
 end
 
 function TradeskillSchematics:OnRightBottomSimpleCraftBtn(wndHandler, wndControl) -- RightBottomSimpleCraftBtn, data is tSchematicId
-	CraftingLib.CraftItem(wndHandler:GetData())
+	local tCurrentCraft = CraftingLib.GetCurrentCraft()
+	if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
+		Event_FireGenericEvent("GenericEvent_CraftFromPL", wndHandler:GetData())
+	else
+		CraftingLib.CraftItem(wndHandler:GetData())
+	end
 	Event_FireGenericEvent("AlwaysHideTradeskills")
 end
 
@@ -598,11 +627,8 @@ end
 
 function TradeskillSchematics:HelperSearchNameMatch(tSchematic, strInput) -- strInput already :lower()
 	local strBase = tSchematic.strName
-	
-	-- GOTCHA: Open brackets signify the start of a capture in patterns.  If we don't escape it, we'll get errors.
-	strInput = string.gsub(strInput, "%(", "%%%(")
 
-	if strBase:lower():find(strInput) then
+	if strBase:lower():find(strInput, 1, true) then
 		return tSchematic
 	else
 		return false
@@ -612,11 +638,7 @@ end
 function TradeskillSchematics:HelperSearchSubschemNameMatch(tSchematic, strInput) -- strInput already :lower()
 	local tResult = {}
 	for key, tSubrecipe in pairs(tSchematic.tSubRecipes or {}) do
-	
-		-- GOTCHA: Open brackets signify the start of a capture in patterns.  If we don't escape it, we'll get errors.
-		strInput = string.gsub(strInput, "%(", "%%%(")
-
-		if tSubrecipe.strName:lower():find(strInput) then
+		if tSubrecipe.strName:lower():find(strInput, 1, true) then
 			table.insert(tResult, tSubrecipe)
 		end
 	end

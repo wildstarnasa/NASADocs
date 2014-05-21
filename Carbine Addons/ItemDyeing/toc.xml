@@ -1,4 +1,0 @@
-<Addon Name="ItemDyeing" APIVersion="2">
-    <Script Name="ItemDyeing.lua" />
-    <Form Name="ItemDyeing.xml" />
-</Addon>

@@ -27,8 +27,6 @@ local ktWhichPerksAreGuildTabs 	= -- TODO super hardcoded
 local knUsePermissionAll		= 8 -- TODO super hard coded hack
 local knUsePermissionNone		= 1 -- TODO super hard coded hack
 
-local knSaveVersion 			= 1
-
 --[[ Permissions also attached to GetRanks()
 bDisband, bRankCreate, bChangeRankPermissions, bSpendInfluence, bRankRename, bVote, bChangeMemberRank
 bInvite, bKick, bEmblemAndStandard, bMemberChat, bCouncilChat, bBankTabRename, bNeighborhood
@@ -43,34 +41,6 @@ end
 
 function WarpartyBank:Init()
     Apollo.RegisterAddon(self)
-end
-
-function WarpartyBank:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function WarpartyBank:OnRestore(eType, tSavedData)
-
-	self.tSavedData = tSavedData
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function WarpartyBank:OnLoad()
@@ -103,11 +73,11 @@ end
 
 function WarpartyBank:WarPartyInitialize()
     if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
-        self.wndMain:Destroy()
+		self.wndMain:Destroy()
     end
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildBankForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("WarpartyBank_Title")})
 
     local guildWarparty = nil
     for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
@@ -129,8 +99,7 @@ function WarpartyBank:Reinitialize(guildToInit)
             self:WarPartyInitialize()
         end
     elseif self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
-        self.wndMain:Destroy()
+		self.wndMain:Destroy()
     end
 end
 
@@ -153,10 +122,6 @@ function WarpartyBank:Initialize(guildOwner)
     self.wndMain:FindChild("BankTabBtnVault"):AttachWindow(self.wndMain:FindChild("BankScreenMain"))
 	self.wndMain:FindChild("BankTabBtnPermissions"):AttachWindow(self.wndMain:FindChild("PermissionsMain"))
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	--Hide windows without fade
 	self.wndMain:FindChild("BankScreenMain"):Show(false, true)
 	self.wndMain:FindChild("PermissionsMain"):Show(false, true)
@@ -173,9 +138,9 @@ end
 
 function WarpartyBank:CloseBank()
     if self.wndMain ~= nil then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
-        self.wndMain:Destroy()
+		self.wndMain:Destroy()
     end
+	
 	Event_CancelWarpartyBank()
 end
 

@@ -32,13 +32,8 @@ function Warparty:OnSave(eType)
 		return
 	end
 	
-	local locMainLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedMainLoc
-	local locInviteLocation = self.wndWarpartyInvite and self.wndWarpartyInvite:GetLocation() or self.locSavedInviteLoc
-	
 	local tSaved = 
 	{
-		tMainLocation = locMainLocation and locMainLocation:ToTable() or nil,
-		tInviteLocation = locInviteLocation and locInviteLocation:ToTable() or nil,
 		bInviteSent = self.wndWarpartyInvite and self.wndWarpartyInvite:IsValid() and self.wndWarpartyInvite:IsShown() or false,
 		strWarpartyName = self.strSavedWarpartyName,
 		strInvitorName = self.strSavedInvitorName,
@@ -51,14 +46,6 @@ end
 function Warparty:OnRestore(eType, tSavedData)
 	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 		return
-	end
-	
-	if tSavedData.tMainLocation then
-		self.locSavedMainLoc = WindowLocation.new(tSavedData.tMainLocation)
-	end
-	
-	if tSavedData.tInviteLocation then
-		self.locSavedInviteLoc = WindowLocation.new(tSavedData.tInviteLocation)
 	end
 	
 	if tSavedData.bInviteSent then
@@ -79,6 +66,7 @@ function Warparty:OnDocumentReady()
     end
 
 	-- The roster portion of this has been moved to the Circles for now (as they did the same thing). TODO: Cleaning up this add-on
+	Apollo.RegisterEventHandler("WindowManagementReady", 			"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("Event_ShowWarpartyInfo",           "OnShowWarpartyInfo", self)
 	Apollo.RegisterEventHandler("GuildInvite", 						"OnGuildInvite", self)  -- notification you got a guild/circle invite
@@ -119,6 +107,10 @@ function Warparty:OnDocumentReady()
 	end
 end
 
+function Warparty:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Warparty_Warparty")})
+end
+
 function Warparty:OnClose()
 	Apollo.StopTimer("RetryLoadingGuilds")
 	self.wndMain:Close()
@@ -142,7 +134,7 @@ function Warparty:OnShowWarpartyInfo(tPos)
 
 			self.wndMain:FindChild("SubHeader"):SetText(String_GetWeaselString(Apollo.GetString("Warparty_Header"), strRank))
 			self.wndMain:FindChild("Header"):SetText(guildCurr:GetName())
-			self.wndMain:FindChild("Header"):SetTextColor(ApolloColor.new("ff2f94ac"))
+			--self.wndMain:FindChild("Header"):SetTextColor(ApolloColor.new("ff2f94ac"))
 			self.wndMain:SetData(guildCurr)
 			self:UpdatePvpRating()
 			guildCurr:RequestMembers()		

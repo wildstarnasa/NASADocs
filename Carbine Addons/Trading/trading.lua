@@ -36,13 +36,8 @@ function Trading:OnSave(eType)
 		return
 	end
 
-	local locInviteLocation = self.wndTradeInvite and self.wndTradeInvite:GetLocation() or self.locSavedInviteLoc
-	local locTradeLocation = self.wndTradeForm and self.wndTradeForm:GetLocation() or self.locSavedTradeLoc
-
 	local tSaved =
 	{
-		tInviteLocation = locInviteLocation  and locInviteLocation:ToTable() or nil,
-		tTradeLocation = locTradeLocation and locTradeLocation:ToTable() or nil,
 		bInviteShown = self.wndTradeInvite:IsShown(),
 		bInviteAccepted = self.bTradeIsActive,
 		idPartner = self.unitTradePartner and self.unitTradePartner:GetId() or nil,
@@ -61,14 +56,6 @@ function Trading:OnRestore(eType, tSavedData)
 		self.unitPartner = GameLib.GetUnitById(tSavedData.idPartner)
 	end
 
-	if tSavedData.tInviteLocation then
-		self.locSavedInviteLoc = WindowLocation.new(tSavedData.tInviteLocation)
-	end
-
-	if tSavedData.tTradeLocation then
-		self.locSavedTradeLoc = WindowLocation.new(tSavedData.tTradeLocation)
-	end
-
 	self.bInviteAccepted = tSavedData.bInviteAccepted;
 end
 
@@ -81,6 +68,8 @@ function Trading:OnDocumentReady()
     if self.xmlDoc == nil then
         return
     end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("P2PTradeInvite", 		"OnP2PTradeInvite", self)
 	Apollo.RegisterEventHandler("P2PTradeResult", 		"OnP2PTradeResult", self)
@@ -118,14 +107,6 @@ function Trading:OnDocumentReady()
 
 	self.bIsTrading = P2PTrading.CanInitiateTrade(GameLib.GetPlayerUnit()) == P2PTrading.P2PTradeError_AlreadyTrading
 
-	if self.wndTradeInvite and self.locSavedInviteLoc then
-		self.wndTradeInvite:MoveToLocation(self.locSavedInviteLoc)
-	end
-
-	if self.wndTradeForm and self.locSavedTradeLoc then
-		self.wndTradeForm:MoveToLocation(self.locSavedTradeLoc)
-	end
-
 	if self.unitPartner == nil then
 		P2PTrading.CancelTrade()
 		return
@@ -148,7 +129,10 @@ function Trading:OnDocumentReady()
 			end
 		end
 	end
+end
 
+function Trading:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndTradeForm, strName = Apollo.GetString("CRB_PlayerToPlayerTrade")})
 end
 
 function Trading:OnUpdate()

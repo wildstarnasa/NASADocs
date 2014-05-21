@@ -28,7 +28,6 @@ local knMediumFlashCountMax 	= 6 -- how many medium flashes before the randomize
 local kstrTickSound 			= Sound.PlayUI11To13GenericPushButtonDigital01
 local kstrAwardSound 			= Sound.PlayUIAlertPopUpMessageReceived
 
-local knSaveVersion = 4
 local ktTierColors = 
 {
 	CColor.new(164/255, 82/255, 0, 0.6), 		-- bronze
@@ -64,32 +63,6 @@ function ChallengeRewardPanel:Init()
     Apollo.RegisterAddon(self)
 end
 
-function ChallengeRewardPanel:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSave =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function ChallengeRewardPanel:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 -----------------------------------------------------------------------------------------------
 -- ChallengeRewardPanel OnLoad
 -----------------------------------------------------------------------------------------------
@@ -99,9 +72,12 @@ function ChallengeRewardPanel:OnLoad()
 end
 
 function ChallengeRewardPanel:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("ChallengeRewardShow", 		"OnChallengeRewardShow", self) -- fire generic event "ChallengeRewardShow" to open the panel
 	Apollo.RegisterEventHandler("ChallengeRewardListReady", "OnChallengeRewardListReady", self)
 	Apollo.RegisterEventHandler("ChallengeRewardReady", 	"OnChallengeRewardReady", self)
@@ -115,9 +91,6 @@ function ChallengeRewardPanel:OnDocumentReady()
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "ChallengeRewardPanelForm", nil, self)
 	self.wndText = self.wndMain:FindChild("BodyText")
 	self.wndMain:Show(false)
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 
 	-- item list
 	self.wndItemList 		= self.wndMain:FindChild("ItemList")
@@ -136,6 +109,10 @@ function ChallengeRewardPanel:OnDocumentReady()
 	self.iReward 			= 0 -- index for the rewarded item; 0 is "not ready"
 	self.iRewardTier 		= 0 -- index of received reward tier
 	self.nLastRandom 		= 0
+end
+
+function ChallengeRewardPanel:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_ChallengeRewardPanel")})
 end
 
 -----------------------------------------------------------------------------------------------

@@ -63,7 +63,8 @@ function RealmSelect:OnLoad()
 	self.wndNetworkStatus:Show(false)
 
 	self.wndSelectForm = Apollo.LoadForm(self.xmlDocRealmSelect, "RealmSelectForm", nil, self)
-	self.wndTicker = Apollo.LoadForm(self.xmlDocRealmSelect, "MOTDTicker", nil, self)
+	self.wndServerMessagesContainer = Apollo.LoadForm(self.xmlDocRealmSelect, "RealmMessagesContainer", nil, self)
+	self.wndServerMessage = self.wndServerMessagesContainer:FindChild("RealmMessage")
 	self.wndControlFrame = Apollo.LoadForm(self.xmlDocRealmSelect, "ControlFrame", nil, self)
 	self.wndMOTD = self.wndSelectForm:FindChild("MOTD")
 	self.wndMOTD:Show(false)
@@ -158,8 +159,11 @@ function RealmSelect:OnRealmListChanged()
 	for _, strMessage in ipairs(PreGameLib.GetLastRealmMessages()) do
 		strAllMessage = strAllMessage .. strMessage .. "\n"
 	end
-	self.wndTicker:SetText(strAllMessage)
-	self.wndTicker:Show(true)
+	
+	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
+	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
+	self.wndServerMessage:SetHeightToContentHeight()
+	
 end
 
 function RealmSelect:FilterForPvE(tList)

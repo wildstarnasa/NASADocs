@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Sprites>
-    <Sprite Name="DashedLine" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_Grid.bmp" x0="0" x1="0" x2="0" x3="0" x4="16" x5="16" y0="0" y1="0" y2="0" y3="0" y4="16" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
-    </Sprite>
-    <Sprite Name="Spred_Holo_Snippet" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_Inset_Snippet.tga" x0="2" x1="14" x2="89" x3="89" x4="89" x5="100" y0="2" y1="15" y2="17" y3="17" y4="17" y5="30" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
-    </Sprite>
-</Sprites>

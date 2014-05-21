@@ -15,19 +15,19 @@ local TutorialPrompts = {}
 local kTutorialComponents =
 {
 	[GameLib.CodeEnumTutorialAnchor.None] 						= {"None", 					1,    0,   0},
-	[GameLib.CodeEnumTutorialAnchor.Abilities] 					= {"Abilities", 			6, 	 -330, 300},
-	[GameLib.CodeEnumTutorialAnchor.Character] 					= {"Character Panel", 		6, 	 -330, 300},
-	[GameLib.CodeEnumTutorialAnchor.Mail] 						= {"Mail", 					6, 	 -330, 300},
-	[GameLib.CodeEnumTutorialAnchor.GalacticArchive] 			= {"Galactic Archive", 		6, 	 -330, 300},
-	[GameLib.CodeEnumTutorialAnchor.Social] 					= {"Social Panel", 			6, 	 -330, 300},
-	[GameLib.CodeEnumTutorialAnchor.GroupFinder] 				= {"Group Finder", 			6, 	 -330, 300},
-	[GameLib.CodeEnumTutorialAnchor.AbilityBar] 				= {"Action Bar", 			4,   28,   0},
-	[GameLib.CodeEnumTutorialAnchor.Codex] 						= {"Codex", 				8,   18,  22},
+	[GameLib.CodeEnumTutorialAnchor.Abilities] 					= {"Abilities", 			4, 	 30, 190},
+	[GameLib.CodeEnumTutorialAnchor.Character] 					= {"Character Panel", 		8, -560,-450},
+	[GameLib.CodeEnumTutorialAnchor.Mail] 						= {"Mail", 					4, 	 50,  65},
+	[GameLib.CodeEnumTutorialAnchor.GalacticArchive] 			= {"Galactic Archive", 		8,  -40,-590},
+	[GameLib.CodeEnumTutorialAnchor.Social] 					= {"Social Panel", 			4,  340,  20},
+	[GameLib.CodeEnumTutorialAnchor.GroupFinder] 				= {"Group Finder", 			8, -50, -480},
+	[GameLib.CodeEnumTutorialAnchor.AbilityBar] 				= {"Action Bar", 			4,  208, -10},
+	[GameLib.CodeEnumTutorialAnchor.Codex] 						= {"Codex", 				8,  18,   22},
 	[GameLib.CodeEnumTutorialAnchor.Challenge] 					= {"Challenges", 			2,  370,  -4},
-	[GameLib.CodeEnumTutorialAnchor.Datachron] 					= {"Datachron", 			4,  -20, -20},
+	[GameLib.CodeEnumTutorialAnchor.Datachron] 					= {"Datachron", 			4,  -20, -30},
 	[GameLib.CodeEnumTutorialAnchor.Inventory] 					= {"Inventory", 			4,   -2, -25},
 	[GameLib.CodeEnumTutorialAnchor.MiniMap] 					= {"MiniMap", 				3,  -40,  -2},
-	[GameLib.CodeEnumTutorialAnchor.QuestTracker] 				= {"Quest Tracker", 		4,   10, -50, true},
+	[GameLib.CodeEnumTutorialAnchor.QuestTracker] 				= {"Quest Tracker", 		4,   10,  -95, true},
 	[GameLib.CodeEnumTutorialAnchor.HUDAlert] 					= {"HUD Alerts", 			5, -122, -20},
 	[GameLib.CodeEnumTutorialAnchor.PressAndHold] 				= {"CSI: Press & Hold", 	5, -112, -24},
 	[GameLib.CodeEnumTutorialAnchor.RapidTapping] 				= {"CSI: Rapid Tap", 		5, -112, -24},
@@ -35,12 +35,12 @@ local kTutorialComponents =
 	[GameLib.CodeEnumTutorialAnchor.Memory] 					= {"CSI: Memory", 			5,    0,   0},
 	[GameLib.CodeEnumTutorialAnchor.Keypad] 					= {"CSI: Keypad", 			5,    0,   0},
 	[GameLib.CodeEnumTutorialAnchor.Metronome] 					= {"CSI: Metronome", 		5, -118, -20},
-	[GameLib.CodeEnumTutorialAnchor.SprintMeter]				= {"Sprint Meter", 			2,    0,  20},
-	[GameLib.CodeEnumTutorialAnchor.DashMeter]					= {"Dash Meter", 			4,    0, -10},
-	[GameLib.CodeEnumTutorialAnchor.InnateAbility]				= {"Innate Ability", 		4,   44,  -5},
-	[GameLib.CodeEnumTutorialAnchor.ClassResource]				= {"Class Mechanic", 		5,    0, -70},
+	[GameLib.CodeEnumTutorialAnchor.SprintMeter]				= {"Sprint Meter", 			4,    0,  20},
+	[GameLib.CodeEnumTutorialAnchor.DashMeter]					= {"Dash Meter", 			4,    50, 10},
+	[GameLib.CodeEnumTutorialAnchor.InnateAbility]				= {"Innate Ability", 		4,  138, -10},
+	[GameLib.CodeEnumTutorialAnchor.ClassResource]				= {"Class Mechanic", 		5,  -40, 330},
 	[GameLib.CodeEnumTutorialAnchor.BuffFrame]					= {"Buff Frame", 			4,  220, -30},
-	[GameLib.CodeEnumTutorialAnchor.QuestCommunicatorReceived]	= {"Communicator Turn In", 	4,  -15, -80, true},
+	[GameLib.CodeEnumTutorialAnchor.QuestCommunicatorReceived]	= {"Communicator Turn In", 	4,  -15,  -80, true},
 	[GameLib.CodeEnumTutorialAnchor.HealthBar]					= {"Health Bar", 			4,   75, -10},
 	[GameLib.CodeEnumTutorialAnchor.ShieldBar]					= {"Shield Bar", 			6,  -75, -10},
 	[GameLib.CodeEnumTutorialAnchor.Recall]						= {"Recall", 				5,    7, -20},
@@ -257,6 +257,7 @@ function TutorialPrompts:OnAutoCloseTutorialInterval()
 	
 	if #self.tAutoCloseTutorials == 0 then
 		Apollo.StopTimer("AutoCloseTutorial")
+		self.wndAlertContainer:DestroyChildren()
 	end
 end
 
@@ -390,6 +391,10 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Alert Functions
 ---------------------------------------------------------------------------------------------------
+function TutorialPrompts:OnTutorialMoreBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("GenericEvent_OpenTutorialMenu")
+end
+
 function TutorialPrompts:OnTutorialAlertBtn(wndHandler, wndControl)
 	-- on click, advance the table by one, remove the last, redraw alerts, remove any prompts
 	local nId = wndControl:GetData()
@@ -535,7 +540,6 @@ function TutorialPrompts:DrawTutorialPage(nTutorialId, nPassedPage) --(wndArg, n
 
 		wnd:FindChild("HideCategoryBtn"):SetData(nType)
 		wnd:FindChild("HideCategoryBtn"):SetCheck(self.bTypeViewSetting)
-		wnd:FindChild("HideAllBtn"):SetCheck(self.bAllViewSetting)
 	end
 
 
@@ -603,6 +607,8 @@ function TutorialPrompts:DrawTutorialPage(nTutorialId, nPassedPage) --(wndArg, n
 		wnd:FindChild("btnPrevious"):Show(false)
 		wnd:FindChild("btnCloseBig"):Show(true)
 	end
+	
+	self.btnNextIsShown = wnd:FindChild("btnNext"):IsShown()
 
 	-- TODO: Refactor this resize code. Also verify if it even works.
 	if tTutorial[nCurrPage].wndRel then
@@ -683,6 +689,11 @@ end
 --------------------------------------------------------------------------------------------
 function TutorialPrompts:OnClose(wndHandler, wndControl)
 	if wndHandler ~= wndControl then return end -- wndHandler is 'btnClose'
+	
+	if self.bAllViewSetting then
+		Event_FireGenericEvent("HideAllTutorials")
+	end
+	
 	wndControl:GetParent():Close()
 	GameLib.StopTutorialSound()
 end
@@ -708,6 +719,11 @@ end
 
 function TutorialPrompts:ShowNext(wndHandler, wndControl)
 	if not wndHandler or not wndHandler:GetData() then return end -- wndHandler is 'btnNext' and its data is { nCurrPage, tTutorial, nTutorialId }
+	
+	if self.bAllViewSetting then
+		Event_FireGenericEvent("HideAllTutorials")
+		wndHandler:GetParent():Close()
+	end
 
 	local nCurrPage = wndHandler:GetData()[1]
 	local tTutorial = wndHandler:GetData()[2]
@@ -722,7 +738,12 @@ end
 
 function TutorialPrompts:ShowPrevious(wndHandler, wndControl)
 	if not wndHandler or not wndHandler:GetData() then return end -- wndHandler is 'btnNext' and its data is { nCurrPage, tTutorial, nTutorialId }
-
+	
+	if self.bAllViewSetting then
+		Event_FireGenericEvent("HideAllTutorials")
+		wndHandler:GetParent():Close()
+	end
+	
 	local nCurrPage = wndHandler:GetData()[1]
 	local tTutorial = wndHandler:GetData()[2]
 	local nTutorialId = wndHandler:GetData()[3]
@@ -734,9 +755,11 @@ end
 
 function TutorialPrompts:OnTypeViewToggle(wndHandler, wndControl)
 	self.bTypeViewSetting = wndControl:IsChecked()
+	self.bAllViewSetting = not wndControl:IsChecked()
 end
 
 function TutorialPrompts:OnAllViewToggle(wndHandler, wndControl)
+	self.bTypeViewSetting = not wndControl:IsChecked()
 	self.bAllViewSetting = wndControl:IsChecked()
 end
 

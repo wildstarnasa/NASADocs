@@ -8,7 +8,7 @@ require "PublicEvent"
 
 local NorthernWildsAdv = {}
 
-local knSaveVersion = 1
+local knSaveVersion = 2
 
 function NorthernWildsAdv:new(o)
     o = o or {}
@@ -22,42 +22,23 @@ function NorthernWildsAdv:OnSave(eType)
 		return false
 	end
 	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSave = self.tAdventureInfo
-	tSave.tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil
-	tSave.nSaveVersion = knSaveVersion
+	local tSave = 
+	{
+		tAdventureInfo = self.tAdventureInfo,
+		nSaveVersion = knSaveVersion,
+	}
 	
 	return tSave
 end
 
 function NorthernWildsAdv:OnRestore(eType, tSavedData)
+	self.tSavedData = tSavedData
 	if tSavedData and tSavedData.nSaveVersion ~= knSaveVersion then
 		return
 	end
 	
-	local bIsNorthernWilds = false
-	local tActiveEvents = PublicEvent.GetActiveEvents()
-	
-	for idx, peEvent in pairs(tActiveEvents) do
-		if peEvent:GetEventType() == PublicEvent.PublicEventType_Adventure_NorthernWilds then
-			bIsNorthernWilds = true
-		end
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedLocation = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-	self.tAdventureInfo = {}
-	if bIsNorthernWilds and tSavedData.bIsShown then
-		self:UIShow()
-		self:UILevel(tSavedData.nLevel or 0)
-		self:UIProgress(tSavedData.nProgress or 0)
-		self:UISkeech(tSavedData.nSkeech or 0)
-		self:UIMoodie(tSavedData.nMoodie or 0)
-		self:UIMeleeShrine(tSavedData.nPlayerMeleeUpgrade or 0, tSavedData.nEnemyMeleeUpgrade or 0)
-		self:UIMagicShrine(tSavedData.nPlayerMagicUpgrade or 0, tSavedData.nEnemyMagicUpgrade or 0)
-		self:UIHunterShrine(tSavedData.nPlayerHunterUpgrade or 0, tSavedData.nEnemyHunterUpgrade or 0)
+	if tSavedData.tAdventureInfo then
+		self.tSavedInfo = tSavedData.tAdventureInfo
 	end
 end
 
@@ -80,17 +61,34 @@ function NorthernWildsAdv:OnDocumentReady()
 	Apollo.RegisterEventHandler("NWADV_MeleeShrine", "UIMeleeShrine", self)
 	Apollo.RegisterEventHandler("NWADV_MagicShrine", "UIMagicShrine", self)
 	Apollo.RegisterEventHandler("NWADV_HunterShrine", "UIHunterShrine", self)
+	Apollo.RegisterEventHandler("OnInstanceResetResult", "ResetInstance", self)
 
 	Apollo.RegisterEventHandler("ChangeWorld", "UIHide", self)
 	
-	if not self.tAdventureInfo then 
-		self.tAdventureInfo = {}
+	local bIsNorthernWilds = false
+	local tActiveEvents = PublicEvent.GetActiveEvents()
+	for idx, peEvent in pairs(tActiveEvents) do
+		if peEvent:GetEventType() == PublicEvent.PublicEventType_Adventure_NorthernWilds then
+			bIsNorthernWilds = true
+		end
 	end
+	
+	self.tAdventureInfo = {}
+	if bIsNorthernWilds and self.tSavedInfo and self.tSavedInfo.bIsShown then
+		self:UIShow()
+	end
+end
+
+function NorthernWildsAdv:ResetInstance()
+	self.tSavedInfo = nil
+	self.tAdventureInfo = {}
 end
 
 function NorthernWildsAdv:UIShow()
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "AdventureNorthernWildsForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Lore_NorthernWilds")})
+		
 		self.wndMain:FindChild("LeftAssetCostume"):SetCostumeToCreatureId(20668) -- TODO Hardcoded
 		self.wndMain:FindChild("LeftAssetCostume"):SetModelSequence(150)
 		self.wndMain:FindChild("RightAssetCostume"):SetCostumeToCreatureId(26431)
@@ -104,16 +102,37 @@ function NorthernWildsAdv:UIShow()
 		self.tAdventureInfo.bIsShown = true
 		self:UILevel(0)
 		self:UIProgress(0)
+		
+		if self.tSavedInfo then
+			self:UILevel(self.tSavedInfo.nLevel or 0)
+			self:UIProgress(self.tSavedInfo.nProgress or 0)
+			self:UISkeech(self.tSavedInfo.nSkeech or 0)
+			self:UIMoodie(self.tSavedInfo.nMoodie or 0)
+			self:UIMeleeShrine(self.tSavedInfo.nPlayerMeleeUpgrade or 0, self.tSavedInfo.nEnemyMeleeUpgrade or 0)
+			self:UIMagicShrine(self.tSavedInfo.nPlayerMagicUpgrade or 0, self.tSavedInfo.nEnemyMagicUpgrade or 0)
+			self:UIHunterShrine(self.tSavedInfo.nPlayerHunterUpgrade or 0, self.tSavedInfo.nEnemyHunterUpgrade or 0)
+		end
 	end
 end
 
 function NorthernWildsAdv:UIHide()
-	if not self.wndMain or not self.wndMain:IsValid() then
-		return
+	if self.wndMain and self.wndMain:IsValid() then
+		self.locSavedLocation = self.wndMain:GetLocation()
+		self.wndMain:Destroy()
 	end
-	self.locSavedLocation = self.wndMain:GetLocation()
-	self.wndMain:Destroy()
-	self.tAdventureInfo = {}
+	
+	local nGroupCount = GroupLib:GetMemberCount()
+	local bIsGroupInMatch = false
+	
+	for idx = 1, nGroupCount do
+		if not bIsGroupInMatch and GroupLib.IsMemberInGroupInstance(idx) then
+			bIsGroupInMatch = true
+		end
+	end
+
+	if not MatchingGame:IsInMatchingGame() and not bIsGroupInMatch then
+		self:ResetInstance()
+	end
 end
 
 function NorthernWildsAdv:UIProgress(nCurrentProgress)
@@ -121,7 +140,9 @@ function NorthernWildsAdv:UIProgress(nCurrentProgress)
 		return
 	end
 	
-	self.tAdventureInfo.nProgress = nCurrentProgress
+	if nCurrentProgress > 0 then
+		self.tAdventureInfo.nProgress = nCurrentProgress
+	end
 
 	local wndLevelProgressBar = self.wndMain:FindChild("LevelBarBG:LevelProgressBar")
 	wndLevelProgressBar:SetMax(100)
@@ -140,7 +161,9 @@ function NorthernWildsAdv:UILevel(nCurrentLevel)
 		return
 	end
 	
-	self.tAdventureInfo.nLevel = nCurrentLevel
+	if nCurrentLevel >= 0 then
+		self.tAdventureInfo.nLevel = nCurrentLevel
+	end
 
 	if nCurrentLevel and nCurrentLevel < 10 then
 		self.wndMain:FindChild("LevelBarBG:LevelProgressText"):SetData(nCurrentLevel)
@@ -150,7 +173,7 @@ function NorthernWildsAdv:UILevel(nCurrentLevel)
 end
 
 function NorthernWildsAdv:UISkeech(nCurrentSkeech)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.wndMain or not self.wndMain:IsValid() or not nCurrentSkeech then
 		return
 	end
 	self.wndMain:FindChild("LeftNumber"):SetText(nCurrentSkeech)
@@ -168,7 +191,7 @@ function NorthernWildsAdv:UISkeech(nCurrentSkeech)
 end
 
 function NorthernWildsAdv:UIMoodie(nCurrentMoodie)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.wndMain or not self.wndMain:IsValid() or not nCurrentMoodie then
 		return
 	end
 	self.wndMain:FindChild("RightNumber"):SetText(nCurrentMoodie)

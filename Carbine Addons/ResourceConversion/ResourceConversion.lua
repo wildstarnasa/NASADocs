@@ -12,8 +12,6 @@ require "GameLib"
 local ResourceConversion = {}
 local kTickDuration = .25
 
-local knSaveVersion = 1
-
 function ResourceConversion:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -23,32 +21,6 @@ end
 
 function ResourceConversion:Init()
     Apollo.RegisterAddon(self)
-end
-
-function ResourceConversion:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function ResourceConversion:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function ResourceConversion:OnLoad()
@@ -74,7 +46,6 @@ end
 function ResourceConversion:OnCloseBtn() -- Also WindowClosed and "ResourceConversionClose"
 	Event_CancelConverting()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 end
@@ -91,17 +62,14 @@ end
 
 function ResourceConversion:OnResourceConversionOpen(unitVendor)
 	if self.wndMain then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ResourceConversionForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("ResourceConversion_Title")})
+	
 	self.wndMain:FindChild("VendorName"):SetText(unitVendor:GetName())
 	self.wndMain:SetData(unitVendor)
-	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 	
 	-- Get the conversions the vendor has available
 	local arVendorConversions = unitVendor:GetResourceConversions()
@@ -153,7 +121,14 @@ function ResourceConversion:OnResourceConversionOpen(unitVendor)
 				wndCurr:FindChild("SliderRight"):Enable(true)
 				wndCurr:FindChild("ConversionBlockerBlackFillIconContainer"):Show(false)
 				wndCurr:FindChild("ConversionBlockerBlackFill"):Show(false)
-				wndCurr:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_AvailToConvert"), tConversion.nAvailableCount, itemLeft:GetName()))
+				
+				local tItemCount =
+				{
+					["name"] = itemLeft:GetName(),
+					["count"] = tConversion.nAvailableCount,
+				}
+				
+				wndCurr:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_AvailToConvert"), tItemCount))
 				wndCurr:FindChild("ConversionItemResult"):SetText("")
 			else
 				wndCurr:FindChild("SliderLeft"):Enable(false)
@@ -344,8 +319,16 @@ function ResourceConversion:DisplayHelper(wndParent, nValue)
 		else
 			strRightItem = itemRight:GetName()
 		end
-		wndParent:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Converting"), nValue, tConversion.nAvailableCount, itemLeft:GetName()))
-		wndParent:FindChild("ConversionItemResult"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Result"), nValue * nRightInterval, strRightItem))
+		
+		local tItemCount =
+		{
+			["name"] = itemLeft:GetName(),
+			["count"] = nValue,
+		}
+		
+		wndParent:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Converting"), nValue, tConversion.nAvailableCount, tItemCount))
+		wndParent:FindChild("ConversionItemResult"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Result"), Apollo.FormatNumber(nValue * nRightInterval, 0, true), strRightItem))
+		
 	end
 	
 	wndParent:FindChild("MainSlider"):SetValue(nValue)

@@ -36,8 +36,6 @@ local ktCategories =  -- key is the enum for the category, v is the number used 
 	[GameLib.CodeEnumTutorialCategory.Classes]					= Apollo.GetString("Tutorials_Classes"),
 }
 
-local knSaveVersion = 1
-
 -----------------------------------------------------------------------------------------------
 -- Initialization
 -----------------------------------------------------------------------------------------------
@@ -54,32 +52,6 @@ end
 function TutorialMenu:Init()
     Apollo.RegisterAddon(self, true, Apollo.GetString("CRB_Tutorials"))
 end
- 
-function TutorialMenu:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function TutorialMenu:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
 
 -----------------------------------------------------------------------------------------------
 -- TutorialMenu OnLoad
@@ -93,10 +65,14 @@ function TutorialMenu:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 			"OnWindowManagementReady",	self)
+	Apollo.RegisterEventHandler("GenericEvent_OpenTutorialMenu",	"OnTutorialMenuOn",			self)
 
     -- Register handlers for events, slash commands and timer, etc.
     -- e.g. Apollo.RegisterEventHandler("KeyDown", "OnKeyDown", self)
-    Apollo.RegisterSlashCommand("Tutorials", "OnTutorialMenuOn", self)
+    Apollo.RegisterEventHandler("HideAllTutorials", "OnHideAllTutorials", self)
+	Apollo.RegisterSlashCommand("Tutorials", "OnTutorialMenuOn", self)
     Apollo.RegisterSlashCommand("tutorials", "OnTutorialMenuOn", self) 
  
     -- load our forms
@@ -120,6 +96,9 @@ function TutorialMenu:OnDocumentReady()
 	end
 end
 
+function TutorialMenu:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Tutorials")})
+end
 
 -----------------------------------------------------------------------------------------------
 -- TutorialMenu Functions
@@ -389,6 +368,10 @@ function TutorialMenu:OnEnableAllBtn(wndHandler, wndControl)
 end
 
 function TutorialMenu:OnHideAllBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("HideAllTutorials")
+end
+
+function TutorialMenu:OnHideAllTutorials()
 	local bSetting = false
 	for idx, entry in pairs(self.tCategoryBtns) do
 		local bCurrent = entry.wnd:FindChild("MiddleLevelViewBtn"):IsChecked()
@@ -446,7 +429,7 @@ function TutorialMenu:OnSearchTopLeftInputBoxChanged(wndHandler, wndControl)
 				end
 			end
 			
-			if bHaveCategory == false then
+			if bHaveCategory == false and ktCategories[entry.tutorialCategoryEnum] ~=  nil then--there exists tutorials, that have a category id that isn't an official current category, dont insert them in results
 				local tCat = {}
 				tCat.title = ktCategories[entry.tutorialCategoryEnum]
 				tCat.nCatEnum = entry.tutorialCategoryEnum

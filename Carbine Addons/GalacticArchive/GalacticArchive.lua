@@ -11,10 +11,16 @@ local GalacticArchive = {}
 
 local kclrDefault = "ff62aec1"
 
+local knHeaderHeightClosed = 0
+
 function GalacticArchive:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tArticleTitleCache = {}
+	o.tWindowCache = {}
+
     return o
 end
 
@@ -36,15 +42,19 @@ function GalacticArchive:OnDocumentReady()
 end
 
 function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
-	Apollo.RegisterEventHandler("GalacticArchiveArticleAdded", 	"OnGalacticArchiveArticleAdded", self)
-	Apollo.RegisterEventHandler("GalacticArchiveEntryAdded", 	"OnGalacticArchiveEntryAdded", self)
-	Apollo.RegisterEventHandler("GalacticArchiveRefresh", 		"OnGalacticArchiveRefresh", self)
+	Apollo.RegisterEventHandler("GalacticArchiveArticleAdded", 		"OnGalacticArchiveArticleAdded", self)
+	Apollo.RegisterEventHandler("GalacticArchiveEntryAdded", 		"OnGalacticArchiveEntryAdded", self)
+	Apollo.RegisterEventHandler("GalacticArchiveRefresh", 			"OnGalacticArchiveRefresh", self)
+	Apollo.RegisterEventHandler("GenericEvent_ShowGalacticArchive", "OnGenericEvent_ShowGalacticArchive", self)
 
 	self.wndArchiveIndexForm = 	Apollo.LoadForm(self.xmlDoc, "ArchiveIndex", wndParent, self)
 	self.wndArticleDisplay = 	Apollo.LoadForm(self.xmlDoc, "ArticleDisplay", nil, self)
 	self.wndHeaderContainer = 	self.wndArchiveIndexForm:FindChild("HeaderContainer")
 	self.wndFilterShowAll = 	self.wndArchiveIndexForm:FindChild("TopRowShowAllFilter")
 	self.wndFilterUpdated = 	self.wndArchiveIndexForm:FindChild("TopRowUpdatedFilter")
+	self.wndSearchFilter =		self.wndArchiveIndexForm:FindChild("SearchFilter")
+	self.wndEmptyLabel =		self.wndArchiveIndexForm:FindChild("EmptyLabel")
+	self.wndBGTitleText =		self.wndArchiveIndexForm:FindChild("BGTitleText")
 
 	self.tArticles = {}
 	self.artDisplayed = nil
@@ -54,8 +64,6 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 	--self.wndArchiveIndexForm:SetSizingMaximum(362, 1200)
 
 	-- My variables
-	self.tSkipHeaders = {}
-	self.tListOfLetters = {}
 	self.tWndTopFilters = {}
 	self.strCurrTypeFilter = ""
 
@@ -84,6 +92,16 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 		table.insert(self.tWndTopFilters, wndCurr)
 	end
 	self.wndArchiveIndexForm:FindChild("TypeFilterContainer"):ArrangeChildrenTiles()
+	
+	local wnd = Apollo.LoadForm(self.xmlDoc, "HeaderItem", nil, self)
+	knHeaderHeightClosed = wnd:GetHeight()
+	wnd:Destroy()
+end
+
+function GalacticArchive:OnGenericEvent_ShowGalacticArchive(artData)
+	if artData:GetCategories() ~= nil then
+		self:DisplayArticle(artData)
+	end
 end
 
 function GalacticArchive:OnToggleGalacticArchiveWindow(wndParent, wndMostTopLevel)
@@ -108,55 +126,48 @@ function GalacticArchive:OnToggleGalacticArchiveWindow(wndParent, wndMostTopLeve
 end
 
 function GalacticArchive:OnFilterShowAllSelect(wndHandler, wndControl)
-	if wndHandler and wndHandler:GetData() then
-		self.strCurrTypeFilter = wndHandler:GetData()
+	if self.strCurrTypeFilter == Apollo.GetString("Archive_ShowAll") then
+		return
 	end
-	self:PopulateArchiveIndex()
+	
+	self.strCurrTypeFilter = Apollo.GetString("Archive_ShowAll")
+	self:FilterArchiveIndex()
 end
 
 function GalacticArchive:OnFilterTypeSelect(wndHandler, wndControl)
-	if wndHandler and wndHandler:GetData() then
-		self.strCurrTypeFilter = wndHandler:GetData()
+	local strFilter = wndHandler:GetData()
+	if self.strCurrTypeFilter == strFilter then
+		return
 	end
-
-	wndHandler:SetCheck(true)
-
+	self.strCurrTypeFilter = strFilter
 	self.wndFilterShowAll:SetCheck(false)
-	self:PopulateArchiveIndex()
-
-
+	self:FilterArchiveIndex()
 end
 
 function GalacticArchive:OnFilterTypeUnselect(wndHandler, wndControl)
-	-- All filters have this, including Recently Updated, except "Show All" (which can't deselect)
 	for idx, wndCurr in ipairs(self.tWndTopFilters) do
-		if wndCurr then
-			wndCurr:FindChild("FilterTypeBtn"):SetCheck(false)
+		if wndCurr and wndCurr:FindChild("FilterTypeBtn"):IsChecked() then
+			return -- Another filter was selected and their select event will take care of everything
 		end
 	end
 
-	wndHandler:SetCheck(false)
-
 	self.strCurrTypeFilter = Apollo.GetString("Archive_ShowAll")
 	self.wndFilterShowAll:SetCheck(true)
-	self:PopulateArchiveIndex()
+	self:FilterArchiveIndex()
 end
 
 function GalacticArchive:OnNameFilterChanged()
-	self:PopulateArchiveIndex()
+	self:FilterArchiveIndex()
 end
 
 function GalacticArchive:OnHeaderBtnItemClick(wndHandler, wndControl)
 	if wndHandler and wndHandler:GetData() then
 		local strLetter = wndHandler:GetData():lower()
-		if self.tSkipHeaders[strLetter] == nil or self.tSkipHeaders[strLetter] == false then
-			self.tSkipHeaders[strLetter] = true
-		else
-			self.tSkipHeaders[strLetter] = false
-		end
-
 		local nScrollPos = self.wndHeaderContainer:GetVScrollPos()
-		self:PopulateArchiveIndex()
+		
+		self:FormatHeaderDisplay(wndControl:GetParent())
+		
+		self.wndHeaderContainer:ArrangeChildrenVert()
 		self.wndHeaderContainer:SetVScrollPos(nScrollPos)
 	end
 
@@ -166,11 +177,8 @@ end
 -----------------------------------------------------------------------------------------------
 -- ArchiveIndex Functions
 -----------------------------------------------------------------------------------------------
-
--- Static
-function GalacticArchive:BuildArchiveList()
-	-- If nil, we will skip this filter later on
-	local strNameChoice = self.wndArchiveIndexForm:FindChild("SearchFilter"):GetText()
+function GalacticArchive:HelperShouldShowArticle(artCurr)
+	local strNameChoice = self.wndSearchFilter:GetText()
     if strNameChoice == "" then
 		strNameChoice = nil
 	end
@@ -180,34 +188,22 @@ function GalacticArchive:BuildArchiveList()
 		strCatChoice = nil
 	end
 
-    self.tArticles = GalacticArchiveArticle.GetArticles()
-	local tResult = {}
-    for idx, artCurr in ipairs(self.tArticles) do
-		local strTitle = self:GetTitleMinusThe(artCurr)
-		local bPass = true
+	local strTitle = self:GetTitleMinusThe(artCurr)
+	if strCatChoice and strCatChoice ~= Apollo.GetString("Archive_ShowAll") and strCatChoice ~= Apollo.GetString("Archive_Updated") and not artCurr:GetCategories()[strCatChoice] then
+		return false
+	elseif strCatChoice and strCatChoice == Apollo.GetString("Archive_Updated") and not self:HelperIsNew(artCurr) then
+		return false
+	end
 
-		if strCatChoice and strCatChoice ~= Apollo.GetString("Archive_ShowAll") and strCatChoice ~= Apollo.GetString("Archive_Updated") and not artCurr:GetCategories()[strCatChoice] then
-			bPass = false
-		elseif strCatChoice and strCatChoice == Apollo.GetString("Archive_Updated") and not self:HelperIsNew(artCurr) then
-			bPass = false
+	-- Find the first character of a word or an exact match from the start
+	if strNameChoice then
+		local strNameChoiceLower = strNameChoice:lower()
+		if not (strTitle:lower():find(" "..strNameChoiceLower, 1, true) or string.sub(strTitle, 0, string.len(strNameChoice)):lower() == strNameChoiceLower) then
+			return false
 		end
+	end
 
-		-- Find the first character of a word or an exact match from the start
-		if bPass and strNameChoice then
-			local strNameChoiceLower = strNameChoice:lower()
-			if not (strTitle:lower():find(" "..strNameChoiceLower) or string.sub(strTitle, 0, string.len(strNameChoice)):lower() == strNameChoiceLower) then
-				bPass = false
-			end
-		end
-
-		if bPass then
-			table.insert(tResult, artCurr)
-		end
-    end
-
-	-- Sort alphabetically
-	table.sort(tResult, function (a,b) return (self:GetTitleMinusThe(a) < self:GetTitleMinusThe(b)) end)
-	return tResult
+	return true
 end
 
 function GalacticArchive:OnHeaderBtnMouseEnter(wndHandler, wndControl)
@@ -220,9 +216,9 @@ end
 
 function GalacticArchive:OnEmptyLabelBtn(wndHandler, wndControl)
 	-- Simulate clicking "Show All" and clear search
-	self.wndArchiveIndexForm:FindChild("SearchFilter"):SetText("")
-	self.wndArchiveIndexForm:FindChild("SearchFilter"):Enable(false)
-	self.wndArchiveIndexForm:FindChild("SearchFilter"):Enable(true) -- HACK: Deselect the search box
+	self.wndSearchFilter:SetText("")
+	self.wndSearchFilter:Enable(false)
+	self.wndSearchFilter:Enable(true) -- HACK: Deselect the search box
 	for key, wndCurr in pairs(self.wndArchiveIndexForm:FindChild("TypeFilterContainer"):GetChildren()) do
 		wndCurr:FindChild("FilterTypeBtn"):SetCheck(false)
 	end
@@ -236,36 +232,118 @@ function GalacticArchive:PopulateArchiveIndex()
 	if not self.wndArchiveIndexForm or not self.wndArchiveIndexForm:IsValid() then
 		return
 	end
-
-	self.wndHeaderContainer:DestroyChildren()
-	self.tListOfLetters = {}
-
-	local tArticlesToAdd = self:BuildArchiveList()
+	
+	local tArticlesToAdd = GalacticArchiveArticle.GetArticles()
+	
+	local nNumOfNewArticles = 0
 	for idx, artCurr in ipairs(tArticlesToAdd) do
 		self:BuildAHeader(artCurr)
-	end
-
-	-- Count number of new articles
-	local nNumOfNewArticles = 0
-	for idx, artCurr in ipairs(GalacticArchiveArticle.GetArticles()) do --for nIdx, article in ipairs(tArticlesToAdd) do
+		
 		if self:HelperIsNew(artCurr) then
 			nNumOfNewArticles = nNumOfNewArticles + 1
 		end
 	end
 
-	-- Empty Label and etc. formatting
-	self.wndArchiveIndexForm:FindChild("EmptyLabel"):Show(#self.wndHeaderContainer:GetChildren() == 0)
-	self.wndArchiveIndexForm:FindChild("EmptyLabel"):SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
-	self.wndArchiveIndexForm:FindChild("BGTitleText"):SetText(String_GetWeaselString(Apollo.GetString("Archive_TitleWithFilter"), self.strCurrTypeFilter))
-
 	if nNumOfNewArticles == 0 then
-
 		self.wndFilterUpdated:SetText(Apollo.GetString("Archive_UpdatedArticles"))
 	else
 		self.wndFilterUpdated:SetText(String_GetWeaselString(Apollo.GetString("Archive_UpdatedArticlesNumber"), nNumOfNewArticles))
 	end
 
-	self.wndHeaderContainer:ArrangeChildrenVert()
+	local nHeight = self.wndHeaderContainer:ArrangeChildrenVert(0, function (a,b)
+		return a:GetData() < b:GetData()
+	end)
+	
+	for idx, wndHeader in pairs(self.wndHeaderContainer:GetChildren()) do
+		wndHeader:FindChild("HeaderItemContainer"):ArrangeChildrenVert(0, function (a,b)
+			return (self:GetTitleMinusThe(a:GetData()) < self:GetTitleMinusThe(b:GetData()))
+		end)
+	end
+	
+	-- Empty Label and etc. formatting
+	local bShowEmpty = nHeight == 0
+	if bShowEmpty ~= self.wndEmptyLabel:IsShown() then
+		self.wndEmptyLabel:Show(bShowEmpty)
+		
+		if bShowEmpty then
+			self.wndEmptyLabel:SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
+			self.wndBGTitleText:SetText(String_GetWeaselString(Apollo.GetString("Archive_TitleWithFilter"), self.strCurrTypeFilter))
+		end
+	end
+	
+end
+
+function GalacticArchive:FilterArchiveIndex()
+	local nNumOfNewArticles = 0
+	local tArticlesToAdd = GalacticArchiveArticle.GetArticles()
+	for idx, artCurr in ipairs(tArticlesToAdd) do
+		
+		local strLetter = string.sub(self:GetTitleMinusThe(artCurr), 0, 1):lower()
+		if strLetter == nil or strLetter == "" then
+			strLetter = Apollo.GetString("Archive_Unspecified")
+		end
+		
+		local wndHeader = self.tWindowCache[strLetter]
+		for idx, wndArticle in pairs(wndHeader:FindChild("HeaderItemContainer"):GetChildren()) do
+			local artData = wndArticle:GetData()
+			local bShow = self:HelperShouldShowArticle(artData)
+			if bShow ~= wndArticle:IsShown() then
+				wndArticle:Show(bShow)
+			end
+		end
+		
+		self:FormatHeaderDisplay(wndHeader)
+		
+		if self:HelperIsNew(artCurr) then
+			nNumOfNewArticles = nNumOfNewArticles + 1
+		end
+	end
+
+	if nNumOfNewArticles == 0 then
+		self.wndFilterUpdated:SetText(Apollo.GetString("Archive_UpdatedArticles"))
+	else
+		self.wndFilterUpdated:SetText(String_GetWeaselString(Apollo.GetString("Archive_UpdatedArticlesNumber"), nNumOfNewArticles))
+	end
+	
+	
+	local nHeight = self.wndHeaderContainer:ArrangeChildrenVert(0)
+	
+	-- Empty Label and etc. formatting
+	local bShowEmpty = nHeight == 0
+	if bShowEmpty ~= self.wndEmptyLabel:IsShown() then
+		self.wndEmptyLabel:Show(bShowEmpty)
+		
+		if bShowEmpty then
+			self.wndEmptyLabel:SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
+			self.wndBGTitleText:SetText(String_GetWeaselString(Apollo.GetString("Archive_TitleWithFilter"), self.strCurrTypeFilter))
+		end
+	end
+end
+
+function GalacticArchive:FormatHeaderDisplay(wndHeader)
+	local wndHeaderItemContainer = wndHeader:FindChild("HeaderItemContainer")
+	local nChildrenHeight = wndHeaderItemContainer:ArrangeChildrenVert(0)
+	local bShow = nChildrenHeight > 0
+	if bShow ~= wndHeader:IsShown() then
+		wndHeader:Show(bShow)
+	end
+	
+	if bShow then
+		local wndHeaderItemContainer = wndHeader:FindChild("HeaderItemContainer")
+		local bIsChecked = wndHeader:FindChild("HeaderBtn"):IsChecked()
+		if bIsChecked ~= wndHeaderItemContainer:IsShown() then
+			wndHeaderItemContainer:Show(bIsChecked)
+		end
+		
+		-- Load children
+		if bIsChecked then
+			local nLeft, nTop, nRight, nBottom = wndHeader:GetAnchorOffsets()
+			wndHeader:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nChildrenHeight + 63)
+		else
+			local nLeft, nTop, nRight, nBottom = wndHeader:GetAnchorOffsets()
+			wndHeader:SetAnchorOffsets(nLeft, nTop, nRight, nTop + knHeaderHeightClosed)
+		end
+	end
 end
 
 function GalacticArchive:BuildAHeader(artBuilding)
@@ -274,50 +352,34 @@ function GalacticArchive:BuildAHeader(artBuilding)
 		strLetter = Apollo.GetString("Archive_Unspecified")
 	end
 
-	-- Draw the header (try to find it via FindChild and our List before making a new one)
-	-- Try to find it first
-	local wndHeader = self.wndHeaderContainer:FindChildByUserData(strLetter:lower())
-	for strIdxLetter, wndCurr in pairs(self.tListOfLetters) do	-- GOTCHA: This is necessary incase FindChild's target doesn't update quick enough
-		if strIdxLetter:lower() == strLetter and wndCurr ~= nil then
-			wndHeader = wndCurr
-		end
-	end
-
-	if wndHeader == nil then
-		wndHeader = Apollo.LoadForm(self.xmlDoc, "HeaderItem", self.wndHeaderContainer, self)
-	end
-
+	local bIsNew = self.tWindowCache[strLetter:lower()] == nil
+	local wndHeader = self:FactoryCacheProduce(self.wndHeaderContainer, "HeaderItem", strLetter:lower())
 	wndHeader:SetData(strLetter)
+	if bIsNew then
+		wndHeader:FindChild("HeaderBtn"):SetCheck(true)
+	end
+	
+	local wndHeader = self:FactoryCacheProduce(self.wndHeaderContainer, "HeaderItem", strLetter:lower())
+	self:AddArticleToIndex(artBuilding, wndHeader:FindChild("HeaderItemContainer"))
+	
 	wndHeader:FindChild("HeaderBtn"):SetData(strLetter) -- Used by OnHeaderBtnItemClick
 	wndHeader:FindChild("HeaderBtnText"):SetText(strLetter:upper()) -- Add children in a separate method since we need FindChild detection
-	self.tListOfLetters[strLetter] = wndHeader
-
-	-- Load children
-	if self.tSkipHeaders[strLetter] == nil or self.tSkipHeaders[strLetter] == false then
-		wndHeader:FindChild("HeaderBtn"):SetCheck(true)
-		self:AddArticleToIndex(artBuilding, wndHeader:FindChild("HeaderItemContainer"))
-
-		local nLeft, nTop, nRight, nBottom = wndHeader:GetAnchorOffsets()
-		wndHeader:SetAnchorOffsets(nLeft, nTop, nRight, nTop + wndHeader:FindChild("HeaderItemContainer"):ArrangeChildrenVert(0) + 63)
-	else
-		wndHeader:FindChild("HeaderBtn"):SetCheck(false)
-		--local nLeft, nTop, nRight, nBottom = wndHeader:GetAnchorOffsets()
-		--wndHeader:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 44)
-	end
+	
+	self:FormatHeaderDisplay(wndHeader)
 end
 
 -----------------------------------------------------------------------------------------------
 -- Add Article
 -----------------------------------------------------------------------------------------------
-
 function GalacticArchive:AddArticleToIndex(artData, wndParent)
-	local wndArticle = wndParent:FindChildByUserData(artData)
-	if wndArticle then
-		return
+	local wndArticle = self:FactoryCacheProduce(wndParent, "ArchiveIndexItem", artData:GetTitle())
+	wndArticle:SetData(artData)
+	
+	local bShow = self:HelperShouldShowArticle(artData)
+	if bShow ~= wndArticle:IsShown() then
+		wndArticle:Show(bShow)
 	end
-
-	wndArticle = Apollo.LoadForm(self.xmlDoc, "ArchiveIndexItem", wndParent, self)
-
+	
 	local nLockCount = 0
 	local nEntryCount = 1 -- Base article will artificially count
 	for idx, entCurr in ipairs(artData:GetEntries()) do
@@ -340,7 +402,7 @@ function GalacticArchive:AddArticleToIndex(artData, wndParent)
 	wndArticle:FindChild("ArticleIcon"):Show(not bHasCostume)
 	wndArticle:FindChild("ArticlePortrait"):Show(bHasCostume)
 
-	wndArticle:SetData(artData)
+	
 	wndArticle:FindChild("ArticleProgress"):SetMax(nMaxCount)
 	wndArticle:FindChild("ArticleProgress"):SetProgress(nEntryCount)
 	wndArticle:FindChild("ArticleProgressText"):SetText(nEntryCount == nMaxCount and "" or String_GetWeaselString(Apollo.GetString("Archive_UnlockedCount"), nEntryCount, nMaxCount))
@@ -356,6 +418,7 @@ function GalacticArchive:HelperIsNew(artCurr)
 		for idx, entCurr in ipairs(artCurr:GetEntries()) do
 			if entCurr:IsUnlocked() and not entCurr:IsViewed() then
 				bIsNew = true
+				break
 			end
 		end
 	elseif artCurr then
@@ -487,8 +550,8 @@ function GalacticArchive:DisplayArticle(artDisplay)
 	self.artDisplayed = artDisplay
 	artDisplay:SetViewed()
 
-	self.wndArchiveIndexForm:FindChild("SearchFilter"):Enable(false)
-	self.wndArchiveIndexForm:FindChild("SearchFilter"):Enable(true) -- HACK: Deselect the search box
+	self.wndSearchFilter:Enable(false)
+	self.wndSearchFilter:Enable(true) -- HACK: Deselect the search box
 
 	-- Top
 	local wndArticle = self.wndArticleDisplay
@@ -515,6 +578,7 @@ function GalacticArchive:DisplayArticle(artDisplay)
 	end
 	wndArticle:FindChild("ArticleDisplayIcon"):Show(not bHasCostume)
 	wndArticle:FindChild("ArticleDisplayCostumeWindow"):Show(bHasCostume)
+	wndArticle:FindChild("ChatLinker"):SetData(artDisplay)
 	-- End Top
 
 	wndArticle:FindChild("ArticleScientistOnlyIcon"):Show(false)
@@ -543,11 +607,8 @@ function GalacticArchive:DisplayArticle(artDisplay)
 	wndArticle:FindChild("TitleProgressBar"):EnableGlow(nEntryCount > 0)
 
 	local tCompletionTitle = artDisplay:GetCompletionTitle()
-	local bFemale = GameLib.GetPlayerUnit() and GameLib.GetPlayerUnit():GetGender() and GameLib.GetPlayerUnit():GetGender() == Unit.CodeEnumGender.Female
-	if tCompletionTitle and bFemale then
-		wndArticle:FindChild("TitleEarned"):SetText(tCompletionTitle:GetFemaleTitle())
-	elseif artDisplay:GetCompletionTitle() then
-		wndArticle:FindChild("TitleEarned"):SetText(tCompletionTitle:GetMaleTitle())
+	if tCompletionTitle or artDisplay:GetCompletionTitle() then
+		wndArticle:FindChild("TitleEarned"):SetText(tCompletionTitle:GetTitle())
 	end
 
 	if artDisplay:GetCompletionTitle() and artDisplay:GetCompletionTitle():GetSpell() then
@@ -624,15 +685,19 @@ function GalacticArchive:OnBack()
 	if not self.artDisplayed then
 		return
 	end
-
-	local nScrollPos = self.wndHeaderContainer:GetVScrollPos()
-	self:PopulateArchiveIndex()
-	self.wndHeaderContainer:SetVScrollPos(nScrollPos)
-
+	
 	self.artDisplayed = nil
+	
+	self:FilterArchiveIndex()
 
 	self.wndArchiveIndexForm:Show(true)
 	self.wndArticleDisplay:Show(false)
+end
+
+function GalacticArchive:OnArticleTitleClick(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and Apollo.IsShiftKeyDown() then
+		Event_FireGenericEvent("GenericEvent_ArchiveArticleLink", wndControl:GetData())
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -644,11 +709,38 @@ function GalacticArchive:ReplaceLineBreaks(strArg)
 end
 
 function GalacticArchive:GetTitleMinusThe(artTitled)
-	if string.sub(artTitled:GetTitle(), 0, 4) == Apollo.GetString("Archive_DefiniteArticle") then
-		return string.sub(artTitled:GetTitle(), 5)
-	else
-		return artTitled:GetTitle()
+	local strTitle = artTitled:GetTitle()
+	if self.tArticleTitleCache[strTitle] == nil then
+		local strDefine = Apollo.GetString("Archive_DefiniteArticle")
+		local nDefineLength = string.len(strDefine)
+		
+		if string.sub(artTitled:GetTitle(), 0, nDefineLength) == strDefine then
+			self.tArticleTitleCache[strTitle] = string.sub(artTitled:GetTitle(), nDefineLength+1)
+		else
+			self.tArticleTitleCache[strTitle] = strTitle
+		end
 	end
+	
+	return self.tArticleTitleCache[strTitle]
+end
+
+-----------------------------------------------------------------------------------------------
+-- Window Factory
+-----------------------------------------------------------------------------------------------
+
+function GalacticArchive:FactoryCacheProduce(wndParent, strFormName, strKey)
+	local wnd = self.tWindowCache[strKey]
+	if not wnd or not wnd:IsValid() then
+		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
+		self.tWindowCache[strKey] = wnd
+
+		for strKey, wndCached in pairs(self.tWindowCache) do
+			if not self.tWindowCache[strKey]:IsValid() then
+				self.tWindowCache[strKey] = nil
+			end
+		end
+	end
+	return wnd
 end
 
 local GalacticArchiveInst = GalacticArchive:new()

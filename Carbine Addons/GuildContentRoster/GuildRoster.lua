@@ -277,8 +277,8 @@ function GuildRoster:OnRemoveRankBtnSignal(wndHandler, wndControl)
 	wndSettings:Show(true)
 	wndSettings:SetData(tRank)
 	wndSettings:FindChild("OptionString"):SetText(tRank.tRankInfo.strName)
-	wndSettings:FindChild("RankPopoutOkBtn"):Enable(tMyRankPermissions.bChangeRankPermissions)
-	wndSettings:FindChild("RankSettingsNameBlocker"):Show(not tMyRankPermissions.bChangeRankPermissions)
+	wndSettings:FindChild("RankPopoutOkBtn"):Enable(tMyRankPermissions.bChangeRankPermissions or tMyRankPermissions.bRankRename)
+	wndSettings:FindChild("RankSettingsNameBlocker"):Show(not tMyRankPermissions.bRankRename)
 	wndSettings:FindChild("PermissionContainerBlocker"):Show(not tMyRankPermissions.bChangeRankPermissions)
 
 	local wndPermissionContainer = self.wndMain:FindChild("PermissionContainer")
@@ -401,7 +401,7 @@ function GuildRoster:OnRankSettingsCloseBtn(wndControl, wndHandler)
 end
 
 function GuildRoster:OnGuildRankChange(guildCurr)
-	if guildCurr ~= self.wndMain:GetData() then
+	if not self.wndMain or guildCurr ~= self.wndMain:GetData() then
 		return
 	end
 	self:FullRedrawOfRoster()

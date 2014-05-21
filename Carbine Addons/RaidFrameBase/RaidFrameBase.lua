@@ -129,7 +129,7 @@ function RaidFrameBase:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-	
+
 	o.arWindowMap = {}
 	o.arMemberIndexToWindow = {}
 	o.nDirtyFlag = 0
@@ -228,7 +228,7 @@ function RaidFrameBase:OnDocumentReady()
 	self.wndRaidMasterLootBtn = self.wndMain:FindChild("RaidMasterLootBtn")
 	self.wndGroupBagBtn = self.wndMain:FindChild("GroupBagBtn")
 	self.wndRaidLockFrameBtn = self.wndMain:FindChild("RaidLockFrameBtn")
-	
+
 	local wndRaidOptions = self.wndMain:FindChild("RaidOptions:SelfConfigRaidCustomizeOptions")
 	self.wndRaidCustomizeClassIcons = wndRaidOptions:FindChild("RaidCustomizeClassIcons")
 	self.wndRaidCustomizeShowNames = wndRaidOptions:FindChild("RaidCustomizeShowNames")
@@ -253,7 +253,7 @@ function RaidFrameBase:OnDocumentReady()
 	self.wndRaidCustomizeRowSizeSub:Enable(false) -- as self.nRowSize == 1 at default
 	self.wndRaidCustomizeNumColSub:Enable(false) -- as self.nNumColumns == 1 at default
 	self.wndMain:Show(false)
-	
+
 	self.nRowSize					= 1
 	self.nNumColumns 				= 1
 	self.kstrMyName 				= ""
@@ -272,14 +272,14 @@ function RaidFrameBase:OnDocumentReady()
 	else
 		self.wndReadyCheckPopup 	= nil
 	end
-	
+
 	self.bSwapToTwoColsOnce 		= false
 	self.bTimerRunning 				= false
 	self.nNumReadyCheckResponses 	= -1 -- -1 means no check, 0 and higher means there is a check
 	self.nPrevMemberCount			= 0
 
 	self:UpdateOffsets()
-	
+
 	local wndMeasure = Apollo.LoadForm(self.xmlDoc, "RaidCategory", nil, self)
 	self.knWndCategoryHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
@@ -297,7 +297,7 @@ function RaidFrameBase:OnCharacterCreated()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	self.kstrMyName = unitPlayer:GetName()
 	self.unitTarget = GameLib.GetTargetUnit()
-	
+
 	self:BuildAllFrames()
 	self:ResizeAllFrames()
 end
@@ -309,7 +309,7 @@ function RaidFrameBase:OnRaidFrameBaseTimer()
 		end
 		return
 	end
-	
+
 	if not self.wndMain:IsShown() then
 		self:OnMasterLootUpdate()
 		self.wndMain:Show(true)
@@ -325,11 +325,11 @@ function RaidFrameBase:OnRaidFrameBaseTimer()
 		else -- Fast update all members
 			self:UpdateAllMembers()
 		end
-		
+
 		if bit32.btest(self.nDirtyFlag, knDirtyLootRules) then
 			self:UpdateLootRules()
 		end
-		
+
 		if bit32.btest(self.nDirtyFlag, knDirtyResize) then
 			self:ResizeAllFrames()
 			if self.nNumColumns then -- This is terrible
@@ -339,7 +339,7 @@ function RaidFrameBase:OnRaidFrameBaseTimer()
 	else -- Fast update all members
 		self:UpdateAllMembers()
 	end
-	
+
 	self.nDirtyFlag = knDirtyNone
 end
 
@@ -359,7 +359,7 @@ end
 
 function RaidFrameBase:OnGroup_Remove()
 	if not GroupLib.InRaid() then return end
-	
+
 	self:DestroyMemberWindows(self.nPrevMemberCount)
 	self.nPrevMemberCount = self.nPrevMemberCount - 1
 
@@ -371,7 +371,7 @@ function RaidFrameBase:OnGroup_Left()
 
 	self:DestroyMemberWindows(self.nPrevMemberCount)
 	self.nPrevMemberCount = self.nPrevMemberCount - 1
-	
+
 	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers, knDirtyResize)
 end
 
@@ -446,7 +446,7 @@ function RaidFrameBase:BuildAllFrames()
 		local wndRaidCategoryBtn = tCategory.wndRaidCategoryBtn
 		local wndRaidCategoryName = tCategory.wndRaidCategoryName
 		local wndRaidCategoryItems = tCategory.wndRaidCategoryItems
-		
+
 		wndRaidCategoryBtn:Show(not self.wndRaidLockFrameBtn:IsChecked())
 		if wndRaidCategoryName:GetText() == "" then
 			wndRaidCategoryName:SetText(" " .. strCurrCategory)
@@ -508,9 +508,9 @@ function RaidFrameBase:UpdateAllMembers()
 	local unitTarget = GameLib.GetTargetUnit()
 	for idx, tRaidMember in pairs(self.arMemberIndexToWindow) do
 		local wndMemberBtn = tRaidMember.wndRaidMemberBtn
-	
+
 		local tMemberData = GroupLib.GetGroupMember(idx)
-	
+
 		-- HP and Shields
 		local unitCurr = GroupLib.GetUnitForGroupMember(idx)
 		if unitCurr then
@@ -518,22 +518,22 @@ function RaidFrameBase:UpdateAllMembers()
 			wndMemberBtn:SetCheck(bTargetThisMember)
 			tRaidMember.wndRaidTearOffBtn:Show(bTargetThisMember and not bFrameLocked and not self.tTearOffMemberIDs[nCodeIdx])
 			self:DoHPAndShieldResizing(tRaidMember, unitCurr)
-	
+			
 			-- Mana Bar
 			local bShowManaBar = self.wndRaidCustomizeManaBar:IsChecked()
-			if bShowManaBar and tMemberData.nManaMax and tMemberData.nManaMax > 0 then
-				local wndManaBar = self:LoadByName("RaidMemberManaBar", wndMemberBtn, "RaidMemberManaBar")
+			local wndManaBar = wndMemberBtn:FindChild("RaidMemberManaBar")
+			if bShowManaBar and tMemberData.nManaMax and tMemberData.nManaMax > 0 then			
 				wndManaBar:SetMax(tMemberData.nManaMax)
-				wndManaBar:SetProgress(tMemberData.nMana)
-				wndManaBar:Show(tMemberData.bIsOnline and not bDead and not bOutOfRange and unitCurr:GetHealth() > 0 and unitCurr:GetMaxHealth() > 0)
+				wndManaBar:SetProgress(tMemberData.nMana)			
 			end
+			wndManaBar:Show(bShowManaBar and tMemberData.bIsOnline and not bDead and not bOutOfRange and unitCurr:GetHealth() > 0 and unitCurr:GetMaxHealth() > 0)			
 		end
-		
+
 		if not tMemberData.bIsOnline or tMemberData.nHealthMax == 0 or tMemberData.nHealth == 0 then
 			nInvalidOrDeadMembers = nInvalidOrDeadMembers + 1
 		end
 	end
-	
+
 	self.wndRaidTitle:SetText(String_GetWeaselString(Apollo.GetString("RaidFrame_MemberCount"), nGroupMemberCount - nInvalidOrDeadMembers, nGroupMemberCount))
 end
 
@@ -543,7 +543,7 @@ end
 
 function RaidFrameBase:UpdateOffsets()
 	self.nRaidMemberWidth = (self.wndMain:GetWidth() - 22) / self.nNumColumns
-	
+
 	-- Calculate this outside the loop, as its the same for entry (TODO REFACTOR)
 	self.nLeftOffsetStartValue = 0
 	if self.wndRaidCustomizeClassIcons:IsChecked() then
@@ -565,7 +565,7 @@ function RaidFrameBase:ResizeAllFrames()
 		for key2, wndRaidMember in pairs(wndRaidCategoryItems:GetChildren()) do
 			self:ResizeMemberFrame(wndRaidMember)
 		end
-		
+
 		wndRaidCategoryItems:ArrangeChildrenTiles(0, kfnSortCategoryMembers)
 		nLeft, nTop, nRight, nBottom = wndCategory:GetAnchorOffsets()
 		local nChildrenHeight = 0
@@ -762,14 +762,14 @@ function RaidFrameBase:UpdateSpecificMember(tRaidMember, nCodeIdx, tMemberData, 
 
 		-- Mana Bar
 		local bShowManaBar = self.wndRaidCustomizeManaBar:IsChecked()
-		if bShowManaBar and tMemberData.nManaMax and tMemberData.nManaMax > 0 then
-			local wndManaBar = self:LoadByName("RaidMemberManaBar", wndMemberBtn, "RaidMemberManaBar")
+		local wndManaBar = wndMemberBtn:FindChild("RaidMemberManaBar")
+		if bShowManaBar and tMemberData.nManaMax and tMemberData.nManaMax > 0 then			
 			wndManaBar:SetMax(tMemberData.nManaMax)
-			wndManaBar:SetProgress(tMemberData.nMana)
-			wndManaBar:Show(tMemberData.bIsOnline and not bDead and not bOutOfRange and unitCurr:GetHealth() > 0 and unitCurr:GetMaxHealth() > 0)
+			wndManaBar:SetProgress(tMemberData.nMana)			
 		end
+		wndManaBar:Show(bShowManaBar and tMemberData.bIsOnline and not bDead and not bOutOfRange and unitCurr:GetHealth() > 0 and unitCurr:GetMaxHealth() > 0)
 	end
-	
+
 	self:ResizeMemberFrame(wndRaidMember)
 end
 
@@ -778,25 +778,25 @@ function RaidFrameBase:OnTargetUnitChanged(unitOwner)
 	self.unitTarget = unitOwner
 
 	if not GroupLib.InRaid() then return end
-	
+
 	local nGroupMemberCount = GroupLib.GetMemberCount()
 	for nMemberIdx=0,nGroupMemberCount do
 		if unitOldTarget ~= nil and unitOldTarget == GroupLib.GetUnitForGroupMember(nMemberIdx) then
 			local tRaidMember = self.arMemberIndexToWindow[nMemberIdx]
 			local tMemberData = GroupLib.GetGroupMember(nMemberIdx)
 			self:UpdateSpecificMember(tRaidMember, nMemberIdx, tMemberData, nGroupMemberCount)
-			
+
 			if self.unitTarget == nil then break end
 		end
 		if self.unitTarget ~= nil and self.unitTarget == GroupLib.GetUnitForGroupMember(nMemberIdx) then
 			local tRaidMember = self.arMemberIndexToWindow[nMemberIdx]
 			local tMemberData = GroupLib.GetGroupMember(nMemberIdx)
 			self:UpdateSpecificMember(tRaidMember, nMemberIdx, tMemberData, nGroupMemberCount)
-			
+
 			if unitOldTarget == nil then break end
 		end
 	end
-	
+
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1132,7 +1132,7 @@ function RaidFrameBase:DoHPAndShieldResizing(tRaidMember, unitPlayer)
 	end
 
 	local wndMemberBtn = tRaidMember.wndRaidMemberBtn
-	
+
 	local nHealthCurr = unitPlayer:GetHealth()
 	local nHealthMax = unitPlayer:GetMaxHealth()
 	local nShieldCurr = unitPlayer:GetShieldCapacity()
@@ -1209,7 +1209,7 @@ function RaidFrameBase:FactoryMemberWindow(wndParent, strKey)
 	if tbl == nil or not tbl.wnd:IsValid() then
 		local wndNew = Apollo.LoadForm(self.xmlDoc, "RaidMember", wndParent, self)
 		wndNew:SetName(strKey)
-		
+
 		tbl =
 		{
 			["strKey"] = strKey,
@@ -1233,16 +1233,16 @@ function RaidFrameBase:FactoryMemberWindow(wndParent, strKey)
 		}
 		wndNew:SetData(tbl)
 		self.cache[strKey] = tbl
-		
+
 		for strCacheKey, wndCached in pairs(self.cache) do
 			if not self.cache[strCacheKey].wnd:IsValid() then
 				self.cache[strCacheKey] = nil
 			end
 		end
-		
+
 		self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyResize)
 	end
-	
+
 	return tbl
 end
 
@@ -1255,7 +1255,7 @@ function RaidFrameBase:FactoryCategoryWindow(wndParent, strKey)
 	if tbl == nil or not tbl.wnd:IsValid() then
 		local wndNew = Apollo.LoadForm(self.xmlDoc, "RaidCategory", wndParent, self)
 		wndNew:SetName(strKey)
-		
+
 		tbl =
 		{
 			wnd = wndNew,
@@ -1265,34 +1265,17 @@ function RaidFrameBase:FactoryCategoryWindow(wndParent, strKey)
 		}
 		wndNew:SetData(tbl)
 		self.cache[strKey] = tbl
-		
+
 		for strCacheKey, wndCached in pairs(self.cache) do
 			if not self.cache[strCacheKey].wnd:IsValid() then
 				self.cache[strCacheKey] = nil
 			end
 		end
-		
+
 		self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyResize)
 	end
-	
-	return tbl
-end
 
-function RaidFrameBase:LoadByName(strFormName, wndParent, strKey)
-	local wnd = self.arWindowMap[strKey]
-	if wnd == nil or not wnd:IsValid() then
-		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
-		wnd:SetName(strKey)
-		self.arWindowMap[strKey] = wnd
-		
-		for strKey, wndCached in pairs(self.arWindowMap) do
-			if not self.arWindowMap[strKey]:IsValid() then
-				self.arWindowMap[strKey] = nil
-			end
-		end
-	end
-	
-	return wnd
+	return tbl
 end
 
 ---------------------------------------------------------------------------------------------------

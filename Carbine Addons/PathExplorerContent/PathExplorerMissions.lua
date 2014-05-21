@@ -460,7 +460,7 @@ function PathExplorerMissions:PositionPowerMapRangeFinder(wndPowerMapRangeFinder
 	posPlayer = GameLib.GetPlayerUnit():GetPosition()
 	local nDistance = math.floor(math.sqrt(math.pow((posTarget.x - posPlayer.x), 2) + math.pow((posTarget.y - posPlayer.y), 2) + math.pow((posTarget.z - posPlayer.z), 2)))
 	wndPowerMapRangeFinder:FindChild("RangeFinderText"):SetText(string.format("%s m", nDistance))
-	self.wndMain:FindChild("PowerMapContainer"):FindChild("PowerMapRangeText"):SetText(string.format("%sm", nDistance))
+	self.wndMain:FindChild("PowerMapContainer"):FindChild("PowerMapRangeText"):SetText(String_GetWeaselString(Apollo.GetString("ExplorerMissions_DistanceNumber"), nDistance))
 
 	-- Color
 	local nRatioColor = CColor.new(0, 1, 0, 1)

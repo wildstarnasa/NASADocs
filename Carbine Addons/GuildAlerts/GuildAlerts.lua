@@ -64,6 +64,10 @@ function GuildAlerts:OnGuildResult(guildSender, strName, nRank, eResult )
 	else
 		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_System, strAlertMessage, "")
 	end
+	
+	if eResult == GuildLib.GuildResult_MemberOnline then
+		Sound.Play(Sound.PlayUISocialFriendAlert)
+	end
 end
 
 function GuildAlerts:OnGuildMessageOfTheDay(guildSender)
@@ -272,7 +276,11 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	elseif eResult == GuildLib.GuildResult_PerkIsAlreadyActive then 				strResult = Apollo.GetString("GuildResult_PerkIsAlreadyActive")
 	elseif eResult == GuildLib.GuildResult_RequiresPerkPurchase then 				strResult = Apollo.GetString("GuildResult_PerkPrereqNotMet")
 	elseif eResult == GuildLib.GuildResult_PerkNotActivateable then 				strResult = Apollo.GetString("GuildResult_PerkCanNotActivate")
-	elseif eResult == GuildLib.GuildResult_NotHighEnoughLevel then					strResult = String_GetWeaselString(Apollo.GetString("GuildRegistration_NotHighEnoughLevel"), strGuildType, GuildLib.GetMinimumLevel(eGuildType or GuildLib.GuildType_WarParty)) -- assuming war party because that is the only way we can get here with no guild type.
+	
+	--The only way we can get this result and have eGuildType to be nil is if we're invited to a warparty
+	elseif eResult == GuildLib.GuildResult_NotHighEnoughLevel then					strResult = (eGuildType or eGuildType ~= GuildLib.GuildType_Warparty) and String_GetWeaselString(Apollo.GetString("GuildRegistration_NotHighEnoughLevel"), strGuildType, GuildLib.GetMinimumLevel(eGuildType))
+																					or String_GetWeaselString(Apollo.GetString("Warparty_NotHighEnoughLevel"), Apollo.GetString("Guild_GuildTypeWarparty"), GuildLib.GetMinimumLevel(GuildLib.GuildType_WarParty))
+																					
 	elseif eResult == GuildLib.GuildResult_InvalidMessageOfTheDay then 				strResult = Apollo.GetString("GuildResult_InvalidMotD")
 	elseif eResult == GuildLib.GuildResult_InvalidMemberNote then 					strResult = Apollo.GetString("GuildResult_InvalidNote")
 	elseif eResult == GuildLib.GuildResult_InsufficentMembers then 					strResult = Apollo.GetString("GuildResult_InsufficientMembers")

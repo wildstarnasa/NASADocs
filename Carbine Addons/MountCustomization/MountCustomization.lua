@@ -62,7 +62,7 @@ function MountScreen:OnDocumentReady()
 end
 
 function MountScreen:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_MountCustomization"), {"GenericEvent_OpenMountCustomize", "", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_MountCustomization"), {"GenericEvent_OpenMountCustomize", "", "Icon_Windows32_UI_CRB_InterfaceMenu_MountCustomization"})
 end
 
 function MountScreen:OpenMounts()
@@ -209,13 +209,28 @@ function MountScreen:DrawNewMount(tMountData)
 			wndCurr:FindChild("CustomizeFlairBtn"):SetData({ tFlairData, tTableData[2], objPetCustomization, wndFlairList })
 			wndCurr:FindChild("CustomizeFlairBtn"):SetCheck(tCurrFlairInThatSlot and tCurrFlairInThatSlot:GetId() == tFlairData:GetId())
 			wndCurr:FindChild("CustomizeFlairBtn"):SetTooltip(tFlairData:GetTooltip())
-			wndCurr:FindChild("CustomizeFlairBtn"):SetText(tFlairData:GetName() or "")
 			--wndCurr:FindChild("CustomizeFlairBtn"):AttachWindow(wndCurr:FindChild("CustomizeFlairCheck"))
 			--wndCurr:FindChild("CustomizeFlairIcon"):SetSprite(tFlairData:GetIconPath())
-
-			if tCurrFlairInThatSlot then
-				self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCurrSlot), tCurrFlairInThatSlot:GetItemDisplay(eCurrSlot))
+			
+			if eFlairType ~= PetCustomizationLib.PetFlairType_GroundMountSide then
+				wndCurr:FindChild("CustomizeFlairBtn"):SetText(tFlairData:GetName() or "")
+			else
+				wndCurr:FindChild("CustomizeFlairBtn"):SetText((tFlairData:GetName() .. " (" .. tFlairData:GetUnlockCount() .. ")") or "")
+				if tFlairData:GetUnlockCount() == 1 then
+					if tCurrFlairInThatSlot == nil or tCurrFlairInThatSlot:GetId() ~= tFlairData:GetId() then
+						local eOtherSideSlot = eCurrSlot == PetCustomizationLib.MountSlot.Left and PetCustomizationLib.MountSlot.Right or PetCustomizationLib.MountSlot.Left
+						local tOtherSideFlair = objPetCustomization:GetSlotFlair(eOtherSideSlot)
+						if tOtherSideFlair and tOtherSideFlair:GetId() == tFlairData:GetId() then
+							wndCurr:FindChild("CustomizeFlairBtn"):Enable(false)
+							wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
+						end
+					end
+				end
 			end
+		end
+
+		if tCurrFlairInThatSlot then
+			self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCurrSlot), tCurrFlairInThatSlot:GetItemDisplay(eCurrSlot))
 		end
 
 		wndFlairList:ArrangeChildrenVert(0)
@@ -248,21 +263,67 @@ function MountScreen:OnCustomizeFlairCheck(wndHandler, wndControl) -- CustomizeF
 	-- Update the preview window
 	self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCustomizationSlot), objFlair:GetItemDisplay(eCustomizationSlot))
 
+	local objPrevFlair = nil
 	-- Uncheck other buttons (can't use global radio group as there's 4 buckets)
 	for idx, wndCurr in pairs(wndFlairList:GetChildren()) do
 		if wndCurr and wndCurr:FindChild("CustomizeFlairBtn") then
+			if wndCurr:FindChild("CustomizeFlairBtn"):IsChecked() and wndCurr:FindChild("CustomizeFlairBtn") ~= wndHandler then
+				objPrevFlair = wndCurr:FindChild("CustomizeFlairBtn"):GetData()[1]
+			end
 			wndCurr:FindChild("CustomizeFlairBtn"):SetCheck(wndCurr:FindChild("CustomizeFlairBtn") == wndHandler)
+		end
+	end
+	
+	local nUnlockCount = objFlair:GetUnlockCount()
+	local nPrevUnlockCount = objPrevFlair and objPrevFlair:GetUnlockCount() or 0
+	if objFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and (nUnlockCount == 1 or nPrevUnlockCount == 1) then
+		local wndOtherFlairList = nil
+		if eCustomizationSlot == PetCustomizationLib.MountSlot.Left then
+			wndOtherFlairList = self.wndMain:FindChild("CustomizeRightList")
+		elseif eCustomizationSlot == PetCustomizationLib.MountSlot.Right then
+			wndOtherFlairList = self.wndMain:FindChild("CustomizeLeftList")
+		end
+
+		for idx, wndCurr in pairs(wndOtherFlairList:GetChildren()) do
+			local wndCustomizeBtn = wndCurr:FindChild("CustomizeFlairBtn")
+			if wndCustomizeBtn then
+				if nUnlockCount == 1 and wndCustomizeBtn:GetData()[1] == objFlair then
+					wndCustomizeBtn:Enable(false)
+					wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
+				end
+				
+				if nPrevUnlockCount == 1 and wndCustomizeBtn:GetData()[1] == objPrevFlair then
+					wndCustomizeBtn:Enable(true)
+				end
+			end
 		end
 	end
 end
 
 function MountScreen:OnCustomizeFlairUncheck(wndHandler, wndControl) -- CustomizeFlairBtn, data is { tFlairData, nSlotIndex }
+	local objFlair = wndHandler:GetData()[1]
 	local eCustomizationSlot = wndHandler:GetData()[2]
 	local objPetCustomization = wndHandler:GetData()[3]
 	objPetCustomization:ClearFlairInSlot(eCustomizationSlot)
 
 	-- Update the preview window
 	self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCustomizationSlot), 0)
+
+	if objFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and objFlair:GetUnlockCount() == 1 then
+		local wndOtherFlairList = nil
+		if eCustomizationSlot == PetCustomizationLib.MountSlot.Left then
+			wndOtherFlairList = self.wndMain:FindChild("CustomizeRightList")
+		elseif eCustomizationSlot == PetCustomizationLib.MountSlot.Right then
+			wndOtherFlairList = self.wndMain:FindChild("CustomizeLeftList")
+		end
+
+		for idx, wndCurr in pairs(wndOtherFlairList:GetChildren()) do
+			local wndCustomizeBtn = wndCurr:FindChild("CustomizeFlairBtn")
+			if wndCustomizeBtn and wndCustomizeBtn:GetData()[1] == objFlair then
+				wndCustomizeBtn:Enable(true)
+			end
+		end
+	end
 end
 
 function MountScreen:OnMountBeginDragDrop(wndHandler, wndControl)

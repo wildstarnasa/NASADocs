@@ -14,9 +14,7 @@ require "HexGroups"
 -----------------------------------------------------------------------------------------------
 -- TaxiMap Module Definition
 -----------------------------------------------------------------------------------------------
-local TaxiMap = {} 
-
-local knSaveVersion = 1
+local TaxiMap = {}
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -40,38 +38,6 @@ function TaxiMap:Init()
     Apollo.RegisterAddon(self)
 end
  
-function TaxiMap:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locMapLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedMapLocation
-	local locPromptLocation = self.wndPrompt and self.wndPrompt:GetLocation() or self.locSavedPromptLocation
-	
-	local tSave =
-	{
-		tMapLocation 	= locMapLocation and locMapLocation:ToTable() or nil,
-		tPromptLocation = locPromptLocation and locPromptLocation:ToTable() or nil,
-		nVersion 		= knSaveVersion,
-	}
-	
-	return tSave
-end
- 
-function TaxiMap:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tMapLocation then
-		self.locSavedMapLocation = WindowLocation.new(tSavedData.tMapLocation)
-	end
-	
-	if tSavedData.tPromptLocation then
-		self.locSavedPromptLocation = WindowLocation.new(tSavedData.tPromptLocation)
-	end
-end
- 
 -----------------------------------------------------------------------------------------------
 -- TaxiMap OnLoad
 -----------------------------------------------------------------------------------------------
@@ -81,9 +47,12 @@ function TaxiMap:OnLoad()
 end
 
 function TaxiMap:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("FlightPathUpdate", 		"OnFlightPathUpdate", self)
 	Apollo.RegisterEventHandler("InvokeTaxiWindow", 		"OnInvokeTaxiWindow", self)
 	Apollo.RegisterEventHandler("InvokeShuttlePrompt", 		"OnInvokeShuttlePrompt", self)		
@@ -93,14 +62,7 @@ function TaxiMap:OnDocumentReady()
     
     -- load our forms
     self.wndMain 	= Apollo.LoadForm(self.xmlDoc, "TaxiMapForm", nil, self)
-	if self.locSavedMapLocation then
-		self.wndMain:MoveToLocation(self.locSavedMapLocation)
-	end
-		
 	self.wndPrompt	= Apollo.LoadForm(self.xmlDoc, "ShuttlePrompt", nil, self)
-	if self.locSavedPromptLocation then
-		self.wndPrompt:MoveToLocation(self.locSavedPromptLocation)
-	end
 	
 	self.xmlDoc = nil
 	self.wndMap 	= self.wndMain:FindChild("WorldMap")
@@ -115,6 +77,9 @@ function TaxiMap:OnDocumentReady()
 	self.wndMessage:Show(false, true)
 end
 
+function TaxiMap:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Taxi_Vendor")})
+end
 
 -----------------------------------------------------------------------------------------------
 -- TaxiMap Functions
@@ -215,9 +180,9 @@ function TaxiMap:PopulateTaxiMap()
 	local tLockedInfo =
 	{
 		strIcon = "IconSprites:Icon_MapNode_Map_Taxi_Undiscovered",
-		crObject = CColor.new(1, 1, 1, 1),
+		crObject = CColor.new(1, 1, 1, 0.76),
 		strIconEdge = "IconSprites:Icon_MapNode_Map_Taxi_Undiscovered",
-		crEdge = CColor.new(1, 1, 1, 1),
+		crEdge = CColor.new(1, 1, 1, 0.76),
 	}
 
 	if not self.eOverlayType then

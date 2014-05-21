@@ -8,7 +8,6 @@ require "Challenges"
 require "ChallengesLib"
 
 local Challenges = {}
-local knVersion = 1
 local LuaEnumTabState =
 {
 	Empty = -1,
@@ -39,7 +38,7 @@ local kstrBigTimerFontPath 		= "CRB_HeaderGigantic_O"
 local kstrSmallTimerFontPath 	= "CRB_HeaderSmall"
 local kfReallyLongAutoHideTime 	= 30
 local kfReallyShortAutoHideTime = 10
-local kfWaitBeforeAutoPromotion = .005
+local kfWaitBeforeAutoPromotion = 0.005
 local kstrFailTabTest 			= Apollo.GetString("Challenges_Fail")
 local kstrPassTabTest			= Apollo.GetString("CRB_Pass")
 
@@ -54,39 +53,20 @@ function Challenges:Init()
 	Apollo.RegisterAddon(self)
 end
 
-function Challenges:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
-		return
-	end
-	
-	local locWindowLocation = self.wndTracker and self.wndTracker:GetLocation() or self.locSavedWindowLoc
-	
-	local tSave = 
-	{
-		tLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nVersion = knVersion,
-	}
-	return tSave
-end
-
-function Challenges:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nVersion  == knVersion then
-		if tSavedData.tLocation then
-			self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocation)
-		end
-	end
-end
-
 function Challenges:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Challenges.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	
 	Apollo.RegisterEventHandler("ChallengeUpdated", "OnChallengeUpdated", self)	
 end
 
 function Challenges:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("ChallengeAbandon", 			"OnChallengeAbandon", self)
 	Apollo.RegisterEventHandler("ChallengeLeftArea", 			"OnChallengeLeftArea", self)
 	Apollo.RegisterEventHandler("ChallengeFailTime", 			"OnChallengeFailTime", self)
@@ -131,12 +111,12 @@ function Challenges:OnDocumentReady()
 	self.wndMinimized:Show(false, true)
 	self.wndBigDisplay 			= self.wndTracker:FindChild("BigDisplay")
 	self.wndCompletedDisplay 	= self.wndTracker:FindChild("CompletedDisplay")
+	
 	self.xmlDoc = nil
 	if self.locSavedWindowLoc then
 		self.wndTracker:MoveToLocation(self.locSavedWindowLoc)
 		self.wndMinimized:MoveToLocation(self.locSavedWindowLoc)
 	end
-	
 
 	-- We rely on this table to be indexed 1, 2, 3, 4. We will use the index of the first entry to be 1 throughout the code.
 	local wndTrackerTabContainer = self.wndTracker:FindChild("TrackerTabContainer")
@@ -172,6 +152,10 @@ function Challenges:OnDocumentReady()
 	self:OnRepeatingTimer()
 end
 
+function Challenges:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndTracker, strName = Apollo.GetString("Challenges")})
+end
+
 ----------------------------------------------------------------------------------------------------------
 -- Challenge Left Area
 ----------------------------------------------------------------------------------------------------------
@@ -201,7 +185,7 @@ function Challenges:OnChallengeLeftArea(idChallenge, strHeader, strDescription, 
         self.idLeftArea = idChallenge
 
         self:UpdateLeftAreaTime()
-	elseif tCurrChallenge then
+	elseif tCurrChallenge and tCurrChallenge:IsActivated() then
 		self:ShowTracker() -- Go back to tracker
 	end
 end
@@ -328,7 +312,9 @@ function Challenges:OnChallengeFailArea(chalFailed, strHeader, strDescription, f
 	if self.idLeftArea == idChallenge then -- Also hide the warning window
 		Apollo.StopTimer("ChallengeLeftAreaTimer")
 		self.wndLeftArea:Show(false)
-		Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
+		if not self.wndTracker:IsShown() then
+			Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
+		end
 		self.idLeftArea = 0
 	end
 	
@@ -351,7 +337,7 @@ end
 function Challenges:OnChallengeActivate(challenge)
 	-- The tracker actually doesn't care about this event. It will poll all challenge results on a timer regardless, which keeps it safe from reloadui.
 	-- However, this does provide a good way to handle popping out of the minimized state
-	self.wndTracker:Show(true)
+	self.wndTracker:Invoke()
 	self.wndMinimized:Show(false)
 	Sound.Play(Sound.PlayUIChallengeStarted)
 	Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", true)
@@ -368,7 +354,7 @@ function Challenges:OnChallengeActivate(challenge)
 end
 
 function Challenges:OnChallengeUpdated(idChallenge)
-	if self.wndTracker:IsShown() then
+	if self.wndTracker:IsShown() or (self.wndLeftArea:IsShown() and idChallenge == self.idLeftArea) then
 		return
 	end
 	
@@ -790,7 +776,8 @@ function Challenges:DrawCompletedMessage(nNewSelection, eRewardOrFailState)
 	self.wndCompletedDisplay:FindChild("CompletedCloseButton"):Show(eRewardOrFailState == LuaEnumTabState.Fail or eRewardOrFailState == LuaEnumTabState.Reward)
 	wndRewardContainer:FindChild("RewardLootButton"):Enable(clgCurrent:ShouldCollectReward() and not self.bRewardWheelSpinning)
 
-	local idSubZone = clgCurrent:GetZoneRestrictionInfo().idSubZone
+	local tZoneRestrictionInfo = clgCurrent:GetZoneRestrictionInfo()
+	local idSubZone = tZoneRestrictionInfo and tZoneRestrictionInfo.idSubZone or nil
 	if idSubZone == 0 or GameLib.IsInWorldZone(idSubZone) then
 		wndFailContainer:FindChild("FailRetryButton"):Enable(not clgCurrent:ShouldCollectReward() and not clgCurrent:IsInCooldown())
 		wndRewardContainer:FindChild("RewardRetryButton"):Enable(not clgCurrent:ShouldCollectReward() and not clgCurrent:IsInCooldown())
@@ -1319,7 +1306,7 @@ function Challenges:OnTrackerMinimizeButton()
     Apollo.StopTimer("ReallyShortAutoHideTimer")
 	self.bReallyLongAutoHideTimerActive = false
 	self.bReallyShortAutoHideTimerActive = false
-	self.wndTracker:Show(false) -- Just the tracker, we can't use HideTracker()
+	self.wndTracker:Close() -- Just the tracker, we can't use HideTracker()
 	self.wndMinimized:Show(true)
 	self:OnBlankMinimizeClick() -- Reset it to MinimizedContents
 	Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)

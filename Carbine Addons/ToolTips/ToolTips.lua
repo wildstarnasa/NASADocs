@@ -453,7 +453,7 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 
 	-- Basics
 	wndLevelString:SetText(unitSource:GetLevel())
-	wndNameString:SetText(string.format("<P Font=\"CRB_Interface12_BB\" TextColor=\"%s\">%s</P>", karDispositionColorStrings[eDisposition], unitSource:GetName()))
+	wndNameString:SetText(string.format("<P Font=\"CRB_HeaderSmall\" TextColor=\"%s\">%s</P>", karDispositionColorStrings[eDisposition], unitSource:GetName()))
 	wndDispositionFrame:SetSprite(karDispositionFrameSprites[eDisposition] or "")
 
 	-- Unit to player affiliation
@@ -498,11 +498,12 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 				local wndReward = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Reward", wndMiddleDataBlockContent, self)
 				wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon[strRewardType])
 				wndReward:FindChild("Label"):SetText(String_GetWeaselString(Apollo.GetString("Tooltip_TitleReward"), tRewardInfo.strTitle, ktRewardToString[strRewardType]))
-
-				-- TODO: Apparently we double the size if it doesn't fit
-				if Apollo.GetTextWidth("CRB_InterfaceMedium", wndReward:FindChild("Label"):GetText()) > wndReward:FindChild("Label"):GetWidth() then
+				
+				-- Adjust height to fit text
+				wndReward:FindChild("Label"):SetHeightToContentHeight()
+				if wndReward:FindChild("Label"):GetHeight() > wndReward:GetHeight() then
 					local rewardWndLeft, rewardWndTop, rewardWndRight, rewardWndBottom = wndReward:GetAnchorOffsets()
-					wndReward:SetAnchorOffsets(rewardWndLeft, rewardWndTop, rewardWndRight, (rewardWndBottom * 2) - 4)
+					wndReward:SetAnchorOffsets(rewardWndLeft, rewardWndTop, rewardWndRight, wndReward:FindChild("Label"):GetHeight())
 				end
 			end
 		end
@@ -670,7 +671,12 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 
 		local tLevelRange = unitSource:GetInstancePortalLevelRange()
 		if tLevelRange and tLevelRange.nMinLevel and tLevelRange.nMaxLevel then
-			local strInstancePortalLevelRange = string.format(Apollo.GetString("InstancePortal_LevelRange"), tLevelRange.nMinLevel, tLevelRange.nMaxLevel)
+			local strInstancePortalLevelRange = ""
+			if tLevelRange.nMinLevel == tLevelRange.nMaxLevel then
+				strInstancePortalLevelRange = string.format(Apollo.GetString("InstancePortal_RequiredLevel"), tLevelRange.nMaxLevel)
+			else
+				strInstancePortalLevelRange = string.format(Apollo.GetString("InstancePortal_LevelRange"), tLevelRange.nMinLevel, tLevelRange.nMaxLevel)
+			end
 			local wndInfo = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Info", wndMiddleDataBlockContent, self)
 			wndInfo:FindChild("Label"):SetText(strInstancePortalLevelRange)
 		end
@@ -1680,9 +1686,13 @@ local function GenerateItemTooltipForm(luaCaller, wndParent, itemSource, tFlags,
 		end
 	else
 		wndTooltip = wndParent:LoadTooltipForm("ui\\Tooltips\\TooltipsForms.xml", "ItemTooltip_Base", luaCaller)
-		wndTooltip:FindChild("CurrentHeader"):Show(false)
 		if tItemInfo.tCompare then
 			wndTooltipComp = wndParent:LoadTooltipFormSecondary("ui\\Tooltips\\TooltipsForms.xml", "ItemTooltip_Base", luaCaller)
+		end
+		if tFlags.bNotEquipped == false then
+			wndTooltip:FindChild("CurrentHeader"):Show(true)
+		else
+			wndTooltip:FindChild("CurrentHeader"):Show(false)
 		end
 	end
 
@@ -1816,11 +1826,11 @@ local function GenerateSpellTooltipForm(luaCaller, wndParent, splSource, tFlags)
 	local wndGeneralDescription = wndTooltip:FindChild("GeneralDescriptionString")
 
     -- Name
-	wndName:SetAML(string.format("<P Font=\"CRB_HeaderSmall\" TextColor=\"UI_TextHoloBodyHighlight\">%s</P>", splSource:GetName()))
+	wndName:SetAML(string.format("<P Font=\"CRB_HeaderSmall\" TextColor=\"UI_TextHoloTitle\">%s</P>", splSource:GetName()))
 
 	-- Tier
 	local nTier = splSource:GetTier() - 1
-	local strTier = nTier == 0 and Apollo.GetString("Tooltips_Base") or String_GetWeaselString(Apollo.GetString("Tooltips_Tier"), nTier)
+	local strTier = nTier == 0 and Apollo.GetString("ToolTip_BaseLowercase") or String_GetWeaselString(Apollo.GetString("Tooltips_Tier"), nTier)
 	wndTier:SetText(strTier)
 
     -- Cast Info
@@ -1989,12 +1999,10 @@ local function GenerateSpellTooltipForm(luaCaller, wndParent, splSource, tFlags)
 		wndCharges:SetAnchorOffsets(3, 0, -3, 0)
     end
 
-
 	-- General Description
 
 	wndGeneralDescription:SetText(splSource:GetFlavor())
 	wndGeneralDescription:SetHeightToContentHeight()
-
 
 	-- Bottom Block
 
@@ -2082,7 +2090,7 @@ local function GenerateSpellTooltipForm(luaCaller, wndParent, splSource, tFlags)
 		nBlockBottom = nBlockBottom - nLineHeight
 	end
 
-	nMainBottom = nMainBottom + wndGeneralDescription:GetHeight()
+	nMainBottom = nMainBottom + wndGeneralDescription:GetHeight() + 12
 
 	if not wndBottomBlock:IsVisible() then
 		nMainBottom = nMainBottom - wndBottomBlock:GetHeight()

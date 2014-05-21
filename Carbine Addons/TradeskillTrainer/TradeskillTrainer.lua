@@ -8,7 +8,6 @@ require "Window"
 local TradeskillTrainer = {}
 
 local knMaxTradeskills = 2 -- how many skills is the player allowed to learn
-local knSaveVersion = 1
 
 function TradeskillTrainer:new(o)
     o = o or {}
@@ -19,32 +18,6 @@ end
 
 function TradeskillTrainer:Init()
     Apollo.RegisterAddon(self)
-end
-
-function TradeskillTrainer:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSaved
-end
-
-function TradeskillTrainer:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function TradeskillTrainer:OnLoad()
@@ -66,6 +39,7 @@ end
 function TradeskillTrainer:OnInvokeTradeskillTrainer(unitTrainer)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "TradeskillTrainerForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("DialogResponse_TradskillTraining")})
 
 		if self.locSavedWindowLoc then
 			self.wndMain:MoveToLocation(self.locSavedWindowLoc)

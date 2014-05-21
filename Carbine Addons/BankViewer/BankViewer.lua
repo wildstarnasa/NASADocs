@@ -23,40 +23,17 @@ function BankViewer:Init()
     Apollo.RegisterAddon(self)
 end
 
-function BankViewer:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSave = 
-	{
-		tWindowLocation	= locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion 	= knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function BankViewer:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
-		if tSavedData.tWindowLocation then
-			self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-		end
-	end
-end
-
 function BankViewer:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("BankViewer.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function BankViewer:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
-    Apollo.RegisterEventHandler("HideBank", "HideBank", self)
+	
+	Apollo.RegisterEventHandler("HideBank", "HideBank", self)
 	Apollo.RegisterEventHandler("ShowBank", "Initialize", self)
     Apollo.RegisterEventHandler("ToggleBank", "Initialize", self)
 	Apollo.RegisterEventHandler("CloseVendorWindow", "HideBank", self)
@@ -71,18 +48,14 @@ end
 
 function BankViewer:Initialize()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Close()
 		self.wndMain:Destroy()
 	end
 
 	self.wndMain = Apollo.LoadForm("BankViewer.xml", "BankViewerForm", nil, self)
 	self.wndMain:FindChild("BankBuySlotBtn"):AttachWindow(self.wndMain:FindChild("BankBuySlotConfirm"))
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Bank_Header")})
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	self:Build()
 end
 
@@ -141,14 +114,12 @@ function BankViewer:OnWindowClosed()
 	Event_CancelBanking()
 	
 	if self.wndMain then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 end
 
 function BankViewer:HideBank()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Close()
 		self.wndMain:Destroy()
 	end
@@ -194,7 +165,6 @@ end
 
 function BankViewer:OnBankViewerCloseBtn()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Close()
 		self.wndMain:Destroy()
 	end

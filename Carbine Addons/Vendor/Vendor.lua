@@ -18,12 +18,13 @@ local kstrTabSell    	= "VendorTab1"
 local kstrTabBuyback 	= "VendorTab2"
 local kstrTabRepair  	= "VendorTab3"
 local knMaxGuildLimit 	= 2000000000 -- 2000 plat
-local knSaveVersion		= 2
 
 local knHeaderContainerMinHeight = 8
 
 local ktVendorRespondEvent =
 {
+	-- Stackable items send the StackSplit reason when they are being sold
+	[Item.CodeEnumItemUpdateReason.StackSplit]	= Apollo.GetString("Vendor_Bought"),
 	[Item.CodeEnumItemUpdateReason.Vendor] 		= Apollo.GetString("Vendor_Bought"),
 	[Item.CodeEnumItemUpdateReason.Buyback] 	= Apollo.GetString("Vendor_BoughtBack"),
 }
@@ -43,32 +44,6 @@ function Vendor:Init()
 	Apollo.RegisterAddon(self, false, "", {"Util"})
 end
 
-function Vendor:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndVendor and self.wndVendor:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function Vendor:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function Vendor:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Vendor.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -78,6 +53,8 @@ function Vendor:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("UpdateInventory", 				"OnUpdateInventory", self)
 	Apollo.RegisterEventHandler("VendorItemsUpdated", 			"OnVendorItemsUpdated", self)
@@ -116,10 +93,10 @@ function Vendor:OnDocumentReady()
 	self.tItemWndList = {}
 	self.tBuybackItems = {}
 	self.tRepairableItems = {}
+end
 
-	if self.wndVendor and self.locSavedWindowLoc then
-		self.wndVendor:MoveToLocation(self.locSavedWindowLoc)
-	end
+function Vendor:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndVendor, strName = Apollo.GetString("CRB_Vendor")})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -298,10 +275,13 @@ function Vendor:DrawListItems(wndParent, tItems)
 			local wndCurr = self:FactoryCacheProduce(wndParent, "VendorListItem", "I"..tCurrItem.idUnique)
 			wndCurr:FindChild("VendorListItemBtn"):SetData(tCurrItem)
 			wndCurr:FindChild("VendorListItemTitle"):SetText(tCurrItem.strName)
-			wndCurr:FindChild("VendorListItemIcon"):SetSprite(tCurrItem.strIcon)
 			wndCurr:FindChild("VendorListItemCantUse"):Show(self:HelperPrereqFailed(tCurrItem))
 
-			wndCurr:FindChild("VendorListItemIcon"):GetWindowSubclass():SetItem(tCurrItem.itemData)
+			if tCurrItem.eType == Item.CodeEnumLootItemType.StaticItem then
+				wndCurr:FindChild("VendorListItemIcon"):GetWindowSubclass():SetItem(tCurrItem.itemData)
+			else
+				wndCurr:FindChild("VendorListItemIcon"):SetSprite(tCurrItem.strIcon)
+			end
 
 			local monPrice = nil
 			if tCurrItem.itemData then
@@ -520,6 +500,7 @@ function Vendor:OnItemAdded(itemBought, nCount, eReason)
 	if self.wndVendor and self.wndVendor:IsShown() and ktVendorRespondEvent[eReason] then
 		local strItem = nCount > 1 and String_GetWeaselString(Apollo.GetString("CombatLog_MultiItem"), nCount, itemBought:GetName()) or itemBought:GetName()
 		self:ShowAlertMessageContainer(String_GetWeaselString(ktVendorRespondEvent[eReason] or Apollo.GetString("Vendor_Bought"), strItem), false)
+		Sound.Play(Sound.PlayUIVendorBuy)
 	end
 end
 
@@ -527,6 +508,7 @@ function Vendor:OnItemRemoved(itemSold, nCount, eReason)
 	if self.wndVendor and self.wndVendor:IsShown() and ktVendorRespondEvent[eReason] then
 		local strMessage = nCount > 1 and String_GetWeaselString(Apollo.GetString("CombatLog_MultiItem"), nCount, itemSold:GetName()) or itemSold:GetName()
 		self:ShowAlertMessageContainer(String_GetWeaselString(Apollo.GetString("Vendor_Sold"), strMessage), false)
+		Sound.Play(Sound.PlayUIVendorSell)
 	end
 end
 
@@ -884,8 +866,15 @@ function Vendor:OnGuildRepairBtn(wndHandler, wndControl)
 
 	if tMyGuild and tItemData and tItemData.idLocation then
 		tMyGuild:RepairItemVendor(tItemData.idLocation)
+		local eRepairCurrency = tItemData.tPriceInfo.eCurrencyType1
+		local nRepairAmount = tItemData.tPriceInfo.nAmount1
+		self.wndVendor:FindChild("AlertCost"):SetMoneySystem(eRepairCurrency)
+		self.wndVendor:FindChild("AlertCost"):SetAmount(nRepairAmount)
 	elseif tMyGuild then
 		tMyGuild:RepairAllItemsVendor()
+		local monRepairAllCost = GameLib.GetRepairAllCost()
+		self.wndVendor:FindChild("AlertCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
+		self.wndVendor:FindChild("AlertCost"):SetAmount(monRepairAllCost)
 	end
 	Sound.Play(Sound.PlayUIVendorRepair)
 end
@@ -908,22 +897,32 @@ function Vendor:FinalizeBuy(tItemData)
 		BuyItemFromVendor(idItem, 1) -- TODO: quantity chooser
 		self.tDefaultSelectedItem = tItemData
 		self:ShowAlertMessageContainer(String_GetWeaselString(Apollo.GetString("Vendor_Bought"), tItemData.strName), false) -- TODO: This shouldn't be needed
-		Sound.Play(Sound.PlayUIVendorBuy)
+		local monBuyPrice = tItemData.itemData:GetBuyPrice()
+		self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyPrice)
 	elseif tItemData and self.wndVendor:FindChild(kstrTabSell):IsChecked() then
 		SellItemToVendorById(idItem, tItemData.nStackSize)
 		self:SelectNextItemInLine(tItemData)
 		self:Redraw()
-		Sound.Play(Sound.PlayUIVendorSell)
+		local monSellPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
+		self.wndVendor:FindChild("AlertCost"):SetAmount(monSellPrice)
 	elseif tItemData and self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
 		BuybackItemFromVendor(idItem)
 		self:SelectNextItemInLine(tItemData)
-		Sound.Play(Sound.PlayUIVendorBuy)
+		local monBuyBackPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
+		self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyBackPrice)
 	elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
 		local idLocation = tItemData and tItemData.idLocation or nil
 		if idLocation then
 			RepairItemVendor(idLocation)
+			local eRepairCurrency = tItemData.tPriceInfo.eCurrencyType1
+			local nRepairAmount = tItemData.tPriceInfo.nAmount1
+			self.wndVendor:FindChild("AlertCost"):SetMoneySystem(eRepairCurrency)
+			self.wndVendor:FindChild("AlertCost"):SetAmount(nRepairAmount)
 		else
 			RepairAllItemsVendor()
+			local monRepairAllCost = GameLib.GetRepairAllCost()
+			self.wndVendor:FindChild("AlertCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
+			self.wndVendor:FindChild("AlertCost"):SetAmount(monRepairAllCost)
 		end
 		Sound.Play(Sound.PlayUIVendorRepair)
 	else
@@ -972,7 +971,7 @@ function Vendor:ArrangeGroups(tItemList, tGroups)
 	local tNewList = {
 		tOther =
 		{
-			strName = "General",
+			strName = Apollo.GetString("ChallengeTypeGeneral"),
 			tItems = {}
 		}
 	} --, specials = {}, future = {} } }

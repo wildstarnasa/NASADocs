@@ -129,7 +129,7 @@ function CraftingGrid:OnLoad()
 end
 
 function CraftingGrid:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 
@@ -138,6 +138,7 @@ function CraftingGrid:OnDocumentReady()
 	Apollo.RegisterEventHandler("GenericEvent_CraftingSummaryIsFinished", 			"OnCloseBtn", self)
 	Apollo.RegisterEventHandler("GenericEvent_StartCraftingGrid", 					"OnGenericEvent_StartCraftingGrid", self)
 	Apollo.RegisterEventHandler("CraftingDiscoveryHotCold", 						"OnCraftingDiscoveryHotCold", self)
+	Apollo.RegisterEventHandler("CraftingSchematicLearned", 						"OnCraftingSchematicLearned", self)
 	Apollo.RegisterEventHandler("CraftingUpdateCurrent", 							"OnCraftingUpdateCurrent", self)
 	Apollo.RegisterEventHandler("UpdateInventory", 									"RedrawAll", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 							"RedrawCash", self)
@@ -223,6 +224,7 @@ function CraftingGrid:RedrawAll()
 	local bHitAnySubSchematic = bCurrentCraftStarted and tCurrentCraft.nSchematicId ~= 0 and tCurrentCraft.nSubSchematicId ~= 0
 	local tSubSchematicInfo = bHitAnySubSchematic and CraftingLib.GetSchematicInfo(tCurrentCraft.nSubSchematicId) or tSchematicInfo
 	self:BuildVariantItem(self.wndMain:FindChild("VariantsCurrentBox"), tSubSchematicInfo.itemOutput, false, false)
+	self.wndMain:FindChild("VariantsCurrentBox"):SetData(tSubSchematicInfo.itemOutput)
 
 	-- POTENTIAL EXIT: Not Known
 	self.wndMain:FindChild("BGNotKnownBlocker"):Show(false)
@@ -546,17 +548,16 @@ function CraftingGrid:OnCraftBtn(wndHandler, wndControl) -- CraftBtn
 
 	-- Order is important, must clear first
 	Event_FireGenericEvent("GenericEvent_ClearCraftSummary")
-
-	-- Now Craft
-	CraftingLib.CompleteCraft()
-
-	-- Post Craft Message
 	if string.len(strTooltipSaved) > 0 then
 		Event_FireGenericEvent("GenericEvent_CraftSummaryMsg", Apollo.GetString("CoordCrafting_ItemsUsedSummary") .. "\n" .. strTooltipSaved)
 	end
 
+	-- Now Craft
+	CraftingLib.CompleteCraft()
+
 	-- Post Craft Effects
-	Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("CraftingSummaryContainer"))
+	local itemOutput = self.wndMain:FindChild("VariantsCurrentBox"):GetData()
+	Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("CraftingSummaryContainer"), itemOutput)
 	self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(true)
 	self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("MouseBlocker"):Show(true)
 	self.wndMain:FindChild("BGPostCraftBlocker"):Show(true)
@@ -571,29 +572,40 @@ function CraftingGrid:OnCraftingGrid_CraftBtnTimer()
 	end
 end
 
-function CraftingGrid:OnCraftingDiscoveryHotCold(eHotCold, eDirection)
-	local tCurrentCraft = CraftingLib.GetCurrentCraft()
-	if tCurrentCraft and tCurrentCraft.nSchematicId and eHotCold == CraftingLib.CodeEnumCraftingDiscoveryHotCold.Success  then
-		self.bFullDestroyNeeded = true
-		self.tLastMarkersList[tCurrentCraft.nSchematicId] = nil
-	elseif tCurrentCraft and tCurrentCraft.nSchematicId then
-		local tTempData = self.tPendingDiscoveryResultData
-		if tTempData then
-			--tPendingDiscoveryResultData has:
-			--	["nPosX"] = nNewPosX,
-			--	["nPosY"] = nNewPosY,
-			--	["idSchematic"] = nSchematicId,
-			--	["strTooltip"] = strTooltipSaved,
-			--	["strHotOrCold"] = Apollo.GetString("CoordCrafting_ViewLastCraft"),
-			tTempData.eDirection = eDirection
-			tTempData.idSchematic = tCurrentCraft.nSchematicId
-			tTempData.strHotOrCold = ktLastAttemptHotOrColdString[eHotCold]
+function CraftingGrid:OnCraftingSchematicLearned(idTradeskill, idSchematic)
+	if not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
 
-			if not self.tLastMarkersList[tCurrentCraft.nSchematicId] then
-				self.tLastMarkersList[tCurrentCraft.nSchematicId] = {}
-			end
-			table.insert(self.tLastMarkersList[tCurrentCraft.nSchematicId], tTempData)
+	local tSchematicInfo = CraftingLib.GetSchematicInfo(idSchematic)
+	local nParentId = tSchematicInfo and tSchematicInfo.nParentSchematicId or idSchematic
+	self.tLastMarkersList[idSchematic] = nil
+	self.tLastMarkersList[nParentId] = nil
+	self.bFullDestroyNeeded = true
+end
+
+function CraftingGrid:OnCraftingDiscoveryHotCold(eHotCold, eDirection)
+	if eHotCold == CraftingLib.CodeEnumCraftingDiscoveryHotCold.Success then
+		return
+	end
+
+	local tTempData = self.tPendingDiscoveryResultData
+	local tCurrentCraft = CraftingLib.GetCurrentCraft()
+	if tCurrentCraft and tCurrentCraft.nSchematicId and tTempData then
+		--tPendingDiscoveryResultData has:
+		--	["nPosX"] = nNewPosX,
+		--	["nPosY"] = nNewPosY,
+		--	["idSchematic"] = nSchematicId,
+		--	["strTooltip"] = strTooltipSaved,
+		--	["strHotOrCold"] = Apollo.GetString("CoordCrafting_ViewLastCraft"),
+		tTempData.eDirection = eDirection
+		tTempData.idSchematic = tCurrentCraft.nSchematicId
+		tTempData.strHotOrCold = ktLastAttemptHotOrColdString[eHotCold]
+
+		if not self.tLastMarkersList[tCurrentCraft.nSchematicId] then
+			self.tLastMarkersList[tCurrentCraft.nSchematicId] = {}
 		end
+		table.insert(self.tLastMarkersList[tCurrentCraft.nSchematicId], tTempData)
 	end
 end
 
@@ -631,6 +643,11 @@ function CraftingGrid:OnAdditiveClick(wndHandler, wndControl) -- AdditiveItem, d
 	-- Wipe 'ready to craft' message
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:FindChild("HelperText_ReadyToCraft"):Show(false)
+	end
+
+	-- Wipe marker estimate
+	if self.wndAdditiveEstimate and self.wndAdditiveEstimate:IsValid() then
+		self.wndAdditiveEstimate:Destroy()
 	end
 end
 
@@ -949,10 +966,15 @@ function CraftingGrid:BuildNewGridCircle(tSchem) -- vectorX, vectorY, radius
 
 	local nRadiusAdjX = tSchem.fRadius / self.nMaxX * self.wndMain:FindChild("CoordinateSchematic"):GetWidth() / 2.0
 	local nRadiusAdjY = tSchem.fRadius / self.nMaxY * self.wndMain:FindChild("CoordinateSchematic"):GetHeight() / 2.0
-
-	nRadiusAdjX = math.max(30, nRadiusAdjX)
-	nRadiusAdjY = math.max(30, nRadiusAdjY)
 	wndResult:FindChild("GridCircleRadius"):SetAnchorOffsets(-nRadiusAdjX, -nRadiusAdjY, nRadiusAdjX, nRadiusAdjY)
+
+	if nRadiusAdjX < 20 or nRadiusAdjX < 20 then
+		wndResult:FindChild("GridCircleIcon"):SetAnchorOffsets(0, 0, 0, 0) -- Don't bother showing icon
+	elseif nRadiusAdjX < 30 or nRadiusAdjY < 30 then
+		local nRadiusIconX = nRadiusAdjY - 11
+		local nRadiusIconY = nRadiusAdjY - 11
+		wndResult:FindChild("GridCircleIcon"):SetAnchorOffsets(-nRadiusIconX, -nRadiusIconY, nRadiusIconX, nRadiusIconY)
+	end
 
 	-- Tooltip and Icon
 	local itemCraft = tSchem.itemOutput

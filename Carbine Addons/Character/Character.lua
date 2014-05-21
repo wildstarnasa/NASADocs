@@ -13,7 +13,6 @@ require "AttributeMilestonesLib"
 local Character = {}
 
 local knNumCostumes = 10
-local knSaveVersion = 1
 
 --Really need an enum for these
 --Numbers come from EItemSlot
@@ -158,29 +157,6 @@ function Character:OnDependencyError(strDep, strError)
 	return false
 end
 
-function Character:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndCharacter and self.wndCharacter:GetLocation() or self.locSavedWindowLocation
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion,
-	}
-	return tSaved
-end
-
-function Character:OnRestore(eType, tSavedData)
-	if tSavedData.nSavedVersion == knSaveVersion then
-		if tSavedData.tWindowLocation then
-			self.locSavedWindowLocation = WindowLocation.new(tSavedData.tWindowLocation)
-		end
-	end
-end
-
 function Character:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Character.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -192,7 +168,8 @@ function Character:OnDocumentReady()
 		return
 	end
 	
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded",						"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady",							"OnWindowManagementReady", self)
 	
 	Apollo.RegisterTimerHandler("Character_DelayedPlayerTitleChange", 				"OnDrawEditNamePopout", self) -- TODO: replace with a guild update event
 
@@ -232,6 +209,8 @@ function Character:OnDocumentReady()
 	Apollo.RegisterEventHandler("LevelUpUnlock_Class_Attribute",					"OnLevelUpUnlock_Character_Generic", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_Path_Title",							"OnLevelUpUnlock_Character_Generic", self)
 
+	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 		"OnTutorial_RequestUIAnchor", self)
+
 	self.wndCharacter 				= Apollo.LoadForm(self.xmlDoc, "CharacterWindow", nil, self)
 	self.wndCostume 				= self.wndCharacter:FindChild("CharFrame_BGArt:Costume")
 
@@ -256,6 +235,7 @@ function Character:OnDocumentReady()
 	self.listAttributes 	= {}
 	self.tOffensiveStats 	= {}
 	self.tDefensiveStats 	= {}
+	self.wCostumeCheckBtn = self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame:SelectCostumeWindowToggle")
 	self.wndCostumeSelectionList = self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtnHolder")
 	self.wndCostumeSelectionList:Show(false)
 
@@ -348,15 +328,15 @@ function Character:OnDocumentReady()
 	else
 	    wndHolomarkContainer:SetRadioSel("GuildHolomarkDistance", 2)
     end
-
-	if self.locSavedWindowLocation and self.wndCharacter then
-		self.wndCharacter:MoveToLocation(self.locSavedWindowLocation)
-	end
 end
 
 function Character:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Character"), {"ToggleCharacterWindow", "CharacterPanel", "spr_HUD_MenuIcons_Character"})
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Reputation"), {"GenericEvent_OpenReputation", "Reputation", "spr_HUD_MenuIcons_Character"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Character"), {"ToggleCharacterWindow", "CharacterPanel", "Icon_Windows32_UI_CRB_InterfaceMenu_Character"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Reputation"), {"GenericEvent_OpenReputation", "Reputation", "Icon_Windows32_UI_CRB_InterfaceMenu_Character"})
+end
+
+function Character:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndCharacter, strName = Apollo.GetString("InterfaceMenu_Character")})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -494,7 +474,7 @@ local wndCostumeHolder = self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtn
 		end
 	end
 
-	self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame:SelectCostumeWindowToggle"):SetCheck(false)
+	self.wCostumeCheckBtn:SetCheck(false)
 	self.wndCostumeSelectionList:Show(false)
 	GameLib.SetCostumeIndex(self.nCurrentCostume)
 	self:UpdateCostumeSlotIcons()
@@ -516,7 +496,7 @@ function Character:OnEditCostumeBtnToggle(wndHandler, wndCtrl) -- keeping these 
 end
 
 function Character:OnNoCostumeBtn()
-	self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame:SelectCostumeWindowToggle"):SetCheck(false)
+	self.wCostumeCheckBtn:SetCheck(false)
 	self.wndCostumeSelectionList:Show(false)
 	self.wndCostumeFrame:Show(false)
 	self.nCurrentCostume = nil
@@ -527,7 +507,7 @@ end
 
 function Character:OnCloseCostumeBtn()
 	self.wndCostumeSelectionList:Show(false)
-	self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame:SelectCostumeWindowToggle"):SetCheck(false)
+	self.wCostumeCheckBtn:SetCheck(false)
 	self.nCurrentCostume = nil
 end
 
@@ -566,10 +546,6 @@ function Character:OnRemoveSlotBtn(wndHandler, wndControl)
 
 	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), -1)
 	self:UpdateCostumeSlotIcons()
-end
-
-function Character:OnCostumeMenuClose()
-	self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame:SelectCostumeWindowToggle"):SetCheck(false)
 end
 
 function Character:UpdateCostumeSlotIcons()
@@ -1238,6 +1214,19 @@ function Character:OnGenerateTooltip(wndHandler, wndControl, eType, itemCurr, id
 	else
 		wndControl:SetTooltip(wndControl:GetName() and ("<P Font=\"CRB_InterfaceSmall_O\">" .. ktSlotWindowNameToTooltip[wndControl:GetName()] .. "</P>") or "")
 	end
+end
+
+---------------------------------------------------------------------------------------------------
+-- Tutorial anchor request
+---------------------------------------------------------------------------------------------------
+
+function Character:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Character then return end
+
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndCharacter:GetRect()
+	
+	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 end
 
 -----------------------------------------------------------------------------------------------

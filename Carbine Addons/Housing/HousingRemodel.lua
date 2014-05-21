@@ -87,10 +87,26 @@ end
 
 function RemodelPreviewControl:OnResidenceChange(idZone)
 	if self.strType == "exterior" then
+	    local tRemodelValues = {}
 		local tBakedList	= {}
 		tBakedList = HousingLib.GetBakedDecorDetails()
 		for key, tData in pairs(tBakedList) do
-			self.tRemodelPreviewItems[key]:OnResidenceChange(tData)
+		    if tData.eHookType ~= nil and tData.eHookType == HousingLib.CodeEnumDecorHookType.Roof then
+		        tRemodelValues[HousingLib.RemodelOptionTypeExterior.Roof] = tData
+		    elseif tData.eType ~= nil and tData.eType == HousingLib.RemodelOptionTypeExterior.Wallpaper then
+		        tRemodelValues[HousingLib.RemodelOptionTypeExterior.Wallpaper] = tData
+		    elseif tData.eHookType ~= nil and tData.eHookType == HousingLib.CodeEnumDecorHookType.Entryway then
+                tRemodelValues[HousingLib.RemodelOptionTypeExterior.Entry] = tData 
+            elseif tData.eHookType ~= nil and tData.eHookType == HousingLib.CodeEnumDecorHookType.Door then
+                tRemodelValues[HousingLib.RemodelOptionTypeExterior.Door] = tData
+            elseif tData.eType ~= nil and tData.eType == HousingLib.RemodelOptionTypeExterior.Sky then
+		        tRemodelValues[HousingLib.RemodelOptionTypeExterior.Sky] = tData
+		    end
+		end
+
+		for eType = HousingLib.RemodelOptionTypeExterior.Roof, HousingLib.RemodelOptionTypeExterior.Sky do
+		    local tData = tRemodelValues[eType]
+			self.tRemodelPreviewItems[eType]:OnResidenceChange(tData)
 		end
 	else
 	    gtRemodelTrueValues = {}
@@ -380,6 +396,7 @@ function HousingRemodel:OnLoad()
 	Apollo.RegisterEventHandler("HousingMyResidenceDecorChanged", 	"OnResidenceDecorChanged", self)
 	Apollo.RegisterEventHandler("HousingResult", 					"OnHousingResult", self)
 	Apollo.RegisterEventHandler("HousingNamePropertyOpen",          "OnHousingNameProperty", self)
+	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 			"OnPlayerCurrencyChanged", self)
 
 	Apollo.RegisterTimerHandler("HousingRemodelTimer", 				"OnRemodelTimer", self)
 	Apollo.RegisterTimerHandler("HousingIntRemodelTimer", 			"OnIntRemodelTimer", self)
@@ -1199,13 +1216,13 @@ function HousingRemodel:ShowItems(wndListControl, tItemList, idPrune)
 
         self.wndCashRemodel:SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
 	    self.wndCashRemodel:SetAmount(GameLib.GetPlayerCurrency(), true)
-		self:SelectItemByUniqueId(wndListControl)
+		self:SelectItemByUniqueId(wndListControl, tItemList)
 
 	end
 end
 
 ---------------------------------------------------------------------------------------------------
-function HousingRemodel:SelectItemByUniqueId(wndListControl)
+function HousingRemodel:SelectItemByUniqueId(wndListControl, tItemList)
 	local nCount = wndListControl:GetRowCount()
 	for idx = 1, nCount do
 		local idx = wndListControl:GetCellData(idx, 1)
@@ -1229,13 +1246,15 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingRemodel:GetItem(idItem, tItemList)
-  for idx = 1, #tItemList do
-    tItemData = tItemList[idx]
-    if tItemData.nId == idItem then
-      return tItemData
-    end
-  end
-  return nil
+	if tItemList then
+		for idx = 1, #tItemList do
+			tItemData = tItemList[idx]
+			if tItemData.nId == idItem then
+				return tItemData
+			end
+		end
+	end
+	return nil
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1423,6 +1442,14 @@ function HousingRemodel:OnHousingResult(strName, eResult)
             self:ResetExtRemodelPreview(false)
         end
     end
+end
+
+function HousingRemodel:OnPlayerCurrencyChanged()
+	if self.wndRemodel then
+		local eCurrencyType = self.wndCashRemodel:GetCurrency():GetMoneyType()
+		local nCurrencyAmount = GameLib.GetPlayerCurrency(eCurrencyType)
+		self.wndCashRemodel:SetAmount(nCurrencyAmount, false)
+	end
 end
 
 ---------------------------------------------------------------------------------------------------

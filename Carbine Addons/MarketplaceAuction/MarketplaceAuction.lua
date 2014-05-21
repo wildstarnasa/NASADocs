@@ -13,14 +13,15 @@ require "ItemAuction"
 
 local MarketplaceAuction = {}
 
+-- Note: These are item levels, not player levels
 local knMinLevel = 1
-local knMaxLevel = 50 -- TODO: Replace with a variable from code
+local knMaxLevel = 60 -- TODO: Replace with a variable from code
+
 local knMaxPlat = 9999999999 -- 9999 plat
 local knMinRarity = Item.CodeEnumItemQuality.Inferior
 local knMaxRarity = Item.CodeEnumItemQuality.Artifact
 local kstrAuctionOrderDuration = MarketplaceLib.kItemAuctionListTimeDays
 
-local knSaveData = 3
 --[[ For Reference, Filters
 	MarketplaceLib.ItemAuctionFilterData.ItemAuctionFilterPropertyMin },
 	MarketplaceLib.ItemAuctionFilterData.ItemAuctionFilterPropertyMax },	-- Unused
@@ -104,32 +105,6 @@ function MarketplaceAuction:Init()
     Apollo.RegisterAddon(self)
 end
 
-function MarketplaceAuction:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-
-	return tSaved
-end
-
-function MarketplaceAuction:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function MarketplaceAuction:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MarketplaceAuction.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -171,10 +146,10 @@ end
 
 function MarketplaceAuction:OnDestroy()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self:OnSearchClearBtn()
 		self.wndMain:Destroy()
 	end
+
 	Event_CancelAuctionhouse()
 end
 
@@ -195,20 +170,17 @@ end
 
 function MarketplaceAuction:Initialize()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceAuctionForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceAuction_AuctionHouse")})
+
 	self.wndOrderLimitText = self.wndMain:FindChild("OpenMarketListingsBtn")
 	self.wndPlayerCashWindow = self.wndMain:FindChild("PlayerCashWindow")
 
 	self.wndMain:SetSizingMinimum(self.wndMain:GetWidth(), 600)
 	self.wndMain:SetSizingMaximum(1600, 1600)
-
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 
 	local wndSort = self.wndMain:FindChild("SortContainer")
 	wndSort:FindChild("SortOptionsStatOpener"):AttachWindow(wndSort:FindChild("SortFlyoutStatContainer"))
@@ -431,8 +403,7 @@ function MarketplaceAuction:ToggleAndInitializeBuyOrSell()
 	wndFilter:FindChild("FilterOptionsContainer"):Show(false)
 	wndFilter:FindChild("FilterClearBtn"):Show(wndFilter:FindChild("FilterClearBtn"):GetData() or false) -- GOTCHA: Visibility update is delayed until a manual reset
 
-	self.wndMain:FindChild("SearchResultListText"):SetText("")
-	self.wndMain:FindChild("SearchResultTooManyResults"):SetText("")
+	self.wndMain:FindChild("SearchResultList"):SetText("")
 
 	if bIsBuyChecked then
 		self:InitializeBuy()
@@ -699,17 +670,19 @@ function MarketplaceAuction:GetBuyFilterOptions()
 
 	-- Level Filtering
 	local wndFilter = self.wndMain:FindChild("FilterContainer")
-	local nLevelMin = tonumber(wndFilter:FindChild("FilterOptionsLevelMinContainer"):FindChild("FilterOptionsLevelEditBox"):GetText()) or 1
-	local nLevelMax = tonumber(wndFilter:FindChild("FilterOptionsLevelMaxContainer"):FindChild("FilterOptionsLevelEditBox"):GetText()) or 50
-	if nLevelMin == 1 then
+	local nLevelMin = tonumber(wndFilter:FindChild("FilterOptionsLevelMinContainer"):FindChild("FilterOptionsLevelEditBox"):GetText()) or knMinLevel
+	local nLevelMax = tonumber(wndFilter:FindChild("FilterOptionsLevelMaxContainer"):FindChild("FilterOptionsLevelEditBox"):GetText()) or knMaxLevel
+	if nLevelMin == knMinLevel then
 		wndFilter:FindChild("FilterOptionsLevelMinContainer"):FindChild("FilterOptionsLevelDownBtn"):Enable(false)
 		wndFilter:FindChild("FilterOptionsLevelMinContainer"):FindChild("FilterOptionsLevelEditBox"):SetText(nLevelMin)
 	end
-	if nLevelMax == 50 then
+	if nLevelMax == knMaxLevel then
 		wndFilter:FindChild("FilterOptionsLevelMaxContainer"):FindChild("FilterOptionsLevelUpBtn"):Enable(false)
 		wndFilter:FindChild("FilterOptionsLevelMaxContainer"):FindChild("FilterOptionsLevelEditBox"):SetText(nLevelMax)
 	end
-	table.insert(tOptions, { nType = MarketplaceLib.ItemAuctionFilterData.ItemAuctionFilterLevel, nMin = nLevelMin, nMax = nLevelMax })
+	if nLevelMin ~= knMinLevel or nLevelMax ~= knMaxLevel then
+		table.insert(tOptions, { nType = MarketplaceLib.ItemAuctionFilterData.ItemAuctionFilterLevel, nMin = nLevelMin, nMax = nLevelMax })
+	end
 
 	-- Max Buyout Price
 	local nMaxBuyout = tonumber(wndFilter:FindChild("FilterOptionsBuyoutCash"):GetAmount()) or 0
@@ -779,23 +752,22 @@ function MarketplaceAuction:InitializeBuy()
 
 			-- Exit early if too many items in the search
 			local tPackagedData = {}
-			local strTooManyResults = Apollo.GetString("MarketplaceAuction_SearchNotPossible") .. "\n" .. Apollo.GetString("MarketplaceAuction_TooManyResults")
+			--local strTooManyResults = ""
 			for idx, tData in pairs(MarketplaceLib.SearchAuctionableItems(strSearchQuery, nFamilyId, nCategoryId, nTypeId)) do -- This is a local call and won't hit the server
 				if #tPackagedData > MarketplaceLib.kAuctionSearchMaxIds then
 					break
 				else
-					strTooManyResults = strTooManyResults .. "\n" .. tData.strName
+					--strTooManyResults = strTooManyResults .. "\n" .. tData.strName
 					table.insert(tPackagedData, tData.nId or 0)
 				end
 			end
 
 			if #tPackagedData > MarketplaceLib.kAuctionSearchMaxIds then
-				self.wndMain:FindChild("SearchResultTooManyResults"):SetText(strTooManyResults .. "\n" .. Apollo.GetString("CRB_Ellipsis"))
-				self.wndMain:FindChild("SearchResultListText"):SetText("") -- So the error messages don't overlap
+				self.wndMain:FindChild("SearchResultList"):SetText(Apollo.GetString("MarketplaceAuction_TooManyResults"))
 			elseif #tPackagedData > 0 then
 				MarketplaceLib.RequestItemAuctionsByItems(tPackagedData, nPage, eAuctionSort, bReverseSort, arFilters, nil, nil, nPropertySort)
 			else
-				self.wndMain:FindChild("SearchResultListText"):SetText(Apollo.GetString("Tradeskills_NoResults"))
+				self.wndMain:FindChild("SearchResultList"):SetText(Apollo.GetString("MarketplaceAuction_SearchNotPossible"))
 			end
 		elseif strSearchEnum == "Top" then
 			MarketplaceLib.RequestItemAuctionsByFamily(nSearchId, nPage, eAuctionSort, bReverseSort, arFilters, nil, nil, nPropertySort)
@@ -850,11 +822,11 @@ function MarketplaceAuction:OnItemAuctionSearchResults(nPage, nTotalResults, tAu
 		-- Not found text
 		local bNoResults = #wndParent:GetChildren() == 0
 		if bNoResults and self.wndMain:FindChild("FilterContainer"):FindChild("FilterClearBtn"):GetData() then
-			self.wndMain:FindChild("SearchResultListText"):SetText(Apollo.GetString("Tradeskills_NoResults").."\n"..Apollo.GetString("MarketplaceAuction_TryClearingFilter"))
+			self.wndMain:FindChild("SearchResultList"):SetText(Apollo.GetString("Tradeskills_NoResults").."\n"..Apollo.GetString("MarketplaceAuction_TryClearingFilter"))
 		elseif bNoResults then
-			self.wndMain:FindChild("SearchResultListText"):SetText(Apollo.GetString("Tradeskills_NoResults"))
+			self.wndMain:FindChild("SearchResultList"):SetText(Apollo.GetString("Tradeskills_NoResults"))
 		else
-			self.wndMain:FindChild("SearchResultListText"):SetText("")
+			self.wndMain:FindChild("SearchResultList"):SetText("")
 		end
 	end
 end
@@ -899,7 +871,7 @@ function MarketplaceAuction:BuildListItem(aucCurr, wndParent, bBuyTab)
 	wnd:FindChild("OwnAuctionLabel"):Show(bIsOwnAuction)
 	wnd:FindChild("TopBidAuctionLabel"):Show(aucCurr:IsTopBidder())
 
-	if wnd:FindChild("BidPrice") then		
+	if wnd:FindChild("BidPrice") then
 		wnd:FindChild("BidPrice"):SetAmount(nDefaultBid)
 	end
 
@@ -916,6 +888,7 @@ function MarketplaceAuction:OnRowSelectBtnUncheck(wndHandler, wndControl)
 	wndParent:SetData(nil)
 	wndParent:FindChild("BottomBuyName"):SetText("")
 	wndParent:FindChild("BottomBuyIcon"):SetSprite("")
+	wndParent:FindChild("BottomBuyIconBG"):Show(false)
 	wndParent:FindChild("BottomBidResetBtn"):Show(false)
 
 	wndParent:FindChild("BottomBidBtn"):Enable(false)
@@ -940,6 +913,7 @@ function MarketplaceAuction:OnRowSelectBtnCheck(wndHandler, wndControl)
 	wndParent:SetData(aucCurr)
 	wndParent:FindChild("BottomBuyName"):SetText(itemCurr:GetName())
 	wndParent:FindChild("BottomBuyIcon"):SetSprite(itemCurr:GetIcon())
+	wndParent:FindChild("BottomBuyIconBG"):Show(true)
 
 	wndParent:FindChild("BottomBidBtn"):SetData(wndParent)
 	wndParent:FindChild("BottomBuyoutBtn"):SetData(wndParent)
@@ -959,16 +933,7 @@ end
 -- Buy Btns
 -----------------------------------------------------------------------------------------------
 
-function MarketplaceAuction:OnBuyNowBtn(wndHandler, wndControl)
-	local wndParent = wndHandler:GetData()
-	local aucCurr = wndParent:GetData()
-	aucCurr:Buyout()
-end
-
-function MarketplaceAuction:OnBidBtn(wndHandler, wndControl)
-	local wndParent = wndHandler:GetData()
-	local aucCurr = wndParent:GetData()
-	aucCurr:Bid(wndParent:FindChild("BottomBidPrice"):GetAmount())
+function MarketplaceAuction:OnItemAuctionBuyOrderSubmitted(bSuccess)
 end
 
 function MarketplaceAuction:OnBidPriceUpBtn(wndHandler, wndControl)
@@ -1002,6 +967,7 @@ function MarketplaceAuction:OnBidResetBtn(wndHandler, wndControl)
 	wndParent:FindChild("BottomBidResetBtn"):Show(false)
 	wndParent:FindChild("BottomBidPriceUpBtn"):Enable(nDefaultBid < aucCurr:GetBuyoutPrice():GetAmount())
 	wndParent:FindChild("BottomBidPriceDownBtn"):Enable(false)
+	wndParent:FindChild("BottomBuyoutPrice"):SetTextColor(ApolloColor.new("UI_WindowTitleGray"))
 	wndParent:FindChild("BottomBidPrice"):SetTextColor(ApolloColor.new("UI_WindowTitleGray"))
 	wndParent:FindChild("BottomBidPrice"):SetAmount(nDefaultBid)
 	wndParent:SetFocus()
@@ -1022,11 +988,14 @@ function MarketplaceAuction:HelperValidateBidEditBoxInput()
 	local aucCurr = wndParent:GetData()
 
 	local bValidBidPrice = true
+	local nPlayerCash = self.wndPlayerCashWindow:GetAmount()
+	local nMinBidPrice = aucCurr:GetMinBid():GetAmount()
+	local nCurrBidPrice = aucCurr:GetCurrentBid():GetAmount()
 	local nBuyoutPrice = aucCurr:GetBuyoutPrice():GetAmount()
 	local nAttemptPrice = wndParent:FindChild("BottomBidPrice"):GetAmount()
 
 	-- Up Down Arrows
-	if nAttemptPrice < aucCurr:GetMinBid():GetAmount() or nAttemptPrice < aucCurr:GetCurrentBid():GetAmount() or nAttemptPrice > self.wndPlayerCashWindow:GetAmount() then
+	if nAttemptPrice < nMinBidPrice or nAttemptPrice < nCurrBidPrice or nAttemptPrice > nPlayerCash then
 		bValidBidPrice = false
 		wndParent:FindChild("BottomBidPriceUpBtn"):Enable(true)
 		wndParent:FindChild("BottomBidPriceDownBtn"):Enable(false)
@@ -1042,23 +1011,35 @@ function MarketplaceAuction:HelperValidateBidEditBoxInput()
 	-- Buttons
 	local bBidOnly = false
 	local bBuyoutOnly = false
-	local nDefaultBid = math.max(aucCurr:GetMinBid():GetAmount(), aucCurr:GetCurrentBid():GetAmount())
+	local nDefaultBid = math.max(nMinBidPrice, nCurrBidPrice)
 	if nBuyoutPrice == 0 then
 		bBidOnly = true
 	elseif nDefaultBid >= nBuyoutPrice then
 		bBuyoutOnly = true
 	end
 
-	wndParent:FindChild("BottomBuyoutBtn"):Enable(not bBidOnly and not aucCurr:IsOwned())
+	local bCanBuyout = not bBidOnly and not aucCurr:IsOwned() and nBuyoutPrice <= nPlayerCash
+	wndParent:FindChild("BottomBuyoutBtn"):Enable(bCanBuyout)
+	if bCanBuyout then
+		wndParent:FindChild("BottomBuyoutBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.MarketplaceAuctionBuySubmit, aucCurr, true)
+	end
+
+	wndParent:FindChild("BottomBuyoutPrice"):SetTextColor(bCanBuyout and "UI_WindowTitleGray" or "UI_BtnTextRedNormal")
 	wndParent:FindChild("BottomBidPrice"):SetTextColor(bValidBidPrice and "UI_WindowTitleGray" or "UI_BtnTextRedNormal")
-	wndParent:FindChild("BottomBidBtn"):Enable(not bBuyoutOnly and bValidBidPrice and not aucCurr:IsTopBidder() and not aucCurr:IsOwned())
+
+	local bCanBid = not bBuyoutOnly and bValidBidPrice and not aucCurr:IsTopBidder() and not aucCurr:IsOwned()
+	wndParent:FindChild("BottomBidBtn"):Enable(bCanBid)
+	if bCanBid then
+		local monBidPrice = wndParent:FindChild("BottomBidPrice"):GetCurrency()
+		wndParent:FindChild("BottomBidBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.MarketplaceAuctionBuySubmit, aucCurr, false, monBidPrice)
+	end
 end
 
 -----------------------------------------------------------------------------------------------
 -- Category Buttons
 -----------------------------------------------------------------------------------------------
 
-function MarketplaceAuction:OnCategoryTopBtnToggle(wndHandler, wndControl) -- CategoryTopBtn
+function MarketplaceAuction:OnCategoryTopBtnCheck(wndHandler, wndControl) -- CategoryTopBtn
 	self.wndMain:SetGlobalRadioSel("MarketplaceAuction_CategoryMidBtn_GlobalRadioGroup", -1)
 
 	self.nSearchId = nil
@@ -1078,6 +1059,15 @@ function MarketplaceAuction:OnCategoryTopBtnToggle(wndHandler, wndControl) -- Ca
 	end
 
 	self:OnRefreshBtn()
+	self:OnResizeCategories()
+end
+
+function MarketplaceAuction:OnCategoryTopBtnUncheck(wndHandler, wndControl) -- CategoryTopBtn
+	self.wndMain:SetGlobalRadioSel("MarketplaceAuction_CategoryMidBtn_GlobalRadioGroup", -1)
+
+	self.nSearchId = nil
+	self.strSearchEnum = nil
+
 	self:OnResizeCategories()
 end
 
@@ -1155,12 +1145,14 @@ function MarketplaceAuction:OnSellListItemCheck(wndHandler, wndControl)
 
 	wndParent:FindChild("CreateBidInputBox"):SetAmount(nVendorPrice)
 	wndParent:FindChild("CreateBidInputBox"):SetData(nVendorPrice) -- Min price to break even
-	wndParent:FindChild("CreateBuyoutInputBox"):SetAmount(nVendorPrice)
-	wndParent:FindChild("CreateBuyoutInputBox"):SetData(nVendorPrice) -- Min price to break even
+	wndParent:FindChild("CreateBuyoutInputBox"):SetAmount(nVendorPrice + 1)
+	wndParent:FindChild("CreateBuyoutInputBox"):SetData(nVendorPrice + 1) -- Min price to break even
 	wndParent:FindChild("CreateSellOrderCostBox"):SetAmount(MarketplaceLib.GetItemAuctionCost(itemSelling))
 	wndParent:FindChild("CreateSellListingLength"):SetText(String_GetWeaselString(Apollo.GetString("MarketplaceAuction_ListingLength"), kstrAuctionOrderDuration))
 
 	wndHandler:FindChild("ListItemTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
+
+	self:ValidateSellOrder()
 
 	-- Return in OnItemAuctionSearchResults
 	-- Options are hardcoded
@@ -1178,38 +1170,73 @@ function MarketplaceAuction:OnSellListItemUncheck(wndHandler, wndControl)
 	self.wndMain:FindChild("SellRightSide"):Show(false)
 end
 
-function MarketplaceAuction:OnSellOrderFromUI(wndHandler, wndControl) -- CreateSellOrderBtn, data is oItemInstance
+function MarketplaceAuction:OnCreateBidInputBoxChanged(wndHandler, wndControl)
+	self:ValidateSellOrder()
+end
+
+function MarketplaceAuction:OnCreateBuyoutInputBoxChanged(wndHandler, wndControl)
+	self:ValidateSellOrder()
+end
+
+function MarketplaceAuction:ValidateSellOrder() -- CreateSellOrderBtn data is oItemInstance
 	if not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
 
-	wndHandler:SetFocus()
-	local itemMerchendice = wndHandler:GetData()
-	local monBidPrice = self.wndMain:FindChild("SellContainer"):FindChild("CreateBidInputBox"):GetCurrency() -- not an integer
-	local monBuyoutPrice = self.wndMain:FindChild("SellContainer"):FindChild("CreateBuyoutInputBox"):GetCurrency() -- not an integer
+	local wndSellOrderBtn = self.wndMain:FindChild("SellContainer"):FindChild("CreateSellOrderBtn")
+	local wndBidInputBox = self.wndMain:FindChild("SellContainer"):FindChild("CreateBidInputBox")
+	local wndBuyoutInputBox = self.wndMain:FindChild("SellContainer"):FindChild("CreateBuyoutInputBox")
+	local wndBidErrorIcon = self.wndMain:FindChild("SellContainer"):FindChild("CreateBidErrorIcon")
 
-	local strErrorReason = nil
+	local itemMerchendice = wndSellOrderBtn:GetData()
+	local monBidPrice = wndBidInputBox:GetCurrency() -- not an integer
+	local monBuyoutPrice = wndBuyoutInputBox:GetCurrency() -- not an integer
+
+	wndBidErrorIcon:Show(false)
+	wndBidInputBox:SetTextColor("white")
+	wndBuyoutInputBox:SetTextColor("white")
+
+	local bValidSellOrder = true
 	if not itemMerchendice or not itemMerchendice:isInstance() or not itemMerchendice:IsAuctionable() then
-		strErrorReason = Apollo.GetString("MarketplaceAuction_InvalidItem")
+		bValidSellOrder = false
+		self:OnPostCustomMessage(Apollo.GetString("MarketplaceAuction_InvalidItem"), false, 4)
+
 	elseif not monBidPrice or monBidPrice:GetAmount() < 1 then
-		strErrorReason = Apollo.GetString("MarketplaceAuction_InvalidPrice")
+		bValidSellOrder = false
+		wndBidErrorIcon:Show(true)
+		wndBidErrorIcon:SetTooltip(Apollo.GetString("MarketplaceAuction_InvalidPrice"))
+		wndBidInputBox:SetTextColor("AddonError")
+
 	elseif monBuyoutPrice:GetAmount() > 0 and monBidPrice:GetAmount() > monBuyoutPrice:GetAmount() then
-		strErrorReason = Apollo.GetString("MarketplaceAuction_BidHigherThanBuyout")
+		bValidSellOrder = false
+		wndBidErrorIcon:Show(true)
+		wndBidErrorIcon:SetTooltip(Apollo.GetString("MarketplaceAuction_BidHigherThanBuyout"))
+		wndBidInputBox:SetTextColor("AddonError")
 	end
 
-	if strErrorReason then
-		self:OnPostCustomMessage(strErrorReason, false, 4)
-	else
-		MarketplaceLib.PostItemAuction(itemMerchendice, monBidPrice, monBuyoutPrice)
-		self.wndMain:FindChild("SellLeftSideItemList"):DestroyChildren()
-		self.wndMain:FindChild("SellRightSide"):Show(false)
-		self:ToggleAndInitializeBuyOrSell()
+	wndSellOrderBtn:Enable(bValidSellOrder)
+	if bValidSellOrder then
+		wndSellOrderBtn:SetActionData(GameLib.CodeEnumConfirmButtonType.MarketplaceAuctionSellSubmit, itemMerchendice, monBidPrice, monBuyoutPrice)
 	end
 end
 
+function MarketplaceAuction:OnItemAuctionSellOrderSubmitted(wndHandler, wndControl)
+	self.wndMain:FindChild("SellLeftSideItemList"):DestroyChildren()
+	self.wndMain:FindChild("SellRightSide"):Show(false)
+	self:ToggleAndInitializeBuyOrSell()
+end
+
 function MarketplaceAuction:OnBuySearchListItemMouseEnter(wndHandler, wndControl) -- Build on mouse enter and not every hit to save computation time
-	local aucCurr = wndHandler:GetData()
-	self:HelperBuildItemTooltip(wndHandler:FindChild("ListIcon"), aucCurr:GetItem())
+	if wndHandler == wndControl and wndHandler:GetData() then
+		local aucCurr = wndHandler:GetData()
+		self:HelperBuildItemTooltip(wndHandler:FindChild("ListIcon"), aucCurr:GetItem())
+	end
+end
+
+function MarketplaceAuction:OnBuySearchListItemMouseExit(wndHandler, wndControl)
+	if wndHandler == wndControl and wndHandler:FindChild("ListIcon") then
+		wndHandler:FindChild("ListIcon"):SetTooltipDoc(nil)
+	end
 end
 
 function MarketplaceAuction:OnSellListItemMouseEnter(wndHandler, wndControl) -- ListItem, data should be an item
@@ -1252,6 +1279,10 @@ function MarketplaceAuction:OnItemAuctionBidResult(eAuctionBidResult, aucCurr)
 end
 
 function MarketplaceAuction:OnItemCancelResult(eAuctionEventType, aucCurr)
+	if not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
+
 	if eAuctionEventType ~= MarketplaceLib.AuctionPostResult.Ok then
 		return
 	end
@@ -1410,3 +1441,5 @@ end
 
 local MarketplaceAuctionInst = MarketplaceAuction:new()
 MarketplaceAuctionInst:Init()
+
+

@@ -303,6 +303,7 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 			if tRewardString[strType] == nil then
 				tRewardString[strType] = ""
 			end
+			
 			if strType == "Quest" and not self:HelperFlagOrDefault(tFlags, "bHideQuests", false) then
 				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
 				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
@@ -334,24 +335,17 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 					tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CBCrafting_Challenge"), unitTarget:GetName(), tRewardString[strType])
 					wndCurr:SetTooltip(tRewardString[strType])
 				end
-			elseif strType == "Soldier" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
+			elseif strType == "Soldier" or strType == "Settler" or strType == "Explorer" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
 				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
 				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
 				tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("Nameplates_Mission"), unitTarget:GetName(), tRewardString[strType])
+			
+
 				wndCurr:SetTooltip(tRewardString[strType])
 
 				if tRewardInfo[idx].splReward then
 					self:HelperDrawSpellBind(wndCurr, strType)
-				end
-			elseif strType == "Settler" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
-				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
-				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-				tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("Nameplates_Mission"), unitTarget:GetName(), tRewardString[strType])
-				wndCurr:SetTooltip(tRewardString[strType])
-
-				if tRewardInfo[idx].splReward then
-					self:HelperDrawSpellBind(wndCurr, strType)
-				end
+				end	
 			elseif strType == "Scientist" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
 				local pmMission = tRewardInfo[idx].pmMission
 				local splSpell = tRewardInfo[idx].splReward
@@ -401,15 +395,6 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 						Tooltip.GetSpellTooltipForm(self, wndCurr, splSpell)
 					end
 				end
-			elseif strType == "Explorer" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
-				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
-				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-				tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, "Mission", unitTarget:GetName(), tRewardString[strType])
-				wndCurr:SetTooltip(tRewardString[strType])
-
-				if tRewardInfo[idx].splReward then
-					self:HelperDrawSpellBind(wndCurr, strType)
-				end
 			elseif strType == "PublicEvent" and not self:HelperFlagOrDefault(tFlags, "bHidePublicEvents", false) then
 				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
 
@@ -420,46 +405,34 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 
 				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
 
-				if wndCurr:IsShown() then -- already have a tooltip
-					-- Do nothing. It has been cut below
-				else
-					local strPublicEventMarker = String_GetWeaselString(Apollo.GetString("Nameplates_PublicEvents"), unitTarget:GetName())
-					tRewardString[strType] = string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"Yellow\">%s</P>", strPublicEventMarker)
-				end
-
+				local strTempTitle = strTitle
 				if peEvent:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_Exterminate then
-					strNumRemaining = String_GetWeaselString(Apollo.GetString("Nameplates_NumRemaining"), strTitle, nCompleted)
-					tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[strType], strNumRemaining)
+					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_NumRemaining"), strTitle, nCompleted)
 				elseif peEvent:ShowPercent() then
-					strPercentCompleted = String_GetWeaselString(Apollo.GetString("Nameplates_PercentCompleted"), strTitle, nCompleted / nNeeded * 100)
-					tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[strType], strPercentCompleted)
-				else
-					tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[strType], String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), strTitle, nCompleted, nNeeded))
+					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_PercentCompleted"), strTitle, nCompleted / nNeeded * 100)
+				elseif nNeeded > 0 then 
+					strTempTitle = String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), strTitle, nCompleted, nNeeded)
 				end
 
-				wndCurr:ToFront()
+				tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[strType], strTempTitle)
+
+				wndCurr:ToFront()				
 				wndCurr:SetTooltip(tRewardString[strType])
 			end
 		end
 	end
 
-	if bIsRival and not self:HelperFlagOrDefault(tFlags, "bHideRivals", false) then
-		local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, "Rival")
+	if ( bIsRival and not self:HelperFlagOrDefault(tFlags, "bHideRivals", false) )
+		or ( bIsFriend and not self:HelperFlagOrDefault(tFlags, "bHideFriends", false) )
+		  or ( bIsAccountFriend and not self:HelperFlagOrDefault(tFlags, "bHideAccountFriends", false) ) then
+
+		local strTempType = bIsRival and "Rival" or "Friend"
+		local strIsAccount = bIsAccountFriend and "TargetFrame_AccountFriend" or "TargetFrame_" .. strTempType
+
+		local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strTempType)
 		nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-		tRewardString["Rival"] = self:HelperDrawBasicRewardTooltip(wndCurr, Apollo.GetString("TargetFrame_Rival"), unitTarget:GetName(), tRewardString["Rival"])
-		wndCurr:SetTooltip(tRewardString["Rival"])
-	end
-	if bIsFriend and not self:HelperFlagOrDefault(tFlags, "bHideFriends", false) then
-		local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, "Friend")
-		nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-		tRewardString["Friend"] = self:HelperDrawBasicRewardTooltip(wndCurr, Apollo.GetString("TargetFrame_Friend"), unitTarget:GetName(), tRewardString["Friend"])
-		wndCurr:SetTooltip(tRewardString["Friend"])
-	end
-	if bIsAccountFriend and not self:HelperFlagOrDefault(tFlags, "bHideAccountFriends", false) then
-		local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, "Friend")
-		nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-		tRewardString["Friend"] = self:HelperDrawBasicRewardTooltip(wndCurr, Apollo.GetString("TargetFrame_AccountFriend"), unitTarget:GetName(), tRewardString["Friend"])
-		wndCurr:SetTooltip(tRewardString["Friend"])
+		tRewardString[strTempType] = self:HelperDrawBasicRewardTooltip(wndCurr, Apollo.GetString(strIsAccount), unitTarget:GetName(), tRewardString[strTempType])
+		wndCurr:SetTooltip(tRewardString[strTempType])
 	end
 
 	if nActiveRewardCount > 0 then

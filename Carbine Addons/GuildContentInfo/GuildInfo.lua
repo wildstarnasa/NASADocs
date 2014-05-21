@@ -378,7 +378,7 @@ function GuildInfo:OnGuildNameplateChange(guildShown)
 end
 
 function GuildInfo:OnGuildMessageUpdated(guildOwner)
-	if self.wndMain:GetData() == guildOwner and self.wndMain and self.wndMain:IsValid() then
+	if self.wndMain and self.wndMain:GetData() == guildOwner and self.wndMain:IsValid() then
 		self:PopulateInfoPane()
 	end
 end

@@ -28,12 +28,9 @@ local ktResultString =
 	[GuildLib.GuildResult_NotHighEnoughLevel] 	= Apollo.GetString("Warparty_InsufficientLevel"),
 }
 
-local knMaxGuildRankName = 16
 local crGuildNameLengthError = ApolloColor.new("red")
 local crGuildNameLengthGood = ApolloColor.new("ffffffff")
 local kstrAlreadyInGuild = Apollo.GetString("Warparty_AlreadyInWarparty")
-
-local knSaveVersion = 1
 
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -43,8 +40,6 @@ function WarpartyRegister:new(o)
     setmetatable(o, self)
     self.__index = self
 
-    -- initialize variables here
-
     return o
 end
 
@@ -52,44 +47,28 @@ function WarpartyRegister:Init()
     Apollo.RegisterAddon(self)
 end
 
-function WarpartyRegister:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local tSave = 
-	{
-		tOffsets = self.wndMain and {self.wndMain:GetAnchorOffsets()} or self.SavedOffsets,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function WarpartyRegister:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if self.wndMain and tSavedData.tOffsets then
-		self.wndMain:SetAnchorOffsets(unpack(tSavedData.tOffsets))
-	end
-end
-
-
 -----------------------------------------------------------------------------------------------
 -- WarpartyRegister OnLoad
 -----------------------------------------------------------------------------------------------
 function WarpartyRegister:OnLoad()
+    self.xmlDoc = XmlDoc.CreateFromFile("WarpartyRegister.xml")
+    self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+end
+
+function WarpartyRegister:OnDocumentReady()
+    if self.xmlDoc == nil then
+        return
+    end
+
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", 	"OnGuildResultInterceptResponse", self)
 	Apollo.RegisterTimerHandler("ErrorMessageTimer", 				"OnErrorMessageTimer", self)
-   --Apollo.RegisterSlashCommand("warparty", 						"OnWarpartyRegistration", self)
 	Apollo.RegisterEventHandler("GenericEvent_RegisterWarparty", 	"OnWarpartyRegistration", self)
 	Apollo.RegisterEventHandler("Event_ShowWarpartyInfo", 			"OnCancel", self)
 	Apollo.RegisterEventHandler("LFGWindowHasBeenClosed", 			"OnCancel", self)
 
     -- load our forms
-    self.wndMain = Apollo.LoadForm("WarpartyRegister.xml", 			"WarpartyRegistrationForm", nil, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc, 			"WarpartyRegistrationForm", nil, self)
+    self.xmlDoc = nil
     self.wndMain:Show(false)
 
 	self.wndWarpartyName = self.wndMain:FindChild("WarpartyNameString")
@@ -104,13 +83,9 @@ function WarpartyRegister:OnLoad()
 	self:ResetOptions()
 end
 
-
 -----------------------------------------------------------------------------------------------
 -- WarpartyRegister Functions
 -----------------------------------------------------------------------------------------------
--- Define general functions here
-
---function WarpartyRegister:OnWarpartyRegistration(command, warpartySize)
 function WarpartyRegister:OnWarpartyRegistration(tPos)
 		-- Check to see if the player is already on an warparty of this type
 	for key, guildCurr in pairs(GuildLib.GetGuilds()) do
@@ -122,17 +97,8 @@ function WarpartyRegister:OnWarpartyRegistration(tPos)
 
 	self.wndMain:FindChild("WarpartyNameLabel"):SetText(Apollo.GetString("Warparty_NameYourWarparty"))
 
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	if tPos ~= nil then
-		if tPos.bDrawOnLeft == true then
-			--self.wndMain:Move(tPos.nX - (nRight - nLeft) + 2, tPos.nY + 3, nRight - nLeft, nBottom - nTop)
-		else
-			--self.wndMain:Move(tPos.nX - 8, tPos.nY + 3, nRight - nLeft, nBottom - nTop)
-		end
-	end
-
 	self.wndRegister:Enable(true)
-	self.wndMain:Show(true) -- show the window
+	self.wndMain:Show(true)
 	self.wndMain:ToFront()
 	self:Validate()
 end
@@ -159,13 +125,13 @@ function WarpartyRegister:Validate()
 	self.wndRegister:Enable(bValid)
 
 	local nNameLength = string.len(self.tCreate.strName or "")
-	if nNameLength < 1 or nNameLength > knMaxGuildRankName then
+	if nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
 		self.WndWarpartyNameLimit:SetTextColor(crGuildNameLengthError)
 	else
 		self.WndWarpartyNameLimit:SetTextColor(crGuildNameLengthGood)
 	end
 
-	self.WndWarpartyNameLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, knMaxGuildRankName))
+	self.WndWarpartyNameLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
 end
 
 function WarpartyRegister:HelperCheckForEmptyString(strText) -- make sure there's a valid string
@@ -185,7 +151,6 @@ end
 -----------------------------------------------------------------------------------------------
 -- WarpartyRegistrationForm Functions
 -----------------------------------------------------------------------------------------------
--- when the OK button is clicked
 function WarpartyRegister:OnRegisterBtn(wndHandler, wndControl)
 	local tGuildInfo = self.tCreate
 
@@ -203,7 +168,6 @@ function WarpartyRegister:OnRegisterBtn(wndHandler, wndControl)
 	--NOTE: Requires a server response to progress
 end
 
--- when the Cancel button is clicked
 function WarpartyRegister:OnCancel(wndHandler, wndControl)
 	self.wndMain:Show(false) -- hide the window
 	self:HelperClearFocus()

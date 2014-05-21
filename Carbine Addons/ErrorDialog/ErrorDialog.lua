@@ -109,7 +109,7 @@ function ErrorDialog:OnDocumentReady()
 end
 
 function ErrorDialog:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ReportBug"), {"InterfaceMenu_ToggleReportBug", "", "spr_HUD_MenuIcons_Bug"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ReportBug"), {"InterfaceMenu_ToggleReportBug", "", "Icon_Windows32_UI_CRB_InterfaceMenu_ReportBug"})
 end
 
 function ErrorDialog:FillSubcategories()
@@ -245,8 +245,9 @@ function ErrorDialog:OnLuaError(tAddon, strError, bCanIgnore)
 
 	self.wndErrorDialog = Apollo.LoadForm(self.xmlDoc, "AddonError", nil, self)
 	self.wndErrorDialog:FindChild("Message"):SetText(String_GetWeaselString(strPrompt, strMessage))
-	self.wndErrorDialog:FindChild("ErrorText"):SetText(string.sub(strError, 0, 1000))
-	--self.wndErrorDialog:FindChild("Prompt"):SetText(strPrompt)
+	local strPartialError = string.sub(strError, 0, 1000)
+	self.wndErrorDialog:FindChild("ErrorText"):SetText(strPartialError)
+	self.wndErrorDialog:FindChild("CopyToClipboard"):SetActionData(GameLib.CodeEnumConfirmButtonType.CopyToClipboard, strPartialError)
 	
 	if self.locAddonError then
 		self.wndErrorDialog:MoveToLocation(self.locAddonError)
@@ -284,11 +285,6 @@ end
 function ErrorDialog:OnCloseBtn(wndHandler, wndControl)
 	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
-end
-
-function ErrorDialog:OnCopyToClipboard(wndHandler, wndControl)
-	local wndParent = wndHandler:GetParent()
-	wndParent:FindChild("ErrorText"):CopyTextToClipboard()
 end
 
 function ErrorDialog:OnCloseErrorWindow(wndHandler, wndControl)
@@ -388,7 +384,7 @@ function ErrorDialog:OnQuestListToggle(wndHandler, wndControl)
 	local wndQuestListFrame = self.wndReportBug:FindChild("Flyout")
 	local wndQuestList = wndQuestListFrame:FindChild("QuestList")
 	local bIsShown = wndHandler:IsChecked()
-	Print("Toggling")
+
 	
 	wndQuestListFrame:Show(bIsShown)
 	wndQuestList:Show(bIsShown)

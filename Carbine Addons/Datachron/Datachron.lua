@@ -92,11 +92,6 @@ function Datachron:OnDocumentReady()
 	Apollo.RegisterEventHandler("ChangeWorld", 						"OnChangeWorld", self) -- From code
 	Apollo.RegisterEventHandler("SetPlayerPath", 					"SetPath", self) -- From code
 
-	-- PVP
-	Apollo.RegisterEventHandler("MatchEntered", 					"OnPVPMatchEntered", self)
-	Apollo.RegisterEventHandler("PVPMatchStateUpdated", 			"OnPVPMatchStateUpdated", self)
-	Apollo.RegisterEventHandler("MatchExited", 						"OnPVPMatchExited", self)
-
 	-- Events
 	Apollo.RegisterEventHandler("GenericEvent_RestoreDatachron", 	"OnGenericEvent_RestoreDatachron", self)
 	Apollo.RegisterEventHandler("Communicator_ShowSpamMsg", 		"OnCommShowSpamMsg", self)
@@ -123,7 +118,6 @@ function Datachron:OnDocumentReady()
 
 	-- Datachron Modes
 	self.wndPathContainer 			= g_wndDatachron:FindChild("PathContainer")
-	self.wndPvPContainer 			= g_wndDatachron:FindChild("PvPContainer")
 	self.wndPathContainerTopLevel 	= g_wndDatachron:FindChild("PathContainerTopLevel")
 
 	self.bSoldierLoaded = false
@@ -150,13 +144,6 @@ function Datachron:OnDocumentReady()
 		self:OnMinimizeDatachron()
 	end
 
-	-------
-	-- PvP System Events
-	-------
-	if MatchingGame:IsInMatchingGame() and MatchingGame:GetPVPMatchState() then
-		self:OnPVPMatchEntered()
-	end
-
 	self:ProcessDatachronState()
 
 	Event_FireGenericEvent("Datachron_LoadPvPContent")
@@ -170,7 +157,7 @@ function Datachron:SetPath()
 
 	local ePathType = PlayerPathLib:GetPlayerPathType()
 	if self.wndPathContainerTopLevel then
-		self.wndPathContainerTopLevel:Show(ePathType == PlayerPathLib.PlayerPathType_Scientist and not MatchingGame.IsInPVPGame())
+		self.wndPathContainerTopLevel:Show(ePathType == PlayerPathLib.PlayerPathType_Scientist)
 	end
 
 	-- TODO REFACTOR
@@ -717,31 +704,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- End Call System
 ---------------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------------
--- PvP Datachron Mode
----------------------------------------------------------------------------------------------------
-function Datachron:OnPVPMatchEntered()
-	if not MatchingGame.IsInPVPGame() then
-		return
-	end
-
-	self.wndPathContainer:Show(false)
-	self.wndPvPContainer:Show(true)
-	self.wndPathContainerTopLevel:Show(false)
-end
-
-function Datachron:OnPVPMatchStateUpdated()
-	if MatchingGame:IsInMatchingGame() and MatchingGame:GetPVPMatchState() then
-		self:OnPVPMatchEntered()
-	end
-end
-
-function Datachron:OnPVPMatchExited()
-	self.wndPathContainer:Show(true)
-	self.wndPvPContainer:Show(false)
-	self.wndPathContainerTopLevel:Show(ePathType == PlayerPathLib.PlayerPathType_Scientist and not MatchingGame.IsInPVPGame())
-end
 
 local DatachronInst = Datachron:new()
 DatachronInst:Init()

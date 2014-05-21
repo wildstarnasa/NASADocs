@@ -27,8 +27,6 @@ local LuaEnumKeybindingState =
 	AcceptingModfierInput 	= 5,
 }
 
-local knVersion = 1
-
 ---------------------------------------------------------------------------------------------------
 -- Keybind Initializing
 ---------------------------------------------------------------------------------------------------
@@ -51,29 +49,6 @@ function Keybind:Init()
 	Apollo.RegisterAddon(self, true, Apollo.GetString("CRB_Keybindings"))
 end
 
-function Keybind:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndKeybindForm and self.wndKeybindForm:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved = 
-	{
-		tLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nVersion = knVersion,
-	}
-	return tSaved
-end
-
-function Keybind:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nVersion  == knVersion then
-		if tSavedData.tLocation then
-			self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocation)
-		end
-	end
-end
-
 ---------------------------------------------------------------------------------------------------
 function Keybind:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("KeybindingForms.xml")
@@ -81,12 +56,15 @@ function Keybind:OnLoad()
 end
 
 function Keybind:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
-		
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("InterfaceMenu_Keybindings", 	"OnShow", self)
-	Apollo.RegisterEventHandler("KeyDown", 						"OnKeyDown", self)
+	Apollo.RegisterEventHandler("MouseWheel", 					"OnMouseWheel", self)
+	Apollo.RegisterEventHandler("MouseButtonUp", 				"OnMouseButtonUp", self)
 	Apollo.RegisterEventHandler("KeyBindingUpdated", 			"RefreshKeybindList", self) -- reload keybind list
 	Apollo.RegisterEventHandler("KeyBindingReceived", 			"UpdateCopySet", self) -- received the copy set from db	
 	Apollo.RegisterSlashCommand("keybind", 						"OnShow", self)
@@ -107,7 +85,7 @@ function Keybind:OnDocumentReady()
 	self.wndSetCancel 		= self.wndKeybindForm:FindChild("CancelSetButton")
 	self.wndBindUnbind 		= self.wndKeybindForm:FindChild("UnbindButton")
 	self.wndBindCancel 		= self.wndKeybindForm:FindChild("CancelButton")
-	self.wndUndoUnbindDuplicate = self.wndKeybindForm:FindChild("UndoBindButton")
+	self.wndUndoUnbind 		= self.wndKeybindForm:FindChild("UndoBindButton")
 	
 	self.wndVerifyYes 		= self.wndKeybindForm:FindChild("ConfirmBindButton")
 	self.wndVerifyNo 		= self.wndKeybindForm:FindChild("CancelBindButton")	
@@ -148,7 +126,11 @@ function Keybind:OnDocumentReady()
         
 	self.wndKeybindForm:Show(false)
 
-end	
+end
+
+function Keybind:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndKeybindForm, strName = Apollo.GetString("CRB_Keybindings")})
+end
 
 function Keybind:OnConfigure()
 	self:OnShow()
@@ -185,7 +167,7 @@ function Keybind:OnShow()
 	self.arKeyBindings = GameLib.GetKeyBindings()
 	self:PopulateKeybindList()
 	
-	self:ShowUndoUnbindDuplicateMessage(false)
+	self:ShowUndoUnbindMessage(false)
     
 end	
 
@@ -212,7 +194,7 @@ end
 function Keybind:AddCategory(tCategory)
     -- add new binding into the form
     local wndBindingItem = self:FactoryCacheProduce(self.wndKeybindList, "KeybindCategoryItem", "C"..tCategory.nCategoryId)
-	wndBindingItem:SetText( "-- " .. tCategory.strName .. " --" )
+	wndBindingItem:SetText(tCategory.strName)
 	wndBindingItem:SetData(tCategory.nCategoryId) 
 end
 
@@ -360,7 +342,7 @@ function Keybind:ShowYesNoDialog(strMsg, fnContinue, oContinue, fnYes, oYes, fnN
     self:EnableSetButtons(false)
     self.wndSetSave:Enable(false)
 	self.wndSetCancel:Enable(false)
-	self:ShowUndoUnbindDuplicateMessage(false)
+	self:ShowUndoUnbindMessage(false)
 end
 function Keybind:ExitYesNoDialog(bYesNo)
     self.bShowingYesNoDialog = false
@@ -407,7 +389,7 @@ end
 ---------------------------------------------------------------------------------------------------	
 
 function Keybind:OnToggleSetSelect() --this opens the set-selection dialog
-	self:ShowUndoUnbindDuplicateMessage(false)
+	self:ShowUndoUnbindMessage(false)
 	if self.wndSetSelection:IsVisible() then
 		self:SetState(LuaEnumKeybindingState.Idle)
 		self.wndSetSelection:Show(false)
@@ -424,7 +406,7 @@ function Keybind:OnSetSelected(wndHandler, wndControl) --this function covers th
         return
     end
 
-	self:ShowUndoUnbindDuplicateMessage(false)
+	self:ShowUndoUnbindMessage(false)
 	
     self:OnToggleSetSelect()
     
@@ -537,7 +519,7 @@ function Keybind:ShowBindingInterface(bShow)
 	if bShow then
 		bShowSelectModifier = self:IsCurrBindingModifierKey()
 		bShowSelectBinding = not bShowSelectModifier
-		self:ShowUndoUnbindDuplicateMessage(false)
+		self:ShowUndoUnbindMessage(false)
 	end
 	
 	if bShowSelectModifier then 
@@ -582,7 +564,7 @@ function Keybind:OnRestoreDefaults( wndHandler, wndControl, eMouseButton )
 end
 
 function Keybind:RestoreDefaults()
-	self:ShowUndoUnbindDuplicateMessage(false)
+	self:ShowUndoUnbindMessage(false)
 
 	-- overwrite the key set
 	self.arKeyBindings = GameLib.GetInputKeySet(GameLib.CodeEnumInputSets.Default1)
@@ -596,22 +578,37 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Keybinding Functions
 ---------------------------------------------------------------------------------------------------
-function Keybind:ShowUndoUnbindDuplicateMessage(bShow)
+function Keybind:ShowUndoUnbindMessage(bShow, strOptionalMessage, bAppendMsg)
+-- show a message at the bottom of the dialog for undoing the unbind action just done
+-- if strOptionalMessageis nil, then display the default message
+-- else show strMessage
+-- unless bAppendMsg is true. both default message and strOptionalMessagewill be shown in this case
 
 	if not bShow or self.iUndoUnbindKeybind == nil or self.iUndoKeybind == nil then
 		self.wndDuplicateMsg:Show(false)
-		self.wndUndoUnbindDuplicate:Show(false)
+		self.wndUndoUnbind:Show(false)
 		self.iUndoUnbindKeybind = nil
 		self.iUndoKeybind = nil
 		return
 	end
+
+	local strTextToBeShown
+	if strOptionalMessage== nil or bAppendMsg then
+	 	strTextToBeShown = String_GetWeaselString(Apollo.GetString("Keybinding_UnmappedDuplicate"), self.arKeyBindings[self.iUndoUnbindKeybind].strActionLocalized )
+	else
+		strTextToBeShown = strOptionalMessage
+	end
 	
-	self.wndDuplicateMsg:SetText(String_GetWeaselString(Apollo.GetString("Keybinding_UnmappedDuplicate"), self.arKeyBindings[self.iUndoUnbindKeybind].strActionLocalized ))
+	if bAppendMsg then
+		strTextToBeShown = strTextToBeShown .. "\n" .. strOptionalMessage
+	end
+	
+	self.wndDuplicateMsg:SetText(strTextToBeShown)
 	self.wndDuplicateMsg:Show(true)
-	self.wndUndoUnbindDuplicate:Show(true)
+	self.wndUndoUnbind:Show(true)
 end
 
-function Keybind:OnUndoUnbindDuplicate( wndHandler, wndControl, eMouseButton )
+function Keybind:OnUndoUnbind( wndHandler, wndControl, eMouseButton )
 	
 	-- undo the keybind
 	-- assign the key back to the unmapped key
@@ -632,7 +629,7 @@ function Keybind:OnUndoUnbindDuplicate( wndHandler, wndControl, eMouseButton )
 		wndBindButton :SetText( GameLib.GetInputKeyNameText(tNewInput) )
 	end
 	
-	self:ShowUndoUnbindDuplicateMessage(false)
+	self:ShowUndoUnbindMessage(false)
 		
 end
 
@@ -642,7 +639,8 @@ function Keybind:OverwriteDuplicates(iKeybind, tInput)
     for idx = 1,#self.arKeyBindings do
         if idx ~= iKeybind then
 			for iBinding = 1, 2 do	
-                if self.arKeyBindings[idx].arInputs[iBinding].nCode == tInput.nCode and 
+                if self.arKeyBindings[idx].arInputs[iBinding].eDevice ~= GameLib.CodeEnumInputDevice.None and
+				   self.arKeyBindings[idx].arInputs[iBinding].nCode == tInput.nCode and 
 				   self.arKeyBindings[idx].arInputs[iBinding].eDevice == tInput.eDevice and 
 				   self.arKeyBindings[idx].arInputs[iBinding].eModifier == tInput.eModifier
                 then
@@ -659,11 +657,29 @@ function Keybind:OverwriteDuplicates(iKeybind, tInput)
 						end
 					end
 					self.arKeyBindings[idx].arInputs[iBinding] = {eDevice = GameLib.CodeEnumInputDevice.None} 
-					self:ShowUndoUnbindDuplicateMessage(true)
+					
+					if self:DoesUnbindKeyBreakBreakoutGameplay(idx, iBinding) then
+						-- "You've unmapped blah blah blah. Warning: This key is used in breakout gameplay" [undo]
+						self:ShowUndoUnbindMessage(true, Apollo.GetString("Keybinding_UnbindStrafeWarning"), true )
+					else
+						-- "You've unmapped blah blah blah" [undo]
+						self:ShowUndoUnbindMessage(true)
+					end
                 end    
             end
         end
     end
+end
+
+function Keybind:DoesUnbindKeyBreakBreakoutGameplay(iKeyBind, iSlot)
+	return
+		-- straft left or right 
+		(self.arKeyBindings[iKeyBind].idAction == GameLib.CodeEnumInputAction.StrafeLeft or 
+	   	self.arKeyBindings[iKeyBind].idAction == GameLib.CodeEnumInputAction.StrafeRight) 
+			and
+		-- and both binding slots are going to be unbound
+		(( iSlot== 2 and self.arKeyBindings[iKeyBind].arInputs[1].eDevice == GameLib.CodeEnumInputDevice.None ) or 
+		  (iSlot== 1 and self.arKeyBindings[iKeyBind].arInputs[2].eDevice == GameLib.CodeEnumInputDevice.None ) )
 end
 
 function Keybind:OnCancelBind()
@@ -751,7 +767,11 @@ function Keybind:OnKeyDown(wndHandler, wndControl, strKeyName, nCode, eModifier)
     end
 end
 
-function Keybind:OnMouseWheel(wndHandler, wndControl, nX, nY, nDelta, eModifier)
+function Keybind:OnWindowMouseWheel(wndHandler, wndControl, nX, nY, nDelta, eModifier)
+	self:OnMouseWheel(nX, nY, nDelta, eModifier)
+end
+
+function Keybind:OnMouseWheel(nX, nY, nDelta, eModifier)
     -- only process the wheel signal when accepting input
     if self.eState == LuaEnumKeybindingState.AcceptingInput then
         local nCode = GameLib.CodeEnumInputMouse.WheelUp
@@ -798,8 +818,11 @@ function Keybind:OnMouseWheel(wndHandler, wndControl, nX, nY, nDelta, eModifier)
     return false
 end
 
-function Keybind:OnMouseButtonUp( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+function Keybind:OnWindowMouseButtonUp( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	self:OnMouseButtonUp( eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+end
 
+function Keybind:OnMouseButtonUp( eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
 	-- capturing mouse input change
 	if self.eState == LuaEnumKeybindingState.AcceptingInput then
 	    if eMouseButton == GameLib.CodeEnumInputMouse.Left or eMouseButton == GameLib.CodeEnumInputMouse.Right then
@@ -821,7 +844,7 @@ function Keybind:OnMouseButtonUp( wndHandler, wndControl, eMouseButton, nLastRel
             iSiblingInput = 2
         end
         local iKeybind = self.wndCurrBind:GetParent():GetData()
-        if self.arKeyBindings[iKeybind].arInputs[iSiblingInput].nCode == nCode and 
+        if self.arKeyBindings[iKeybind].arInputs[iSiblingInput].nCode == eMouseButton and 
 		   self.arKeyBindings[iKeybind].arInputs[iSiblingInput].eDevice == GameLib.CodeEnumInputDevice.Mouse and
 		   self.arKeyBindings[iKeybind].arInputs[iSiblingInput].eModifier == eModifier then
 			return false
@@ -844,13 +867,22 @@ function Keybind:OnMouseButtonUp( wndHandler, wndControl, eMouseButton, nLastRel
 end
 
 function Keybind:AcceptCurrInput(iKeybind, tCurrInput)
-	
+
 	self.iUndoKeybind = iKeybind -- keep track of the keybind just got changed (in case of undoing unmapping due to duplicate)
 	self.tUndoInput = TableUtil:Copy(self.arKeyBindings[iKeybind].arInputs[self.wndCurrBind:GetData()]) -- undo input = input before changes
 	self.iUndoSlot = self.wndCurrBind:GetData() -- the slot being changed
 	
-	-- if there are any duplicates, save over them
-	self:OverwriteDuplicates(iKeybind, tCurrInput)
+	if self.tUndoInput.eDevice ~= GameLib.CodeEnumInputDevice.None and tCurrInput.eDevice == GameLib.CodeEnumInputDevice.None then
+		self.iUndoUnbindKeybind = iKeybind
+		self.iUndoUnbindSlot = self.wndCurrBind:GetData()
+		
+		if self:DoesUnbindKeyBreakBreakoutGameplay(iKeybind, self.iUndoSlot) then
+			self:ShowUndoUnbindMessage(true, Apollo.GetString("Keybinding_UnbindStrafeWarning") ) 
+		end
+	else
+		-- if there are any duplicates, save over them
+		self:OverwriteDuplicates(iKeybind, tCurrInput)
+	end
 
 	self.bNeedSave = true
     self.wndCurrBind:SetCheck(false)

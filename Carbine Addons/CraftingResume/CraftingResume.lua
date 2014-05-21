@@ -123,6 +123,7 @@ function CraftingResume:OnGenericEvent_CraftFromPL(idQueuedSchematic)
 			Tooltip.GetItemTooltipForm(self, wndNoMaterials, tMaterial.itemMaterial, {bPrimary = true, bSelling = false})
 		end
 		self.wndMain:FindChild("CoordPrevWindowMaterials"):ArrangeChildrenHorz(0)
+		self.wndMain:Invoke()
 
 		if self.locSavedWindowLoc then
 			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
@@ -174,6 +175,7 @@ end
 function CraftingResume:OnWindowClosed()
 	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
+	self.bCraftingStation = true
 end
 
 local CraftingResumeInst = CraftingResume:new()

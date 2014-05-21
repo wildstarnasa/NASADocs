@@ -8,8 +8,6 @@ require "GameLib"
 
 local ProgressLog = {}
 
-local knSaveVersion = 1
-
 function ProgressLog:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -21,32 +19,6 @@ function ProgressLog:Init()
     Apollo.RegisterAddon(self)
 end
 
-function ProgressLog:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = g_wndProgressLog and g_wndProgressLog:GetLocation() or self.locSavedLocation
-
-	local tSave =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSave
-end
-
-function ProgressLog:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedLocation = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function ProgressLog:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ProgressLog.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -56,6 +28,9 @@ function ProgressLog:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", "OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("ToggleCodex", "OnProgressLogOn", self)
 	Apollo.RegisterEventHandler("ToggleQuestLog", "ToggleQuestLog", self)
 	Apollo.RegisterEventHandler("ToggleProgressLog", "OnProgressLogOn", self)
@@ -85,6 +60,10 @@ function ProgressLog:OnDocumentReady()
 
 	Event_FireGenericEvent("ProgressLogLoaded")
 	self.nLastSelection = -1
+end
+
+function ProgressLog:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = g_wndProgressLog, strName = Apollo.GetString("CRB_Codex")})
 end
 
 function ProgressLog:OnProgressLogOn() --general toggle

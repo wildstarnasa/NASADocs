@@ -37,7 +37,6 @@ function Circles:OnDocumentReady()
 		return
 	end
 
-
 	Apollo.RegisterEventHandler("GenericEvent_InitializeCircles",	"OnGenericEvent_InitializeCircles", self)
 	Apollo.RegisterEventHandler("GenericEvent_DestroyCircles", 		"OnGenericEvent_DestroyCircles", self)
 	Apollo.RegisterEventHandler("GuildRoster", 						"OnGuildRoster", self)
@@ -49,19 +48,18 @@ function Circles:OnDocumentReady()
 
 	Apollo.RegisterTimerHandler("CircleAlertDisplayTimer", "OnCircleAlertDisplayTimer", self)
 	Apollo.RegisterTimerHandler("OfflineTimeUpdate", "OnOfflineTimeUpdate", self)
-	-- TODO: Add a slow timer, say 10 seconds, to update Roster when it's open for LastTimeOnline
-	-- TODO: GuildInvite event is done in GuildMain, it should be done here
-end
-
-function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
-	if self.wndMain and self.wndMain:IsValid() then
-		return
-	end
 	
 	Apollo.CreateTimer("OfflineTimeUpdate", 30.000, true)
 	Apollo.StopTimer("OfflineTimeUpdate")
+	
+	Apollo.CreateTimer("CircleAlertDisplayTimer", 3.0, false)
+	Apollo.StopTimer("CircleAlertDisplayTimer")
+end
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "CirclesMainForm", wndParent, self)
+function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
+	if not self.wndMain or not self.wndMain:IsValid() then
+		self.wndMain = Apollo.LoadForm(self.xmlDoc, "CirclesMainForm", wndParent, self)
+	end
 
 	local wndRosterScreen = self.wndMain:FindChild("RosterScreen")
 	local wndRosterBottom = wndRosterScreen:FindChild("RosterBottom")
@@ -86,12 +84,9 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 
 	self.wndRankPopout = wndRosterScreen:FindChild("RankPopout")
 
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	Apollo.StartTimer("OfflineTimeUpdate")
 	self.wndMain:SetData(guildCurr)
+	self.wndMain:Show(true)
 	self:FullRedrawOfRoster()
 end
 
@@ -101,17 +96,10 @@ function Circles:OnGenericEvent_DestroyCircles()
 	end
 end
 
-function Circles:OnSocialPanelBtn(wndHandler, wndControl)
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	Event_FireGenericEvent("EventGeneric_OpenSocialPanel", { x = nLeft, y = nTop })
-	self:OnClose()
-end
-
 function Circles:OnClose()
 	Apollo.StopTimer("CircleAlertDisplayTimer")
 	Apollo.StopTimer("OfflineTimeUpdate")
 	self.wndMain:FindChild("AlertMessage"):Show(false)
-	self.wndMain:Close()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -516,11 +504,6 @@ function Circles:ResetRosterMemberButtons()
 	end
 end
 
---function Circles:UpdateInfluenceAndMoney(guildCurr, nInfluence, monCash)
---	if not self.wndMain:IsShown() or self.wndMain:GetData() ~= guildCurr or guildCurr:GetType() ~= GuildLib.GuildType_Guild then return end
---	self.wndMain:FindChild("HeaderTitleText"):SetText(guildCurr:GetName().." ("..guildCurr:GetInfluence().." Influence)")
---end
-
 -----------------------------------------------------------------------------------------------
 -- Member permissions updating buttons
 -----------------------------------------------------------------------------------------------
@@ -609,7 +592,8 @@ function Circles:OnRosterLeaveYesClick(wndHandler, wndControl) -- wndHandler is 
 	elseif guildCurr then
 		guildCurr:Leave()
 	end
-	self:OnClose()
+	wndHandler:GetParent():Close()
+	self.wndMain:Close()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -662,35 +646,25 @@ function Circles:OnGuildResult(guildCurr, strName, nRank, eResult)
 		if eResult == GuildLib.GuildResult_KickedYou and self.wndMain:IsShown() then
 			self.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Ouch"))
 			self.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_Kicked"), strName))
-			self.wndMain:FindChild("AlertMessage"):Show(true)
-			Apollo.CreateTimer("CircleAlertDisplayTimer", 3.0, false)
+			self.wndMain:FindChild("AlertMessage"):Invoke()
+			Apollo.StartTimer("CircleAlertDisplayTimer")
 		elseif eResult == GuildLib.GuildResult_YouQuit and self.wndMain:IsShown() then
 			self.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Bye"))
 			self.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_LeftCircle"), strName))
-			self.wndMain:FindChild("AlertMessage"):Show(true)
-			Apollo.CreateTimer("CircleAlertDisplayTimer", 3.0, false)
+			self.wndMain:FindChild("AlertMessage"):Invoke()
+			Apollo.StartTimer("CircleAlertDisplayTimer")
 		elseif eResult == GuildLib.GuildResult_GuildDisbanded and self.wndMain:IsShown() then
 			self.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_CircleDisbanded"))
 			self.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_YouDisbanded"), strName))
-			self.wndMain:FindChild("AlertMessage"):Show(true)
-			Apollo.CreateTimer("CircleAlertDisplayTimer", 3.0, false)
+			self.wndMain:FindChild("AlertMessage"):Invoke()
+			Apollo.StartTimer("CircleAlertDisplayTimer")
 		end
-
-		-- DFOSCO - 2.8.13 - Guild system already changes nameplate when appropreate when joining a guild.  This causes two nameplate changes.
-		--if eResult == GuildLib.GuildResult_YouJoined or eResult == GuildLib.GuildResult_YouCreated then
-		--	local strCurrentguildCurrName = GameLib.GetPlayerUnit():GetGuildName()
-		--	if not strCurrentguildCurrName or string.len(strCurrentguildCurrName) == 0 then
-		--		guildCurr:SetAsNameplate()
-		--	end
-		--end
 	end
 end
 
 function Circles:OnCircleAlertDisplayTimer()
 	self.wndMain:FindChild("AlertMessage"):Show(false)
-	if self.bViewingRemovedGuild then -- flip back to the picker
-		self:OnSocialPanelBtn()
-	end
+	self.wndMain:Close()
 end
 
 -----------------------------------------------------------------------------------------------

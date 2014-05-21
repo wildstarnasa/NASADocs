@@ -384,6 +384,19 @@ function CommDisplay:DrawLootItem(tCurrReward, wndParentArg)
 		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):Show(true)
 		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetMoneySystem(tCurrReward.eCurrencyType or 0)
 		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetAmount(tCurrReward.nAmount, 0)
+		
+		local strText = ""
+		if tCurrReward.nAmount >= 1000000 then
+			strText = String_GetWeaselString(Apollo.GetString("CRB_Platinum"), math.floor(tCurrReward.nAmount / 1000000))
+		end
+		if tCurrReward.nAmount >= 10000 then
+			strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Gold"), math.floor(tCurrReward.nAmount % 1000000 / 10000))
+		end
+		if tCurrReward.nAmount >= 100 then
+			strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Silver"), math.floor(tCurrReward.nAmount % 10000 / 100))
+		end
+		strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Copper"), math.floor(tCurrReward.nAmount % 100))
+		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetTooltip(strText)
 	end
 
 	local strIconSprite = ""

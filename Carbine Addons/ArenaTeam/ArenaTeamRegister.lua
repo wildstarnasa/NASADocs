@@ -18,10 +18,7 @@ local ArenaTeamRegister = {}
 -----------------------------------------------------------------------------------------------
 local kcrDefaultText = CColor.new(135/255, 135/255, 135/255, 1.0)
 local kcrHighlightedText = CColor.new(0, 1.0, 1.0, 1.0)
-
-	
-local kstrAlreadyInGuild = Apollo.GetString("ArenaRegister_AlreadyInGuild") -- TODO: localize
-local knSaveVersion = 1	
+local kstrAlreadyInGuild = Apollo.GetString("ArenaRegister_AlreadyInGuild")
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -39,34 +36,6 @@ end
 function ArenaTeamRegister:Init()
     Apollo.RegisterAddon(self)
 end
-
-function ArenaTeamRegister:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-		
-	local tSave = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSave
-end
-
-function ArenaTeamRegister:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
- 
-
 -----------------------------------------------------------------------------------------------
 -- ArenaTeamRegister OnLoad
 -----------------------------------------------------------------------------------------------
@@ -76,9 +45,12 @@ function ArenaTeamRegister:OnLoad()
 end
 
 function ArenaTeamRegister:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", "OnGuildResultInterceptResponse", self)
 	Apollo.RegisterTimerHandler("SuccessfulMessageTimer", "OnSuccessfulMessageTimer", self)
 	Apollo.RegisterTimerHandler("ErrorMessageTimer", "OnErrorMessageTimer", self)	 
@@ -89,9 +61,6 @@ function ArenaTeamRegister:OnDocumentReady()
     -- load our forms
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "ArenaTeamRegistrationForm", nil, self)
     self.wndMain:Show(false)
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 	self.xmlDoc = nil
 	
 	self.wndArenaTeamName = self.wndMain:FindChild("RegistrationContent:ArenaTeamNameString")
@@ -109,6 +78,9 @@ function ArenaTeamRegister:OnDocumentReady()
 	self:ResetOptions()
 end
 
+function ArenaTeamRegister:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MatchMaker_Arenas")})
+end
 
 -----------------------------------------------------------------------------------------------
 -- ArenaTeamRegister Functions
@@ -152,13 +124,13 @@ function ArenaTeamRegister:OnArenaTeamRegistration(eTeamSize, tPos)
 	end
 
 	self.wndRegister:Enable(true)
-	self.wndMain:Show(true) -- show the window
+	self.wndMain:Invoke() -- show the window
 	self.wndMain:ToFront()
 end
 
 function ArenaTeamRegister:ResetOptions()
 	-- Reset the data for the next time the player attempts to create a team
-	self.wndAlert:Show(false)
+	self.wndAlert:Close()
 	self.wndAlert:FindChild("MessageAlertText"):SetText("")
 	self.wndAlert:FindChild("MessageBodyText"):SetText("")	
 	self.wndArenaTeamName:SetText("")
@@ -209,7 +181,7 @@ end
 -- when the Cancel button is clicked
 function ArenaTeamRegister:OnCancel(wndHandler, wndControl)
 	Event_FireGenericEvent("GuildRegistrationWindowChange", self.tCreate.eGuildType, nil )
-	self.wndMain:Show(false) -- hide the window
+	self.wndMain:Close() -- hide the window
 	self:HelperClearFocus()	
 	self:ResetOptions()	
 end
@@ -221,12 +193,12 @@ function ArenaTeamRegister:OnGuildResultInterceptResponse( guildCurr, eGuildType
 
 	if eResult == GuildLib.GuildResult_Success or eResult == GuildLib.GuildResult_YouCreated or eResult == GuildLib.GuildResult_YouJoined then	
 		Event_FireGenericEvent("Event_ShowArenaInfo", self.tCreate.eGuildType, self.tPos)
-		self.wndMain:Show(false)
+		self.wndMain:Close()
 	else
 		self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("ArenaRegister_Woops"))
 		Apollo.CreateTimer("ErrorMessageTimer", 3.00, false)
 		self.wndAlert:FindChild("MessageBodyText"):SetText(strAlertMessage)
-		self.wndAlert:Show(true)
+		self.wndAlert:Invoke()
 	end
 end
 
@@ -235,7 +207,7 @@ function ArenaTeamRegister:OnSuccessfulMessageTimer()
 end
 
 function ArenaTeamRegister:OnErrorMessageTimer()
-	self.wndAlert:Show(false)
+	self.wndAlert:Close()
 	self.wndRegister:Enable(true) -- safe to assume since it was clicked once
 end
 

@@ -33,7 +33,6 @@ local GuildDesigner = {}
 -- e.g. local kiExampleVariableMax = 999
 	
 local kstrNoPermissions = Apollo.GetString("GuildDesigner_NotEnoughPermissions")
-local knSavedVersion = 0
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -51,28 +50,6 @@ end
 function GuildDesigner:Init()
     Apollo.RegisterAddon(self)
 end
-
-function GuildDesigner:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion
-	}
-	
-	return tSaved
-end
-
-function GuildDesigner:OnRestore(eType, tSavedData)
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
  
 -----------------------------------------------------------------------------------------------
 -- GuildDesigner OnLoad
@@ -83,9 +60,12 @@ function GuildDesigner:OnLoad()
 end
 
 function GuildDesigner:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
     -- Register handlers for events, slash commands and timer, etc.
     -- e.g. Apollo.RegisterEventHandler("KeyDown", "OnKeyDown", self)
 	Apollo.RegisterEventHandler("Event_GuildDesignerOn", 	"OnGuildDesignerOn", self)
@@ -117,6 +97,10 @@ function GuildDesigner:OnDocumentReady()
 	end
 	
 	self:SetDefaults()
+end
+
+function GuildDesigner:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("GuildDesigner_GuildDesigner")})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -213,15 +197,11 @@ function GuildDesigner:UpdateOptions()
 		return
 	end
 	
-	local bHasGuildPermissions = false
+	local tRanks = guildOwner:GetRanks()
+	local bHasGuildPermissions = tRanks[guildOwner:GetMyRank()].bEmblemAndStandard
 	
-	if guildOwner:GetMyRank() ~= 1 then -- not a leader. TODO: enum not hardcoded
-		self.wndMain:FindChild("GuildPermissionsAlert"):SetText(kstrNoPermissions)
-	else
-		self.wndMain:FindChild("GuildPermissionsAlert"):SetText("")
-		bHasGuildPermissions = true
-	end		
-	
+	self.wndMain:FindChild("GuildPermissionsAlert"):SetText(bHasGuildPermissions and kstrNoPermissions or "")
+
 	local bChangeDetected = self:IsHolomarkChanged()
 	
 	self.wndMain:FindChild("ResetAllBtn"):Enable(bChangeDetected)

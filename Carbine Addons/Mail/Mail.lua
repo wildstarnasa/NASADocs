@@ -48,13 +48,9 @@ function Mail:OnSave(eType)
 	
 	wndMessage = next(self.tOpenMailMessages)
 	
-	local locMainWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedMainWindowLoc
-	local locComposeWindowLocation = self.luaComposeMail  and self.luaComposeMail.wndMain and self.luaComposeMail.wndMain:GetLocation() or self.locSavedComposeWindowLoc
 	local locMessageWindowLocation = wndMessage and self.tOpenMailMessages[wndMessage].wndMain and self.tOpenMailMessages[wndMessage].wndMain:GetLocation() or self.locSavedMessageWindowLoc
 	local tSave = 
 	{
-		tMainLocation = locMainWindowLocation and locMainWindowLocation:ToTable() or nil,
-		tComposeLocation = locComposeWindowLocation and locComposeWindowLocation:ToTable() or nil,
 		tMessageLocation = locMessageWindowLocation and locMessageWindowLocation:ToTable() or nil,
 		nSavedVersion = knSaveVersion,
 	}
@@ -64,19 +60,9 @@ end
 --------------------//-----------------------------
 function Mail:OnRestore(eType, tSavedData)
 	if tSavedData and tSavedData.nSavedVersion  == knSaveVersion then	
-		if tSavedData.tMainLocation then
-			self.locSavedMainWindowLoc = WindowLocation.new(tSavedData.tMainLocation)
-		end
-		
-		if tSavedData.tComposeLocation then
-			self.locSavedComposeWindowLoc = WindowLocation.new(tSavedData.tComposeLocation)
-		else
-		end
-	
 		if tSavedData.tMessageLocation then
 			self.locSavedMessageWindowLoc = WindowLocation.new(tSavedData.tMessageLocation)
 		end
-	else
 	end
 end
 --------------------//-----------------------------
@@ -92,6 +78,7 @@ function Mail:OnDocumentReady()
 	end
 	
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 	
 	Apollo.RegisterEventHandler("SubZoneChanged", 			"CalculateMailAlert", self)
 	Apollo.RegisterEventHandler("AvailableMail", 			"OnAvailableMail", self)
@@ -103,15 +90,13 @@ function Mail:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 	"OnPlayerCurrencyChanged", self)
 	Apollo.RegisterEventHandler("MailResult",				"OnMailResult", self)
 	Apollo.RegisterEventHandler("MailAddAttachment",		"OnMailAddAttachment", self)
+	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", "OnTutorial_RequestUIAnchor", self)
 
 	Apollo.RegisterSlashCommand("ToggleMailWindow", 		"ToggleWindow", self)	--Don't know if we have this in the C
 
 	Apollo.RegisterTimerHandler("OneSecTimer", 				"OnMailWindowTimer", self)
 
 	self.wndMain		= Apollo.LoadForm(self.xmlDoc, "MailForm", nil, self) --Our main form.
-	if self.locSavedMainWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedMainWindowLoc)
-	end
 	self.wndMailList 	= self.wndMain:FindChild("MailWindow")  --The window that populates with the mail items
 	self.wndErrorMsg 	= nil
 	self.wndOpenBtn 	= self.wndMain:FindChild("IBOpenBtn")
@@ -130,8 +115,12 @@ function Mail:OnDocumentReady()
 end
 
 function Mail:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Mail"), {"ToggleMailWindow", "Mail", "spr_HUD_MenuIcons_Mail"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Mail"), {"ToggleMailWindow", "Mail", "Icon_Windows32_UI_CRB_InterfaceMenu_Mail"})
 	self:CalculateMailAlert()
+end
+
+function Mail:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Mail")})
 end
 
 --------------------//-----------------------------
@@ -199,19 +188,24 @@ function Mail:UpdateAllListItems()
 	local bNeedPopulate = false
 	local bItemsSelected = false
 	local bCanDelete = true
+	
 	for idx, wndMail in pairs(self.tMailItemWnds) do
 		if wndMail:FindChild("SelectMarker"):IsChecked() then
 			bItemsSelected = true
 		end
 		local msgMail = wndMail:GetData()
-		local tMessageInfo = msgMail:GetMessageInfo()
-		if tMessageInfo ~= nil then
-			if (wndMail:FindChild("SelectMarker"):IsChecked()) then
-				if (#tMessageInfo.arAttachments > 0) or (tMessageInfo.monGift and tMessageInfo.monGift:GetAmount() > 0) then
-					bCanDelete = false
+		if msgMail then
+			local tMessageInfo = msgMail:GetMessageInfo()
+			if tMessageInfo ~= nil then
+				if (wndMail:FindChild("SelectMarker"):IsChecked()) then
+					if (#tMessageInfo.arAttachments > 0) or (tMessageInfo.monGift and tMessageInfo.monGift:GetAmount() > 0) then
+						bCanDelete = false
+					end
 				end
+				self:UpdateListItem(wndMail, msgMail)
+			else
+				bNeedPopulate = true
 			end
-			self:UpdateListItem(wndMail, msgMail)
 		else
 			bNeedPopulate = true
 		end
@@ -642,6 +636,20 @@ function Mail:OnTooltipAttachment( wndHandler, wndControl, eToolTipType, x, y )
 	end
 end
 
+---------------------------------------------------------------------------------------------------
+-- Tutorial anchor request
+---------------------------------------------------------------------------------------------------
+
+function Mail:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Mail then return end
+
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	
+	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+end
+
+
 --------------------/Compose Controls/-----------------------------
 function MailCompose:new(o)
 	o = o or {}
@@ -660,6 +668,7 @@ function MailCompose:Init(luaMailSystem)
 	self.luaMailSystem 			= luaMailSystem
 	self.tMyBlocks 				= {}
 	self.wndMain 				= Apollo.LoadForm(self.luaMailSystem.xmlDoc, "ComposeMessage", nil, self) --The compose mail form.
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Mail_ComposeLabel")})
 	
 	self.wndNameEntry 			= self.wndMain:FindChild("NameEntryText")  --The player inputs the recipient here
 	self.wndRealmEntry 			= self.wndMain:FindChild("RealmEntryText")  --The player inputs the recipient here

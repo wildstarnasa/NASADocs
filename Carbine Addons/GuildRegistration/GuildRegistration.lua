@@ -30,7 +30,6 @@ local GuildRegistration = {}
 local kcrDefaultText = CColor.new(135/255, 135/255, 135/255, 1.0)
 local kcrHighlightedText = CColor.new(0, 1.0, 1.0, 1.0)
 local eProfanityFilter = GameLib.CodeEnumUserTextFilterClass.Strict
-local knSavedVersion = 0
 
 local kstrDefaultOption =
 {
@@ -52,39 +51,18 @@ function GuildRegistration:Init()
     Apollo.RegisterAddon(self)
 end
 
-function GuildRegistration:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLocation
-	
-	local tSaved = 
-	{
-		tWindowLocation  = locWindowLocation:ToTable(),
-		nSavedVersion = knSaveVersion
-	}
-	
-	return tSaved
-end
-
-function GuildRegistration:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nSavedVersion == knSaveVersion then
-		if tSavedData.tWindowLocation then
-			self.locSavedWindowLocation = WindowLocation.new(tSavedData.tWindowLocation)
-		end
-	end
-end
-
 function GuildRegistration:OnLoad() -- TODO: Only load when needed
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildRegistration.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function GuildRegistration:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", "OnGuildResultInterceptResponse", self)
 	Apollo.RegisterTimerHandler("SuccessfulMessageTimer", 	"OnSuccessfulMessageTimer", self)
 	Apollo.RegisterTimerHandler("ErrorMessageTimer", 		"OnErrorMessageTimer", self)
@@ -131,6 +109,10 @@ function GuildRegistration:OnDocumentReady()
 
 	self:InitializeHolomarkParts()
 	self:ResetOptions()
+end
+
+function GuildRegistration:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("GuildRegistration_RegisterGuild")})
 end
 
 function GuildRegistration:OnGuildRegistrationOn()

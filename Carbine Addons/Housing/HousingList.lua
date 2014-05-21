@@ -86,7 +86,9 @@ function HousingList:OnHousingButtonList()
         self.wndDecorList:Show(true)
         self:ShowHousingListWindow()
         self.wndDecorList:ToFront()
-        Event_FireGenericEvent("HousingEnterEditMode")
+        
+		Event_FireGenericEvent("HousingEnterEditMode")
+		HousingLib.SetEditMode(true)		
 	else
 	    self:OnCloseHousingListWindow()
 	end

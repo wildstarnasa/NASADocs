@@ -58,6 +58,7 @@ function BuildMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("ChangeWorld", 					"OnCloseBtn", self)
 	Apollo.RegisterEventHandler("SettlerHubUpdated", 			"OnSettlerHubUpdated", self)
 	Apollo.RegisterEventHandler("SettlerBuildStatusUpdate", 	"OnSettlerBuildStatusUpdate", self)
+	Apollo.RegisterEventHandler("ZoneMapPlayerIndicatorUpdated","OnPlayerIndicatorUpdated", self)
 
 	-- TODO
 	--Apollo.RegisterEventHandler("InvokeSoldierBuild", "OnInvokeSoldierBuild", self) -- TODO
@@ -208,7 +209,7 @@ function BuildMap:RedrawSelectionItems()
 		elseif not nArgAvenueType or nArgAvenueType == tNode:GetAvenueType() then
 			self:DrawTierSettler(tNode)
 		end
-		self.wndMain:FindChild("TopSection:WorldMap"):AddObject(self.eOverlayType, tNode:GetPosition(), tNode:GetName(), tInfo, {bNeverShowOnEdge = true, bFixedSizeLarge = true}, tNode)
+		self.wndMain:FindChild("TopSection:WorldMap"):AddObject(self.eOverlayType, tNode:GetPosition(), tNode:GetName(), tInfo, {bNeverShowOnEdge = true, bFixedSizeLarge = true}, false, tNode)
 	end
 
 	if not self.wndExtraInfoScreen or not self.wndExtraInfoScreen:IsValid() or not self.wndExtraInfoScreen:IsShown() then
@@ -302,6 +303,27 @@ function BuildMap:OnSettlerHubUpdated()
 	end
 end
 
+function BuildMap:OnPlayerIndicatorUpdated()
+	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+		return
+	end
+	
+	local wndWorldMap = self.wndMain:FindChild("TopSection:WorldMap")
+	
+	local tCurrentInfo = wndWorldMap:GetZoneInfo()
+	if not tCurrentInfo then
+		return
+	end
+	
+	local signalLost = not wndWorldMap:IsShowPlayerOn()
+
+	if tCurrentInfo.parentZoneId ~= 0 then
+		signalLost = false
+	end
+
+	self.wndMain:FindChild("PlayerCursorHidden"):Show(signalLost)
+end
+
 -----------------------------------------------------------------------------------------------
 -- Extra Info
 -----------------------------------------------------------------------------------------------
@@ -368,7 +390,9 @@ function BuildMap:OnSelectionItemShowExtraInfo(wndHandler, wndControl) -- Select
 	wndCurr:FindChild("PopoutBuildBtn"):SetText(strButtonText)
 	wndCurr:FindChild("PopoutBuildBtn"):Enable(bEnableBuildBtn)
 	wndCurr:FindChild("PopoutBuildBtn"):SetData({setNode, nTier})
+	wndCurr:Invoke()
 	wndHandler:AttachWindow(wndCurr)
+	
 
 	self:ShowMapHover(setNode)
 
@@ -410,7 +434,7 @@ function BuildMap:ShowMapHover(setNode)
 		crEdge = CColor.new(1, 1, 1, 1),
 		crObject = CColor.new(1, 1, 1, 1),
 	}
-	self.wndLastMouseEnter = self.wndMain:FindChild("TopSection:WorldMap"):AddObject(self.eOverlayType, setNode:GetPosition(), setNode:GetName(), tInfo, {bNeverShowOnEdge=true}, setNode)
+	self.wndLastMouseEnter = self.wndMain:FindChild("TopSection:WorldMap"):AddObject(self.eOverlayType, setNode:GetPosition(), setNode:GetName(), tInfo, {bNeverShowOnEdge=true}, false, setNode)
 end
 
 function BuildMap:HideMapHover() -- Also SelectionItemBtn uncheck

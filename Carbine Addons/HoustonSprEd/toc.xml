@@ -1,4 +1,0 @@
-<Addon Name="HoustonSprEd" Version="1" ExternalTool="1" APIVersion="1">
-    <Script Name="HoustonSprEd.lua" />
-    <Form Name="SprEdForms.xml" />
-</Addon>

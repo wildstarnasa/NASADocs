@@ -7,8 +7,6 @@ require "Window"
 
 local RuneSets = {}
 
-local knSaveVersion = 1
-
 function RuneSets:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -18,32 +16,6 @@ end
 
 function RuneSets:Init()
     Apollo.RegisterAddon(self)
-end
-
-function RuneSets:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSaved
-end
-
-function RuneSets:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function RuneSets:OnLoad()
@@ -59,6 +31,7 @@ function RuneSets:OnDocumentReady()
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleSets", 	"RedrawSets", self)
 	Apollo.RegisterEventHandler("PlayerEquippedItemChanged", 	"OnUpdateEvent", self)
 	Apollo.RegisterEventHandler("ItemModified", 				"OnUpdateEvent", self)
+	Apollo.RegisterEventHandler("ToggleCharacterWindow", 		"OnToggleCharacterWindow", self)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -132,6 +105,13 @@ end
 
 function RuneSets:OnUpdateEvent()
 	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsVisible() then -- Will consider parents as well
+		return
+	end
+	self:RedrawSets()
+end
+
+function RuneSets:OnToggleCharacterWindow()
+	if not self.wndMain or not self.wndMain:IsValid() then -- Doesn't care about visibility (as it's false while being opened)
 		return
 	end
 	self:RedrawSets()

@@ -88,7 +88,7 @@ function ZoneCompletion:OnDocumentReady()
 	Apollo.StopTimer("ZoneCompletion_UpdateWindowTimer")
 
 	self.wndMain = nil
-	self.bWasIOpen = true
+	self.bWasIOpen = false
 end
 
 function ZoneCompletion:OnClose(wndHandler, wndControl)
@@ -118,6 +118,17 @@ function ZoneCompletion:OnOpened(wndHandler, wndControl)
 		self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):SetCheck(true)
 		self.bWasIOpen = false
 	end
+	--Scale Left Window
+	local nLeft2, nTop2, nRight2, nBottom2 = self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):GetAnchorOffsets()
+	
+	if self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):IsChecked() then
+		self.wndMinimizeToggle:FindChild("GrabberFrame"):Show(false)
+		self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):SetAnchorOffsets(216, nTop2, 269, nBottom2)
+	else
+		self.wndMinimizeToggle:FindChild("GrabberFrame"):Show(true)
+		self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):SetAnchorOffsets(-1, nTop2, 52, nBottom2)
+	end
+	
 end
 
 function ZoneCompletion:OnShow(wndParent)
@@ -230,6 +241,7 @@ function ZoneCompletion:RedrawAll() -- Also from GenericEvent_ZoneMap_ZoneChange
 	end
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
 	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 100)
+	
 end
 
 function ZoneCompletion:HelperBuildCountItem(tLocalZoneValues, nIndex)
@@ -273,8 +285,19 @@ function ZoneCompletion:HelperBuildPathCountItem(tPathValues)
 	end
 end
 
-function ZoneCompletion:OnMinimizeToggle()
+function ZoneCompletion:OnMinimizeToggle(wndHandler, wndControl)
 	self.bMaximized = self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):IsChecked()
+	
+	--Scale Left Window
+	local nLeft2, nTop2, nRight2, nBottom2 = self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):GetAnchorOffsets()
+	
+	if self.bMaximized then
+		self.wndMinimizeToggle:FindChild("GrabberFrame"):Show(false)
+		self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):SetAnchorOffsets(216, nTop2, 269, nBottom2)
+	else
+		self.wndMinimizeToggle:FindChild("GrabberFrame"):Show(true)
+		self.wndMinimizeToggle:FindChild("ZoneCompletionMinimizeToggleBtn"):SetAnchorOffsets(-1, nTop2, 52, nBottom2)
+	end
 end
 
 local ZoneCompletionInst = ZoneCompletion:new()

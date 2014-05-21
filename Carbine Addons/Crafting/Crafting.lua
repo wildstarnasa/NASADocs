@@ -26,8 +26,6 @@ local karPowerCoreTierToString =
 	[CraftingLib.CodeEnumTradeskillTier.Expert] 	= Apollo.GetString("CRB_Tradeskill_Starshard"),
 }
 
-local knSaveVersion = 1
-
 function Crafting:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -39,37 +37,17 @@ function Crafting:Init()
 	Apollo.RegisterAddon(self)
 end
 
-function Crafting:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	local tSave =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	return tSave
-end
-
-function Crafting:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
-		if tSavedData.tWindowLocation then
-			self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-		end
-	end
-end
-
 function Crafting:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Crafting.xml") -- QuestLog will always be kept in memory, so save parsing it over and over
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function Crafting:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+
+	Apollo.RegisterEventHandler("WindowManagementReady", 								"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("GenericEvent_CraftingSummaryIsFinished", 				"OnCloseBtn", self)
 	Apollo.RegisterEventHandler("GenericEvent_CraftingResume_CloseCraftingWindows",		"ExitAndReset", self)
@@ -86,9 +64,6 @@ function Crafting:OnDocumentReady()
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingForm", nil, self)
 	self.wndMain:Show(false, true)
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 
 	self.wndTutorialPopup = self.wndMain:FindChild("TutorialPopup")
 	self.wndTutorialPopup:SetData(0)
@@ -96,6 +71,10 @@ function Crafting:OnDocumentReady()
 	self.luaSchematic = nil --Link to CircuitBoardSchematic.lua
 
 	self:ExitAndReset()
+end
+
+function Crafting:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("DialogResponse_CraftingStation")})
 end
 
 function Crafting:OnCrafting_TimerCraftingStationCheck() -- Hackish: These are async from the rest of the UI (and definitely can't handle data being set)
@@ -145,7 +124,7 @@ function Crafting:OnGenericEvent_StartCircuitCraft(idSchematic)
 
 			local wndCurr = Apollo.LoadForm(self.xmlDoc, "RawMaterialsItem", self.wndMain:FindChild("NoMaterialsBlocker"):FindChild("NoMaterialsList"), self)
 			wndCurr:FindChild("RawMaterialsIcon"):SetSprite(tData.itemMaterial:GetIcon())
-			wndCurr:FindChild("RawMaterialsIcon"):SetText(tData.nAmount.."/"..tData.itemMaterial:GetBackpackCount()) -- TODO need stringweasel
+			wndCurr:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), tData.itemMaterial:GetBackpackCount(), tData.nAmount))
 			wndCurr:FindChild("RawMaterialsNotEnough"):Show(tData.nAmount > tData.itemMaterial:GetBackpackCount())
 			Tooltip.GetItemTooltipForm(self, wndCurr, tData.itemMaterial, {bSelling = false})
 		end
@@ -214,6 +193,8 @@ function Crafting:OnCraftBtnClicked(wndHandler, wndControl) -- CraftButton, data
 	if self.luaSchematic then
 		local tCurrentCraft = CraftingLib.GetCurrentCraft()
 		local tSchematicInfo = CraftingLib.GetSchematicInfo(tCurrentCraft.nSchematicId)
+		local tMicrochips, tThresholds = self.luaSchematic:HelperGetUserSelection()
+		local tCraftInfo = CraftingLib.GetPreviewInfo(tSchematicInfo.nSchematicId, tMicrochips, tThresholds)
 
 		-- Order is important, must clear first
 		Event_FireGenericEvent("GenericEvent_ClearCraftSummary")
@@ -222,16 +203,20 @@ function Crafting:OnCraftBtnClicked(wndHandler, wndControl) -- CraftButton, data
 		local strSummaryMsg = Apollo.GetString("CoordCrafting_LastCraftTooltip")
 		for idx, tData in pairs(tSchematicInfo.tMaterials) do
 			local itemCurr = tData.itemMaterial
-			strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CoordCrafting_SummaryCount"), tonumber(tData.nAmount), itemCurr:GetName())
+			local tPluralName =
+			{
+				["name"] = itemCurr:GetName(),
+				["count"] = tonumber(tData.nAmount)
+			}
+			strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CoordCrafting_SummaryCount"), tPluralName)
 		end
 		Event_FireGenericEvent("GenericEvent_CraftSummaryMsg", strSummaryMsg)
 
 		-- Craft
-		local tMicrochips, tThresholds = self.luaSchematic:HelperGetUserSelection()
 		CraftingLib.CompleteCraft(tMicrochips, tThresholds)
 
 		-- Post Craft Effects
-		Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("PostCraftBlocker"):FindChild("CraftingSummaryContainer"))
+		Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("PostCraftBlocker"):FindChild("CraftingSummaryContainer"), tCraftInfo.itemPreview)
 		self.wndMain:FindChild("PostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(true)
 		self.wndMain:FindChild("PostCraftBlocker"):Show(true)
 		Apollo.StartTimer("CircuitCrafting_CraftBtnTimer")

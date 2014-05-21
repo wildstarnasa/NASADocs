@@ -1,6 +1,6 @@
 <Documentation Id="1">
     <Global Id="10">
-        <Event Name="AchievementUpdated" Incomplete="true" Id="39" Desc="Fires when an progress is made towards an achievement&apos;s objective">
+        <Event Name="AchievementUpdated" Id="39" Desc="Fires when an progress is made towards an achievement&apos;s objective">
             <Param Name="achUpdated" Type="Achievement" Id="40" Desc="The achievement that has been updated"/>
         </Event>
         <Event Name="AddSpellShortcut" Incomplete="true" Id="46" InternalNotes="Need more info on this one.  Not currently used in Lua">
@@ -8,23 +8,44 @@
             <Param Name="eReason" Type="Integer" Id="48"/>
             <Param Name="eData" Type="Integer" Id="49"/>
         </Event>
-        <Event Name="AbilityBookChange" Incomplete="true" Id="184" Desc="Fires when a change is made to the Action Set Builder."/>
-        <Event Name="AchievementGranted" Incomplete="true" Id="6679" Desc="Fires when an achievement is completed">
+        <Event Name="AbilityBookChange" Id="184" Desc="Fires when a change is made to the Action Set Builder."/>
+        <Event Name="AchievementGranted" Id="6679" Desc="Fires when an achievement is completed">
             <Param Name="achComplete" Desc="The achievement that was completed" Type="Achievement" Id="9443"/>
         </Event>
         <Event Name="ActionBarDescriptionSpell" Incomplete="true" Id="6698" InternalNotes="Needs a list of the various flags available in tReasons">
             <Param Name="splDisplayed" Desc="The spell currently being displayed" Type="Spell" Id="9444"/>
-            <Param Name="strDesc" Desc="The description of the spell" Type="String" Id="9445"/>
+            <Param Name="tEffects" Desc="A table containing information about the spell" Type="Table" Id="9445">
+                <Item Name="sprite" Desc="The name of the sprite for the spell" Type="String" Id="13320"/>
+                <Item Name="textString" Desc="The spell&apos;s description" Type="String" Id="13321"/>
+                <Item Name="countString" Desc="The number of charges for the spell" Type="String" Id="13322"/>
+                <Item Name="globalCooldown" Desc="Whether or not the spell is affected by the Global Cooldown" Type="Boolean" Id="13323"/>
+                <Item Name="cooldownPercent" Type="Float" Id="13324"/>
+                <Item Name="cooldownTime" Desc="The number of milliseconds in the spell&apos;s cooldown" Type="Integer" Id="13325"/>
+                <Item Name="casting" Desc="Whether or not the spell is being cast" Type="Boolean" Id="13326"/>
+                <Item Name="radarSweep" Type="Boolean" Id="13327"/>
+                <Item Name="popIcon" Type="Boolean" Id="13328"/>
+                <Item Name="readyBlingSprite" Type="Boolean" Id="13329"/>
+                <Item Name="blur" Type="Boolean" Id="13330"/>
+                <Item Name="shake" Type="Boolean" Id="13331"/>
+                <Item Name="shatterSprite" Type="Boolean" Id="13332"/>
+                <Item Name="itemUnavailable" Type="Boolean" Id="13333"/>
+                <Item Name="textColor" Desc="The color of the description text" Type="CColor" Id="13334"/>
+                <Item Name="diffuse" Desc="The spell&apos;s diffuse color" Type="CColor" Id="13335"/>
+                <Item Name="saturation" Type="Float" Id="13336"/>
+                <Item Name="lightOverlay" Type="Boolean" Id="13337"/>
+                <Item Name="diffused" Type="Boolean" Id="13338"/>
+                <Item Name="indicatorSprite" Type="Boolean" Id="13339"/>
+            </Param>
             <Param Name="tReasons" Desc="A list of flags that may be referenced by Lua." Type="Table" Id="9446"/>
         </Event>
         <Event Name="ActivateCCStateStun" Incomplete="true" Id="6704" Desc="Fires when the player is stunned.">
             <Param Name="nTotalTaps" Desc="The total number of button presses it takes to break out of the stun state" Type="Integer" Id="9447"/>
             <Param Name="fTotalDuration" Desc="The total amount of time left before the stun wears off." Type="Float" Id="9448"/>
         </Event>
-        <Event Name="AbilitiesWindowClose" Incomplete="true" Id="6711" Desc="Fires when the Limited Action Set Builder window closes.">
+        <Event Name="AbilitiesWindowClose" Id="6711" Desc="Fires when the Limited Action Set Builder window closes.">
             <Param Name="bAtTrainer" Desc="Returns whether or not the player is at a training station when the window was closed" Type="Boolean" Id="9441"/>
         </Event>
-        <Event Name="AcceptProgressInput" Incomplete="true" Id="6853" Desc="Fires when CSIs turn player input on and off.  This is only used for the &quot;Memory&quot; CSI.">
+        <Event Name="AcceptProgressInput" Id="6853" Desc="Fires when CSIs turn player input on and off.  This is only used for the &quot;Memory&quot; CSI.">
             <Param Name="bShouldAccept" Desc="Whether or not the CSI will accept user input." Type="Boolean" Id="9442"/>
         </Event>
         <Event Name="AlertMailInfo" Incomplete="true" Id="6979" Desc="Fires when the player gets new mail"/>
@@ -40,7 +61,7 @@
         <Event Name="ChallengeShared" Incomplete="true" Id="8218"/>
         <Event Name="ChallengeShareTimedOut" Incomplete="true" Id="8219"/>
         <Event Name="StanceChanged" Incomplete="true" Id="8220"/>
-        <Event Name="ActionBarNonSpellShortcutAddFailed" Incomplete="true" Id="8221" Desc="Fires when a non-spell fails to be placed on the action bar."/>
+        <Event Name="ActionBarNonSpellShortcutAddFailed" Id="8221" Desc="Fires when a non-spell fails to be placed on the action bar."/>
         <Event Name="StunVGPressed" Incomplete="true" Id="8222"/>
         <Event Name="ItemLink" Incomplete="true" Id="8223"/>
         <Event Name="ToggleFramerate" Incomplete="true" Id="8224"/>
@@ -94,7 +115,10 @@
         <Event Name="MountUnlocked" Incomplete="true" Id="8272"/>
         <Event Name="Inspect" Incomplete="true" Id="8273"/>
         <Event Name="ChatAccountTellFailed" Incomplete="true" Id="8274"/>
-        <Event Name="AccountSupportTicketResult" Incomplete="true" Id="8275" InternalNotes="Need more info on this one.  It seems to be the channel to display the success/fail message and whether or not it succeeded or failed, but it&apos;s hard to tell"/>
+        <Event Name="AccountSupportTicketResult" Incomplete="true" Id="8275" InternalNotes="Need more info on this one.  It seems to be the channel to display the success/fail message and whether or not it succeeded or failed, but it&apos;s hard to tell">
+            <Param Name="channelGM" Desc="The chat channel where the message will be displayed" Type="Channel" Id="13318"/>
+            <Param Name="bSuccess" Type="Boolean" Id="13319"/>
+        </Event>
         <Event Name="ChatReply" Incomplete="true" Id="8276"/>
         <Event Name="ChatReWhisper" Incomplete="true" Id="8277"/>
         <Event Name="CityDirectionsList" Incomplete="true" Id="8278"/>
@@ -115,9 +139,9 @@
         <Event Name="TutorialPlaybackEnded" Incomplete="true" Id="8293"/>
         <Event Name="ZoneCompletionUpdated" Incomplete="true" Id="8294"/>
         <Event Name="ZoneMapPlayerIndicatorUpdated" Incomplete="true" Id="8295"/>
-        <Event Name="AccountPendingItemsUpdate" Incomplete="true" Id="8296" Desc="Fires when items that are pending for the current player&apos;s account have changed states."/>
-        <Event Name="AccountInventoryUpdate" Incomplete="true" Id="8297" Desc="Fires when the Account Inventory for the current account has changed."/>
-        <Event Name="AccountEntitlementUpdate" Incomplete="true" Id="8298" Desc="Fires when a change is made to the current account&apos;s entitlements"/>
+        <Event Name="AccountPendingItemsUpdate" Id="8296" Desc="Fires when items that are pending for the current player&apos;s account have changed states."/>
+        <Event Name="AccountInventoryUpdate" Id="8297" Desc="Fires when the Account Inventory for the current account has changed."/>
+        <Event Name="AccountEntitlementUpdate" Id="8298" Desc="Fires when a change is made to the current account&apos;s entitlements"/>
         <Event Name="CharacterEntitlementUpdate" Incomplete="true" Id="8299"/>
         <Event Name="WalletUpdate" Incomplete="true" Id="8300"/>
         <Event Name="NewCustomerSurveyRequest" Incomplete="true" Id="8301"/>
@@ -186,7 +210,10 @@
         <Event Name="CombatLogElderPointsLimitReached" Incomplete="true" Id="12276"/>
         <Event Name="ElderPointsLimitReached" Incomplete="true" Id="12277"/>
         <Event Name="HousingNamePropertyOpen" Incomplete="true" Id="12278"/>
-        <Event Name="AccountOperationResults" Incomplete="true" Id="12279"/>
+        <Event Name="AccountOperationResults" Incomplete="true" Id="12279">
+            <Param Name="eOperation" Type="Integer" Id="13316"/>
+            <Param Name="eResult" Type="Integer" Id="13317"/>
+        </Event>
         <Event Name="CREDDOperationHistoryResults" Incomplete="true" Id="12280"/>
         <Event Name="ActionSetError" Incomplete="true" Id="12281"/>
         <Event Name="CraftingInterrupted" Incomplete="true" Id="12282"/>
@@ -3539,6 +3566,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Method Name="__gc" Incomplete="true" Id="13242"/>
     </Object>
     <Object Name="MatchingGame" Incomplete="true" Id="4050" Prefix="match">
+        <Function Name="GetSelectedRoles" Incomplete="true" Id="7932" Remarks="Known Issue: The values returned from this function carry over to characters with the same name on the same realm and same account.  Because of this, the selected roles may be different than the roles the new character is eligible for."/>
         <EnumSet Name="RatingType" Incomplete="true" Id="7976">
             <Enum Name="Warplot" Id="8734"/>
         </EnumSet>
@@ -3742,6 +3770,20 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Event Name="SalvageItemRequested" Incomplete="true" Id="8790"/>
         <Event Name="DeleteItemRequested" Incomplete="true" Id="8791"/>
         <Event Name="EmailSent" Incomplete="true" Id="8792"/>
+        <Event Name="AccountPendingItemsClaimed" Id="13311"/>
+        <Event Name="AccountPendingItemsGifted" Id="13312"/>
+        <Event Name="AccountPendingItemsReturned" Id="13313"/>
+        <Event Name="AccountPendingItemTook" Id="13314"/>
+        <Event Name="CREDDExchangeOrderSubmitted" Id="13315"/>
+        <Event Name="ItemAuctionSellOrderSubmitted" Id="13341"/>
+        <Event Name="ItemAuctionBuyOrderSubmitted" Id="13343">
+            <Param Name="bSuccess" Type="Boolean" Id="13347"/>
+        </Event>
+        <Event Name="MarketplaceCommoditiesSubmitted" Id="13344">
+            <Param Name="bSuccess" Type="Boolean" Id="13346"/>
+        </Event>
+        <Event Name="StringCoppiedToClipboard" Id="13345"/>
+        <Event Name="AccountCREDDRedeemed" Id="13348"/>
     </WindowControl>
     <Library Name="AccountItemLib" Incomplete="true" Id="8793">
         <Function Name="GetPendingAccountSingleItems" Incomplete="true" Id="8794"/>

@@ -350,6 +350,8 @@ function GroupDisplay:OnDocumentReady()
 	self.bMessagesQueued 		= false
 	self.tMessageQueue 			= {nFirst = 0, nLast = -1}
 
+	self.wndGroupPortraitContainer = self.wndGroupHud:FindChild("GroupPortraitContainer")
+
 	self.wndGroupInviteDialog 	= Apollo.LoadForm(self.xmlDoc, "GroupInviteDialog", nil, self)
 	self.wndGroupInviteDialog:Show(false, true)
 	if self.locSavedInviteLoc then
@@ -425,7 +427,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function GroupDisplay:LoadPortrait(idx)
-	local wndHud = Apollo.LoadForm(self.xmlDoc, "GroupPortraitHud", self.wndGroupHud:FindChild("GroupPortraitContainer"))
+	local wndHud = Apollo.LoadForm(self.xmlDoc, "GroupPortraitHud", self.wndGroupPortraitContainer)
 
 	self.tGroupWndPortraits[idx] =
 	{
@@ -591,18 +593,21 @@ end
 -- Group Formatting
 ---------------------------------------------------------------------------------------------------
 
-function GroupDisplay:ReloadGroup()
-	local nMemberCount = GroupLib.GetMemberCount()
+function GroupDisplay:DestroyGroup()
+	for idx, tMemberInfo in pairs(self.tGroupWndPortraits) do -- This is essentially self.wndGroupPortraitContainer:DestroyChildren()
+		if tMemberInfo.wndHud and tMemberInfo.wndHud:IsValid() then
+			tMemberInfo.wndHud:Destroy()
+		end
+		self.tGroupWndPortraits[idx] = nil
+	end
 
+	Apollo.StopTimer("GroupUpdateTimer")
+
+	local nMemberCount = GroupLib.GetMemberCount()
 	if nMemberCount <= 1 then
 		return
 	end
 
-	for idx, tMemberInfo in pairs(self.tGroupWndPortraits) do
-		tMemberInfo.wndHud:Destroy()
-		self.tGroupWndPortraits[idx] = nil
-	end
-	
 	Apollo.StartTimer("GroupUpdateTimer")
 
 	self:OnGroupUpdated()
@@ -655,7 +660,7 @@ function GroupDisplay:OnGroupUpdated()
 
 	-- Attach the portrait form to each hud slot.
 
-	if GroupLib.GetMemberCount() == 0 then
+	if GroupLib.InGroup() and GroupLib.GetMemberCount() == 0 then
 		self.bDisplayedRaid = nil
 		self:HelperResizeGroupContents()
 		return
@@ -669,7 +674,7 @@ function GroupDisplay:OnGroupUpdated()
 	self.nGroupMemberCount = GroupLib.GetMemberCount()
 
 	local nCount = 0
-	if self.nGroupMemberCount > 1 then
+	if self.nGroupMemberCount > 0 then
 		for idx = 1, self.nGroupMemberCount do
 			local tMemberInfo = GroupLib.GetGroupMember(idx)
 			if tMemberInfo ~= nil then
@@ -796,11 +801,13 @@ end
 
 function GroupDisplay:OnConfirmLeave()
 	GroupLib.LeaveGroup()
+	self:DestroyGroup()
 end
 
 function GroupDisplay:OnConfirmDisband()
 	if GroupLib.AmILeader() and not GroupLib.InInstance() then
 		GroupLib.DisbandGroup()
+		self:DestroyGroup()
 	end
 end
 
@@ -1067,10 +1074,7 @@ function GroupDisplay:OnGroupLeft(eReason)
 	self.wndRequest:Show(false)
 	self.wndLeaveGroup:Show(false)
 
-	self:ReloadGroup()
-	if GroupLib.GetMemberCount() <= 1 then
-		Apollo.StopTimer("GroupUpdateTimer")
-	end
+	self:DestroyGroup()
 end
 
 function GroupDisplay:OnGroupMemberFlags(nMemberIndex, bIsFromPromotion, tChangedFlags)
@@ -1295,7 +1299,7 @@ function GroupDisplay:OnGroupRequestResult(strCharacterName, eResult, bIsJoin)
 end
 
 function GroupDisplay:CloseGroupHUD() -- see if the HUD can be closed
-	if GroupLib.InGroup() and GroupLib.GetMemberCount() > 1 then
+	if GroupLib.InGroup() and GroupLib.GetMemberCount() > 0 then
 		return false
 	end
 
@@ -1395,14 +1399,14 @@ end
 
 function GroupDisplay:HelperResizeGroupContents()
 	local nOnGoingHeight = 0
-	for key, wndCurr in pairs(self.wndGroupHud:FindChild("GroupPortraitContainer"):GetChildren()) do
+	for key, wndCurr in pairs(self.wndGroupPortraitContainer:GetChildren()) do
 		if wndCurr:IsShown() then
 			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
 			nOnGoingHeight = nOnGoingHeight + (nBottom - nTop)
 		end
 	end
-	self.wndGroupHud:FindChild("GroupPortraitContainer"):ArrangeChildrenVert()
-	self.wndGroupHud:FindChild("GroupPortraitContainer"):SetAnchorOffsets(0, 0, 0, nOnGoingHeight)
+	self.wndGroupPortraitContainer:ArrangeChildrenVert()
+	self.wndGroupPortraitContainer:SetAnchorOffsets(0, 0, 0, nOnGoingHeight)
 
 	if self.wndGroupMessage:IsShown() then
 		local nLeft, nTop, nRight, nBottom = self.wndGroupMessage:GetAnchorOffsets()

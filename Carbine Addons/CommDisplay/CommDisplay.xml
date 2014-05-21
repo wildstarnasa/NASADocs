@@ -44,7 +44,7 @@
                 </Control>
             </Control>
         </Control>
-        <Control Class="Button" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-71" TAnchorPoint="0" TAnchorOffset="24" RAnchorPoint="1" RAnchorOffset="-29" BAnchorPoint="0" BAnchorOffset="68" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" NewWindowDepth="1" RelativeToClient="1" NoClip="1" HideInEditor="0" TooltipColor="">
+        <Control Class="Button" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-71" TAnchorPoint="0" TAnchorOffset="24" RAnchorPoint="1" RAnchorOffset="-29" BAnchorPoint="0" BAnchorOffset="68" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" NewWindowDepth="1" RelativeToClient="1" NoClip="1" HideInEditor="0" TooltipColor="" WindowSoundTemplate="HoloButtonSmall">
             <Event Name="ButtonSignal" Function="OnCloseBtn"/>
         </Control>
         <Event Name="MouseButtonUp" Function="OnMouseButtonUp"/>

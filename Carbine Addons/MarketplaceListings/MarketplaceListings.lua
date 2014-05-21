@@ -20,8 +20,6 @@ local ktTimeRemaining =
 	[ItemAuction.CodeEnumAuctionRemaining.Very_Long]	= Apollo.GetString("MarketplaceAuction_VeryLong")
 }
 
-local knSaveVersion = 1
-
 function MarketplaceListings:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -31,32 +29,6 @@ end
 
 function MarketplaceListings:Init()
     Apollo.RegisterAddon(self)
-end
-
-function MarketplaceListings:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-
-	return tSaved
-end
-
-function MarketplaceListings:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocation)
-	end
 end
 
 function MarketplaceListings:OnLoad()
@@ -98,21 +70,17 @@ function MarketplaceListings:OnDocumentReady()
 end
 
 function MarketplaceListings:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AuctionListings"), {"InterfaceMenu_ToggleMarketplaceListings", "", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AuctionListings"), {"InterfaceMenu_ToggleMarketplaceListings", "", "Icon_Windows32_UI_CRB_InterfaceMenu_MarketplaceListings"})
 end
 
 function MarketplaceListings:OnToggle()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	else
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceListingsForm", nil, self)
 		self.wndMain:SetSizingMinimum(400, 300)
 		self.wndMain:Show(false, true)
-
-		if self.locSavedWindowLoc then
-			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-		end
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AuctionListings")})
 
 		self.wndMain:FindChild("TitleBGText"):SetData(GameLib.GetPlayerUnit())
 		self:RequestData()
@@ -123,7 +91,6 @@ end
 
 function MarketplaceListings:OnDestroy()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		Apollo.StopTimer("MarketplaceUpdateTimer")
 	end
@@ -217,7 +184,7 @@ function MarketplaceListings:SharedDrawMain()
 	self.wndMain:FindChild("WaitScreen"):Show(false)
 	self.wndMain:FindChild("TitleBGText"):SetText(String_GetWeaselString(Apollo.GetString("MarketplaceListings_PlayerPrefixListings"), strPlayerName))
 	self.wndMain:FindChild("MainScroll"):SetText(nNumChildren == 0 and Apollo.GetString("MarketplaceListings_NoActiveListings") or "")
-	self.wndMain:FindChild("MainScroll"):ArrangeChildrenVert(0)
+	self.wndMain:FindChild("MainScroll"):ArrangeChildrenVert(0, function(a,b) return a:GetName() > b:GetName() end)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -296,32 +263,66 @@ end
 -- UI Interaction (mostly to cancel order)
 -----------------------------------------------------------------------------------------------
 
-function MarketplaceListings:OnAuctionCancelBtn(wndHandler, wndControl)
+function MarketplaceListings:OnCancelBtn(wndHandler, wndControl)
+	local aucCurrent = wndHandler:GetData()
+	if self.wndConfirmDelete == nil or not self.wndConfirmDelete:IsValid() then
+		self.wndConfirmDelete = Apollo.LoadForm(self.xmlDoc, "ConfirmDelete", self.wndMain:FindChild("ConfirmBlocker"), self)
+	end
+	self.wndMain:FindChild("ConfirmBlocker"):Show(true)
+	self.wndConfirmDelete:Invoke()
+	
+	self.wndConfirmDelete:FindChild("CancelCommodityConfirmBtn"):Show(wndHandler:GetName() == "CommodityCancelBtn")
+	self.wndConfirmDelete:FindChild("CancelAuctionConfirmBtn"):Show(wndHandler:GetName() == "AuctionCancelBtn")
+	self.wndConfirmDelete:FindChild("CancelCREDDListingBtn"):Show(wndHandler:GetName() == "CreddCancelBtn")
+	
+	if wndHandler:GetName() == "CommodityCancelBtn" then
+		self.wndConfirmDelete:FindChild("CancelCommodityConfirmBtn"):SetData(aucCurrent)
+		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("MarketplaceListings_CancelCommodityConfirm"))
+		
+	elseif wndHandler:GetName() == "AuctionCancelBtn" then
+		self.wndConfirmDelete:FindChild("CancelAuctionConfirmBtn"):SetData(aucCurrent)
+		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("MarketplaceListings_CancelAuctionConfirm"))
+
+	else
+		self.wndConfirmDelete:FindChild("CancelCREDDListingBtn"):SetData(aucCurrent)
+		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("MarketplaceListings_CancelCREDDConfirm"))
+	end
+end
+
+function MarketplaceListings:OnAuctionCancelConfirmBtn(wndHandler, wndControl)
 	local aucCurrent = wndHandler:GetData()
 	if not aucCurrent then
 		return
 	end
 	aucCurrent:Cancel()
 	self.wndMain:FindChild("MainScroll"):Show(false)
+	self.wndConfirmDelete:Destroy()
+	self.wndMain:FindChild("RefreshBlocker"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthLargeTemp")
+	self.wndMain:FindChild("ConfirmBlocker"):Show(false)
 end
 
-function MarketplaceListings:OnCommodityCancelBtn(wndHandler, wndControl)
+function MarketplaceListings:OnCommodityCancelConfirmBtn(wndHandler, wndControl)
 	local aucCurrent = wndHandler:GetData()
 	if not aucCurrent or not aucCurrent:IsPosted() then
 		return
 	end
 	aucCurrent:Cancel()
 	self.wndMain:FindChild("MainScroll"):Show(false)
+	self.wndConfirmDelete:Destroy()
+	self.wndMain:FindChild("RefreshBlocker"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthLargeTemp")
+	self.wndMain:FindChild("ConfirmBlocker"):Show(false)
 end
 
-function MarketplaceListings:OnCreddCancelBtn(wndHandler, wndControl)
+function MarketplaceListings:OnCreddCancelConfirmBtn(wndHandler, wndControl)
 	local aucCurrent = wndHandler:GetData()
 	if not aucCurrent or not aucCurrent:IsPosted() then
 		return
 	end
 	CREDDExchangeLib.CancelOrder(aucCurrent)
-	--self.wndMain:FindChild("MainScroll"):Show(false)
 	self:RequestData()
+	self.wndConfirmDelete:Destroy()
+	self.wndMain:FindChild("RefreshBlocker"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthLargeTemp")
+	self.wndMain:FindChild("ConfirmBlocker"):Show(false)
 end
 
 function MarketplaceListings:OnCommodityItemSmallMouseEnter(wndHandler, wndControl)
@@ -447,6 +448,18 @@ function MarketplaceListings:OnItemAuctionResult(eAuctionResult, aucAdded)
 
 	self:OnItemAuctionUpdated(aucAdded)
 end
+
+function MarketplaceListings:OnItemListingClose(wndHandler, wndControl)
+	
+	if self.wndConfirmDelete and self.wndConfirmDelete:IsValid() then
+		self.wndConfirmDelete:Destroy()
+	end
+	
+	self.wndMain:FindChild("ConfirmBlocker"):Show(false)
+
+end
+
+
 
 -----------------------------------------------------------------------------------------------
 -- Helpers

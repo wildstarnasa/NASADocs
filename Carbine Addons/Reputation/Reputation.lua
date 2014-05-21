@@ -19,8 +19,6 @@ local karRepToColor =
 	ApolloColor.new("ffd5b66d"), -- Beloved
 }
 
-local knSaveVersion = 1
-
 function Reputation:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -30,23 +28,6 @@ end
 
 function Reputation:Init()
     Apollo.RegisterAddon(self)
-end
-
-function Reputation:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	local tSaved =
-	{
-		nSaveVersion = knSaveVersion,
-	}
-	return tSaved
-end
-
-function Reputation:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
 end
 
 -----------------------------------------------------------------------------------------------

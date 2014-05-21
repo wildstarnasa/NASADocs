@@ -31,15 +31,11 @@ function StalkerResource:OnDocumentReady()
 	end
 	
 	Apollo.RegisterEventHandler("ActionBarLoaded", "OnRequiredFlagsChanged", self)
-end
-
-function StalkerResource:OnDocumentReady()
-	self.bDocLoaded = true
 	self:OnRequiredFlagsChanged()
 end
 
 function StalkerResource:OnRequiredFlagsChanged()
-	if g_wndActionBarResources and self.bDocLoaded then
+	if g_wndActionBarResources then
 		if GameLib.GetPlayerUnit() then
 			self:OnCharacterCreated()
 		else

@@ -301,18 +301,19 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	end
 
 	local strDescription = achCurr:IsComplete() and achCurr:GetDescription() or achCurr:GetProgressText()
-	wndCurr:FindChild("ExtraInfoDescription"):SetText("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\" Align=\"Center\">"..strDescription.."</P>")
+	strDescription = "<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\" Align=\"Center\">" .. strDescription .. "</P>"
 
 	local nNumNeeded = achCurr:GetNumNeeded()
 	local nNumCompleted = achCurr:GetNumCompleted()
 	if nNumNeeded > 100 then
-		strAppend = "<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\" Align=\"Center\"> (" .. nNumCompleted .. "/" .. nNumNeeded .. ")</P>"
-		wndCurr:FindChild("ExtraInfoDescription"):SetText(wndCurr:FindChild("ExtraInfoDescription"):GetText() .. strAppend)
+		strDescription = strDescription .. "<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\" Align=\"Center\"> (" .. nNumCompleted .. "/" .. nNumNeeded .. ")</P>"
 	end
 
 	if wndParent:FindChild("ItemTitle") and wndParent:FindChild("ItemTitle"):GetData() and string.len(wndParent:FindChild("ItemTitle"):GetData()) > 0 then
-		wndCurr:FindChild("ExtraInfoDescription"):SetText(wndCurr:FindChild("ExtraInfoDescription"):GetText() .. wndParent:FindChild("ItemTitle"):GetData())
+		strDescription = strDescription .. wndParent:FindChild("ItemTitle"):GetData()
 	end
+
+	wndCurr:FindChild("ExtraInfoDescription"):SetText(strDescription)
 
 	-- Checklist Special formatting TODO TEMP
 	local tChecklistTable = {}
@@ -335,14 +336,14 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 		-- We want the link to the be subschematic's parent if possible
 		local nCorrectLinkId = idLinkSchematic
 		local tSchematicLinkInfo = CraftingLib.GetSchematicInfo(idLinkSchematic)
-		
+
 		if tSchematicLinkInfo then
 			if  tSchematicLinkInfo.nParentSchematicId and tSchematicLinkInfo.nParentSchematicId ~= 0 then
 				nCorrectLinkId = tSchematicLinkInfo.nParentSchematicId
 			end
 
 			local wndSchematicBtn = Apollo.LoadForm(self.xmlDoc, "ExtraInfoSchemItemBtn", wndCurr:FindChild("ExtraInfoSchemContainer"), self)
-			wndSchematicBtn:SetData({ nCorrectLinkId, tSchematicLinkInfo }) -- For OnExtraInfoSchemItemBtn (GOTCHA: Needs to be a table to interact with FindChildByUserData)
+			wndSchematicBtn:SetData({ tSchematicLinkInfo }) -- For OnExtraInfoSchemItemBtn (GOTCHA: Needs to be a table to interact with FindChildByUserData)
 			wndSchematicBtn:FindChild("ExtraInfoSchemItemText"):SetText(tSchematicLinkInfo.strName)
 			wndSchematicBtn:FindChild("ExtraInfoSchemItemCheckIcon"):Show(tChecklistTable[idLinkSchematic])
 		end
@@ -403,7 +404,7 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	-- Resize
 	local nWidth, nHeight = wndCurr:FindChild("ExtraInfoDescription"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wndCurr:FindChild("ExtraInfoDescription"):GetAnchorOffsets()
-	nHeight = nHeight + 8 -- Extra padding for below the text
+	nHeight = nHeight + 10 -- Extra padding for below the text
 	wndCurr:FindChild("ExtraInfoDescription"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight)
 
 	if wndCurr:FindChild("ExtraInfoSchemArt"):IsShown() then
@@ -414,16 +415,16 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	end
 	wndCurr:FindChild("ExtraInfoArrangeVert"):ArrangeChildrenVert(0)
 
-	-- If too nHeight is too low, use the smaller version and center align it
+	-- If too nHeight is too low, use the smaller version and align it
 	if nHeight > 100 then
 		local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
 		wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nBottom + nHeight)
 	else
 		local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-		wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 125) -- TODO: Hardcoded minimum size
+		wndCurr:SetAnchorOffsets(nLeft, nTop, nLeft + 300, nTop + 125) -- TODO: Hardcoded minimum size
 
 		nLeft, nTop, nRight, nBottom = wndCurr:FindChild("ExtraInfoScreenBG"):GetAnchorOffsets()
-		wndCurr:FindChild("ExtraInfoScreenBG"):SetAnchorOffsets(nLeft, -4, nRight, 4) -- TODO: SUPER hardcoded formatting
+		wndCurr:FindChild("ExtraInfoScreenBG"):SetAnchorOffsets(30, 8, nRight, -8) -- TODO: Hardcoded background art
 		wndCurr:FindChild("ExtraInfoScreenBG"):SetSprite("kitBase_HoloBlue_PopoutSmall")
 	end
 
@@ -431,13 +432,10 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	wndParent:AttachWindow(wndCurr)
 end
 
-function TradeskillTree:OnExtraInfoSchemItemBtn(wndHandler, wndControl) -- wndHandler is "ExtraInfoSchemItemBtn" and its data is {nSchematicId}
-	local nSchematicId = wndHandler:GetData()[1]
-	local tSchematicInfo = wndHandler:GetData()[2]
-	if tSchematicInfo.bIsAutoCraft or not tSchematicInfo.bIsKnown then
+function TradeskillTree:OnExtraInfoSchemItemBtn(wndHandler, wndControl) -- wndHandler is "ExtraInfoSchemItemBtn"
+	local tSchematicInfo = wndHandler:GetData()[1]
+	if tSchematicInfo and tSchematicInfo.strName then
 		Event_FireGenericEvent("GenericEvent_OpenToSearchSchematic", tSchematicInfo.strName)
-	else
-		Event_FireGenericEvent("GenericEvent_CraftFromPL", nSchematicId)
 	end
 end
 

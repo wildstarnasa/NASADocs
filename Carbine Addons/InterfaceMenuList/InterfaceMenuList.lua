@@ -78,6 +78,7 @@ function InterfaceMenuList:OnDocumentReady()
 
 	if not self.tPinnedAddons then
 		self.tPinnedAddons = {
+			Apollo.GetString("InterfaceMenu_AccountInventory"),
 			Apollo.GetString("InterfaceMenu_Character"),
 			Apollo.GetString("InterfaceMenu_AbilityBuilder"),
 			Apollo.GetString("InterfaceMenu_QuestLog"),
@@ -89,7 +90,7 @@ function InterfaceMenuList:OnDocumentReady()
 	end
 	
 	self.tMenuData = {
-		[Apollo.GetString("InterfaceMenu_SystemMenu")] = { "", "", "" }, --
+		[Apollo.GetString("InterfaceMenu_SystemMenu")] = { "", "", "Icon_Windows32_UI_CRB_InterfaceMenu_EscMenu" }, --
 	}
 	
 	self.tMenuTooltips = {}
@@ -132,7 +133,7 @@ function InterfaceMenuList:OnUpdateTimer()
 		bShowTime = true
 	end
 
-	local tTime = GameLib.GetServerTime()
+	local tTime = GameLib.GetLocalTime()
 	self.wndMain:FindChild("Time"):SetText(bShowTime and string.format("%02d:%02d", tostring(tTime.nHour), tostring(tTime.nMinute)) or "")
 end
 
@@ -154,7 +155,7 @@ function InterfaceMenuList:IsPinned(strText)
 end
 
 function InterfaceMenuList:FullListRedraw()
-	local strUnbound = Apollo.GetString("CRB_Unbound")
+	local strUnbound = Apollo.GetString("Keybinding_Unbound")
 	local wndParent = self.wndMain:FindChild("FullListScroll")
 	
 	local strQuery = string.lower(tostring(self.wndMain:FindChild("SearchEditBox"):GetText()) or "")
@@ -211,7 +212,7 @@ function InterfaceMenuList:ButtonListRedraw()
 end
 
 function InterfaceMenuList:OnQueuedRedraw()
-	local strUnbound = Apollo.GetString("CRB_Unbound")
+	local strUnbound = Apollo.GetString("Keybinding_Unbound")
 	local wndParent = self.wndMain:FindChild("ButtonList")
 	wndParent:DestroyChildren()
 	local nParentWidth = wndParent:GetWidth()
@@ -416,12 +417,12 @@ end
 function InterfaceMenuList:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	local arTutorialAnchorMapping =
 	{
-		[GameLib.CodeEnumTutorialAnchor.Abilities] 			= "LASBtn",
-		[GameLib.CodeEnumTutorialAnchor.Character] 			= "CharacterBtn",
-		[GameLib.CodeEnumTutorialAnchor.Mail] 				= "MailBtn",
-		[GameLib.CodeEnumTutorialAnchor.GalacticArchive] 	= "LoreBtn",
-		[GameLib.CodeEnumTutorialAnchor.Social] 			= "SocialBtn",
-		[GameLib.CodeEnumTutorialAnchor.GroupFinder] 		= "GroupFinderBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Abilities] 			= "LASBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Character] 			= "CharacterBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Mail] 				= "MailBtn",
+		--[GameLib.CodeEnumTutorialAnchor.GalacticArchive] 	= "LoreBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Social] 			= "SocialBtn",
+		--[GameLib.CodeEnumTutorialAnchor.GroupFinder] 		= "GroupFinderBtn",
 	}
 
 	local strWindowName = "ButtonList" or false
@@ -432,7 +433,10 @@ function InterfaceMenuList:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPo
 	local tRect = {}
 	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:FindChild(strWindowName):GetRect()
 	tRect.r = tRect.r - 26
-	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+	
+	if arTutorialAnchorMapping[eAnchor] then
+		Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+	end
 end
 
 local InterfaceMenuListInst = InterfaceMenuList:new()

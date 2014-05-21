@@ -29,13 +29,10 @@ function PublicEventVote:OnSave(eType)
 		return false
 	end
 	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
 	local tSavedData = 
 	{
 		bIsShown = self.bWindowShown, 
 		nSelectedVote = self.nSelectedVote,
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
 		nSaveVersion = knSaveVersion,
 	}
 	
@@ -45,10 +42,6 @@ end
 function PublicEventVote:OnRestore(eType, tSavedData)
 	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
 	end
 	
 	if tSavedData.bIsShown then
@@ -72,9 +65,10 @@ function PublicEventVote:OnLoad()
 end
 
 function PublicEventVote:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
 	Apollo.RegisterEventHandler("PublicEventInitiateVote", 	"OnPublicEventInitiateVote", self)
 	Apollo.RegisterEventHandler("PublicEventVoteTallied", 	"OnPublicEventVoteTallied", self)
 	Apollo.RegisterEventHandler("PublicEventVoteEnded", 	"OnPublicEventVoteEnded", self)
@@ -87,27 +81,24 @@ function PublicEventVote:OnDocumentReady()
 	
 
 	self.wndMain = nil
-	
 	self.bWindowShown = false
 end
 
 function PublicEventVote:Initialize()
 	if self.wndMain then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		Apollo.StopTimer("VoteUpdateTimer")
 		self.wndMain:Destroy()
 	end
 
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "PublicEventVoteForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Guild_ChatFlagVote")})
+		
 		Apollo.StartTimer("VoteUpdateTimer")
 	end
+	
 	self.wndMain:Show(true)
 	self.bWindowShown = true
-	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 end
 
 function PublicEventVote:OnPublicEventInitiateVote() -- The close checking also routes here
@@ -116,7 +107,6 @@ function PublicEventVote:OnPublicEventInitiateVote() -- The close checking also 
 	local tVoteData = PublicEvent.GetActiveVote()
 	if not tVoteData then
 		if self.wndMain then
-			self.locSavedWindowLoc = self.wndMain:GetLocation()
 			self.wndMain:Destroy()
 			self.bWindowShown = false
 		end
@@ -232,7 +222,6 @@ function PublicEventVote:OnPublicEventVoteEnded(nWinner)
 end
 
 function PublicEventVote:OnVoteFrameHideBtn(wndHandler, wndControl)
-	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
 	Sound.Play(Sound.PlayUIWindowPublicEventVoteClose)
 end

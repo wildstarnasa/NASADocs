@@ -87,7 +87,7 @@ function QuestLog:OnDocumentReady()
 end
 
 function QuestLog:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_QuestLog"), {"ToggleQuestLog", "Codex", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_QuestLog"), {"ToggleQuestLog", "Codex", "Icon_Windows32_UI_CRB_InterfaceMenu_QuestLog"})
 end
 
 function QuestLog:Initialize()
@@ -107,6 +107,8 @@ function QuestLog:Initialize()
 	self.wndLeftFilterFinished = self.wndMain:FindChild("LeftSideFilterBtnsBG:LeftSideFilterBtnShowFinished")
 	self.wndLeftFilterHidden = self.wndMain:FindChild("LeftSideFilterBtnsBG:LeftSideFilterBtnShowHidden")
 	self.wndLeftSideScroll = self.wndMain:FindChild("LeftSideScroll")
+	self.wndRightSide = self.wndMain:FindChild("RightSide")
+	self.wndQuestInfoControls = self.wndMain:FindChild("QuestInfoControls")
 
 	-- Variables
 	self.wndLastBottomLevelBtnSelection = nil -- Just for button pressed state faking of text color
@@ -160,22 +162,33 @@ function QuestLog:OnGenericEvent_ShowQuestLog(queTarget)
 
 	self:RedrawLeftTree() -- Add categories
 
+	if queTarget:GetState() == Quest.QuestState_Unknown then
+		self.wndQuestInfoControls:Show(false)
+		
+		self:DrawUnknownRightSide(queTarget)
+		self:ResizeRight()
+		self:ResizeTree()
+		return
+	end
+	
 	local strCategoryKey
 	local strEpisodeKey
 	local strQuestKey
 
-	if epiMid:IsWorldStory() then
-		strCategoryKey = "CWorldStory"
-		strEpisodeKey = strCategoryKey.."E"..epiMid:GetId()
-		strQuestKey = strEpisodeKey.."Q"..queTarget:GetId()
-	elseif epiMid:IsZoneStory() or epiMid:IsRegionalStory() then
-		strCategoryKey = "C"..qcTop:GetId()
-		strEpisodeKey = strCategoryKey.."E"..epiMid:GetId()
-		strQuestKey = strEpisodeKey.."Q"..queTarget:GetId()
-	else
-		strCategoryKey = "C"..qcTop:GetId()
-		strEpisodeKey = strCategoryKey.."ETasks"
-		strQuestKey = strEpisodeKey.."Q"..queTarget:GetId()
+	if epiMid then
+		if epiMid:IsWorldStory() then
+			strCategoryKey = "CWorldStory"
+			strEpisodeKey = strCategoryKey.."E"..epiMid:GetId()
+			strQuestKey = strEpisodeKey.."Q"..queTarget:GetId()
+		elseif epiMid:IsZoneStory() or epiMid:IsRegionalStory() then
+			strCategoryKey = "C"..qcTop:GetId()
+			strEpisodeKey = strCategoryKey.."E"..epiMid:GetId()
+			strQuestKey = strEpisodeKey.."Q"..queTarget:GetId()
+		else
+			strCategoryKey = "C"..qcTop:GetId()
+			strEpisodeKey = strCategoryKey.."ETasks"
+			strQuestKey = strEpisodeKey.."Q"..queTarget:GetId()
+		end
 	end
 
 	if qcTop then
@@ -252,11 +265,11 @@ function QuestLog:RedrawEverything()
 
 	local bLeftSideHasResults = #self.wndLeftSideScroll:GetChildren() ~= 0
 	self.wndLeftSideScroll:SetText(bLeftSideHasResults and "" or Apollo.GetString("QuestLog_NoResults"))
-	self.wndMain:FindChild("QuestInfoControls"):Show(bLeftSideHasResults)
-	self.wndMain:FindChild("RightSide"):Show(bLeftSideHasResults)
+	self.wndQuestInfoControls:Show(bLeftSideHasResults)
+	self.wndRightSide:Show(bLeftSideHasResults)
 
-	if self.wndMain:FindChild("RightSide"):IsShown() and self.wndMain:FindChild("RightSide"):GetData() then
-		self:DrawRightSide(self.wndMain:FindChild("RightSide"):GetData())
+	if self.wndRightSide:IsShown() and self.wndRightSide:GetData() then
+		self:DrawRightSide(self.wndRightSide:GetData())
 	end
 
 	self:ResizeRight()
@@ -265,11 +278,11 @@ end
 function QuestLog:RedrawRight()
 	local bLeftSideHasResults = #self.wndLeftSideScroll:GetChildren() ~= 0
 	self.wndLeftSideScroll:SetText(bLeftSideHasResults and "" or Apollo.GetString("QuestLog_NoResults"))
-	self.wndMain:FindChild("QuestInfoControls"):Show(bLeftSideHasResults)
-	self.wndMain:FindChild("RightSide"):Show(bLeftSideHasResults)
+	self.wndQuestInfoControls:Show(bLeftSideHasResults)
+	self.wndRightSide:Show(bLeftSideHasResults)
 
-	if self.wndMain:FindChild("RightSide"):IsShown() and self.wndMain:FindChild("RightSide"):GetData() then
-		self:DrawRightSide(self.wndMain:FindChild("RightSide"):GetData())
+	if self.wndRightSide:IsShown() and self.wndRightSide:GetData() then
+		self:DrawRightSide(self.wndRightSide:GetData())
 	end
 
 	self:ResizeRight()
@@ -633,8 +646,8 @@ function QuestLog:ResizeRight()
 	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfo"):GetAnchorOffsets()
 	self.wndMain:FindChild("QuestInfo"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.wndMain:FindChild("QuestInfo"):ArrangeChildrenVert(0))
 
-	self.wndMain:FindChild("RightSide"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("RightSide"):RecalculateContentExtents()
+	self.wndRightSide:ArrangeChildrenVert(0)
+	self.wndRightSide:RecalculateContentExtents()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -642,7 +655,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function QuestLog:DrawRightSide(queSelected)
-	local wndRight = self.wndMain:FindChild("RightSide")
+	local wndRight = self.wndRightSide
 	local eQuestState = queSelected:GetState()
 
 	-- Episode Summary
@@ -781,6 +794,7 @@ function QuestLog:DrawRightSide(queSelected)
 
 	-- Bottom Buttons (outside of Scroll)
 	self.wndMain:FindChild("QuestInfoControlsHideBtn"):Show(eQuestState == Quest.QuestState_Abandoned or eQuestState == Quest.QuestState_Mentioned)
+	self.wndMain:FindChild("QuestRestartBtn"):Show(eQuestState == Quest.QuestState_Ignored)
 	self.wndMain:FindChild("QuestInfoControlButtons"):Show(eQuestState == Quest.QuestState_Accepted or eQuestState == Quest.QuestState_Achieved or eQuestState == Quest.QuestState_Botched)
 	if eQuestState ~= Quest.QuestState_Abandoned then
 		local bCanShare = queSelected:CanShare()
@@ -794,6 +808,64 @@ function QuestLog:DrawRightSide(queSelected)
 		self.wndMain:FindChild("QuestTrackBtn"):SetTooltip(bIsTracked and Apollo.GetString("QuestLog_RemoveFromTracker") or Apollo.GetString("QuestLog_AddToTracker"))
 	end
 	--self.wndMain:FindChild("QuestInfoControlButtons"):ArrangeChildrenHorz(1)
+
+	-- Hide Pop Out CloseOnExternalClick windows
+	self.wndMain:FindChild("QuestAbandonConfirm"):Show(false)
+end
+
+function QuestLog:DrawUnknownRightSide(queSelected)
+	local wndRight = self.wndRightSide
+	local eQuestState = queSelected:GetState()
+
+	-- Episode Summary
+	wndRight:FindChild("EpisodeSummaryTitle"):SetText(Apollo.GetString("QuestLog_UnknownQuest"))
+	wndRight:FindChild("EpisodeSummaryProgText"):SetAML(string.format("<P Font=\"CRB_HeaderTiny\" Align=\"Center\">"..
+	"(<T Font=\"CRB_HeaderTiny\" Align=\"Center\">%s</T>/%s)</P>", Apollo.GetString("QuestLog_UnknownQuest"), Apollo.GetString("QuestLog_UnknownQuest")))
+	wndRight:FindChild("EpisodeSummaryPopoutText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff2f94ac\">"..Apollo.GetString("QuestLog_UnknownQuest").."</P>")
+	wndRight:FindChild("EpisodeSummaryPopoutText"):SetHeightToContentHeight()
+	wndRight:FindChild("EpisodeSummaryExpandBtn"):Enable(false)
+	wndRight:FindChild("EpisodeSummaryProgBG"):Show(true)
+
+	-- Text Summary
+	local tConData = ktConToUI[queSelected:GetColoredDifficulty() or 1]
+	local strDifficulty = String_GetWeaselString(Apollo.GetString("QuestLog_Difficulty"), "<T Font=\"CRB_InterfaceMedium\" TextColor=\"ff9aaea3\"> "..Apollo.GetString("QuestLog_UnknownQuest").."</T>")
+	wndRight:FindChild("QuestInfoDifficultyPic"):Show(false)
+	wndRight:FindChild("QuestInfoDifficultyText"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\">"..strDifficulty.."</P>")
+
+	--local bOptionalQuest = queSelected:IsOptionalForEpisode(epiParent:GetId())
+	wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("white"))
+	wndRight:FindChild("QuestInfoTitle"):SetText(queSelected:GetTitle())
+
+	wndRight:FindChild("QuestInfoTitleIcon"):SetTooltip(Apollo.GetString("QuestLog_ObjectivesNotComplete"))
+	wndRight:FindChild("QuestInfoTitleIcon"):SetSprite("CRB_Basekit:kitIcon_Gold_Checkbox")
+
+	wndRight:FindChild("QuestInfoDescriptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff56b381\">"..Apollo.GetString("QuestLog_UnknownQuest").."</P>")
+	wndRight:FindChild("QuestInfoDescriptionText"):SetHeightToContentHeight()
+
+	-- More Info
+	wndRight:FindChild("QuestInfoMoreInfoToggleBtn"):SetCheck(false)
+	wndRight:FindChild("QuestInfoMoreInfoText"):SetAML("")
+	wndRight:FindChild("QuestInfoMoreInfoFrame"):Show(false)
+
+	-- Objectives
+	wndRight:FindChild("QuestInfoObjectivesList"):DestroyChildren()
+
+	-- Rewards Received
+	wndRight:FindChild("QuestInfoRewardRecList"):DestroyChildren()
+
+	-- Rewards To Choose
+	wndRight:FindChild("QuestInfoRewardChoList"):DestroyChildren()
+
+	-- Special reward formatting for finished quests
+	wndRight:FindChild("QuestInfoRewardRecTitle"):SetText(Apollo.GetString("QuestLog_WillReceive"))
+	wndRight:FindChild("QuestInfoRewardChoTitle"):SetText(Apollo.GetString("QuestLog_CanChooseOne"))
+
+	-- Call Button
+	wndRight:FindChild("QuestInfoCallFrame"):Show(false)
+
+	-- Bottom Buttons (outside of Scroll)
+	self.wndMain:FindChild("QuestInfoControlsHideBtn"):Show(false)
+	self.wndMain:FindChild("QuestInfoControlButtons"):Show(false)
 
 	-- Hide Pop Out CloseOnExternalClick windows
 	self.wndMain:FindChild("QuestAbandonConfirm"):Show(false)
@@ -832,17 +904,17 @@ function QuestLog:OnBottomLevelBtnCheck(wndHandler, wndControl) -- From Button o
 	wndHandler:FindChild("BottomLevelBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 	self.wndLastBottomLevelBtnSelection = wndHandler
 
-	self.wndMain:FindChild("RightSide"):Show(true)
-	self.wndMain:FindChild("RightSide"):SetVScrollPos(0)
-	self.wndMain:FindChild("RightSide"):RecalculateContentExtents()
-	self.wndMain:FindChild("RightSide"):SetData(wndHandler:GetData())
+	self.wndRightSide:Show(true)
+	self.wndRightSide:SetVScrollPos(0)
+	self.wndRightSide:RecalculateContentExtents()
+	self.wndRightSide:SetData(wndHandler:GetData())
 	self:RedrawRight()
 end
 
 function QuestLog:OnBottomLevelBtnUncheck(wndHandler, wndControl)
 	wndHandler:FindChild("BottomLevelBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
-	self.wndMain:FindChild("QuestInfoControls"):Show(false)
-	self.wndMain:FindChild("RightSide"):Show(false)
+	self.wndQuestInfoControls:Show(false)
+	self.wndRightSide:Show(false)
 end
 
 function QuestLog:OnBottomLevelBtnDown( wndHandler, wndControl, eMouseButton )
@@ -856,7 +928,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function QuestLog:OnQuestTrackBtn(wndHandler, wndControl) -- QuestTrackBtn
-	local queSelected = self.wndMain:FindChild("RightSide"):GetData()
+	local queSelected = self.wndRightSide:GetData()
 	local bNewTrackValue = not queSelected:IsTracked()
 	queSelected:SetTracked(bNewTrackValue)
 	self.wndMain:FindChild("QuestTrackBtn"):SetText(bNewTrackValue and Apollo.GetString("QuestLog_Untrack") or Apollo.GetString("QuestLog_Track"))
@@ -865,32 +937,32 @@ function QuestLog:OnQuestTrackBtn(wndHandler, wndControl) -- QuestTrackBtn
 end
 
 function QuestLog:OnQuestShareBtn(wndHandler, wndControl) -- QuestShareBtn
-	local queSelected = self.wndMain:FindChild("RightSide"):GetData()
+	local queSelected = self.wndRightSide:GetData()
 	queSelected:Share()
 end
 
 function QuestLog:OnQuestCallBtn(wndHandler, wndControl) -- QuestCallBtn or QuestInfoCostumeWindow
-	local queSelected = self.wndMain:FindChild("RightSide"):GetData()
+	local queSelected = self.wndRightSide:GetData()
 	CommunicatorLib.CallContact(queSelected)
 	Event_FireGenericEvent("ToggleCodex") -- Hide codex, not sure if we want this
 end
 
 function QuestLog:OnQuestAbandonBtn(wndHandler, wndControl) -- QuestAbandonBtn
-	local queSelected = self.wndMain:FindChild("RightSide"):GetData()
+	local queSelected = self.wndRightSide:GetData()
 	queSelected:Abandon()
 	self:OnDestroyQuestObject(queUpdated)
 	self:DestroyAndRedraw()
-	self.wndMain:FindChild("RightSide"):Show(false)
-	self.wndMain:FindChild("QuestInfoControls"):Show(false)
+	self.wndRightSide:Show(false)
+	self.wndQuestInfoControls:Show(false)
 end
 
 function QuestLog:OnQuestHideBtn(wndHandler, wndControl) -- QuestInfoControlsHideBtn
-	local queSelected = self.wndMain:FindChild("RightSide"):GetData()
+	local queSelected = self.wndRightSide:GetData()
 	queSelected:ToggleIgnored()
 	self:OnDestroyQuestObject(queSelected)
 	self:DestroyAndRedraw()
-	self.wndMain:FindChild("RightSide"):Show(false)
-	self.wndMain:FindChild("QuestInfoControls"):Show(false)
+	self.wndRightSide:Show(false)
+	self.wndQuestInfoControls:Show(false)
 	Apollo.CreateTimer("RedrawQuestLogInOneSec", 1, false) -- TODO TEMP HACK, since Quest:ToggleIgnored() takes a while
 end
 
@@ -915,16 +987,16 @@ function QuestLog:OnQuestStateChanged(queUpdated, eState)
 	else -- Botched, Mentioned, Ignored, Unknown
 		self:RedrawEverything()
 
-		local queCurrent = self.wndMain:FindChild("RightSide"):GetData()
+		local queCurrent = self.wndRightSide:GetData()
 		if queCurrent and queCurrent:GetId() == queUpdated:GetId() then
-			self.wndMain:FindChild("RightSide"):Show(false)
-			self.wndMain:FindChild("QuestInfoControls"):Show(false)
+			self.wndRightSide:Show(false)
+			self.wndQuestInfoControls:Show(false)
 		end
 	end
 end
 
 function QuestLog:OnQuestObjectiveUpdated(queUpdated)
-	local queCurrent = self.wndMain:FindChild("RightSide"):GetData()
+	local queCurrent = self.wndRightSide:GetData()
 	if queCurrent and queCurrent:GetId() == queUpdated:GetId() then
 		self:RedrawEverything()
 	end
@@ -946,11 +1018,11 @@ function QuestLog:OnDestroyQuestObject(queTarget) -- QuestStateChanged, QuestObj
 end
 
 function QuestLog:OnQuestTrackedChanged(queUpdated, bTracked)
-	if self.wndMain:FindChild("RightSide"):IsShown() 
-		and self.wndMain:FindChild("RightSide"):GetData() 
-		and self.wndMain:FindChild("RightSide"):GetData() == queUpdated then
+	if self.wndRightSide:IsShown() 
+		and self.wndRightSide:GetData() 
+		and self.wndRightSide:GetData() == queUpdated then
 		
-		self:DrawRightSide(self.wndMain:FindChild("RightSide"):GetData())
+		self:DrawRightSide(self.wndRightSide:GetData())
 		self:ResizeRight()
 	end
 end
@@ -1038,16 +1110,16 @@ function QuestLog:HelperBuildRewardsRec(wndReward, tRewardData, bReceived)
 				strText = String_GetWeaselString(Apollo.GetString("CRB_Platinum"), math.floor(nInCopper / 1000000))
 			end
 			if nInCopper >= 10000 then
-				strText = String_GetWeaselString(Apollo.GetString("CRB_Gold"), math.floor(nInCopper % 1000000 / 10000))
+				strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Gold"), math.floor(nInCopper % 1000000 / 10000))
 			end
 			if nInCopper >= 100 then
-				strText = String_GetWeaselString(Apollo.GetString("CRB_Silver"), math.floor(nInCopper % 10000 / 100))
+				strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Silver"), math.floor(nInCopper % 10000 / 100))
 			end
 			strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Copper"), math.floor(nInCopper % 100))
 			strSprite = "ClientSprites:Icon_ItemMisc_bag_0001"
 			wndReward:SetTooltip(strText)
 		else
-			local tDenomInfo = GameLib.GetPlayerCurrency(tRewardData.eCurrencyType):GetDenomInfo()
+			local tDenomInfo = GameLib.GetPlayerCurrency(tRewardData.eCurrencyType or tRewardData.idObject):GetDenomInfo()
 			if tDenomInfo ~= nil then
 				strText = tRewardData.nAmount .. " " .. tDenomInfo[1].strName
 				strSprite = "ClientSprites:Icon_ItemMisc_bag_0001"

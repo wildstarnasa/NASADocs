@@ -245,6 +245,7 @@ function ClassResources:OnSlingerUpdateTimer()
 	self.wndMain:FindChild("ManaProgressBacker"):Show(nManaCurrent ~= nManaMax)
 
 	-- Nodes
+	local strNodeTooltip = String_GetWeaselString(Apollo.GetString("Spellslinger_SpellSurge"), nResourceCurrent, nResourceMax)
 	for idx, wndCurr in pairs({ self.wndSlinger1, self.wndSlinger2, self.wndSlinger3, self.wndSlinger4 }) do
 		local nPartialProgress = nResourceCurrent - (nResourceMaxDiv4 * (idx - 1)) -- e.g. 250, 500, 750, 1000
 		local bThisBubbleFilled = nPartialProgress >= nResourceMaxDiv4
@@ -269,6 +270,7 @@ function ClassResources:OnSlingerUpdateTimer()
 			wndCurr:FindChild("NodeFlash"):SetSprite("CM_SpellslingerSprites:sprSlinger_NodeBar_Flash_Orange")
 		end
 		wndCurr:SetData(nPartialProgress)
+		wndCurr:SetTooltip(strNodeTooltip)
 	end
 
 	-- Surge

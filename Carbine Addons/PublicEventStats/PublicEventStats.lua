@@ -233,54 +233,22 @@ local ktRewardTierInfo =
 	[PublicEvent.PublicEventRewardTier_Gold] 	= {Apollo.GetString("PublicEventStats_GoldMedal"), 		"CRB_CurrencySprites:sprCashGold"},
 }
 
-local ktSaveVersion = 1
-
-function PublicEventStats:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	local locAdventureLocation = self.wndAdventure and self.wndAdventure:GetLocation() or self.locSavedAdventureLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		tAdventureLocation = locAdventureLocation and locAdventureLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-
-	return tSaved
-end
-
-function PublicEventStats:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-
-	if tSavedData.tAdventureLocation then
-		self.locSavedAdventureLoc = WindowLocation.new(tSavedData.tAdventureLocation)
-	end
-end
-
 function PublicEventStats:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("PublicEventStats.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function PublicEventStats:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
-    Apollo.RegisterEventHandler("GenericEvent_OpenEventStats", 			"Initialize", self)
+
+    Apollo.RegisterEventHandler("GenericEvent_OpenEventStats", 			"OnToggleEventStats", self)
     Apollo.RegisterEventHandler("GenericEvent_OpenEventStatsZombie", 	"InitializeZombie", self)
 	Apollo.RegisterEventHandler("ResolutionChanged", 					"OnResolutionChanged", self)
 	Apollo.RegisterEventHandler("WarPartyMatchResults", 				"OnWarPartyMatchResults", self)
 	Apollo.RegisterEventHandler("PVPMatchFinished", 					"OnPVPMatchFinished", self)
+	Apollo.RegisterEventHandler("PublicEventStart",						"OnPublicEventStart", self)
 	Apollo.RegisterEventHandler("PublicEventEnd", 						"OnPublicEventEnd", self)
 	Apollo.RegisterEventHandler("PublicEventLeave", 					"OnPublicEventLeave", self)
 	Apollo.RegisterEventHandler("ChangeWorld", 							"OnClose", self)
@@ -292,58 +260,41 @@ function PublicEventStats:OnDocumentReady()
 
 	self.wndMain = nil
 	self.wndAdventure = nil
+
+	local tActiveEvents = PublicEvent.GetActiveEvents()
+	for idx, peEvent in pairs(tActiveEvents) do
+		self:OnPublicEventStart(peEvent)
+	end
 end
 
-function PublicEventStats:OnResolutionChanged()
-	self.bResolutionChanged = true -- Delay so we can get the new value
-end
-
-function PublicEventStats:OnPublicEventLeave(peEnding, eReason)
-	Apollo.StopTimer("UpdateTimer")
-end
-
-function PublicEventStats:OnPublicEventEnd(peEnding, eReason, tStats)
-	Apollo.StopTimer("UpdateTimer")
-	self.bIsOver = true
-
-	local eEventType = peEnding:GetEventType()
-	
-	if not self.nEventCount then
-		self.nEventCount = 1
+function PublicEventStats:OnToggleEventStats()
+	if self.wndMain:IsShown() then
+		self.wndMain:Close()
+		Apollo.StopTimer("UpdateTimer")
 	else
-		self.nEventCount = self.nEventCount + 1
-	end
-	
-	local tViewableData = {nEventCount = nEventCount, eEventType = eEventType, tStats = tStats}
-	Event_FireGenericEvent("SendVarToRover", peEnding:GetName(), tViewableData)
-
-	if ktPvPEvents[eEventType] then
-		self:OnClose() -- Destroy self.wndMain
-		self:Initialize(peEnding, tStats.arPersonalStats, tStats.arTeamStats, tStats.arParticipantStats)
-		self.tZombieStats = tStats -- After Initialize (initialize will wipe zombie stats)
-	elseif eEventType == PublicEvent.PublicEventType_SubEvent or eEventType == PublicEvent.PublicEventType_WorldEvent then
-		-- TODO; currently handled from Quest Tracker toggle
-	else -- Adventures
-		self:OnClose() -- Destroy self.wndMain
-		self.tZombieStats = tStats -- Needs to be before BuildAdventuresSummary
-		self:BuildAdventuresSummary(self:HelperBuildCombinedList(tStats.arPersonalStats, tStats.arTeamStats, tStats.arParticipantStats), peEnding)
+		self.wndMain:Invoke()
+		self:OnOneSecTimer()
+		Apollo.StartTimer("UpdateTimer")
 	end
 end
 
-function PublicEventStats:InitializeZombie(tZombieEvent)
-	self:Initialize(tZombieEvent.peEvent, tZombieEvent.tStats, tZombieEvent.tStats.arTeamStats, tZombieEvent.tStats.arParticipantStats)
-	self.tZombieStats = tZombieEvent.tStats -- After Initialize (initialize will wipe zombie stats)
-
-	Apollo.StartTimer("UpdateTimer")
+function PublicEventStats:OnPublicEventStart(peEvent)
+	local eType = peEvent:GetEventType()
+	if peEvent:HasLiveStats() then
+		local tLiveStats = peEvent:GetLiveStats()
+		self:Initialize(peEvent, peEvent:GetMyStats(), tLiveStats.arTeamStats, tLiveStats.arParticipantStats)
+	end
 end
 
-function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsParticipants)
+function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsParticipants, tZombieStats)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc , "PublicEventStatsForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Tutorials_PublicEvents")})
 	end
 
 	local eEventType = peEvent:GetEventType()
 	local wndParent = self.wndMain:FindChild(ktEventTypeToWindowName[eEventType])
+
 	local wndGrid = wndParent
 
 	if wndGrid:GetName() ~= "PublicEventGrid" then
@@ -356,7 +307,6 @@ function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsPart
 		wndGrid = wndParent:FindChild("PvPTeamGridTop")
 	end
 
-
 	local nMaxWndMainWidth = self.wndMain:GetWidth() - wndGrid:GetWidth() + 15 -- Magic number for the width of the scroll bar
 	for idx = 1, wndGrid:GetColumnCount() do
 		nMaxWndMainWidth = nMaxWndMainWidth + wndGrid:GetColumnWidth(idx)
@@ -366,19 +316,61 @@ function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsPart
 	self.wndMain:SetSizingMinimum(500, 500)
 	self.wndMain:SetSizingMaximum(nMaxWndMainWidth, 800)
 
-	self.wndMain:SetData({peEvent, tStatsSelf or {}, tStatsTeam or {}, tStatsParticipants or {}})
-	self.wndMain:Show(true)
-	self.tZombieStats = nil
+	local tData =
+	{
+		peEvent = peEvent,
+		tStatsSelf = tStatsSelf or {},
+		tStatsTeam = tStatsTeam or {},
+		tStatsParticipants = tStatsParticipants or {}
+	}
+
+	self.wndMain:SetData(tData)
+	self.wndMain:Show(false)
+	self.tZombieStats = tZombieStats -- note: this will be nil be default
 	peEvent:RequestScoreboard(true)
 
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+	self:OnOneSecTimer()
+end
+
+function PublicEventStats:InitializeZombie(tZombieEvent)
+	self:Initialize(tZombieEvent.peEvent, tZombieEvent.tStats, tZombieEvent.tStats.arTeamStats, tZombieEvent.tStats.arParticipantStats, tZombieEvent.tStats)
+	self.wndMain:Invoke()
+	Apollo.StartTimer("UpdateTimer")
+end
+
+function PublicEventStats:OnResolutionChanged()
+	self.bResolutionChanged = true -- Delay so we can get the new value
+end
+
+function PublicEventStats:OnPublicEventLeave(peEnding, eReason)
+	if self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:FindChild("Header:BGPvPWinnerTopBar"):Show(false)
+		Apollo.StopTimer("UpdateTimer")
+	end
+end
+
+function PublicEventStats:OnPublicEventEnd(peEnding, eReason, tStats)
+	Apollo.StopTimer("UpdateTimer")
+
+	local eEventType = peEnding:GetEventType()
+
+	if not self.nEventCount then
+		self.nEventCount = 1
+	else
+		self.nEventCount = self.nEventCount + 1
 	end
 
-	if not self.bIsOver then
-		Apollo.StartTimer("UpdateTimer")
-	else
-		self:OnOneSecTimer()
+	local tViewableData = {nEventCount = nEventCount, eEventType = eEventType, tStats = tStats}
+
+	if ktPvPEvents[eEventType] then
+		self:Initialize(peEnding, tStats.arPersonalStats, tStats.arTeamStats, tStats.arParticipantStats, tStats)
+		self.wndMain:Invoke()
+	elseif eEventType == PublicEvent.PublicEventType_SubEvent or eEventType == PublicEvent.PublicEventType_WorldEvent then
+		-- TODO; currently handled from Quest Tracker toggle
+	else -- Adventures
+		self:OnClose()
+		self.tZombieStats = tStats -- Needs to be before BuildAdventuresSummary
+		self:BuildAdventuresSummary(self:HelperBuildCombinedList(tStats.arPersonalStats, tStats.arTeamStats, tStats.arParticipantStats), peEnding)
 	end
 end
 
@@ -387,20 +379,33 @@ end
 -----------------------------------------------------------------------------------------------
 
 function PublicEventStats:OnOneSecTimer()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.wndMain or not self.wndMain:IsValid() then
 		Apollo.StopTimer("UpdateTimer")
 		return
 	end
 
-	local peCurrent = self.wndMain:GetData()[1]
-	local tLiveStats = peCurrent:GetLiveStats()
+	local peCurrent = self.wndMain:GetData().peEvent
 	local eEventType = peCurrent:GetEventType()
+	local tLiveStats = nil
+
+	if not self.tZombieStats then
+		tLiveStats = peCurrent:GetLiveStats()
+	end
 
 	if tLiveStats and peCurrent:IsActive() then
-		self.wndMain:SetData({peCurrent, peCurrent:GetMyStats(), tLiveStats.arTeamStats, tLiveStats.arParticipantStats})
+		local tData =
+		{
+			peEvent = peCurrent,
+			tStatsSelf = peCurrent:GetMyStats(),
+			tStatsTeam = tLiveStats.arTeamStats,
+			tStatsParticipants = tLiveStats.arParticipantStats
+		}
+		self.wndMain:SetData(tData)
 		self:Redraw()
 	elseif ktPvPEvents[eEventType] or eEventType == PublicEvent.PublicEventType_WorldEvent then
-		self:Redraw()
+		if self.wndMain:GetData() then
+			self:Redraw()
+		end
 	end
 
 	if self.bResolutionChanged then
@@ -415,10 +420,11 @@ function PublicEventStats:OnOneSecTimer()
 end
 
 function PublicEventStats:Redraw() -- self.wndMain guaranteed valid and visible
-	local peCurrent = self.wndMain:GetData()[1]
-	local tStatsSelf = self.wndMain:GetData()[2]
-	local tStatsTeam = self.wndMain:GetData()[3]
-	local tStatsParticipants = self.wndMain:GetData()[4]
+	local tData = self.wndMain:GetData()
+	local peCurrent = tData.peEvent
+	local tStatsSelf = tData.tStatsSelf
+	local tStatsTeam = tData.tStatsTeam
+	local tStatsParticipants = tData.tStatsParticipants
 	local tMegaList = self:HelperBuildCombinedList(tStatsSelf, tStatsTeam, tStatsParticipants)
 
 	for key, wndCurr in pairs(self.wndMain:FindChild("MainGridContainer"):GetChildren()) do
@@ -508,6 +514,7 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 		local strDamage	= String_GetWeaselString(Apollo.GetString("PublicEventStats_Damage"), self:HelperFormatNumber(tCurr.nDamage))
 		local strHealed	= String_GetWeaselString(Apollo.GetString("PublicEventStats_Healing"), self:HelperFormatNumber(tCurr.nHealed))
 
+		-- Setting up the team names / headers
 		if eEventType == "CTF" or eEventType == "HoldTheLine" or eEventType == "Sabotage" then
 			if tCurr.strTeamName == "Exiles" then
 				crTitleColor = ApolloColor.new("ff31fcf6")
@@ -590,6 +597,7 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 			end
 
 			local strClassIcon = idx == 1 and kstrClassToMLIcon[tParticipant.eClass] or ""
+
 			wndGrid:SetCellDoc(wndCurrRow, idx, string.format("<T Font=\"CRB_InterfaceSmall\">%s%s</T>", strClassIcon, self:HelperFormatNumber(value)))
 		end
 	end
@@ -606,7 +614,8 @@ function PublicEventStats:BuildPublicEventGrid(wndGrid, tMegaList)
 	local nVScrollPos = wndGrid:GetVScrollPos()
 	local nSortedColumn = wndGrid:GetSortColumn() or 1
 	local bAscending = wndGrid:IsSortAscending()
-	wndGrid:DeleteAll() -- TODO remove this for better performance eventually
+	 -- TODO remove this for better performance eventually
+	 wndGrid:DeleteAll()
 
 	for strKey, tCurrTable in pairs(tMegaList) do
 		for key, tCurr in pairs(tCurrTable) do
@@ -615,7 +624,7 @@ function PublicEventStats:BuildPublicEventGrid(wndGrid, tMegaList)
 
 			local tAttributes = {tCurr.strName, tCurr.nContributions, tCurr.nDamage, tCurr.nDamageReceived, tCurr.nHealed, tCurr.nHealingReceived}
 			for idx, oValue in pairs(tAttributes) do
-				if type(value) == "number" then
+				if type(oValue) == "number" then
 					wndGrid:SetCellSortText(wndCurrRow, idx, string.format("%8d", oValue))
 				else
 					wndGrid:SetCellSortText(wndCurrRow, idx, oValue)
@@ -641,8 +650,8 @@ function PublicEventStats:OnWarPartyMatchResults(tWarplotResults)
 			local strStats = String_GetWeaselString(Apollo.GetString("PEStats_WarPartyTeamStats"), tTeamStats.nRating, tTeamStats.nDestroyedPlugs, tTeamStats.nRepairCost, tTeamStats.nWarCoinsEarned)
 			self.wndMain:FindChild("PvPWarPlotContainer"):FindChild(idx == 1 and "PvPTeamHeaderTop" or "PvPTeamHeaderBot"):FindChild("PvPHeaderText"):SetData(strStats)
 		end
+		self.wndMain:FindChild("PvPSurrenderMatchBtn"):Show(false)
 	end
-	self.wndMain:FindChild("PvPSurrenderMatchBtn"):Show(false)
 end
 
 function PublicEventStats:OnPVPMatchFinished(eWinner, eReason, nDeltaTeam1, nDeltaTeam2)
@@ -650,7 +659,7 @@ function PublicEventStats:OnPVPMatchFinished(eWinner, eReason, nDeltaTeam1, nDel
 		return
 	end
 
-	local peMatch = self.wndMain:GetData()[1]
+	local peMatch = self.wndMain:GetData().peEvent
 	local eEventType = peMatch:GetEventType()
 	if not ktPvPEvents[eEventType] or eEventType == PublicEvent.PublicEventType_PVP_Warplot then
 		return
@@ -750,21 +759,37 @@ end
 function PublicEventStats:OnClose(wndHandler, wndControl) -- Also LeaveAdventureBtn, AdventureCloseBtn
 	self.tZombieStats = nil
 	if self.wndMain then
-		local peCurrent = self.wndMain:GetData() and self.wndMain:GetData()[1]
+		local peCurrent = self.wndMain:GetData() and self.wndMain:GetData().peEvent
 		if peCurrent then
 			peCurrent:RequestScoreboard(false)
 		end
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
-		self.wndMain:Destroy()
+		if ktEventTypeToWindowName[peCurrent:GetEventType()] then
+			local wndGrid = self.wndMain:FindChild(ktEventTypeToWindowName[peCurrent:GetEventType()])
+			local wndGridTop 	= wndGrid:FindChild("PvPTeamGridTop")
+			local wndGridBot 	= wndGrid:FindChild("PvPTeamGridBot")
+
+			if wndGridTop then
+				wndGridTop:DeleteAll()
+			end
+			if wndGridBot then
+				wndGridBot:DeleteAll()
+			end
+		end
+
+		self.wndMain:Close()
+		Apollo.StopTimer("UpdateTimer")
 	end
 	if self.wndAdventure then
-		self.locSavedAdventureLoc = self.wndAdventure:GetLocation()
 		self.wndAdventure:Destroy()
 	end
 end
 
 function PublicEventStats:OnPvPLeaveMatchBtn(wndHandler, wndControl)
 	if MatchingGame.IsInMatchingGame() then
+		if self.wndMain then
+			self.wndMain:FindChild("Header:BGPvPWinnerTopBar"):Show(false)
+			self.wndMain:Close()
+		end
 		MatchingGame.LeaveMatchingGame()
 	end
 end
@@ -781,13 +806,11 @@ end
 
 function PublicEventStats:BuildAdventuresSummary(tMegaList, peAdventure)
 	self.wndAdventure = Apollo.LoadForm(self.xmlDoc , "AdventureEventStatsForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MatchMaker_Adventures")})
+
 	local wndCurr = self.wndAdventure
 	local tSelf = tMegaList.tStatsSelf[1]
 	local tScore = {["nDamage"] = 0, ["nHealed"] = 0, ["nDeaths"] = 0}
-
-	if self.locSavedAdventureLoc then
-		self.wndAdventure:MoveToLocation(self.locSavedAdventureLoc)
-	end
 
 	-- Add Custom to score tracker
 	for idx, tTable in pairs(tSelf.arCustomStats) do

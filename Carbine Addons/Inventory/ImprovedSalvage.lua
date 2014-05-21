@@ -7,7 +7,6 @@ require "Item"
 local ImprovedSalvage = {}
 
 local kidBackpack = 0
-local knSavedVersion = 100
 
 function ImprovedSalvage:new(o)
 	o = o or {}
@@ -17,44 +16,18 @@ function ImprovedSalvage:new(o)
 	return o
 end
 
-function ImprovedSalvage:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-	return tSaved
-end
-
-function ImprovedSalvage:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSavedVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-		
-		if self.wndMain then
-			--self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-		end
-	end
-end
-
 function ImprovedSalvage:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ImprovedSalvage.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function ImprovedSalvage:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("RequestSalvageAll", "OnSalvageAll", self) -- using this for bag changes
 	Apollo.RegisterSlashCommand("salvageall", "OnSalvageAll", self)
 
@@ -71,6 +44,10 @@ function ImprovedSalvage:OnDocumentReady()
 	self.nItemIndex = nil
 
 	self.wndMain:Show(false, true)
+end
+
+function ImprovedSalvage:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Salvage")})
 end
 
 --------------------//-----------------------------

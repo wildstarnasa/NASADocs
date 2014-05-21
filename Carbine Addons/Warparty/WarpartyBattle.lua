@@ -240,7 +240,7 @@ function WarpartyBattle:OnCloseBtn(wndHandler, wndControl)
 end
 
 function WarpartyBattle:OnHousingDecorateChecked()
-	Event_FireGenericEvent("DatachronDecorateBtn", false)
+	Event_FireGenericEvent("HousingButtonCrate", false)
 	Event_FireGenericEvent("HousingEnterEditMode")
 end
 

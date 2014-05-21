@@ -12,7 +12,7 @@ local LevelUpUnlocks = {}
 local knMaxLevel = 50
 local knMaxPathLevel = 30
 local knAutoHideReminderTime = 250
-local knSaveVersion = 1
+local knSaveVersion = 8
 
 local ktUnlockMapping =
 {
@@ -198,7 +198,7 @@ function LevelUpUnlocks:OnDocumentReady()
 end
 
 function LevelUpUnlocks:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_LevelUpUnlocks"), {"ToggleLevelUpUnlocks", "", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_LevelUpUnlocks"), {"ToggleLevelUpUnlocks", "", "Icon_Windows32_UI_CRB_InterfaceMenu_LevelUpUnlock"})
 end
 
 function LevelUpUnlocks:Initialize()

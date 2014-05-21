@@ -21,7 +21,24 @@ local kcrInactiveColor 			= CColor.new(47/2551, 148/255, 172/255, 1)
 local kstrConsoleRealmFilter	= "matching.realmOnly"
 local knSaveVersion = 1
 
------------------------------------------------------------------------------------------------
+local ktEventTypeToMatchType =
+{
+	[PublicEvent.PublicEventType_Dungeon]						= MatchingGame.MatchType.Dungeon,
+	[PublicEvent.PublicEventType_PVP_Arena] 					= MatchingGame.MatchType.Arena,
+	[PublicEvent.PublicEventType_PVP_Warplot] 					= MatchingGame.MatchType.Warplot,
+	[PublicEvent.PublicEventType_PVP_Battleground_Vortex] 		= MatchingGame.MatchType.Battleground,
+	[PublicEvent.PublicEventType_PVP_Battleground_HoldTheLine] 	= MatchingGame.MatchType.Battleground,
+	[PublicEvent.PublicEventType_PVP_Battleground_Cannon]		= MatchingGame.MatchType.Battleground,
+	[PublicEvent.PublicEventType_PVP_Battleground_Sabotage]		= MatchingGame.MatchType.Battleground,
+	[PublicEvent.PublicEventType_Adventure_Malgrave]			= MatchingGame.MatchType.Adventure,
+	[PublicEvent.PublicEventType_Adventure_Hycrest]				= MatchingGame.MatchType.Adventure,
+	[PublicEvent.PublicEventType_Adventure_Skywatch]			= MatchingGame.MatchType.Adventure,
+	[PublicEvent.PublicEventType_Adventure_Whitevale]			= MatchingGame.MatchType.Adventure,
+	[PublicEvent.PublicEventType_Adventure_Galeras]				= MatchingGame.MatchType.Adventure,
+	[PublicEvent.PublicEventType_Adventure_Astrovoid]			= MatchingGame.MatchType.Adventure,
+	[PublicEvent.PublicEventType_Adventure_Farside]				= MatchingGame.MatchType.Adventure,
+}
+-----------------------------------------------------------------------------------------------                 PublicEventType_Adventure_NorthernWilds);
 -- Initialization
 -----------------------------------------------------------------------------------------------
 function MatchMaker:new(o)
@@ -53,32 +70,6 @@ function MatchMaker:Init()
     Apollo.RegisterAddon(self)
 end
 
-function MatchMaker:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-	return tSaved
-end
-
-function MatchMaker:OnRestore(eType, tSavedData)
-	self.tSavedData = tSavedData
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 -----------------------------------------------------------------------------------------------
 -- MatchMaker OnLoad
 -----------------------------------------------------------------------------------------------
@@ -93,6 +84,7 @@ function MatchMaker:OnDocumentReady()
 	end
 
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 			"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 				"OnWindowManagementReady", self)
 
     Apollo.RegisterSlashCommand("checkrating", 							"OnCheckRating", self)
 	Apollo.RegisterEventHandler("ToggleGroupFinder", 					"OnToggleMatchMaker", self)
@@ -149,6 +141,7 @@ function MatchMaker:OnDocumentReady()
 	Apollo.RegisterEventHandler("LevelUpUnlock_GroupFinder_Arenas", 	"OnLevelUpUnlock_GroupFinder_Arenas", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_GroupFinder_Warplots", 	"OnLevelUpUnlock_GroupFinder_Warplots", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_PvP_Battleground",		"OnLevelUpUnlock_PvP_Battleground", self)
+	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 			"OnTutorial_RequestUIAnchor", self)
 
 	--Apollo.RegisterTimerHandler("MatchTimer", 							"OnMatchTimer", self)
 	--Apollo.RegisterTimerHandler("MatchPrecisionTimer", 					"StartMatchTimer", self)
@@ -162,10 +155,6 @@ function MatchMaker:OnDocumentReady()
 
     -- load our forms
     self.wndMain 					= Apollo.LoadForm(self.xmlDoc, "MatchMakerFrame", nil, self)
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	self.wndModeList 				= self.wndMain:FindChild("ModeToggleList")
 	self.wndModeListToggle 			= self.wndMain:FindChild("ModeToggle")
 
@@ -300,7 +289,11 @@ function MatchMaker:OnDocumentReady()
 end
 
 function MatchMaker:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_GroupFinder"), {"ToggleGroupFinder", "GroupFinder", "spr_HUD_MenuIcons_GroupFinder"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_GroupFinder"), {"ToggleGroupFinder", "GroupFinder", "Icon_Windows32_UI_CRB_InterfaceMenu_GroupFinder"})
+end
+
+function MatchMaker:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_GroupFinder")})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -367,7 +360,19 @@ function MatchMaker:OnMatchMakerOn()
 	self.wndMain:Show(true)
 	self.wndModeList:Show(false)
 
+	-- go to the correct tab
+	if MatchingGame.IsInMatchingGame() then
+		local tActiveEvents = PublicEvent.GetActiveEvents()
+		for idx, peEvent in pairs(tActiveEvents) do
+			local eType = peEvent:GetEventType()
+			if ktEventTypeToMatchType[eType] then
+				self.eSelectedTab = ktEventTypeToMatchType[eType]
+			end
+		end
+	end
+
 	local tGames = MatchingGame.GetAvailableMatchingGames(self.eSelectedTab)
+
 	if tGames == nil then
 		return
 	end
@@ -428,9 +433,14 @@ function MatchMaker:OnMatchMakerOn()
 		end
 
 		local tSelectedRoles = MatchingGame.GetSelectedRoles()
-		if tSelectedRoles ~= nil then
+		if tSelectedRoles and #tEligibleRoles > 0 then
 			for idx, eRole in ipairs(tSelectedRoles) do
-				self.tGroupFinderRoleButtons[eRole]:SetCheck(true)
+				if self.tGroupFinderRoleButtons[eRole]:IsEnabled() then
+					self.tGroupFinderRoleButtons[eRole]:SetCheck(true)
+					MatchingGame.SelectRole(eRole, true)
+				else
+					MatchingGame.SelectRole(eRole, false)
+				end
 			end
 		end
 	end
@@ -800,14 +810,19 @@ function MatchMaker:RefreshStatus()
 				self.wndJoinAsGroup:Show(true)
 				self.wndModeListToggle:Enable(true)
 				self.wndListBlocker:Show(false)
-			else
+			elseif bInInstance then
 				self.wndLeaveGame:Show(true)
+			else
+				self.wndListBlocker:Show(true)
+				self.wndListBlocker:SetText(Apollo.GetString("MatchMaker_CantQueueWhileGrouped"))
 			end
 		else
 			local tMatchState = MatchingGame:GetPVPMatchState()
 			local bCanDisband = not tMatchState or tMatchState.eRules ~= MatchingGame.Rules.DeathmatchPool -- Not in PvP. If In PvP, then not in Deathmatch
 
 			self.wndListBlocker:Show(true)
+			self.wndListBlocker:SetText(Apollo.GetString("MatchMaker_CurrentlyInMatch"))
+
 			self.wndModeListToggle:Enable(false)
 			self.wndVoteDisband:Show(bCanDisband and not bLeader)
 
@@ -932,7 +947,7 @@ function MatchMaker:OnLeaveQueue()
 end
 
 function MatchMaker:OnVoteKickBegin(tPlayerInfo)
-	self.wndVoteKick:FindChild("Title"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_VoteKick"), tPlayerInfo.characterName))
+	self.wndVoteKick:FindChild("Title"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_VoteKick"), tPlayerInfo.strCharacterName))
 	self.wndVoteKick:Show(true)
 	self.wndVoteKick:ToFront()
 end
@@ -1601,6 +1616,22 @@ function MatchMaker:OnDuelWarningTimer()
 		Apollo.StartTimer("DuelWarningTimer")
 	end
 end
+
+---------------------------------------------------------------------------------------------------
+-- Tutorial anchor request
+---------------------------------------------------------------------------------------------------
+
+function MatchMaker:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.GroupFinder or not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
+
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+end
+
+---------------------------------------------------------------------------------------------------
 
 function MatchMaker:DisplayPendingInfo()
 	if self.wndJoinGame:IsShown() then

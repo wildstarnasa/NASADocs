@@ -83,13 +83,14 @@ function CircleRegistration:OnEventGeneric_OpenCircleRegistrationPanel(wndParent
 		self:Initialize(wndParent)
 	end
 	
+	if not self.wndMain:IsShown() then
+		self.wndMain:Invoke()
+	end
+	
 	self:OnFullRedrawOfRegistration()
 end
 
 function CircleRegistration:OnClose()
-	 -- TODO: We may not want all messages to route back to Social Panel
-	Event_FireGenericEvent("EventGeneric_OpenSocialPanel")
-
 	Apollo.StopTimer("LeftCircleMessageTimer")
 	Apollo.StopTimer("SuccessfulMessageTimer")
 	Apollo.StopTimer("ErrorMessageTimer")

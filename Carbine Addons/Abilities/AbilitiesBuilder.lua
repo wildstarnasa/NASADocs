@@ -9,8 +9,6 @@ require "ActionSetLib"
 require "AbilityBook"
 require "Tooltip"
 
-local knSaveVersion = 4
-
 local Abilities = {}
 
 function Abilities:new(o)
@@ -30,21 +28,23 @@ function Abilities:OnLoad()
 end
 
 function Abilities:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 					"OnInterfaceMenuListHasLoaded", self)
 
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 						"DrawSpellBook", self)
-	Apollo.RegisterEventHandler("AbilityBookChange", 							"RedrawFromScratch", self)
+	Apollo.RegisterEventHandler("AbilityBookChange", 							"DrawSpellBook", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 							"DrawSpellBook", self)
 	Apollo.RegisterEventHandler("SpecChanged", 									"OnSpecChanged", self)
+	Apollo.RegisterEventHandler("ActionSetError", 								"OnActionSetError", self)
 	Apollo.RegisterEventHandler("AbilityAMPs_ToggleDirtyBit", 					"OnToggleDirtyBit", self)
 
 	Apollo.RegisterEventHandler("PlayerChanged", 								"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 							"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("ToggleAbilitiesWindow", 						"OnToggleAbilitiesWindow", self)
+	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 					"OnTutorial_RequestUIAnchor", self)
 
 	Apollo.RegisterEventHandler("LevelUpUnlock_AMPSystem",						"OnLevelUpUnlock_AMPSystem", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_AMPPoint",						"OnLevelUpUnlock_AMPSystem", self)
@@ -71,35 +71,13 @@ function Abilities:OnDocumentReady()
 end
 
 function Abilities:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AbilityBuilder"), {"ToggleAbilitiesWindow", "LimitedActionSetBuilder", "spr_HUD_MenuIcons_Abilities"})
-	
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AbilityBuilder"), {"ToggleAbilitiesWindow", "LimitedActionSetBuilder", "Icon_Windows32_UI_CRB_InterfaceMenu_Abilities"})
 	self:UpdateInterfaceMenuAlerts()
 end
 
-function Abilities:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedLocation
-
-	local tSave =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nVersion = knSaveVersion,
-	}
-
-	return tSave
-end
-
-function Abilities:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedLocation = WindowLocation.new(tSavedData.tWindowLocation)
-	end
+function Abilities:UpdateInterfaceMenuAlerts()
+	local nPoints = GameLib.GetAbilityPoints() + AbilityBook.GetAvailablePower()
+	Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_AbilityBuilder"), {nPoints > 0, nil, nPoints})
 end
 
 function Abilities:OnToggleAbilitiesWindow(bAtTrainer)
@@ -118,17 +96,12 @@ function Abilities:OnToggleAbilitiesWindow(bAtTrainer)
 	end
 end
 
-function Abilities:UpdateInterfaceMenuAlerts()
-	local nPoints = GameLib.GetAbilityPoints() + AbilityBook.GetAvailablePower()
-	
-	Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_AbilityBuilder"), {nPoints > 0, nil, nPoints})
-end
-
 function Abilities:BuildWindow()
 	if not self.wndMain or not self.wndMain:IsValid() then
 		local nNumSpecs = AbilityBook.GetNumUnlockedSpecs()
 
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilitiesBuilderForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AbilityBuilder")})
 
 		local wndBGFrame = self.wndMain:FindChild("BGFrame")
 		local wndAbilityBuilder = wndBGFrame:FindChild("AbilityBuilderMain")
@@ -177,9 +150,13 @@ function Abilities:OnCharacterCreated()
 	self:RedrawFromScratch()
 end
 
-function Abilities:OnWindowClosed()
+function Abilities:OnWindowClosed(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+
 	if self.bDirtyBit and not self.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
-		self.wndMain:FindChild("LeaveConfirmationContainer"):Show(true)
+		self.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
 		self.wndMain:Invoke() -- Reshow
 	else
 		self:OnCloseFinal()
@@ -192,8 +169,6 @@ function Abilities:OnClose()
 	else
 		self:OnCloseFinal()
 	end
-	
-	self:UpdateInterfaceMenuAlerts()
 end
 
 function Abilities:OnCloseFinal() -- Window Escape Key also routes here
@@ -206,6 +181,7 @@ function Abilities:OnCloseFinal() -- Window Escape Key also routes here
 	end
 
 	Event_FireGenericEvent("ToggleBlockBarsVisibility", false) -- TODO: Remove this, you can click close with a drag to circumvent the soft gate
+	self:UpdateInterfaceMenuAlerts()
 end
 
 function Abilities:OnRedrawFromUI()
@@ -293,7 +269,11 @@ function Abilities:RedrawFromScratch() -- Draw Slots destroys everything (Level 
 		elseif idx == 10 then
 			self.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(nAbilityId)
 		else
-			self:HelperAddSlot(nAbilityId)
+			local wndSlot = wndSlotItemContainer:GetChildren()[idx]
+			if wndSlot then
+				local wndDisplay = wndSlot:FindChild("SlotDisplay")
+				wndDisplay:SetAbilityId(nAbilityId)
+			end
 		end
 	end
 
@@ -304,10 +284,14 @@ end
 
 function Abilities:OnAbilitiesTabCheck(wndHandler, wndControl)
 	Event_FireGenericEvent("GenericEvent_CloseEldanAugmentation")
+	self.wndMain:FindChild("BGPointsContainer:AbilityHighlight"):Show(true)
+	self.wndMain:FindChild("BGPointsContainer:AMPHighlight"):Show(false)
 end
 
 function Abilities:OnAmpTabCheck(wndHandler, wndControl)
 	Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.wndMain:FindChild("BGFrame:AMPBuilderMain"))
+	self.wndMain:FindChild("BGPointsContainer:AbilityHighlight"):Show(false)
+	self.wndMain:FindChild("BGPointsContainer:AMPHighlight"):Show(true)
 end
 
 function Abilities:DrawSpellBook()
@@ -320,7 +304,7 @@ function Abilities:DrawSpellBook()
 	local nPlayerLevel = GameLib.GetPlayerLevel(bCheckPlayerRealLevel)
 	local nAbilityPoints = GameLib.GetAbilityPoints()
 	local nTotalAbilityPoints = GameLib.GetTotalAbilityPoints()
-	
+
 	local wndBGPointsContainer = self.wndMain:FindChild("BGPointsContainer")
 	local wndSpellbookAbilityPoints = wndBGPointsContainer:FindChild("SpellbookAbilityPointsBG")
 	wndSpellbookAbilityPoints:FindChild("SpellbookAbilityPointsTextSmall"):SetText(String_GetWeaselString(Apollo.GetString("AbilitiesBuilder_AvailablePoints"), nTotalAbilityPoints))
@@ -460,14 +444,17 @@ function Abilities:DrawATiersSpell(tBaseAbility, tHighestTier, nPlayerLevel, nAb
 	-- Path won't show tiers
 	local wndSpellbookProgPiecesContainer = wndSpellbookItem:FindChild("SpellbookItemProgPiecesContainer")
 	wndSpellbookProgPiecesContainer:Show(not self.wndPathTabBtn:IsChecked())
+	wndSpellbookItem:FindChild("SpellbookItemName"):Show(self.wndPathTabBtn:IsChecked())
+
 
 	if not self.wndPathTabBtn:IsChecked() then
 		-- Prog Pieces
 		wndSpellbookProgPiecesContainer:DestroyChildren()
+		local nStart = 0
 		for idx, tBtnTier in pairs(tBaseAbility.tTiers or {}) do
 			local bLevelReq = nPlayerLevel >= tBtnTier.nLevelReq
 			local bPointsReq = tBtnTier.bIsActive or nAbilityPoints > 0
-			local strFormName = (idx == 5 or idx == 9) and "SpellbookProgPieceBig" or "SpellbookProgPiece"
+			local strFormName = (idx == 1) and "SpellbookProgPieceFirst" or (idx == 5) and "SpellbookProgPieceBig" or (idx == 9 and "SpellbookProgPieceBigEnd") or "SpellbookProgPiece"
 			local wndProgPiece = Apollo.LoadForm(self.xmlDoc, strFormName, wndSpellbookProgPiecesContainer, self)
 			wndProgPiece:SetData(tBtnTier.splObject) -- For tooltip (OnSpellbookProgPieceTooltip)
 
@@ -484,8 +471,14 @@ function Abilities:DrawATiersSpell(tBaseAbility, tHighestTier, nPlayerLevel, nAb
 			elseif not bPointsReq then
 				wndProgPiece:SetTooltip(Apollo.GetString("AbilityBuilder_OutOfPoints"))
 			end
+
+			local nLeft, nTop, nRight, nBottom = wndProgPiece:GetAnchorOffsets()
+			local nWidth = idx == 5 and 214 or idx == 9 and 250 or 102
+
+
+			wndProgPiece:SetAnchorOffsets(nStart, nTop, nStart + nWidth, nBottom)
+			nStart = nStart + nWidth - 50
 		end
-		wndSpellbookProgPiecesContainer:ArrangeChildrenHorz(0)
 	end
 end
 
@@ -716,6 +709,19 @@ function Abilities:OnSpecChanged(newSpecIndex, specError)
 	end
 end
 
+function Abilities:OnActionSetError(eResult)
+	local strMessage = nil	
+	if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.InVoid then
+		strMessage = Apollo.GetString("ActionSet_Error_InTheVoid")
+		-- TODO MORE
+	end
+
+	if strMessage then		
+		self:BuildWindow() -- This can happen after the set has "successfully" closed, so bring it back up if closed
+		self:HelperShowError(strMessage)
+	end
+end
+
 -----------------------------------------------------------------------------------------------
 -- Level Up Unlock System
 -----------------------------------------------------------------------------------------------
@@ -746,6 +752,19 @@ function Abilities:OnLevelUpUnlock_Path_Spell(splAbility)
 	self:OnLevelUpUnlock_TierPointSystem()
 end
 
+---------------------------------------------------------------------------------------------------
+-- Tutorial anchor request
+---------------------------------------------------------------------------------------------------
+
+function Abilities:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Abilities then return end
+
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+
+	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+end
+
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
@@ -761,7 +780,7 @@ function Abilities:HelperRedrawPoints()
 	wndBGPointsContainer:FindChild("AMPPoints:AMPPointsTextSmall"):SetText(String_GetWeaselString(Apollo.GetString("AbilitiesBuilder_AvailablePoints"), nTotalAMP))
 	wndBGPointsContainer:FindChild("AMPPoints:AMPPointsTextBig"):SetText(nAvailableAMP)
 	wndBGPointsContainer:FindChild("AMPPoints:AMPPointsTextBig"):SetTextColor(nAvailableAMP == 0 and ApolloColor.new("ff56b381") or ApolloColor.new("UI_WindowTitleYellow")) -- TODO HEX
-	
+
 	self:UpdateInterfaceMenuAlerts()
 end
 

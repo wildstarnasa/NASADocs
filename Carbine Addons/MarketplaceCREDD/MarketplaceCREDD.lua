@@ -11,32 +11,40 @@ local MarketplaceCREDD = {}
 
 local ktResultErrorCodeStrings =
 {
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.GenericFail] = "Generic Failure.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.DBError] = "Generic Failure.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidOffer] = "Invalid order.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidPrice] = "Invalid price.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NotEnoughCurrency] = "Not enough currency.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NeedTransaction] = "Need transaction",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidAccountItem] = "Invalid account item.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidPendingItem] = "Invalid escrow item.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidInventoryItem] = "Invalid item.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoConnection] = "No connection.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoCharacter] = "No character.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.AlreadyClaimed] = "Already claimed",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.MaxEntitlementCount] = "At max entitement count.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoRegift] = "No regift.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoGifting] = "No gifting.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidFriend] = "Invalid friend.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidCoupon] = "Invalid coupon.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.CannotReturn] = "Can't return.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.Prereq] = "Prereq not met.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.CREDDExchangeNotLoaded] = "C.R.E.D.D. Exchange is busy. Please try again.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoCREDD] = "Not enough C.R.E.D.D. for order.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoMatchingOrder] = "Could not find matching market order. Someone may have already claimed it at your price.",
-	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidCREDDOrder] = "Invalid C.R.E.D.D. order."
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.GenericFail] = "MarketplaceCredd_Error_GenericFail",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.DBError] = "MarketplaceCredd_Error_GenericFail",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidOffer] = "MarketplaceCredd_Error_InvalidOffer",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidPrice] = "MarketplaceCredd_Error_InvalidPrice",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NotEnoughCurrency] = "GenericError_Vendor_NotEnoughCash",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NeedTransaction] = "MarketplaceCredd_Error_GenericFail",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidAccountItem] = "MarketplaceAuction_InvalidItem",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidPendingItem] = "MarketplaceAuction_InvalidItem",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidInventoryItem] = "MarketplaceAuction_InvalidItem",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoConnection] = "MarketplaceCredd_Error_Connection",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoCharacter] = "MarketplaceCredd_Error_GenericFail",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.AlreadyClaimed] = "MarketplaceCredd_Error_AlreadyClaimed",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.MaxEntitlementCount] = "MarketplaceCredd_Error_MaxEntitlement",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoRegift] = "MarketplaceCredd_Error_CantGift",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoGifting] = "MarketplaceCredd_Error_CantGift",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidFriend] = "MarketplaceCredd_Error_InvalidFriend",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidCoupon] = "MarketplaceCredd_Error_InvalidCoupon",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.CannotReturn] = "MarketplaceCredd_Error_CantReturn",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.Prereq] = "MarketplaceCredd_Error_Prereq",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.CREDDExchangeNotLoaded] = "MarketplaceCredd_Error_Busy",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoCREDD] = "MarketplaceCredd_Error_NoCredd",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.NoMatchingOrder] = "MarketplaceCredd_Error_NoMatch",
+	[CREDDExchangeLib.CodeEnumAccountOperationResult.InvalidCREDDOrder] = "MarketplaceCredd_Error_GenericFail",
 }
 
-local knSaveVersion = 1
+local ktLogTypeStrings =
+{
+	[AccountItemLib.CodeEnumAccountOperation.SellCREDD] = "MarketplaceCredd_Log_SellOrderCreated",
+	[AccountItemLib.CodeEnumAccountOperation.BuyCREDD] = "MarketplaceCredd_Log_BuyOrderCreated",
+	[AccountItemLib.CodeEnumAccountOperation.SellCREDDComplete] = "MarketplaceCredd_Log_SellOrderComplete",
+	[AccountItemLib.CodeEnumAccountOperation.BuyCREDDComplete] = "MarketplaceCredd_Log_BuyOrderComplete",
+	[AccountItemLib.CodeEnumAccountOperation.CancelCREDDOrder] = "MarketplaceCredd_Log_CancelOrder",
+}
+
 local knMaxPlat = 9999999999 -- 9999 plat
 local kMaxPlayerCreddOrders = 20
 
@@ -51,31 +59,6 @@ function MarketplaceCREDD:Init()
     Apollo.RegisterAddon(self)
 end
 
-function MarketplaceCREDD:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	local tSaved =
-	{
-		tLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-	return tSaved
-end
-
-function MarketplaceCREDD:OnRestore(eType, tSavedData)
-	self.nSaveVersion = tSavedData.nSaveVersion
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocation)
-	end
-end
-
 function MarketplaceCREDD:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MarketplaceCREDD.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -85,13 +68,21 @@ function MarketplaceCREDD:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
+
 	Apollo.RegisterEventHandler("ToggleCREDDExchangeWindow", 	"OnToggleCREDDExchangeWindow", self)
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 	"OnInterfaceMenuListHasLoaded", self)
+end
+
+function MarketplaceCREDD:OnInterfaceMenuListHasLoaded()
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("MarketplaceCredd_Title"), {"ToggleCREDDExchangeWindow", "", "Icon_Windows32_UI_CRB_InterfaceMenu_Credd"})
 end
 
 function MarketplaceCREDD:Initialize()
+	Apollo.RegisterEventHandler("CREDDOperationHistoryResults", "OnCREDDOperationHistoryResults", self)
 	Apollo.RegisterEventHandler("CREDDExchangeWindowClose", 	"OnCREDDExchangeWindowClose", self)
 	Apollo.RegisterEventHandler("CREDDExchangeInfoResults", 	"OnCREDDExchangeInfoResults", self)
 	Apollo.RegisterEventHandler("AccountOperationResults", 		"OnCREDDExchangeOperationResults", self)
+	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 		"RefreshBoundCredd", self)
 	Apollo.RegisterEventHandler("AccountInventoryUpdate", 		"RefreshBoundCredd", self)
 	Apollo.RegisterEventHandler("AccountInventoryUpdate", 		"RefreshEscrow", self)
 
@@ -100,25 +91,30 @@ function MarketplaceCREDD:Initialize()
 	Apollo.StopTimer("HidePostResultNotification")
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceCREDDForm", nil, self)
-	self.wndOpenOrders = Apollo.LoadForm(self.xmlDoc, "MarketplaceListingsForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceCredd_Title")})
 
 	self.tWindowMap =
 	{
 		["HeaderBuyBtn"]						=	self.wndMain:FindChild("HeaderBuyBtn"),
 		["HeaderBuyBtn"]						=	self.wndMain:FindChild("HeaderBuyBtn"),
+		["HeaderLogBtn"]						=	self.wndMain:FindChild("HeaderLogBtn"),
 		["HeaderSellBtn"]						=	self.wndMain:FindChild("HeaderSellBtn"),
+		["HeaderSellCount"]						=	self.wndMain:FindChild("HeaderSellCount"),
 		["RefreshMarketBtn"]					=	self.wndMain:FindChild("RefreshMarketBtn"),
 		["RefreshAnimation"]					=	self.wndMain:FindChild("RefreshAnimation"),
 		["WaitingScreen"]						=	self.wndMain:FindChild("CommonAlertMessages:WaitingScreen"),
+		["LogMain"]								=	self.wndMain:FindChild("LogMain"),
+		["LogScroll"]							=	self.wndMain:FindChild("LogScroll"),
 		["ActNowPrice"]							=	self.wndMain:FindChild("ActNowPrice"),
 		["ActLaterPrice"]						=	self.wndMain:FindChild("ActLaterPrice"),
+		["ActNowNoCashIcon"]					=	self.wndMain:FindChild("ActNowNoCashIcon"),
+		["ActLaterNoCashIcon"]					=	self.wndMain:FindChild("ActLaterNoCashIcon"),
 		["CreateSellNowBtn"]					=	self.wndMain:FindChild("CreateSellNowBtn"),
 		["CreateSellOrderBtn"]					=	self.wndMain:FindChild("CreateSellOrderBtn"),
 		["CreateBuyNowBtn"]						=	self.wndMain:FindChild("CreateBuyNowBtn"),
 		["CreateBuyOrderBtn"]					=	self.wndMain:FindChild("CreateBuyOrderBtn"),
-		["AccountBoundText"]					=	self.wndMain:FindChild("AccountBoundText"),
-		["EscrowText"]							=	self.wndMain:FindChild("EscrowText"),
-		["OpenListingsBtn"]						=	self.wndMain:FindChild("OpenListingsBtn"),
+		["OpenInventoryBtn"]					=	self.wndMain:FindChild("MetalRowFrame:OpenInventoryBtn"),
+		["OpenListingsBtn"]						=	self.wndMain:FindChild("MetalRowFrame:OpenListingsBtn"),
 		["MoreMarketStats"]						=	self.wndMain:FindChild("MoreMarketStats"),
 		["MainBuyContainer"]					=	self.wndMain:FindChild("MainBuyContainer"),
 		["MainSellContainer"]					=	self.wndMain:FindChild("MainSellContainer"),
@@ -133,15 +129,19 @@ function MarketplaceCREDD:Initialize()
 		["PostResultNotificationCheck"]			=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationCheck"),
 		["PostResultNotificationLabel"]			=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationLabel"),
 		["PostResultNotificationSubText"]		=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationSubText"),
+		["ConfirmationYesBtn"]					= 	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationYesBtn"),
 	}
+
+	self.tWindowMap["HeaderLogBtn"]:AttachWindow(self.tWindowMap["LogMain"])
+	self.tWindowMap["HeaderBuyBtn"]:SetCheck(true)
+	self.tWindowMap["ConfirmationBlocker"]:Show(false, true)
+	self.tWindowMap["PostResultNotification"]:Show(false, true)
 	self.tWindowMap["ActNowPrice"]:SetAmountLimit(knMaxPlat)
 	self.tWindowMap["ActLaterPrice"]:SetAmountLimit(knMaxPlat)
 
 	if self.locSavedWindowLoc then
 		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
-
-	self.tWindowMap["HeaderBuyBtn"]:SetCheck(true)
 
 	self.arOrders = nil
 end
@@ -161,9 +161,7 @@ end
 function MarketplaceCREDD:OnClose(wndHandler, wndControl, eMouseButton)
 	if wndHandler == wndControl then
 		self.wndMain:Destroy()
-		-- TODO needs a
-		--Event_CancelAuctionhouse()
-		--Event_CancelCommodities()
+		Event_CancelCREDDExchange()
 	end
 end
 
@@ -171,11 +169,21 @@ function MarketplaceCREDD:OnOpenListingsBtn(wndHandler, wndControl)
 	Event_FireGenericEvent("InterfaceMenu_ToggleMarketplaceListings")
 end
 
+function MarketplaceCREDD:OnOpenInventoryBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("GenericEvent_OpenAccountInventory")
+end
+
 -----------------------------------------------------------------------------------------------
 -- Events
 -----------------------------------------------------------------------------------------------
 
+function MarketplaceCREDD:OnHeaderLogCheck(wndHandler, wndControl) -- Same Radio Group as OnHeaderTabCheck
+	self.tWindowMap["ConfirmationBlocker"]:Show(false)
+	CREDDExchangeLib.GetCREDDHistory() -- Leads to OnCREDDExchangeInfoResults
+end
+
 function MarketplaceCREDD:OnHeaderTabCheck(wndHandler, wndControl)
+	self.tWindowMap["ConfirmationBlocker"]:Show(false)
 	CREDDExchangeLib.RequestExchangeInfo() -- Leads to OnCREDDExchangeInfoResults
 end
 
@@ -205,7 +213,7 @@ function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) --
 	-- Price Stats
 	self.tWindowMap["MainBuyContainer"]:DestroyChildren()
 	local wndMarketData = Apollo.LoadForm(self.xmlDoc, "MarketDataForm", self.tWindowMap["MainBuyContainer"], self)
-	wndMarketData:FindChild("MarketDataFormLabel"):SetText("Top Buy Order")
+	wndMarketData:FindChild("MarketDataFormLabel"):SetText(Apollo.GetString("MarketplaceCredd_TopBuyOrder"))
 	wndMarketData:FindChild("MarketDataFormLabel"):SetTextColor(ApolloColor.new("UI_TextHoloBody"))
 	wndMarketData:FindChild("MarketDataFormPrice"):SetTextColor(ApolloColor.new("UI_TextHoloBody"))
 	wndMarketData:FindChild("MarketDataFormPrice"):SetAmount(tBuyOrderData.monPrice, false)
@@ -213,7 +221,7 @@ function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) --
 
 	self.tWindowMap["MainSellContainer"]:DestroyChildren()
 	local wndMarketData = Apollo.LoadForm(self.xmlDoc, "MarketDataForm", self.tWindowMap["MainSellContainer"], self)
-	wndMarketData:FindChild("MarketDataFormLabel"):SetText("Top Sell Order") -- TODO LOCALIZE (hardcoded string for translation)
+	wndMarketData:FindChild("MarketDataFormLabel"):SetText(Apollo.GetString("MarketplaceCredd_TopSellOrder"))
 	wndMarketData:FindChild("MarketDataFormLabel"):SetTextColor(ApolloColor.new("ffc2e57f"))
 	wndMarketData:FindChild("MarketDataFormPrice"):SetTextColor(ApolloColor.new("ffc2e57f"))
 	wndMarketData:FindChild("MarketDataFormPrice"):SetAmount(tSellOrderData.monPrice, false)
@@ -222,9 +230,8 @@ function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) --
 	-- Allow refresh btn to be clicked again
 	self.tWindowMap["RefreshMarketBtn"]:Enable(true)
 	self.tWindowMap["MoreMarketStats"]:SetData(arMarketStats) -- For OnGenerateTooltipFullStats
-
-	-- TODO Refactor the need of this for listings
 	self.tWindowMap["OpenListingsBtn"]:SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_OrderLimitCount"), #arOrders, kMaxPlayerCreddOrders))
+
 	self.arOrders = arOrders
 
 	self:RefreshBoundCredd()
@@ -250,23 +257,31 @@ function MarketplaceCREDD:RefreshEscrow()
 			nCreddEscrow = nCreddEscrow + 1
 		end
 	end
-	self.tWindowMap["EscrowText"]:SetText(String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nCreddEscrow))
+
+	local strText = nCreddEscrow > 0 and String_GetWeaselString(Apollo.GetString("MarketplaceCredd_AccountInventoryCount"), nCreddEscrow) or Apollo.GetString("AccountInv_TitleText")
+	local strTooltip = nCreddEscrow > 0 and Apollo.GetString("MarketplaceCredd_HaveInventoryTooltip") or Apollo.GetString("MarketplaceCredd_OpenInventoryTooltip")
+	self.tWindowMap["OpenInventoryBtn"]:SetText(strText)
+	self.tWindowMap["OpenInventoryBtn"]:SetTooltip(strTooltip)
 end
 
 function MarketplaceCREDD:RefreshBoundCredd()
-	-- TODO: Requires 2FA to Buy CREDD.
 	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+		local nPlayerCash = GameLib.GetPlayerCurrency():GetAmount()
 		local nNumBound = AccountItemLib.GetAccountCurrency(AccountItemLib.CodeEnumAccountCurrency.CREDD)
-		self.tWindowMap["AccountBoundText"]:SetText(String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nNumBound))
+		self.tWindowMap["HeaderSellCount"]:Show(nNumBound > 0)
+		self.tWindowMap["HeaderSellCount"]:SetText(nNumBound > 0 and nNumBound or "")
+		self.tWindowMap["HeaderSellCount"]:SetTooltip(String_GetWeaselString(Apollo.GetString("MarketplaceCredd_SellNumAvailable"), nNumBound))
 
 		-- Enable/Disable Btns
 		local nNowAmount = self.tWindowMap["ActNowPrice"]:GetAmount()
-		self.tWindowMap["CreateSellNowBtn"]:Enable(nNowAmount > 0 and nNumBound > 0)
-		self.tWindowMap["CreateBuyNowBtn"]:Enable(nNowAmount > 0 and nNumBound > 0)
+		self.tWindowMap["ActNowNoCashIcon"]:Show(nNowAmount > nPlayerCash)
+		self.tWindowMap["CreateSellNowBtn"]:Enable(nNowAmount <= nPlayerCash and nNowAmount > 0 and nNumBound > 0)
+		self.tWindowMap["CreateBuyNowBtn"]:Enable(nNowAmount <= nPlayerCash and nNowAmount > 0)
 
 		local nLaterAmount = self.tWindowMap["ActLaterPrice"]:GetAmount()
-		self.tWindowMap["CreateSellOrderBtn"]:Enable(nLaterAmount > 0 and nNumBound > 0)
-		self.tWindowMap["CreateBuyOrderBtn"]:Enable(nLaterAmount > 0 and nNumBound > 0)
+		self.tWindowMap["ActLaterNoCashIcon"]:Show(nLaterAmount > nPlayerCash)
+		self.tWindowMap["CreateSellOrderBtn"]:Enable(nLaterAmount <= nPlayerCash and nLaterAmount > 0 and nNumBound > 0)
+		self.tWindowMap["CreateBuyOrderBtn"]:Enable(nLaterAmount <= nPlayerCash and nLaterAmount > 0)
 	end
 end
 
@@ -287,22 +302,22 @@ function MarketplaceCREDD:OnGenerateTooltipFullStats(wndHandler, wndControl, eTy
 		local strBuy = ""
 		local nBuyPrice = tStats.arBuyOrderPrices[nRowIdx].monPrice:GetAmount()
 		if nBuyPrice > 0 then
-			strBuy = self.wndMain:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nBuyPrice, true, "ff2f94ac", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
+			strBuy = self.wndMain:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nBuyPrice, true, "UI_TextHoloBody", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
 		else
-			strBuy = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">" .. Apollo.GetString("CRB_NoData") .. "</P>"
+			strBuy = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">" .. Apollo.GetString("CRB_NoData") .. "</P>"
 		end
 
 		local strSell = ""
 		local nSellPrice = tStats.arSellOrderPrices[nRowIdx].monPrice:GetAmount()
 		if nSellPrice > 0 then
-			strSell = self.wndMain:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nSellPrice, true, "ff2f94ac", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
+			strSell = self.wndMain:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nSellPrice, true, "ffc2e57f", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
 		else
-			strSell = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">" .. Apollo.GetString("CRB_NoData") .. "</P>"
+			strSell = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffc2e57f\">" .. Apollo.GetString("CRB_NoData") .. "</P>"
 		end
 
 		local wndRow = wndFullStats:FindChild("FullStatsGrid"):AddRow("")
 		local strCount = String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_Top"), tStats.arBuyOrderPrices[nRowIdx].nCount)
-		wndFullStats:FindChild("FullStatsGrid"):SetCellDoc(wndRow, 1, "<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">" .. strCount .. "</P>")
+		wndFullStats:FindChild("FullStatsGrid"):SetCellDoc(wndRow, 1, "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloTitle\">" .. strCount .. "</P>")
 		wndFullStats:FindChild("FullStatsGrid"):SetCellDoc(wndRow, 2, strBuy)
 		wndFullStats:FindChild("FullStatsGrid"):SetCellDoc(wndRow, 3, strSell)
 	end
@@ -327,47 +342,51 @@ function MarketplaceCREDD:OnCreddTransactionBtn(wndHandler, wndControl, eMouseBu
 	local strTitle = ""
 	local strBigText = ""
 	local strSubtitle = ""
-	local nCurrAmount = 0
+
+	local wndCurrAmount = nil
+	local bBuy = false
+	local bNow = false
 	if strWindowName == "CreateBuyNowBtn" then
-		nCurrAmount = self.tWindowMap["ActNowPrice"]:GetAmount()
+		wndCurrAmount = self.tWindowMap["ActNowPrice"]
 		strTitle = Apollo.GetString("MarketplaceCommodity_BuyNow")
-		strBigText = Apollo.GetString("MarketplaceCredd_BuyLabel")
+		strBigText = Apollo.GetString("MarketplaceCredd_FinalLabel")
+		strSubtitle = ""
+		bBuy = true
+		bNow = true
 	elseif strWindowName == "CreateSellNowBtn" then
-		nCurrAmount = self.tWindowMap["ActNowPrice"]:GetAmount()
+		wndCurrAmount = self.tWindowMap["ActNowPrice"]
 		strTitle = Apollo.GetString("MarketplaceCommodity_SellNow")
-		strBigText = Apollo.GetString("MarketplaceCredd_SellLabel")
+		strBigText = Apollo.GetString("MarketplaceCredd_ProfitLabel")
+		strSubtitle = Apollo.GetString("MarketplaceCredd_ConfirmationSubtitle")
+		bNow = true
 	elseif strWindowName == "CreateBuyOrderBtn" then
-		nCurrAmount = self.tWindowMap["ActLaterPrice"]:GetAmount()
+		wndCurrAmount = self.tWindowMap["ActLaterPrice"]
 		strTitle = Apollo.GetString("MarketplaceCredd_BuyOrder")
-		strBigText = Apollo.GetString("MarketplaceCredd_BuyLabel")
-		strSubtitle = Apollo.GetString("MarketplaceCredd_Duration48h")
+		strBigText = Apollo.GetString("MarketplaceCredd_FinalLabel")
+		strSubtitle = ""
+		bBuy = true
 	elseif strWindowName == "CreateSellOrderBtn" then
-		nCurrAmount = self.tWindowMap["ActLaterPrice"]:GetAmount()
+		wndCurrAmount = self.tWindowMap["ActLaterPrice"]
 		strTitle = Apollo.GetString("MarketplaceCredd_SellOrder")
-		strBigText = Apollo.GetString("MarketplaceCredd_SellLabel")
-		strSubtitle = Apollo.GetString("MarketplaceCredd_Duration48h")
+		strBigText = Apollo.GetString("MarketplaceCredd_ProfitLabel")
+		strSubtitle = Apollo.GetString("MarketplaceCredd_ConfirmationSubtitle")
 	end
 
 	self.tWindowMap["ConfirmationBlocker"]:Show(true)
 	self.tWindowMap["ConfirmationBlocker"]:SetData(strWindowName)
 	self.tWindowMap["ConfirmationTitle"]:SetText(strTitle)
 	self.tWindowMap["ConfirmationSubtitle"]:SetText(strSubtitle)
+
+	local nCurrAmount = wndCurrAmount:GetAmount()
+	self.tWindowMap["ConfirmationTaxText"]:Show(bBuy)
+	self.tWindowMap["ConfirmationTaxCash"]:Show(bBuy)
+	self.tWindowMap["ConfirmationTaxCash"]:SetAmount(nCurrAmount * 0.05)
+	self.tWindowMap["ConfirmationBigCash"]:SetAmount(bBuy and (nCurrAmount * 1.05) or nCurrAmount)
 	self.tWindowMap["ConfirmationBigText"]:SetText(strBigText)
-	self.tWindowMap["ConfirmationBigCash"]:SetAmount(nCurrAmount)
-	self.tWindowMap["ConfirmationTaxText"]:Show(strSubtitle ~= "")
-	self.tWindowMap["ConfirmationTaxCash"]:Show(strSubtitle ~= "")
-	self.tWindowMap["ConfirmationTaxCash"]:SetAmount(nCurrAmount * 0.05) -- TODO! Replace with code enums
+	self.tWindowMap["ConfirmationYesBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.CREDDExchangeSubmit, bBuy, wndCurrAmount:GetCurrency(), bNow)
 end
 
-function MarketplaceCREDD:OnConfirmationYesBtn(wndHandler, wndControl)
-	local nAmount = self.tWindowMap["ConfirmationBigCash"]:GetCurrency()
-	local strWindowName = self.tWindowMap["ConfirmationBlocker"]:GetData()
-	if strWindowName == "CreateBuyNowBtn" or strWindowName == "CreateBuyOrderBtn" then
-		CREDDExchangeLib.BuyCREDD(nAmount, strWindowName == "CreateBuyNowBtn")
-	else
-		CREDDExchangeLib.SellCREDD(nAmount, strWindowName == "CreateSellNowBtn")
-	end
-
+function MarketplaceCREDD:OnCREDDExchangeOrderSubmitted(wndHandler, wndControl)
 	self.tWindowMap["ActNowPrice"]:SetAmount(0)
 	self.tWindowMap["ActLaterPrice"]:SetAmount(0)
 	self.tWindowMap["WaitingScreen"]:Show(true)
@@ -378,13 +397,12 @@ function MarketplaceCREDD:OnConfirmationYesBtn(wndHandler, wndControl)
 end
 
 function MarketplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResult)
-	local bSuccess = eResult == 0 -- TODO Replace with enums
-	local strFailMessage = ktResultErrorCodeStrings[eResult] or ""
+	local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
 	self.tWindowMap["WaitingScreen"]:Show(false)
 	self.tWindowMap["PostResultNotification"]:Show(true)
-	self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and "Success" or "Error")
+	self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
 	self.tWindowMap["PostResultNotificationCheck"]:SetSprite(bSuccess and "Icon_Windows_UI_CRB_Checkmark" or "LootCloseBox")
-	self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and "Transaction Successful" or strFailMessage)
+	self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString(ktResultErrorCodeStrings[eResult]))
 	Apollo.StartTimer("HidePostResultNotification")
 	self:RefreshBoundCredd()
 end
@@ -394,56 +412,69 @@ function MarketplaceCREDD:OnHidePostResultNotification() -- Both Timer and Mouse
 end
 
 -----------------------------------------------------------------------------------------------
--- Listings
+-- Log
 -----------------------------------------------------------------------------------------------
 
-function MarketplaceCREDD:OnOpenMarketListingsBtn(wndHandler, wndControl, eMouseButton)
-	self.wndOpenOrders:Show(not self.wndOpenOrders:IsShown())
-	if self.wndOpenOrders:IsShown() then
-		self.wndOpenOrders:ToFront()
-
-		local wndScroll = self.wndOpenOrders:FindChild("ListingMainScroll")
-		wndScroll:DestroyChildren()
-
-		for idx, orderCurr in pairs(self.arOrders) do
-			local bIsBuy = orderCurr:IsBuy()
-			local wndMarketOrder = Apollo.LoadForm(self.xmlDoc, "MarketListingForm", wndScroll, self)
-			wndMarketOrder:FindChild("CancelBtn"):SetData(orderCurr)
-			wndMarketOrder:FindChild("BuyBG"):Show(bIsBuy)
-			wndMarketOrder:FindChild("SellBG"):Show(not bIsBuy)
-			wndMarketOrder:FindChild("Price"):SetAmount(orderCurr:GetPrice())
-			wndMarketOrder:FindChild("ItemName"):SetText(bIsBuy and "Buy" or "Sell")
-			wndMarketOrder:FindChild("TimeLeftText"):SetText(self:HelperFormatTimeString(orderCurr:GetExpirationTime()))
-		end
-		wndScroll:ArrangeChildrenVert(0)
+function MarketplaceCREDD:OnCREDDOperationHistoryResults(tHistory)
+	if not self.tWindowMap["LogScroll"] or not self.tWindowMap["LogScroll"]:IsValid() or not self.tWindowMap["LogScroll"]:IsVisible() then
+		return
 	end
+
+	self.tWindowMap["LogScroll"]:DestroyChildren()
+	for idx, tEntry in pairs(tHistory) do
+		local wndEntry = Apollo.LoadForm(self.xmlDoc, "LogEntryBasicForm", self.tWindowMap["LogScroll"], self)
+		wndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntry.eOperation] or ""))
+		wndEntry:FindChild("LogTimeStamp"):SetText(self:HelperLogConvertToTimeString(tEntry.nLogAge))
+	end
+
+	if #self.tWindowMap["LogScroll"]:GetChildren() == 0 then
+		local wndEntry = Apollo.LoadForm(self.xmlDoc, "LogEntryBasicForm", self.tWindowMap["LogScroll"], self)
+		wndEntry:FindChild("LogName"):SetText(Apollo.GetString("MarketplaceCredd_NoLogEntries"))
+		wndEntry:FindChild("LogTimeStamp"):SetText("")
+	end
+
+	self.tWindowMap["LogScroll"]:ArrangeChildrenVert(0)
 end
 
-function MarketplaceCREDD:HelperFormatTimeString(oExpirationTime)
-	local strResult = ""
-	local nInSeconds = math.floor(math.abs(Time.SecondsElapsed(oExpirationTime))) -- CLuaTime object
-	local nDays = math.floor(nInSeconds / 86400)
-	local nHours = math.floor(nInSeconds / 3600)
-	local nMins = math.floor(nInSeconds / 60 - (nHours * 60))
+function MarketplaceCREDD:HelperLogConvertToTimeString(nDays)
+	local tTimeData =
+	{
+		["name"]	= "",
+		["count"]	= nil,
+	}
 
-	if nDays > 0 then
-		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Hours"), nDays)
-	elseif nHours > 0 then
-		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Hours"), nHours)
-	elseif nMins > 0 then
-		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Minutes"), nMins)
+	local nYears = math.floor(nDays / 365)
+	local nMonths = math.floor(nDays / 30)
+	local nWeeks = math.floor(nDays / 7)
+	local nDaysRounded = math.floor(nDays / 1)
+	local fHours = nDays * 24
+	local nHoursRounded = math.floor(fHours)
+	local nMinutes = math.floor(fHours * 60)
+
+	if nYears > 0 then
+		tTimeData["name"] = Apollo.GetString("CRB_Year")
+		tTimeData["count"] = nYears
+	elseif nMonths > 0 then
+		tTimeData["name"] = Apollo.GetString("CRB_Month")
+		tTimeData["count"] = nMonths
+	elseif nWeeks > 0 then
+		tTimeData["name"] = Apollo.GetString("CRB_Week")
+		tTimeData["count"] = nWeeks
+	elseif nDaysRounded > 0 then
+		tTimeData["name"] = Apollo.GetString("CRB_Day")
+		tTimeData["count"] = nDaysRounded
+	elseif nHoursRounded > 0 then
+		tTimeData["name"] = Apollo.GetString("CRB_Hour")
+		tTimeData["count"] = nHoursRounded
+	elseif nMinutes > 0 then
+		tTimeData["name"] = Apollo.GetString("CRB_Min")
+		tTimeData["count"] = nMinutes
 	else
-		strResult = Apollo.GetString("MarketplaceListings_LessThan1m")
+		tTimeData["name"] = Apollo.GetString("CRB_Min")
+		tTimeData["count"] = 1
 	end
-	return strResult
-end
 
-function MarketplaceCREDD:OnMarketOrderCancelBtn(wndHandler, wndControl, eMouseButton)
-	CREDDExchangeLib.CancelOrder(wndControl:GetData())
-end
-
-function MarketplaceCREDD:OnCloseOrdersBtn(wndHandler, wndControl, eMouseButton)
-	self.wndOpenOrders:Show(false)
+	return String_GetWeaselString(Apollo.GetString("AccountInventory_LogTime"), tTimeData)
 end
 
 local MarketplaceCREDDInst = MarketplaceCREDD:new()

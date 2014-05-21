@@ -55,13 +55,18 @@ function Login:OnLoad()
 	
 	-- This is where the realm messages get loaded if they exist.	
 	self.arServerMessages = PreGameLib.GetLastRealmMessages()
-	self.wndServerMessages = Apollo.LoadForm(c_strFormFile, "RealmMessages", nil, self)
+	self.wndServerMessagesContainer = Apollo.LoadForm(c_strFormFile, "RealmMessagesContainer", nil, self)
+	self.wndServerMessage = self.wndServerMessagesContainer:FindChild("RealmMessage")
+
 	local strAllMessage = ""
 	for _, strMessage in ipairs(self.arServerMessages) do
 		strAllMessage = strAllMessage .. strMessage .. "\n"
 	end
-	self.wndServerMessages:SetText(strAllMessage)
-	self.wndServerMessages:Show(true)
+	
+	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
+	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
+	self.wndServerMessage:SetHeightToContentHeight()
+	--self.wndServerMessages:Show(true)
 
 
 	--PreGameLib.uScene:SetBackground("UI\\Screens\\UI_CRB_LoginScreen.tex")

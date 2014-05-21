@@ -27,8 +27,6 @@ local ktIdToClassTooltip =
 	[GameLib.CodeEnumClass.Medic] 			= "CRB_Medic",
 }
 
-local knSaveVersion = 7
-
 function RaidFrameLeaderOptions:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -38,32 +36,6 @@ end
 
 function RaidFrameLeaderOptions:Init()
     Apollo.RegisterAddon(self)
-end
-
-function RaidFrameLeaderOptions:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function RaidFrameLeaderOptions:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function RaidFrameLeaderOptions:OnLoad()
@@ -85,7 +57,6 @@ end
 
 function RaidFrameLeaderOptions:Initialize(bShow)
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 
@@ -94,13 +65,11 @@ function RaidFrameLeaderOptions:Initialize(bShow)
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "RaidFrameLeaderOptionsForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Options")})
+	
 	self.wndMain:SetSizingMinimum(self.wndMain:GetWidth(), self.wndMain:GetHeight())
 	self.wndMain:SetSizingMaximum(self.wndMain:GetWidth(), 1000)
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	Apollo.StartTimer("RaidBuildTimer")
 	self:BuildList()
 end
@@ -108,7 +77,6 @@ end
 function RaidFrameLeaderOptions:BuildList()
 	if not GroupLib.InRaid() then
 		if self.wndMain and self.wndMain:IsValid() then
-			self.locSavedWindowLoc = self.wndMain:GetLocation()
 			self.wndMain:Destroy()
 		end
 		return

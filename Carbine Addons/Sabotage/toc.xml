@@ -1,0 +1,4 @@
+<Addon Name="Sabotage" Version="1">
+    <Script Name="Sabotage.lua"/>
+    <Form Name="Sabotage.xml"/>
+</Addon>

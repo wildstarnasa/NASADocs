@@ -14,7 +14,6 @@ local kclrWhite = ApolloColor.new("ffffffff")
 local kclrGray 	= ApolloColor.new("ff555555")
 local kclrRed 	= ApolloColor.new("ffff0000")
 local knUnloadWaitTime = 300 -- unload from memory if unused for 5 minutes
-local knSaveVersion = 1
 
 function SupplySatchel:new(o)
 	o = o or {}
@@ -25,32 +24,6 @@ end
 
 function SupplySatchel:Init()
 	Apollo.RegisterAddon(self, false, "", {"Util"})
-end
-
-function SupplySatchel:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function SupplySatchel:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function SupplySatchel:OnLoad()
@@ -91,17 +64,14 @@ end
 
 function SupplySatchel:InitializeSatchel()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "SupplySatchelForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("SupplySatchel_Title")})
+	
 	self.wndCategoryList = self.wndMain:FindChild("CategoryList")
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	-- Variables
 	self.tItemCache = {}
 	self.wndClickedItem = nil
@@ -154,7 +124,6 @@ end
 
 function SupplySatchel:OnUnloadSatchel()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndMain = nil
 	end
@@ -170,30 +139,6 @@ function SupplySatchel:OnToggleTradeskillInventoryFromBag(tAnchors)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self:InitializeSatchel()
 	end
-	
-	if not self.locSavedWindowLoc then
-		self:OnToggleVisibility()
-	end
-
-	--[[if tAnchors == nil or self.wndMain:IsShown() then
-		self:OnToggleVisibility()
-		return
-	end
-
-	local tScreen = Apollo.GetDisplaySize()
- 
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	local nWidth = nRight - nLeft
-	local nHeight = nBottom - nTop
-	self.nLastWidth = nWidth
-
-	if (tScreen.nWidth + tAnchors.nLeft) < nWidth then -- width less left edge (negative) and padding
-		self.wndMain:SetAnchorOffsets(tAnchors.nRight, tAnchors.nTop, tAnchors.nRight + nWidth, tAnchors.nTop + nHeight) -- move to right
-	else
-		self.wndMain:SetAnchorOffsets(tAnchors.nLeft - nWidth, tAnchors.nTop, tAnchors.nLeft, tAnchors.nTop + nHeight) -- priority placement on left
-	end
-
-	self:OnToggleVisibility()--]]
 end
 
 function SupplySatchel:OnShowAll( wndHandler, wndControl, eMouseButton )
@@ -371,7 +316,7 @@ function SupplySatchel:HelperSearchNameMatch(strBase, strInput)
 	-- Find the first character of a word or an exact match from the start
 	strBase = strBase:lower() -- Not case sensitive
 	strInput = strInput:lower()
-	return strBase:find(strInput)
+	return strBase:find(strInput, 1, true)
 end
 
 -----------------------------------------------------------------------------------------------

@@ -8,8 +8,6 @@ require "Money"
 
 local GuildBank = {}
 
-local knSaveVersion = 1
-
 local kstrFontLog 				= "CRB_InterfaceMedium"
 local knNumBankTabs				= 5
 local knMaxBankSlots 			= 128
@@ -53,41 +51,16 @@ function GuildBank:Init()
     Apollo.RegisterAddon(self)
 end
 
-function GuildBank:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion
-	}
-	
-	return tSaved
-end
-
-function GuildBank:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSavedVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function GuildBank:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildBank.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function GuildBank:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
 	Apollo.RegisterEventHandler("GuildBankerOpen", 			"GuildInitialize", self) -- notification you opened the bank.
 	Apollo.RegisterEventHandler("GuildBankTab", 			"OnGuildBankTab", self) -- noficiation that a guild bank tab is loaded.
 	Apollo.RegisterEventHandler("GuildBankItem", 			"OnGuildBankItem", self) -- noficiation of a change to a specific item that exists on a tab.
@@ -107,17 +80,15 @@ end
 
 function GuildBank:GuildInitialize()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndBankItemSlot = nil
 	end
+	
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildBankForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("GuildBank_Title")})
+	
 	self.wndSplit = nil
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	local guildSelected = nil
 	for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
 		if guildCurr:GetType() == GuildLib.GuildType_Guild then
@@ -133,7 +104,6 @@ function GuildBank:GuildInitialize()
 	end
 
 	if not guildSelected then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_System, Apollo.GetString("Guild_YouAreNotInAGuild"), "" )
 		Event_CancelGuildBank()
 		Event_CancelWarpartyBank()
@@ -178,7 +148,6 @@ function GuildBank:Reinitialize(guildToInit)
 			end
 		end
 	elseif self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndBankItemSlot = nil
 	end
@@ -236,10 +205,10 @@ end
 
 function GuildBank:CloseBank()
 	if self.wndMain ~= nil then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndBankItemSlot = nil
 	end
+	
 	Event_CancelGuildBank()
 	Event_CancelWarpartyBank()
 end

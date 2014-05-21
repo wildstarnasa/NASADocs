@@ -26,11 +26,8 @@ function ClueTracker:OnSave(eType)
 		return
 	end
 
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
 	local tSaved = 
 	{
-		tLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
 		bIsShown = self.bIsShown, 
 		tClueList = self.tClues,
 		nSaveVersion = knSaveVersion,
@@ -41,10 +38,6 @@ end
 function ClueTracker:OnRestore(eType, tSavedData)
 	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 		return
-	end
-	
-	if tSavedData.tLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tLocation)
 	end
 	
 	if tSavedData.bIsShown then
@@ -84,17 +77,15 @@ end
 function ClueTracker:Initialize()
     if not self.wndMain then -- To save memory, don't load until needed
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "ClueTrackerForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("ClueTracker_Clues")})
 	end
+	
 	self.wndMain:Show(true)
 	self.bIsShown = true
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 end
 
 function ClueTracker:OnHide()
 	if self.wndMain then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.bIsShown = false
 	end

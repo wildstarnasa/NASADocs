@@ -9,7 +9,6 @@ require "Item"
 
 local Costumes = {}
 
-local knSaveVersion = 1
 local knNumCostumes = 10
 
 local karCostumeSlotNames = -- string name, then id, then button art
@@ -34,30 +33,6 @@ function Costumes:Init()
 	Apollo.RegisterAddon(self)
 end
 
-function Costumes:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndCostumes and self.wndCostumes:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function Costumes:OnRestore(eType, tSavedData)
-	if tSavedData.nSavedVersion == knSaveVersion then
-		if tSavedData.tWindowLocation then
-			self.locWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-		end
-	end
-end
-
 function Costumes:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Costumes.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -68,11 +43,12 @@ function Costumes:OnDocumentReady()
 		return
 	end
 	
-	Apollo.RegisterEventHandler("CharacterCreated", 			"OnCharacterCreated", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("ShowDye", 						"ShowCostumeWindow", self)
 	Apollo.RegisterEventHandler("HideDye", 						"OnClose", self)
 	Apollo.RegisterEventHandler("DyeLearned",					"OnDyeLearned", self)
-	Apollo.RegisterEventHandler("PersonaUpdateCharacterStats",	"Reset", self)
+	Apollo.RegisterEventHandler("UpdateInventory",				"Reset", self)
 	
 	self.wndMain 		= Apollo.LoadForm(self.xmlDoc, "CharacterWindow", nil, self)
 	self.wndDyeList 	= self.wndMain:FindChild("Right:DyeListContainer:DyeList")
@@ -80,10 +56,6 @@ function Costumes:OnDocumentReady()
 	self.wndCost 		= self.wndMain:FindChild("Cost")
 	self.wndResetBtn	= self.wndMain:FindChild("ResetBtn")
 	self.wndDyeButton	= self.wndMain:FindChild("DyeBtn")
-	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLocation)
-	end
 	
 	self.wndMain:Show(false, true)
 	
@@ -97,9 +69,9 @@ function Costumes:OnDocumentReady()
 
 		wndCostumeEntry:FindChild("CostumeSlot"):SetData(tInfo[2])
 		
-		wndCostumeEntry:FindChild("DyeColor1:DyeSwatchArtHack:DyeSwatch"):Show(false)
-		wndCostumeEntry:FindChild("DyeColor2:DyeSwatchArtHack:DyeSwatch"):Show(false)
-		wndCostumeEntry:FindChild("DyeColor3:DyeSwatchArtHack:DyeSwatch"):Show(false)
+		wndCostumeEntry:FindChild("DyeColor1Container:DyeSwatchArtHack:DyeSwatch"):Show(false)
+		wndCostumeEntry:FindChild("DyeColor2Container:DyeSwatchArtHack:DyeSwatch"):Show(false)
+		wndCostumeEntry:FindChild("DyeColor3Container:DyeSwatchArtHack:DyeSwatch"):Show(false)
 		
 		wndCostumeEntry:FindChild("DyeColor1"):Enable(false)
 		wndCostumeEntry:FindChild("DyeColor2"):Enable(false)
@@ -133,10 +105,10 @@ function Costumes:OnDocumentReady()
 	end
 	
 	self.wndMain:FindChild("CostumeListContainer"):ArrangeChildrenVert(0)
-	
-	if GameLib.GetPlayerUnit() ~= nil then
-		self:OnCharacterCreated()
-	end
+end
+
+function Costumes:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Costumes_Title")})
 end
 
 function Costumes:OnSlashCommand()
@@ -147,10 +119,6 @@ function Costumes:OnClose()
 	self:HideCostumeWindow()
 	
 	Event_CancelDyeWindow()
-end
-
-function Costumes:OnCharacterCreated()
-	self.unitPlayer = GameLib.GetPlayerUnit()
 end
 
 function Costumes:OnDyeLearned()
@@ -309,7 +277,6 @@ function Costumes:OnVisibleBtnCheck(wndHandler, wndControl)
 
 	if self.nCurrentCostume ~= nil and self.nCurrentCostume ~= 0 then
 		GameLib.SetCostumeSlotVisible(self.nCurrentCostume, iSlot, bVisible)
-		
 	end
 
 	self:UpdateCostumeSlotIcons()
@@ -393,6 +360,7 @@ function Costumes:UpdateCostumeSlotIcons()
 			local bShown = GameLib.IsCostumeSlotVisible(self.nCurrentCostume, idx)
 			local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
 			
+			GameLib.SetCostumeSlotVisible(self.nCurrentCostume, idx, bShown)
 			wndSlot:FindChild("VisibleBtn"):SetCheck(bShown)
 			wndSlot:FindChild("VisibleBtn"):Enable(true)
 			wndSlot:FindChild("HiddenBlocker"):Show(not bShown)
@@ -483,6 +451,8 @@ end
 function Costumes:ShowCostumeWindow()
 	self.wndMain:Show(true)
 	
+	local unitPlayer = GameLib.GetPlayerUnit()
+	
 	-- hide the costumes list.
 	self.wndCostumeSelectionList = self.wndMain:FindChild("Middle:CostumeBtnHolder")
 	self.wndCostumeSelectionList:Show(false)
@@ -504,7 +474,7 @@ function Costumes:ShowCostumeWindow()
 	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("CostumeBtnHolder"):GetAnchorOffsets()
 	self.wndMain:FindChild("CostumeBtnHolder"):SetAnchorOffsets(nLeft, nBottom - (75 + 28 * self.nCostumeCount), nRight, nBottom)
 	
-	self.wndCostume:SetCostume(self.unitPlayer)
+	self.wndCostume:SetCostume(unitPlayer)
 	self.wndCostume:SetSheathed(self.wndMain:FindChild("SetSheatheBtn"):IsChecked())
 	
 	self:Reset()
@@ -514,7 +484,7 @@ function Costumes:ResetInputs()
 	for nDyeChannel = 1,#self.arDyeButtons do
 		for idx, tButton in ipairs(self.arDyeButtons[nDyeChannel]) do
 			tButton:SetCheck(false)
-			tButton:FindChild("DyeSwatchArtHack:DyeSwatch"):SetSprite("")
+			tButton:GetParent():FindChild("DyeSwatchArtHack:DyeSwatch"):SetSprite("")
 		end
 	end
 	
@@ -586,8 +556,8 @@ function Costumes:GetSelectedItems(tDye)
 					
 					if nDyeId > 0 and tButton:IsChecked() then
 						self.tSelectedItems[tItem:GetItemId()][nDyeChannel] = nDyeId
-						tButton:FindChild("DyeSwatch"):SetSprite(tDye.strSprite)
-						tButton:FindChild("DyeSwatch"):Show(true)
+						tButton:GetParent():FindChild("DyeSwatch"):SetSprite(tDye.strSprite)
+						tButton:GetParent():FindChild("DyeSwatch"):Show(true)
 					end
 				end
 			end

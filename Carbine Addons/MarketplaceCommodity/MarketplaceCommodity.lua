@@ -20,7 +20,16 @@ local kMaxCommodityOrder = MarketplaceLib.kMaxCommodityOrder -- An order can onl
 local kMaxPlayerCommodityOrders = MarketplaceLib.kMaxPlayerCommodityOrders -- You can only have 25 postings active
 local kstrAuctionOrderDuration = MarketplaceLib.kCommodityOrderListTimeDays
 
-local knSaveVersion = 1
+local karEvalStrings =
+{
+	[Item.CodeEnumItemQuality.Inferior] 		= Apollo.GetString("CRB_Inferior"),
+	[Item.CodeEnumItemQuality.Average] 			= Apollo.GetString("CRB_Average"),
+	[Item.CodeEnumItemQuality.Good] 			= Apollo.GetString("CRB_Good"),
+	[Item.CodeEnumItemQuality.Excellent] 		= Apollo.GetString("CRB_Excellent"),
+	[Item.CodeEnumItemQuality.Superb] 			= Apollo.GetString("CRB_Superb"),
+	[Item.CodeEnumItemQuality.Legendary] 		= Apollo.GetString("CRB_Legendary"),
+	[Item.CodeEnumItemQuality.Artifact] 		= Apollo.GetString("CRB_Artifact"),
+}
 
 local karEvalColors =
 {
@@ -44,41 +53,16 @@ function MarketplaceCommodity:Init()
     Apollo.RegisterAddon(self)
 end
 
-function MarketplaceCommodity:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-
-	local tSaved =
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion
-	}
-
-	return tSaved
-end
-
-function MarketplaceCommodity:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function MarketplaceCommodity:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MarketplaceCommodity.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function MarketplaceCommodity:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+
 	Apollo.RegisterEventHandler("ToggleMarketplaceWindow", 							"Initialize", self)
 	Apollo.RegisterEventHandler("PostCommodityOrderResult", 						"OnPostCommodityOrderResult", self)
 	Apollo.RegisterEventHandler("CommodityAuctionRemoved", 							"OnCommodityAuctionRemoved", self)
@@ -92,7 +76,6 @@ end
 
 function MarketplaceCommodity:OnDestroy()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self:OnSearchClearBtn()
 		self.wndMain:Destroy()
 	end
@@ -101,18 +84,16 @@ end
 
 function MarketplaceCommodity:Initialize()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
+
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceCommodityForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceCommodity_CommoditiesExchange")})
+
 	self.wndOrderLimitText = self.wndMain:FindChild("OpenMarketListingsBtn")
 
 	self.wndMain:SetSizingMinimum(790, 600)
 	self.wndMain:SetSizingMaximum(790, 1600)
-
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
 
 	self.wndMain:FindChild("FilterOptionsBtn"):AttachWindow(self.wndMain:FindChild("FilterOptionsContainer"))
 	self.wndMain:FindChild("FilterOptionsLevelMaxContainer"):FindChild("FilterOptionsLevelUpBtn"):SetData(self.wndMain:FindChild("FilterOptionsLevelMaxContainer"))
@@ -151,9 +132,9 @@ function MarketplaceCommodity:Initialize()
 	for idx, tQuality in ipairs(tItemQualities) do
 		local wndFilter = Apollo.LoadForm(self.xmlDoc, "FilterOptionsRarityItem", wndFilterParent, self)
 		wndFilter:FindChild("FilterOptionsRarityItemBtn"):SetCheck(true)
-		wndFilter:FindChild("FilterOptionsRarityItemBtn"):SetText(tQuality.strKey)
 		wndFilter:FindChild("FilterOptionsRarityItemBtn"):SetData(tQuality.nQuality)
-		wndFilter:FindChild("FilterOptionsRarityItemBtn"):SetTooltip(tQuality.strKey)
+		wndFilter:FindChild("FilterOptionsRarityItemBtn"):SetText(karEvalStrings[tQuality.nQuality])
+		wndFilter:FindChild("FilterOptionsRarityItemBtn"):SetTooltip(karEvalStrings[tQuality.nQuality])
 		wndFilter:FindChild("FilterOptionsRarityItemColor"):SetBGColor(karEvalColors[tQuality.nQuality])
 	end
 	wndFilterParent:ArrangeChildrenVert(0)
@@ -372,27 +353,6 @@ function MarketplaceCommodity:BuildListItem(tCurrItem, strWindowName, strBtnText
 	wndCurr:Show(false) -- Invisible until OnCommodityInfoResults fills in the remaining data (so it doesn't flash if invalid)
 end
 
-function MarketplaceCommodity:OnListSubmitBtn(wndHandler, wndControl) -- ListSubmitBtn, data is { tCurrItem and window "SimpleListItem" }
-	local tCurrItem = wndHandler:GetData()[1]
-	local wndParent = wndHandler:GetData()[2]
-	local monPricePerUnit = wndParent:FindChild("ListInputPrice"):GetCurrency() -- not an integer
-	local nOrderCount = tonumber(wndParent:FindChild("ListInputNumber"):GetText())
-	local bBuyTab = self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked()
-
-	local orderNew = bBuyTab and CommodityOrder.newBuyOrder(tCurrItem:GetItemId()) or CommodityOrder.newSellOrder(tCurrItem:GetItemId())
-	if nOrderCount and monPricePerUnit:GetAmount() > 0 then
-		orderNew:SetCount(nOrderCount)
-		orderNew:SetPrices(monPricePerUnit)
-		orderNew:SetForceImmediate(self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked())
-	end
-
-	if not nOrderCount or not monPricePerUnit or monPricePerUnit:GetAmount() < 1 or not orderNew:CanPost() then
-		return false
-	end
-
-	orderNew:Post() -- PostCommodityOrderResult will come shortly after
-end
-
 function MarketplaceCommodity:OnListInputNumberChanged(wndHandler, wndControl, strText)
 	local wndParent = wndHandler:GetData()
 	local nCount = tonumber(strText)
@@ -470,8 +430,9 @@ function MarketplaceCommodity:HelperValidateListInputForSubmit(wndParent)
 	end
 
 	local wndListInputPrice = wndParent:FindChild("ListInputPrice")
-	if wndListInputPrice then
-		nPrice = math.max(0, tonumber(wndListInputPrice:GetAmount() or 0))
+	if wndListInputPrice and wndParent:FindChild("ListInputNumber") and wndParent:FindChild("ListInputNumber"):IsValid() then
+		nPrice = math.max(0, tonumber(wndListInputPrice:GetAmount() or 0)) * tonumber(wndParent:FindChild("ListInputNumber"):GetText())
+		nPrice = nPrice + math.max(nPrice * MarketplaceLib.kfCommodityBuyOrderTaxMultiplier, MarketplaceLib.knCommodityBuyOrderTaxMinimum)
 	end
 
 	local bCanAfford = true
@@ -493,7 +454,28 @@ function MarketplaceCommodity:HelperValidateListInputForSubmit(wndParent)
 
 	local wndListSubmitBtn = wndParent:FindChild("ListSubmitBtn")
 	if wndListSubmitBtn then
-		wndListSubmitBtn:Enable(nPrice > 0 and nQuantity > 0 and nQuantity <= kMaxCommodityOrder and nAvailable > 0 and bCanAfford)
+		local bEnable = nPrice > 0 and nQuantity > 0 and nQuantity <= kMaxCommodityOrder and nAvailable > 0 and bCanAfford
+		wndListSubmitBtn:Enable(bEnable)
+		if bEnable then
+			local tCurrItem = wndListSubmitBtn:GetData()[1]
+			local wndParent = wndListSubmitBtn:GetData()[2]
+			local monPricePerUnit = wndParent:FindChild("ListInputPrice"):GetCurrency() -- not an integer
+			local nOrderCount = tonumber(wndParent:FindChild("ListInputNumber"):GetText())
+			local bBuyTab = self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked()
+
+			local orderNew = bBuyTab and CommodityOrder.newBuyOrder(tCurrItem:GetItemId()) or CommodityOrder.newSellOrder(tCurrItem:GetItemId())
+			if nOrderCount and monPricePerUnit:GetAmount() > 0 then
+				orderNew:SetCount(nOrderCount)
+				orderNew:SetPrices(monPricePerUnit)
+				orderNew:SetForceImmediate(self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked())
+			end
+
+			if not bCanAfford or not nOrderCount or not monPricePerUnit or monPricePerUnit:GetAmount() < 1 or not orderNew:CanPost() then
+				wndListSubmitBtn:Enable(false)
+			else
+				wndListSubmitBtn:SetActionData(GameLib.CodeEnumConfirmButtonType.MarketplaceCommoditiesSubmit, orderNew)
+			end
+		end
 	end
 end
 
@@ -838,9 +820,34 @@ function MarketplaceCommodity:OnCommodityInfoResults(nItemId, tStats, tOrders)
 
 	local bCanAfford = true
 	if self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked() then
-		bCanAfford = GameLib.GetPlayerCurrency():GetAmount() >= (nValueForInput or 0)
+		local nPrice = math.max(0, (nValueForInput or 0))
+		nPrice = nPrice + math.max(nPrice * MarketplaceLib.kfCommodityBuyOrderTaxMultiplier, MarketplaceLib.knCommodityBuyOrderTaxMinimum)
+		bCanAfford = GameLib.GetPlayerCurrency():GetAmount() >= nPrice
 	end
-	wndMatch:FindChild("ListSubmitBtn"):Enable(nValueForInput and bCanAfford)
+
+	local wndListSubmitBtn = wndMatch:FindChild("ListSubmitBtn")
+	local bEnable = nValueForInput and bCanAfford
+	wndListSubmitBtn:Enable(bEnable)
+	if bEnable then
+		local tCurrItem = wndListSubmitBtn:GetData()[1]
+		local wndParent = wndListSubmitBtn:GetData()[2]
+		local monPricePerUnit = wndParent:FindChild("ListInputPrice"):GetCurrency() -- not an integer
+		local nOrderCount = tonumber(wndParent:FindChild("ListInputNumber"):GetText())
+		local bBuyTab = self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked()
+
+		local orderNew = bBuyTab and CommodityOrder.newBuyOrder(tCurrItem:GetItemId()) or CommodityOrder.newSellOrder(tCurrItem:GetItemId())
+		if nOrderCount and monPricePerUnit:GetAmount() > 0 then
+			orderNew:SetCount(nOrderCount)
+			orderNew:SetPrices(monPricePerUnit)
+			orderNew:SetForceImmediate(self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked())
+		end
+
+		if not bCanAfford or not nOrderCount or not monPricePerUnit or monPricePerUnit:GetAmount() < 1 or not orderNew:CanPost() then
+			wndListSubmitBtn:Enable(false)
+		else
+			wndListSubmitBtn:SetActionData(GameLib.CodeEnumConfirmButtonType.MarketplaceCommoditiesSubmit, orderNew)
+		end
+	end
 	wndMatch:FindChild("ListInputPrice"):SetAmount(nValueForInput or 0)
 	wndMatch:FindChild("ListInputPrice"):SetTextColor(bCanAfford and "white" or "UI_BtnTextRedNormal")
 	wndMatch:FindChild("ListSubtitlePriceLeft"):Show(nValueForLeftPrice)
@@ -911,6 +918,10 @@ function MarketplaceCommodity:OnCommodityAuctionRemoved(eAuctionEventType, order
 	--elseif eAuctionEventType == MarketplaceLib.AuctionEventType.Expire then
 	--elseif eAuctionEventType == MarketplaceLib.AuctionEventType.Cancel then
 	--end
+
+	if not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
 
 	self:UpdateOrderLimit(self.nOwnedOrderCount - 1)
 end

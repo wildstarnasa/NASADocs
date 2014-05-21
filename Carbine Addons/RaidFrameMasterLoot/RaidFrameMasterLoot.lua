@@ -7,8 +7,6 @@ require "Window"
 
 local RaidFrameMasterLoot = {}
 
-local knSaveVersion = 3
-
 function RaidFrameMasterLoot:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -18,32 +16,6 @@ end
 
 function RaidFrameMasterLoot:Init()
     Apollo.RegisterAddon(self)
-end
-
-function RaidFrameMasterLoot:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSaved = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	
-	return tSaved
-end
-
-function RaidFrameMasterLoot:OnRestore(eType, tSavedData)
-	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
-		return
-	end
-	
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
 end
 
 function RaidFrameMasterLoot:OnLoad()
@@ -60,7 +32,6 @@ end
 
 function RaidFrameMasterLoot:Initialize(bShow)
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 	end
 
@@ -69,13 +40,11 @@ function RaidFrameMasterLoot:Initialize(bShow)
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "RaidFrameMasterLootForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Group_MasterLoot")})
+	
 	self.wndMain:SetSizingMinimum(self.wndMain:GetWidth(), self.wndMain:GetHeight())
 	self.wndMain:SetSizingMaximum(self.wndMain:GetWidth(), 1000)
 	
-	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-	end
-
 	self:InitializeGroupSettings()
 end
 
@@ -204,7 +173,6 @@ end
 
 function RaidFrameMasterLoot:OnOptionsCloseBtn()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		Event_FireGenericEvent("GenericEvent_Raid_UncheckMasterLoot")
 	end

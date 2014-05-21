@@ -11,8 +11,6 @@ require "GameLib"
 
 local ArenaTeam = {}
 
-local knSaveVersion = 1
-
 function ArenaTeam:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -26,35 +24,18 @@ function ArenaTeam:Init()
     Apollo.RegisterAddon(self)
 end
 
-function ArenaTeam:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local tSave = 
-	{
-		tWindowLocation = self.wndMain and self.wndMain:GetLocation():ToTable() or nil,
-		nVersion = knSaveVersion,
-	}
-	
-	return tSave
-end
-
-function ArenaTeam:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nVersion == knSaveVersion and tSavedData.tWindowLocation then
-			self.locSavedLocation = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function ArenaTeam:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ArenaTeam.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function ArenaTeam:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
+	Apollo.RegisterEventHandler("WindowManagementReady", 			"OnWindowManagementReady", self)
+	
 	-- Registering events with Apollo
 	Apollo.RegisterEventHandler("Event_ShowArenaInfo", 				"OnShowArenaInfo", self)
 	Apollo.RegisterEventHandler("GuildInvite", 						"OnGuildInvite", self)  -- notification you got a guild/circle invite
@@ -73,10 +54,10 @@ function ArenaTeam:OnDocumentReady()
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "ArenaTeamForm", nil, self)
 	self.wndMain:FindChild("Controls"):ArrangeChildrenHorz(2)
 	self.wndMain:Show(false, true)
-	
-	if self.locSavedLocation then
-		self.wndMain:MoveToLocation(self.locSavedLocation)
-	end	
+end
+
+function ArenaTeam:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Guild_GuildTypeArena")})
 end
 
 function ArenaTeam:OnClose()
@@ -154,12 +135,12 @@ function ArenaTeam:ResetRosterMemberButtons()
 	local wndAdd = self.wndMain:FindChild("RosterOptionBtnAdd")
 	local wndInvite = self.wndMain:FindChild("RosterOptionBtnInvite")
 	
-	self.wndMain:FindChild("AddMemberContainer"):Show(false)
-	self.wndMain:FindChild("RemoveMemberContainer"):Show(false)
-	self.wndMain:FindChild("DisbandContainer"):Show(false)
-	self.wndMain:FindChild("LeaveContainer"):Show(false)
-	wndDisband:SetCheck(false)
-	wndLeave:SetCheck(false)	
+	self.wndMain:FindChild("AddMemberContainer"):Close()
+	self.wndMain:FindChild("RemoveMemberContainer"):Close()
+	self.wndMain:FindChild("DisbandContainer"):Close()
+	self.wndMain:FindChild("LeaveContainer"):Close()
+	--wndDisband:SetCheck(false)
+	--wndLeave:SetCheck(false)	
 	
 	-- Defaults
 	wndAdd:Show(false)
@@ -197,30 +178,39 @@ end
 -- The buttons
 function ArenaTeam:OnRosterAddMemberClick(wndHandler, wndControl)
 	self:ResetRosterMemberButtons()
-	self.wndMain:FindChild("AddMemberContainer"):Show(wndHandler:IsChecked())
 	if wndHandler:IsChecked() then
+		self.wndMain:FindChild("AddMemberContainer"):Invoke()
 		self.wndMain:FindChild("AddMemberEditBox"):SetFocus()
+	else
+		self.wndMain:FindChild("AddMemberContainer"):Close()
 	end
 end
 
 function ArenaTeam:OnRosterRemoveMemberClick(wndHandler, wndControl)
 	self:ResetRosterMemberButtons()
-	self.wndMain:FindChild("RemoveMemberContainer"):Show(wndHandler:IsChecked())
+	local wndContainer = wndHandler:FindChild("RemoveMemberContainer")
 	if wndHandler:IsChecked() then
-		self.wndMain:FindChild("RemoveMemberLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_KickLabel"), self.wndMain:FindChild("RosterGrid"):GetData().strName))
+		wndContainer:Invoke()
+		wndContainer:FindChild("RemoveMemberLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_KickLabel"), self.wndMain:FindChild("RosterGrid"):GetData().strName))
+	else
+		wndContainer:Close()
 	end
 end
 
 -- The Pop Up Bubbles
 function ArenaTeam:OnRosterAddMemberCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("AddMemberEditBox"):SetText("")
-	self.wndMain:FindChild("AddMemberContainer"):Show(false)
-	self.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
+	self.wndMain:FindChild("AddMemberContainer"):Close()
+	if not self.wndMain:FindChild("RosterOptionBtnAdd"):ContainsMouse() then
+		self.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
+	end
 end
 
-function ArenaTeam:OnRosterRemoveMemberCloseBtn() -- The Window Close Event can also route here
-	self.wndMain:FindChild("RemoveMemberContainer"):Show(false)
-	self.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
+function ArenaTeam:OnRosterRemoveMemberCloseBtn()
+	self.wndMain:FindChild("RemoveMemberContainer"):Close()
+	if not self.wndMain:FindChild("RosterOptionBtnRemove"):ContainsMouse() then
+		self.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
+	end
 end
 
 function ArenaTeam:OnRosterRemoveMemberYesClick(wndHandler, wndControl)
@@ -260,7 +250,9 @@ end
 function ArenaTeam:OnDisbandContainerCloseBtn(wndHandler, wndControl)
 	local wndDisband = self.wndMain:FindChild("RosterDisbandBtn")
 	wndDisband:FindChild("DisbandContainer"):Show(false)
-	wndDisband:SetCheck(false)
+	if not wndDisband:ContainsMouse() then
+		wndDisband:SetCheck(false)
+	end
 end
 
 function ArenaTeam:OnConfirmLeaveBtn(wndHandler, wndControl)
@@ -272,18 +264,23 @@ end
 function ArenaTeam:OnLeaveContainerCloseBtn(wndHandler, wndControl)
 	local wndLeave = self.wndMain:FindChild("RosterLeaveBtn")
 	wndLeave:FindChild("LeaveContainer"):Show(false)
-	wndLeave:SetCheck(false)
+	if not wndLeave:ContainsMouse() then
+		wndLeave:SetCheck(false)
+	end
 end
 
 function ArenaTeam:OnRosterLeaveBtn(wndHandler, wndControl)
-	wndControl:FindChild("LeaveContainer"):Show(true)
+	self:ResetRosterMemberButtons()
+	wndControl:FindChild("LeaveContainer"):Invoke()
 end
 
 function ArenaTeam:OnRosterDisbandBtn(wndHandler, wndControl)
-	wndControl:FindChild("DisbandContainer"):Show(true)
+	self:ResetRosterMemberButtons()
+	wndControl:FindChild("DisbandContainer"):Invoke()
 end
 
 function ArenaTeam:OnInviteToGroupClick(wndHandler, wndControl)
+	self:ResetRosterMemberButtons()
 	local wndRoster = self.wndMain:FindChild("RosterGrid")
 	local tSelected = wndRoster:GetData()
 	
@@ -444,7 +441,7 @@ function ArenaTeam:OnGuildInvite( strGuildName, strInvitorName, guildType )
 		return
 	end
 	self.wndArenaTeamInvite:FindChild("ArenaTeamInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_InviteHeader"), strType, strGuildName, strInvitorName))
-	self.wndArenaTeamInvite:ToFront()
+	self.wndArenaTeamInvite:Invoke()
 end
 
 function ArenaTeam:OnArenaTeamInviteAccept(wndHandler, wndControl)

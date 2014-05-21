@@ -23,6 +23,203 @@ local ktRomanNumeralMap =
     M = 1000,
 }
 
+
+local ktAchievementIconsText =
+{
+	[1	]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[2	]		= "IconSprites:Icon_Achievement_Achievement_GenericAchievement",
+	[3	]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[4	]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[7	]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[8	]		= "IconSprites:Icon_Achievement_Achievement_MetaAchievement",
+	[9	]		= "IconSprites:Icon_Achievement_Achievement_Path_Explorer",
+	[10	]		= "IconSprites:Icon_Achievement_Achievement_Datacube",
+	[11	]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[12	]		= "IconSprites:Icon_Achievement_Achievement_GenericAchievement",
+	[65	]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[161]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[162]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[164]		= "IconSprites:Icon_Achievement_Achievement_Raid",
+	[175]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[281]		= "IconSprites:Icon_Achievement_Achievement_Social",
+	[284]		= "IconSprites:Icon_Achievement_Achievement_ServerWide_General",
+	[290]		= "IconSprites:Icon_Achievement_Achievement_GenericAchievement",
+	[191]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[192]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[193]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[194]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[195]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[196]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[197]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[198]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[199]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[200]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[201]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[202]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[203]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[204]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[205]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[206]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[207]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[176]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[177]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[178]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[179]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[180]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[181]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[182]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[183]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[184]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[185]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[186]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[187]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[188]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[189]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[190]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[208]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[209]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[210]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[211]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[212]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[213]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[214]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[215]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[216]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[217]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[218]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[219]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[220]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[221]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[222]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[282]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[283]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[13	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[14	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[15	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[16	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[158]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Survivalist",
+	[159]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Miner",
+	[160]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_RelicHunter",
+	[70	]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[71	]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[156]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[244]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[245]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[246]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[247]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[248]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[249]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[250]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[251]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[252]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[253]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[254]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
+	[19	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[20	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[21	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[22	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[23	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[286]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
+	[25	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[26	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[27	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[28	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[29	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[287]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
+	[31	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[32	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[33	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[41	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[42	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[288]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
+	[34	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[35	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[43	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[44	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[45	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[289]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Tailor",
+	[36	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[37	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[57	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[58	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[59	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[293]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[294]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Architect",
+	[38	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Technologist",
+	[39	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Technologist",
+	[54	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Technologist",
+	[55	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Technologist",
+	[56	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Technologist",
+	[47	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Cooking",
+	[76	]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Cooking",
+	[66	]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[166]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[169]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[172]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[67	]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[68	]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[153]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[154]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[155]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[149]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[150]		= "IconSprites:Icon_Achievement_Achievement_PvP",
+	[79	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[82	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[85	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[88	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[91	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[94	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[80	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[81	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[83	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[84	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[86	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[87	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[89	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[90	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[92	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[95	]		= "IconSprites:Icon_Achievement_Achievement_Adventures",
+	[259]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[260]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[261]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[262]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[263]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[264]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[265]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[266]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[267]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[268]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[269]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[272]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[273]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[274]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[275]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[276]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[277]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[278]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[279]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[228]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[229]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[230]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[231]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[232]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[233]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[234]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[235]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[236]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[237]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[238]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[165]		= "IconSprites:Icon_Achievement_Achievement_Raid",
+	[239]		= "IconSprites:Icon_Achievement_Achievement_Raid",
+	[167]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[168]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[170]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[171]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[173]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+	[174]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
+
+}
+
 function Achievements:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -59,7 +256,7 @@ function Achievements:OnDocumentReady()
 end
 
 function Achievements:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AchievementLog"), {"ToggleAchievementWindow", "Achievements", ""})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AchievementLog"), {"ToggleAchievementWindow", "Achievements", "Icon_Windows32_UI_CRB_InterfaceMenu_Achievements"})
 end
 
 function Achievements:OnAchievementUpdated(achUpdated) -- TODO: Pinpoint the redraw instead of a full redraw
@@ -351,6 +548,12 @@ function Achievements:LoadSummaryScreen() -- TODO: Figure out why this is being 
 		local wndListItem = Apollo.LoadForm(self.xmlDoc, "RecentUpdateItem", wndRecentUpdateContainer, self)
 		wndListItem:FindChild("RecentUpdateBtn"):SetData(achUpdated)
 		wndListItem:FindChild("RecentUpdateName"):SetText(achUpdated:GetName())
+		local nOldHeight = wndListItem:FindChild("RecentUpdateName"):GetHeight()
+		wndListItem:FindChild("RecentUpdateName"):SetHeightToContentHeight()
+		if wndListItem:FindChild("RecentUpdateName"):GetHeight() > nOldHeight then
+			local nListItemLeft, nListItemTop, nListItemRight, nListItemBottom = wndListItem:GetAnchorOffsets()
+			wndListItem:SetAnchorOffsets(nListItemLeft, nListItemTop, nListItemRight, nListItemBottom + wndListItem:FindChild("RecentUpdateName"):GetHeight() - nOldHeight)
+		end
 		wndListItem:FindChild("RecentUpdatePoints"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_PointValue"), achUpdated:GetPoints()))
 	end
 	wndRecentUpdateContainer:ArrangeChildrenVert(0)
@@ -575,11 +778,12 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 		wndContainer:FindChild("TitleText"):SetText(achData:GetName())
 	end
 	
+	local nId = achData:GetCategoryId()
+	wndContainer:FindChild("AchievementIcon"):SetSprite(ktAchievementIconsText[achData:GetCategoryId()])
 	if achData:IsComplete() then
 		nNumCompleted = nNumNeeded
 		wndContainer:FindChild("TitleText"):SetTextColor(ApolloColor.new("UI_BtnTextGreenNormal"))
 		wndContainer:FindChild("PointsText"):SetTextColor(ApolloColor.new("UI_BtnTextGreenNormal"))
-		wndContainer:FindChild("AchievementIcon"):SetSprite("Achievements:sprAchievements_Icon_Solo") -- TODO! GetIcon() doesn't exist yet
 		wndContainer:FindChild("DescriptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBodyCyan\">"..achData:GetDescription().."</P>")
 
 		local strTooltipCompleted = String_GetWeaselString(Apollo.GetString("Achievements_CompletedDate"), achData:GetDateCompleted())
@@ -589,6 +793,17 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 		wndContainer:FindChild("TitleText"):SetTextColor(ApolloColor.new("UI_TextHoloTitle"))
 		wndContainer:FindChild("PointsText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 		wndContainer:SetTooltip("")
+	end
+	
+	-- Resize based on description height
+	local nDescHeight = wndContainer:FindChild("DescriptionText"):GetHeight()
+	wndContainer:FindChild("DescriptionText"):SetHeightToContentHeight()
+	if wndContainer:FindChild("DescriptionText"):GetHeight() > nDescHeight then
+		local nOffset = wndContainer:FindChild("DescriptionText"):GetHeight() - nDescHeight + 10
+		local nLeft, nTop, nRight, nBottom = wndContainer:GetAnchorOffsets()
+		wndContainer:SetAnchorOffsets(nLeft, nTop, nRight, nBottom + nOffset)
+		nLeft, nTop, nRight, nBottom = wndContainer:FindChild("AchievementExtraContainer"):GetAnchorOffsets()
+		wndContainer:FindChild("AchievementExtraContainer"):SetAnchorOffsets(nLeft, nTop + nOffset, nRight, nBottom)
 	end
 
 	wndContainer:FindChild("AchievementCheck"):Show(achData:IsComplete())
@@ -796,7 +1011,7 @@ function Achievements:HelperCheckFilters(achFiltered)
 	if bResult and strSearchString then
 		-- Find the first character of a word or an exact match from the start
 		local strAchieveName = achFiltered:GetName():lower()
-		bResult = strAchieveName:find(" "..strSearchString) or string.sub(strAchieveName, 0, string.len(strSearchString)) == strSearchString
+		bResult = strAchieveName:find(" "..strSearchString, 1, true) or string.sub(strAchieveName, 0, string.len(strSearchString)) == strSearchString
 	end
 
 	return bResult
