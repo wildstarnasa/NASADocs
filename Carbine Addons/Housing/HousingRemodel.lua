@@ -397,6 +397,7 @@ function HousingRemodel:OnLoad()
 	Apollo.RegisterEventHandler("HousingResult", 					"OnHousingResult", self)
 	Apollo.RegisterEventHandler("HousingNamePropertyOpen",          "OnHousingNameProperty", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 			"OnPlayerCurrencyChanged", self)
+	Apollo.RegisterEventHandler("HousingBuildStarted", 				"OnBuildStarted", self)
 
 	Apollo.RegisterTimerHandler("HousingRemodelTimer", 				"OnRemodelTimer", self)
 	Apollo.RegisterTimerHandler("HousingIntRemodelTimer", 			"OnIntRemodelTimer", self)
@@ -1450,6 +1451,12 @@ function HousingRemodel:OnPlayerCurrencyChanged()
 		local nCurrencyAmount = GameLib.GetPlayerCurrency(eCurrencyType)
 		self.wndCashRemodel:SetAmount(nCurrencyAmount, false)
 	end
+end
+
+function HousingRemodel:OnBuildStarted(plotIndex)
+    if plotIndex == 1 and self.wndRemodel:IsVisible() then
+        self:OnCloseHousingRemodelWindow()
+    end
 end
 
 ---------------------------------------------------------------------------------------------------

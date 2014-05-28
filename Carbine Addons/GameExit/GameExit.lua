@@ -57,24 +57,24 @@ function GameExit:OnTimer()
 		self.wndMain:FindChild("Title"):SetText(Apollo.GetString("CRB_Exit"))
 		self.wndMain:FindChild("Message"):SetText(Apollo.GetString("GameExit_TimeTillQuit"))
 		self.wndMain:FindChild("LeaveNow"):Show(true)
-
-		self.wndMain:FindChild("CancelButton"):SetAnchorOffsets(0, -91, 200, -18)
+		self.wndMain:FindChild("CancelButton"):SetAnchorOffsets(211, -91, 351, -18)
 	else
 		self.wndMain:FindChild("Title"):SetText(Apollo.GetString("Options_SwitchCharacter"))
 		self.wndMain:FindChild("Message"):SetText(Apollo.GetString("GameExit_TimeTillCamp"))
 		self.wndMain:FindChild("LeaveNow"):Show(false)
-
-		self.wndMain:FindChild("CancelButton"):SetAnchorOffsets(-100, -91, 100, -18)
+		self.wndMain:FindChild("CancelButton"):SetAnchorOffsets(136, -91, 276, -18)
 	end
+	
 	if not self.wndMain:IsShown() then
 		self.wndMain:Invoke()
 	end
+	
 	self.wndMain:FindChild("Time"):SetText(String_GetWeaselString(Apollo.GetString("GameExit_Timer"), tExitInfo.fTimeRemaining))
 
 	-- TODO: Do this the right way when there's time
 	local nSeconds = math.floor(tExitInfo.fTimeRemaining)
 	local strOutput = nSeconds < 10 and Apollo.GetString("GameExit_ShortTimer") or Apollo.GetString("GameExit_NumTimer")
-	self.wndMain:FindChild("Time"):SetText(String_GetWeaselString(Apollo.GetString("CharacterSelect_LogoffInSeconds"), nSeconds))
+	self.wndMain:FindChild("Time"):SetText(String_GetWeaselString(strOutput, nSeconds))
 end
 
 function GameExit:OnPlayerCamp()
@@ -93,12 +93,11 @@ end
 -- GameExitForm Functions
 -----------------------------------------------------------------------------------------------
 
-function GameExit:OnPreOrder()
-	GameLib.InvokePreOrder()
-	ExitNow()
-end
-
-function GameExit:OnCancel()
+function GameExit:OnCancel(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+	
 	self.wndMain:Close()
 	CancelExit()
 end

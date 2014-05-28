@@ -758,7 +758,7 @@ end
 
 function Abilities:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Abilities then return end
-
+	if not self.wndMain or not self.wndMain:IsValid() then return end
 	local tRect = {}
 	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
 

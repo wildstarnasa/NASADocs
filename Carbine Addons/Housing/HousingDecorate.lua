@@ -85,6 +85,7 @@ function HousingDecorate:OnLoad()
 	Apollo.RegisterEventHandler("HousingMyResidenceDecorChanged", 	"OnMyResidenceDecorChanged", self)
 	Apollo.RegisterEventHandler("HousingExitEditMode", 				"OnExitEditMode", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 			"OnPlayerCurrencyChanged", self)
+	Apollo.RegisterEventHandler("HousingBuildStarted", 				"OnBuildStarted", self)
 	
 	Apollo.RegisterEventHandler("HousingButtonCrate", 				"OnHousingButtonCrate", self)
 	Apollo.RegisterEventHandler("HousingButtonVendor", 				"OnHousingButtonVendor", self)
@@ -233,6 +234,12 @@ function HousingDecorate:OnPlayerCurrencyChanged()
 	end
 	self.wndCashDecorate:SetMoneySystem(self.eDisplayedCurrencyType, self.eDisplayedGroupCurrencyType)
 	self.wndCashDecorate:SetAmount(GameLib.GetPlayerCurrency(self.eDisplayedCurrencyType, self.eDisplayedGroupCurrencyType), true) -- 2nd argument = IsInstant
+end
+
+function HousingDecorate:OnBuildStarted(plotIndex)
+    if plotIndex == 1 then
+        self:OnCloseHousingDecorateWindow()
+    end
 end
 
 function HousingDecorate:OnCategorySelectionClosed()
@@ -841,6 +848,10 @@ end
 function HousingDecorate:OnMyResidenceDecorChanged(eDecorType, nOldItemHandle, nNewItemHandle)
 	-- we don't need to do anything on decorations (and since they are numerous messages, bail!)
 	if eDecorType == kDecorType_HookDecor or eDecorType == kDecorType_FreePlaceDecor then
+		return
+	end
+	
+	if not self.wndDecorate:IsVisible() then
 		return
 	end
 

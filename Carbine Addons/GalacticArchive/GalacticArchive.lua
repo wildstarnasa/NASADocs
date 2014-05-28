@@ -628,8 +628,7 @@ function GalacticArchive:DisplayArticle(artDisplay)
 	wndArticle:FindChild("ArticleScroll"):ArrangeChildrenVert(0)
 
 	self.wndArchiveIndexForm:Show(true)
-	self.wndArticleDisplay:Show(true) -- wndArticle
-	self.wndArticleDisplay:ToFront() -- wndArticle
+	self.wndArticleDisplay:Invoke()-- wndArticle
 end
 
 function GalacticArchive:DrawEntry(entDraw, wndArticle)
@@ -691,7 +690,7 @@ function GalacticArchive:OnBack()
 	self:FilterArchiveIndex()
 
 	self.wndArchiveIndexForm:Show(true)
-	self.wndArticleDisplay:Show(false)
+	self.wndArticleDisplay:Close()
 end
 
 function GalacticArchive:OnArticleTitleClick(wndHandler, wndControl, eMouseButton)

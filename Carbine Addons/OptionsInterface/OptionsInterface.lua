@@ -16,7 +16,7 @@ local kbDefaultQuestTrackerByDistance 	= true
 local kbDefaultInteractTextOnUnit 		= false
 local knWindowStayOnScreenOffset = 100
 
-local knSaveVersion = 3
+local knSaveVersion = 5
 
 function OptionsInterface:new(o)
     o = o or {}

@@ -60,6 +60,7 @@ function HousingList:OnLoad()
 	Apollo.RegisterEventHandler("HousingFreePlaceControlClose", 	"OnCloseFreePlaceControl", self)
 	Apollo.RegisterEventHandler("HousingDestroyDecorControlOpen", 	"OnOpenDestroyDecorControl", self)
 	Apollo.RegisterEventHandler("HousingExitEditMode", 				"OnExitEditMode", self)
+	Apollo.RegisterEventHandler("HousingBuildStarted", 				"OnBuildStarted", self)
     
     -- load our forms
     self.xmlDoc = XmlDoc.CreateFromFile("HousingList.xml")
@@ -118,6 +119,13 @@ end
 ---------------------------------------------------------------------------------------------------
 function HousingList:OnExitEditMode()
 	if self.wndDecorList:IsVisible() then
+		self:OnCloseHousingListWindow()
+	end
+end
+
+---------------------------------------------------------------------------------------------------
+function HousingList:OnBuildStarted(plotIndex)
+	if plotIndex == 1 and self.wndDecorList:IsVisible() then
 		self:OnCloseHousingListWindow()
 	end
 end

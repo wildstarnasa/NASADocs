@@ -572,6 +572,10 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function FloatText:OnLootedMoney(monLooted) -- karCurrencyTypeToString filters to most alternate currencies but Money. Money displays in LootNotificationWindow.
+	if not monLooted then
+		return
+	end
+	
 	local arCurrencyTypeToString =
 	{
 		[Money.CodeEnumCurrencyType.Renown] 			= "CRB_Renown",

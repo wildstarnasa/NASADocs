@@ -10,7 +10,10 @@ require "FriendshipLib"
 
 local AccountInventory = {}
 
-local keCantBeClaimed = -1
+local knBoomBoxItemId = 44359
+local keCreddType = -1 * AccountItemLib.CodeEnumAccountCurrency.CREDD -- Negative to avoid collision with ID 1
+local keNameChangeType = -1 * AccountItemLib.CodeEnumAccountCurrency.NameChange -- Negative to avoid collision with ID 2
+local keRealmTransferType = -1 * AccountItemLib.CodeEnumAccountCurrency.RealmTransfer -- Negative to avoid collision with ID 3
 
 local ktResultErrorCodeStrings =
 {
@@ -83,6 +86,27 @@ function AccountInventory:OnLoad()
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
+function AccountInventory:OnSave(eType)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+		return
+	end
+
+	local nLastAccountBoundCount = self.nLastAccountBoundCount
+	local tSave =
+	{
+		nLastAccountBoundCount = nLastAccountBoundCount,
+	}
+	return tSave
+end
+
+function AccountInventory:OnRestore(eType, tSavedData)
+	if tSavedData then
+		if tSavedData.tLocation then
+			self.nLastAccountBoundCount = tSavedData.nLastAccountBoundCount
+		end
+	end
+end
+
 function AccountInventory:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
@@ -90,12 +114,20 @@ function AccountInventory:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 			"OnInterfaceMenuListHasLoaded", self)
 
-	Apollo.RegisterEventHandler("GenericEvent_OpenAccountInventory", 	"OnAccountInventoryOn", self)
 	Apollo.RegisterEventHandler("GenericEvent_ToggleAccountInventory", 	"OnAccountInventoryToggle", self)
-	Apollo.RegisterEventHandler("AccountPendingItemsUpdate", 			"RefreshInventory", self)
-	Apollo.RegisterEventHandler("AccountInventoryUpdate", 				"RefreshInventory", self)
 	Apollo.RegisterEventHandler("AccountEntitlementUpdate", 			"OnAccountEntitlementUpdate", self)
 	Apollo.RegisterEventHandler("AccountOperationResults", 				"OnAccountOperationResults", self) -- TODO
+
+	Apollo.RegisterEventHandler("FriendshipRemove", 					"OnFriendshipRemove", self)
+
+	Apollo.RegisterEventHandler("AccountPendingItemsUpdate", 			"RefreshInventory", self)
+	Apollo.RegisterEventHandler("AccountInventoryUpdate", 				"RefreshInventory", self)
+	Apollo.RegisterEventHandler("AchievementUpdated", 					"RefreshInventory", self)
+	Apollo.RegisterEventHandler("PlayerLevelChange", 					"RefreshInventory", self)
+	Apollo.RegisterEventHandler("SubZoneChanged", 						"RefreshInventory", self)
+	Apollo.RegisterEventHandler("PathLevelUp", 							"RefreshInventory", self)
+
+	-- self.nLastAccountBoundCount, from OnRestore()
 end
 
 function AccountInventory:OnAccountOperationResults(eOperationType, eResult)
@@ -105,21 +137,46 @@ function AccountInventory:OnAccountOperationResults(eOperationType, eResult)
 end
 
 function AccountInventory:OnInterfaceMenuListHasLoaded()
-	local strIcon = "Icon_Windows32_UI_CRB_InterfaceMenu_InventoryAccount"
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AccountInventory"), {"GenericEvent_OpenAccountInventory", "", strIcon})
+	local strIcon = "Icon_Windows32_UI_CRB_InterfaceMenu_Gift"
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AccountInventory"), {"GenericEvent_ToggleAccountInventory", "", strIcon})
+	self:OnRefreshInterfaceMenuAlert()
 end
 
-function AccountInventory:OnAccountInventoryOn()
-	if not self.wndMain or not self.wndMain:IsValid() then
-		self:SetupMainWindow()
+function AccountInventory:OnRefreshInterfaceMenuAlert()
+	local bShowHighlight = false
+	local nAlertCount = #AccountItemLib.GetPendingAccountSingleItems() -- Escrow Only, Doesn't consider UI restrictions (e.g. no name)
+	for idx, tPendingAccountItemGroup in pairs(AccountItemLib.GetPendingAccountItemGroups()) do
+		nAlertCount = nAlertCount + #tPendingAccountItemGroup.items
 	end
+
+	for idx, tAccountItem in pairs(AccountItemLib.GetAccountItems()) do
+		if tAccountItem.item and tAccountItem.item:GetItemId() == knBoomBoxItemId then
+			nAlertCount = nAlertCount + 1
+			if tAccountItem.cooldown and tAccountItem.cooldown == 0 then
+				bShowHighlight = true -- Always highlight if a boom box is ready to go
+			end
+		end
+	end
+
+	if not bShowHighlight and self.nLastAccountBoundCount then
+		bShowHighlight = self.nLastAccountBoundCount ~= nAlertCount
+	end
+
+	if nAlertCount == 0 then
+		Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_AccountInventory"), {false, "", 0})
+	else
+		Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_AccountInventory"), {bShowHighlight, "", nAlertCount})
+	end
+	self.nLastAccountBoundCount = nAlertCount
 end
 
 function AccountInventory:OnAccountInventoryToggle()
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self:SetupMainWindow()
 	else
-		self:OnClose()
+		self.locSavedWindowLoc = self.wndMain:GetLocation()
+		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 
@@ -130,8 +187,8 @@ function AccountInventory:OnAccountEntitlementUpdate()
 	self:RefreshEntitlements()
 end
 
-function AccountInventory:OnClose()
-	if self.wndMain and self.wndMain:IsValid() then
+function AccountInventory:OnClose(wndHandler, wndControl)
+	if wndHandler == wndControl and self.wndMain and self.wndMain:IsValid() then
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndMain = nil
@@ -141,6 +198,7 @@ end
 function AccountInventory:SetupMainWindow()
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "AccountInventoryForm", nil, self)
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("AccountInv_TitleText")})
+	Event_ShowTutorial(GameLib.CodeEnumTutorial.General_AccountServices)
 
 	--Menu buttons
 	self.wndInventoryBtn = self.wndMain:FindChild("InventoryBtn")
@@ -183,11 +241,12 @@ function AccountInventory:SetupMainWindow()
 	self.wndMain:SetSizingMinimum(640, 480)
 	self.wndMain:SetSizingMaximum(1920, 1080)
 	self.wndInventoryBtn:SetCheck(true) -- Default check
-	self.wndInventoryGift:Show(false)
-	self.wndInventoryGiftConfirm:Show(false)
-	self.wndInventoryClaimConfirm:Show(false)
-	self.wndInventoryTakeConfirm:Show(false)
-	self.wndInventoryGiftReturnConfirm:Show(false)
+	self.wndInventoryGift:Show(false, true)
+	self.wndInventoryTakeConfirm:Show(false, true)
+	self.wndInventoryGiftConfirm:Show(false, true)
+	self.wndInventoryClaimConfirm:Show(false, true)
+	self.wndInventoryGiftReturnConfirm:Show(false, true)
+	self.wndInventoryRedeemCreddConfirm:Show(false, true)
 
 	if self.locSavedWindowLoc then
 		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
@@ -197,7 +256,6 @@ function AccountInventory:SetupMainWindow()
 
 	self:RefreshInventory()
 	self:RefreshEntitlements()
-	CREDDExchangeLib.GetCREDDHistory()
 end
 
 function AccountInventory:OnInventoryCheck(wndHandler, wndControl, eMouseButton)
@@ -347,6 +405,8 @@ function AccountInventory:HelperAddPendingGroupToContainer(wndParent, tPendingAc
 end
 
 function AccountInventory:RefreshInventory()
+	self:OnRefreshInterfaceMenuAlert() -- Happens even if wndMain hasn't loaded
+
 	if self.wndMain == nil or not self.wndMain:IsValid() then
 		return
 	end
@@ -358,18 +418,42 @@ function AccountInventory:RefreshInventory()
 
 	-- Currencies
 	for idx, tCurrData in pairs(ktCurrencies) do
-		local nCount = AccountItemLib.GetAccountCurrency(tCurrData.eType)
-		if nCount > 0 then
+		local nCurrencyCount = AccountItemLib.GetAccountCurrency(tCurrData.eType)
+		if nCurrencyCount > 0 then
 			local wndGroup = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupForm", self.wndInventoryGridContainer, self)
-			wndGroup:SetData({bIsGroup = false, tData = keCantBeClaimed})
-			wndGroup:FindChild("ItemButton"):SetText(String_GetWeaselString(Apollo.GetString(tCurrData.strNum), nCount))
+			wndGroup:SetData(-1 * tCurrData.eType) -- Don't need to care about bIsGroup or anything
+			wndGroup:FindChild("ItemButton"):SetText(String_GetWeaselString(Apollo.GetString(tCurrData.strNum), nCurrencyCount))
 
 			local wndObject = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupItemForm", wndGroup:FindChild("ItemContainer"), self)
-			wndObject:SetData(-1*tCurrData.eType)
+			wndObject:SetData(-1 * tCurrData.eType) -- To avoid collision with ID 1,2,3
 			wndObject:FindChild("Name"):SetText("")
 			wndObject:FindChild("Icon"):SetSprite(tCurrData.strIcon)
 			wndObject:SetTooltip(Apollo.GetString(tCurrData.strTooltip or ""))
 		end
+	end
+
+	-- Boom Boxes (Account Bound only, not Escrow)
+	local nBoomBoxCount = 0
+	local tBoomBoxData = nil
+	for idx, tAccountItem in pairs(AccountItemLib.GetAccountItems()) do
+		if tAccountItem.item and tAccountItem.item:GetItemId() == knBoomBoxItemId then
+			tBoomBoxData = tAccountItem
+			nBoomBoxCount = nBoomBoxCount + 1
+		end
+	end
+
+	if nBoomBoxCount > 0 then
+		local wndGroup = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupForm", self.wndInventoryGridContainer, self)
+		wndGroup:SetData({bIsGroup = false, tData = tBoomBoxData})
+		wndGroup:FindChild("ItemButton"):SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_MultiItem"), nBoomBoxCount, tBoomBoxData.item:GetName()))
+		wndGroup:FindChild("ItemMultiText"):Show(tBoomBoxData.cooldown and tBoomBoxData.cooldown > 0)
+		wndGroup:FindChild("ItemMultiText"):SetText(tBoomBoxData.cooldown and self:HelperCooldown(tBoomBoxData.cooldown) or "")
+		wndGroup:FindChild("ItemIconArrangeVert"):ArrangeChildrenVert(1)
+
+		local wndObject = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupItemForm", wndGroup:FindChild("ItemContainer"), self)
+		wndObject:SetData(tBoomBoxData)
+		wndObject:FindChild("Name"):SetText("")
+		wndObject:FindChild("Icon"):SetSprite(tBoomBoxData.item:GetIcon())
 	end
 
 	-- Separator if we added at least one
@@ -379,7 +463,9 @@ function AccountInventory:RefreshInventory()
 
 	-- Account Bound
 	for idx, tAccountItem in pairs(AccountItemLib.GetAccountItems()) do
-		self:HelperAddPendingSingleToContainer(self.wndInventoryGridContainer, tAccountItem)
+		if not tAccountItem.item or tAccountItem.item:GetItemId() ~= knBoomBoxItemId then
+			self:HelperAddPendingSingleToContainer(self.wndInventoryGridContainer, tAccountItem)
+		end
 	end
 	self.wndInventoryGridContainer:ArrangeChildrenVert(0)
 	self.wndInventoryGridContainer:SetVScrollPos(nInventoryGridScrollPos)
@@ -433,21 +519,26 @@ function AccountInventory:RefreshInventoryActions()
 	self.wndInventoryReturnBtn:SetData(tSelectedPendingData)
 	self.wndInventoryReturnBtn:Show(bPendingCanReturn)
 
-	local bCreddSelected = tSelectedData == (-1*AccountItemLib.CodeEnumAccountCurrency.CREDD)
-		or (tSelectedData ~= nil and tSelectedData.tData == (-1*AccountItemLib.CodeEnumAccountCurrency.CREDD))
+	-- Check if currency
+	local bCanBeClaimed = true
+	if tSelectedData and type(tSelectedData) == "table" and tSelectedData.item and tSelectedData.item:GetItemId() == knBoomBoxItemId then
+		bCanBeClaimed = true
+	elseif tSelectedData and type(tSelectedData) == "table" and tSelectedData.tData then
+		bCanBeClaimed = tSelectedData.tData ~= keCreddType and tSelectedData.tData ~= keNameChangeType and tSelectedData.tData ~= keRealmTransferType
+	elseif tSelectedData and type(tSelectedData) == "number" then
+		bCanBeClaimed = tSelectedData ~= keCreddType and tSelectedData ~= keNameChangeType and tSelectedData ~= keRealmTransferType
+	end
 
-	self.wndInventoryRedeemCreddBtn:Show(bCreddSelected)
+	-- It's an item, check pre-reqs
+	if bCanBeClaimed and tSelectedData and tSelectedData.tData and tSelectedData.tData.prereqId > 0 then
+		local tPrereqInfo = GameLib.GetPlayerUnit():GetPrereqInfo(tSelectedData.tData.prereqId)
+		bCanBeClaimed = tPrereqInfo and tPrereqInfo.bIsMet and tSelectedData.tData.canClaim
+	end
 
-	local bCanBeClaimed = tSelectedData ~= (-1*AccountItemLib.CodeEnumAccountCurrency.CREDD)
-		and (tSelectedData == nil or tSelectedData.tData ~= (-1*AccountItemLib.CodeEnumAccountCurrency.CREDD))
-		and tSelectedData ~= (-1*AccountItemLib.CodeEnumAccountCurrency.NameChange)
-		and (tSelectedData == nil or tSelectedData.tData ~= (-1*AccountItemLib.CodeEnumAccountCurrency.NameChange))
-		and tSelectedData ~= (-1*AccountItemLib.CodeEnumAccountCurrency.RealmTransfer)
-		and (tSelectedData == nil or tSelectedData.tData ~= (-1*AccountItemLib.CodeEnumAccountCurrency.RealmTransfer))
-
-	self.wndInventoryTakeBtn:Enable(tSelectedData and bCanBeClaimed and tSelectedData.tData.canClaim)
+	self.wndInventoryTakeBtn:Enable(tSelectedData and bCanBeClaimed)
 	self.wndInventoryTakeBtn:SetData(tSelectedData)
-	self.wndInventoryTakeBtn:Show(not bCreddSelected)
+	self.wndInventoryTakeBtn:Show(tSelectedData ~= keCreddType)
+	self.wndInventoryRedeemCreddBtn:Show(tSelectedData == keCreddType)
 end
 
 function AccountInventory:OnPendingInventoryItemCheck(wndHandler, wndControl, eMouseButton)
@@ -500,11 +591,11 @@ function AccountInventory:OnInventoryRedeemCreddBtn(wndHandler, wndControl, eMou
 	self.wndInventoryRedeemCreddConfirm:FindChild("ConfirmBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.AccountCreddRedeem)
 
 	local wndGroup = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupForm", self.wndInventoryCreddRedeemConfirmContainer, self)
-	wndGroup:SetData({bIsGroup = false, tData = keCantBeClaimed})
-	wndGroup:FindChild("ItemButton"):SetText(String_GetWeaselString(Apollo.GetString(tCurrData.strNum), nCount))
+	wndGroup:SetData(-1 * tCurrData.eType)
+	wndGroup:FindChild("ItemButton"):SetText(String_GetWeaselString(Apollo.GetString(tCurrData.strNum), 1))
 
 	local wndObject = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupItemForm", wndGroup:FindChild("ItemContainer"), self)
-	wndObject:SetData(-1*tCurrData.eType)
+	wndObject:SetData(-1 * tCurrData.eType)
 	wndObject:FindChild("Name"):SetText("")
 	wndObject:FindChild("Icon"):SetSprite(tCurrData.strIcon)
 	wndObject:SetTooltip(Apollo.GetString(tCurrData.strTooltip or ""))
@@ -592,6 +683,14 @@ end
 --[[
 Inventory Gift
 ]]--
+
+
+function AccountInventory:OnFriendshipRemove()
+	if not self.wndInventoryGift or not self.wndInventoryGift:IsValid() then
+		return
+	end
+	self.wndInventoryGift:Show(false)
+end
 
 function AccountInventory:RefreshInventoryGift()
 	local tSelectedPendingData = self.wndInventoryGift:GetData()

@@ -10,6 +10,7 @@ local QuestTracker = {}
 local tMinimized = {}
 local knMaxZombieEventCount 	= 7
 local knQuestProgBarFadeoutTime = 10
+local knChallngeOffset 			= 132
 local kstrPublicEventMarker 	= "Public Event"
 local ktNumbersToLetters		=
 {
@@ -152,6 +153,7 @@ function QuestTracker:OnDocumentReady()
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "QuestTrackerForm", "FixedHudStratum", self)
 	self.wndMain:SetSizingMinimum(345, 120)
 	self.bMoveable = self.wndMain:IsStyleOn("Moveable")
+	self.nLeft, self.nTop, self.nRight, self.nBottom = self.wndMain:GetAnchorOffsets()
 
 	local unitPlayer = GameLib.GetPlayerUnit()
 	self.bQuestTrackerByDistance 		= g_InterfaceOptions.Carbine.bQuestTrackerByDistance
@@ -200,10 +202,10 @@ function QuestTracker:OnWindowManagementUpdate(tSettings)
 	if bOldHasMoved ~= self.bHasMoved then
 		self:RedrawAll()
 		
-		if not bMaximized then
-			self:OnDatachronMinimized(self.nDatachronShift)
-		else
+		if self.bMaximized then
 			self:OnDatachronRestored(self.nDatachronShift)
+		else
+			self:OnDatachronMinimized(self.nDatachronShift)
 		end
 	end
 end
@@ -1159,39 +1161,46 @@ end
 function QuestTracker:OnDatachronRestored(nDatachronShift)
 	self.nDatachronShift = nDatachronShift
 	
-	if not self.wndMain or self.bMaximized or self.bHasMoved then
+	if not self.wndMain then
 		return
 	end
 
 	self.bMaximized = true
-
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - nDatachronShift)
+	
+	if not self.bHasMoved then
+		self.wndMain:SetAnchorOffsets(self.nLeft, self.nTop, self.nRight, self.nBottom - nDatachronShift)
+	end
+	
 	self:RedrawAll()
 end
 
 function QuestTracker:OnDatachronMinimized(nDatachronShift)
 	self.nDatachronShift = nDatachronShift
 	
-	if not self.wndMain or not self.bMaximized or self.bHasMoved then
+	if not self.wndMain then
 		return
 	end
 
 	self.bMaximized = false
-
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom + nDatachronShift)
+	
+	if not self.bHasMoved then
+		self.wndMain:SetAnchorOffsets(self.nLeft, self.nTop, self.nRight, self.nBottom)
+	end
+	
 	self:RedrawAll()
 end
 
 function QuestTracker:OnGenericEvent_ChallengeTrackerToggled(bVisible)
-	if not self.wndMain or self.bChallengeVisible == bVisible or self.bHasMoved then
+	if not self.wndMain or self.bChallengeVisible == bVisible then
 		return
 	end
 
 	self.bChallengeVisible = bVisible
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	self.wndMain:SetAnchorOffsets(nLeft, bVisible and 340 or 208, nRight, nBottom)
+	
+	if not self.bHasMoved then
+		self.wndMain:SetAnchorOffsets(self.nLeft, bVisible and self.nTop+knChallngeOffset or self.nTop, self.nRight, self.nBottom)
+	end
+	
 	self:RedrawAll()
 end
 

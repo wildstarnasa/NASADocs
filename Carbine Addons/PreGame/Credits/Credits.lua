@@ -54,11 +54,12 @@ end
 function Credits:OnDocLoaded()
 
 	if self.xmlDoc ~= nil and self.xmlDoc:IsLoaded() then
-	    self.wndMain = Apollo.LoadForm(self.xmlDoc, "CreditsForm", nil, self)
+	    self.wndMain = Apollo.LoadForm(self.xmlDoc, "CreditsHolder", nil, self)
 		if self.wndMain == nil then
 			Apollo.AddAddonErrorText(self, "Could not load the main window for some reason.")
 			return
 		end
+		self.wndCredits = self.wndMain:FindChild("CreditsForm")
 		
 	    self.wndMain:Show(false, true)
 
@@ -81,7 +82,7 @@ end
 -- on SlashCommand "/credits"
 function Credits:OnCreditsOn()
 	self.wndMain:Show(true) -- show the window
-	self.wndMain:DestroyChildren()
+	self.wndCredits:DestroyChildren()
 	
 	self.tCredits = PreGameLib.GetCredits()
 	if self.tCredits == nil then
@@ -121,12 +122,12 @@ function Credits:NextCredit()
 		
 	if self.nPerson == 0 then
 		-- load up a group header
-		local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsForm:GroupHeader", self.wndMain, self)
+		local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsHolder:CreditsForm:GroupHeader", self.wndCredits, self)
 		wnd:SetText(tGroup.strGroupName)
 		local tGroupClient = wnd:GetClientRect()
 		
 		local tLocBegin = {fPoints={0,0,1,0}, nOffsets={0, tMainClient.nHeight, 0, tMainClient.nHeight + tGroupClient.nHeight}}
-		local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -300, 0, -300 + tGroupClient.nHeight}}
+		local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -500, 0, -500 + tGroupClient.nHeight}}
 
 		local locBegin = WindowLocation.new(tLocBegin)
 		local locEnd = WindowLocation.new(tLocEnd)
@@ -150,7 +151,7 @@ function Credits:NextCredit()
 		return
 	else
 		if tCredit.strImage ~= "" then
-			local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsForm:ImageHolder", self.wndMain, self)
+			local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsHolder:CreditsForm:ImageHolder", self.wndCredits, self)
 			
 			if tCredit.strImage == "CarbineLogo" then
 				wnd:FindChild("ImageCarbineLogo"):Show(true)
@@ -164,7 +165,7 @@ function Credits:NextCredit()
 			local tImageClient = wnd:GetClientRect()
 			
 			local tLocBegin = {fPoints={0,0,1,0}, nOffsets={0, tMainClient.nHeight, 0, tMainClient.nHeight + tImageClient .nHeight}}
-			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -300, 0, -300 + tImageClient .nHeight}}
+			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -500, 0, -500 + tImageClient.nHeight}}
 	
 			local locBegin = WindowLocation.new(tLocBegin)
 			local locEnd = WindowLocation.new(tLocEnd)
@@ -179,13 +180,13 @@ function Credits:NextCredit()
 			self.tWindows[wnd:GetId()] = wnd
 			return
 		else
-			local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsForm:Person", self.wndMain, self)
+			local wnd = Apollo.LoadForm(self.xmlDoc, "CreditsHolder:CreditsForm:Person", self.wndCredits, self)
 			local wndName = wnd:FindChild("Name")
 			wndName:SetText(tCredit.strPersonName)
 			local nMaxHeight = wndName:GetLocation():ToTable().nOffsets[4]
 			for idx,strTitle in ipairs(tCredit.arTitles) do
 				local wndTitle = wnd:FindChild("Title"..tostring(idx))
-				if wndTitle ~= nil then
+				if wndTitle ~= nil and (idx <= 1 or string.len(strTitle) > 0) then
 					wndTitle:SetText(strTitle)
 					nMaxHeight = wndTitle:GetLocation():ToTable().nOffsets[4]
 				end
@@ -193,7 +194,7 @@ function Credits:NextCredit()
 			
 			nMaxHeight = nMaxHeight + 2
 			local tLocBegin = {fPoints={0,0,1,0}, nOffsets={0, tMainClient.nHeight, 0, tMainClient.nHeight + nMaxHeight}}
-			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -300, 0, -300 + nMaxHeight}}
+			local tLocEnd = {fPoints={0,0,1,0}, nOffsets={0, -500, 0, -500 + nMaxHeight}}
 	
 			local locBegin = WindowLocation.new(tLocBegin)
 			local locEnd = WindowLocation.new(tLocEnd)

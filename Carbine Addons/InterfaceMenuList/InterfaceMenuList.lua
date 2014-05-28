@@ -8,7 +8,7 @@ require "GameLib"
 require "Apollo"
 
 local InterfaceMenuList = {}
-local knVersion = 1
+local knVersion = 2
 
 function InterfaceMenuList:new(o)
     o = o or {}

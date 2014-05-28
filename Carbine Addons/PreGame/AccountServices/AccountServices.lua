@@ -41,6 +41,18 @@ local ktRealmTransferResults =
 	[PreGameLib.CodeEnumCharacterModifyResults.RealmTransferFailed_Money]				=	"AccountServices_Error_TooMuchMoney",
 }
 
+local ktCreddRedeemResults =
+{
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_NoCREDD]				=	"AccountServices_CreddError_NoCredd",
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_NoEntitlement]			=	"AccountServices_CreddError_NoEntitlement",
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_Internal]				=	"AccountServices_CreddError_Internal",
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDOk]							=	"AccountServices_TransactionCompleteCredd",
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_InvalidCREDD]			=	"AccountServices_CreddError_InvalidCredd",
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_PlatformError]			=	"AccountServices_CreddError_PlatformError",
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_PlatformPermaFail]		=	"AccountServices_CreddError_PlatformError", -- Same
+	[PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDFailed_PlatformTempFail]		=	"AccountServices_CreddError_PlatformError", -- Same
+}
+
 function AccountServices:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -58,7 +70,7 @@ function AccountServices:OnLoad()
 end
 
 function AccountServices:DebugPrint(strMessage)
-	if self.wndDebugPrint and self.wndDebugPrint:IsValid() then self.wndDebugPrint:Destroy() end
+	--if self.wndDebugPrint and self.wndDebugPrint:IsValid() then self.wndDebugPrint:Destroy() end
 	self.wndDebugPrint = Apollo.LoadForm(self.xmlDoc, "DebugPrint", "AccountServices", self)
 	self.wndDebugPrint:SetText(tostring(strMessage))
 	self.wndDebugPrint:Show(true)
@@ -71,6 +83,7 @@ function AccountServices:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("AccountItemUpdate", 				"RedrawAll", self) -- Global catch all method
 	Apollo.RegisterEventHandler("CharacterRename", 					"OnCharacterRename", self)
+	Apollo.RegisterEventHandler("CREDDRedeemResult", 				"OnCREDDRedeemResult", self)
 	Apollo.RegisterEventHandler("RealmTransferResult", 				"OnRealmTransferResult", self)
 	Apollo.RegisterEventHandler("TransferDestinationRealmList", 	"OnTransferDestinationRealmList", self)
 
@@ -110,18 +123,6 @@ end
 function AccountServices:RedrawAll()
 	self:HelperCheckTriggers()
 
-	local bLoadLapsedAccount = CharacterScreenLib.GetSubscriptionExpired()
-	if bLoadLapsedAccount then
-		self.wndBlackFill = Apollo.LoadForm(self.xmlDoc, "FullScreenBlackFill", "AccountServices", self)
-		self.wndBlackFill:Invoke()
-
-		self.wndLapsedPopup = Apollo.LoadForm(self.xmlDoc, "LapsedAccountWithCREDD", "AccountServices", self)
-		self.wndLapsedPopup:Invoke()
-
-		self.wndLapsedBlocker = Apollo.LoadForm(self.xmlDoc, "LapsedButtonBlocker", "AccountServices", self)
-		self.wndLapsedBlocker:Invoke()
-	end
-
 	-- Count Account Bound options
 	local nCreddEscrow = 0
 	local nRenameEscrow = 0
@@ -149,6 +150,24 @@ function AccountServices:RedrawAll()
 			nRenameEscrow = ePendingType == PreGameLib.CodeEnumAccountCurrency.NameChange and (nRenameEscrow + 1) or nRenameEscrow
 			nTransferEscrow = ePendingType == PreGameLib.CodeEnumAccountCurrency.RealmTransfer and (nTransferEscrow + 1) or nTransferEscrow
 		end
+	end
+
+	-- Early exit if subscription expired
+	local bLoadLapsedAccount = CharacterScreenLib.GetSubscriptionExpired()
+	if bLoadLapsedAccount then
+		self.wndBlackFill = Apollo.LoadForm(self.xmlDoc, "FullScreenBlackFill", "AccountServices", self)
+		self.wndBlackFill:Invoke()
+
+		self.wndLapsedBlocker = Apollo.LoadForm(self.xmlDoc, "LapsedButtonBlocker", "AccountServices", self)
+		self.wndLapsedBlocker:Invoke()
+
+		self.wndLapsedPopup = Apollo.LoadForm(self.xmlDoc, "LapsedAccountWithCREDD", "AccountServices", self)
+		self.wndLapsedPopup:Invoke()
+
+		local bHaveCredd = nCreddBound > 0 or nCreddEscrow > 0
+		self.wndLapsedPopup:FindChild("LapsedSubtitleHaveCREDD"):Show(bHaveCredd)
+		self.wndLapsedPopup:FindChild("LapsedSubtitleNoCREDD"):Show(not bHaveCredd)
+		self.wndLapsedPopup:FindChild("LapsedStartRedeemBtn"):Enable(bHaveCredd)
 	end
 
 	-- Initialize if > 0
@@ -241,6 +260,27 @@ function AccountServices:OnHideMainPicker(wndHandler, wndControl)
 end
 
 -----------------------------------------------------------------------------------------------
+-- Lapsed Account
+-----------------------------------------------------------------------------------------------
+
+function AccountServices:OnLapsedExitToLogin(wndHandler, wndControl)
+	CharacterScreenLib.ExitToLogin()
+end
+
+function AccountServices:OnLapsedStartRedeemBtn(wndHandler, wndControl)
+	local bUsingEscrow = self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):IsChecked()
+	local tEscrowData, bGiftableGroup = self:HelperDeterminePayment(bUsingEscrow, PreGameLib.CodeEnumAccountCurrency.CREDD)
+
+	if AccountItemLib.GetAccountCurrency(PreGameLib.CodeEnumAccountCurrency.CREDD) > 0 then
+		AccountItemLib.RedeemCREDD()
+	elseif bGiftableGroup then
+		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnCredd })
+	else
+		self:ShowCreddRedemptionConfirmation(tEscrowData)
+	end
+end
+
+-----------------------------------------------------------------------------------------------
 -- Credd
 -----------------------------------------------------------------------------------------------
 
@@ -270,8 +310,7 @@ function AccountServices:OnCreddConfirmBtn(wndHandler, wndControl)
 	local tEscrowData, bGiftableGroup = self:HelperDeterminePayment(bUsingEscrow, PreGameLib.CodeEnumAccountCurrency.CREDD)
 
 	if bGiftableGroup then
-		local wndGroupBindConfirm = self:ShowGroupBindConfirmation(tEscrowData)
-		wndGroupBindConfirm:SetData({ eType = keFireOnCredd })
+		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnCredd })
 	else
 		self:ShowCreddRedemptionConfirmation(tEscrowData)
 	end
@@ -284,17 +323,20 @@ function AccountServices:ShowCreddRedemptionConfirmation(tEscrowData)
 		self.wndCreddConfirm:Destroy()
 	end
 
-	if self.wndLapsedPopup and self.wndLapsedPopup:IsValid() then
-		self.wndLapsedPopup:Destroy()
-	end
-
 	-- The actual confirmation button will need to be protected
 	self.wndCreddConfirm = Apollo.LoadForm(self.xmlDoc, "RedeemCREDDConfirmation", "AccountServices", self)
 	self.wndCreddConfirm:FindChild("RedeemCREDDYesBtn"):SetData(tEscrowData and tEscrowData.index)
 	self.wndCreddConfirm:Invoke()
 end
 
-function AccountServices:OnRedeemCREDDYesBtn(wndHandler, wndControl)
+function AccountServices:OnRedeemCREDDYesBtn(wndHandler, wndControl) -- Note Lapsed account may skip this step if it can just bind right away
+	if self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):IsChecked() then
+		AccountItemLib.ClaimPendingSingleItem(wndHandler:GetData()) -- HelperCatchTriggers will catch the event, detect a non nil self.bFireCreddOnUpdate, then call Redeem
+		self.bFireCreddOnUpdate = true
+	else
+		AccountItemLib.RedeemCREDD()
+	end
+
 	if self.wndBlackFill and self.wndBlackFill:IsValid() then
 		self.wndBlackFill:Destroy()
 	end
@@ -309,14 +351,6 @@ function AccountServices:OnRedeemCREDDYesBtn(wndHandler, wndControl)
 
 	if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
 		self.wndCreddConfirm:Destroy()
-	end
-
-	if self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):IsChecked() then
-		local nEscrowIndex = wndHandler:GetData()
-		AccountItemLib.ClaimPendingSingleItem(nEscrowIndex) -- HelperCatchTriggers will catch the event, detect a non nil self.bFireCreddOnUpdate, then call Redeem
-		self.bFireCreddOnUpdate = true
-	else
-		AccountItemLib.RedeemCREDD()
 	end
 end
 
@@ -375,8 +409,7 @@ function AccountServices:OnRenameConfirmBtn(wndHandler, wndControl)
 	end
 
 	if bGiftableGroup then
-		local wndGroupBindConfirm = self:ShowGroupBindConfirmation(tEscrowData)
-		wndGroupBindConfirm:SetData({ eType = keFireOnRename, strText = strText })
+		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnRename, strText = wndHandler:GetData() })
 	else
 		self:ShowRenameConfirmation(wndHandler:GetData(), tEscrowData)
 	end
@@ -408,12 +441,6 @@ end
 function AccountServices:OnRenameNoBtn(wndHandler, wndControl)
 	self.strFireRenameOnUpdate = nil
 	self.wndRenameConfirm:Destroy()
-end
-
-function AccountServices:OnCharacterRename(nRenameResult, strName)
-	if nRenameResult == PreGameLib.CodeEnumCharacterModifyResults.RenameOk and self.wndMainPicker and self.wndMainPicker:FindChild("AvailableScroll") then
-		self.wndMainPicker:FindChild("AvailableScroll"):FindChild("AvailablePaidRenameBtn"):Enable(true)
-	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -451,7 +478,7 @@ function AccountServices:OnTransferDestinationRealmList(tRealmList)
 	-- Build Grid
 	local tMyRealmInfo = CharacterScreenLib.GetRealmInfo()
 	local wndGrid = self.wndPaidTransferFlyout:IsVisible() and self.wndPaidTransferFlyout:FindChild("PaidTransferGrid") or self.wndFreeTransferFlyout:FindChild("FreeTransferGrid")
-	for idx, tCurr in pairs(tRealmList) do
+	for idxRealm, tCurr in pairs(tRealmList) do
 		if (bFree or not tCurr.bIsFree) and tMyRealmInfo.strName ~= tCurr.strName then
 			-- Strings for Cell 1,2,3 respectively
 			local strRealmType = tCurr.nRealmPVPType == PreGameLib.CodeEnumRealmPVPType.PVP and Apollo.GetString("RealmSelect_PvP") or Apollo.GetString("RealmSelect_PvE")
@@ -466,9 +493,13 @@ function AccountServices:OnTransferDestinationRealmList(tRealmList)
 
 			local wndCurrRow = HelperGridFactoryProduce(wndGrid, tCurr.nRealmId) -- GOTCHA: This is an integer
 			wndGrid:SetCellLuaData(wndCurrRow, 1, tCurr)
-			for idx, strCellString in pairs(tCellStrings) do
-				wndGrid:SetCellSortText(wndCurrRow, idx, strCellString)
-				wndGrid:SetCellDoc(wndCurrRow, idx, string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", strCellString))
+			for idxCell, strCellString in pairs(tCellStrings) do
+				local strSortText = strCellString
+				if idxCell == 1 and tCurr.nCount > 0 then
+					strSortText = (100 - tCurr.nCount) .. tCurr.strName
+				end
+				wndGrid:SetCellSortText(wndCurrRow, idxCell, strSortText)
+				wndGrid:SetCellDoc(wndCurrRow, idxCell, string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", strCellString))
 			end
 		end
 	end
@@ -619,8 +650,7 @@ function AccountServices:OnPaidTransferConfirmBtn(wndHandler, wndControl)
 	end
 
 	if bGiftableGroup then
-		local wndGroupBindConfirm = self:ShowGroupBindConfirmation(tEscrowData)
-		wndGroupBindConfirm:SetData({ eType = keFireOnPaidTransfer, nRealmId = nRealmId })
+		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnPaidTransfer, nRealmId = nRealmId, strRealm = strRealm })
 	else
 		self:ShowTransferConfirmation(bPaid, nRealmId, strRealm, tEscrowData)
 	end
@@ -646,7 +676,7 @@ function AccountServices:HelperCheckTriggers()
 	end
 
 	if self.bFireCreddOnUpdate ~= nil then
-		AccountItemLib.RedeemCredd()
+		AccountItemLib.RedeemCREDD()
 		self.bFireCreddOnUpdate = nil
 		return
 	end
@@ -704,6 +734,38 @@ function AccountServices:OnErrorMessageClose(wndHandler, wndControl)
 	end
 end
 
+function AccountServices:OnCREDDRedeemResult(eResult)
+	if self.wndErrorMessage and self.wndErrorMessage:IsValid() then
+		self.wndErrorMessage:Destroy()
+	end
+
+	local bSuccess = eResult == PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDOk
+	self.wndErrorMessage = Apollo.LoadForm(self.xmlDoc, "ErrorMessage", "AccountServices", self)
+	self.wndErrorMessage:FindChild("ErrorMessageTitle"):SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
+	self.wndErrorMessage:FindChild("ErrorMessageTitle"):SetTextColor(bSuccess and "UI_BtnTextGreenNormal" or "UI_BtnTextRedNormal")
+	self.wndErrorMessage:FindChild("ErrorMessageBody"):SetText(Apollo.GetString(ktCreddRedeemResults[eResult]))
+
+	if bSuccess then
+		if self.wndBlackFill and self.wndBlackFill:IsValid() then
+			self.wndBlackFill:Destroy()
+		end
+
+		if self.wndLapsedBlocker and self.wndLapsedBlocker:IsValid() then
+			self.wndLapsedBlocker:Destroy()
+		end
+
+		if self.wndLapsedPopup and self.wndLapsedPopup:IsValid() then
+			self.wndLapsedPopup:Destroy()
+		end
+
+		if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
+			self.wndCreddConfirm:Destroy()
+		end
+	end
+
+	self:RedrawAll()
+end
+
 function AccountServices:OnRealmTransferResult(eResult)
 	if self.wndErrorMessage and self.wndErrorMessage:IsValid() then
 		self.wndErrorMessage:Destroy()
@@ -714,17 +776,48 @@ function AccountServices:OnRealmTransferResult(eResult)
 	self.wndErrorMessage:FindChild("ErrorMessageTitle"):SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
 	self.wndErrorMessage:FindChild("ErrorMessageTitle"):SetTextColor(bSuccess and "UI_BtnTextGreenNormal" or "UI_BtnTextRedNormal")
 	self.wndErrorMessage:FindChild("ErrorMessageBody"):SetText(Apollo.GetString(ktRealmTransferResults[eResult]))
+
+	self:RedrawAll()
+end
+
+function AccountServices:OnCharacterRename(eRenameResult, strName)
+	if eRenameResult == PreGameLib.CodeEnumCharacterModifyResults.RenameOk and self.wndMainPicker and self.wndMainPicker:FindChild("AvailableScroll") then
+		self.wndMainPicker:FindChild("AvailableScroll"):FindChild("AvailablePaidRenameBtn"):Enable(true)
+	end
+
+	self:RedrawAll()
 end
 
 -----------------------------------------------------------------------------------------------
 -- Group Bind
 -----------------------------------------------------------------------------------------------
 
-function AccountServices:ShowGroupBindConfirmation(tEscrowData) -- In this case tEscrowData is a tPendingAccountItemGroup (instead of a tPendingAccountItem)
+function AccountServices:ShowGroupBindConfirmation(tEscrowData, tBindData) -- In this case tEscrowData is a tPendingAccountItemGroup (instead of a tPendingAccountItem)
 	-- The actual confirmation button will need to be protected
 	self.wndGroupBindConfirm = Apollo.LoadForm(self.xmlDoc, "GroupBindConfirmation", "AccountServices", self)
 	self.wndGroupBindConfirm:Invoke()
-	self.wndGroupBindConfirm:FindChild("GroupBindTitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_BindGroupPurchases"), #tEscrowData.items))
+
+	local strTitle = ""
+	local strMessage = ""
+	local nCurrCount = #tEscrowData.items
+	if nCurrCount == 1 and tBindData.eType == keFireOnCredd then
+		strTitle = Apollo.GetString("AccountServices_CREDD")
+		strMessage = Apollo.GetString("AccountLogin_RedeemCREDDLogin")
+	elseif nCurrCount == 1 and tBindData.eType == keFireOnRename then
+		strTitle = Apollo.GetString("CRB_Rename")
+		strMessage = PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_RenameExplanation"), tBindData.strText)
+	elseif nCurrCount == 1 and tBindData.eType == keFireOnPaidTransfer then
+		local strPayment = Apollo.GetString("AccountServices_PaidRealmTransfer") -- Only paid transfers can be in a group
+		strTitle = Apollo.GetString("AccountInventory_RealmTransfer")
+		strMessage = PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_TransferExplanation"), self.strCharacterSelectedName, tBindData.strRealm, strPayment)
+	else
+		strTitle = PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_BindGroupPurchases"), #tEscrowData.items)
+		strMessage = Apollo.GetString("AccountServices_GroupBindExplanation")
+	end
+
+	self.wndGroupBindConfirm:SetData(tBindData)
+	self.wndGroupBindConfirm:FindChild("GroupBindTitle"):SetText(strTitle)
+	self.wndGroupBindConfirm:FindChild("GroupBindExplanation"):SetText(strMessage)
 	self.wndGroupBindConfirm:FindChild("GroupBindYesBtn"):SetData(tEscrowData.index)
 	return self.wndGroupBindConfirm
 end
@@ -733,7 +826,7 @@ function AccountServices:OnGroupBindYesBtn(wndHandler, wndControl) -- In this ca
 	AccountItemLib.ClaimPendingItemGroup(wndHandler:GetData())
 
 	if self.wndGroupBindConfirm:GetData().eType == keFireOnRename then
-		self.bFireRenameOnUpdate = self.wndGroupBindConfirm:GetData().strText
+		self.strFireRenameOnUpdate = self.wndGroupBindConfirm:GetData().strText
 	elseif self.wndGroupBindConfirm:GetData().eType == keFireOnCredd then
 		self.bFireCreddOnUpdate = true
 	elseif self.wndGroupBindConfirm:GetData().eType == keFireOnPaidTransfer then
@@ -745,19 +838,6 @@ end
 
 function AccountServices:OnGroupBindNoBtn(wndHandler, wndControl)
 	self.wndGroupBindConfirm:Destroy()
-end
-
------------------------------------------------------------------------------------------------
--- Lapsed Account
------------------------------------------------------------------------------------------------
-
-function AccountServices:OnLapsedExitToLogin(wndHandler, wndControl)
-	CharacterScreenLib.ExitToLogin()
-end
-
-function AccountServices:OnLapsedStartRedeemBtn(wndHandler, wndControl)
-	-- Show the universal confirmation dialog
-	self:ShowCreddRedemptionConfirmation()
 end
 
 local AccountServicesInst = AccountServices:new()

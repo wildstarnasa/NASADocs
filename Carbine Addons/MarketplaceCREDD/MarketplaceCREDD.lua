@@ -4,6 +4,7 @@
 -----------------------------------------------------------------------------------------------
 
 require "Window"
+require "AccountItemLib"
 require "CREDDExchangeLib"
 require "CREDDExchangeOrder"
 
@@ -46,7 +47,6 @@ local ktLogTypeStrings =
 }
 
 local knMaxPlat = 9999999999 -- 9999 plat
-local kMaxPlayerCreddOrders = 20
 
 function MarketplaceCREDD:new(o)
     o = o or {}
@@ -92,6 +92,7 @@ function MarketplaceCREDD:Initialize()
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceCREDDForm", nil, self)
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceCredd_Title")})
+	Event_ShowTutorial(GameLib.CodeEnumTutorial.General_CREDD)
 
 	self.tWindowMap =
 	{
@@ -125,6 +126,8 @@ function MarketplaceCREDD:Initialize()
 		["ConfirmationBigText"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBigText"),
 		["ConfirmationTaxText"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTaxText"),
 		["ConfirmationTaxCash"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTaxCash"),
+		["ConfirmationBaseText"]				=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseText"),
+		["ConfirmationBaseCash"]				=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseCash"),
 		["PostResultNotification"]				=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification"),
 		["PostResultNotificationCheck"]			=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationCheck"),
 		["PostResultNotificationLabel"]			=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationLabel"),
@@ -170,7 +173,7 @@ function MarketplaceCREDD:OnOpenListingsBtn(wndHandler, wndControl)
 end
 
 function MarketplaceCREDD:OnOpenInventoryBtn(wndHandler, wndControl)
-	Event_FireGenericEvent("GenericEvent_OpenAccountInventory")
+	Event_FireGenericEvent("GenericEvent_ToggleAccountInventory")
 end
 
 -----------------------------------------------------------------------------------------------
@@ -201,6 +204,7 @@ function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) --
 	local tBuyOrderData = arMarketStats.arBuyOrderPrices[1]
 	local tSellOrderData = arMarketStats.arSellOrderPrices[1]
 	local bBuyTabChecked = self.tWindowMap["HeaderBuyBtn"]:IsChecked()
+	self.tWindowMap["WaitingScreen"]:Show(false)
 	self.tWindowMap["CreateSellOrderBtn"]:Show(not bBuyTabChecked)
 	self.tWindowMap["CreateSellNowBtn"]:Show(not bBuyTabChecked)
 	self.tWindowMap["CreateBuyOrderBtn"]:Show(bBuyTabChecked)
@@ -230,7 +234,6 @@ function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) --
 	-- Allow refresh btn to be clicked again
 	self.tWindowMap["RefreshMarketBtn"]:Enable(true)
 	self.tWindowMap["MoreMarketStats"]:SetData(arMarketStats) -- For OnGenerateTooltipFullStats
-	self.tWindowMap["OpenListingsBtn"]:SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_OrderLimitCount"), #arOrders, kMaxPlayerCreddOrders))
 
 	self.arOrders = arOrders
 
@@ -267,6 +270,7 @@ end
 function MarketplaceCREDD:RefreshBoundCredd()
 	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
 		local nPlayerCash = GameLib.GetPlayerCurrency():GetAmount()
+		local bBuyTabChecked = self.tWindowMap["HeaderBuyBtn"]:IsChecked()
 		local nNumBound = AccountItemLib.GetAccountCurrency(AccountItemLib.CodeEnumAccountCurrency.CREDD)
 		self.tWindowMap["HeaderSellCount"]:Show(nNumBound > 0)
 		self.tWindowMap["HeaderSellCount"]:SetText(nNumBound > 0 and nNumBound or "")
@@ -274,14 +278,14 @@ function MarketplaceCREDD:RefreshBoundCredd()
 
 		-- Enable/Disable Btns
 		local nNowAmount = self.tWindowMap["ActNowPrice"]:GetAmount()
-		self.tWindowMap["ActNowNoCashIcon"]:Show(nNowAmount > nPlayerCash)
-		self.tWindowMap["CreateSellNowBtn"]:Enable(nNowAmount <= nPlayerCash and nNowAmount > 0 and nNumBound > 0)
-		self.tWindowMap["CreateBuyNowBtn"]:Enable(nNowAmount <= nPlayerCash and nNowAmount > 0)
+		self.tWindowMap["ActNowNoCashIcon"]:Show(bBuyTabChecked and nNowAmount > nPlayerCash)
+		self.tWindowMap["CreateBuyNowBtn"]:Enable(bBuyTabChecked and nNowAmount <= nPlayerCash and nNowAmount > 0)
+		self.tWindowMap["CreateSellNowBtn"]:Enable(nNowAmount > 0 and nNumBound > 0)
 
 		local nLaterAmount = self.tWindowMap["ActLaterPrice"]:GetAmount()
-		self.tWindowMap["ActLaterNoCashIcon"]:Show(nLaterAmount > nPlayerCash)
-		self.tWindowMap["CreateSellOrderBtn"]:Enable(nLaterAmount <= nPlayerCash and nLaterAmount > 0 and nNumBound > 0)
-		self.tWindowMap["CreateBuyOrderBtn"]:Enable(nLaterAmount <= nPlayerCash and nLaterAmount > 0)
+		self.tWindowMap["ActLaterNoCashIcon"]:Show(bBuyTabChecked and nLaterAmount > nPlayerCash)
+		self.tWindowMap["CreateBuyOrderBtn"]:Enable(bBuyTabChecked and nLaterAmount <= nPlayerCash and nLaterAmount > 0)
+		self.tWindowMap["CreateSellOrderBtn"]:Enable(nLaterAmount > 0 and nNumBound > 0)
 	end
 end
 
@@ -380,8 +384,13 @@ function MarketplaceCREDD:OnCreddTransactionBtn(wndHandler, wndControl, eMouseBu
 	local nCurrAmount = wndCurrAmount:GetAmount()
 	self.tWindowMap["ConfirmationTaxText"]:Show(bBuy)
 	self.tWindowMap["ConfirmationTaxCash"]:Show(bBuy)
+	self.tWindowMap["ConfirmationBaseText"]:Show(bBuy)
+	self.tWindowMap["ConfirmationBaseCash"]:Show(bBuy)
+
 	self.tWindowMap["ConfirmationTaxCash"]:SetAmount(nCurrAmount * 0.05)
+	self.tWindowMap["ConfirmationBaseCash"]:SetAmount(nCurrAmount)
 	self.tWindowMap["ConfirmationBigCash"]:SetAmount(bBuy and (nCurrAmount * 1.05) or nCurrAmount)
+	
 	self.tWindowMap["ConfirmationBigText"]:SetText(strBigText)
 	self.tWindowMap["ConfirmationYesBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.CREDDExchangeSubmit, bBuy, wndCurrAmount:GetCurrency(), bNow)
 end
@@ -420,11 +429,21 @@ function MarketplaceCREDD:OnCREDDOperationHistoryResults(tHistory)
 		return
 	end
 
+	-- Sort table
+	table.sort(tHistory, function(a,b) return a.nLogAge < b.nLogAge end)
+
 	self.tWindowMap["LogScroll"]:DestroyChildren()
 	for idx, tEntry in pairs(tHistory) do
 		local wndEntry = Apollo.LoadForm(self.xmlDoc, "LogEntryBasicForm", self.tWindowMap["LogScroll"], self)
 		wndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntry.eOperation] or ""))
 		wndEntry:FindChild("LogTimeStamp"):SetText(self:HelperLogConvertToTimeString(tEntry.nLogAge))
+
+		if tEntry.monAmount and tEntry.monAmount:GetAmount() > 0 then
+			local nLeft, nTop, nRight, nBottom = wndEntry:GetAnchorOffsets()
+			wndEntry:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 50)
+			wndEntry:FindChild("LogCashWindow"):Show(true)
+			wndEntry:FindChild("LogCashWindow"):SetAmount(tEntry.monAmount)
+		end
 	end
 
 	if #self.tWindowMap["LogScroll"]:GetChildren() == 0 then
