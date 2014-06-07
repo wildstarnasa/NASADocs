@@ -82,6 +82,7 @@ function AccountServices:OnDocumentReady()
 	end
 
 	Apollo.RegisterEventHandler("AccountItemUpdate", 				"RedrawAll", self) -- Global catch all method
+	Apollo.RegisterEventHandler("SubscriptionExpired",				"RedrawAll", self)
 	Apollo.RegisterEventHandler("CharacterRename", 					"OnCharacterRename", self)
 	Apollo.RegisterEventHandler("CREDDRedeemResult", 				"OnCREDDRedeemResult", self)
 	Apollo.RegisterEventHandler("RealmTransferResult", 				"OnRealmTransferResult", self)
@@ -201,6 +202,9 @@ function AccountServices:RedrawAll()
 		wndMainPickerButtonList:FindChild("AvailablePaidRenameBtn"):Enable(not self.bCharacterRequiresRename)
 
 		wndMainPickerButtonList:ArrangeChildrenVert(0)
+	else
+		self.wndMain:Close()
+		self.wndMinimized:Close()
 	end
 end
 

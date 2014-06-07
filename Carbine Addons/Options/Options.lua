@@ -1081,11 +1081,7 @@ function OptionsAddon:FillDisplayList()
 		if tMode.vec.x == exclusiveDisplayMode.x and tMode.vec.y == exclusiveDisplayMode.y and tMode.vec.z == exclusiveDisplayMode.z then
 			nSel = i
 		end
-		local str = ""
-		if tMode.bCurrent then
-			self.tPrevExcRes = tMode
-		end
-		str = str .. tMode.strDisplay
+		local str = tMode.strDisplay
 		self.wndVideo:FindChild("ResolutionParent"):FindChild("Resolution"):AddRow(str, "", tMode)
 	end
 	self.bValidResolution = (nSel > 0)
@@ -1260,6 +1256,7 @@ function OptionsAddon:OnResolutionSelChanged(wndHandler, wndControl, nRow)
 	end
 	self.wndVideo:FindChild("ResolutionParent"):Show(false)
 	self.wndVideo:FindChild("DropToggleExclusive"):SetText(tMode.strDisplay)
+	self.tPrevExcRes = Apollo.GetConsoleVariable("video.exclusiveDisplayMode")
 	Apollo.SetConsoleVariable("video.exclusiveDisplayMode", tMode.vec)
 
 	if Apollo.GetConsoleVariable("video.fullscreen") == true and Apollo.GetConsoleVariable("video.exclusive") == true then
@@ -1282,8 +1279,8 @@ function OptionsAddon:OnResExChangedTimer()
 		self.wndVideoConfirm:Show(false)
 
 		if self.tPrevExcRes ~= nil then
-			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.strDisplay)
-			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes.vec)
+			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.x .."x".. self.tPrevExcRes.y .."@".. self.tPrevExcRes.z)
+			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes)
 			self.tPrevExcRes = nil
 		end
 	end
@@ -1408,8 +1405,8 @@ function OptionsAddon:OnChangeCancelBtn(wndHandler, wndControl)
 		end
 	else -- res exc
 		if self.tPrevExcRes ~= nil then
-			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.strDisplay)
-			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes.vec)
+			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.x .."x".. self.tPrevExcRes.y .."@".. self.tPrevExcRes.z)
+			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes)
 			self.tPrevExcRes = nil
 		end
 	end
@@ -1488,6 +1485,9 @@ function OptionsAddon:OnRestoreDefaults()
 		end
 	end
 	self:OnOptionsCheck()
+	
+	self.wndVideo:FindChild("RefreshAnimation"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+
 end
 
 function OptionsAddon:OnCheckCombatMusicFlair( wndHandler, wndControl, eMouseButton )

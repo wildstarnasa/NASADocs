@@ -363,8 +363,6 @@ function Nameplates:UpdateNameplateRewardInfo(tNameplate)
 	
 	if RewardIcons ~= nil and RewardIcons.GetUnitRewardIconsForm ~= nil then
 		RewardIcons.GetUnitRewardIconsForm(tNameplate.wnd.questRewards, tNameplate.unitOwner, tFlags)
-	else
-		Print("adsfasdf")
 	end
 end
 
@@ -375,6 +373,7 @@ function Nameplates:UpdateAllNameplateVisibility()
 end
 
 function Nameplates:UpdateNameplateVisibility(tNameplate)
+	tNameplate.eDisposition = tNameplate.unitOwner:GetDispositionTo(self.unitPlayer)
 	local bNewShow = self:HelperVerifyVisibilityOptions(tNameplate) and self:CheckDrawDistance(tNameplate)
 	if bNewShow ~= tNameplate.bShow then
 		tNameplate.wndNameplate:Show(bNewShow)
@@ -405,7 +404,7 @@ function Nameplates:OnUnitCreated(unitNew) -- build main options here
 	
 	if wnd == nil or not wnd:IsValid() then
 		wnd = Apollo.LoadForm(self.xmlDoc, "NameplateNew", "InWorldHudStratum", self)
-		wndReferences  = nil
+		wndReferences = nil
 	end
 	
 	wnd:Show(false, true)
@@ -439,10 +438,10 @@ function Nameplates:OnUnitCreated(unitNew) -- build main options here
 			vulnerable = wnd:FindChild("Container:Vulnerable"),
 			level = wnd:FindChild("Container:Health:Level"),
 			guild = wnd:FindChild("Guild"),
-			name = wnd:FindChild("Name"),
-			certainDeath = wnd:FindChild("CertainDeath"),
+			name = wnd:FindChild("NameRewardContainer:Name"),
+			certainDeath = wnd:FindChild("TargetAndDeathContainer:CertainDeath"),
 			targetScalingMark = wnd:FindChild("TargetScalingMark"),
-			nameRewardContainer = wnd:FindChild("NameRewardContainer"),
+			nameRewardContainer = wnd:FindChild("NameRewardContainer:RewardContainer"),
 			healthMaxShield = wnd:FindChild("Container:Health:HealthBars:MaxShield"),
 			healthShieldFill = wnd:FindChild("Container:Health:HealthBars:MaxShield:ShieldFill"),
 			healthMaxAbsorb = wnd:FindChild("Container:Health:HealthBars:MaxAbsorb"),
@@ -452,8 +451,8 @@ function Nameplates:OnUnitCreated(unitNew) -- build main options here
 			castBarLabel = wnd:FindChild("Container:CastBar:Label"),
 			castBarCastFill = wnd:FindChild("Container:CastBar:CastFill"),
 			vulnerableVulnFill = wnd:FindChild("Container:Vulnerable:VulnFill"),
-			questRewards = wnd:FindChild("NameRewardContainer:QuestRewards"),
-			targetMarkerArrow = wnd:FindChild("TargetMarkerArrow"),
+			questRewards = wnd:FindChild("NameRewardContainer:RewardContainer:QuestRewards"),
+			targetMarkerArrow = wnd:FindChild("TargetAndDeathContainer:TargetMarkerArrow"),
 			targetMarker = wnd:FindChild("Container:TargetMarker"),
 		}
 	end
@@ -504,8 +503,6 @@ function Nameplates:DrawNameplate(tNameplate)
 	local unitPlayer = self.unitPlayer
 	local unitOwner = tNameplate.unitOwner
 	local wndNameplate = tNameplate.wndNameplate
-
-	tNameplate.eDisposition = unitOwner:GetDispositionTo(unitPlayer)
 	
 	if unitOwner:IsMounted() and wndNameplate:GetUnit() == unitOwner then
 		wndNameplate:SetUnit(unitOwner:GetUnitMount(), 1)
@@ -596,29 +593,33 @@ function Nameplates:DrawName(tNameplate)
 		bShow = self.bShowNameTarget
 	end
 	
-	wndName:Show(bShow)
+	if wndName:IsShown() ~= bShow then
+		wndName:Show(bShow)
+	end
 	if bShow then
-		local strNewName = unitOwner:GetName()
+		local strNewName
 		if self.bShowTitle then
 			strNewName = unitOwner:GetTitleOrName()
+		else
+			strNewName = unitOwner:GetName()
 		end
 		
-		if strNewName == wndName:GetText() then
-			return
+		if wndName:GetText() ~= strNewName then
+			local wndNameRewardContainer = tNameplate.wnd.nameRewardContainer
+			local nNameWidth = Apollo.GetTextWidth("Nameplates", strNewName)
+			local nHalfNameWidth = math.ceil(nNameWidth / 2)
+			
+			-- Rewards also depend on name
+			local nLeft, nTop, nRight, nBottom = wndNameRewardContainer:GetAnchorOffsets()
+			wndNameRewardContainer:SetAnchorOffsets(nHalfNameWidth, nTop, nHalfNameWidth + wndNameRewardContainer:ArrangeChildrenHorz(0), nBottom)
+			
+			-- Resize Name
+			nLeft, nTop, nRight, nBottom = wndName:GetAnchorOffsets()
+			wndName:SetAnchorOffsets(-nHalfNameWidth - 15, nTop, nHalfNameWidth + 15, nBottom)
+			wndName:SetText(strNewName)
 		end
-	
-		local wndNameRewardContainer = tNameplate.wnd.nameRewardContainer
-		local nNameWidth = Apollo.GetTextWidth("Nameplates", strNewName)
-		local nHalfNameWidth = math.ceil(nNameWidth / 2)
 		
-		-- Rewards also depend on name
-		local nLeft, nTop, nRight, nBottom = wndNameRewardContainer:GetAnchorOffsets()
-		wndNameRewardContainer:SetAnchorOffsets(nHalfNameWidth, nTop, nHalfNameWidth + wndNameRewardContainer:ArrangeChildrenHorz(0), nBottom)
 		
-		-- Resize Name
-		nLeft, nTop, nRight, nBottom = wndName:GetAnchorOffsets()
-		wndName:SetAnchorOffsets(-nHalfNameWidth, nTop, nHalfNameWidth, nBottom)
-		wndName:SetText(strNewName)
 	end
 end
 
@@ -633,40 +634,24 @@ function Nameplates:DrawGuild(tNameplate)
 		bShow = self.bShowGuildNameTarget
 	end
 	
-	if wndGuild:IsShown() ~= bShow then
-		bResetOffsets = true
-		wndGuild:Show(bShow)
-		
-		local strNewGuild = unitOwner:GetAffiliationName()
-		if unitOwner:GetType() == "Player" and strAffiliationName ~= nil and strAffiliationName ~= "" then
-			strNewGuild = String_GetWeaselString(Apollo.GetString("Nameplates_GuildDisplay"), strAffiliationName)
-		end
-		
-		if strNewGuild == wndGuild:GetText() then
-			return
-		end
-		
-		local nGuildWidth = Apollo.GetTextWidth("CRB_Interface9_BBO", strNewGuild)
-		local nHalfGuildWidth = math.ceil(nGuildWidth / 2)
-		
-		local nGuildLeft, nGuildTop, nGuildRight, nGuildBottom = wndGuild:GetAnchorOffsets()
-		wndGuild:SetAnchorOffsets(-nHalfGuildWidth, nGuildTop, nHalfGuildWidth, nGuildBottom)
+	local strNewGuild = unitOwner:GetAffiliationName()
+	if unitOwner:GetType() == "Player" and strNewGuild ~= nil and strNewGuild ~= "" then
+		strNewGuild = String_GetWeaselString(Apollo.GetString("Nameplates_GuildDisplay"), strNewGuild)
+	end
+	
+	if strNewGuild ~= wndGuild:GetText() then
 		wndGuild:SetTextRaw(strNewGuild)
-		
-		-- Resize name window to make room for guild
-		local wndName = tNameplate.wnd.name
-		local nNameLeft, nNameTop, nNameRight, nNameBottom = wndName:GetAnchorOffsets()
-		
-		if bShow and strNewGuild ~= nil and strNewGuild ~= "" then
-			wndName:SetAnchorOffsets(nNameLeft, nGuildTop-wndGuild:GetHeight(), nNameRight, nGuildTop)
-		else
-			wndName:SetAnchorOffsets(nNameLeft, nGuildTop, nNameRight, nGuildBottom)
-		end
+	end
+	
+	local bShow = bShow and strNewGuild ~= nil and strNewGuild ~= ""
+	
+	if wndGuild:IsShown() ~= bShow then
+		wndGuild:Show(bShow)
+		wndNameplate:ArrangeChildrenVert(2)
 	end
 end
 
 function Nameplates:DrawLevel(tNameplate)
-	local wndNameplate = tNameplate.wndNameplate
 	local unitOwner = tNameplate.unitOwner
 	
 	tNameplate.wnd.level:SetText(unitOwner:GetLevel() or "-")
@@ -824,7 +809,7 @@ function Nameplates:HelperVerifyVisibilityOptions(tNameplate)
 	local unitPlayer = self.unitPlayer
 	local unitOwner = tNameplate.unitOwner
 	local eDisposition = tNameplate.eDisposition
-
+	
 	local bHiddenUnit = not unitOwner:ShouldShowNamePlate()
 	if bHiddenUnit and not tNameplate.bIsTarget then
 		return false
@@ -834,10 +819,10 @@ function Nameplates:HelperVerifyVisibilityOptions(tNameplate)
 		return false
 	end
 	
-	if tNameplate.bGibbed then
+	if tNameplate.bGibbed or tNameplate.bSpeechBubble then
 		return false
 	end
-
+	
 	local bShowNameplate = false
 	
 	if self.bShowMainObjectiveOnly and tNameplate.bIsObjective then
@@ -1059,29 +1044,30 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Nameplates:OnNameplateNameClick(wndHandler, wndCtrl, eMouseButton)
-	local idUnit = wndHandler:GetId()
-	if self.arWnd2Nameplate[idUnit] == nil then
+	local tNameplate = self.arWnd2Nameplate[wndHandler:GetId()]
+	if tNameplate == nil then
 		return
 	end
 	
-	local unitOwner = self.arWnd2Nameplate[idUnit].unitOwner
+	local unitOwner = tNameplate.unitOwner
 	if GameLib.GetTargetUnit() ~= unitOwner and eMouseButton == GameLib.CodeEnumInputMouse.Left then
 		GameLib.SetTargetUnit(unitOwner)
 	end
 end
 
 function Nameplates:OnWorldLocationOnScreen(wndHandler, wndControl, bOnScreen)
-	local idUnit = wndHandler:GetId()
-	if self.arWnd2Nameplate[idUnit] ~= nil then
-		self.arWnd2Nameplate[idUnit].bOnScreen = bOnScreen
+	local tNameplate = self.arWnd2Nameplate[wndHandler:GetId()]
+	if tNameplate ~= nil then
+		tNameplate.bOnScreen = bOnScreen
+		self:UpdateNameplateVisibility(tNameplate)
 	end
 end
 
 function Nameplates:OnUnitOcclusionChanged(wndHandler, wndControl, bOccluded)
-	local idUnit = wndHandler:GetId()
-	if self.arWnd2Nameplate[idUnit] ~= nil then
-		self.arWnd2Nameplate[idUnit].bOccluded = bOccluded
-		self:UpdateNameplateVisibility(self.arWnd2Nameplate[idUnit])
+	local tNameplate = self.arWnd2Nameplate[wndHandler:GetId()]
+	if tNameplate ~= nil then
+		tNameplate.bOccluded = bOccluded
+		self:UpdateNameplateVisibility(tNameplate)
 	end
 end
 
@@ -1089,10 +1075,11 @@ end
 -- System Events
 -----------------------------------------------------------------------------------------------
 
-function Nameplates:OnUnitTextBubbleToggled(tUnitArg, strText)
-	local idUnit = tUnitArg:GetId()
-	if self.arUnit2Nameplate[idUnit] ~= nil then
-		self.arUnit2Nameplate[idUnit].bSpeechBubble = strText and strText ~= ""
+function Nameplates:OnUnitTextBubbleToggled(tUnitArg, strText, nRange)
+	local tNameplate = self.arUnit2Nameplate[tUnitArg:GetId()]
+	if tNameplate ~= nil then
+		tNameplate.bSpeechBubble = strText ~= nil and strText ~= ""
+		self:UpdateNameplateVisibility(tNameplate)
 	end
 end
 
@@ -1176,15 +1163,18 @@ end
 
 function Nameplates:OnTargetUnitChanged(unitOwner) -- build targeted options here; we get this event when a creature attacks, too
 	for idx, tNameplateOther in pairs(self.arUnit2Nameplate) do
-		if tNameplateOther.bIsTarget or tNameplateOther.bIsCluster then
+		local bIsTarget = tNameplateOther.bIsTarget
+		local bIsCluster = tNameplateOther.bIsCluster
+		
+		tNameplateOther.bIsTarget = false
+		tNameplateOther.bIsCluster = false
+		
+		if bIsTarget or bIsCluster then
 			self:DrawName(tNameplateOther)
 			self:DrawGuild(tNameplateOther)
 			self:DrawLevel(tNameplateOther)
 			self:UpdateNameplateRewardInfo(tNameplateOther)
 		end
-	
-		tNameplateOther.bIsTarget = false
-		tNameplateOther.bIsCluster = false
 	end
 	
 	if unitOwner == nil then
