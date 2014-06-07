@@ -1196,9 +1196,11 @@ function QuestTracker:OnGenericEvent_ChallengeTrackerToggled(bVisible)
 	end
 
 	self.bChallengeVisible = bVisible
+	local nTopOffset =  bVisible and self.nTop+knChallngeOffset or self.nTop
+	local nBottomOffset = self.bMaximized and self.nBottom - self.nDatachronShift or self.nBottom
 	
 	if not self.bHasMoved then
-		self.wndMain:SetAnchorOffsets(self.nLeft, bVisible and self.nTop+knChallngeOffset or self.nTop, self.nRight, self.nBottom)
+		self.wndMain:SetAnchorOffsets(self.nLeft, nTopOffset, self.nRight, nBottomOffset)
 	end
 	
 	self:RedrawAll()
