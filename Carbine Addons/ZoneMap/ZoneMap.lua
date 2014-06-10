@@ -756,6 +756,7 @@ end
 
 function ZoneMap:OnOptionsUpdated()
 	self.bQuestTrackerByDistance = g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or false
+	self:OnQuestStateChanged()
 end
 
 function ZoneMap:ToggleWindow()

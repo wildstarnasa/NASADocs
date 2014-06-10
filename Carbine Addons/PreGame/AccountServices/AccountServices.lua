@@ -83,6 +83,8 @@ function AccountServices:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("AccountItemUpdate", 				"RedrawAll", self) -- Global catch all method
 	Apollo.RegisterEventHandler("SubscriptionExpired",				"RedrawAll", self)
+	Apollo.RegisterEventHandler("CharacterList", 					"RedrawAll", self) -- Main most reliable method to RedrawAll
+
 	Apollo.RegisterEventHandler("CharacterRename", 					"OnCharacterRename", self)
 	Apollo.RegisterEventHandler("CREDDRedeemResult", 				"OnCREDDRedeemResult", self)
 	Apollo.RegisterEventHandler("RealmTransferResult", 				"OnRealmTransferResult", self)
@@ -110,8 +112,6 @@ function AccountServices:OnDocumentReady()
 	self.wndTransferConfirm = nil
 	self.wndGroupBindConfirm = nil
 
-	self:RedrawAll() -- We need to call this on start up and with AccountItemUpdate, so it'll draw no matter what
-
 	self.bFireCreddOnUpdate = nil
 	self.strFireRenameOnUpdate = nil
 	self.nFirePaidTransferOnUpdate = nil
@@ -119,6 +119,8 @@ function AccountServices:OnDocumentReady()
 	self.nCharacterSelectedId = 0
 	self.strCharacterSelectedName = nil
 	self.bCharacterRequiresRename = false
+	
+	self:RedrawAll() -- We need to call this on start up and with AccountItemUpdate, so it'll draw no matter what
 end
 
 function AccountServices:RedrawAll()
@@ -172,9 +174,10 @@ function AccountServices:RedrawAll()
 	end
 
 	-- Initialize if > 0
+	local bHaveCharacters = g_arCharacters and #g_arCharacters > 0
 	local tMyRealmInfo = CharacterScreenLib.GetRealmInfo()
 	local bCanFreeRealmTransfer = tMyRealmInfo and tMyRealmInfo.bFreeRealmTransfer or nil
-	if bCanFreeRealmTransfer or math.max(nCreddBound, nCreddEscrow, nRenameBound, nRenameEscrow, nTransferBound, nTransferEscrow) > 0 then
+	if bHaveCharacters and (bCanFreeRealmTransfer or math.max(nCreddBound, nCreddEscrow, nRenameBound, nRenameEscrow, nTransferBound, nTransferEscrow) > 0) then
 		local bDefaultMinimized = false -- TODO, Console Variable or saved setting
 		self.wndMain:Show(not bDefaultMinimized, true)
 		self.wndMinimized:Show(bDefaultMinimized, true)
