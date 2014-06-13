@@ -373,8 +373,11 @@ function Nameplates:UpdateAllNameplateVisibility()
 end
 
 function Nameplates:UpdateNameplateVisibility(tNameplate)
+<<<<<<< HEAD
 	tNameplate.bOnScreen = tNameplate.wndNameplate:IsOnScreen()
 	tNameplate.bOccluded = tNameplate.wndNameplate:IsOccluded()
+=======
+>>>>>>> origin/master
 	tNameplate.eDisposition = tNameplate.unitOwner:GetDispositionTo(self.unitPlayer)
 	local bNewShow = self:HelperVerifyVisibilityOptions(tNameplate) and self:CheckDrawDistance(tNameplate)
 	if bNewShow ~= tNameplate.bShow then
