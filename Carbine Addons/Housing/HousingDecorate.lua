@@ -846,12 +846,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingDecorate:OnMyResidenceDecorChanged(eDecorType, nOldItemHandle, nNewItemHandle)
-	-- we don't need to do anything on decorations (and since they are numerous messages, bail!)
-	if eDecorType == kDecorType_HookDecor or eDecorType == kDecorType_FreePlaceDecor then
-		return
-	end
-	
-	if not self.wndDecorate:IsVisible() then
+	if not self.wndDecorate:IsVisible() and self.wndDecorMsgFrame == nil then
 		return
 	end
 

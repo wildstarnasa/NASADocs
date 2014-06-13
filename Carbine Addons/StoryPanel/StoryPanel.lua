@@ -10,10 +10,10 @@ require "DialogResponse"
 require "GameLib"
 
 local StoryPanel = {}
-local kcrAlertColor = "ffffeba4"
-local kcrInfoColor = "ffffffff"
-local kstrAlertFont = "CRB_HeaderLarge"
-local kstrInfoFont = "CRB_HeaderLarge"
+local kcrAlertColor = "UI_BtnTextRedNormal"
+local kcrInfoColor = "UI_TextHoloTitle"
+local kstrAlertFont = "CRB_HeaderMedium"
+local kstrInfoFont = "CRB_HeaderMedium"
 
 function StoryPanel:new(o)
 	o = o or {}
@@ -56,6 +56,7 @@ function StoryPanel:OnDocumentReady()
 		tCurr.wndStory:Close()
 		tCurr.wndStory:Show(false)
 	end
+	
 end
 
 function StoryPanel:OnStoryShow(eWindowType, tLines, nDisplayLength)
@@ -70,7 +71,7 @@ function StoryPanel:OnStoryShow(eWindowType, tLines, nDisplayLength)
 	
 	local oTimer = ApolloTimer.Create(nDisplayLength, false, (self.tVariants[eWindowType] and self.tVariants[eWindowType].strCallback or "HideStoryPanel"), self)
 	wndCurr:SetData(oTimer)
-	
+
 	-- Text if there is text
 	local wndStoryPanelText = wndCurr:FindChild("StoryPanelText")
 	if wndStoryPanelText then
@@ -83,9 +84,9 @@ function StoryPanel:OnStoryShow(eWindowType, tLines, nDisplayLength)
 				if eWindowType == GameLib.CodeEnumStoryPanel.Urgent then
 					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrAlertFont, kcrAlertColor, strCurr)
 				elseif eWindowType == GameLib.CodeEnumStoryPanel.Informational then
-					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"UI_WindowTitleYellow\">%s</P>", strAMLText, kstrInfoFont, strCurr)
+					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrInfoFont, kcrInfoColor, strCurr)
 				else
-					strAMLText = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_WindowTitleYellow\">%s</P>", strAMLText, strCurr)
+					strAMLText = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</P>", strAMLText, kcrInfoColor, strCurr)
 				end
 			end
 		end
@@ -167,11 +168,16 @@ end
 
 function StoryPanel:OnStoryPanelMouseExit(wndHandler, wndControl, nX, nY)
 	if wndHandler == wndControl and wndHandler:FindChild("ClosePrompt") then
-		wndHandler:FindChild("ClosePrompt"):Close()
+		wndHandler:FindChild("ClosePrompt"):Show(false)
+
 	end
 end
 
 function StoryPanel:HideStoryPanel(wndStory)
+	if wndStory and wndStory:FindChild("ClosePrompt") then
+		wndStory:FindChild("ClosePrompt"):Show(false)
+	end
+	
 	if wndStory then
 		wndStory:Close()
 		wndStory:Show(false)
@@ -180,6 +186,9 @@ function StoryPanel:HideStoryPanel(wndStory)
 		for idx, tCurr in pairs(self.tVariants) do
 			tCurr.wndStory:Close()
 			tCurr.wndStory:SetData(nil)
+			if tCurr.wndStory and tCurr.wndStory:FindChild("ClosePrompt") then
+				tCurr.wndStory:FindChild("ClosePrompt"):Show(false)
+			end
 		end
 	end
 end

@@ -272,6 +272,7 @@ function PublicEventStats:OnToggleEventStats()
 		self.wndMain:Close()
 		Apollo.StopTimer("UpdateTimer")
 	else
+		self.wndMain:GetData().peEvent:RequestScoreboard(true)
 		self.wndMain:Invoke()
 		self:OnOneSecTimer()
 		Apollo.StartTimer("UpdateTimer")

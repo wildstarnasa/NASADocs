@@ -2,6 +2,7 @@ require "Apollo"
 require "Window"
 require "CharacterScreenLib"
 require "PreGameLib"
+require "Sound"
 
 ---------------------------------------------------------------------------------------------------
 -- Character module definition

@@ -469,6 +469,7 @@ function ZoneMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("QuestHighlightChanged", 				"OnQuestStateChanged", self)
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 				"OnQuestStateChanged", self)
 	Apollo.RegisterEventHandler("QuestStateChanged", 					"OnQuestStateChanged", self)
+	Apollo.RegisterEventHandler("GenericEvent_QuestTrackerRenumbered", 	"OnQuestStateChanged", self)
 
 	Apollo.RegisterEventHandler("UnitCreated", 							"OnUnitCreated", self)
 	Apollo.RegisterEventHandler("UnitDestroyed", 						"OnUnitDestroyed", self)
@@ -756,6 +757,7 @@ end
 
 function ZoneMap:OnOptionsUpdated()
 	self.bQuestTrackerByDistance = g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or false
+	self:OnQuestStateChanged()
 end
 
 function ZoneMap:ToggleWindow()

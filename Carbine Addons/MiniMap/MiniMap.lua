@@ -271,6 +271,7 @@ function MiniMap:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 				"OnQuestStateChanged", self)
 	Apollo.RegisterEventHandler("QuestStateChanged", 					"OnQuestStateChanged", self)
+	Apollo.RegisterEventHandler("GenericEvent_QuestTrackerRenumbered", 	"OnQuestStateChanged", self)
 
 	Apollo.RegisterEventHandler("FriendshipAdd", 						"OnFriendshipAdd", self)
 	Apollo.RegisterEventHandler("FriendshipRemove", 					"OnFriendshipRemove", self)
@@ -465,6 +466,7 @@ end
 
 function MiniMap:OnOptionsUpdated()
 	self.bQuestTrackerByDistance = g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or false
+	self:OnQuestStateChanged()
 end
 
 ---------------------------------------------------------------------------------------------------

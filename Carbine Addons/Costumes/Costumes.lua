@@ -48,6 +48,7 @@ function Costumes:OnDocumentReady()
 	Apollo.RegisterEventHandler("ShowDye", 						"ShowCostumeWindow", self)
 	Apollo.RegisterEventHandler("HideDye", 						"OnClose", self)
 	Apollo.RegisterEventHandler("DyeLearned",					"OnDyeLearned", self)
+	Apollo.RegisterEventHandler("AppearanceChanged",			"OnAppearanceChanged", self)
 	Apollo.RegisterEventHandler("UpdateInventory",				"Reset", self)
 	
 	self.wndMain 		= Apollo.LoadForm(self.xmlDoc, "CharacterWindow", nil, self)
@@ -123,6 +124,12 @@ end
 
 function Costumes:OnDyeLearned()
 	self:FillDyes()
+end
+
+function Costumes:OnAppearanceChanged()
+	if self.wndMain:IsShown() then
+		self:HelperPreviewItems()
+	end
 end
 
 function Costumes:CostumeSelectionWindowToggle()

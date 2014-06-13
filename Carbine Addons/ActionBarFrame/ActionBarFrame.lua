@@ -73,7 +73,6 @@ function ActionBarFrame:OnDocumentReady()
 
 	Event_FireGenericEvent("ActionBarLoaded")
 
-	self.unitPlayer = nil
 	self.nSelectedMount = nil
 	self.nSelectedPotion = nil
 
@@ -138,11 +137,9 @@ function ActionBarFrame:OnPlayerEquippedItemChanged()
 end
 
 function ActionBarFrame:IsWeaponEquipped()
-	if self.unitPlayer == nil then
-		return false
-	end
-
-	local tEquipment = self.unitPlayer:GetEquippedItems()
+	local unitPlayer = GameLib.GetPlayerUnit()
+	
+	local tEquipment = unitPlayer and unitPlayer:IsValid() and unitPlayer:GetEquippedItems() or {}
 	for idx, tItemData in pairs(tEquipment) do
 		if tItemData:GetSlot() == 16 then
 			return true
@@ -161,10 +158,6 @@ function ActionBarFrame:OnUnitEnteredCombat(unit)
 end
 
 function ActionBarFrame:InitializeBars()
-	if self.unitPlayer == nil then
-		return
-	end
-
 	self:RedrawStances()
 	self:RedrawMounts()
 	self:RedrawPotions()
@@ -255,6 +248,7 @@ function ActionBarFrame:InitializeBars()
 end
 
 function ActionBarFrame:RedrawBarVisibility()
+	local unitPlayer = GameLib.GetPlayerUnit()
 	local bActionBarShown = self.wndMain:IsShown()
 
 	--Toggle Visibility based on ui preference
@@ -269,9 +263,9 @@ function ActionBarFrame:RedrawBarVisibility()
 	elseif nSkillsVisibility == 2 then --always off
 		self.wndMain:Show(false)
 	elseif nSkillsVisibility == 3 then --on in combat
-		self.wndMain:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
+		self.wndMain:Show(unitPlayer and unitPlayer:IsInCombat())
 	elseif nSkillsVisibility == 4 then --on out of combat
-		self.wndMain:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
+		self.wndMain:Show(unitPlayer and not unitPlayer:IsInCombat())
 	else
 		self.wndMain:Show(false)
 	end
@@ -287,12 +281,12 @@ function ActionBarFrame:RedrawBarVisibility()
 	elseif nLeftVisibility == 2 then --always off
 		self.wndBar2:Show(false)
 	elseif nLeftVisibility == 3 then --on in combat
-		self.wndBar2:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
+		self.wndBar2:Show(unitPlayer and unitPlayer:IsInCombat())
 	elseif nLeftVisibility == 4 then --on out of combat
-		self.wndBar2:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
+		self.wndBar2:Show(unitPlayer and not unitPlayer:IsInCombat())
 	else
 		--NEW Player Experience: Set the bottom left/right bars to Always Show once you've reached level 3
-		if self.unitPlayer and (self.unitPlayer:GetLevel() or 1) > 2 then
+		if unitPlayer and (unitPlayer:GetLevel() or 1) > 2 then
 			--Trigger a HUD Tutorial
 			Event_FireGenericEvent("OptionsUpdated_HUDTriggerTutorial", "secondaryLeftBarDisplay")
 		end
@@ -305,12 +299,12 @@ function ActionBarFrame:RedrawBarVisibility()
 	elseif nRightVisibility == 2 then --always off
 		self.wndBar3:Show(false)
 	elseif nRightVisibility == 3 then --on in combat
-		self.wndBar3:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
+		self.wndBar3:Show(unitPlayer and unitPlayer:IsInCombat())
 	elseif nRightVisibility == 4 then --on out of combat
-		self.wndBar3:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
+		self.wndBar3:Show(unitPlayer and not unitPlayer:IsInCombat())
 	else
 		--NEW Player Experience: Set the bottom left/right bars to Always Show once you've reached level 3
-		if self.unitPlayer and (self.unitPlayer:GetLevel() or 1) > 2 then
+		if unitPlayer and (unitPlayer:GetLevel() or 1) > 2 then
 			--Trigger a HUD Tutorial
 			Event_FireGenericEvent("OptionsUpdated_HUDTriggerTutorial", "secondaryRightBarDisplay")
 		end
@@ -322,9 +316,9 @@ function ActionBarFrame:RedrawBarVisibility()
 		if nMountVisibility == 2 then --always off
 			self.wndMountFlyout:Show(false)
 		elseif nMountVisibility == 3 then --on in combat
-			self.wndMountFlyout:Show(self.unitPlayer and self.unitPlayer:IsInCombat())
+			self.wndMountFlyout:Show(unitPlayer and unitPlayer:IsInCombat())
 		elseif nMountVisibility == 4 then --on out of combat
-			self.wndMountFlyout:Show(self.unitPlayer and not self.unitPlayer:IsInCombat())
+			self.wndMountFlyout:Show(unitPlayer and not unitPlayer:IsInCombat())
 		else
 			self.wndMountFlyout:Show(true)
 		end
@@ -338,7 +332,7 @@ function ActionBarFrame:RedrawBarVisibility()
 	self.wndShadow:SetOpacity(0.5)
 	self.wndShadow:Show(true)
 	self.wndArt:Show(bActionBarShown)
-	self.wndPotionFlyout:Show(self.wndPotionFlyout:IsShown() and self.unitPlayer and not self.unitPlayer:IsInVehicle())
+	self.wndPotionFlyout:Show(self.wndPotionFlyout:IsShown() and unitPlayer and not unitPlayer:IsInVehicle())
 
 	local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
 
@@ -355,10 +349,6 @@ end
 -- Main Redraw
 -----------------------------------------------------------------------------------------------
 function ActionBarFrame:RedrawStances()
-	if self.unitPlayer == nil then
-		return
-	end
-
 	local wndStancePopout = self.wndStancePopoutFrame:FindChild("StancePopoutList")
 	wndStancePopout:DestroyChildren()
 
@@ -395,10 +385,6 @@ function ActionBarFrame:RedrawSelectedMounts()
 end
 
 function ActionBarFrame:RedrawMounts()
-	if self.unitPlayer == nil then
-		return
-	end
-
 	local wndPopoutFrame = self.wndMountFlyout:FindChild("MountPopoutFrame")
 	local wndMountPopout = wndPopoutFrame:FindChild("MountPopoutList")
 	wndMountPopout:DestroyChildren()
@@ -456,18 +442,16 @@ function ActionBarFrame:OnMountBtn(wndHandler, wndControl)
 end
 
 function ActionBarFrame:RedrawPotions()
-	if self.unitPlayer == nil then
-		return
-	end
-
+	local unitPlayer = GameLib.GetPlayerUnit()
+	
 	local wndPotionPopout = self.wndPotionPopoutFrame:FindChild("PotionPopoutList")
 	wndPotionPopout:DestroyChildren()
 
-	local tItemList = self.unitPlayer:GetInventoryItems() or {}
+	local tItemList = unitPlayer and unitPlayer:IsValid() and unitPlayer:GetInventoryItems() or {}
 	local tSelectedPotion = nil;
 	local tFirstPotion = nil
 	local tPotions = { }
-
+	
 	for idx, tItemData in pairs(tItemList) do
 		if tItemData and tItemData.itemInBag and tItemData.itemInBag:GetItemCategory() == 48 then--and tItemData.itemInBag:GetConsumable() == "Consumable" then
 			local tItem = tItemData.itemInBag
@@ -613,12 +597,14 @@ function ActionBarFrame:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopup
 end
 
 function ActionBarFrame:OnUpdateInventory()
+	local unitPlayer = GameLib.GetPlayerUnit()
+	
 	if self.nPotionCount == nil then
 		self.nPotionCount = 0
 	end
 
 	local nLastPotionCount = self.nPotionCount
-	local tItemList = self.unitPlayer:GetInventoryItems() or {}
+	local tItemList = unitPlayer and unitPlayer:IsValid() and unitPlayer:GetInventoryItems() or {}
 	local tPotions = { }
 
 	for idx, tItemData in pairs(tItemList) do
@@ -674,15 +660,15 @@ function ActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
 end
 
 function ActionBarFrame:OnCharacterCreated()
-	self.unitPlayer = GameLib.GetPlayerUnit()
+	local unitPlayer = GameLib.GetPlayerUnit()
 	
-	if not self.bCharacterLoaded and self.unitPlayer and self.unitPlayer:IsValid() then
+	if not self.bCharacterLoaded and unitPlayer and unitPlayer:IsValid() then
 		self.bCharacterLoaded = true
 		Apollo.StopTimer("ActionBarFrameTimer_DelayedInit")
 		Event_FireGenericEvent("ActionBarReady", self.wndMain)
 		self:InitializeBars()
 		
-		if self.tCurrentVehicleInfo and self.unitPlayer:IsInVehicle() then
+		if self.tCurrentVehicleInfo and unitPlayer:IsInVehicle() then
 			self:OnShowActionBarShortcut(self.tCurrentVehicleInfo.nBar, true, self.tCurrentVehicleInfo.nNumShortcuts)
 		else
 			self.tCurrentVehicleInfo = nil

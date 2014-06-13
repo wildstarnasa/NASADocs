@@ -30,10 +30,11 @@ end
 function Circles:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CirclesMain.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 end
 
 function Circles:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if  self.xmlDoc == nil or not g_InterfaceOptionsLoaded then
 		return
 	end
 
@@ -680,9 +681,14 @@ function Circles:OnCircleInvite( strGuildName, strInvitorName, guildType )
 		self.wndCircleInvite:Destroy()
 	end
 
-	self.wndCircleInvite = Apollo.LoadForm(self.xmlDoc, "CircleInviteConfirmation", nil, self)
-	self.wndCircleInvite:FindChild("CircleInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_IncomingCircleInvite"), strGuildName, strInvitorName))
-	self.wndCircleInvite:ToFront()
+	if self:FilterRequest(strInvitor) then
+		self.wndCircleInvite = Apollo.LoadForm(self.xmlDoc, "CircleInviteConfirmation", nil, self)
+		self.wndCircleInvite:FindChild("CircleInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_IncomingCircleInvite"), strGuildName, strInvitorName))
+		self.wndCircleInvite:FindChild("FilterBtn"):SetCheck(g_InterfaceOptions.Carbine.bFilterGuildInvite)
+		self.wndCircleInvite:ToFront()
+	else
+		GuildLib.Decline()
+	end
 end
 
 function Circles:OnCircleInviteAccept(wndHandler, wndControl)
@@ -697,6 +703,10 @@ function Circles:OnCircleInviteDecline() -- This can come from a variety of sour
 	if self.wndCircleInvite then
 		self.wndCircleInvite:Destroy()
 	end
+end
+
+function Circles:OnFilterBtn(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -751,6 +761,20 @@ end
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
+function Circles:FilterRequest(strInvitor)
+	if not g_InterfaceOptions.Carbine.bFilterGuildInvite then
+		return true
+	end
+	
+	local bPassedFilter = false
+	
+	local tRelationships = GameLib.SearchRelationshipStatusByCharacterName(strInvitor)
+	if tRelationships and (tRelationships.tFriend or tRelationships.tAccountFriend or tRelationships.tGuilds or tRelationships.nGuildIndex) then
+		bPassedFilter = true
+	end
+	
+	return bPassedFilter
+end
 
 function Circles:HelperConvertPathToString(ePath)
 	local strResult = ""

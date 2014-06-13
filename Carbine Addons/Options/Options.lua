@@ -369,9 +369,15 @@ end
 function OptionsAddon:InitTargetingControls()
 	self.wndTargeting:FindChild("DashDoubleTapBtn"):SetCheck(Apollo.GetConsoleVariable("player.showDoubleTapToDash"))
 	self.wndTargeting:FindChild("UseAbilityQueueBtn"):SetCheck(Apollo.GetConsoleVariable("player.abilityQueueMax") > 0)
-	self.wndTargeting:FindChild("AbilityQueueLengthSliderBar"):SetValue(Apollo.GetConsoleVariable("player.abilityQueueMax") or 0)
+
 	self.wndTargeting:FindChild("AbilityQueueLengthBlocker"):Show(Apollo.GetConsoleVariable("player.abilityQueueMax") == 0)
-	self.wndTargeting:FindChild("AbilityQueueLengthEditBox"):SetText(Apollo.GetConsoleVariable("player.abilityQueueMax"))
+	self.wndTargeting:FindChild("AbilityQueueLengthSliderBar"):SetValue(Apollo.GetConsoleVariable("player.abilityQueueMax") or 0)
+	self.wndTargeting:FindChild("MouseTurnSpeedSliderBar"):SetValue(Apollo.GetConsoleVariable("player.turningSpeedMouse") or 0)
+	self.wndTargeting:FindChild("KeyboardTurnSpeedSliderBar"):SetValue(Apollo.GetConsoleVariable("player.turningSpeedKeyboard") or 0)
+	self.wndTargeting:FindChild("AbilityQueueLengthEditBox"):SetText(string.format("%.0f", Apollo.GetConsoleVariable("player.abilityQueueMax")))
+	self.wndTargeting:FindChild("MouseTurnSpeedEditBox"):SetText(string.format("%.2f", Apollo.GetConsoleVariable("player.turningSpeedMouse")))
+	self.wndTargeting:FindChild("KeyboardTurnSpeedEditBox"):SetText(string.format("%.2f", Apollo.GetConsoleVariable("player.turningSpeedKeyboard")))
+
 	self.wndTargeting:FindChild("AlwaysFaceBtn"):SetCheck(not Apollo.GetConsoleVariable("Player.ignoreAlwaysFaceTarget"))
 	self.wndTargeting:FindChild("FacingLockBtn"):SetCheck(not Apollo.GetConsoleVariable("Player.disableFacingLock"))
 	self.wndTargeting:FindChild("ColorBlindNoneBtn"):SetCheck(Apollo.GetConsoleVariable("world.telegraphColorblindDisplay") == 0)
@@ -1081,17 +1087,13 @@ function OptionsAddon:FillDisplayList()
 		if tMode.vec.x == exclusiveDisplayMode.x and tMode.vec.y == exclusiveDisplayMode.y and tMode.vec.z == exclusiveDisplayMode.z then
 			nSel = i
 		end
-		local str = ""
-		if tMode.bCurrent then
-			self.tPrevExcRes = tMode
-		end
-		str = str .. tMode.strDisplay
+		local str = tMode.strDisplay
 		self.wndVideo:FindChild("ResolutionParent"):FindChild("Resolution"):AddRow(str, "", tMode)
 	end
 	self.bValidResolution = (nSel > 0)
 	self.wndVideo:FindChild("ResolutionParent"):FindChild("Resolution"):SetCurrentRow(nSel)
 	self.wndVideo:FindChild("ResolutionParent"):FindChild("Resolution"):SetVScrollPos(nPos)
-	
+
 	if not Apollo.GetConsoleVariable("video.exclusive") then
 		self.wndVideo:FindChild("DropToggleExclusive"):Enable(false)
 		self.wndVideo:FindChild("DropToggleExclusive"):SetText("")
@@ -1260,6 +1262,7 @@ function OptionsAddon:OnResolutionSelChanged(wndHandler, wndControl, nRow)
 	end
 	self.wndVideo:FindChild("ResolutionParent"):Show(false)
 	self.wndVideo:FindChild("DropToggleExclusive"):SetText(tMode.strDisplay)
+	self.tPrevExcRes = Apollo.GetConsoleVariable("video.exclusiveDisplayMode")
 	Apollo.SetConsoleVariable("video.exclusiveDisplayMode", tMode.vec)
 
 	if Apollo.GetConsoleVariable("video.fullscreen") == true and Apollo.GetConsoleVariable("video.exclusive") == true then
@@ -1282,8 +1285,8 @@ function OptionsAddon:OnResExChangedTimer()
 		self.wndVideoConfirm:Show(false)
 
 		if self.tPrevExcRes ~= nil then
-			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.strDisplay)
-			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes.vec)
+			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.x .."x".. self.tPrevExcRes.y .."@".. self.tPrevExcRes.z)
+			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes)
 			self.tPrevExcRes = nil
 		end
 	end
@@ -1408,8 +1411,8 @@ function OptionsAddon:OnChangeCancelBtn(wndHandler, wndControl)
 		end
 	else -- res exc
 		if self.tPrevExcRes ~= nil then
-			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.strDisplay)
-			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes.vec)
+			self.wndVideo:FindChild("DropToggleExclusive"):SetText(self.tPrevExcRes.x .."x".. self.tPrevExcRes.y .."@".. self.tPrevExcRes.z)
+			Apollo.SetConsoleVariable("video.exclusiveDisplayMode", self.tPrevExcRes)
 			self.tPrevExcRes = nil
 		end
 	end
@@ -1458,6 +1461,18 @@ function OptionsAddon:OnAbilityQueueLengthChanged(wndHandler, wndControl, fValue
 	self.wndTargeting:FindChild("AbilityQueueLengthEditBox"):SetText(string.format("%.0f", fValue))
 end
 
+function OptionsAddon:OnMouseTurnSpeedChanged(wndHandler, wndControl, fValue, fOldValue)
+	local strRound = string.format("%.2f", fValue)
+	Apollo.SetConsoleVariable("player.turningSpeedMouse", tonumber(strRound))
+	self.wndTargeting:FindChild("MouseTurnSpeedEditBox"):SetText(strRound)
+end
+
+function OptionsAddon:OnKeyboardTurnSpeedChanged(wndHandler, wndControl, fValue, fOldValue)
+	local strRound = string.format("%.2f", fValue)
+	Apollo.SetConsoleVariable("player.turningSpeedKeyboard", tonumber(strRound))
+	self.wndTargeting:FindChild("KeyboardTurnSpeedEditBox"):SetText(strRound)
+end
+
 -- Telegraphs
 function OptionsAddon:OnColorBlindNoneBtn(wndHandler, wndControl, eMouseButton)
 	Apollo.SetConsoleVariable("world.telegraphColorblindDisplay", 0)
@@ -1488,6 +1503,9 @@ function OptionsAddon:OnRestoreDefaults()
 		end
 	end
 	self:OnOptionsCheck()
+
+	self.wndVideo:FindChild("RefreshAnimation"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+
 end
 
 function OptionsAddon:OnCheckCombatMusicFlair( wndHandler, wndControl, eMouseButton )

@@ -11,6 +11,7 @@ require "GameLib"
 local OptionsInterface = {}
 
 local kbDefaultSpellErrorMessages 		= true
+local kbDefaultFilterGuildInvites		= true
 local kbDefaultHealthBarFlashes 		= true
 local kbDefaultQuestTrackerByDistance 	= true
 local kbDefaultInteractTextOnUnit 		= false
@@ -101,6 +102,10 @@ function OptionsInterface:OnRestore(eType, tSavedData)
 	
 	if g_InterfaceOptions.Carbine.bSpellErrorMessages == nil then
 		g_InterfaceOptions.Carbine.bSpellErrorMessages = kbDefaultSpellErrorMessages
+	end
+	
+	if g_InterfaceOptions.Carbine.bFilterGuildInvite == nil then
+		g_InterfaceOptions.Carbine.bFilterGuildInvite = kbDefaultFilterGuildInvite
 	end
 
 	if g_InterfaceOptions.Carbine.bHealthBarFlashes == nil then
@@ -204,6 +209,10 @@ function OptionsInterface:OnConfigure() -- From ESC -> Options
 	if g_InterfaceOptions.Carbine.bSpellErrorMessages == nil then
 		g_InterfaceOptions.Carbine.bSpellErrorMessages = kbDefaultSpellErrorMessages
 	end
+	
+	if g_InterfaceOptions.Carbine.bFilterGuildInvite == nil then
+		g_InterfaceOptions.Carbine.bFilterGuildInvite = kbDefaultFilterGuildInvite
+	end
 
 	if g_InterfaceOptions.Carbine.bHealthBarFlashes == nil then
 		g_InterfaceOptions.Carbine.bHealthBarFlashes = kbDefaultHealthBarFlashes
@@ -229,6 +238,7 @@ function OptionsInterface:OnConfigure() -- From ESC -> Options
 	self.wndInterface:FindChild("IgnoreDuelRequests"):SetCheck(g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests)
 	self.wndInterface:FindChild("ToggleQuestMarkers"):SetCheck(g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible)
 	self.wndInterface:FindChild("SpellErrorMessages"):SetCheck(g_InterfaceOptions.Carbine.bSpellErrorMessages)
+	self.wndInterface:FindChild("GuildInviteFilter"):SetCheck(g_InterfaceOptions.Carbine.bFilterGuildInvite)
 	self.wndInterface:FindChild("HealthBarFlashes"):SetCheck(g_InterfaceOptions.Carbine.bHealthBarFlashes)
 	self.wndInterface:FindChild("QuestTrackerByDistance"):SetCheck(g_InterfaceOptions.Carbine.bQuestTrackerByDistance)
 	self.wndInterface:FindChild("InteractTextOnUnit"):SetCheck(g_InterfaceOptions.Carbine.bInteractTextOnUnit)
@@ -541,6 +551,10 @@ function OptionsInterface:OnToggleSpellErrorMessages(wndHandler, wndControl)
 	g_InterfaceOptions.Carbine.bSpellErrorMessages = wndHandler:IsChecked()
 	Event_FireGenericEvent("OptionsUpdated_Floaters")
 	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_SpellErrorToggle"), tostring(wndControl:IsChecked())))
+end
+
+function OptionsInterface:OnToggleGuildInviteFilter(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
 end
 
 function OptionsInterface:OnHealthBarFlashes(wndHandler, wndControl)

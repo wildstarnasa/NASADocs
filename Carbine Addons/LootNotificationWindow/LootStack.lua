@@ -77,16 +77,19 @@ function LootStack:OnDocumentReady()
 
 	self.wndLootStack = Apollo.LoadForm(self.xmlDoc, "LootStackForm", "FixedHudStratumHigh", self)
 	self.xmlDoc = nil
-	self.wndCashDisplay = self.wndLootStack:FindChild("CashDisplay")
-	self.wndCashComplex = self.wndLootStack:FindChild("CashComplex")
+	self.wndCashDisplay = self.wndLootStack:FindChild("LootFloaters:CashComplex:CashDisplay")
+	self.wndCashComplex = self.wndLootStack:FindChild("LootFloaters:CashComplex")
 	self.wndCashComplex:Show(false)
+	
+	-- This will be updated the first time we go through LootStackUpdate
+	self.bIsMoveable = nil
 
 	for idx = 1, knMaxEntryData do
-		local wndEntry = self.wndLootStack:FindChild("LootedItem_"..idx)
+		local wndEntry = self.wndLootStack:FindChild("LootFloaters:LootedItem_"..idx)
 		wndEntry:Show(false, true)
 		self.arEntries[idx] = wndEntry
 	end
-	local wndEntry = self.wndLootStack:FindChild("LootedItem_4")
+	local wndEntry = self.wndLootStack:FindChild("LootFloaters:LootedItem_4")
 	wndEntry:Show(false, true)
 
 	self:UpdateDisplay()
@@ -107,7 +110,7 @@ function LootStack:OnLootedMoney(monLooted)
 	end
 
 	self.wndCashDisplay:SetAmount(self.wndCashDisplay:GetAmount() + monLooted:GetAmount())
-	self.wndCashComplex:Show(true)
+	self.wndCashComplex:Invoke()
 
 	Apollo.StopTimer("LootStack_CashTimer")
 	Apollo.StartTimer("LootStack_CashTimer")
@@ -139,7 +142,14 @@ function LootStack:OnLootStackUpdate(strVar, nValue)
 	if self.wndLootStack == nil then
 		return
 	end
-
+	
+	local bCanMove = self.wndLootStack:IsStyleOn("Moveable")
+	if bCanMove ~= self.bIsMoveable then
+		self.bIsMoveable = bCanMove
+		self.wndLootStack:SetStyle("IgnoreMouse", not self.bIsMoveable)
+		self.wndLootStack:FindChild("Backer"):Show(self.bIsMoveable)
+	end
+	
 	local fCurrTime = GameLib.GetGameTime()
 
 	-- remove any old items
@@ -209,8 +219,12 @@ function LootStack:UpdateDisplay()
 		local tCurrEntryData = self.tEntryData[idx]
 		local tCurrItem = tCurrEntryData and tCurrEntryData.itemInstance or false
 
-		wndEntry:Show(tCurrEntryData)
-
+		if tCurrEntryData then
+			wndEntry:Invoke()
+		else
+			wndEntry:Close()
+		end
+		
 		if tCurrEntryData and tCurrItem and tCurrEntryData.nButton ~= idx then
 			local bGivenQuest = tCurrItem:GetGivenQuest()
 			local eItemQuality = tCurrItem and tCurrItem:GetItemQuality() or 1
@@ -227,7 +241,7 @@ function LootStack:UpdateDisplay()
 		end
 	end
 
-	self.wndLootStack:ArrangeChildrenVert(2)
+	self.wndLootStack:FindChild("LootFloaters"):ArrangeChildrenVert(2)
 end
 
 local LootStackInst = LootStack:new()

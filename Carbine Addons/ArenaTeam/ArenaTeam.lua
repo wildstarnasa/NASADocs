@@ -27,10 +27,12 @@ end
 function ArenaTeam:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ArenaTeam.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	
+	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 end
 
 function ArenaTeam:OnDocumentReady()
-	if self.xmlDoc == nil then
+	if self.xmlDoc == nil or not g_InterfaceOptionsLoaded or self.wndMain then
 		return
 	end
 	
@@ -430,18 +432,23 @@ function ArenaTeam:OnGuildInvite( strGuildName, strInvitorName, guildType )
 	local strType = ""
 	if guildType == GuildLib.GuildType_ArenaTeam_2v2 then
 		strType = Apollo.GetString("ArenaRoster_2v2")
-		self.wndArenaTeamInvite = Apollo.LoadForm(self.xmlDoc, "ArenaTeamInviteConfirmation", nil, self)
 	elseif guildType == GuildLib.GuildType_ArenaTeam_3v3 then
 		strType = Apollo.GetString("ArenaRoster_3v3")
-		self.wndArenaTeamInvite = Apollo.LoadForm(self.xmlDoc, "ArenaTeamInviteConfirmation", nil, self)
 	elseif guildType == GuildLib.GuildType_ArenaTeam_5v5 then
 		strType = Apollo.GetString("ArenaRoster_5v5")
-		self.wndArenaTeamInvite = Apollo.LoadForm(self.xmlDoc, "ArenaTeamInviteConfirmation", nil, self)
 	else
 		return
 	end
-	self.wndArenaTeamInvite:FindChild("ArenaTeamInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_InviteHeader"), strType, strGuildName, strInvitorName))
-	self.wndArenaTeamInvite:Invoke()
+	
+	if self:FilterRequest(strInvitorName) then
+		self.wndArenaTeamInvite = Apollo.LoadForm(self.xmlDoc, "ArenaTeamInviteConfirmation", nil, self)
+		
+		self.wndArenaTeamInvite:FindChild("ArenaTeamFilterBtn"):SetCheck(g_InterfaceOptions.Carbine.bFilterGuildInvite)
+		self.wndArenaTeamInvite:FindChild("ArenaTeamInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_InviteHeader"), strType, strGuildName, strInvitorName))
+		self.wndArenaTeamInvite:Invoke()
+	else
+		GuildLib.Decline()
+	end
 end
 
 function ArenaTeam:OnArenaTeamInviteAccept(wndHandler, wndControl)
@@ -458,9 +465,27 @@ function ArenaTeam:OnArenaTeamInviteDecline() -- This can come from a variety of
 	end
 end
 
+function ArenaTeam:OnFilterBtn(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
+end
+
 -----------------------------------------------------------------------------------------------
 -- Feedback Messages
 -----------------------------------------------------------------------------------------------
+function ArenaTeam:FilterRequest(strInvitor)
+	if not g_InterfaceOptions.Carbine.bFilterGuildInvite then
+		return true
+	end
+	
+	local bPassedFilter = false
+	
+	local tRelationships = GameLib.SearchRelationshipStatusByCharacterName(strInvitor)
+	if tRelationships and (tRelationships.tFriend or tRelationships.tAccountFriend or tRelationships.tGuilds or tRelationships.nGuildIndex) then
+		bPassedFilter = true
+	end
+	
+	return bPassedFilter
+end
 
 function ArenaTeam:OnGuildMemberChange(guildCurr)
 	if (guildCurr:GetType() == self.eCurrentType) and self.wndMain:IsShown() then

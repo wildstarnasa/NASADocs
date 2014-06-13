@@ -58,10 +58,11 @@ end
 function Warparty:OnLoad()
     self.xmlDoc = XmlDoc.CreateFromFile("Warparty.xml")
     self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 end
 
 function Warparty:OnDocumentReady()
-    if self.xmlDoc == nil then
+    if self.xmlDoc == nil or not g_InterfaceOptionsLoaded or self.wndMain then
         return
     end
 
@@ -449,20 +450,24 @@ end
 
 function Warparty:OnGuildInvite( strGuildName, strInvitorName, eGuildType )
 	if eGuildType == GuildLib.GuildType_WarParty then
-		self.wndWarpartyInvite = Apollo.LoadForm(self.xmlDoc, "WarpartyInviteConfirmation", nil, self)
-		self.wndWarpartyInvite:FindChild("WarpartyInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Warparty_InvitedBy"), strGuildName, strInvitorName))
+		if self:FilterRequest(strInvitorName) then
+			self.wndWarpartyInvite = Apollo.LoadForm(self.xmlDoc, "WarpartyInviteConfirmation", nil, self)
+			self.wndWarpartyInvite:FindChild("WarpartyInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Warparty_InvitedBy"), strGuildName, strInvitorName))
 		
-		if self.locSavedInviteLoc then
-			self.wndWarpartyInvite:MoveToLocation(self.locSavedInviteLoc)
+			if self.locSavedInviteLoc then
+				self.wndWarpartyInvite:MoveToLocation(self.locSavedInviteLoc)
+			end
+			self.strSavedWarpartyName = strGuildName
+			self.strSavedInvitorName = strInvitorName
+		
+			self.wndWarpartyInvite:Show(true)
+			self.wndWarpartyInvite:ToFront()
+		else
+			GuildLib.Decline()
 		end
-		self.strSavedWarpartyName = strGuildName
-		self.strSavedInvitorName = strInvitorName
-		
-		self.wndWarpartyInvite:Show(true)
 	else
 		return
 	end
-	self.wndWarpartyInvite:ToFront()
 end
 
 function Warparty:OnWarpartyInviteAccept(wndHandler, wndControl)
@@ -480,6 +485,10 @@ function Warparty:OnWarpartyInviteDecline() -- This can come from a variety of s
 		self.locSavedInviteLoc = self.wndWarpartyInvite:GetLocation()
 		self.wndWarpartyInvite:Destroy()
 	end
+end
+
+function Warparty:OnFilterBtn(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -518,6 +527,22 @@ function Warparty:OnGuildResult( guildSender, strName, nRank, eResult)
 	elseif self.wndMain:IsShown() then -- TODO: TEMP, request members again on an update
 		guildSender:RequestMembers()
 	end
+end
+
+function Warparty:FilterRequest(strInvitor)
+	if not g_InterfaceOptions.Carbine.bFilterGuildInvite then
+		
+		return true
+	end
+	
+	local bPassedFilter = false
+	
+	local tRelationships = GameLib.SearchRelationshipStatusByCharacterName(strInvitor)
+	if tRelationships and (tRelationships.tFriend or tRelationships.tAccountFriend or tRelationships.tGuilds or tRelationships.nGuildIndex) then
+		bPassedFilter = true
+	end
+	
+	return bPassedFilter
 end
 
 function Warparty:HelperConvertToTime(nDays)

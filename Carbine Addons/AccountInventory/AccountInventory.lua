@@ -311,20 +311,19 @@ function AccountInventory:HelperAddPendingSingleToContainer(wndParent, tPendingA
 	local wndGroup = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupForm", wndParent, self)
 	wndGroup:SetData({bIsGroup = false, tData = tPendingAccountItem})
 	wndGroup:FindChild("ItemButton"):SetText(strName)
-	wndGroup:FindChild("ItemGiftableIcon"):Show(tPendingAccountItem.canGift)
+	wndGroup:FindChild("ItemIconGiftable"):Show(tPendingAccountItem.canGift)
 
 	local wndObject = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupItemForm", wndGroup:FindChild("ItemContainer"), self)
 	wndObject:SetData(tPendingAccountItem)
 	wndObject:FindChild("Name"):SetText("") -- Done at ItemButton if single, Only used by Groups
 	wndObject:FindChild("Icon"):SetSprite(bShowLock and "CRB_AMPs:spr_AMPs_LockStretch_Blue" or strIcon)
 
-	-- Infinity icon
-	local bMultiClaim = (wndParent == self.wndInventoryGridContainer and tPendingAccountItem.multiClaim) or (wndParent == self.wndEscrowGridContainer and tPendingAccountItem.multiRedeem)
-	if bMultiClaim then
-		wndGroup:FindChild("ItemMultiIcon"):Show(not tPendingAccountItem.cooldown)
-		wndGroup:FindChild("ItemMultiText"):Show(tPendingAccountItem.cooldown and tPendingAccountItem.cooldown > 0)
-		wndGroup:FindChild("ItemMultiText"):SetText(tPendingAccountItem.cooldown and self:HelperCooldown(tPendingAccountItem.cooldown) or "")
+	-- Icons for the number of redempetions / cooldowns
+	if tPendingAccountItem.multiClaim or tPendingAccountItem.multiRedeem then -- Should be only multiRedeem
+		wndGroup:FindChild("ItemIconText"):Show(tPendingAccountItem.cooldown and tPendingAccountItem.cooldown > 0)
+		wndGroup:FindChild("ItemIconText"):SetText(tPendingAccountItem.cooldown and self:HelperCooldown(tPendingAccountItem.cooldown) or "")
 	end
+	wndGroup:FindChild("ItemIconOnceOnly"):Show(not tPendingAccountItem.multiClaim and not tPendingAccountItem.multiRedeem) -- Should be only multiRedeem
 	wndGroup:FindChild("ItemIconArrangeVert"):ArrangeChildrenVert(1)
 
 	-- Tooltip
@@ -345,7 +344,7 @@ function AccountInventory:HelperAddPendingGroupToContainer(wndParent, tPendingAc
 	local wndGroup = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupForm", wndParent, self)
 	wndGroup:SetData({bIsGroup = true, tData = tPendingAccountItemGroup})
 	wndGroup:FindChild("ItemButton"):SetText("")
-	wndGroup:FindChild("ItemGiftableIcon"):Show(tPendingAccountItemGroup.canGift)
+	wndGroup:FindChild("ItemIconGiftable"):Show(tPendingAccountItemGroup.canGift)
 
 	local wndGroupContainer = wndGroup:FindChild("ItemContainer")
 	for idx, tPendingAccountItem in pairs(tPendingAccountItemGroup.items) do
@@ -376,13 +375,6 @@ function AccountInventory:HelperAddPendingGroupToContainer(wndParent, tPendingAc
 		end
 		wndObject:FindChild("Name"):SetText(strName)
 		wndObject:FindChild("Icon"):SetSprite(bShowLock and "CRB_AMPs:spr_AMPs_LockStretch_Blue" or strIcon)
-
-		-- Infinity icon
-		if (wndParent == self.wndInventoryGridContainer and tPendingAccountItem.multiClaim) or (wndParent == self.wndEscrowGridContainer and tPendingAccountItem.multiRedeem) then
-			wndGroup:FindChild("ItemMultiIcon"):Show(true)
-			wndGroup:FindChild("ItemMultiIcon"):SetText(tPendingAccountItem.canClaim and Apollo.GetString("AccountInventory_InfinitySign") or self:HelperCooldown(tPendingAccountItem.cooldown))
-		end
-		wndGroup:FindChild("ItemIconArrangeVert"):ArrangeChildrenVert(1)
 
 		-- Tooltip
 		if bShowLock then
@@ -446,8 +438,8 @@ function AccountInventory:RefreshInventory()
 		local wndGroup = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupForm", self.wndInventoryGridContainer, self)
 		wndGroup:SetData({bIsGroup = false, tData = tBoomBoxData})
 		wndGroup:FindChild("ItemButton"):SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_MultiItem"), nBoomBoxCount, tBoomBoxData.item:GetName()))
-		wndGroup:FindChild("ItemMultiText"):Show(tBoomBoxData.cooldown and tBoomBoxData.cooldown > 0)
-		wndGroup:FindChild("ItemMultiText"):SetText(tBoomBoxData.cooldown and self:HelperCooldown(tBoomBoxData.cooldown) or "")
+		wndGroup:FindChild("ItemIconText"):Show(tBoomBoxData.cooldown and tBoomBoxData.cooldown > 0)
+		wndGroup:FindChild("ItemIconText"):SetText(tBoomBoxData.cooldown and self:HelperCooldown(tBoomBoxData.cooldown) or "")
 		wndGroup:FindChild("ItemIconArrangeVert"):ArrangeChildrenVert(1)
 
 		local wndObject = Apollo.LoadForm(self.xmlDoc, "InventoryPendingGroupItemForm", wndGroup:FindChild("ItemContainer"), self)
@@ -521,11 +513,11 @@ function AccountInventory:RefreshInventoryActions()
 
 	-- Check if currency
 	local bCanBeClaimed = true
-	if tSelectedData and type(tSelectedData) == "table" and tSelectedData.item and tSelectedData.item:GetItemId() == knBoomBoxItemId then
-		bCanBeClaimed = true
-	elseif tSelectedData and type(tSelectedData) == "table" and tSelectedData.tData then
+	if tSelectedData and type(tSelectedData) == "table" and tSelectedData.tData and tSelectedData.tData.item and tSelectedData.tData.item:GetItemId() == knBoomBoxItemId then -- If BoomBox
+		bCanBeClaimed = tSelectedData.tData.cooldown == 0
+	elseif tSelectedData and type(tSelectedData) == "table" and tSelectedData.tData then -- If Credd/NameChange/RealmTransfer
 		bCanBeClaimed = tSelectedData.tData ~= keCreddType and tSelectedData.tData ~= keNameChangeType and tSelectedData.tData ~= keRealmTransferType
-	elseif tSelectedData and type(tSelectedData) == "number" then
+	elseif tSelectedData and type(tSelectedData) == "number" then -- Redundant check if Credd/NameChange/RealmTransfer
 		bCanBeClaimed = tSelectedData ~= keCreddType and tSelectedData ~= keNameChangeType and tSelectedData ~= keRealmTransferType
 	end
 
@@ -813,7 +805,7 @@ function AccountInventory:RefreshInventoryGiftConfirm()
 		wndCurr:Enable(false)
 		if wndCurr:FindChild("ItemButton") then
 			wndCurr:FindChild("ItemButton"):ChangeArt("CRB_DEMO_WrapperSprites:btnDemo_CharInvisible")
-			wndCurr:FindChild("ItemGiftableIcon"):Show(false)
+			wndCurr:FindChild("ItemIconGiftable"):Show(false)
 		end
 	end
 end
@@ -851,7 +843,7 @@ function AccountInventory:RefreshInventoryGiftReturnConfirm()
 		wndCurr:Enable(false)
 		if wndCurr:FindChild("ItemButton") then
 			wndCurr:FindChild("ItemButton"):ChangeArt("CRB_DEMO_WrapperSprites:btnDemo_CharInvisible")
-			wndCurr:FindChild("ItemGiftableIcon"):Show(false)
+			wndCurr:FindChild("ItemIconGiftable"):Show(false)
 		end
 	end
 end

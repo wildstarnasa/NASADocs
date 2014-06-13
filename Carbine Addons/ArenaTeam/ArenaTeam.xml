@@ -106,7 +106,7 @@
             </Control>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-154" TAnchorPoint="0.5" TAnchorOffset="-154" RAnchorPoint="0.5" RAnchorOffset="154" BAnchorPoint="0.5" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Invite" Name="ArenaTeamInviteConfirmation" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" IgnoreMouse="1" Sprite="CRB_Basekit:kitBase_Hybrid_Message" TransitionShowHide="1" UseTransitionSprite="0" Visible="1" TooltipColor="" Tooltip="" TextId="">
+    <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-154" TAnchorPoint="0.5" TAnchorOffset="-154" RAnchorPoint="0.5" RAnchorOffset="154" BAnchorPoint="0.5" BAnchorOffset="23" RelativeToClient="1" Font="Default" Text="" Template="Invite" Name="ArenaTeamInviteConfirmation" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" IgnoreMouse="1" Sprite="CRB_Basekit:kitBase_Hybrid_Message" TransitionShowHide="1" UseTransitionSprite="0" Visible="1" TooltipColor="" Tooltip="" TextId="">
         <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-114" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="0.5" RAnchorOffset="114" BAnchorPoint="0" BAnchorOffset="70" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="ArenaTeamInviteLabel" BGColor="white" TextColor="UI_TextHoloBodyHighlight" TextId="CRB__2" DT_WORDBREAK="1" DT_CENTER="1" DT_VCENTER="1" TooltipColor=""/>
         <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-36" TAnchorPoint="0" TAnchorOffset="9" RAnchorPoint="1" RAnchorOffset="-9" BAnchorPoint="0" BAnchorOffset="38" DT_VCENTER="1" DT_CENTER="1" Name="ArenaTeamInviteCloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="" Template="Default" WindowSoundTemplate="MetalButtonSmall">
             <Event Name="ButtonSignal" Function="OnArenaTeamInviteDecline"/>
@@ -118,5 +118,9 @@
             <Event Name="ButtonSignal" Function="OnArenaTeamInviteDecline"/>
         </Control>
         <Event Name="WindowClosed" Function="OnGuildInviteDecline"/>
+        <Control Class="Button" Base="BK3:btnHolo_Check" Font="CRB_InterfaceMedium" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="95" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="0" RAnchorOffset="225" BAnchorPoint="0" BAnchorOffset="96" DT_VCENTER="1" DT_CENTER="0" BGColor="UI_BtnBGDefault" TextColor="UI_TextHoloBodyHighlight" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" TooltipType="OnCursor" Name="ArenaTeamFilterBtn" TooltipColor="" Text="" TextId="InterfaceOptions_FilterInvites" DrawAsCheckbox="1">
+            <Event Name="ButtonCheck" Function="OnFilterBtn"/>
+            <Event Name="ButtonUncheck" Function="OnFilterBtn"/>
+        </Control>
     </Form>
 </Forms>

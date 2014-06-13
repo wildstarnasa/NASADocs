@@ -162,6 +162,7 @@ function Mail:ToggleWindow()
 		Event_CancelMail()
 	else
 		self.wndMain:Show(true)
+		self.wndMain:FindChild("ConfirmDeleteBlocker"):Show(false)
 		self.wndMain:ToFront()
 		Sound.Play(Sound.PlayUI68OpenPanelFromKeystrokeVirtual)
 		self:PopulateList()
@@ -385,7 +386,8 @@ function Mail:OnMailResult(eResult)
 		[GameLib.CodeEnumGenericError.Mail_CanNotHaveCoDAndGift] 		= 	"GenericError_Mail_CanNotHaveCoDAndGift",
 		[GameLib.CodeEnumGenericError.Mail_CannotMailSelf] 				= 	"GenericError_Mail_CannotMailSelf",
 		[GameLib.CodeEnumGenericError.Mail_CannotReturn] 				= 	"GenericError_Mail_CannotReturn",
-		[GameLib.CodeEnumGenericError.Item_InventoryFull]				=   "GenericError_Item_InventoryFull"
+		[GameLib.CodeEnumGenericError.Item_InventoryFull]				=   "GenericError_Item_InventoryFull",
+		[GameLib.CodeEnumGenericError.Mail_Squelched] 					= 	"GenericError_Mail_Squelched"
 	}
 	
 	local tMailHeaderError = 
@@ -481,7 +483,10 @@ function Mail:OnOpenBtn()
 end
 
 function Mail:OnIBDeleteBtn(wndHandler, wndControl)
+	self.wndMain:FindChild("ConfirmDeleteBlocker"):Show(true)
+end
 
+function Mail:OnIBDeletConfirmeBtn(wndHandler, wndControl)
 	local tMessages = {}
 
 	for idx, wndMail in pairs(self.tMailItemWnds) do
@@ -491,10 +496,13 @@ function Mail:OnIBDeleteBtn(wndHandler, wndControl)
 	end
 
 	MailSystemLib.DeleteMultipleMessages(tMessages)
-
 	self:UpdateAllListItems()
+	self.wndMain:FindChild("ConfirmDeleteBlocker"):Close()
 end
 
+function Mail:OnCancelDeleteBtn(wndHandler, wndControl)
+	self.wndMain:FindChild("ConfirmDeleteBlocker"):Close()
+end
 --------------------/Mail List Item Controls/-----------------------------
 function Mail:OnItemCheck()
 	Sound.Play(Sound.PlayUI19SelectStoreItemVirtual)
@@ -1092,6 +1100,8 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 	self.msgMail = msgMail
 
 	self.wndMain = Apollo.LoadForm(self.luaMailSystem.xmlDoc, "MailMessage", nil, self)
+	self.wndMain:FindChild("ReceiveDeleteBtn"):AttachWindow(self.wndMain:FindChild("DeleteConfirmationWnd"))
+
 	self.arWndAttachmentIcon = {}
 	
 	if self.luaMailSystem.locSavedMessageWindowLoc then
@@ -1130,12 +1140,19 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 		self.wndMain:FindChild("SenderIcon"):SetSprite(kstrPCIcon)
 	end
 
+	if tMessageInfo.eSenderType ~= MailSystemLib.EmailType_Character then
+		self.wndMain:FindChild("ReportSpam"):Show(false)
+	elseif not tMessageInfo.bIsReturnable then
+		self.wndMain:FindChild("ReportSpam"):Enable(false)
+	end
+
 	if tMessageInfo.monCod:GetAmount() == 0 then
 		self.wndMain:FindChild("CODFrame"):Show(false)
 	end
 
 	self:UpdateControls()
 	self:WindowToFront()
+	
 end
 
 function MailReceived:WindowToFront()
@@ -1354,6 +1371,10 @@ function MailReceived:OnDeleteBtn(wndHandler, wndControl)
 	self.msgMail:DeleteMessage()
 end
 
+function MailReceived:OnSubCloseBtn(wndHandler, wndControl)
+	self.wndMain:FindChild("Frame"):GetParent():Show(false)
+end
+
 function MailReceived:OnAcceptCODBtn(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
 		return
@@ -1379,6 +1400,10 @@ end
 
 function MailReceived:OnPlayerCurrencyChanged()
 	self:UpdateControls()
+end
+
+function MailReceived:OnReportSpamBtn(wndHandler, wndControl, eMouseButton)
+	Event_FireGenericEvent("GenericEvent_ReportPlayerMail", self.msgMail)
 end
 
 -------------------------------- instance ----------------------------------------------

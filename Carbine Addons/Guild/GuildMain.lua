@@ -23,10 +23,11 @@ end
 function Guild:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildMain.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 end
 
 function Guild:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if  self.xmlDoc == nil or not g_InterfaceOptionsLoaded then
 		return
 	end
 
@@ -184,20 +185,24 @@ function Guild:OnGuildInvite( strGuildName, strInvitorName, guildType, tFlags )
 		self.wndGuildInvite:Destroy()
 	end
 
-	self.wndGuildInvite = Apollo.LoadForm(self.xmlDoc, "GuildInviteConfirmation", nil, self)
-	local nLeft, nTop, nRight, nBottom = self.wndGuildInvite:FindChild("GuildInviteLabel"):GetAnchorOffsets()
+	if self:FilterRequest(strInvitorName) then
+		self.wndGuildInvite = Apollo.LoadForm(self.xmlDoc, "GuildInviteConfirmation", nil, self)
+		local nLeft, nTop, nRight, nBottom = self.wndGuildInvite:FindChild("GuildInviteLabel"):GetAnchorOffsets()
 
-	if tFlags.bTax then
-		self.wndGuildInvite:FindChild("GuildInviteTaxes"):Show(true)
-		self.wndGuildInvite:FindChild("GuildInviteLabel"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + 61)
+		if tFlags.bTax then
+			self.wndGuildInvite:FindChild("GuildInviteTaxes"):Show(true)
+			self.wndGuildInvite:FindChild("GuildInviteLabel"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + 61)
+		else
+			self.wndGuildInvite:FindChild("GuildInviteTaxes"):Show(false)
+			self.wndGuildInvite:FindChild("GuildInviteLabel"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + 96)
+		end
+
+		self.wndGuildInvite:FindChild("GuildInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_IncomingInvite"), strGuildName, strInvitorName))
+		--self.wndGuildInvite:FindChild("GuildInviteTaxes"):Show( tFlags.bTax )
+		self.wndGuildInvite:ToFront()
 	else
-		self.wndGuildInvite:FindChild("GuildInviteTaxes"):Show(false)
-		self.wndGuildInvite:FindChild("GuildInviteLabel"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + 96)
+		GuildLib.Decline()
 	end
-
-	self.wndGuildInvite:FindChild("GuildInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_IncomingInvite"), strGuildName, strInvitorName))
-	--self.wndGuildInvite:FindChild("GuildInviteTaxes"):Show( tFlags.bTax )
-	self.wndGuildInvite:ToFront()
 end
 
 function Guild:OnGuildInviteAccept(wndHandler, wndControl)
@@ -212,6 +217,10 @@ function Guild:OnGuildInviteDecline() -- This can come from a variety of sources
 	if self.wndGuildInvite then
 		self.wndGuildInvite:Destroy()
 	end
+end
+
+function Guild:OnFilterBtn(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -240,6 +249,22 @@ function Guild:OnGuildChange()
 	self.wndMain:Show(false)
 	Event_FireGenericEvent("GuildWindowHasBeenClosed")
 	self:OnGuildOn()
+end
+
+function Guild:FilterRequest(strInvitor)
+	if not g_InterfaceOptions.Carbine.bFilterGuildInvite then
+		
+		return true
+	end
+	
+	local bPassedFilter = false
+	
+	local tRelationships = GameLib.SearchRelationshipStatusByCharacterName(strInvitor)
+	if tRelationships and (tRelationships.tFriend or tRelationships.tAccountFriend or tRelationships.tGuilds or tRelationships.nGuildIndex) then
+		bPassedFilter = true
+	end
+	
+	return bPassedFilter
 end
 
 local GuildInst = Guild:new()
