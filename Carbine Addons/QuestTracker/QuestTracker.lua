@@ -289,15 +289,6 @@ function QuestTracker:OnQuestTrackerOrderTimer()
 	self.nCurentQuestsOrderedCount = nCount
 end
 
-function QuestTracker:OnQuestInit()
-	self:RedrawAll()
-end
-
-function QuestTracker:OnSubZoneChanged()
-	self:RedrawAll()
-	Apollo.RemoveEventHandler("SubZoneChanged", self) -- Only needed this event for the edge case of first load not having a zone set yet
-end
-
 function QuestTracker:ResizeEpisodes()
 	-- Sort
 	local function HelperSortEpisodes(a,b)

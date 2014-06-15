@@ -1503,11 +1503,7 @@ function OptionsAddon:OnRestoreDefaults()
 		end
 	end
 	self:OnOptionsCheck()
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> origin/master
 	self.wndVideo:FindChild("RefreshAnimation"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
 
 end
