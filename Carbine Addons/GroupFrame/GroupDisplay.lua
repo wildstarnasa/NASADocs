@@ -1230,7 +1230,7 @@ function GroupDisplay:OnGroupReadyCheck(nMemberIndex, strMessage)
 		strName = tMember.strCharacterName
 	end
 
-	ChatSystemLib.PostOnChannel( self.eChatChannel, String_GetWeaselString(Apollo.GetString("Group_ReadyCheckStarted"), strName, strMessage), "" )
+	ChatSystemLib.PostOnChannel( self.eChatChannel, String_GetWeaselString(Apollo.GetString("Group_ReadyCheckStarted"), strName, {["strLiteral"] = strMessage}), "" )
 end
 
 

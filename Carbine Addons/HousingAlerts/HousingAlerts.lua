@@ -152,7 +152,7 @@ function HousingAlerts:GenerateAlert( strName, eResult )
 	strName = tostring(strName or '') -- just in case.
 
 	if string.len(strName) >= 1 and strComplexResult then
-		strResult = String_GetWeaselString(strComplexResult, strName)
+		strResult = String_GetWeaselString(strComplexResult, {strLiteral = strName})
 	end
 	
 	return strResult

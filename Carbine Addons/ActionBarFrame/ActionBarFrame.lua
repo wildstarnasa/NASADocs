@@ -454,22 +454,26 @@ function ActionBarFrame:RedrawPotions()
 	
 	for idx, tItemData in pairs(tItemList) do
 		if tItemData and tItemData.itemInBag and tItemData.itemInBag:GetItemCategory() == 48 then--and tItemData.itemInBag:GetConsumable() == "Consumable" then
-			local tItem = tItemData.itemInBag
+			local itemPotion = tItemData.itemInBag
 
 			if tFirstPotion == nil then
-				tFirstPotion = tItem
+				tFirstPotion = itemPotion
 			end
 
-			if tItem:GetItemId() == self.nSelectedPotion then
-				tSelectedPotion = tItem
+			if itemPotion:GetItemId() == self.nSelectedPotion then
+				tSelectedPotion = itemPotion
 			end
+			
+			local idItem = itemPotion:GetItemId()
 
-			if tPotions[tItem:GetItemId()] == nil then
-				tPotions[tItem:GetItemId()] = {}
-				tPotions[tItem:GetItemId()].itemObject=tItem
-				tPotions[tItem:GetItemId()].nCount=tItem:GetStackCount()
+			if tPotions[idItem] == nil then
+				tPotions[idItem] = 
+				{
+					itemObject = itemPotion,
+					nCount = itemPotion:GetStackCount(),
+				}
 			else
-				tPotions[tItem:GetItemId()].nCount = tPotions[tItem:GetItemId()].nCount + tItem:GetStackCount()
+				tPotions[idItem].nCount = tPotions[idItem].nCount + itemPotion:GetStackCount()
 			end
 		end
 	end
@@ -480,10 +484,8 @@ function ActionBarFrame:RedrawPotions()
 		if (tData.nCount > 1) then wndCurr:FindChild("PotionBtnStackCount"):SetText(tData.nCount) end
 		wndCurr:SetData(tData.itemObject)
 
-		if Tooltip then
-			wndCurr:SetTooltipDoc(nil)
-			Tooltip.GetItemTooltipForm(self, wndCurr, tData.itemObject, {})
-		end
+		wndCurr:SetTooltipDoc(nil)
+		Tooltip.GetItemTooltipForm(self, wndCurr, tData.itemObject, {})
 	end
 
 	if tSelectedPotion == nil and tFirstPotion ~= nil then
@@ -662,7 +664,7 @@ end
 function ActionBarFrame:OnCharacterCreated()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	
-	if not self.bCharacterLoaded and unitPlayer and unitPlayer:IsValid() then
+	if GameLib.IsCharacterLoaded() and not self.bCharacterLoaded and unitPlayer and unitPlayer:IsValid() then
 		self.bCharacterLoaded = true
 		Apollo.StopTimer("ActionBarFrameTimer_DelayedInit")
 		Event_FireGenericEvent("ActionBarReady", self.wndMain)

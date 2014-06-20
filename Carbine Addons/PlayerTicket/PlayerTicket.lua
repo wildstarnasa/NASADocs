@@ -71,6 +71,8 @@ function PlayerTicketDialog:OnDocumentReady()
 	
 	self.wndCatList:SetColumnText(1, Apollo.GetString("CRB_Category"))
 	self.wndSubcatList:SetColumnText(1, Apollo.GetString("ErrorDialog_SubcatTitle"))
+	
+	self.bIsBug = false
 end
 
 function PlayerTicketDialog:OnInterfaceMenuListHasLoaded()
@@ -138,11 +140,21 @@ function PlayerTicketDialog:PopulateSubtypeCombo()
 		self.wndAcceptBtn:Enable(false)		
 		self.wndSubCategoryBlocker:Show(true)
 	end
+	
+	--Bug category is index 4.  Yup, this is pretty ugly.
+	if iRow == 4 then
+		self.wndAcceptBtn:Enable(true)
+		self.wndAcceptBtn:SetText(Apollo.GetString("InterfaceMenu_ReportBug"))
+		self.bIsBug = true
+	else
+		self.wndAcceptBtn:SetText(Apollo.GetString("PlayerTicket_SendTicketBtn"))
+		self.bIsBug = false
+	end
 end
 
 function PlayerTicketDialog:OnSubcategoryChanged()
 	self.wndTextEntry:SetFocus()
-	self.wndTextEntry:SetSel(0, -1)		
+	self.wndTextEntry:SetSel(0, -1)	
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -154,11 +166,17 @@ function PlayerTicketDialog:OnOkBtn(wndHandler, wndControl)
 	local nCategory = self.wndCatList:GetCellData(self.wndCatList:GetCurrentRow(), 1)
 	local nSubCategory = self.wndSubcatList:GetCellData(self.wndSubcatList:GetCurrentRow(), 1)
 	
-	if nCategory ~= nil and nSubCategory ~= nil then
+	
+	
+	if self.bIsBug then
+		local strText = self.wndTextEntry:GetText()
+		Event_FireGenericEvent("TicketToBugDialog", strText)
+		self.bIsBug = false
+	elseif nCategory ~= nil and nSubCategory ~= nil then
 		PlayerTicketDialog_Report (nCategory, nSubCategory, self.wndTextEntry:GetText())
 	end
 	
-	self.wndMain:Show(false)
+	self.wndMain:Close()
 end
 
 ---------------------------------------------------------------------------------------------------

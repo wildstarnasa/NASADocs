@@ -3784,6 +3784,9 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         </Event>
         <Event Name="StringCoppiedToClipboard" Id="13345"/>
         <Event Name="AccountCREDDRedeemed" Id="13348"/>
+        <Event Name="MatchingGameRespondedToPending" Id="13440">
+            <Param Name="bResponse" Desc="Was the matching game accepted or declined" Type="Boolean" Id="13442"/>
+        </Event>
     </WindowControl>
     <Library Name="AccountItemLib" Incomplete="true" Id="8793">
         <Function Name="GetPendingAccountSingleItems" Incomplete="true" Id="8794"/>

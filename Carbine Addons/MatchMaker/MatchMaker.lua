@@ -213,6 +213,9 @@ function MatchMaker:OnDocumentReady()
 	self.wndRoleBlocker:Show(false)
 	self.wndRealmFilterBlocker:Show(false)
 	self.bInCombat = false
+	
+	self.wndJoinGame:FindChild("YesButton"):SetActionData(GameLib.CodeEnumConfirmButtonType.MatchingGameRespondToPending, true)
+	self.wndJoinGame:FindChild("NoButton"):SetActionData(GameLib.CodeEnumConfirmButtonType.MatchingGameRespondToPending, false)
 
 	self.tWarparty =
 	{
@@ -806,7 +809,6 @@ function MatchMaker:RefreshStatus()
 			self.wndQueueInfo:FindChild("QueueStatus"):SetText(Apollo.GetString("Matchmaker_NotQueued"))
 			self.wndQueueInfo:FindChild("QueueStatus"):SetTextColor(kcrInactiveColor)
 			if bLeader then
-				self.wndAltLeaveGame:Show(true)
 				self.wndJoinAsGroup:Show(true)
 				self.wndModeListToggle:Enable(true)
 				self.wndListBlocker:Show(false)
@@ -1245,17 +1247,15 @@ end
 	self:RefreshStatus()
 end--]]
 
-function MatchMaker:OnYes(wndHandler, wndControl)
-	MatchingGame.RespondToPendingGame(true)
-	self.eSelectedTab = self.eQueuedTab
-	self:OnMatchMakerOn()
+function MatchMaker:OnPendingGameResponded(wndHandler, wndControl, bResponse)
+	if bResponse then
+		self.eSelectedTab = self.eQueuedTab
+		self:OnMatchMakerOn()
+	else
+		self:RefreshStatus()
+	end
+	
 	self.wndJoinGame:Show(false)
-end
-
-function MatchMaker:OnNo(wndHandler, wndControl)
-	MatchingGame.RespondToPendingGame(false)
-	self.wndJoinGame:Show(false)
-	self:RefreshStatus()
 end
 
 function MatchMaker:OnVoteKickYes(wndHandler, wndControl)

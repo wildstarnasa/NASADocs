@@ -66,6 +66,7 @@ function Abilities:OnDocumentReady()
 	Apollo.RegisterEventHandler("LevelUpUnlock_AbilityTier8",					"OnLevelUpUnlock_TierPointSystem", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_Class_Ability",					"OnLevelUpUnlock_Class_Ability", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_Path_Spell",						"OnLevelUpUnlock_Path_Spell", self)
+	Apollo.RegisterEventHandler("DragDropSysEnd",								"OnDragDropEnd", self)
 
 	Apollo.RegisterTimerHandler("AbilitiesBuilder_HideErrorContainerTimer", 	"OnErrorContainerHideBtn", self)
 end
@@ -132,7 +133,7 @@ function Abilities:BuildWindow()
 		wndSpellFilterTabs:FindChild("SpellFilterTab_Path"):SetData(Spell.CodeEnumSpellTag.Path)
 
 		self.bDirtyBit = false
-		self.tCurrentDragData = false
+		self.tCurrentDragData = nil
 
 		if self.locSavedLocation then
 			self.wndMain:MoveToLocation(self.locSavedLocation)
@@ -614,7 +615,7 @@ function Abilities:OnStartDragSkillFromSlots(wndHandler, wndControl)
 		return -- Early exit if already dragging, this can occur if moving the mouse from spellbook over a slot item
 	end
 
-	self.tCurrentDragData = { wndHandler, wndHandler:GetAbilityId() } -- We need the table since we delete right away
+	self.tCurrentDragData = { wndSource = wndHandler, idSpell = wndHandler:GetAbilityId() } -- We need the table since we delete right away
 	wndHandler:SetAbilityId(0) -- Not using HelperDeleteSlot as we don't want to reset points
 	self:DrawSpellBook()
 end
@@ -630,15 +631,23 @@ function Abilities:OnEndDragSkillOntoSlotItem(wndHandler, wndControl)
 
 	-- Save then Swap
 	local idSwapAbility = wndHandler:FindChild("SlotDisplay"):GetAbilityId()
-	wndHandler:FindChild("SlotDisplay"):SetAbilityId(self.tCurrentDragData[2])
+	wndHandler:FindChild("SlotDisplay"):SetAbilityId(self.tCurrentDragData.idSpell)
 
 	if idSwapAbility ~= 0 then
-		self.tCurrentDragData[1]:SetAbilityId(idSwapAbility)
+		self.tCurrentDragData.wndSource:SetAbilityId(idSwapAbility)
 	end
 
-	self.tCurrentDragData = false
+	self.tCurrentDragData = nil
 
 	self:DrawSpellBook()
+end
+
+function Abilities:OnDragDropEnd()
+	if self.tCurrentDragData then
+		AbilityBook.UpdateSpellTier(self.tCurrentDragData.idSpell, 1)
+		self:HelperDeleteSlot(self.tCurrentDragData.wndSource)
+		self.tCurrentDragData = nil
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -710,13 +719,13 @@ function Abilities:OnSpecChanged(newSpecIndex, specError)
 end
 
 function Abilities:OnActionSetError(eResult)
-	local strMessage = nil	
+	local strMessage = nil
 	if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.InVoid then
 		strMessage = Apollo.GetString("ActionSet_Error_InTheVoid")
 		-- TODO MORE
 	end
 
-	if strMessage then		
+	if strMessage then
 		self:BuildWindow() -- This can happen after the set has "successfully" closed, so bring it back up if closed
 		self:HelperShowError(strMessage)
 	end

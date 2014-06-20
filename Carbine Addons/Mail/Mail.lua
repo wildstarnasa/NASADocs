@@ -527,7 +527,7 @@ function Mail:UpdateListItem(wndMailItem, msgMail)
 
 	local strSubject
 	if tMsgInfo.monGift:GetAmount() > 0 then
-		strSubject = String_GetWeaselString(Apollo.GetString("Mail_MoneyAttachedPrefix"), tMsgInfo.strSubject)
+		strSubject = String_GetWeaselString(Apollo.GetString("Mail_MoneyAttachedPrefix"), {strLiteral = tMsgInfo.strSubject})
 	else
 		strSubject = tMsgInfo.strSubject
 	end
@@ -918,7 +918,6 @@ function MailCompose:UpdateControls()
 	strMessage = self.wndMessageEntryText:GetText()
 
 	self.wndSendBtn:SetActionData(GameLib.CodeEnumConfirmButtonType.SendMail, strTo, strRealm, strSubject, strMessage, self.arAttachments, self.nDeliverySpeed, monCoD, monGift)
-
 end
 
 function MailCompose.LimitTextEntry(wndCompose, nCharacterLimit)
@@ -1169,6 +1168,7 @@ function MailReceived:UpdateControls()
 	end
 
 	self.wndMain:FindChild("ReceiveReturnBtn"):Enable(tMessageInfo.bIsReturnable)
+	self.wndMain:FindChild("ReportSpam"):Enable(tMessageInfo.bIsReturnable)
 
 	for idx, wndIcon in pairs(self.arWndAttachmentIcon) do
 		local tAttachment = tMessageInfo.arAttachments[idx]
@@ -1340,12 +1340,12 @@ function MailReceived:OnReplyBtn()
 
 	local strNewSubject = Apollo.GetString("Mail_ReplyPrepend")
 	if( tMessageInfo.strSubject ~= nil ) then
-		strNewSubject = String_GetWeaselString(strNewSubject, tMessageInfo.strSubject)
+		strNewSubject = String_GetWeaselString(strNewSubject, {strLiteral = tMessageInfo.strSubject})
 	end
 
 	local strNewBody = Apollo.GetString("Mail_InlineReplyPrepend")
 	if(tMessageInfo.strBody ~= nil ) then
-		strNewBody = String_GetWeaselString(strNewBody, tMessageInfo.strBody)
+		strNewBody = String_GetWeaselString(strNewBody, {strLiteral = tMessageInfo.strBody})
 	end
 
 	self.luaMailSystem:ComposeMail()

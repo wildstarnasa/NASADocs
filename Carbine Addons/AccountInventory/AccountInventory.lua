@@ -320,8 +320,9 @@ function AccountInventory:HelperAddPendingSingleToContainer(wndParent, tPendingA
 
 	-- Icons for the number of redempetions / cooldowns
 	if tPendingAccountItem.multiClaim or tPendingAccountItem.multiRedeem then -- Should be only multiRedeem
-		wndGroup:FindChild("ItemIconText"):Show(tPendingAccountItem.cooldown and tPendingAccountItem.cooldown > 0)
-		wndGroup:FindChild("ItemIconText"):SetText(tPendingAccountItem.cooldown and self:HelperCooldown(tPendingAccountItem.cooldown) or "")
+		local bShowCooldown = tPendingAccountItem.cooldown and tPendingAccountItem.cooldown > 0
+		wndGroup:FindChild("ItemIconText"):Show(bShowCooldown)
+		wndGroup:FindChild("ItemIconText"):SetText(bShowCooldown and self:HelperCooldown(tPendingAccountItem.cooldown) or "")
 	end
 	wndGroup:FindChild("ItemIconOnceOnly"):Show(not tPendingAccountItem.multiClaim and not tPendingAccountItem.multiRedeem) -- Should be only multiRedeem
 	wndGroup:FindChild("ItemIconArrangeVert"):ArrangeChildrenVert(1)
@@ -865,10 +866,10 @@ end
 
 function AccountInventory:HelperCooldown(nRawTime)
 	local strResult = Apollo.GetString("CRB_LessThan1M")
-	local nSeconds = math.floor(nRawTime / 10000)
+	local nSeconds = math.floor(nRawTime / 1000)
 	local nMinutes = math.floor(nSeconds / 60)
-	local nHours = math.floor(nSeconds / 360)
-	local nDays = math.floor(nSeconds / 8640)
+	local nHours = math.floor(nSeconds / 3600)
+	local nDays = math.floor(nSeconds / 86400)
 
 	if nDays > 1 then
 		strResult = String_GetWeaselString(Apollo.GetString("CRB_Days"), nDays)
@@ -877,6 +878,7 @@ function AccountInventory:HelperCooldown(nRawTime)
 	elseif nMinutes > 1 then
 		strResult = String_GetWeaselString(Apollo.GetString("CRB_Minutes"), nMinutes)
 	end
+
 	return strResult
 end
 

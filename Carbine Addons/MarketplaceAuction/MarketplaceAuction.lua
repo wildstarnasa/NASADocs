@@ -108,10 +108,13 @@ end
 function MarketplaceAuction:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MarketplaceAuction.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	
+	Apollo.RegisterEventHandler("OwnedItemAuctions", 			"OnOwnedItemAuctions", self)
+	self.nOwnedAuctionCount = 0
 end
 
 function MarketplaceAuction:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	-- Window events
@@ -128,7 +131,6 @@ function MarketplaceAuction:OnDocumentReady()
 	Apollo.RegisterEventHandler("PostItemAuctionResult", 		"OnPostItemAuctionResult", self)
 	Apollo.RegisterEventHandler("ItemAuctionBidResult", 		"OnItemAuctionBidResult", self)
 	Apollo.RegisterEventHandler("ItemCancelResult", 			"OnItemCancelResult", self)
-	Apollo.RegisterEventHandler("OwnedItemAuctions", 			"OnOwnedItemAuctions", self)
 
 	-- Other events
 	Apollo.RegisterEventHandler("UpdateInventory", 				"OnUpdateInventory", self)
@@ -1269,7 +1271,7 @@ function MarketplaceAuction:OnItemAuctionBidResult(eAuctionBidResult, aucCurr)
 
 	local bResultOK = eAuctionBidResult == MarketplaceLib.AuctionPostResult.Ok
 	local strMessage = bResultOK and String_GetWeaselString(Apollo.GetString("MarketplaceAuction_BidAccepted"), aucCurr:GetItem():GetName()) or Apollo.GetString("UnknownError")
-	self:OnPostCustomMessage(kAuctionPostResultToString[eAuctionPostResult] or strMessage, bResultOK, 4)
+	self:OnPostCustomMessage(kAuctionPostResultToString[eAuctionBidResult] or strMessage, bResultOK, 4)
 
 	if eAuctionBidResult == MarketplaceLib.AuctionPostResult.Ok then
 		self.fnLastSearch(self.nCurPage)
@@ -1379,10 +1381,6 @@ function MarketplaceAuction:OnOpenMarketListingsBtn(wndHandler, wndControl)
 end
 
 function MarketplaceAuction:OnOwnedItemAuctions(tAuctions) -- From MarketplaceLib.RequestOwnedItemAuctions()
-	if not self.wndMain or not self.wndMain:IsValid() then
-		return
-	end
-
 	local nCount = 0
 	for nIdx, tCurrOrder in pairs(tAuctions) do
 		if tCurrOrder and tCurrOrder:IsOwned() then -- TODO: Eventually show bids?
@@ -1399,7 +1397,10 @@ function MarketplaceAuction:UpdateOrderLimit(nCount)
 	else
 		self.nOwnedAuctionCount = nCount
 	end
-	self.wndOrderLimitText:SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_OrderLimitCount"), self.nOwnedAuctionCount, MarketplaceLib.kMaxPlayerAuctions))
+	
+	if self.wndOrderLimitText then
+		self.wndOrderLimitText:SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_OrderLimitCount"), self.nOwnedAuctionCount, MarketplaceLib.kMaxPlayerAuctions))
+	end
 end
 
 function MarketplaceAuction:OnGenericEditBoxMouseDown(wndHandler, wndControl)

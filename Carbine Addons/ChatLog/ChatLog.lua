@@ -27,11 +27,11 @@ local kstrDialogFont 		= "CRB_Dialog"
 local kstrDialogFontRP 		= "CRB_Dialog_I"
 
 local kstrGMIcon 		= "Icon_Windows_UI_GMIcon"
-local knChannelListHeight = 500
+local knChannelListHeight = 275
 
 local knWindowStayOnScreenOffset = 50
 
-local knSaveVersion = 2
+local knSaveVersion = 3
 
 local karEvalColors =
 {
@@ -207,6 +207,7 @@ function ChatLog:OnSave(eType)
 		bShowChannel = self.bShowChannel,
 		bShowTimestamp = self.bShowTimestamp,
 		bProfanityFilter = self.bProfanityFilter,
+		eRoleplayOption = self.eRoleplayOption,
 	}
 
 	local arWindowGroupMap = {}
@@ -217,7 +218,6 @@ function ChatLog:OnSave(eType)
 		tSave.tWindow[nCount].tChatData = wndChat:GetData()
 		tSave.tWindow[nCount].tStrings = wndChat:FindChild("Input"):GetHistoryStrings()
 		tSave.tWindow[nCount].strTitle = wndChat:GetText()
-		tSave.tWindow[nCount].bLocked = wndChat:FindChild("LockBtn"):IsChecked()
 
 		local nMatchingTabGroup = 0
 		for idx, wndGroup in pairs(arWindowGroupMap) do
@@ -231,9 +231,8 @@ function ChatLog:OnSave(eType)
 			nMatchingTabGroup = #arWindowGroupMap + 1
 			arWindowGroupMap[nMatchingTabGroup] = wndChat
 		end
+
 		tSave.tWindow[nCount].nTabGroup = nMatchingTabGroup
-
-
 		tSave.tWindow[nCount].tWindowLocation = wndChat:GetLocation():ToTable()
 	end
 
@@ -242,34 +241,38 @@ function ChatLog:OnSave(eType)
 end
 
 function ChatLog:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nVersion == knSaveVersion then
-		if tSavedData.bEnableNCFade ~= nil then
-			self.bEnableNCFade = tSavedData.bEnableNCFade
-		end
-		if tSavedData.bEnableBGFade ~= nil then
-			self.bEnableBGFade = tSavedData.bEnableBGFade
-		end
-		if tSavedData.nBGOpacity ~= nil then
-			self.nBGOpacity = tSavedData.nBGOpacity
-		end
-		if tSavedData.bShowChannel ~= nil then
-			self.bShowChannel = tSavedData.bShowChannel
-		end
-		if tSavedData.bShowTimestamp ~= nil then
-			self.bShowTimestamp = tSavedData.bShowTimestamp
-		end
-		if tSavedData.bProfanityFilter ~= nil then
-			self.bProfanityFilter = tSavedData.bProfanityFilter
-		end
-
-		if tSavedData.tOptionsLocation then
-			self.locSavedOptionsLoc = WindowLocation.new(tSavedData.tOptionsLocation)
-		end
-
-		self.nFontSize = tSavedData.nFontSize
-		self.tWindow = tSavedData.tWindow
+	if not tSavedData or tSavedData.nVersion ~= knSaveVersion then
+		return
 	end
 
+	if tSavedData.bEnableNCFade ~= nil then
+		self.bEnableNCFade = tSavedData.bEnableNCFade
+	end
+	if tSavedData.bEnableBGFade ~= nil then
+		self.bEnableBGFade = tSavedData.bEnableBGFade
+	end
+	if tSavedData.nBGOpacity ~= nil then
+		self.nBGOpacity = tSavedData.nBGOpacity
+	end
+	if tSavedData.bShowChannel ~= nil then
+		self.bShowChannel = tSavedData.bShowChannel
+	end
+	if tSavedData.bShowTimestamp ~= nil then
+		self.bShowTimestamp = tSavedData.bShowTimestamp
+	end
+	if tSavedData.bProfanityFilter ~= nil then
+		self.bProfanityFilter = tSavedData.bProfanityFilter
+	end
+	if tSavedData.eRoleplayOption then
+		self.eRoleplayOption = tSavedData.eRoleplayOption
+	end
+
+	if tSavedData.tOptionsLocation then
+		self.locSavedOptionsLoc = WindowLocation.new(tSavedData.tOptionsLocation)
+	end
+
+	self.nFontSize = tSavedData.nFontSize
+	self.tWindow = tSavedData.tWindow
 end
 
 function ChatLog:OnConfigure() -- From ESC -> Options
@@ -284,9 +287,14 @@ function ChatLog:OnLoad()
 end
 
 function ChatLog:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+
+	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
+end
+
+function ChatLog:OnWindowManagementReady()
 	Apollo.RegisterEventHandler("ChatMessage", 					"OnChatMessage", self)
 	Apollo.RegisterEventHandler("ChatFlag", 					"OnChatFlag", self)
 	Apollo.RegisterEventHandler("ChatZone", 					"OnChatZone", self)
@@ -310,9 +318,6 @@ function ChatLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayedTime",					"OnPlayedtime", self)
 	Apollo.RegisterEventHandler("ChatReply",					"OnGenericEvent_ChatLogWhisper", self)
 	Apollo.RegisterEventHandler("CombatLogLoot", 				"OnCombatLogLoot", self)
-	
-	Apollo.RegisterEventHandler("ResolutionChanged", 			"OnResolutionChanged", self)
-	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", "OnApplicationWindowSizeChanged", self)
 
 	Apollo.RegisterEventHandler("GenericEvent_LootChannelMessage", 		"OnGenericEvent_LootChannelMessage", self)
 	Apollo.RegisterEventHandler("GenericEvent_SystemChannelMessage", 	"OnGenericEvent_SystemChannelMessage", self)
@@ -324,10 +329,10 @@ function ChatLog:OnDocumentReady()
 
 	-- Other add-ons
 	Apollo.RegisterEventHandler("TradeSkillSigilResult", 				"OnTradeSkillSigilResult", self)
-
-	Apollo.RegisterEventHandler("VarChange_FrameCount", "OnChatLineTimer", self)
+	Apollo.RegisterEventHandler("VarChange_FrameCount",					"OnChatLineTimer", self)
 
 	self.nCurrentTimeMS = GameLib.GetGameTime()
+	self.nChatIndex = 0
 
 	self.arChatColor =
 	{
@@ -367,7 +372,7 @@ function ChatLog:OnDocumentReady()
 	self.tLinks 			= {}
 	self.nNextLinkIndex 	= 1
 	self.nMaxChatLines 		= 256
-	
+
 	self.twndItemLinkTooltips = {}
 
 	---------------OPTIONS---------------
@@ -384,10 +389,14 @@ function ChatLog:OnDocumentReady()
 	self.wndChatOptions:Show(false)
 
 	-- Profanity Filter Option
-	self.bProfanityFilter = true
+	if self.bProfanityFilter == nil then
+		self.bProfanityFilter = true
+	end
+	
 	wndOptionsContainer:FindChild("ProfanityOn"):SetData(true)
 	wndOptionsContainer:FindChild("ProfanityOff"):SetData(false)
-	wndOptionsContainer:FindChild("ProfanityOn"):SetCheck(true) -- Default
+	wndOptionsContainer:FindChild("ProfanityOn"):SetCheck(self.bProfanityFilter) -- Default
+	wndOptionsContainer:FindChild("ProfanityOff"):SetCheck(not self.bProfanityFilter)
 
 	for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels()) do
 		local eChannelType = channelCurrent:GetType()
@@ -417,24 +426,37 @@ function ChatLog:OnDocumentReady()
 
 	-- Channel Options
 	local wndOptionsContainer = self.wndChatOptions:FindChild("TwoOptionsContainer")
-	self.bShowChannel = true
+	if self.bShowChannel == nil then
+		self.bShowChannel = true
+	end
 	wndOptionsContainer:FindChild("ChannelShow"):SetData(true)
 	wndOptionsContainer:FindChild("ChannelShowOff"):SetData(false)
-	wndOptionsContainer:FindChild("ChannelShow"):SetCheck(true)  -- Default
+	wndOptionsContainer:FindChild("ChannelShow"):SetCheck(self.bShowChannel)  -- Default
+	wndOptionsContainer:FindChild("ChannelShowOff"):SetCheck(not self.bShowChannel)
 
 	-- Timestamp
-	self.bShowTimestamp = true
+	if self.bShowTimestamp == nil then
+		self.bShowTimestamp = true
+	end
 	wndOptionsContainer:FindChild("TimestampShow"):SetData(true)
 	wndOptionsContainer:FindChild("TimestampShowOff"):SetData(false)
-	wndOptionsContainer:FindChild("TimestampShow"):SetCheck(true) -- Default
-
+	wndOptionsContainer:FindChild("TimestampShow"):SetCheck(self.bShowTimestamp) -- Default
+	wndOptionsContainer:FindChild("TimestampShowOff"):SetData(not self.bShowTimestamp)
+	
 	-- Background
-	self.bEnableBGFade = true
+	if self.bEnableBGFade == nil then
+		self.bEnableBGFade = true
+	end
 	wndOptionsContainer:FindChild("EnableFadeBtn"):SetData(true)
 	wndOptionsContainer:FindChild("DisableFadeBtn"):SetData(false)
-	wndOptionsContainer:FindChild("EnableFadeBtn"):SetCheck(true) -- Default
+	wndOptionsContainer:FindChild("EnableFadeBtn"):SetCheck(self.bEnableBGFade) -- Default
+	wndOptionsContainer:FindChild("DisableFadeBtn"):SetCheck(not self.bEnableBGFade)
 
-	self.nBGOpacity = self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):GetValue()
+	if not self.nBGOpacity then
+		self.nBGOpacity = self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):GetValue()
+	else
+		self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):SetValue(self.nBGOpacity)
+	end
 
 	self.tCombatChannels =
 	{
@@ -446,123 +468,125 @@ function ChatLog:OnDocumentReady()
 	if not self.tWindow then
 		local wndChat = self:NewChatWindow(Apollo.GetString("CRB_Chat"), ktDefaultChannels, ktDefaultHolds, false)
 		local wndCombat = self:NewChatWindow(Apollo.GetString("ChatType_Combat"), ktDefaultChannels, {}, true)
+
 		wndChat:AttachTab(wndCombat, false)
 	end
 
 	self.tChatQueue = Queue:new()
 
-	self.eRoleplayOption = 3 -- by default, no RP shown
+	if not self.eRoleplayOption then
+		self.eRoleplayOption = 3 -- by default, no RP shown
+	end
+	wndChatOptionsContent:SetRadioSel("RoleplayViewToggle", self.eRoleplayOption)
 	self.tLastWhisperer = nil -- last person to whisper to you
 
 	-------------------------------------OnRestoreSection-------------------------------------
 	if self.nFontSize ~= nil then
-			local strFontControlName = "FontSizeMedium"
+		local strFontControlName = "FontSizeMedium"
 
-			local wndChatOptionsContent = self.wndChatOptions:FindChild("ChatOptionsContent")
+		local wndChatOptionsContent = self.wndChatOptions:FindChild("ChatOptionsContent")
 
-			wndChatOptionsContent:FindChild("FontSizeSmall"):SetCheck(self.nFontSize == 1)
-			wndChatOptionsContent:FindChild("FontSizeMedium"):SetCheck(self.nFontSize == 2)
-			wndChatOptionsContent:FindChild("FontSizeLarge"):SetCheck(self.nFontSize == 3)
+		wndChatOptionsContent:FindChild("FontSizeSmall"):SetCheck(self.nFontSize == 1)
+		wndChatOptionsContent:FindChild("FontSizeMedium"):SetCheck(self.nFontSize == 2)
+		wndChatOptionsContent:FindChild("FontSizeLarge"):SetCheck(self.nFontSize == 3)
 
-			if self.nFontSize == 1 then
-				strFontControlName = "FontSizeSmall"
-			elseif self.nFontSize == 2 then
-				strFontControlName = "FontSizeMedium"
-			elseif self.nFontSize == 3 then
-				strFontControlName = "FontSizeLarge"
-			end
-
-			local wndFontControl = self.wndChatOptions:FindChild("ChatOptionsContent:" .. strFontControlName)
-			self:OnFontSizeOption(wndFontControl, wndFontControl)
+		if self.nFontSize == 1 then
+			strFontControlName = "FontSizeSmall"
+		elseif self.nFontSize == 2 then
+			strFontControlName = "FontSizeMedium"
+		elseif self.nFontSize == 3 then
+			strFontControlName = "FontSizeLarge"
 		end
 
-		local arWindowGroupMap = {}
-		for key, tWindowInfo in ipairs(self.tWindow or {}) do
-			if self.tChatWindows[key] == nil then
-				local bCombatLog = false
-				if tWindowInfo.tChatData.bCombatLog ~= nil then
-					bCombatLog = tWindowInfo.tChatData.bCombatLog
-				end
-				self:NewChatWindow(tWindowInfo.strTitle, tWindowInfo.tChatData.tViewedChannels or ktDefaultChannels, tWindowInfo.tChatData.tHeldChannels or ktDefaultHolds, tWindowInfo.tChatData.bCombatLog)
+		local wndFontControl = self.wndChatOptions:FindChild("ChatOptionsContent:" .. strFontControlName)
+		self:OnFontSizeOption(wndFontControl, wndFontControl)
+	end
+
+	local arWindowGroupMap = {}
+	for key, tWindowInfo in ipairs(self.tWindow or {}) do
+		if self.tChatWindows[key] == nil then
+			local bCombatLog = false
+
+			if tWindowInfo.tChatData.bCombatLog ~= nil then
+				bCombatLog = tWindowInfo.tChatData.bCombatLog
 			end
 
-			local wndChat = self.tChatWindows[key]
-			if tWindowInfo.tStrings ~= nil then
-				for idx, strHistory in pairs(tWindowInfo.tStrings) do
-					wndChat:FindChild("Input"):AddHistoryString(strHistory)
-				end
+			self:NewChatWindow(tWindowInfo.strTitle, tWindowInfo.tChatData.tViewedChannels or ktDefaultChannels, tWindowInfo.tChatData.tHeldChannels or ktDefaultHolds, tWindowInfo.tChatData.bCombatLog)
+		end
+
+		local wndChat = self.tChatWindows[key]
+		if tWindowInfo.tStrings ~= nil then
+			for idx, strHistory in pairs(tWindowInfo.tStrings) do
+				wndChat:FindChild("Input"):AddHistoryString(strHistory)
 			end
+		end
 
-			if tWindowInfo.strTitle ~= nil then
-				if tWindowInfo.strTitle == "Chat" then
-					tWindowInfo.strTitle = Apollo.GetString("CRB_Chat")
-				elseif tWindowInfo.strTitle == "Combat" then
-					tWindowInfo.strTitle = Apollo.GetString("ChatType_Combat")
-				else
-					wndChat:SetText(tWindowInfo.strTitle)
-				end
-			end
-
-			if tWindowInfo.tWindowLocation then
-				wndChat:Detach()
-				wndChat:MoveToLocation(WindowLocation.new(tWindowInfo.tWindowLocation))
-			end
-
-			if tWindowInfo.bLocked ~= nil then
-				self:HelperSetLockWindow(wndChat, tWindowInfo.bLocked)
-			end
-
-			if self.bEnableNCFade ~= nil and self.bEnableBGFade ~= nil then
-				wndChat:SetStyle("AutoFadeNC", self.bEnableNCFade)
-				if self.bEnableNCFade then wndChat:SetNCOpacity(1) end
-
-				wndChat:SetStyle("AutoFadeBG", self.bEnableBGFade)
-				if self.bEnableBGFade then wndChat:SetBGOpacity(1) end
-			end
-
-			if self.nBGOpacity ~= nil then
-				wndChat:FindChild("BGArt"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
-				wndChat:FindChild("BGArt_SidePanel"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
-			end
-
-			local nMatchingTabGroup = 0
-			for idx, wndGroup in pairs(arWindowGroupMap) do
-				if idx == tWindowInfo.nTabGroup then
-					nMatchingTabGroup = idx
-					break
-				end
-			end
-
-			if nMatchingTabGroup == 0 then
-				nMatchingTabGroup = tWindowInfo.nTabGroup
-				arWindowGroupMap[tWindowInfo.nTabGroup] = wndChat
+		if tWindowInfo.strTitle ~= nil then
+			if tWindowInfo.strTitle == "Chat" then
+				tWindowInfo.strTitle = Apollo.GetString("CRB_Chat")
+			elseif tWindowInfo.strTitle == "Combat" then
+				tWindowInfo.strTitle = Apollo.GetString("ChatType_Combat")
 			else
-				arWindowGroupMap[tWindowInfo.nTabGroup]:AttachTab(wndChat)
+				wndChat:SetText(tWindowInfo.strTitle)
 			end
 		end
 
-		if self.wndChatOptions then
-			local wndOptionsContainer = self.wndChatOptions:FindChild("TwoOptionsContainer")
-			wndOptionsContainer:FindChild("EnableFadeBtn"):SetCheck(self.bEnableBGFade)
-			wndOptionsContainer:FindChild("DisableFadeBtn"):SetCheck(not self.bEnableBGFade)
-			self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):SetValue(self.nBGOpacity)
-			wndOptionsContainer:FindChild("ChannelShow"):SetCheck(self.bShowChannel)
-			wndOptionsContainer:FindChild("ChannelShowOff"):SetCheck(not self.bShowChannel)
-			wndOptionsContainer:FindChild("TimestampShow"):SetCheck(self.bShowTimestamp)
-			wndOptionsContainer:FindChild("TimestampShowOff"):SetCheck(not self.bShowTimestamp)
-			wndOptionsContainer:FindChild("ProfanityOn"):SetCheck(self.bProfanityFilter)
-			wndOptionsContainer:FindChild("ProfanityOff"):SetCheck(not self.bProfanityFilter)
-			Apollo.SetConsoleVariable("chat.filter", self.bProfanityFilter)
+		if tWindowInfo.tWindowLocation then
+			wndChat:Detach()
+		end
 
-			for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels() or {}) do
-				channelCurrent:SetProfanity(self.bProfanityFilter)
+		if self.bEnableNCFade ~= nil and self.bEnableBGFade ~= nil then
+			wndChat:SetStyle("AutoFadeNC", self.bEnableNCFade)
+			if self.bEnableNCFade then wndChat:SetNCOpacity(1) end
+
+			wndChat:SetStyle("AutoFadeBG", self.bEnableBGFade)
+			if self.bEnableBGFade then wndChat:SetBGOpacity(1) end
+		end
+
+		if self.nBGOpacity ~= nil then
+			wndChat:FindChild("BGArt"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
+			wndChat:FindChild("BGArt_SidePanel"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
+		end
+
+		local nMatchingTabGroup = 0
+		for idx, wndGroup in pairs(arWindowGroupMap) do
+			if idx == tWindowInfo.nTabGroup then
+				nMatchingTabGroup = idx
+				break
 			end
 		end
 
+		if nMatchingTabGroup == 0 then
+			nMatchingTabGroup = tWindowInfo.nTabGroup
+			arWindowGroupMap[tWindowInfo.nTabGroup] = wndChat
+		else
+			arWindowGroupMap[tWindowInfo.nTabGroup]:AttachTab(wndChat)
+		end
+	end
+
+	if self.wndChatOptions then
+		local wndOptionsContainer = self.wndChatOptions:FindChild("TwoOptionsContainer")
+		wndOptionsContainer:FindChild("EnableFadeBtn"):SetCheck(self.bEnableBGFade)
+		wndOptionsContainer:FindChild("DisableFadeBtn"):SetCheck(not self.bEnableBGFade)
+		self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):SetValue(self.nBGOpacity)
+		wndOptionsContainer:FindChild("ChannelShow"):SetCheck(self.bShowChannel)
+		wndOptionsContainer:FindChild("ChannelShowOff"):SetCheck(not self.bShowChannel)
+		wndOptionsContainer:FindChild("TimestampShow"):SetCheck(self.bShowTimestamp)
+		wndOptionsContainer:FindChild("TimestampShowOff"):SetCheck(not self.bShowTimestamp)
+		wndOptionsContainer:FindChild("ProfanityOn"):SetCheck(self.bProfanityFilter)
+		wndOptionsContainer:FindChild("ProfanityOff"):SetCheck(not self.bProfanityFilter)
+		Apollo.SetConsoleVariable("chat.filter", self.bProfanityFilter)
+
+		for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels() or {}) do
+			channelCurrent:SetProfanity(self.bProfanityFilter)
+		end
+	end
 end
 
 function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombatLog, channelCurrent)
 	local wndChatWindow = Apollo.LoadForm(self.xmlDoc, "ChatWindow", "FixedHudStratum", self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = wndChatWindow, strName = strTitle})
+
 	wndChatWindow:SetSizingMinimum(240, 240)
 	wndChatWindow:SetStyle("AutoFadeNC", self.bEnableBGFade)
 	wndChatWindow:SetStyle("AutoFadeBG", self.bEnableBGFade)
@@ -570,7 +594,7 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 	wndChatWindow:FindChild("BGArt_SidePanel"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
 	wndChatWindow:SetText(strTitle)
 	wndChatWindow:Show(true)
-	wndChatWindow:FindChild("MouseCatcher"):SetData(wndChatWindow:FindChild("InputTypeBtn:InputType"))
+	wndChatWindow:FindChild("MouseCatcher"):SetData({ wndChatWindow:FindChild("InputType"), wndChatWindow:FindChild("InputTypeBtnText") })
 
 	--Store the initial input window size
 	self.nInputMenuLeft, self.nInputMenuTop, self.nInputMenuRight, self.nInputMenuBottom = wndChatWindow:FindChild("InputWindow"):GetAnchorOffsets()
@@ -616,7 +640,7 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 
 	tChatData.channelCurrent = channelCurrent or self:HelperFindAViewedChannel()
 
-	local wndInputType = wndChatWindow:FindChild("InputTypeBtn:InputType")
+	local wndInputType = wndChatWindow:FindChild("InputType")
 	if tChatData.channelCurrent then
 		tChatData.crText = self.arChatColor[tChatData.channelCurrent:GetType()]
 		wndInputType:SetText(tChatData.channelCurrent:GetCommand())
@@ -634,7 +658,7 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 	else
 		wndChatWindow:FindChild("CloseBtn"):Show(false)
 	end
-	
+
 	table.insert(self.tChatWindows, wndChatWindow)
 
 	local nWindowCount = #self.tChatWindows
@@ -647,17 +671,6 @@ end
 
 function ChatLog:OnLuaChatLogMessage(strArgMessage, tArgFlags)
 	ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Debug, strArgMessage, "")
-
-end
-
-function ChatLog:OnNoClipMouseEnterHack(wndHandler, wndControl)
-	wndHandler:GetParent():SetStyle("AutoFadeNC", false)
-	wndHandler:GetParent():SetStyle("AutoFadeBG", false)
-end
-
-function ChatLog:OnNoClipMouseExitHack(wndHandler, wndControl)
-	wndHandler:GetParent():SetStyle("AutoFadeNC", self.bEnableBGFade)
-	wndHandler:GetParent():SetStyle("AutoFadeBG", self.bEnableBGFade)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -817,7 +830,7 @@ function ChatLog:OnChatLeave( channelLeft, bKicked, bBanned )
 			tChatData.channelCurrent = self.sayChannel
 			tChatData.crText = self.arChatColor[ ChatSystemLib.ChatChannel_Say ]
 
-			local wndInputType = wndChatWindow:FindChild("InputTypeBtn:InputType")
+			local wndInputType = wndChatWindow:FindChild("InputType")
 			wndInputType:SetText(tChatData.channelCurrent:GetCommand())
 			wndInputType:SetTextColor(tChatData.crText)
 		end
@@ -950,7 +963,7 @@ function ChatLog:ShowQueuedMessages(wndForm, nDeltaTimeMS)
 
 		tChatData.nNextIndex = tChatData.nNextIndex + 1
 		tChatData.tChildren:Push(wndChatLine)
-		
+
 		wndChatList:SendChildToBottom(wndChatLine, true)
 	end
 
@@ -1002,7 +1015,7 @@ function ChatLog:OnNodeClick(wndHandler, wndControl, strNode, tAttributes, eMous
 				end
 			else
 				if self.tLinks[nIndex].uItem then
-					
+
 					local bWindowExists = false
 					for idx, wndCur in pairs(self.twndItemLinkTooltips or {}) do
 						if wndCur:GetData() == self.tLinks[nIndex].uItem then
@@ -1010,28 +1023,28 @@ function ChatLog:OnNodeClick(wndHandler, wndControl, strNode, tAttributes, eMous
 							break
 						end
 					end
-				
+
 					if bWindowExists == false then
 						local wndChatItemToolTip = Apollo.LoadForm("ChatLog.xml", "TooltipWindow", nil, self)
 						wndChatItemToolTip:SetData(self.tLinks[nIndex].uItem)
-						
+
 						table.insert(self.twndItemLinkTooltips, wndChatItemToolTip)
-						
+
 						local itemEquipped = self.tLinks[nIndex].uItem:GetEquippedItemForItemType()
-						
+
 						local wndLink = Tooltip.GetItemTooltipForm(self, wndControl, self.tLinks[nIndex].uItem, {bPermanent = true, wndParent = wndChatItemToolTip, bSelling = false, bNotEquipped = true})
-						
+
 						local nLeftWnd, nTopWnd, nRightWnd, nBottomWnd = wndChatItemToolTip:GetAnchorOffsets()
 						local nLeft, nTop, nRight, nBottom = wndLink:GetAnchorOffsets()
-						
+
 						wndChatItemToolTip:SetAnchorOffsets(nLeftWnd, nTopWnd, nLeftWnd + nRight + 15, nBottom + 75)
-						
+
 						if itemEquipped then
 							wndChatItemToolTip:SetTooltipDoc(nil)
 							Tooltip.GetItemTooltipForm(self, wndChatItemToolTip, itemEquipped, {bPrimary = true, bSelling = false, bNotEquipped = false})
 						end
 					end
-					
+
 				elseif self.tLinks[nIndex].uQuest then
 					Event_FireGenericEvent("ShowQuestLog", wndHandler:GetData()) -- Codex (todo: deprecate this)
 					Event_FireGenericEvent("GenericEvent_ShowQuestLog", self.tLinks[nIndex].uQuest)
@@ -1049,13 +1062,13 @@ end
 function ChatLog:OnCloseItemTooltipWindow(wndHandler, wndControl)
 	local wndParent = wndControl:GetParent()
 	local itemData = wndParent:GetData()
-	
+
 	for idx, wndCur in pairs(self.twndItemLinkTooltips) do
 		if wndCur:GetData() == itemData then
 			table.remove(self.twndItemLinkTooltips, idx)
 		end
 	end
-	
+
 	wndParent:Destroy()
 end
 
@@ -1102,7 +1115,7 @@ function ChatLog:OnGenericEvent_ChatLogWhisper(strTarget)
 	end
 
 	local wndEdit = wndParent:FindChild("Input")
-	local strOutput = String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), string.lower(Apollo.GetString("ChatType_Tell")), strTarget)
+	local strOutput = String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), Apollo.StringToLower(Apollo.GetString("ChatType_Tell")), strTarget)
 	wndEdit:SetText(strOutput)
 	wndEdit:SetFocus()
 	wndEdit:SetSel(strOutput:len(), -1)
@@ -1128,7 +1141,7 @@ function ChatLog:OnEmoteCheck(wndHandler, wndControl)
 		wndContainer:ArrangeChildrenVert()
 	end
 
-	
+
 	wndEmotes:GetParent():FindChild("CloseBtn"):Enable(not wndHandler:IsChecked())
 	if wndHandler:IsChecked() then
 		wndEmotes:Invoke()
@@ -1184,6 +1197,7 @@ function ChatLog:OnCloseChatWindow(wndHandler, wndControl)
 			self.tChatWindows[1]:FindChild("CloseBtn"):Show(false)
 		end
 	end
+
 	wndForm:Detach()
 	wndForm:Destroy()
 end
@@ -1205,16 +1219,15 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 		local bViewedChannel = true
 		local tInput = ChatSystemLib.SplitInput(strText)
 		if strText ~= "" and strText ~= Apollo.GetString("ChatLog_RPMarker") and strText ~= Apollo.GetString("ChatLog_Marker") then
-
 			local channelCurrent = tInput.channelCommand or tChatData.channelCurrent
-
+			
 			if channelCurrent:GetType() == ChatSystemLib.ChatChannel_Command then
 				if tInput.bValidCommand then -- good command
 					ChatSystemLib.Command( strText )
 				else	-- bad command
-					local strFailString = String_GetWeaselString(Apollo.GetString("ChatLog_UnknownCommand"), Apollo.GetString("CombatFloaterType_Error"), tInput.strCommand)
+					local strFailString = String_GetWeaselString(Apollo.GetString("ChatLog_UnknownCommand"), Apollo.GetString("CombatFloaterType_Error"), {strLiteral = tInput.strCommand})
 					ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Command, strFailString, "" )
-					wndInput:SetText(String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), tInput.strCommand, tInput.strMessage))
+					wndInput:SetText(String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), {strLiteral = tInput.strCommand}, {strLiteral = tInput.strMessage}))
 					wndInput:SetFocus()
 					local strSubmitted = wndForm:FindChild("Input"):GetText()
 					wndInput:SetSel(strSubmitted:len(), -1)
@@ -1228,9 +1241,9 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 		end
 
 		local crText = self.arChatColor[tChatData.channelCurrent:GetType()] or ApolloColor.new("white")
-		local wndInputType = wndForm:FindChild("InputTypeBtn:InputType")
+		local wndInputType = wndForm:FindChild("InputType")
 		wndForm:GetData().crText = crText
-		wndForm:FindChild("InputTypeBtn:InputType"):SetTextColor(crText)
+		wndForm:FindChild("InputType"):SetTextColor(crText)
 		wndInput:SetTextColor(crText)
 		wndInputType:SetText(tChatData.channelCurrent:GetCommand())
 
@@ -1271,6 +1284,7 @@ end
 
 function ChatLog:OnInputChanged(wndHandler, wndControl, strText)
 	local wndForm = wndControl:GetParent()
+
 	if wndControl:GetName() ~= "Input" then
 		return
 	end
@@ -1281,8 +1295,9 @@ function ChatLog:OnInputChanged(wndHandler, wndControl, strText)
 	wndControl:SetData(true)
 
 	local wndForm = wndControl:GetParent()
-	local wndInputType = wndForm:FindChild("InputTypeBtn:InputType")
+	local wndInputType = wndForm:FindChild("InputType")
 	local wndInput = wndForm:FindChild("Input")
+	wndInputType:Show(string.len(strText) == 0) -- Hide background say once a message has been typed
 
 	if strText == Apollo.GetString("ChatLog_Reply") and self.tLastWhisperer and self.tLastWhisperer.strCharacterName ~= "" then
 		local strName = self.tLastWhisperer.strCharacterName
@@ -1347,7 +1362,7 @@ function ChatLog:OnAddWindow(wndHandler, wndControl)
 	local wndForm = wndControl:GetParent() -- TODO refactor
 	local wndAdd = wndForm:FindChild("AddTabSubForm")
 	local bShown = wndAdd:IsShown()
-	
+
 
 	for key, wndChat in pairs(self.tChatWindows) do
 		if wndChat:FindChild("AddTabSubForm"):IsShown() then
@@ -1369,11 +1384,11 @@ end
 
 function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; each is its own window
 	wndControl:GetParent():Close()
+	self.nChatIndex = self.nChatIndex + 1
 
 	local wndForm = wndControl:GetParent():GetParent() -- TODO refactor
 	local tData = wndForm:GetData()
-	local bLocked = wndForm:FindChild("LockBtn"):IsChecked()
-	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("CRB_Chat"))
+	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("CRB_Chat"), self.nChatIndex)
 
 	local tChannelsToView = {}
 	if tData.bCombatLog then
@@ -1381,7 +1396,7 @@ function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; 
 	else
 		tChannelsToView = tData.tViewedChannels
 	end
-	
+
 	-- needs to take it from the main form of toggled from a combat window (idx == 1)
 	if wndForm:FindChild("BGArt_ChatBackerIcon"):IsShown() then
 		for idx, wndChat in pairs(self.tChatWindows) do
@@ -1397,50 +1412,23 @@ function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; 
 
 	wndForm:AttachTab(wndNewForm, true)
 	wndNewForm:FindChild("Options"):SetCheck(true)
-	wndNewForm:FindChild("LockBtn"):SetCheck(bLocked)
-	self:HelperSetLockWindow(wndNewForm, bLocked)
 
 	self:OnSettings(wndNewForm:FindChild("Options"), wndNewForm:FindChild("Options"))
 end
 
 function ChatLog:OnAddNewTabCombat(wndHandler, wndControl) -- this is when a tab; each is its own window
 	wndControl:GetParent():Close()
+	self.nChatIndex = self.nChatIndex + 1
 
 	local wndForm = wndControl:GetParent():GetParent()
 	local tData = wndForm:GetData()
-	local bLocked = wndForm:FindChild("LockBtn"):IsChecked()
-
-	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("ChatType_Combat"))
-
+	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("ChatType_Combat"), self.nChatIndex)
 	local wndNewForm = self:NewChatWindow(strName, tData.tViewedChannels, {}, true, tData.channelCurrent)
 
 	wndForm:AttachTab(wndNewForm, true)
 	wndNewForm:FindChild("Options"):SetCheck(true)
-	wndNewForm:FindChild("LockBtn"):SetCheck(bLocked)
-	self:HelperSetLockWindow(wndNewForm, bLocked)
 
 	self:OnSettingsCombat(wndNewForm:FindChild("Options"), wndNewForm:FindChild("Options"))
-end
-
-function ChatLog:OnLockWindow(wndHandler, wndControl)
-	local bLocked = wndControl:IsChecked()
-	local wndForm = wndControl:GetParent()
-
-	for key, wndChat in pairs(self.tChatWindows) do
-		if wndForm:IsAttachedToTab(wndChat) then
-			self:HelperSetLockWindow(wndChat, bLocked)
-		end
-	end
-end
-
-function ChatLog:HelperSetLockWindow(wndChat, bLocked)
-	wndChat:Lock(bLocked)
-
-	if not bLocked then
-		wndChat:FindChild("LockBtn"):FindChild("Icon"):SetSprite("CRB_ActionBarSprites:ActionBar_LockBarButtonPressed")
-	else
-		wndChat:FindChild("LockBtn"):FindChild("Icon"):SetSprite("CRB_ActionBarSprites:ActionBar_LockBarButtonNormal")
-	end
 end
 
 function ChatLog:OnSaveLog(wndHandler, wndControl)
@@ -1834,10 +1822,11 @@ function ChatLog:OnInputMenuEntry(wndHandler, wndControl)
 
 	wndInput:SetText(strText)
 	local crText = self.arChatColor[channelCurrent:GetType()] or ApolloColor.new("white")
-	local wndInputType = wndChat:FindChild("InputTypeBtn:InputType")
+	local wndInputType = wndChat:FindChild("InputType")
 	wndInput:SetTextColor(crText)
 	wndInputType:SetText(channelCurrent:GetCommand())
 	wndInputType:SetTextColor(crText)
+	wndInputType:Show(string.len(strText) == 0)
 
 	wndInput:SetFocus()
 	wndInput:SetSel(strText:len(), -1)
@@ -2306,7 +2295,7 @@ function ChatLog:HelperRemoveChannelFromInputWindow(channelRemoved) -- used when
 		if tChatData.channelCurrent:GetType() == channelRemoved then
 
 			local channelNew = self:HelperFindAViewedChannel()
-			local wndInputType = wnd:FindChild("InputTypeBtn:InputType")
+			local wndInputType = wnd:FindChild("InputType")
 
 			if channelNew ~= nil then
 				tChatData.channelCurrent = channelNew
@@ -2362,7 +2351,7 @@ function ChatLog:HelperFindAViewedChannel()
 			break
 		end
 	end
-	
+
 	if nNewChannelIdx == nil then
 		nNewChannelIdx = ChatSystemLib.ChatChannel_Say
 	end
@@ -2398,33 +2387,36 @@ function ChatLog:HelperGetCurrentEditbox()
 	return wndEdit
 end
 
-function ChatLog:OnWndMainMouseEnter(wndHandler, wndControl)
+function ChatLog:OnWndMainMouseEnter(wndHandler, wndControl) -- wndHandler is MouseCatcher, Data is a list of windows
 	if wndHandler:GetData() then -- Because UseParentOpacity is BGColor not TextColor
-		wndHandler:GetData():Show(true)
+		for idx, wndCurr in pairs(wndHandler:GetData()) do
+			wndCurr:Show(true)
+		end
 	end
 end
 
 function ChatLog:OnWndMainMouseExit(wndHandler, wndControl)
-	--[[
-	if wndHandler:GetData() then -- Because UseParentOpacity is BGColor not TextColor
-		wndHandler:GetData():Show(false)
+	local bContainsMouse = wndHandler:GetParent():ContainsMouse()
+	if wndHandler:GetData() and not bContainsMouse then -- Because UseParentOpacity is BGColor not TextColor
+		for idx, wndCurr in pairs(wndHandler:GetData()) do
+			wndCurr:Show(false)
+		end
 	end
-	]]--
 end
 
 function ChatLog:OnFocusTab(wndHandler, wndControl)
-	self:HelperSetLockWindow(wndHandler, wndHandler:FindChild("LockBtn"):IsChecked())
+
 end
 
 function ChatLog:OnInputGainedFocus(wndHandler, wndControl)
-	if wndHandler == wndControl and wndHandler:GetParent() and wndHandler:GetParent():FindChild("InputTypeBtn:InputType") then
-		wndHandler:GetParent():FindChild("InputTypeBtn:InputType"):Show(true)
+	if wndHandler == wndControl and wndHandler:GetParent() and wndHandler:GetParent():FindChild("InputType") then
+		wndHandler:GetParent():FindChild("InputType"):Show(string.len(wndHandler:GetParent():FindChild("Input"):GetText()) == 0)
 	end
 end
 
 function ChatLog:OnInputLostFocus(wndHandler, wndControl)
-	if wndHandler == wndControl and wndHandler:GetParent() and wndHandler:GetParent():FindChild("InputTypeBtn:InputType") then
-		wndHandler:GetParent():FindChild("InputTypeBtn:InputType"):Show(false)
+	if wndHandler == wndControl and wndHandler:GetParent() and wndHandler:GetParent():FindChild("InputType") then
+		wndHandler:GetParent():FindChild("InputType"):Show(false)
 	end
 end
 
@@ -2451,44 +2443,6 @@ function ChatLog:OnTradeSkillSigilResult(eResult)
 	}
 
 	Event_FireGenericEvent("GenericEvent_LootChannelMessage", kstrTradeskillResultTable[eResult])
-end
-
------------------------------------------------------------------------------------------------
--- Window Edge, Resolution and Resize
------------------------------------------------------------------------------------------------
-
-function ChatLog:OnWindowMove(wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom)
-
-	local nLeft, nTop, nRight, nBottom = wndHandler:GetRect()
-	local nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
-
-	local nWidth = nRight - nLeft
-	local nHeight = nBottom - nTop
-
-	nLeft = math.max(math.min(nLeft, nScreenWidth - knWindowStayOnScreenOffset), -nWidth + knWindowStayOnScreenOffset)
-	nTop = math.max(math.min(nTop, nScreenHeight - knWindowStayOnScreenOffset), -nHeight + knWindowStayOnScreenOffset)
-
-	wndHandler:Move(nLeft, nTop, nWidth, nHeight)
-
-end
-
-function ChatLog:OnApplicationWindowSizeChanged(tSize)
-	self:OnResolutionChanged(tSize.nWidth, tSize.nHeight)
-end
-
-function ChatLog:OnResolutionChanged(nScreenWidth, nScreenHeight)
-
-	for wndIdx, wndCur in pairs(self.tChatWindows) do
-		local nLeft, nTop, nRight, nBottom = wndCur:GetRect()
-		local nWidth = nRight - nLeft
-		local nHeight = nBottom - nTop
-	
-		nLeft = math.max(math.min(nLeft, nScreenWidth - knWindowStayOnScreenOffset), -nWidth + knWindowStayOnScreenOffset)
-		nTop = math.max(math.min(nTop, nScreenHeight - knWindowStayOnScreenOffset), -nHeight + knWindowStayOnScreenOffset)
-	
-		wndCur:Move(nLeft, nTop, nWidth, nHeight)
-	end
-
 end
 
 -------------------------------------

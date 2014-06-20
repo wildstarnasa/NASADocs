@@ -494,6 +494,9 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 	local nSortedColumnBot 	= wndGridBot:GetSortColumn() or 1
 	local bAscendingTop 	= wndGridTop:IsSortAscending()
 	local bAscendingBot 	= wndGridBot:IsSortAscending()
+	
+	wndGridTop:DeleteAll()
+	wndGridBot:DeleteAll()
 
 	local tMatchState 	= MatchingGame:GetPVPMatchState()
 	local strMyTeamName = ""
@@ -763,18 +766,6 @@ function PublicEventStats:OnClose(wndHandler, wndControl) -- Also LeaveAdventure
 		local peCurrent = self.wndMain:GetData() and self.wndMain:GetData().peEvent
 		if peCurrent then
 			peCurrent:RequestScoreboard(false)
-		end
-		if ktEventTypeToWindowName[peCurrent:GetEventType()] then
-			local wndGrid = self.wndMain:FindChild(ktEventTypeToWindowName[peCurrent:GetEventType()])
-			local wndGridTop 	= wndGrid:FindChild("PvPTeamGridTop")
-			local wndGridBot 	= wndGrid:FindChild("PvPTeamGridBot")
-
-			if wndGridTop then
-				wndGridTop:DeleteAll()
-			end
-			if wndGridBot then
-				wndGridBot:DeleteAll()
-			end
 		end
 
 		self.wndMain:Close()

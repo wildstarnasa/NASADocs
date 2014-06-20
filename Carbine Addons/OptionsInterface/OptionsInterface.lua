@@ -10,11 +10,6 @@ require "GameLib"
 
 local OptionsInterface = {}
 
-local kbDefaultSpellErrorMessages 		= true
-local kbDefaultFilterGuildInvites		= true
-local kbDefaultHealthBarFlashes 		= true
-local kbDefaultQuestTrackerByDistance 	= true
-local kbDefaultInteractTextOnUnit 		= false
 local knWindowStayOnScreenOffset = 100
 
 local knSaveVersion = 5
@@ -31,14 +26,25 @@ function OptionsInterface:Init()
 end
 
 function OptionsInterface:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
-	self.xmlDoc = XmlDoc.CreateFromFile("OptionsInterface.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
-	
 	self.tTrackedWindows = {}
 	self.tTrackedWindowsByName = {}
 	
 	self.bUIScaleTimerActive = false
 	self.bConstrainWindows 	 = true
+	
+	self:HelperSetUpGlobalIfNil()
+	
+	-- Set up defaults
+	g_InterfaceOptions.Carbine.bSpellErrorMessages 			= true
+	g_InterfaceOptions.Carbine.bFilterGuildInvite			= true
+	g_InterfaceOptions.Carbine.bHealthBarFlashes 			= true
+	g_InterfaceOptions.Carbine.bQuestTrackerByDistance 		= true
+	g_InterfaceOptions.Carbine.bInteractTextOnUnit 			= false
+	g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible = true
+	g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests 		= false
+	
+	self.xmlDoc = XmlDoc.CreateFromFile("OptionsInterface.xml")
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function OptionsInterface:OnDocumentReady()
@@ -74,6 +80,12 @@ function OptionsInterface:OnDocumentReady()
 	Apollo.CreateTimer("WindowManagementResizeTimer", 1.0, false)
 	
 	self.wndInterface:FindChild("ConstrainToScreen"):SetCheck(self.bConstrainWindows)
+	
+	if g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible ~= GameLib.AreQuestUnitCalloutsVisible() then
+		GameLib.ToggleQuestUnitCallouts()
+	end
+
+	GameLib.SetIgnoreDuelRequests(g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests)
 end
 
 function OptionsInterface:OnWindowManagementLoadTimer()
@@ -86,6 +98,10 @@ function OptionsInterface:OnWindowManagementResizeTimer()
 end
 
 function OptionsInterface:OnRestore(eType, tSavedData)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+		return
+	end
+	
 	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		g_InterfaceOptions = tSavedData.tSavedInterfaceOptions
 		
@@ -201,39 +217,7 @@ function OptionsInterface:OnConfigure() -- From ESC -> Options
 
 	local fUIScale = Apollo.GetConsoleVariable("ui.Scale") or 1
 	self.wndInterface:FindChild("UIScaleSliderBar"):SetValue(fUIScale)
-	self.wndInterface:FindChild("UIScaleLabel"):SetText(String_GetWeaselString(Apollo.GetString("InterfaceOptions_UIScale"), fUIScale))
-
-	self:HelperSetUpGlobalIfNil()
-
-	-- Set up defaults (GOTCHA: Handle if 1/4 are nil, e.g. if we add more options later)
-	if g_InterfaceOptions.Carbine.bSpellErrorMessages == nil then
-		g_InterfaceOptions.Carbine.bSpellErrorMessages = kbDefaultSpellErrorMessages
-	end
-	
-	if g_InterfaceOptions.Carbine.bFilterGuildInvite == nil then
-		g_InterfaceOptions.Carbine.bFilterGuildInvite = kbDefaultFilterGuildInvite
-	end
-
-	if g_InterfaceOptions.Carbine.bHealthBarFlashes == nil then
-		g_InterfaceOptions.Carbine.bHealthBarFlashes = kbDefaultHealthBarFlashes
-	end
-
-	if g_InterfaceOptions.Carbine.bQuestTrackerByDistance == nil then
-		g_InterfaceOptions.Carbine.bQuestTrackerByDistance = kbDefaultQuestTrackerByDistance
-	end
-
-	if g_InterfaceOptions.Carbine.bInteractTextOnUnit == nil then
-		g_InterfaceOptions.Carbine.bInteractTextOnUnit = kbDefaultInteractTextOnUnit
-	end
-	
-	if g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible == nil then
-		g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible = GameLib.AreQuestUnitCalloutsVisible()
-	end
-	
-	if g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests == nil then
-		g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests = GameLib.IsIgnoringDuelRequests()
-	end
-	
+	self.wndInterface:FindChild("UIScaleLabel"):SetText(String_GetWeaselString(Apollo.GetString("InterfaceOptions_UIScale"), fUIScale))	
 	
 	self.wndInterface:FindChild("IgnoreDuelRequests"):SetCheck(g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests)
 	self.wndInterface:FindChild("ToggleQuestMarkers"):SetCheck(g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible)

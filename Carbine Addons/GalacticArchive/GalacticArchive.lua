@@ -613,7 +613,7 @@ function GalacticArchive:DisplayArticle(artDisplay)
 
 	if artDisplay:GetCompletionTitle() and artDisplay:GetCompletionTitle():GetSpell() then
 		wndArticle:FindChild("TitleSpell"):SetSprite(artDisplay:GetCompletionTitle():GetSpell():GetIcon())
-		wndArticle:FindChild("TitleSpell"):SetTooltip(artDisplay:GetCompletionTitle():GetSpell():GetName())
+		wndArticle:FindChild("TitleSpell"):SetTooltip(artDisplay:GetCompletionTitle():GetSpell():GetName() or "")
 	else
 		wndArticle:FindChild("TitleSpell"):SetSprite("CRB_GuildSprites:sprGuild_Glave")
 		wndArticle:FindChild("TitleSpell"):SetTooltip(Apollo.GetString("Archive_UncoverArticle"))

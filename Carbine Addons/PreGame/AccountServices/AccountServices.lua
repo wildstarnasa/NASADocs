@@ -119,7 +119,7 @@ function AccountServices:OnDocumentReady()
 	self.nCharacterSelectedId = 0
 	self.strCharacterSelectedName = nil
 	self.bCharacterRequiresRename = false
-	
+
 	self:RedrawAll() -- We need to call this on start up and with AccountItemUpdate, so it'll draw no matter what
 end
 
@@ -193,7 +193,7 @@ function AccountServices:RedrawAll()
 			["AvailableFreeRealmBtn"]	=	{ Apollo.GetString("AccountServices_NumRealmsAvailable"), bCanFreeRealmTransfer and 1 or 0 }, -- Just for enabling
 			["AvailablePaidRealmBtn"]	=	{ Apollo.GetString("AccountServices_NumAvailable"), nTransferBound +  nTransferEscrow },
 			["AvailablePaidRenameBtn"]	=	{ Apollo.GetString("AccountServices_NumAvailable"), nRenameBound + nRenameEscrow },
-			["AvailablePaidCreddBtn"]	=	{ Apollo.GetString("AccountServices_NumAvailableCREDDExplain"), nCreddBound + nCreddEscrow },
+			--["AvailablePaidCreddBtn"]	=	{ Apollo.GetString("AccountServices_NumAvailableCREDDExplain"), nCreddBound + nCreddEscrow }, -- Disabled for now
 		}
 		for strButtonName, tData in pairs(tWindowNameToSubtitle) do
 			local bValid = tonumber(tData[2]) > 0

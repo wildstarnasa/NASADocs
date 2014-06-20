@@ -84,6 +84,7 @@ function ErrorDialog:OnDocumentReady()
 	Apollo.RegisterEventHandler("GameClickProp", "OnGameClickProp", self)
 	Apollo.RegisterEventHandler("GameClickWorld", "OnGameClickWorld", self)
 	Apollo.RegisterEventHandler("LuaError", "OnLuaError", self)
+	Apollo.RegisterEventHandler("TicketToBugDialog", "OnBugOpen", self)
 
 	-- load our forms
 	self.wndReportBug = Apollo.LoadForm(self.xmlDoc, "ReportBugDialog", nil, self)
@@ -206,6 +207,11 @@ end
 
 function ErrorDialog:OnCancelBtn()
 	self.wndReportBug:Show(false)
+end
+
+function ErrorDialog:OnBugOpen(strText)
+	self:ShowErrorDialog(true)
+	self.wndReportBug:FindChild("Description"):SetText(strText)
 end
 
 ---------------------------------------------------------------------------------------------------

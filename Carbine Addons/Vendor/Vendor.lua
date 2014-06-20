@@ -891,40 +891,50 @@ function Vendor:OnBuy(wndHandler, wndControl)
 end
 
 function Vendor:FinalizeBuy(tItemData)
-	local idItem = tItemData and tItemData.idUnique or nil
-
-	if tItemData and self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
-		BuyItemFromVendor(idItem, 1) -- TODO: quantity chooser
-		self.tDefaultSelectedItem = tItemData
-		self:ShowAlertMessageContainer(String_GetWeaselString(Apollo.GetString("Vendor_Bought"), tItemData.strName), false) -- TODO: This shouldn't be needed
-		local monBuyPrice = tItemData.itemData:GetBuyPrice()
-		self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyPrice)
-	elseif tItemData and self.wndVendor:FindChild(kstrTabSell):IsChecked() then
-		SellItemToVendorById(idItem, tItemData.nStackSize)
-		self:SelectNextItemInLine(tItemData)
-		self:Redraw()
-		local monSellPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
-		self.wndVendor:FindChild("AlertCost"):SetAmount(monSellPrice)
-	elseif tItemData and self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
-		BuybackItemFromVendor(idItem)
-		self:SelectNextItemInLine(tItemData)
-		local monBuyBackPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
-		self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyBackPrice)
-	elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
-		local idLocation = tItemData and tItemData.idLocation or nil
-		if idLocation then
-			RepairItemVendor(idLocation)
-			local eRepairCurrency = tItemData.tPriceInfo.eCurrencyType1
-			local nRepairAmount = tItemData.tPriceInfo.nAmount1
-			self.wndVendor:FindChild("AlertCost"):SetMoneySystem(eRepairCurrency)
-			self.wndVendor:FindChild("AlertCost"):SetAmount(nRepairAmount)
-		else
-			RepairAllItemsVendor()
-			local monRepairAllCost = GameLib.GetRepairAllCost()
-			self.wndVendor:FindChild("AlertCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
-			self.wndVendor:FindChild("AlertCost"):SetAmount(monRepairAllCost)
+	if tItemData then
+		local idItem = tItemData.idUnique
+		if self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
+			BuyItemFromVendor(idItem, 1) -- TODO: quantity chooser
+			self.tDefaultSelectedItem = tItemData
+			self:ShowAlertMessageContainer(String_GetWeaselString(Apollo.GetString("Vendor_Bought"), tItemData.strName), false) -- TODO: This shouldn't be needed
+			
+			if tItemData.itemData then
+				local monBuyPrice = tItemData.itemData:GetBuyPrice()
+				self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyPrice)
+			end
+		elseif self.wndVendor:FindChild(kstrTabSell):IsChecked() then
+			SellItemToVendorById(idItem, tItemData.nStackSize)
+			self:SelectNextItemInLine(tItemData)
+			self:Redraw()
+			
+			if tItemData.itemData then
+				local monSellPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
+				self.wndVendor:FindChild("AlertCost"):SetAmount(monSellPrice)
+			end
+		elseif self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
+			BuybackItemFromVendor(idItem)
+			self:SelectNextItemInLine(tItemData)
+			
+			if tItemData.itemData then
+				local monBuyBackPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
+				self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyBackPrice)
+			end
+		elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
+			local idLocation = tItemData.idLocation or nil
+			if idLocation then
+				RepairItemVendor(idLocation)
+				local eRepairCurrency = tItemData.tPriceInfo.eCurrencyType1
+				local nRepairAmount = tItemData.tPriceInfo.nAmount1
+				self.wndVendor:FindChild("AlertCost"):SetMoneySystem(eRepairCurrency)
+				self.wndVendor:FindChild("AlertCost"):SetAmount(nRepairAmount)
+			else
+				RepairAllItemsVendor()
+				local monRepairAllCost = GameLib.GetRepairAllCost()
+				self.wndVendor:FindChild("AlertCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
+				self.wndVendor:FindChild("AlertCost"):SetAmount(monRepairAllCost)
+			end
+			Sound.Play(Sound.PlayUIVendorRepair)
 		end
-		Sound.Play(Sound.PlayUIVendorRepair)
 	else
 		return
 	end

@@ -504,6 +504,7 @@ function ZoneMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("ZoneMapPlayerIndicatorUpdated",		"OnPlayerIndicatorUpdated", self)
 	Apollo.RegisterEventHandler("SubZoneChanged", 						"OnSubZoneChanged", self)
 	Apollo.RegisterEventHandler("ZoneMapWindowModeChange",				"OnMouseScroll", self)
+	Apollo.RegisterEventHandler("ZoneMap_OpenMapToQuest",				"OnZoneMap_OpenMapToQuest", self)
 
 	Apollo.RegisterEventHandler("CityDirectionsList", 					"OnCityDirectionsList", self)
 	Apollo.RegisterEventHandler("CityDirectionMarked",					"OnCityDirectionMarked", self)
@@ -1021,12 +1022,12 @@ function ZoneMap:OnToggleControlsOn(wndHandler, wndControl)
 	self.wndMapControlPanel:Show(true, false)
 	self.wndMain:FindChild("ToggleControlsBtn"):SetCheck(true)
 	self.wndMain:FindChild("GrabberFrame"):Show(false)
-	
+
 	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("ToggleControlsBtn"):GetAnchorOffsets()
 	self.wndMain:FindChild("ToggleControlsBtn"):SetAnchorOffsets(-418, nTop, -365, nBottom)
 	self.wndMain:FindChild("ToggleControlsBtn"):SetTooltip(Apollo.GetString("CRB_Collapse_zone_selection_controls"))
 end
-	
+
 function ZoneMap:OnToggleControlsOff(wndHandler, wndControl)
 	self.bControlPanelShown = false
 	self.wndMain:FindChild("ZoneMapControlPanelParent"):Show(false)
@@ -1128,6 +1129,7 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 	self.wndMain:FindChild("ZoomInBtn"):Enable(eZoomLevel ~= tZoneMapEnums.SuperPanning and (eZoomLevel ~= tZoneMapEnums.Scaled or self.wndZoneMap:CanZoomZone()))
 	self.wndMain:FindChild("GhostBtn"):Enable(bPanning or eZoomLevel == tZoneMapEnums.Scaled)
 	self.wndMain:FindChild("ReturnBtn"):Enable(eZoomLevel ~= tZoneMapEnums.Scaled or not tHomeZone or tHomeZone.id ~= tCurrentInfo.id)
+
 
 	if self.eLastZoomLevel ~= eZoomLevel then
 		if eZoomLevel == tZoneMapEnums.SuperPanning then -- SuperPanning
@@ -1317,14 +1319,14 @@ function ZoneMap:AddQuestIndicators()
 		-- Add entries for each queCurr in the epiCurr
 		for idx2, queCurr in ipairs(epiCurr:GetTrackedQuests(0, self.bQuestTrackerByDistance)) do
 			if queCurr:IsActiveQuest() then
-				tQuestRegions = queCurr:GetMapRegions()
+				local tQuestRegions = queCurr:GetMapRegions()
 				for nObjIdx, tObjRegions in pairs(tQuestRegions) do
 					self.wndZoneMap:AddRegion(self.eObjectTypeQuest, tObjRegions.nWorldZoneId, tObjRegions.tRegions, queCurr, tObjRegions.tIndicator, tostring(nQuest), self.tPOITypes.tTrackedQuestActive[1])
 				end
 
 				nQuest = nQuest + 1
 			elseif self.tToggledIcons.bTracked then
-				tQuestRegions = queCurr:GetMapRegions()
+				local tQuestRegions = queCurr:GetMapRegions()
 				for nObjIdx, tObjRegions in pairs(tQuestRegions) do
 					self.wndZoneMap:AddRegion(self.eObjectTypeQuest, tObjRegions.nWorldZoneId, tObjRegions.tRegions, queCurr, tObjRegions.tIndicator, tostring(nQuest), self.tPOITypes.tTrackedQuest[1])
 				end
@@ -2090,7 +2092,7 @@ function ZoneMap:OnUnitCreated(unitMade)
 
 		self.wndZoneMap:AddUnit(unitMade, objectType, tInfo, tMarkerOptions, self:IsTypeCurrentlyHidden(objectType))
 		self.tUnitsShown[unitMade:GetId()] = { unitValue = unitMade }
-		
+
 		if objectType == self.eObjectTypeGroupMember then
 			self:DrawGroupMembers()
 		end
@@ -2585,10 +2587,10 @@ function ZoneMap:OnZoneMapMouseMove(wndHandler, wndControl, nX, nY)
 	local strZone = tHex.strZone or ""
 
 	local wndTooltip = self.wndZoneMap:FindChild("ZoneName")
-	wndTooltip:SetText(strZone)	
+	wndTooltip:SetText(strZone)
 	if string.len(strZone) > 0 and tHex.nLabelX ~= nil then
 		wndTooltip:Move(tHex.nLabelX - 150, tHex.nLabelY - 40, 300, 80)
-	end	
+	end
 end
 
 function ZoneMap:OnZoneMap_MapCoordinateDelay()
@@ -2704,41 +2706,12 @@ function ZoneMap:UpdateQuestList()
 
 			local eQuestState = queCurr:GetState() -- don't show completed or unknown quests
 			if eQuestState == Quest.QuestState_Achieved or eQuestState == Quest.QuestState_Botched then
-				wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(1.0, 1.0, 1.0, 1.0))
-				wndQuestLine:FindChild("DifficultyMark"):SetSprite("")
 				wndNumber:SetTextColor(CColor.new(47/255, 220/255, 2/255, 1.0))
 
 				--Fail state settings
 				if eQuestState == Quest.QuestState_Botched then
-					wndQuestLine:FindChild("DifficultyMark"):SetSprite("")
 					wndNumber:SetTextColor(CColor.new(1.0, 0, 0, 1.0))
 					wndNumber:SetText(Apollo.GetString("ZoneMap_FailMarker"))
-				end
-
-			else
-				wndQuestLine:FindChild("DifficultyMark"):SetSprite("ClientSprites:WhiteFill")
-
-				local eConLevel = queCurr:GetColoredDifficulty()
-				if eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Grey then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(130/255, 130/255, 130/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Green then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(130/255, 130/255, 130/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Cyan then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(162/255, 255/255, 0/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Blue then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(0/255, 150/255, 255/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.White then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(255/255, 255/255, 255/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Yellow then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(255/255, 240/255, 0/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Orange then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(255/255, 155/255, 0/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Red then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(232/255, 5/255, 0/255, 1.0))
-				elseif eConLevel == Unit.CodeEnumLevelDifferentialAttribute.Magenta then
-					wndQuestLine:FindChild("DifficultyMark"):SetBGColor(CColor.new(175/255, 0/255, 232/255, 1.0))
-				else
-					--wndQuestLine:FindChild("DifficultyMark"):SetSprite("")
 				end
 			end
 
@@ -2877,6 +2850,32 @@ function ZoneMap:QuestEntryMouseButtonDown(wndHandler, wndControl)
 		queCurr:ToggleActiveQuest()
 	end
 	self:ToggleActiveRegion(wndControl:GetData())
+	self.bIgnoreQuestStateChanged = false
+end
+
+function ZoneMap:OnZoneMap_OpenMapToQuest(queArg)
+	if not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
+
+	self.bIgnoreQuestStateChanged = true  --Bool used in changing active to mouse-over (as ToggleActive auto-repopulates)
+	if self.objActiveRegionUserData == nil or self.objActiveRegionUserData ~= queArg then
+		local tRegions = queArg:GetMapRegions()
+		local tQuestLoc = tRegions[1] or nil -- TODO: Just the first region for now, for multi region quests
+		if tQuestLoc then
+			local objZoneMap = GameLib.GetZoneMap(tQuestLoc.nWorldId, tQuestLoc.nWorldZoneId, tQuestLoc.tIndicator)
+			if objZoneMap then
+				self.wndZoneMap:SetDisplayMode(ZoneMapWindow.CodeEnumDisplayMode.Scaled)
+				self.wndZoneMap:SetZone(objZoneMap.id)
+				self.idCurrentZone = objZoneMap.id
+
+				self:SetControls()
+				self:OnZoomChange()
+			end
+		end
+		queArg:ToggleActiveQuest()
+		self.wndZoneMap:HighlightRegionsByUserData(queArg)
+	end
 	self.bIgnoreQuestStateChanged = false
 end
 
