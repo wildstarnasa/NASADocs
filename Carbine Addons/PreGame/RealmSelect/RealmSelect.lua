@@ -441,10 +441,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function RealmSelect:OnExitBtn()
-	if self.nCurrentRealm ~= nil then
-		RealmSelectScreenLib.SetCurrentRealm(self.nCurrentRealm)
-		RealmSelectScreenLib.SelectRealm()
-	end
+	RealmSelectScreenLib.ExitToCharacter()
 end
 
 function RealmSelect:OnSelectBtn()

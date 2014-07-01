@@ -247,6 +247,7 @@ function LoreWindow:OnCloseBtn(wndHandler, wndControl)
 	Event_FireGenericEvent("GenericEvent_CloseGAReader")
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 
@@ -474,6 +475,7 @@ function LoreWindow:OnDestroyColDisplay(wndHandler, wndControl)
 			wndOrigin:SetCheck(false)
 		end
 		self.wndColDisplay:Destroy()
+		self.wndColDisplay = nil
 
 		DatacubeLib.StopDatacubeSound()
 		Event_FireGenericEvent("GenericEvent_Collections_StopDatacube") -- To turn off the HUD Alert

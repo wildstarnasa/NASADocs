@@ -53,6 +53,8 @@ function Medic:OnCharacterCreated()
 	elseif unitPlayer:GetClassId() ~= GameLib.CodeEnumClass.Medic then
 		if self.wndMain then
 			self.wndMain:Destroy()
+			self.wndMain = nil
+			self.tCores = {}
 		end
 		return
 	end

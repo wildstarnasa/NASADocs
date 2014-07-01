@@ -97,11 +97,7 @@ function OptionsInterface:OnWindowManagementResizeTimer()
 	self:ReDrawTrackedWindows()
 end
 
-function OptionsInterface:OnRestore(eType, tSavedData)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-	
+function OptionsInterface:OnRestore(eType, tSavedData)	
 	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		g_InterfaceOptions = tSavedData.tSavedInterfaceOptions
 		
@@ -193,8 +189,6 @@ end
 function OptionsInterface:OnFailSafe()
 	if not g_InterfaceOptionsLoaded then
 		self:OnRestore(GameLib.CodeEnumAddonSaveLevel.Character, nil)
-		
-		Event_FireGenericEvent("InterfaceOptionsLoaded")
 	end
 end
 
@@ -252,7 +246,11 @@ function OptionsInterface:OnWindowManagementAdd(tSettings)
 		-- Remove the entry if it already existed previously.
 		for idx, tOldSettings in pairs(self.tTrackedWindows) do
 			if tOldSettings.strName == tSettings.strName then
-				tOldSettings.bActiveEntry = false
+				if tOldSettings.wndForm ~= nil and tOldSettings.wndForm:IsValid() then
+					tOldSettings.wndForm:Destroy()
+				end
+				tOldSettings.wndForm = nil
+				self.tTrackedWindows[idx] = nil
 			end
 		end
 		
@@ -283,7 +281,10 @@ function OptionsInterface:ReDrawTrackedWindows()
 	for idx, tSettings in pairs(self.tTrackedWindows) do
 		nIndex = nIndex + 1
 		
-		if self.tTrackedWindows[tSettings.wnd:GetId()] and tSettings.bActiveEntry then 
+		if self.tTrackedWindows[tSettings.wnd:GetId()] and tSettings.bActiveEntry then
+			if tSettings.wndForm ~= nil and tSettings.wndForm:IsValid() then
+				tSettings.wndForm:Destroy()
+			end
 			tSettings.wndForm = Apollo.LoadForm(self.xmlDoc, "WindowEntry", wndContainer, self)
 			
 			self:UpdateTrackedWindow(tSettings.wnd)

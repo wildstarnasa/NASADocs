@@ -23,6 +23,9 @@ function CraftingSummaryScreen:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -59,9 +62,9 @@ function CraftingSummaryScreen:OnDocumentReady()
 	Apollo.RegisterEventHandler("TradeskillAchievementUpdate", 		"OnTradeskillAchievementUpdate", self)
 	Apollo.RegisterEventHandler("CraftingInterrupted",				"OnCraftingInterrupted", self)
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingSummaryScreenForm", wndParent, self) -- Needs to start initialized so it can listen to messages
-	self.wndMain:Show(false, true)
-	self.wndCraftingCastBar = nil
+	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingSummaryScreenForm", wndParent, self) -- Needs to start initialized so it can listen to messages
+	self.tWndRefs.wndMain:Show(false, true)
+	self.tWndRefs.wndCraftingCastBar = nil
 
 	self.itemTooltipOverride = nil
 	self.bBotchCraft = false
@@ -69,14 +72,14 @@ function CraftingSummaryScreen:OnDocumentReady()
 end
 
 function CraftingSummaryScreen:OnCraftingSummary_StationTimer() -- Hackish: These are async from the rest of the UI (and definitely can't handle data being set)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsVisible() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsVisible() then
 		return
 	end
 
 	Apollo.StartTimer("CraftingSummary_StationTimer")
 
 	local bResult = true
-	local tSchematicInfo = CraftingLib.GetSchematicInfo(self.wndMain:GetData()) -- Data can be either a main or subschematic ID
+	local tSchematicInfo = CraftingLib.GetSchematicInfo(self.tWndRefs.wndMain:GetData()) -- Data can be either a main or subschematic ID
 	if not CraftingLib.IsAtCraftingStation() then
 		bResult = false
 	elseif tSchematicInfo then
@@ -88,7 +91,7 @@ function CraftingSummaryScreen:OnCraftingSummary_StationTimer() -- Hackish: Thes
 		end
 	end
 
-	self.wndMain:FindChild("CraftingSummaryRecraftBtn"):Enable(bResult)
+	self.tWndRefs.wndMain:FindChild("CraftingSummaryRecraftBtn"):Enable(bResult)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -96,28 +99,28 @@ end
 -----------------------------------------------------------------------------------------------
 
 function CraftingSummaryScreen:OnGenericEvent_StartCraftCastBar(wndParent, itemOutput)
-	if self.wndCraftingCastBar and self.wndCraftingCastBar:IsValid() then
-		self.wndCraftingCastBar:Destroy()
+	if self.tWndRefs.wndCraftingCastBar and self.tWndRefs.wndCraftingCastBar:IsValid() then
+		self.tWndRefs.wndCraftingCastBar:Destroy()
 	end
 
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
 	end
 
-	self.wndCraftingCastBar = Apollo.LoadForm(self.xmlDoc, "CraftingCastBar", wndParent, self)
-	self.wndCraftingCastBar:FindChild("CraftingCastBarFlavor"):SetText(Apollo.GetString("CraftingSummary_RandomFlavor_"..math.random(1, knNumRandomCastBarFlavor)) or "")
-	self.wndCraftingCastBar:FindChild("CraftingProgBar"):SetProgress(1, 1 / 2.5) -- TODO Magic Number
+	self.tWndRefs.wndCraftingCastBar = Apollo.LoadForm(self.xmlDoc, "CraftingCastBar", wndParent, self)
+	self.tWndRefs.wndCraftingCastBar:FindChild("CraftingCastBarFlavor"):SetText(Apollo.GetString("CraftingSummary_RandomFlavor_"..math.random(1, knNumRandomCastBarFlavor)) or "")
+	self.tWndRefs.wndCraftingCastBar:FindChild("CraftingProgBar"):SetProgress(1, 1 / 2.5) -- TODO Magic Number
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingSummaryScreenForm", wndParent, self)
-	self.wndMain:Show(false, true)
+	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingSummaryScreenForm", wndParent, self)
+	self.tWndRefs.wndMain:Show(false, true)
 
 	self.itemTooltipOverride = itemOutput -- Technically this is the most accurate
 end
 
 function CraftingSummaryScreen:OnGenericEvent_ClearCraftSummary()
 	self.strOnGoingMessage = ""
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:FindChild("CraftingSummaryDetails"):SetAML("")
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:FindChild("CraftingSummaryDetails"):SetAML("")
 	end
 end
 
@@ -126,9 +129,9 @@ end
 -----------------------------------------------------------------------------------------------
 
 function CraftingSummaryScreen:OnCraftingInterrupted()
-	if self.wndCraftingCastBar then
-		self.wndCraftingCastBar:Destroy()
-		self.wndCraftingCastBar = nil
+	if self.tWndRefs.wndCraftingCastBar then
+		self.tWndRefs.wndCraftingCastBar:Destroy()
+		self.tWndRefs.wndCraftingCastBar = nil
 	end
 
 	self.bBotchCraft = true
@@ -140,12 +143,12 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 		return
 	end
 
-	if self.wndCraftingCastBar then
-		self.wndCraftingCastBar:Destroy()
-		self.wndCraftingCastBar = nil
+	if self.tWndRefs.wndCraftingCastBar then
+		self.tWndRefs.wndCraftingCastBar:Destroy()
+		self.tWndRefs.wndCraftingCastBar = nil
 	end
 
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
@@ -159,46 +162,46 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 		return
 	end
 
-	self.wndMain:Invoke()
-	self.wndMain:SetData(idSchematic)
-	self.wndMain:FindChild("CraftingSummaryRecraftBtn"):SetData(idSchematic)
+	self.tWndRefs.wndMain:Invoke()
+	self.tWndRefs.wndMain:SetData(idSchematic)
+	self.tWndRefs.wndMain:FindChild("CraftingSummaryRecraftBtn"):SetData(idSchematic)
 
 	-- Draw Pass / Fail
 	if tSchemInfo then
 		-- self.itemTooltipOverride will cover any modded items so they display correctly, while tSchemInfo.itemOutput covers simple crafts (which won't have an override).
 		local itemSchem = self.itemTooltipOverride or tSchemInfo.itemOutput
 		if bPass then
-			self.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite(itemSchem:GetIcon())
-			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("UI_TextHoloTitle")
-			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftSummary_CraftingSuccess"), itemSchem:GetName()))
-			Tooltip.GetItemTooltipForm(self, self.wndMain:FindChild("CraftingSummaryItemIcon"), itemSchem, {itemCompare = itemSchem:GetEquippedItemForItemType()})
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite(itemSchem:GetIcon())
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("UI_TextHoloTitle")
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftSummary_CraftingSuccess"), itemSchem:GetName()))
+			Tooltip.GetItemTooltipForm(self, self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"), itemSchem, {itemCompare = itemSchem:GetEquippedItemForItemType()})
 			Sound.Play(Sound.PlayUICraftingSuccess)
 		else
-			self.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite("ClientSprites:LootCloseBox")
-			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("AddonError")
-			self.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftingSummary_CraftFailedText"), itemSchem:GetName()))
-			self.wndMain:FindChild("CraftingSummaryItemIcon"):SetTooltip(Apollo.GetString("CraftingSummary_CraftFailedTooltip"))
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite("ClientSprites:LootCloseBox")
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("AddonError")
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftingSummary_CraftFailedText"), itemSchem:GetName()))
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetTooltip(Apollo.GetString("CraftingSummary_CraftFailedTooltip"))
 			Sound.Play(Sound.PlayUICraftingFailure)
 		end
 
 		-- XP Bar
 		local tTradeskillInfo = CraftingLib.GetTradeskillInfo(tSchemInfo.eTradeskillId)
-		self.wndMain:FindChild("CraftingSummaryXPProgBG"):Show(nEarnedXp > 0)
+		self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgBG"):Show(nEarnedXp > 0)
 
 		if nEarnedXp > 0 then -- Assume crafts will always give > 0 xp at non-max tiers
 			local nCurrXP = tTradeskillInfo.nXp
 			local nNextXP = tTradeskillInfo.nXpForNextTier
 			local strProgText = String_GetWeaselString(Apollo.GetString("CraftingSummary_ProgressText"), nEarnedXp, tTradeskillInfo.strName, nCurrXP + nEarnedXp, nNextXP)
-			self.wndMain:FindChild("CraftingSummaryXPProgBar"):SetMax(nNextXP)
-			self.wndMain:FindChild("CraftingSummaryXPProgBar"):SetProgress(nCurrXP)
-			self.wndMain:FindChild("CraftingSummaryXPProgBar"):EnableGlow(nCurrXP > 0 and nCurrXP < nNextXP)
-			self.wndMain:FindChild("CraftingSummaryXPProgText"):SetText(strProgText)
-			self.wndMain:FindChild("CraftingSummaryXPProgText"):SetTooltip(strProgText .. "\n" .. Apollo.GetString("CraftingSummary_TierUnlockTooltip"))
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgBar"):SetMax(nNextXP)
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgBar"):SetProgress(nCurrXP)
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgBar"):EnableGlow(nCurrXP > 0 and nCurrXP < nNextXP)
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgText"):SetText(strProgText)
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgText"):SetTooltip(strProgText .. "\n" .. Apollo.GetString("CraftingSummary_TierUnlockTooltip"))
 		end
 	end
 
-	local nLeft, nRight, nTop, nBottom = self.wndMain:FindChild("CraftingSummaryDetailsScroll"):GetAnchorOffsets()
-	self.wndMain:FindChild("CraftingSummaryDetailsScroll"):SetAnchorOffsets(nLeft, nRight, nTop, self.wndMain:FindChild("CraftingSummaryXPProgBG"):IsVisible() and -85 or -7)
+	local nLeft, nRight, nTop, nBottom = self.tWndRefs.wndMain:FindChild("CraftingSummaryDetailsScroll"):GetAnchorOffsets()
+	self.tWndRefs.wndMain:FindChild("CraftingSummaryDetailsScroll"):SetAnchorOffsets(nLeft, nRight, nTop, self.tWndRefs.wndMain:FindChild("CraftingSummaryXPProgBG"):IsVisible() and -85 or -7)
 
 	-- Summary Detail Messages
 	if arMaterialReturnedIds then
@@ -250,7 +253,7 @@ function CraftingSummaryScreen:OnCraftingSummaryCloseBtn(wndHandler, wndControl)
 end
 
 function CraftingSummaryScreen:OnClose()
-	self.wndMain:Close()
+	self.tWndRefs.wndMain:Close()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -268,10 +271,10 @@ function CraftingSummaryScreen:HelperWriteToCraftingSummaryDetails(strMessage)
 		self.strOnGoingMessage = string.format("%s%s</P>%s%s</P>", strFont, strMessage, strFont, self.strOnGoingMessage or "")
 	end
 
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:FindChild("CraftingSummaryDetails"):SetAML(self.strOnGoingMessage)
-		self.wndMain:FindChild("CraftingSummaryDetails"):SetHeightToContentHeight()
-		self.wndMain:FindChild("CraftingSummaryDetailsScroll"):RecalculateContentExtents()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:FindChild("CraftingSummaryDetails"):SetAML(self.strOnGoingMessage)
+		self.tWndRefs.wndMain:FindChild("CraftingSummaryDetails"):SetHeightToContentHeight()
+		self.tWndRefs.wndMain:FindChild("CraftingSummaryDetailsScroll"):RecalculateContentExtents()
 	end
 end
 
@@ -285,14 +288,14 @@ function CraftingSummaryScreen:OnCraftingDiscoveryHotCold(eHotCold, eDirection)
 		local tAxisNames = tInfo.tAxisNames -- R, T, L, B
 		local tMapping =
 		{
-			tAxisNames[1],
 			tAxisNames[2],
-			tAxisNames[3],
-			tAxisNames[4],
 			String_GetWeaselString(Apollo.GetString("CoordCrafting_AxisCombine"), tAxisNames[1], tAxisNames[2]),
+			tAxisNames[1],
 			String_GetWeaselString(Apollo.GetString("CoordCrafting_AxisCombine"), tAxisNames[1], tAxisNames[4]),
-			String_GetWeaselString(Apollo.GetString("CoordCrafting_AxisCombine"), tAxisNames[3], tAxisNames[2]),
+			tAxisNames[4],
 			String_GetWeaselString(Apollo.GetString("CoordCrafting_AxisCombine"), tAxisNames[3], tAxisNames[4]),
+			tAxisNames[3],
+			String_GetWeaselString(Apollo.GetString("CoordCrafting_AxisCombine"), tAxisNames[3], tAxisNames[2]),
 		}
 		strLineTwo = String_GetWeaselString(Apollo.GetString("Crafting_DiscoveryMore"), tostring(tMapping[eDirection]))
 	end

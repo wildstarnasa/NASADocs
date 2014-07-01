@@ -63,6 +63,9 @@ function AbilityAMPs:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -89,7 +92,7 @@ function AbilityAMPs:OnDocumentReady()
 	Apollo.RegisterEventHandler("LevelUpUnlock_AMPPoint",					"OnLevelUpUnlock_AMPPoint", self)
 	Apollo.RegisterTimerHandler("AbilityAMPs_MessageDisplayTimer", 			"OnMessageDisplayTimer", self)
 
-	self.wndMain = nil
+	self.tWndRefs.wndMain = nil
 	self.nVScrollPos = 170
 	self.nZoomLevel = knDefaultZoom
 
@@ -101,25 +104,26 @@ function AbilityAMPs:Initialize(wndParent)
 end
 
 function AbilityAMPs:OnStartRedrawAll(wndParent)
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilityAMPsForm", wndParent, self)
-	self.wndMiddle = Apollo.LoadForm(self.xmlDoc, "MiddleBG", self.wndMain:FindChild("ScrollContainer:LightBulbLayer"), self)
-	self.wndMiddle:ToFront()
-	self.wndMessage = self.wndMain:FindChild("UpdateMessage")
+	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilityAMPsForm", wndParent, self)
+	self.tWndRefs.wndMiddle = Apollo.LoadForm(self.xmlDoc, "MiddleBG", self.tWndRefs.wndMain:FindChild("ScrollContainer:LightBulbLayer"), self)
+	self.tWndRefs.wndMiddle:ToFront()
+	self.tWndRefs.wndMessage = self.tWndRefs.wndMain:FindChild("UpdateMessage")
 	
-	self.wndMain:FindChild("UpdateMessage"):Show(false, true)
-	self.wndMain:FindChild("ResetFrame:ResetBtn"):AttachWindow(self.wndMain:FindChild("ResetFrame:ResetConfirm"))
+	self.tWndRefs.wndMain:FindChild("UpdateMessage"):Show(false, true)
+	self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("ResetFrame:ResetConfirm"))
 
-	self.nOrigMiddleLeft, self.nOrigMiddleTop, self.nOrigMiddleRight, self.nOrigMiddleBot = self.wndMiddle:GetAnchorOffsets()
+	self.nOrigMiddleLeft, self.nOrigMiddleTop, self.nOrigMiddleRight, self.nOrigMiddleBot = self.tWndRefs.wndMiddle:GetAnchorOffsets()
 
 	self:RedrawAll()
 end
 
 function AbilityAMPs:OnPlayerCurrencyChanged()
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsVisible() then
 		local nAmount = AbilityBook.GetEldanAugmentationRespecCost()
 		local bCanAfford = nAmount < GameLib.GetPlayerCurrency():GetAmount()
 		local bAtMaxPoints = AbilityBook.GetAvailablePower() == AbilityBook.GetTotalPower()
@@ -130,10 +134,10 @@ function AbilityAMPs:OnPlayerCurrencyChanged()
 		elseif bAtMaxPoints then
 			strColor = ApolloColor.new("UI_BtnTextBlueDisabled")
 		end
-		self.wndMain:FindChild("ResetFrame:ResetLabel"):SetTextColor(strColor)
-		self.wndMain:FindChild("ResetFrame:ResetCost"):SetTextColor(strColor)
-		self.wndMain:FindChild("ResetFrame:ResetCost"):SetAmount(nAmount, true)
-		self.wndMain:FindChild("ResetFrame:ResetBtn"):Enable(bCanAfford and not bAtMaxPoints)
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetLabel"):SetTextColor(strColor)
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetCost"):SetTextColor(strColor)
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetCost"):SetAmount(nAmount, true)
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):Enable(bCanAfford and not bAtMaxPoints)
 	end
 end
 
@@ -143,24 +147,24 @@ function AbilityAMPs:OnClose(wndHandler, wndControl)
 	end
 
 	Apollo.StopTimer("AbilityAMPs_MessageDisplayTimer")
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
-		self.wndMain = nil
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 end
 
 function AbilityAMPs:BuildFromEvent()
-	if self.wndMain and self.wndMain:IsValid() then -- Incase the event gets called with the UI not active
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then -- Incase the event gets called with the UI not active
 		self:DestroyAndBuild()
 	end
 end
 
 function AbilityAMPs:DestroyAndBuild()
-	if self.wndMain and self.wndMain:IsValid() then
-		local wndContainer = self.wndMain:FindChild("ScrollContainer")
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		local wndContainer = self.tWndRefs.wndMain:FindChild("ScrollContainer")
 		self.nVScrollPos = wndContainer:GetVScrollPos()
 	end
-	self:OnStartRedrawAll(self.wndMain and self.wndMain:GetParent() or nil)
+	self:OnStartRedrawAll(self.tWndRefs.wndMain and self.tWndRefs.wndMain:GetParent() or nil)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -168,7 +172,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from multiple sources
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
@@ -178,7 +182,7 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		return
 	end
 
-	local wndContainer = self.wndMain:FindChild("ScrollContainer")
+	local wndContainer = self.tWndRefs.wndMain:FindChild("ScrollContainer")
 	local wndAmps = wndContainer:FindChild("Amps")
 	wndAmps:DestroyChildren()
 
@@ -260,15 +264,15 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		tCategoryPowers[tCategory.nId] = tCategory.fPowerInCategory
 
 		-- Light Bulb
-		local wndLightBulb = self.wndMiddle:FindChild(karCategoryToConstantData[tCategory.nId][1])
+		local wndLightBulb = self.tWndRefs.wndMiddle:FindChild(karCategoryToConstantData[tCategory.nId][1])
 		wndLightBulb:SetSprite(tCategory.nHighestTierUnlocked > 1 and karCategoryToConstantData[tCategory.nId][2] or "")
 		wndLightBulb:FindChild("LightBulbText"):SetText("")
 		--wndLightBulb:FindChild("LightBulbText"):SetText(nCurrPower == 0 and "" or nCurrPower) -- TODO RESTORE OR DELETE
 	end
 
 	-- Progress Sub Labels
-	local wndButtons = self.wndMain:FindChild("Buttons")
-	local wndFloatingLabels = self.wndMain:FindChild("ScrollContainer"):FindChild("LightBulbLayer")
+	local wndButtons = self.tWndRefs.wndMain:FindChild("Buttons")
+	local wndFloatingLabels = self.tWndRefs.wndMain:FindChild("ScrollContainer"):FindChild("LightBulbLayer")
 	for idx = 1, #tEldanAugmentationData.tCategories do
 		local strSubLabel = ""
 		local tCategory = tEldanAugmentationData.tCategories[idx]
@@ -370,7 +374,7 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 
 	-- Middle Center Piece
 	local nMidZoom = self.nZoomLevel / 24
-	self.wndMiddle:SetAnchorOffsets(self.nOrigMiddleLeft * nMidZoom, self.nOrigMiddleTop * nMidZoom, self.nOrigMiddleRight * nMidZoom, self.nOrigMiddleBot * nMidZoom)
+	self.tWndRefs.wndMiddle:SetAnchorOffsets(self.nOrigMiddleLeft * nMidZoom, self.nOrigMiddleTop * nMidZoom, self.nOrigMiddleRight * nMidZoom, self.nOrigMiddleBot * nMidZoom)
 
 	-- Restore scroll pos
 	wndContainer:SetVScrollPos(self.nVScrollPos)
@@ -380,7 +384,7 @@ end
 
 function AbilityAMPs:RedrawSelections(tEldanAugmentationData)
 	-- AMP icon states
-	for idx, wndAmp in pairs(self.wndMain:FindChild("ScrollContainer:Amps"):GetChildren()) do
+	for idx, wndAmp in pairs(self.tWndRefs.wndMain:FindChild("ScrollContainer:Amps"):GetChildren()) do
 		local tAmp = wndAmp:GetData()
 		local eEnum = tAmp.eEldanAvailability
 		local strSprite = ""
@@ -423,7 +427,7 @@ function AbilityAMPs:RedrawSelections(tEldanAugmentationData)
 	-- Middle Text
 	local nTotalPower = AbilityBook.GetTotalPower()
 	local nAvailablePower = AbilityBook.GetAvailablePower()
-	local wndMiddleBG = self.wndMain:FindChild("ScrollContainer:LightBulbLayer:MiddleBG")
+	local wndMiddleBG = self.tWndRefs.wndMain:FindChild("ScrollContainer:LightBulbLayer:MiddleBG")
 	local wndAvailablePoints = wndMiddleBG:FindChild("PointsAvailable")
 	local wndMaxPoints = wndMiddleBG:FindChild("PointsMaxText")
 	local wndProgress = wndMiddleBG:FindChild("PointsProgBar")
@@ -455,7 +459,7 @@ function AbilityAMPs:OnLabelShortcutBtn(wndHandler, wndControl)
 	end
 
 	-- TODO: Refactor/delete the other scroll position code
-	local wndContainer = self.wndMain:FindChild("ScrollContainer")
+	local wndContainer = self.tWndRefs.wndMain:FindChild("ScrollContainer")
 	wndContainer:SetVScrollPos(nVScrollPos)
 end
 
@@ -469,8 +473,8 @@ function AbilityAMPs:OnResetConfirmYesBtn(wndHandler, wndControl)
 end
 
 function AbilityAMPs:OnResetConfirmWindowClosed(wndHandler, wndControl)
-	if self.wndMain and self.wndMain:IsValid() and wndHandler == wndControl then
-		self.wndMain:FindChild("ResetFrame:ResetConfirm"):Show(false)
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and wndHandler == wndControl then
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetConfirm"):Show(false)
 	end
 end
 
@@ -478,12 +482,12 @@ function AbilityAMPs:OnAugmentationTooltip(wndHandler, wndControl, eToolTipType,
 	local wndParent = wndControl:GetParent()
 	local tAugment = wndParent:GetData()
 
-	if not tAugment or not self.wndMain or not self.wndMain:IsValid() then
+	if not tAugment or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
 	if not self.wndTooltip or not self.wndTooltip:IsValid() then
-		self.wndTooltip = Apollo.LoadForm(self.xmlDoc, "TooltipForm", self.wndMain, self)
+		self.wndTooltip = Apollo.LoadForm(self.xmlDoc, "TooltipForm", self.tWndRefs.wndMain, self)
 	end
 
 	local strCategory = karCategoryToConstantData[tAugment.nCategoryId][3] or ""
@@ -544,9 +548,9 @@ function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl) -- AmpFormButton
 end
 
 function AbilityAMPs:HelperCreateMessage(strMessage, nDuration)
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() and strMessage ~= "" then
-		self.wndMessage:FindChild("MessageTextBG:MessageText"):SetText(strMessage)
-		self.wndMessage:Show(true)
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsShown() and strMessage ~= "" then
+		self.tWndRefs.wndMessage:FindChild("MessageTextBG:MessageText"):SetText(strMessage)
+		self.tWndRefs.wndMessage:Show(true)
 		Apollo.StopTimer("AbilityAMPs_MessageDisplayTimer")
 		Apollo.CreateTimer("AbilityAMPs_MessageDisplayTimer", nDuration, false)
 	end
@@ -554,8 +558,8 @@ end
 
 function AbilityAMPs:OnMessageDisplayTimer()
 	Apollo.StopTimer("AbilityAMPs_MessageDisplayTimer")
-	if self.wndMessage and self.wndMessage:IsValid() then
-		self.wndMessage:Show(false)
+	if self.tWndRefs.wndMessage and self.tWndRefs.wndMessage:IsValid() then
+		self.tWndRefs.wndMessage:Show(false)
 	end
 end
 

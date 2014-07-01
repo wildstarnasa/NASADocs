@@ -108,6 +108,7 @@ function PublicEventVote:OnPublicEventInitiateVote() -- The close checking also 
 	if not tVoteData then
 		if self.wndMain then
 			self.wndMain:Destroy()
+			self.wndMain = nil
 			self.bWindowShown = false
 		end
 		return
@@ -223,6 +224,7 @@ end
 
 function PublicEventVote:OnVoteFrameHideBtn(wndHandler, wndControl)
 	self.wndMain:Destroy()
+	self.wndMain = nil
 	Sound.Play(Sound.PlayUIWindowPublicEventVoteClose)
 end
 

@@ -194,6 +194,7 @@ end
 function NeighborsList:OnGenericEvent_DestroyNeighbors()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 

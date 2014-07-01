@@ -108,7 +108,7 @@ end
 function MarketplaceAuction:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MarketplaceAuction.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
-	
+
 	Apollo.RegisterEventHandler("OwnedItemAuctions", 			"OnOwnedItemAuctions", self)
 	self.nOwnedAuctionCount = 0
 end
@@ -150,12 +150,18 @@ function MarketplaceAuction:OnDestroy()
 	if self.wndMain and self.wndMain:IsValid() then
 		self:OnSearchClearBtn()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	Event_CancelAuctionhouse()
 end
 
 function MarketplaceAuction:OnToggleAuctionWindow()
+	if AccountItemLib.CodeEnumEntitlement.EconomyParticipation and AccountItemLib.GetEntitlementCount(AccountItemLib.CodeEnumEntitlement.EconomyParticipation) == 0 then
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", Apollo.GetString("CRB_FeatureDisabledForGuests"))
+		return
+	end
+
 	if self.wndMain and self.wndMain:IsValid() then
 		self:OnDestroy()
 	else
@@ -1397,7 +1403,7 @@ function MarketplaceAuction:UpdateOrderLimit(nCount)
 	else
 		self.nOwnedAuctionCount = nCount
 	end
-	
+
 	if self.wndOrderLimitText then
 		self.wndOrderLimitText:SetText(String_GetWeaselString(Apollo.GetString("MarketplaceCommodity_OrderLimitCount"), self.nOwnedAuctionCount, MarketplaceLib.kMaxPlayerAuctions))
 	end

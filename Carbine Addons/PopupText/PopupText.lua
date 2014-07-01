@@ -101,6 +101,7 @@ end
 function PopupText:OnPopupText_ShowPathAlert(strArgMessage, tContent) -- Arguments are legacy
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	local strTopText = karPathToString[self.ePlayerPath]

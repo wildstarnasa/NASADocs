@@ -75,7 +75,7 @@ function ClueTracker:OnDocumentReady()
 end
 
 function ClueTracker:Initialize()
-    if not self.wndMain then -- To save memory, don't load until needed
+    if not self.wndMain or not self.wndMain:IsValid() then -- To save memory, don't load until needed
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "ClueTrackerForm", nil, self)
 		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("ClueTracker_Clues")})
 	end
@@ -87,12 +87,13 @@ end
 function ClueTracker:OnHide()
 	if self.wndMain then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		self.bIsShown = false
 	end
 end
 
 function ClueTracker:OnPopulate(nWhich, strText)
-	if not self.wndMain then
+	if not self.wndMain or not self.wndMain:IsValid() then
 		self:Initialize()
 	end
 	

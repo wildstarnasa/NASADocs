@@ -216,6 +216,8 @@ function FriendsList:new(o)
 		[LuaCodeEnumTabTypes.Ignore] = {"", "Special"},
 		[LuaCodeEnumTabTypes.Suggested] = {"", "Special"},
 	}
+	
+	o.tWndRefs = {}
 
     return o
 end
@@ -270,90 +272,90 @@ function FriendsList:OnDocumentReady()
 end
 
 function FriendsList:OnGenericEvent_InitializeFriends(wndParent)
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-    self.wndMain 				= Apollo.LoadForm(self.xmlDoc, "FriendsListForm", wndParent, self)
-	self.wndListContainer 		= self.wndMain:FindChild("ListContainer")
-	self.wndMessage				= self.wndMain:FindChild("UpdateMessage")
-	self.wndStatusDropDownLabel = self.wndMain:FindChild("StatusLabel")
-	self.wndStatusDropDownIcon 	= self.wndMain:FindChild("StatusIcon")
-	self.wndControls 			= self.wndMain:FindChild("SortContainer")
-	self.wndAddBtn 				= self.wndControls:FindChild("AddBtn")
-	self.wndAccountAddBtn		= self.wndControls:FindChild("AccountAddBtn")
-	self.wndModifyBtn 			= self.wndControls:FindChild("ModifyBtn")
-	self.wndUnignoreBtn 		= self.wndControls:FindChild("UnignoreBtn")
-	self.wndModifyNoteBtn 		= self.wndControls:FindChild("ModifyNoteBtn")
-	self.wndModifySubFraming 	= self.wndControls:FindChild("ModifySubFraming")
-	self.wndModifyFriendBtn		= self.wndControls:FindChild("ModifyFriendBtn")
-	self.wndModifyRivalBtn 		= self.wndControls:FindChild("ModifyRivalBtn")
-	self.wndModifyIgnoreBtn 	= self.wndControls:FindChild("ModifyIgnoreBtn")
-	self.wndUnignoreWindow 		= self.wndControls:FindChild("UnignoreWindow")
-	self.wndModifyWindow 		= self.wndControls:FindChild("ModifyWindow")
-	self.wndAddWindow 			= self.wndControls:FindChild("AddWindow")
-	self.wndAccountAddWindow 	= self.wndControls:FindChild("AccountAddWindow")
-	self.wndNoteWindow 			= self.wndControls:FindChild("NoteWindow")
-	self.wndAccountBlockBtn 	= self.wndMain:FindChild("AccountBlockBtn")
+    self.tWndRefs.wndMain 					= Apollo.LoadForm(self.xmlDoc, "FriendsListForm", wndParent, self)
+	self.tWndRefs.wndListContainer 			= self.tWndRefs.wndMain:FindChild("ListContainer")
+	self.tWndRefs.wndMessage				= self.tWndRefs.wndMain:FindChild("UpdateMessage")
+	self.tWndRefs.wndStatusDropDownLabel 	= self.tWndRefs.wndMain:FindChild("StatusLabel")
+	self.tWndRefs.wndStatusDropDownIcon 	= self.tWndRefs.wndMain:FindChild("StatusIcon")
+	self.tWndRefs.wndControls 				= self.tWndRefs.wndMain:FindChild("SortContainer")
+	self.tWndRefs.wndAddBtn 				= self.tWndRefs.wndControls:FindChild("AddBtn")
+	self.tWndRefs.wndAccountAddBtn			= self.tWndRefs.wndControls:FindChild("AccountAddBtn")
+	self.tWndRefs.wndModifyBtn 				= self.tWndRefs.wndControls:FindChild("ModifyBtn")
+	self.tWndRefs.wndUnignoreBtn 			= self.tWndRefs.wndControls:FindChild("UnignoreBtn")
+	self.tWndRefs.wndModifyNoteBtn 			= self.tWndRefs.wndControls:FindChild("ModifyNoteBtn")
+	self.tWndRefs.wndModifySubFraming 		= self.tWndRefs.wndControls:FindChild("ModifySubFraming")
+	self.tWndRefs.wndModifyFriendBtn		= self.tWndRefs.wndControls:FindChild("ModifyFriendBtn")
+	self.tWndRefs.wndModifyRivalBtn 		= self.tWndRefs.wndControls:FindChild("ModifyRivalBtn")
+	self.tWndRefs.wndModifyIgnoreBtn 		= self.tWndRefs.wndControls:FindChild("ModifyIgnoreBtn")
+	self.tWndRefs.wndUnignoreWindow 		= self.tWndRefs.wndControls:FindChild("UnignoreWindow")
+	self.tWndRefs.wndModifyWindow 			= self.tWndRefs.wndControls:FindChild("ModifyWindow")
+	self.tWndRefs.wndAddWindow 				= self.tWndRefs.wndControls:FindChild("AddWindow")
+	self.tWndRefs.wndAccountAddWindow 		= self.tWndRefs.wndControls:FindChild("AccountAddWindow")
+	self.tWndRefs.wndNoteWindow 			= self.tWndRefs.wndControls:FindChild("NoteWindow")
+	self.tWndRefs.wndAccountBlockBtn 		= self.tWndRefs.wndMain:FindChild("AccountBlockBtn")
 
-	self.wndMain:Show(true)
-	self.wndMessage:Show(true)
+	self.tWndRefs.wndMain:Show(true)
+	self.tWndRefs.wndMessage:Show(true)
 	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+		self.tWndRefs.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
 
-	self.tTabs = {}
+	self.tWndRefs.tTabs = {}
 
-	self.arHeaders =
+	self.tWndRefs.arHeaders =
 	{
-		self.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Friends"),
-		self.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Rivals"),
-		self.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Ignored"),
-		self.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Suggested"),
+		self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Friends"),
+		self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Rivals"),
+		self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Ignored"),
+		self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):FindChild("Controls_Suggested"),
 	}
 
-	self.wndMain:FindChild("ListBlocker"):Show(true)
-	self.wndMain:FindChild("BlockBtn"):SetCheck(not FriendshipLib.IsLocked())
+	self.tWndRefs.wndMain:FindChild("ListBlocker"):Show(true)
+	self.tWndRefs.wndMain:FindChild("BlockBtn"):SetCheck(not FriendshipLib.IsLocked())
 	if FriendshipLib.IsLocked() then
-		self.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsDisabled"))
+		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsDisabled"))
 	else
-		self.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsEnabled"))
+		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsEnabled"))
 	end
 
 	local bIgnoreAccountFriendInvites = FriendshipLib.GetPersonalStatus().bIgnoreStrangerInvites
-	self.wndAccountBlockBtn:SetCheck(not bIgnoreAccountFriendInvites)
+	self.tWndRefs.wndAccountBlockBtn:SetCheck(not bIgnoreAccountFriendInvites)
 
 	for idx = 1, #ktListNames do
-		local wndTabBtn = self.wndMain:FindChild("TabContainer"):FindChild("FriendTabBtn"..idx)
+		local wndTabBtn = self.tWndRefs.wndMain:FindChild("TabContainer"):FindChild("FriendTabBtn"..idx)
 		wndTabBtn:SetData(idx)
 		wndTabBtn:Enable(false)
-		self.tTabs[idx] = wndTabBtn
+		self.tWndRefs.tTabs[idx] = wndTabBtn
 	end
 
-	self.wndMain:FindChild("TabContainer"):ArrangeChildrenHorz(1)
+	self.tWndRefs.wndMain:FindChild("TabContainer"):ArrangeChildrenHorz(1)
 
-	self.wndMain:FindChild("OptionsBtn"):AttachWindow(self.wndMain:FindChild("OptionsBtnFlash"))
-	self.wndMain:FindChild("OptionsBtn"):AttachWindow(self.wndMain:FindChild("AdvancedOptionsContainer"))
-	self.wndMain:FindChild("UnignoreBtn"):AttachWindow(self.wndMain:FindChild("UnignoreBtn"):FindChild("UnignoreWindow"))
-	self.wndMain:FindChild("ModifyBtn"):AttachWindow(self.wndMain:FindChild("ModifyBtn"):FindChild("ModifyWindow"))
-	self.wndMain:FindChild("ModifyNoteBtn"):AttachWindow(self.wndMain:FindChild("ModifyNoteBtn"):FindChild("NoteWindow"))
-	self.wndMain:FindChild("SelfBtn"):AttachWindow(self.wndMain:FindChild("SelfBtn"):FindChild("SelfWindow"))
-	self.wndMain:FindChild("SelfWindowChangeNoteBtn"):AttachWindow(self.wndMain:FindChild("SelfWindowChangeNoteBtn"):FindChild("SelfNoteWindow"))
-	self.wndMain:FindChild("SelfModifyNameBtn"):AttachWindow(self.wndMain:FindChild("SelfModifyNameBtn"):FindChild("NameWindow"))
-	self.wndMain:FindChild("ModifyRemoveBtn"):AttachWindow(self.wndMain:FindChild("ModifyRemoveBtn"):FindChild("RemoveFriendWindow"))
-	self.wndMain:FindChild("AccountAddBtn"):AttachWindow(self.wndMain:FindChild("AccountAddBtn"):FindChild("AccountAddWindow"))
-	self.wndMain:FindChild("AddBtn"):AttachWindow(self.wndMain:FindChild("AddBtn"):FindChild("AddWindow"))
-	self.wndMain:FindChild("StatusDropdownBtn"):AttachWindow(self.wndMain:FindChild("StatusDropdownArt"))
+	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("OptionsBtnFlash"))
+	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
+	self.tWndRefs.wndMain:FindChild("UnignoreBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("UnignoreBtn"):FindChild("UnignoreWindow"))
+	self.tWndRefs.wndMain:FindChild("ModifyBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("ModifyBtn"):FindChild("ModifyWindow"))
+	self.tWndRefs.wndMain:FindChild("ModifyNoteBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("ModifyNoteBtn"):FindChild("NoteWindow"))
+	self.tWndRefs.wndMain:FindChild("SelfBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("SelfBtn"):FindChild("SelfWindow"))
+	self.tWndRefs.wndMain:FindChild("SelfWindowChangeNoteBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("SelfWindowChangeNoteBtn"):FindChild("SelfNoteWindow"))
+	self.tWndRefs.wndMain:FindChild("SelfModifyNameBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("SelfModifyNameBtn"):FindChild("NameWindow"))
+	self.tWndRefs.wndMain:FindChild("ModifyRemoveBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("ModifyRemoveBtn"):FindChild("RemoveFriendWindow"))
+	self.tWndRefs.wndMain:FindChild("AccountAddBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AccountAddBtn"):FindChild("AccountAddWindow"))
+	self.tWndRefs.wndMain:FindChild("AddBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AddBtn"):FindChild("AddWindow"))
+	self.tWndRefs.wndMain:FindChild("StatusDropdownBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("StatusDropdownArt"))
 
-	self.wndMain:FindChild("SelfWindowAvailableBtn"):SetData(FriendshipLib.AccountPresenceState_Available)
-	self.wndMain:FindChild("SelfWindowAwaylBtn"):SetData(FriendshipLib.AccountPresenceState_Away)
-	self.wndMain:FindChild("SelfWindowBusyBtn"):SetData(FriendshipLib.AccountPresenceState_Busy)
-	--self.wndMain:FindChild("SelfWindowInvisibleBtn"):SetData(FriendshipLib.AccountPresenceState_Invisible)
+	self.tWndRefs.wndMain:FindChild("SelfWindowAvailableBtn"):SetData(FriendshipLib.AccountPresenceState_Available)
+	self.tWndRefs.wndMain:FindChild("SelfWindowAwaylBtn"):SetData(FriendshipLib.AccountPresenceState_Away)
+	self.tWndRefs.wndMain:FindChild("SelfWindowBusyBtn"):SetData(FriendshipLib.AccountPresenceState_Busy)
+
 
 	self.wndRequest = Apollo.LoadForm(self.xmlDoc, "FriendRequestPopup", nil, self)
 	self.wndRequest:Show(false)
 
-	self.wndMain:FindChild("MessageText"):Show(false)
+	self.tWndRefs.wndMain:FindChild("MessageText"):Show(false)
 
 		
 	if FriendshipLib.IsLoaded() then
@@ -368,9 +370,12 @@ function FriendsList:OnGenericEvent_InitializeFriends(wndParent)
 end
 
 function FriendsList:OnGenericEvent_DestroyFriends()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
+	
+	Apollo.StopTimer("UpdateLastOnlineTimer")
 end
 
 function FriendsList:OnSave(eType)
@@ -401,13 +406,13 @@ end
 -----------------------------------------------------------------------------------------------
 -- Define general functions here
 function FriendsList:OnFriendshipLoaded()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-	self.wndMain:FindChild("ListBlocker"):Show(false)
-	for idx = 1, #self.tTabs do
-		self.tTabs[idx]:Enable(true)
+	self.tWndRefs.wndMain:FindChild("ListBlocker"):Show(false)
+	for idx = 1, #self.tWndRefs.tTabs do
+		self.tWndRefs.tTabs[idx]:Enable(true)
 	end
 end
 
@@ -448,12 +453,12 @@ function FriendsList:OnFriendsListOn()
 		self.arInvites[tInvite.nId] = tInvite
 	end
 
-	self.tTabs[LuaCodeEnumTabTypes.Friend]:SetCheck(true)
-	self.arHeaders[LuaCodeEnumTabTypes.Friend]:Show(true)
+	self.tWndRefs.tTabs[LuaCodeEnumTabTypes.Friend]:SetCheck(true)
+	self.tWndRefs.arHeaders[LuaCodeEnumTabTypes.Friend]:Show(true)
 	self:DrawControls(LuaCodeEnumTabTypes.Friend)
-	for idx = 2, #self.tTabs do
-		self.tTabs[idx]:SetCheck(false)
-		self.arHeaders[idx]:Show(false)
+	for idx = 2, #self.tWndRefs.tTabs do
+		self.tWndRefs.tTabs[idx]:SetCheck(false)
+		self.tWndRefs.arHeaders[idx]:Show(false)
 	end
 
 	if not self.bTimerCreated then
@@ -472,7 +477,7 @@ end
 -- Friends List Updates (all types but suggested)
 -----------------------------------------------------------------------------------------------
 function FriendsList:OnFriendshipAdd(nFriendId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
@@ -481,16 +486,16 @@ function FriendsList:OnFriendshipAdd(nFriendId)
 
 	if tFriend.bIgnore == true then
 		self.arIgnored[nFriendId] = tFriend
-		bViewingList = self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Ignore
+		bViewingList = self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Ignore
 	else
 		if tFriend.bFriend == true then -- can be friend and rival
 			self.arFriends[nFriendId] = tFriend
-			bViewingList = self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Ignore and self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Suggested
+			bViewingList = self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Ignore and self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Suggested
 		end
 
 		if tFriend.bRival == true then
 			self.arRivals[nFriendId] = tFriend
-			bViewingList = self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Ignore and self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Suggested
+			bViewingList = self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Ignore and self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Suggested
 		end
 	end
 
@@ -501,7 +506,7 @@ function FriendsList:OnFriendshipAdd(nFriendId)
 end
 
 function FriendsList:OnFriendshipUpdate(nFriendId) -- Gotcha: will fire for every list the player is on, so removing might also have this event
-	local nTab = self.wndListContainer and self.wndListContainer:GetData() or nil
+	local nTab = self.tWndRefs.wndListContainer and self.tWndRefs.wndListContainer:GetData() or nil
 	local tFriend = FriendshipLib.GetById( nFriendId )
 
 	if tFriend.bIgnore == true then
@@ -552,13 +557,13 @@ function FriendsList:OnFriendshipUpdateOnline(nFriendId)
 		Sound.Play(Sound.PlayUISocialFriendAlert)
 	end
 
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 
-	if self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Friend then -- only Friends draw this info
-		for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	if self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Friend then -- only Friends draw this info
+		for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 			if wndPlayerEntry:GetData() == nFriendId then
 				self:HelperAddOrUpdateMemberWindow(nFriendId, tFriend)
 				self:PerformLastSort()
@@ -588,11 +593,11 @@ end
 -----------------------------------------------------------------------------------------------
 
 function FriendsList:OnUpdateLocationsTimer()
-	if not self.wndMain:IsShown() or self.wndMain:IsShown() and self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndMain == nil or self.tWndRefs.wndMain:IsShown() and self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 	local tOnlineFriends = {}
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndPlayerEntry:GetData() ~= nil then
 			local nFriendId = wndPlayerEntry:GetData()
 			local tFriend = FriendshipLib.GetById(nFriendId) or FriendshipLib.GetAccountById(nFriendId)
@@ -608,13 +613,13 @@ end
 
 
 function FriendsList:OnFriendshipLocation(tLocations)
-	if not self.wndMain:IsShown() or self.wndMain:IsShown() and self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if not self.tWndRefs.wndMain:IsShown() or self.tWndRefs.wndMain:IsShown() and self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
 	for idx, tLocInfo in pairs(tLocations) do
 		if tLocInfo.nId ~= nil and self.arListTypes[LuaCodeEnumTabTypes.Friend][tLocInfo.nId] ~= nil then
-			for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+			for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 				if wndPlayerEntry:GetData() == tLocInfo.nId then
 					local tFriend = FriendshipLib.GetById(tLocInfo.nId)
 					self.arListTypes[LuaCodeEnumTabTypes.Friend][tLocInfo.nId] =  tFriend
@@ -629,42 +634,42 @@ end
 -- Suggested List Updates
 -----------------------------------------------------------------------------------------------
 function FriendsList:OnFriendshipSuggestedAdd(nSuggestedId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	local tSuggested = FriendshipLib.GetSuggestedById(nSuggestedId)
 	self.arSuggested[nSuggestedId] = tSuggested
 
-	if self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Suggested then
+	if self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Suggested then
 		self:HelperAddOrUpdateMemberWindow(nSuggestedId, tSuggested)
 		self:PerformLastSort()
 	end
 end
 
 function FriendsList:OnFriendshipSuggestedUpdate(nSuggestedId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	local tSuggested = FriendshipLib.GetSuggestedById(nSuggestedId)
 	self.arSuggested[nSuggestedId] = tSuggested -- overwrites the old data
 
-	if self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Suggested then
+	if self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Suggested then
 		self:HelperAddOrUpdateMemberWindow(nSuggestedId, tSuggested)
 		self:PerformLastSort()
 	end
 end
 
 function FriendsList:OnFriendshipSuggestedRemove(nSuggestedId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	self.arSuggested[nSuggestedId] = nil
 
-	if self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Suggested then
-		for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	if self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Suggested then
+		for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 			if wndPlayerEntry:GetData() == nSuggestedId then
 				wndPlayerEntry:Destroy()
 				self:PerformLastSort()
@@ -679,9 +684,9 @@ end
 -----------------------------------------------------------------------------------------------
 
 function FriendsList:DrawList(nList) -- pass the list we're updating so we can call against all of them
-	self.wndListContainer:DestroyChildren()
-	self.wndListContainer:RecalculateContentExtents()
-	self.wndListContainer:SetData(nList)
+	self.tWndRefs.wndListContainer:DestroyChildren()
+	self.tWndRefs.wndListContainer:RecalculateContentExtents()
+	self.tWndRefs.wndListContainer:SetData(nList)
 
 
 	if nList == LuaCodeEnumTabTypes.Friend then
@@ -714,28 +719,28 @@ function FriendsList:DrawList(nList) -- pass the list we're updating so we can c
 end
 
 function FriendsList:HelperAddOrUpdateMemberWindow(nFriendId, tFriend)
-	if not self.wndMain or not self.wndMain:IsValid() then -- May actually not be visible yet
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then -- May actually not be visible yet
 		return
 	end
 
 	local wndNewListEntry = self:GetFriendshipWindowByFriendId(nFriendId)
 	if wndNewListEntry == nil then
-		if self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Friend then
+		if self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Friend then
 			if self.arFriends[nFriendId] ~= nil then
-				wndNewListEntry = self:FactoryProduce(self.wndListContainer, "FriendForm", nFriendId)
+				wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "FriendForm", nFriendId)
 			elseif self.arAccountFriends[nFriendId] ~= nil then
-				wndNewListEntry = self:FactoryProduce(self.wndListContainer, "AccountFriendForm", nFriendId)
+				wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "AccountFriendForm", nFriendId)
 			elseif self.arAccountInvites[nFriendId] ~= nil then
-				wndNewListEntry = self:FactoryProduce(self.wndListContainer, "AccountFriendInviteForm", nFriendId)
+				wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "AccountFriendInviteForm", nFriendId)
 			elseif self.arInvites[nFriendId] ~= nil then
-				wndNewListEntry = self:FactoryProduce(self.wndListContainer, "FriendInviteForm", nFriendId)
+				wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "FriendInviteForm", nFriendId)
 			end
-		elseif self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Ignore then
-			wndNewListEntry = self:FactoryProduce(self.wndListContainer, "IgnoredForm", nFriendId)
-		elseif self.wndListContainer:GetData() == LuaCodeEnumTabTypes.Rival  then
-			wndNewListEntry = self:FactoryProduce(self.wndListContainer, "RivalForm", nFriendId)
+		elseif self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Ignore then
+			wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "IgnoredForm", nFriendId)
+		elseif self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Rival  then
+			wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "RivalForm", nFriendId)
 		else -- suggested
-			wndNewListEntry = self:FactoryProduce(self.wndListContainer, "SuggestedForm", nFriendId)
+			wndNewListEntry = self:FactoryProduce(self.tWndRefs.wndListContainer, "SuggestedForm", nFriendId)
 		end
 
 		if wndNewListEntry == nil then
@@ -771,12 +776,12 @@ function FriendsList:HelperAddOrUpdateMemberWindow(nFriendId, tFriend)
 end
 
 function FriendsList:HelperRemoveMemberWindow(nFriendId, nList)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
-	if nList == self.wndListContainer:GetData() then -- if we're showing this list
-		for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	if nList == self.tWndRefs.wndListContainer:GetData() then -- if we're showing this list
+		for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 			if wndPlayerEntry:GetData() == nFriendId then
 				wndPlayerEntry:Destroy()
 				self:PerformLastSort()
@@ -789,37 +794,37 @@ function FriendsList:HelperRemoveMemberWindow(nFriendId, nList)
 end
 
 function FriendsList:DrawControls(nList)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-	self.wndAddBtn:Show(true)
-	self.wndAccountAddBtn:Show(false)
-	--self.wndModifyBtn:Show(true)
-	self.wndUnignoreBtn:Show(false)
-	self.wndModifyNoteBtn:Show(true)
-	self.wndModifySubFraming:Show(true)
-	self.wndModifyFriendBtn:Show(true)
-	self.wndModifyRivalBtn:Show(true)
-	self.wndModifyIgnoreBtn:Show(true)
+	self.tWndRefs.wndAddBtn:Show(true)
+	self.tWndRefs.wndAccountAddBtn:Show(false)
+	--self.tWndRefs.wndModifyBtn:Show(true)
+	self.tWndRefs.wndUnignoreBtn:Show(false)
+	self.tWndRefs.wndModifyNoteBtn:Show(true)
+	self.tWndRefs.wndModifySubFraming:Show(true)
+	self.tWndRefs.wndModifyFriendBtn:Show(true)
+	self.tWndRefs.wndModifyRivalBtn:Show(true)
+	self.tWndRefs.wndModifyIgnoreBtn:Show(true)
 
-	self.wndUnignoreWindow:Show(false)
-	self.wndModifyWindow:Show(false)
-	self.wndAddWindow:Show(false)
-	self.wndAccountAddWindow:Show(false)
-	self.wndNoteWindow:Show(false)
+	self.tWndRefs.wndUnignoreWindow:Show(false)
+	self.tWndRefs.wndModifyWindow:Show(false)
+	self.tWndRefs.wndAddWindow:Show(false)
+	self.tWndRefs.wndAccountAddWindow:Show(false)
+	self.tWndRefs.wndNoteWindow:Show(false)
 
 	if nList == LuaCodeEnumTabTypes.Friend then
-		self.wndAccountAddBtn:Show(true)
+		self.tWndRefs.wndAccountAddBtn:Show(true)
 	elseif nList == LuaCodeEnumTabTypes.Rival then
 	elseif nList == LuaCodeEnumTabTypes.Ignore then
-		self.wndModifyBtn:Show(false)
-		self.wndUnignoreBtn:Show(true)
+		self.tWndRefs.wndModifyBtn:Show(false)
+		self.tWndRefs.wndUnignoreBtn:Show(true)
 	elseif nList == LuaCodeEnumTabTypes.Suggested then
-		self.wndAddBtn:Show(false)
-		self.wndModifyNoteBtn:Show(false)
+		self.tWndRefs.wndAddBtn:Show(false)
+		self.tWndRefs.wndModifyNoteBtn:Show(false)
 	end
-	self.wndMain:FindChild("SortContainer"):ArrangeChildrenHorz(2)
+	self.tWndRefs.wndMain:FindChild("SortContainer"):ArrangeChildrenHorz(2)
 end
 
 
@@ -829,45 +834,44 @@ function FriendsList:OnFriendTabBtn(wndHandler, wndControl)
 	end
 
 	local nList = wndControl:GetData()
-	for idx = 1, #self.tTabs do
-		self.tTabs[idx]:SetCheck(self.tTabs[idx]:GetData() == nList)
-		self.arHeaders[idx]:Show(idx == nList)
+	for idx = 1, #self.tWndRefs.tTabs do
+		self.tWndRefs.tTabs[idx]:SetCheck(self.tWndRefs.tTabs[idx]:GetData() == nList)
+		self.tWndRefs.arHeaders[idx]:Show(idx == nList)
 	end
 
 	self:DrawList(nList)
-	self.wndMain:FindChild("SortContainer"):ArrangeChildrenHorz(2)
+	self.tWndRefs.wndMain:FindChild("SortContainer"):ArrangeChildrenHorz(2)
 	self:UpdateControls()
 end
 
 function FriendsList:UpdateControls()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-
-	if self.wndMain:FindChild("FriendTabBtn1"):IsChecked() then
+	if self.tWndRefs.wndMain:FindChild("FriendTabBtn1"):IsChecked() then
 		self:DrawControls(LuaCodeEnumTabTypes.Friend)
-	elseif self.wndMain:FindChild("FriendTabBtn2"):IsChecked() then	 -- Rival
+	elseif self.tWndRefs.wndMain:FindChild("FriendTabBtn2"):IsChecked() then	 -- Rival
 		self:DrawControls(LuaCodeEnumTabTypes.Rival)
-	elseif self.wndMain:FindChild("FriendTabBtn3"):IsChecked() then -- Ignore
+	elseif self.tWndRefs.wndMain:FindChild("FriendTabBtn3"):IsChecked() then -- Ignore
 		self:DrawControls(LuaCodeEnumTabTypes.Ignore)
-	elseif self.wndMain:FindChild("FriendTabBtn4"):IsChecked() then	-- Suggested
+	elseif self.tWndRefs.wndMain:FindChild("FriendTabBtn4"):IsChecked() then	-- Suggested
 		self:DrawControls(LuaCodeEnumTabTypes.Suggested)
 		self:UpdateControlsSuggested()
 		return
 	end
 
-	self.wndModifyBtn:SetText(Apollo.GetString("Friends_Modify"))
+	self.tWndRefs.wndModifyBtn:SetText(Apollo.GetString("Friends_Modify"))
 
 	local tPersonalStatus = FriendshipLib.GetPersonalStatus()
-	self.wndStatusDropDownLabel:SetText(karStatusText[tPersonalStatus.nPresenceState])
-	self.wndStatusDropDownIcon:SetBGColor(karStatusColors[tPersonalStatus.nPresenceState])
+	self.tWndRefs.wndStatusDropDownLabel:SetText(karStatusText[tPersonalStatus.nPresenceState])
+	self.tWndRefs.wndStatusDropDownIcon:SetBGColor(karStatusColors[tPersonalStatus.nPresenceState])
 
 	local tFriend = nil
 	local strWindowName = nil
 
 	local bFoundAtLeastOne = false
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndPlayerEntry:FindChild("FriendBtn"):IsChecked() then
 			local nFriendId = wndPlayerEntry:GetData()
 			tFriend = FriendshipLib.GetById(nFriendId) or FriendshipLib.GetAccountById(nFriendId)
@@ -876,30 +880,30 @@ function FriendsList:UpdateControls()
 		end
 	end
 
-	self.wndModifyBtn:Enable(bFoundAtLeastOne and strWindowName ~= "AccountFriendInviteForm" and strWindowName ~= "FriendInviteForm")
-	self.wndModifyNoteBtn:Enable(bFoundAtLeastOne and strWindowName ~= "AccountFriendInviteForm" and strWindowName ~= "FriendInviteForm")
-	self.wndUnignoreBtn:Enable(bFoundAtLeastOne and strWindowName ~= "AccountFriendInviteForm" and strWindowName ~= "FriendInviteForm")
+	self.tWndRefs.wndModifyBtn:Enable(bFoundAtLeastOne and strWindowName ~= "AccountFriendInviteForm" and strWindowName ~= "FriendInviteForm")
+	self.tWndRefs.wndModifyNoteBtn:Enable(bFoundAtLeastOne and strWindowName ~= "AccountFriendInviteForm" and strWindowName ~= "FriendInviteForm")
+	self.tWndRefs.wndUnignoreBtn:Enable(bFoundAtLeastOne and strWindowName ~= "AccountFriendInviteForm" and strWindowName ~= "FriendInviteForm")
 
 	if tFriend then
-		self.wndModifyBtn:SetData(tFriend)
-		self.wndModifyNoteBtn:SetData(tFriend)
-		self.wndUnignoreBtn:SetData(tFriend)
+		self.tWndRefs.wndModifyBtn:SetData(tFriend)
+		self.tWndRefs.wndModifyNoteBtn:SetData(tFriend)
+		self.tWndRefs.wndUnignoreBtn:SetData(tFriend)
 	end
 
-	self.wndMain:FindChild("SortContainer"):ArrangeChildrenHorz(2)
+	self.tWndRefs.wndMain:FindChild("SortContainer"):ArrangeChildrenHorz(2)
 end
 
 function FriendsList:UpdateControlsSuggested()
-	self.wndModifyBtn:Show(true)
+	self.tWndRefs.wndModifyBtn:Show(true)
 	local tFriend = nil
-	local nList = self.wndListContainer:GetData()
-	self.wndModifyBtn:SetText(Apollo.GetString("Friends_AddToList"))
+	local nList = self.tWndRefs.wndListContainer:GetData()
+	self.tWndRefs.wndModifyBtn:SetText(Apollo.GetString("Friends_AddToList"))
 
 	if nList ~= LuaCodeEnumTabTypes.Suggested then
 		return
 	end
 
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndPlayerEntry:FindChild("FriendBtn"):IsChecked() then
 			local nFriendId = wndPlayerEntry:GetData()
 			tFriend = FriendshipLib.GetSuggestedById(nFriendId)
@@ -907,13 +911,13 @@ function FriendsList:UpdateControlsSuggested()
 	end
 
 	if tFriend == nil then
-		self.wndModifyBtn:Enable(false)
+		self.tWndRefs.wndModifyBtn:Enable(false)
 		return
 	end
 
-	self.wndModifyBtn:Enable(true)
-	self.wndModifyBtn:SetData(tFriend)
-	self.wndModifyNoteBtn:SetData(tFriend)
+	self.tWndRefs.wndModifyBtn:Enable(true)
+	self.tWndRefs.wndModifyBtn:SetData(tFriend)
+	self.tWndRefs.wndModifyNoteBtn:SetData(tFriend)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -921,7 +925,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function FriendsList:HelperDrawMemberWindowFriend(wndPlayerInfo, tFriend)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 	self:HelperFormatPathAndClass(wndPlayerInfo, tFriend.nClassId, tFriend.nPathId)
@@ -1017,7 +1021,7 @@ function FriendsList:HelperDrawMemberWindowAccountFriend(wnd, tFriend)
 		wnd:FindChild("LastOnline"):SetText(tFirstFriendCharacter.strWorldZone)
 
 		-- if this account friend is also a friend, we should use that accounts status to determine the friend's color
-		for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+		for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 			if tFirstFriendCharacter.strCharacterName == wndPlayerEntry:FindChild("Name"):GetText() then
 				local tLocFriend = FriendshipLib.GetById(wndPlayerEntry:GetData())
 				if tLocFriend and tLocFriend.fLastOnline == 0 then
@@ -1212,7 +1216,7 @@ function FriendsList:OnAccountContextMenuOnlyBtn(wndHandler, wndControl) -- TODO
 		return false
 	end
 
-	Event_FireGenericEvent("GenericEvent_NewContextMenuFriend", self.wndMain, idFriend)
+	Event_FireGenericEvent("GenericEvent_NewContextMenuFriend", self.tWndRefs.wndMain, idFriend)
 end
 
 function FriendsList:OnContextMenuOnlyBtn(wndHandler, wndControl)
@@ -1226,7 +1230,7 @@ function FriendsList:OnContextMenuOnlyBtn(wndHandler, wndControl)
 		return false
 	end
 
-	Event_FireGenericEvent("GenericEvent_NewContextMenuFriend", self.wndMain, idFriend)
+	Event_FireGenericEvent("GenericEvent_NewContextMenuFriend", self.tWndRefs.wndMain, idFriend)
 end
 
 function FriendsList:OnAccountFriendBtn(wndHandler, wndControl) -- TODO REFACTOR: Can just store the name instead
@@ -1273,7 +1277,7 @@ function FriendsList:OnAddBtn(wndHandler, wndControl)
 	wndAdd:FindChild("AddMemberEditBox"):SetFocus()
 
 	local wndAddMemberNoteEditBoxLabel = wndAdd:FindChild("AddMemberNoteEditBox"):FindChild("Label")
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		wndAddMemberNoteEditBoxLabel:SetText(Apollo.GetString("Friends_NoteHeader"))
 	else
 		wndAddMemberNoteEditBoxLabel:SetText(Apollo.GetString("Friends_MessageHeader"))
@@ -1304,13 +1308,13 @@ function FriendsList:OnAddMemberYesClick(wndHandler, wndControl)
 	end
 
 	if strName ~= nil and strName ~= "" then
-		FriendshipLib.AddByName(ktTypesIntoEnums[self.wndListContainer:GetData()], strName, strAddFriendRealm, strAddFriendNote)
+		FriendshipLib.AddByName(ktTypesIntoEnums[self.tWndRefs.wndListContainer:GetData()], strName, strAddFriendRealm, strAddFriendNote)
 	end
 	wndControl:GetParent():Show(false)
 end
 
 function FriendsList:OnAccountAddMemberYesClick(wndHandler, wndControl)
-	local wndAdd = self.wndMain:FindChild("SortContainer:AccountAddBtn:AccountAddWindow")
+	local wndAdd = self.tWndRefs.wndMain:FindChild("SortContainer:AccountAddBtn:AccountAddWindow")
 	local strName = wndAdd:FindChild("AddMemberEditBox"):GetText()
 
 	local strAddFriendNote = wndAdd:FindChild("AddMemberNoteEditBox"):GetText() or nil
@@ -1349,7 +1353,7 @@ function FriendsList:OnModifyBtn(wndHandler, wndControl)
 
 	wndModify:FindChild("RemoveFriendWindow"):SetData(tFriend)
 
-	local nList = self.wndListContainer:GetData()
+	local nList = self.tWndRefs.wndListContainer:GetData()
 	if nList == LuaCodeEnumTabTypes.Suggested then
 		wndModify:FindChild("ModifyRemoveBtn"):SetText(Apollo.GetString("Friends_Remove"))
 	elseif nList == LuaCodeEnumTabTypes.Friend then
@@ -1499,7 +1503,7 @@ function FriendsList:OnNoteConfirmBtn(wndHandler, wndControl)
 	local tFriend = wndNote:GetData()
 
 	local wndSelectedEntry
-	for key, wndFriendEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndFriendEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndFriendEntry:GetData() == tFriend.nId then
 			wndSelectedEntry = wndFriendEntry
 			break
@@ -1515,7 +1519,7 @@ function FriendsList:OnNoteConfirmBtn(wndHandler, wndControl)
 	end
 
 	wndNote:Show(false)
-	self.wndModifyWindow:Show(false)
+	self.tWndRefs.wndModifyWindow:Show(false)
 end
 
 function FriendsList:OnBlockBtn(wndHandler, wndControl)
@@ -1523,9 +1527,9 @@ function FriendsList:OnBlockBtn(wndHandler, wndControl)
 	FriendshipLib.SetLock(bBlocked)
 
 	if bBlocked == true then
-		self.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsDisabled"))
+		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsDisabled"))
 	else
-		self.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsEnabled"))
+		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsEnabled"))
 	end
 end
 
@@ -1579,7 +1583,7 @@ function FriendsList:OnNameConfirmBtn( wndHandler, wndControl)
 	FriendshipLib.SetPublicDisplayName(wndNote:FindChild("NameEditBox"):GetText())
 
 	wndNote:Show(false)
-	local wndModify = self.wndMain:FindChild("ModifyWindow")
+	local wndModify = self.tWndRefs.wndMain:FindChild("ModifyWindow")
 	if wndModify ~= nil then
 		wndModify:Show(false)
 	end
@@ -1614,10 +1618,10 @@ function FriendsList:OnChangeAccountStatusBtn( wndHandler, wndControl)
 	local nPresenceState = FriendshipLib.SetPersonalPresenceState(newState)
 
 	if newState ~= nPresenceState then
-		self.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
-		self.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
-		self.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
---		self.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
+		self.tWndRefs.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
+		self.tWndRefs.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
+		self.tWndRefs.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
+--		self.tWndRefs.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
 	end
 
 end
@@ -1627,7 +1631,7 @@ function FriendsList:OnRemoveFriendConfirmBtn(wndHandler, wndControl)
 	local tFriend = wndConfirm:GetData()
 
 	local wndSelectedEntry
-	for key, wndFriendEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndFriendEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndFriendEntry:GetData() == tFriend.nId then
 			wndSelectedEntry = wndFriendEntry
 			break
@@ -1638,21 +1642,21 @@ function FriendsList:OnRemoveFriendConfirmBtn(wndHandler, wndControl)
 		if wndSelectedEntry:GetName() == "AccountFriendForm" then
 			FriendshipLib.AccountRemove(tFriend.nId)
 		else
-			FriendshipLib.Remove(tFriend.nId, ktTypesIntoEnums[self.wndListContainer:GetData()]) -- TODO:flip
+			FriendshipLib.Remove(tFriend.nId, ktTypesIntoEnums[self.tWndRefs.wndListContainer:GetData()]) -- TODO:flip
 		end
 	end
 
 	wndConfirm:Show(false)
-	self.wndModifyWindow:Show(false)
+	self.tWndRefs.wndModifyWindow:Show(false)
 end
 
 function FriendsList:OnStatusDropdownBtn( wndHandler, wndControl)
 	local nPresenceState = FriendshipLib.GetPersonalStatus().nPresenceState
 
-	self.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
-	self.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
-	self.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
---	self.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
+	self.tWndRefs.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
+	self.tWndRefs.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
+	self.tWndRefs.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
+--	self.tWndRefs.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
 end
 
 function FriendsList:OnStatusDropdownOptionBtn(wndHandler, wndControl)
@@ -1660,13 +1664,13 @@ function FriendsList:OnStatusDropdownOptionBtn(wndHandler, wndControl)
 	local nPresenceState = FriendshipLib.SetPersonalPresenceState(newState)
 
 	if newState ~= nPresenceState then
-		self.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
-		self.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
-		self.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
---		self.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
+		self.tWndRefs.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
+		self.tWndRefs.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
+		self.tWndRefs.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
+--		self.tWndRefs.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
 	end
 
-	self.wndMain:FindChild("StatusDropdownArt"):Show(false)
+	self.tWndRefs.wndMain:FindChild("StatusDropdownArt"):Show(false)
 	self:UpdateControls()
 end
 
@@ -1682,7 +1686,7 @@ end
 function FriendsList:OnFriendSortToggle(wndHandler, wndControl, eMouseButton)
 	local wndName = wndControl:GetName()
 	local bDesc = true
-	local eCurrentTab = self.wndListContainer:GetData()
+	local eCurrentTab = self.tWndRefs.wndListContainer:GetData()
 	local tLastSort = self.arLastSorts[eCurrentTab]
 	local strLastSort = tLastSort[2]
 	
@@ -1690,7 +1694,7 @@ function FriendsList:OnFriendSortToggle(wndHandler, wndControl, eMouseButton)
 		bDesc = true
 		self.arLastSorts[eCurrentTab] = {wndName, wndName.."2"}
 	elseif strLastSort == wndName.."2" then
-		self.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
+		self.tWndRefs.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
 			if eCurrentTab ~= LuaCodeEnumTabTypes.Friend then
 				return self:SortDefaultOther(wndLeft, wndRight)
 			else
@@ -1705,7 +1709,7 @@ function FriendsList:OnFriendSortToggle(wndHandler, wndControl, eMouseButton)
 		self.arLastSorts[eCurrentTab] = {wndName, wndName}
 	end
 
-	self.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
+	self.tWndRefs.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
 		if ktSortButtonToFuncMap[wndName] ~= nil then
 			return self[ktSortButtonToFuncMap[wndName]](self, bDesc, wndLeft, wndRight)
 		end
@@ -1713,7 +1717,7 @@ function FriendsList:OnFriendSortToggle(wndHandler, wndControl, eMouseButton)
 end
 
 function FriendsList:PerformLastSort()
-	local eCurrentTab = self.wndListContainer:GetData()
+	local eCurrentTab = self.tWndRefs.wndListContainer:GetData()
 	local tLastSort = self.arLastSorts[eCurrentTab]
 	local strLastSort = tLastSort[2]
 	local wndName = tLastSort[1] or ""
@@ -1722,7 +1726,7 @@ function FriendsList:PerformLastSort()
 	if strLastSort == wndName.."2" then
 		bDesc = true
 	elseif strLastSort == "Special" then
-		self.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
+		self.tWndRefs.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
 			if eCurrentTab ~= LuaCodeEnumTabTypes.Friend then
 				return self:SortDefaultOther(wndLeft, wndRight)
 			else
@@ -1730,7 +1734,7 @@ function FriendsList:PerformLastSort()
 			end
 		end)
 		if wndName ~= "" then
-			self.arHeaders[eCurrentTab]:FindChild(wndName):SetCheck(false)
+			self.tWndRefs.arHeaders[eCurrentTab]:FindChild(wndName):SetCheck(false)
 		end
 		return
 	else
@@ -1738,9 +1742,9 @@ function FriendsList:PerformLastSort()
 	end
 
 	if wndName ~= "" then
-		self.arHeaders[eCurrentTab]:FindChild(wndName):SetCheck(true)
+		self.tWndRefs.arHeaders[eCurrentTab]:FindChild(wndName):SetCheck(true)
 	end
-	self.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
+	self.tWndRefs.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
 		if ktSortButtonToFuncMap[wndName] ~= nil then
 			return self[ktSortButtonToFuncMap[wndName]](self, bDesc, wndLeft, wndRight)
 		end
@@ -2064,14 +2068,14 @@ end
 -----------------------------------------------------------------------------------------------
 
 function FriendsList:OnFriendshipResult(strName, eResult)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 	local strMessage = ktFriendshipResult[eResult] or String_GetWeaselString(Apollo.GetString("Friends_UnknownResult"), eResult)
-	if self.wndMain:IsShown() then
+	if self.tWndRefs.wndMain:IsShown() then
 		-- (Re)start the timer and show the window. We're not queuing these since they come as results of direct action
-		self.wndMain:FindChild("MessageText"):SetText(strMessage)
-		self.wndMain:FindChild("MessageText"):Show(true)
+		self.tWndRefs.wndMain:FindChild("MessageText"):SetText(strMessage)
+		self.tWndRefs.wndMain:FindChild("MessageText"):Show(true)
 		Apollo.StopTimer("Friends_MessageDisplayTimer")
 		Apollo.CreateTimer("Friends_MessageDisplayTimer", 4, false)
 	else
@@ -2080,8 +2084,8 @@ function FriendsList:OnFriendshipResult(strName, eResult)
 end
 
 function FriendsList:OnMessageDisplayTimer()
-	if self.wndMain:FindChild("MessageText") then
-		self.wndMain:FindChild("MessageText"):Show(false)
+	if self.tWndRefs.wndMain:FindChild("MessageText") then
+		self.tWndRefs.wndMain:FindChild("MessageText"):Show(false)
 	end
 end
 
@@ -2172,7 +2176,7 @@ function FriendsList:OnAccountFriendInviteBtn(wndHandler, wndControl)
 		return false
 	end
 
-	for key, wndInviteEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndInviteEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		wndInviteEntry:FindChild("FriendBtn"):SetCheck(wndInviteEntry:GetData() == tInviteId)
 	end
 
@@ -2216,41 +2220,41 @@ function FriendsList:OnRejectAccountFriendRequest(wndHandler, wndControl)
 end
 
 function FriendsList:OnFriendshipInvitesRecieved(tInviteList)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	for idx, tInvite in pairs(tInviteList) do
 		self.arInvites[tInvite.nId] = tInvite
 		-- We only want to add the invite to the window if we're on the Contacts tab
-		if self.wndMain:FindChild("FriendTabBtn1"):IsChecked() then
+		if self.tWndRefs.wndMain:FindChild("FriendTabBtn1"):IsChecked() then
 			self:HelperAddOrUpdateMemberWindow(tInvite.nId, tInvite)
 		end
 	end
 
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then return end
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then return end
 
 	self:PerformLastSort()
 	self:UpdateControls()
 end
 
 function FriendsList:OnFriendshipInviteRemoved(nId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	self.arInvites[nId] = nil
 
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndPlayerEntry:GetData() == nId then
 			wndPlayerEntry:Destroy()
 		end
 	end
 
-	if not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
@@ -2268,11 +2272,11 @@ function FriendsList:OnFriendshipAccountInvitesRecieved(tInviteList)
 		self:HelperAddOrUpdateMemberWindow(tInvite.nId, tInvite)
 	end
 
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
@@ -2281,22 +2285,22 @@ function FriendsList:OnFriendshipAccountInvitesRecieved(tInviteList)
 end
 
 function FriendsList:OnFriendshipAccountInviteRemoved(nId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	self.arAccountInvites[nId] = nil
 
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndPlayerEntry:GetData() == nId then
 			wndPlayerEntry:Destroy()
 		end
 	end
 
-	if not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
@@ -2305,7 +2309,7 @@ function FriendsList:OnFriendshipAccountInviteRemoved(nId)
 end
 
 function FriendsList:OnFriendshipAccountFriendsRecieved(tFriendAccountList)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
@@ -2314,10 +2318,10 @@ function FriendsList:OnFriendshipAccountFriendsRecieved(tFriendAccountList)
 		self:HelperAddOrUpdateMemberWindow(tAccountFriend.nId, tAccountFriend)
 	end
 
-	if not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
@@ -2326,16 +2330,16 @@ function FriendsList:OnFriendshipAccountFriendsRecieved(tFriendAccountList)
 end
 
 function FriendsList:OnFriendshipAccountFriendRemoved(nId)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
 	self.arAccountFriends[nId] = nil
 
-	if not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
@@ -2367,10 +2371,10 @@ end
 -----------------------------------------------------------------------------------------------
 
 function FriendsList:GetFriendshipWindowByFriendId(nId)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndListContainer then
 		return
 	end
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		if wndPlayerEntry:GetData() == nId then
 			return wndPlayerEntry
 		end
@@ -2380,10 +2384,10 @@ function FriendsList:GetFriendshipWindowByFriendId(nId)
 end
 
 function FriendsList:FriendshipAccountUpdate(nId)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
-	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if not self.tWndRefs.wndListContainer or self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
@@ -2410,11 +2414,11 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function FriendsList:OnUpdateLastOnlineTimer()
- 	if self.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+ 	if self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndPlayerEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		local nFriendId = wndPlayerEntry:GetData()
 		if nFriendId ~= nil then
 			local tFriend = nil
@@ -2449,7 +2453,7 @@ function FriendsList:OnFriendInviteBtn( wndHandler, wndControl)
 		return false
 	end
 
-	for key, wndInviteEntry in pairs(self.wndListContainer:GetChildren()) do
+	for key, wndInviteEntry in pairs(self.tWndRefs.wndListContainer:GetChildren()) do
 		wndInviteEntry:FindChild("FriendBtn"):SetCheck(wndInviteEntry:GetData() == tInviteId)
 	end
 

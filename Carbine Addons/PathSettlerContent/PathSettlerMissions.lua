@@ -62,6 +62,7 @@ end
 function PathSettlerMissions:LoadFromList(pmMission)
 	if self.wndMain then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathSettlerrMissionMain", g_wndDatachron:FindChild("PathContainer"):FindChild("SettlerMissionContainer"), self)
@@ -72,6 +73,7 @@ end
 function PathSettlerMissions:HelperResetUI()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 

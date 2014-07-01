@@ -67,9 +67,10 @@ function BuildMap:OnDocumentReady()
 end
 
 function BuildMap:Initialize()
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.wndMain ~= nil and self.wndMain:IsValid() then
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "BuildMapForm", nil, self)
@@ -459,11 +460,11 @@ function BuildMap:OnCloseVendorWindow()
 end
 
 function BuildMap:OnCloseBtn() -- SettlerBuildResult
-	if self.wndMain and self.wndMain:IsValid() then	
+	if self.wndMain ~= nil and self.wndMain:IsValid() then	
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
-		Event_CancelSettlerHub()
 		self.wndMain:Destroy()
-		
+		self.wndMain = nil
+		Event_CancelSettlerHub()
 	end
 end
 

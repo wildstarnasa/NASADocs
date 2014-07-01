@@ -13,6 +13,9 @@ function Guild:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -42,46 +45,47 @@ function Guild:OnDocumentReady()
 end
 
 function Guild:OnGenericEvent_InitializeGuild(wndParent)
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.tWndRefs.wndMain ~= nil and self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildMainForm", wndParent, self)
-    self.wndOptions = self.wndMain:FindChild("TopTabContainer")
+    self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildMainForm", wndParent, self)
+    self.tWndRefs.wndOptions = self.tWndRefs.wndMain:FindChild("TopTabContainer")
 
 	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+		self.tWndRefs.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
 
 	self.nLastSelection = -1
-	self.tContent = {}
+	self.tWndRefs.tContent = {}
 	for idx = 1, 3 do
-		self.tContent[idx] = self.wndMain:FindChild("ContentWnd_" .. idx)
-		self.tContent[idx]:Show(false)
+		self.tWndRefs.tContent[idx] = self.tWndRefs.wndMain:FindChild("ContentWnd_" .. idx)
+		self.tWndRefs.tContent[idx]:Show(false)
 	end
 
 	Event_FireGenericEvent("Guild_WindowLoaded")
 	Event_FireGenericEvent("GuildMainLoaded")
 
-	self.wndMain:Show(true)
+	self.tWndRefs.wndMain:Show(true)
 	self:OnGuildOn()
 end
 
 function Guild:OnGenericEvent_DestroyGuild()
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.tWndRefs.wndMain ~= nil and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 		Event_FireGenericEvent("GuildWindowHasBeenClosed")
-		self.wndMain:Destroy()
 	end
 end
 
 function Guild:OnGenericEvent_ClearGuild()
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.tWndRefs.wndMain ~= nil and self.tWndRefs.wndMain:IsValid() then
 		Event_FireGenericEvent("GuildWindowHasBeenClosed")
 	end
 end
 
 function Guild:OnGuildOn()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
@@ -89,26 +93,26 @@ function Guild:OnGuildOn()
 	for key, guildData in pairs(GuildLib.GetGuilds()) do
 		if guildData:GetType() == GuildLib.GuildType_Guild then
 			bGuildTableIsEmpty = false
-			self.wndMain:SetData(guildData)
+			self.tWndRefs.wndMain:SetData(guildData)
 		end
 	end
 
 	if bGuildTableIsEmpty or GuildLib:IsLoading() then
-		self.wndMain:FindChild("JoinContainer"):Show(true)
-		self.wndMain:FindChild("GuildOption1"):Enable(false)
-		self.wndMain:FindChild("GuildOption2"):Enable(false)
-		self.wndMain:FindChild("GuildOption3"):Enable(false)
-		self.wndMain:Show(true)
+		self.tWndRefs.wndMain:FindChild("JoinContainer"):Show(true)
+		self.tWndRefs.wndMain:FindChild("GuildOption1"):Enable(false)
+		self.tWndRefs.wndMain:FindChild("GuildOption2"):Enable(false)
+		self.tWndRefs.wndMain:FindChild("GuildOption3"):Enable(false)
+		self.tWndRefs.wndMain:Show(true)
 
 		Apollo.CreateTimer("RetryLoadingGuilds", 1.0, false)
 		Apollo.StartTimer("RetryLoadingGuilds")
 		return
 	end
 
-	self.wndMain:FindChild("JoinContainer"):Show(false)
-	self.wndMain:FindChild("GuildOption1"):Enable(true)
-	self.wndMain:FindChild("GuildOption2"):Enable(true)
-	self.wndMain:FindChild("GuildOption3"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("JoinContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("GuildOption1"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("GuildOption2"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("GuildOption3"):Enable(true)
 
 	if self.nLastSelection == nil or self.nLastSelection == 1 then 
 		self:ToggleInfo()
@@ -127,50 +131,50 @@ function Guild:RetryLoadingGuilds()
 end
 
 function Guild:ToggleInfo()
-	self.wndMain:Show(true)
-	self.wndMain:ToFront()
-	self.wndOptions:SetRadioSel("GuildOptions", 1)
+	self.tWndRefs.wndMain:Show(true)
+	self.tWndRefs.wndMain:ToFront()
+	self.tWndRefs.wndOptions:SetRadioSel("GuildOptions", 1)
 	self:OnGuildOptionCheck()
 end
 
 function Guild:ToggleRoster()
-	self.wndMain:Show(true)
-	self.wndMain:ToFront()
-	self.wndOptions:SetRadioSel("GuildOptions", 2)
+	self.tWndRefs.wndMain:Show(true)
+	self.tWndRefs.wndMain:ToFront()
+	self.tWndRefs.wndOptions:SetRadioSel("GuildOptions", 2)
 	self:OnGuildOptionCheck()
 end
 
 function Guild:TogglePerks()
-	self.wndMain:Show(true)
-	self.wndMain:ToFront()
-	self.wndOptions:SetRadioSel("GuildOptions", 3)
+	self.tWndRefs.wndMain:Show(true)
+	self.tWndRefs.wndMain:ToFront()
+	self.tWndRefs.wndOptions:SetRadioSel("GuildOptions", 3)
 	self:OnGuildOptionCheck()
 end
 
 function Guild:OnGuildOptionCheck(wndHandler, wndControl, bToggledFromCall, tUserData)
-	local nGuildOption = self.wndOptions:GetRadioSel("GuildOptions")
+	local nGuildOption = self.tWndRefs.wndOptions:GetRadioSel("GuildOptions")
 	if nGuildOption ~= 1 then -- the player's switched to anything but Info (which auto-selects)
 		Event_FireGenericEvent("Guild_TabChanged") -- stops anything going on in the window
 	end
 
 	for idx = 1, 3 do
-		self.tContent[idx]:Show(false)
+		self.tWndRefs.tContent[idx]:Show(false)
 	end
 
 	if nGuildOption == 1 then
-		Event_FireGenericEvent("Guild_ToggleInfo", self.tContent[nGuildOption])
+		Event_FireGenericEvent("Guild_ToggleInfo", self.tWndRefs.tContent[nGuildOption])
 	elseif nGuildOption == 2 then
-		Event_FireGenericEvent("Guild_ToggleRoster", self.tContent[nGuildOption])
+		Event_FireGenericEvent("Guild_ToggleRoster", self.tWndRefs.tContent[nGuildOption])
 	elseif nGuildOption == 3 then
-		Event_FireGenericEvent("Guild_TogglePerks", self.tContent[nGuildOption])
+		Event_FireGenericEvent("Guild_TogglePerks", self.tWndRefs.tContent[nGuildOption])
 	end
 
 	self.nLastSelection = nGuildOption -- Save last selection
-	self.tContent[nGuildOption]:Show(true)
+	self.tWndRefs.tContent[nGuildOption]:Show(true)
 
-	if not self.wndMain:IsVisible() then -- in case it's responding to a key or Datachron toggle
-		self.wndMain:Show(true)
-		self.wndMain:ToFront()
+	if not self.tWndRefs.wndMain:IsVisible() then -- in case it's responding to a key or Datachron toggle
+		self.tWndRefs.wndMain:Show(true)
+		self.tWndRefs.wndMain:ToFront()
 	end
 end
 
@@ -181,7 +185,7 @@ end
 function Guild:OnGuildInvite( strGuildName, strInvitorName, guildType, tFlags )
 	if guildType ~= GuildLib.GuildType_Guild then return end
 
-	if self.wndGuildInvite ~= nil then
+	if self.wndGuildInvite ~= nil and self.wndGuildInvite:IsValid() then
 		self.wndGuildInvite:Destroy()
 	end
 
@@ -209,6 +213,7 @@ function Guild:OnGuildInviteAccept(wndHandler, wndControl)
 	GuildLib.Accept()
 	if self.wndGuildInvite then
 		self.wndGuildInvite:Destroy()
+		self.wndGuildInvite = nil
 	end
 end
 
@@ -216,6 +221,7 @@ function Guild:OnGuildInviteDecline() -- This can come from a variety of sources
 	GuildLib.Decline()
 	if self.wndGuildInvite then
 		self.wndGuildInvite:Destroy()
+		self.wndGuildInvite = nil
 	end
 end
 
@@ -230,23 +236,24 @@ end
 function Guild:OnGuildResult(guildCurr, strName, nRank, eResult)
 	if eResult == GuildLib.GuildResult_PendingInviteExpired and self.wndGuildInvite ~= nil then
 		self.wndGuildInvite:Destroy()
+		self.wndGuildInvite = nil
 	end
 end
 
 -- Feedback Messages
 -----------------------------------------------------------------------------------------------
 function Guild:OnGuildChange()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 	-- a guild was added or removed.
 	for idx = 1, 3 do
-		self.tContent[idx]:Show(false)
+		self.tWndRefs.tContent[idx]:Show(false)
 	end
 	
 	self.nLastSelection = -1
 
-	self.wndMain:Show(false)
+	self.tWndRefs.wndMain:Show(false)
 	Event_FireGenericEvent("GuildWindowHasBeenClosed")
 	self:OnGuildOn()
 end

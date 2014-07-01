@@ -124,6 +124,8 @@ end
 function Reputation:OnGenericEvent_DestroyReputation()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
+		self.tStrToWndMapping = {}
 	end
 end
 
@@ -230,7 +232,7 @@ function Reputation:BuildTopLevel(wndCurr, tFaction)
 		wndCurr:FindChild("BaseProgressLevelBar"):SetProgress(tFaction.nCurrent)
 		wndCurr:FindChild("BaseProgressLevelText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), tFaction.nCurrent, tLevelData.nMax))
 	end
-	--wndCurr:FindChild("ItemsBtn"):ArrangeChildrenVert(1)
+	
 	self.tStrToWndMapping[tFaction.strName] = wndCurr
 	return wndCurr
 end
@@ -265,40 +267,69 @@ end
 
 function Reputation:ResizeItemContainer()
 	for key, wndTopGroup in pairs(self.wndMain:FindChild("FactionList"):GetChildren()) do
-		wndTopGroup:Show(#wndTopGroup:FindChild("ItemsContainer"):GetChildren() > 0)
+		local wndTopContainer = wndTopGroup:FindChild("ItemsContainer")
+		local wndTopButton = wndTopGroup:FindChild("ItemsBtn")
+		
+		wndTopGroup:Show(#wndTopContainer:GetChildren() > 0)
 		if wndTopGroup:IsShown() then
 			local nTopHeight = self.knHeightTop
 
 			local nMiddleHeight = 0
-			wndTopGroup:FindChild("ItemsContainer"):Show(wndTopGroup:FindChild("ItemsBtn"):IsChecked())
-			if wndTopGroup:FindChild("ItemsBtn"):IsChecked() then
+			wndTopContainer:Show(wndTopButton:IsChecked())
+			
+			local bEnableTop = false
+			if wndTopButton:IsChecked() then
 				nTopHeight = self.knExpandedHeightTop
-
-				for idx, wndMiddleGroup in pairs(wndTopGroup:FindChild("ItemsContainer"):GetChildren()) do
-					wndMiddleGroup:Show(not wndMiddleGroup:FindChild("ItemsContainer") or #wndMiddleGroup:FindChild("ItemsContainer"):GetChildren() > 0)
+				local bEnableMid = false
+				for idx, wndMiddleGroup in pairs(wndTopContainer:GetChildren()) do
+					local wndMiddleContainer = wndMiddleGroup:FindChild("ItemsContainer")
+					local wndMiddleButton = wndMiddleGroup:FindChild("ItemsBtn")
+					wndMiddleGroup:Show(not wndMiddleContainer or #wndMiddleContainer:GetChildren() > 0)
 
 					if wndMiddleGroup:IsShown() then
 						local nBottomHeight = 0
 						local nHeightToUse = self.knHeightProgress
+						
 
 						-- Special formatting if it has a container (different height, show/hide, and arrange vert)
-						if wndMiddleGroup:FindChild("ItemsContainer") then
+						if wndMiddleContainer then
 							nHeightToUse = self.knHeightLabel
-
-							wndMiddleGroup:FindChild("ItemsContainer"):Show(wndMiddleGroup:FindChild("ItemsBtn"):IsChecked())
-							if wndMiddleGroup:FindChild("ItemsBtn"):IsChecked() then
-								nBottomHeight = self.knHeightProgress * #wndMiddleGroup:FindChild("ItemsContainer"):GetChildren()
+							
+							wndMiddleContainer:Show(wndMiddleButton:IsChecked())
+							
+							if wndMiddleButton:IsChecked() then
+								nBottomHeight = self.knHeightProgress * #wndMiddleContainer:GetChildren()
 								nHeightToUse = self.knExpandedHeightLabel
 							end
-							wndMiddleGroup:FindChild("ItemsContainer"):ArrangeChildrenVert(0)
+							
+							if #wndMiddleContainer:GetChildren() > 0 and not bEnableMid then
+								bEnableMid = true
+							end
+							
+							wndMiddleContainer:ArrangeChildrenVert(0)
 						end
 						-- End special formatting
 
 						local nLeft, nTop, nRight, nBottom = wndMiddleGroup:GetAnchorOffsets()
 						wndMiddleGroup:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nBottomHeight + nHeightToUse)
 						nMiddleHeight = nMiddleHeight + nBottomHeight + nHeightToUse
+						
+						if wndMiddleButton then
+							if not bEnableMid then
+								wndMiddleButton:SetCheck(false)
+							end
+							wndMiddleButton:Enable(bEnableMid)
+						end
+						
+						if not bEnableTop then
+							bEnableTop = true
+						end
 					end
 				end
+				if not bEnableTop then
+					wndTopButton:SetCheck(false)
+				end
+				wndTopButton:Enable(bEnableTop)
 			end
 
 			local nLeft, nTop, nRight, nBottom = wndTopGroup:GetAnchorOffsets()

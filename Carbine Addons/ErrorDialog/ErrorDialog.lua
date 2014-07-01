@@ -249,6 +249,10 @@ function ErrorDialog:OnLuaError(tAddon, strError, bCanIgnore)
 		wnd:FindChild("Suspend"):Enable(false)
 	end
 
+	if self.wndErrorDialog and self.wndErrorDialog:IsValid() then
+		self.wndErrorDialog:Destroy()
+	end
+	
 	self.wndErrorDialog = Apollo.LoadForm(self.xmlDoc, "AddonError", nil, self)
 	self.wndErrorDialog:FindChild("Message"):SetText(String_GetWeaselString(strPrompt, strMessage))
 	local strPartialError = string.sub(strError, 0, 1000)
@@ -273,6 +277,7 @@ function ErrorDialog:OnSuspendAddon(wndHandler, wndControl)
 	Apollo.SuspendAddon(tAddon.strName)
 	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
+	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnDisableAddon(wndHandler, wndControl, eMouseButton)
@@ -281,16 +286,19 @@ function ErrorDialog:OnDisableAddon(wndHandler, wndControl, eMouseButton)
 	Apollo.DisableAddon(tAddon.strName)
 	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
+	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnIgnoreError(wndHandler, wndControl)
 	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
+	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnCloseBtn(wndHandler, wndControl)
 	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
+	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnCloseErrorWindow(wndHandler, wndControl)

@@ -53,6 +53,10 @@ function CSI:OnSave(eType)
 end
 
 function CSI:OnRestore(eType, tSavedData)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+		return
+	end
+
 	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		
 		if tSavedData.tMemoryLocation then
@@ -130,7 +134,11 @@ function CSI:OnDocumentReady()
 		self.wndKeypad:FindChild("KeypadButtonContainer:Button"..idx):SetData(idx) -- Requires exactly named windows
 	end
 
-	-- TODO: Persistance through reloadui via GetActiveCSI? (Memory and Keypad possibly had this)
+	-- Persistance through reloadui
+	local tActiveCSI = CSIsLib.GetActiveCSI()
+	if CSIsLib.IsCSIRunning() then
+		self:OnProgressClickWindowDisplay(true)
+	end
 end
 
 function CSI:OnProgressClickWindowDisplay(bShow)
@@ -139,7 +147,7 @@ function CSI:OnProgressClickWindowDisplay(bShow)
 		return
 	end
 	
-	if self.wndProgress then
+	if self.wndProgress and self.wndProgress:IsValid() then
 		self.wndProgress:Destroy()
 	end
 	
@@ -234,6 +242,10 @@ function CSI:BuildPressAndHold(tActiveCSI, bShow, strBodyText)
 	wndCurr:FindChild("BodyText"):SetText(strBodyText)
 	wndCurr:FindChild("ProgressButton"):SetText(GameLib.GetKeyBinding("Interact"))
 	wndCurr:FindChild("HoldButtonDecoration"):Show(true)
+	
+	if self.wndProgress and self.wndProgress:IsValid() then
+		self.wndProgress:Destroy()
+	end
 	self.wndProgress = wndCurr
 end
 
@@ -248,6 +260,10 @@ function CSI:BuildRapidTap(tActiveCSI, bShow)
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_Progress", nil, self)
 	wndCurr:Show(true) -- to get the animation
 	wndCurr:FindChild("ProgressButton"):SetText(GameLib.GetKeyBinding("Interact"))
+	
+	if self.wndProgress and self.wndProgress:IsValid() then
+		self.wndProgress:Destroy()
+	end
 	self.wndProgress = wndCurr
 end
 
@@ -276,6 +292,10 @@ function CSI:BuildPrecisionTap(tActiveCSI, bShow, strBodyText)
 	wndCurr:FindChild("ProgressBar"):SetGlowSprite(kstrPrecisionArrowRight)
 
 	wndCurr:FindChild("MetronomeProgress"):Show(tActiveCSI.eType == CSIsLib.ClientSideInteractionType_Metronome)
+	
+	if self.wndProgress and self.wndProgress:IsValid() then
+		self.wndProgress:Destroy()
+	end
 	self.wndProgress = wndCurr
 	self.nMetronomeMisses = 0
 	self.nMetronomeHits = 0

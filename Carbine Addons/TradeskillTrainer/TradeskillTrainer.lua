@@ -91,6 +91,7 @@ function TradeskillTrainer:OnClose()
 	if self.wndMain then
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 	Event_CancelTradeskillTraining()
 end

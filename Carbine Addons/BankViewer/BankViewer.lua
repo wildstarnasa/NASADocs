@@ -16,6 +16,7 @@ function BankViewer:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
     return o
 end
 
@@ -36,7 +37,7 @@ function BankViewer:OnDocumentReady()
 	Apollo.RegisterEventHandler("HideBank", "HideBank", self)
 	Apollo.RegisterEventHandler("ShowBank", "Initialize", self)
     Apollo.RegisterEventHandler("ToggleBank", "Initialize", self)
-	Apollo.RegisterEventHandler("CloseVendorWindow", "HideBank", self)
+	Apollo.RegisterEventHandler("CloseVendorWindow", "OnCloseVendorWindow", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", "ComputeCashLimits", self)
 	Apollo.RegisterEventHandler("BankSlotPurchased", "OnBankSlotPurchased", self)
 	Apollo.RegisterEventHandler("PersonaUpdateCharacterStats", "RefreshBagCount", self)
@@ -50,6 +51,7 @@ function BankViewer:Initialize()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Close()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	self.wndMain = Apollo.LoadForm("BankViewer.xml", "BankViewerForm", nil, self)
@@ -113,15 +115,19 @@ end
 function BankViewer:OnWindowClosed()
 	Event_CancelBanking()
 	
-	if self.wndMain then
-		self.wndMain:Destroy()
-	end
+	self:HideBank()
+end
+
+function BankViewer:OnCloseVendorWindow()
+	self:HideBank()
 end
 
 function BankViewer:HideBank()
 	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Close()
-		self.wndMain:Destroy()
+		local wndMain = self.wndMain
+		self.wndMain = nil
+		wndMain:Close()
+		wndMain:Destroy()
 	end
 end
 
@@ -164,10 +170,7 @@ function BankViewer:ResizeBankSlots()
 end
 
 function BankViewer:OnBankViewerCloseBtn()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Close()
-		self.wndMain:Destroy()
-	end
+	self:HideBank()
 end
 
 function BankViewer:OnBankBuyConfirmClose()

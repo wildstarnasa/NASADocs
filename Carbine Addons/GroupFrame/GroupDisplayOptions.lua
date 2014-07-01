@@ -43,6 +43,10 @@ function GroupDisplayOptions:OnDocumentReady()
 end
 
 function GroupDisplayOptions:Initialize(wndParent)
+	if self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:Destroy()
+	end
+
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "GroupLeaderOptions", wndParent, self)
 	wndParent:AttachWindow(self.wndMain)
 

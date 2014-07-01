@@ -39,7 +39,7 @@ function PvPKillBoard:new(o)
     setmetatable(o, self)
     self.__index = self 
 
-    -- initialize variables here
+    o.tWndRefs = {}
 
     return o
 end
@@ -80,11 +80,11 @@ end
 -- PvPKillBoard Events
 -----------------------------------------------------------------------------------------------
 function PvPKillBoard:OnPvpKillNotification(strVictimName, eReason, strKillerName, eKillerClass, eVictimTeam)
-	if not self.wndMain or not self.wndContainer then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndContainer then
 		return
 	end
 
-	local wndEntry = Apollo.LoadForm(self.xmlDoc, "KillEntry", self.wndContainer, self)
+	local wndEntry = Apollo.LoadForm(self.xmlDoc, "KillEntry", self.tWndRefs.wndContainer, self)
 	local wndKillerNameLabel = wndEntry:FindChild("KillerNameLabel")
 	local wndVictimNameLabel = wndEntry:FindChild("VictimNamelabel")
 	
@@ -123,8 +123,8 @@ function PvPKillBoard:OnPvpKillNotification(strVictimName, eReason, strKillerNam
 	
 	wndEntry:ArrangeChildrenHorz(0)
 	
-	self.wndContainer:ArrangeChildrenVert(1)
-	self.wndContainer:SetVScrollPos(self.wndContainer:GetVScrollRange())
+	self.tWndRefs.wndContainer:ArrangeChildrenVert(1)
+	self.tWndRefs.wndContainer:SetVScrollPos(self.tWndRefs.wndContainer:GetVScrollRange())
 end
 
 function PvPKillBoard:OnPVPMatchEntered()
@@ -149,24 +149,25 @@ function PvPKillBoard:OnPvPKillBoardOn()
 		return
 	end
 
-	self.wndExpanded:Show(true)
+	self.tWndRefs.wndExpanded:Show(true)
 end
 
 function PvPKillBoard:Initialize()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
 	end
 	
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PvPKillBoardForm", nil, self)
-	self.wndExpanded = self.wndMain:FindChild("ExpandedContents")
-	self.wndContainer = self.wndMain:FindChild("KillContainer")
+	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "PvPKillBoardForm", nil, self)
+	self.tWndRefs.wndExpanded = self.tWndRefs.wndMain:FindChild("ExpandedContents")
+	self.tWndRefs.wndContainer = self.tWndRefs.wndMain:FindChild("KillContainer")
 	
-	self.wndExpanded:Show(false)
+	self.tWndRefs.wndExpanded:Show(false)
 end
 
 function PvPKillBoard:Cleanup()
-	if self.wndMain then
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 end
 
@@ -180,7 +181,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function PvPKillBoard:OnMinimizedExpandClick( wndHandler, wndControl, eMouseButton )
-	self.wndExpanded:Show(not self.wndExpanded:IsShown())
+	self.tWndRefs.wndExpanded:Show(not self.tWndRefs.wndExpanded:IsShown())
 end
 
 -----------------------------------------------------------------------------------------------

@@ -928,18 +928,25 @@ function Vendor:FinalizeBuy(tItemData)
 				self.wndVendor:FindChild("AlertCost"):SetMoneySystem(eRepairCurrency)
 				self.wndVendor:FindChild("AlertCost"):SetAmount(nRepairAmount)
 			else
-				RepairAllItemsVendor()
-				local monRepairAllCost = GameLib.GetRepairAllCost()
-				self.wndVendor:FindChild("AlertCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
-				self.wndVendor:FindChild("AlertCost"):SetAmount(monRepairAllCost)
+				self:RepairAllHelper()
 			end
 			Sound.Play(Sound.PlayUIVendorRepair)
 		end
+	elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
+		self:RepairAllHelper()
+		Sound.Play(Sound.PlayUIVendorRepair)
 	else
 		return
 	end
 
 	self.wndVendor:FindChild("VendorFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+end
+
+function Vendor:RepairAllHelper()
+	RepairAllItemsVendor()
+	local monRepairAllCost = GameLib.GetRepairAllCost()
+	self.wndVendor:FindChild("AlertCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
+	self.wndVendor:FindChild("AlertCost"):SetAmount(monRepairAllCost)
 end
 
 function Vendor:OnTabBtn(wndHandler, wndControl)

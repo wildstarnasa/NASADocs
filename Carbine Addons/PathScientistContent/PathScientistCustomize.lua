@@ -75,6 +75,7 @@ function PathScientistCustomize:Initialize(bShow)
 	if self.wndMain and self.wndMain:IsValid() then
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		if not bShow then
 			return
 		end
@@ -336,6 +337,7 @@ end
 function PathScientistCustomize:OnCloseBtn(wndHandler, wndControl)
 	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
+	self.wndMain = nil
 end
 
 function PathScientistCustomize:OnCurrentFlairMouseEnter(wndHandler, wndControl)

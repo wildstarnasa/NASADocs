@@ -734,7 +734,7 @@ function HousingDecorate:ShowDecorateWindow(bClear)
         self.tDecorList = (self.bIsWarplot and HousingLib.GetDecorListWarplot()) or HousingLib.GetDecorList()
     else
   		self.wndBuyButton:SetText(Apollo.GetString("HousingDecorate_Place"))
-  		self.wndDeleteButton:Show(true)
+  		self.wndDeleteButton:Show(HousingLib.IsOnMyResidence())
 		self.wndVendorList:Show(false)
         self.wndDecorate:FindChild("StructureList"):Show(true)
         self.wndListView = self.wndDecorate:FindChild("StructureList")
@@ -1342,7 +1342,7 @@ function HousingDecorate:OnDecorateListItemChange(wndControl, wndHandler, nX, nY
 
 	self.wndTogglePreview:Enable(true)
 	
-	self.wndDeleteButton:Enable(true)
+	self.wndDeleteButton:Enable(HousingLib.IsOnMyResidence())
 		
 	if idItem ~= 0 then
 		self.wndPreview:FindChild("ModelWindow"):SetAnimated(true)
@@ -1419,7 +1419,7 @@ function HousingDecorate:ShowItems(wndControl, tItemList, idPrune)
             if #tFilteredList > 0 then
                 tItemList = tFilteredList
                 if (self.nPreviewDecorHandle == nil or self.nPreviewDecorHandle == 0) and not self.bIsVendor then
-                    self.wndDeleteButton:Enable(true)
+                    self.wndDeleteButton:Enable(HousingLib.IsOnMyResidence())
                 end
             else
                 self.wndDeleteButton:Enable(false)

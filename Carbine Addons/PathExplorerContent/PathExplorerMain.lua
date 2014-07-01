@@ -138,6 +138,7 @@ function PathExplorerMain:ValidatePath()
 	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then
 		if self.wndMain then
 			self.wndMain:Destroy()
+			self.wndMain = nil
 		end
 		return
 	end
@@ -250,6 +251,7 @@ function PathExplorerMain:OnPathUpdate()
 	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then
 		if self.wndMain then
 			self.wndMain:Destroy()
+			self.wndMain = nil
 		end
 		return
 	end
@@ -436,6 +438,7 @@ function PathExplorerMain:OnMainTimer() -- slower timer that updates the mission
 	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then
 		if self.wndMain then
 			self.wndMain:Destroy()
+			self.wndMain = nil
 		end
 		return
 	end

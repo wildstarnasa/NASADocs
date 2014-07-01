@@ -47,6 +47,14 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 	Apollo.RegisterEventHandler("GalacticArchiveRefresh", 			"OnGalacticArchiveRefresh", self)
 	Apollo.RegisterEventHandler("GenericEvent_ShowGalacticArchive", "OnGenericEvent_ShowGalacticArchive", self)
 
+	if self.wndArchiveIndexForm and self.wndArchiveIndexForm:IsValid() then
+		self.wndArchiveIndexForm:Destroy()
+	end
+	
+	if self.wndArticleDisplay and self.wndArticleDisplay:IsValid() then
+		self.wndArticleDisplay:Destroy()
+	end
+	
 	self.wndArchiveIndexForm = 	Apollo.LoadForm(self.xmlDoc, "ArchiveIndex", wndParent, self)
 	self.wndArticleDisplay = 	Apollo.LoadForm(self.xmlDoc, "ArticleDisplay", nil, self)
 	self.wndHeaderContainer = 	self.wndArchiveIndexForm:FindChild("HeaderContainer")

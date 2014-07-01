@@ -625,13 +625,13 @@ function Achievements:OnZoomToAchievementIfValid(achArg)
 
 	local idArgCategory = achArg:GetCategoryId()
 	for key, wndTopGroup in pairs(self.wndMain:FindChild("BGLeft:LeftScroll"):GetChildren()) do
-		if wndTopGroup:GetData() == achArg then
+		if wndTopGroup:GetData() == idArgCategory then
 			self:OnTopGroupSelect(wndTopGroup:FindChild("TopGroupBtn"))
 			return
 		end
 
 		for key2, wndMiddleGroup in pairs(wndTopGroup:FindChild("GroupContents"):GetChildren()) do
-			if wndMiddleGroup:GetData() == achArg then
+			if wndMiddleGroup:GetData() == idArgCategory then
 				self:OnBottomItemSelect(wndMiddleGroup:FindChild("MiddleGroupBtn"))
 				return
 			end

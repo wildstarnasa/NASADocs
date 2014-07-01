@@ -15,7 +15,7 @@ local knFrameWidthShield	 				= 372
 local knFrameWidthMin	 					= 340
 local knClusterFrameWidth 					= 60 -- MUST MATCH XML
 local knClusterFrameHeight 					= 62 -- MUST MATCH XML
-local knClusterFrameVertOffset 				= 100 -- how far down to move the cluster members
+local knClusterFrameVertOffset 				= 120 -- how far down to move the cluster members
 local knHealthRed							= 0.3
 local knHealthYellow						= 0.5
 local knWindowStayOnScreenWidthOffset 		= 200
@@ -227,10 +227,10 @@ function TargetFrame:Init(luaUnitFrameSystem, tParams)
 	self.arClusterFrames =
 	{
 		self.wndMainClusterFrame,
-		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", 	"FixedHudStratumLow", self),
-		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", 	"FixedHudStratumLow", self),
-		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", 	"FixedHudStratumLow", self),
-		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", 	"FixedHudStratumLow", self)
+		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", "FixedHudStratumLow", self),
+		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", "FixedHudStratumLow", self),
+		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", "FixedHudStratumLow", self),
+		Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", "FixedHudStratumLow", self)
 	}
 	
 	self.arClusterFrames[1]:SetScale(self.tParams.fScale)
@@ -1051,15 +1051,15 @@ function TargetFrame:ArrangeClusterMembers()
 		self.nFrameBottom = nFrameBottom
 		
 		if self.tParams.bFlipped then
-			self.arClusterFrames[2]:Move(self.nFrameRight-47-8-knClusterFrameWidth*0, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
-			self.arClusterFrames[3]:Move(self.nFrameRight-47-8-knClusterFrameWidth*1, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
-			self.arClusterFrames[4]:Move(self.nFrameRight-47-8-knClusterFrameWidth*2, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
-			self.arClusterFrames[5]:Move(self.nFrameRight-47-8-knClusterFrameWidth*3, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[2]:Move(self.nFrameRight-knClusterFrameWidth*1, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[3]:Move(self.nFrameRight-knClusterFrameWidth*2, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[4]:Move(self.nFrameRight-knClusterFrameWidth*3, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[5]:Move(self.nFrameRight-knClusterFrameWidth*4, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
 		else
-			self.arClusterFrames[2]:Move(self.nFrameLeft+8+knClusterFrameWidth*0, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
-			self.arClusterFrames[3]:Move(self.nFrameLeft+8+knClusterFrameWidth*1, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
-			self.arClusterFrames[4]:Move(self.nFrameLeft+8+knClusterFrameWidth*2, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
-			self.arClusterFrames[5]:Move(self.nFrameLeft+8+knClusterFrameWidth*3, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[2]:Move(self.nFrameLeft+knClusterFrameWidth*0, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[3]:Move(self.nFrameLeft+knClusterFrameWidth*1, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[4]:Move(self.nFrameLeft+knClusterFrameWidth*2, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
+			self.arClusterFrames[5]:Move(self.nFrameLeft+knClusterFrameWidth*3, self.nFrameTop + knClusterFrameVertOffset, knClusterFrameWidth, knClusterFrameHeight)
 		end
 	end
 end

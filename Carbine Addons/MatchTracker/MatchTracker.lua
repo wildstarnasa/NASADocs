@@ -59,6 +59,8 @@ function MatchTracker:new(o)
 	o.fTimeRemaining = 0
 	o.fTimeInQueue = 0
 	o.eMyTeam = 0
+	
+	o.tWndRefs = {}
 
     return o
 end
@@ -95,10 +97,10 @@ function MatchTracker:OnSave(eType)
 		nSaveVersion = knSaveVersion,
 		tSavedCTFFlags = 
 		{
-			bNeutral = self.wndMatchTracker and self.wndMatchTracker:FindChild("CTFNeutralFlag"):IsVisible() or nil,
-			bDominion = self.wndMatchTracker and self.wndMatchTracker:FindChild("CTFDomHaveFlag"):IsVisible() or nil,
-			bStolen = self.wndMatchTracker and self.wndMatchTracker:FindChild("CTFStolenFlag"):IsVisible() or nil,
-			bExiles = self.wndMatchTracker and self.wndMatchTracker:FindChild("CTFExilesHaveFlag"):IsVisible() or nil
+			bNeutral = self.tWndRefs.wndMatchTracker and self.tWndRefs.wndMatchTracker:FindChild("CTFNeutralFlag"):IsVisible() or nil,
+			bDominion = self.tWndRefs.wndMatchTracker and self.tWndRefs.wndMatchTracker:FindChild("CTFDomHaveFlag"):IsVisible() or nil,
+			bStolen = self.tWndRefs.wndMatchTracker and self.tWndRefs.wndMatchTracker:FindChild("CTFStolenFlag"):IsVisible() or nil,
+			bExiles = self.tWndRefs.wndMatchTracker and self.tWndRefs.wndMatchTracker:FindChild("CTFExilesHaveFlag"):IsVisible() or nil
 		},
 	}
 	
@@ -162,16 +164,17 @@ function MatchTracker:OnDocumentReady()
 end
 
 function MatchTracker:OnLoadFromDatachron()
-	if self.wndMatchTracker and self.wndMatchTracker:IsValid() then -- stops double-loading
+	if self.tWndRefs.wndMatchTracker ~= nil and self.tWndRefs.wndMatchTracker:IsValid() then -- stops double-loading
 		return
 	end
 
 	if self.wndHoldLineFloater and self.wndHoldLineFloater:IsValid() then
 		self.locSavedWindowLoc = self.wndHoldLineFloater:GetLocation()
 		self.wndHoldLineFloater:Destroy()
+		self.wndHoldLineFloater = nil
 	end
 	
-	self.wndMatchTracker 	= Apollo.LoadForm(self.xmlDoc, "MatchTracker", "FixedHudStratum", self)
+	self.tWndRefs.wndMatchTracker 	= Apollo.LoadForm(self.xmlDoc, "MatchTracker", "FixedHudStratum", self)
 	self.match = nil
 	self.wndHoldLineFloater = nil
 	self.nHTLHintArrow 		= nil
@@ -218,26 +221,26 @@ function MatchTracker:OnLoadFromDatachron()
 	Apollo.RegisterEventHandler("PvP_HTL_PrepPhase",					"OnHTLPrepPhase", self)
 
 	-- Load window types
-	self.arMatchWnd =
+	self.tWndRefs.arMatchWnd =
 	{
-		self.wndMatchTracker:FindChild("DeathMatchInfo"),
-		self.wndMatchTracker:FindChild("CTFMatchInfo"),
-		self.wndMatchTracker:FindChild("HoldLineMatchInfo"),
+		self.tWndRefs.wndMatchTracker:FindChild("DeathMatchInfo"),
+		self.tWndRefs.wndMatchTracker:FindChild("CTFMatchInfo"),
+		self.tWndRefs.wndMatchTracker:FindChild("HoldLineMatchInfo"),
 	}	
 	
 	if self.tSavedCTFFlags then
-		self.wndMatchTracker:FindChild("CTFNeutralFlag"):Show(self.tSavedCTFFlags.bNeutral or false)
-		self.wndMatchTracker:FindChild("CTFDomHaveFlag"):Show(self.tSavedCTFFlags.bDominion or false)
-		self.wndMatchTracker:FindChild("CTFStolenFlag"):Show(self.tSavedCTFFlags.bStolen or false)
-		self.wndMatchTracker:FindChild("CTFExilesHaveFlag"):Show(self.tSavedCTFFlags.bExiles or false)
-		self.wndMatchTracker:FindChild("CTFAlertContainer"):ArrangeChildrenVert(1)
+		self.tWndRefs.wndMatchTracker:FindChild("CTFNeutralFlag"):Show(self.tSavedCTFFlags.bNeutral or false)
+		self.tWndRefs.wndMatchTracker:FindChild("CTFDomHaveFlag"):Show(self.tSavedCTFFlags.bDominion or false)
+		self.tWndRefs.wndMatchTracker:FindChild("CTFStolenFlag"):Show(self.tSavedCTFFlags.bStolen or false)
+		self.tWndRefs.wndMatchTracker:FindChild("CTFExilesHaveFlag"):Show(self.tSavedCTFFlags.bExiles or false)
+		self.tWndRefs.wndMatchTracker:FindChild("CTFAlertContainer"):ArrangeChildrenVert(1)
 	end
 
 	-- Initialization/Formatting
-	self.arMatchWnd[2]:FindChild("CTFStolenFlag"):SetData(0)
-	self.arMatchWnd[2]:FindChild("CTFNeutralFlag"):SetData(0)
-	self.arMatchWnd[2]:FindChild("CTFDomHaveFlag"):SetData(0)
-	self.arMatchWnd[2]:FindChild("CTFExilesHaveFlag"):SetData(0)
+	self.tWndRefs.arMatchWnd[2]:FindChild("CTFStolenFlag"):SetData(0)
+	self.tWndRefs.arMatchWnd[2]:FindChild("CTFNeutralFlag"):SetData(0)
+	self.tWndRefs.arMatchWnd[2]:FindChild("CTFDomHaveFlag"):SetData(0)
+	self.tWndRefs.arMatchWnd[2]:FindChild("CTFExilesHaveFlag"):SetData(0)
 
 	if MatchingGame.IsInMatchingGame() or MatchingGame.IsInPVPGame() then
 		self:OnMatchEntered()
@@ -252,12 +255,14 @@ end
 
 function MatchTracker:OnMatchExited()
 	Apollo.StopTimer("OneSecMatchTimer")
-	if self.wndMatchTracker and self.wndMatchTracker:IsValid() then
-		self.wndMatchTracker:Destroy()
+	if self.tWndRefs.wndMatchTracker ~= nil and self.tWndRefs.wndMatchTracker:IsValid() then
+		self.tWndRefs.wndMatchTracker:Destroy()
+		self.tWndRefs = {}
 	end
 	if self.wndHoldLineFloater and self.wndHoldLineFloater:IsValid() then
 		self.locSavedWindowLoc = self.wndHoldLineFloater:GetLocation()
 		self.wndHoldLineFloater:Destroy()
+		self.wndHoldLineFloater = nil
 	end
 	self.nHTLTimeToBeat = 0
 	if self.tLastResTeam then
@@ -281,7 +286,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function MatchTracker:OnOneSecMatchTimer()
-	if not self.wndMatchTracker or not self.wndMatchTracker:IsValid() then
+	if not self.tWndRefs.wndMatchTracker or not self.tWndRefs.wndMatchTracker:IsValid() then
 		self:OnLoadFromDatachron()
 	end
 
@@ -290,15 +295,15 @@ function MatchTracker:OnOneSecMatchTimer()
 		return
 	end
 	
-	self.wndMatchTracker:Show(true)
-	self.wndMatchTracker:FindChild("TimerLabel"):SetText(self:HelperTimeString(tMatchState.fTimeRemaining))
-	self.wndMatchTracker:FindChild("MessageBlockerFrame"):Show(tMatchState.eState == MatchingGame.PVPGameState.Finished or tMatchState.eState == MatchingGame.PVPGameState.Preparation)
+	self.tWndRefs.wndMatchTracker:Show(true)
+	self.tWndRefs.wndMatchTracker:FindChild("TimerLabel"):SetText(self:HelperTimeString(tMatchState.fTimeRemaining))
+	self.tWndRefs.wndMatchTracker:FindChild("MessageBlockerFrame"):Show(tMatchState.eState == MatchingGame.PVPGameState.Finished or tMatchState.eState == MatchingGame.PVPGameState.Preparation)
 
 	if tMatchState.eState == MatchingGame.PVPGameState.Preparation then
-		self.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(false)
+		self.tWndRefs.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(false)
 		return
 	elseif tMatchState.eState == MatchingGame.PVPGameState.Finished then
-		self.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(true)
+		self.tWndRefs.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(true)
 		return
 	end
 
@@ -331,8 +336,9 @@ function MatchTracker:OnPVPMatchFinished(eWinner, eReason)
 	if self.wndHoldLineFloater and self.wndHoldLineFloater:IsValid() then
 		self.locSavedWindowLoc = self.wndHoldLineFloater:GetLocation()
 		self.wndHoldLineFloater:Destroy()
+		self.wndHoldLineFloater = nil
 	end
-	if not self.wndMatchTracker or not self.wndMatchTracker:IsValid() then
+	if not self.tWndRefs.wndMatchTracker or not self.tWndRefs.wndMatchTracker:IsValid() then
 		self:OnLoadFromDatachron()
 	end
 
@@ -355,9 +361,9 @@ function MatchTracker:OnPVPMatchFinished(eWinner, eReason)
 		strMessage = Apollo.GetString("MatchTracker_Defeat")
 	end
 
-	self.wndMatchTracker:FindChild("MessageBlockerFrame"):Show(true)
-	self.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(true)
-	self.wndMatchTracker:FindChild("TimerLabel"):SetText("")
+	self.tWndRefs.wndMatchTracker:FindChild("MessageBlockerFrame"):Show(true)
+	self.tWndRefs.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(true)
+	self.tWndRefs.wndMatchTracker:FindChild("TimerLabel"):SetText("")
 end
 
 function MatchTracker:OnMatchLeaveBtn(wndHandler, wndControl)
@@ -408,22 +414,22 @@ end
 function MatchTracker:HelperCTFPlusOneFlag(nArg)
 	local strWindowName = ktRavelIdToCTFWindowName[nArg]
 	if strWindowName then
-		self.wndMatchTracker:FindChild(strWindowName):Show(true)
-		self.wndMatchTracker:FindChild(strWindowName):SetData(self.wndMatchTracker:FindChild(strWindowName):GetData() + 1)
-		self.wndMatchTracker:FindChild("CTFAlertContainer"):ArrangeChildrenVert(1)
+		self.tWndRefs.wndMatchTracker:FindChild(strWindowName):Show(true)
+		self.tWndRefs.wndMatchTracker:FindChild(strWindowName):SetData(self.tWndRefs.wndMatchTracker:FindChild(strWindowName):GetData() + 1)
+		self.tWndRefs.wndMatchTracker:FindChild("CTFAlertContainer"):ArrangeChildrenVert(1)
 	end
 end
 
 function MatchTracker:HelperCTFMinusOneFlag(nArg)
 	local strWindowName = ktRavelIdToCTFWindowName[nArg]
 	if strWindowName then
-		self.wndMatchTracker:FindChild(strWindowName):SetData(math.max(0, self.wndMatchTracker:FindChild(strWindowName):GetData() - 1))
+		self.tWndRefs.wndMatchTracker:FindChild(strWindowName):SetData(math.max(0, self.tWndRefs.wndMatchTracker:FindChild(strWindowName):GetData() - 1))
 	end
-	self.wndMatchTracker:FindChild("CTFNeutralFlag"):Show(self.wndMatchTracker:FindChild("CTFNeutralFlag"):GetData() > 0)
-	self.wndMatchTracker:FindChild("CTFDomHaveFlag"):Show(self.wndMatchTracker:FindChild("CTFDomHaveFlag"):GetData() > 0)
-	self.wndMatchTracker:FindChild("CTFStolenFlag"):Show(self.wndMatchTracker:FindChild("CTFStolenFlag"):GetData() > 0)
-	self.wndMatchTracker:FindChild("CTFExilesHaveFlag"):Show(self.wndMatchTracker:FindChild("CTFExilesHaveFlag"):GetData() > 0)
-	self.wndMatchTracker:FindChild("CTFAlertContainer"):ArrangeChildrenVert(1)
+	self.tWndRefs.wndMatchTracker:FindChild("CTFNeutralFlag"):Show(self.tWndRefs.wndMatchTracker:FindChild("CTFNeutralFlag"):GetData() > 0)
+	self.tWndRefs.wndMatchTracker:FindChild("CTFDomHaveFlag"):Show(self.tWndRefs.wndMatchTracker:FindChild("CTFDomHaveFlag"):GetData() > 0)
+	self.tWndRefs.wndMatchTracker:FindChild("CTFStolenFlag"):Show(self.tWndRefs.wndMatchTracker:FindChild("CTFStolenFlag"):GetData() > 0)
+	self.tWndRefs.wndMatchTracker:FindChild("CTFExilesHaveFlag"):Show(self.tWndRefs.wndMatchTracker:FindChild("CTFExilesHaveFlag"):GetData() > 0)
+	self.tWndRefs.wndMatchTracker:FindChild("CTFAlertContainer"):ArrangeChildrenVert(1)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -437,7 +443,7 @@ function MatchTracker:DrawDeathmatchScreen()
 	end
 
 	self:HelperClearMatchesExcept(1)
-	local wndInfo = self.arMatchWnd[1]
+	local wndInfo = self.tWndRefs.arMatchWnd[1]
 	local tMyTeam = tMatchState.eMyTeam
 	local nLivesTeam1 = tMatchState.tLivesRemaining.nTeam1
 	local nLivesTeam2 = tMatchState.tLivesRemaining.nTeam2
@@ -470,7 +476,7 @@ function MatchTracker:DrawCTFScreen(peMatch)
 	end
 
 	self:HelperClearMatchesExcept(2)
-	local wndInfo = self.arMatchWnd[2]
+	local wndInfo = self.tWndRefs.arMatchWnd[2]
 	wndInfo:SetData(peMatch)
 
 	for idObjective, peoCurrent in pairs(peMatch:GetObjectives()) do
@@ -508,7 +514,7 @@ function MatchTracker:DrawHoldLineScreen(peMatch)
 	end
 
 	self:HelperClearMatchesExcept(3)
-	local wndDatachron = self.arMatchWnd[3]
+	local wndDatachron = self.tWndRefs.arMatchWnd[3]
 	local wndFloat = self.wndHoldLineFloater
 	local strTitleText = ""
 	local nTotalTime = 0;
@@ -651,7 +657,7 @@ function MatchTracker:DrawHoldLineScreen(peMatch)
 	end
 	
 	nTotalTime = peoScriptCurrent:GetTotalTime() / 1000;
-	self.wndMatchTracker:FindChild("TimerLabel"):SetText(self:HelperTimeString((peoScriptCurrent:GetTotalTime() - peoScriptCurrent:GetElapsedTime()) / 1000))
+	self.tWndRefs.wndMatchTracker:FindChild("TimerLabel"):SetText(self:HelperTimeString((peoScriptCurrent:GetTotalTime() - peoScriptCurrent:GetElapsedTime()) / 1000))
 	self.wndHoldLineFloater:FindChild("TimerText"):SetText(self:HelperTimeString((peoScriptCurrent:GetTotalTime() - peoScriptCurrent:GetElapsedTime()) / 1000))
 	
 	wndFloat:FindChild("TitleTextRight"):SetText("")
@@ -725,12 +731,12 @@ function MatchTracker:OnViewEventStatsBtn(wndHandler, wndControl) -- ViewEventSt
 end
 
 function MatchTracker:HelperClearMatchesExcept(nShow) -- hides all other window types
-	for idx = 1, #self.arMatchWnd do
-		self.arMatchWnd[idx]:Show(false)
+	for idx = 1, #self.tWndRefs.arMatchWnd do
+		self.tWndRefs.arMatchWnd[idx]:Show(false)
 	end
 
 	if nShow ~= nil then
-		self.arMatchWnd[nShow]:Show(true)
+		self.tWndRefs.arMatchWnd[nShow]:Show(true)
 	end
 end
 

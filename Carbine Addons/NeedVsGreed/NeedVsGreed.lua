@@ -67,6 +67,7 @@ end
 function NeedVsGreed:Close()
 	if self.wndMain then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 

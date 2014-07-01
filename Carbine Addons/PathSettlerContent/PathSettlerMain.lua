@@ -45,6 +45,7 @@ function PathSettlerMain:new(o)
 	self.__index = self
 
 	o.bAlreadySent = false
+	o.tWndRefs = {}
 
 	return o
 end
@@ -86,7 +87,7 @@ function PathSettlerMain:OnDocumentReady()
 end
 
 function PathSettlerMain:OnLoadFromDatachron()
-	if self.wndMain then -- stops double-loading
+	if self.tWndRefs.wndMain then -- stops double-loading
 		return
 	end
 
@@ -96,8 +97,8 @@ function PathSettlerMain:OnLoadFromDatachron()
 	end
 
 	-- The parent is the globally defined datachron
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "SettlerMain", g_wndDatachron:FindChild("PathContainer"), self)
-	self.wndMissionList = self.wndMain:FindChild("MissionList")
+	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "SettlerMain", g_wndDatachron:FindChild("PathContainer"), self)
+	self.tWndRefs.wndMissionList = self.tWndRefs.wndMain:FindChild("MissionList")
 
 	Apollo.RegisterEventHandler("CharacterCreated", 			"ValidatePath", self)
 	Apollo.RegisterEventHandler("ChangeWorld", 					"HelperResetUI", self)
@@ -126,15 +127,15 @@ end
 
 function PathSettlerMain:HelperResetUI()
 	-- Note: This gets called from a variety of sources
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMissionList:DestroyChildren() -- Full Redraw
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMissionList:DestroyChildren() -- Full Redraw
 		self:OnPathUpdate()
 	end
 end
 
 function PathSettlerMain:ValidatePath(unitPlayer)
 	local unitPlayer = GameLib:GetPlayerUnit()
-	if not unitPlayer or not self.wndMain or not self.wndMain:IsValid() then
+	if not unitPlayer or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	elseif unitPlayer:GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Settler then
 		return
@@ -151,12 +152,13 @@ end
 
 function PathSettlerMain:OnPathUpdate()
 
-	if not PlayerPathLib or not self.wndMain or not self.wndMain:IsValid() then
+	if not PlayerPathLib or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		Apollo.StopTimer("Settler_PathUpdateTimer");
 		return
 	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Settler then
-		if self.wndMain then
-			self.wndMain:Destroy()
+		if self.tWndRefs.wndMain then
+			self.tWndRefs.wndMain:Destroy()
+			self.tWndRefs = {}
 		end
 		Apollo.StopTimer("Settler_PathUpdateTimer");
 		return
@@ -188,7 +190,7 @@ function PathSettlerMain:OnPathUpdate()
 
 	---
 
-	self.wndMain:FindChild("EmptyLabel"):Show(false)
+	self.tWndRefs.wndMain:FindChild("EmptyLabel"):Show(false)
 
 	-- Inline Sort Method
 	local function SortMissionItems(pmData1, pmData2) -- GOTCHA: This needs to be declared before it's used
@@ -209,7 +211,7 @@ function PathSettlerMain:OnPathUpdate()
 	local bThereIsACompleteHub = false
 	local nRemainingMissions = 0
 	local nActiveMissionCount = 0
-	self:FactoryProduce(self.wndMissionList, "ActiveMissionsHeader", "ActiveMissionsHeader")
+	self:FactoryProduce(self.tWndRefs.wndMissionList, "ActiveMissionsHeader", "ActiveMissionsHeader")
 
 	for idx, pmMission in ipairs(tFullMissionList) do
 		local bMissionComplete = pmMission:IsComplete()
@@ -229,31 +231,31 @@ function PathSettlerMain:OnPathUpdate()
 	end
 
 	if nActiveMissionCount == 0 then
-		local wndAvailableMissions = self.wndMain:FindChildByUserData("AvailableMissionsHeader")
+		local wndAvailableMissions = self.tWndRefs.wndMain:FindChildByUserData("AvailableMissionsHeader")
 		if wndAvailableMissions then
 			local nLeft, nTop, nRight, nBottom = wndAvailableMissions:GetAnchorOffsets()
 			wndAvailableMissions:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 22) -- TODO Hardcoded formatting, quick hack
 		end
-		self.wndMissionList:FindChildByUserData("ActiveMissionsHeader"):Destroy()
+		self.tWndRefs.wndMissionList:FindChildByUserData("ActiveMissionsHeader"):Destroy()
 	end
-	self.wndMissionList:ArrangeChildrenVert(0)
+	self.tWndRefs.wndMissionList:ArrangeChildrenVert(0)
 
 	-- Other Screens
 	if bThereIsAMission then
-		self.wndMissionList:Show(true)
-		self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
+		self.tWndRefs.wndMissionList:Show(true)
+		self.tWndRefs.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
 
 		if not self.bAlreadySent then
 			Event_FireGenericEvent("GenericEvent_RestoreDatachron")
 			self.bAlreadySent = true
 		end
 	elseif bThereIsACompleteHub then -- no missions, but hub
-		self.wndMissionList:Show(true)
-		self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
+		self.tWndRefs.wndMissionList:Show(true)
+		self.tWndRefs.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
 
 	elseif nRemainingMissions > 0 then -- no missions, no hubs, not all complete
-		self.wndMissionList:Show(false)
-		local wndMRS = self.wndMain:FindChild("MissionsRemainingScreen")
+		self.tWndRefs.wndMissionList:Show(false)
+		local wndMRS = self.tWndRefs.wndMain:FindChild("MissionsRemainingScreen")
 		wndMRS:Show(true)
 		wndMRS:FindChild("MissionsRemainingCount"):SetText(nRemainingMissions)
 		wndMRS:FindChild("EpNameString"):SetText(pepEpisode:GetWorldZone())
@@ -265,7 +267,7 @@ function PathSettlerMain:OnPathUpdate()
 	-- TEMP HACK
 	if self.nLastActiveMissionCount ~= nActiveMissionCount then
 		self.nLastActiveMissionCount = nActiveMissionCount
-		self.wndMissionList:DestroyChildren()
+		self.tWndRefs.wndMissionList:DestroyChildren()
 		self:OnPathUpdate()
 	end
 end
@@ -285,10 +287,10 @@ function PathSettlerMain:BuildListItem(pmMission) -- the bool lets us draw hubs/
 	if bActive then
 		nActiveMissionCount = nActiveMissionCount + 1
 	else
-		self:FactoryProduce(self.wndMissionList, "AvailableMissionsHeader", "AvailableMissionsHeader")
+		self:FactoryProduce(self.tWndRefs.wndMissionList, "AvailableMissionsHeader", "AvailableMissionsHeader")
 	end
 
-	local wndListItem = self:FactoryProduce(self.wndMissionList, "SettlerListItem", pmMission)
+	local wndListItem = self:FactoryProduce(self.tWndRefs.wndMissionList, "SettlerListItem", pmMission)
 	wndListItem:FindChild("ListItemBigBtn"):SetData(pmMission)
 	wndListItem:FindChild("ListItemCodexBtn"):SetData(pmMission)
 	wndListItem:FindChild("ListItemCompleteBtn"):SetData(pmMission)
@@ -437,15 +439,15 @@ end
 -----------------------------------------------------------------------------------------------
 
 function PathSettlerMain:HelperDrawNoEpisode()
-	self.wndMain:FindChild("EmptyLabel"):Show(true)
-	self.wndMissionList:Show(false)
-	self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
-	self.wndMissionList:DestroyChildren()
-	self.wndMissionList:RecalculateContentExtents()
+	self.tWndRefs.wndMain:FindChild("EmptyLabel"):Show(true)
+	self.tWndRefs.wndMissionList:Show(false)
+	self.tWndRefs.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
+	self.tWndRefs.wndMissionList:DestroyChildren()
+	self.tWndRefs.wndMissionList:RecalculateContentExtents()
 end
 
 function PathSettlerMain:OnMainTimer() -- slower timer that updates the mission pulse
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
@@ -453,13 +455,13 @@ function PathSettlerMain:OnMainTimer() -- slower timer that updates the mission 
 	for idx, tMissionInfo in pairs(self.tNewMissions) do -- run our "new mission" table
 		tMissionInfo.nCount = tMissionInfo.nCount + 1 -- iterate the count on all
 		if tMissionInfo.nCount >= knNewMissionRunnerTimeout then -- if beyond max pulse count, remove; Explorer needs Nil gating for the zone-wide territory mission
-			local wnd = self.wndMissionList:FindChildByUserData(tMissionInfo.pmMission)
+			local wnd = self.tWndRefs.wndMissionList:FindChildByUserData(tMissionInfo.pmMission)
 			if wnd ~= nil then
 				wnd:FindChild("ListItemNewRunner"):Show(false) -- redundant hide to ensure it's gone
 			end
 			table.remove(self.tNewMissions, idx)
 		else -- show runner
-			local wnd = self.wndMissionList:FindChildByUserData(tMissionInfo.pmMission)
+			local wnd = self.tWndRefs.wndMissionList:FindChildByUserData(tMissionInfo.pmMission)
 			if wnd ~= nil then
 				wnd:FindChild("ListItemNewRunner"):Show(true)
 			end
@@ -472,8 +474,8 @@ function PathSettlerMain:OnPlayerPathMissionDeactivate(pmMission)
 		return
 	end
 
-	if self.wndMain and self.wndMissionList:FindChildByUserData(pmMission) then
-		self.wndMissionList:FindChildByUserData(pmMission):Destroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMissionList:FindChildByUserData(pmMission) then
+		self.tWndRefs.wndMissionList:FindChildByUserData(pmMission):Destroy()
 	end
 end
 
@@ -482,11 +484,11 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function PathSettlerMain:MissionNotificationRecieved(nType, strName)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-	local wndNotification = self.wndMain:FindChild("MissionNotification")
+	local wndNotification = self.tWndRefs.wndMain:FindChild("MissionNotification")
 	if nType ~= 2 and (not wndNotification
 	or wndNotification:FindChild("NewMissionContent"):IsShown()
 	or wndNotification:FindChild("FailedMissionContent"):IsShown()
@@ -498,7 +500,7 @@ function PathSettlerMain:MissionNotificationRecieved(nType, strName)
 		wndNotification:FindChild("NewMissionContent"):FindChild("MissionName"):SetText("- " .. strName .. " -")
 		wndNotification:FindChild("NewMissionContent"):Show(true)
 	elseif nType == 2 then -- Completion notice
-		self.wndMissionList:DestroyChildren() -- Full Redraw -- TODO: Move this somewhere more appropriate
+		self.tWndRefs.wndMissionList:DestroyChildren() -- Full Redraw -- TODO: Move this somewhere more appropriate
 		-- TODO: We also need to re-sort when a mission goes active
 		wndNotification:FindChild("CompletedMissionContent"):FindChild("NewMissionText"):SetText(Apollo.GetString("Nameplates_Mission"))
 		wndNotification:FindChild("CompletedMissionContent"):FindChild("MissionName"):SetText("- " .. strName .. " -")
@@ -517,14 +519,14 @@ function PathSettlerMain:MissionNotificationRecieved(nType, strName)
 end
 
 function PathSettlerMain:OnNotificationShowTimer()
-	if not self.wndMain or not self.wndMain:IsValid() then return end
-	self.wndMain:FindChild("MissionNotification"):Show(false)
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then return end
+	self.tWndRefs.wndMain:FindChild("MissionNotification"):Show(false)
 	Apollo.CreateTimer("NotificationHideTimer", 0.300, false)
 end
 
 function PathSettlerMain:OnNotificationHideTimer()
-	if not self.wndMain or not self.wndMain:IsValid() then return end
-	local wndNotification = self.wndMain:FindChild("MissionNotification")
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then return end
+	local wndNotification = self.tWndRefs.wndMain:FindChild("MissionNotification")
 	wndNotification:FindChild("NewMissionContent"):Show(false)
 	wndNotification:FindChild("FailedMissionContent"):Show(false)
 	wndNotification:FindChild("CompletedMissionContent"):Show(false)

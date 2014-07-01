@@ -85,6 +85,7 @@ function AccountServices:OnDocumentReady()
 	Apollo.RegisterEventHandler("SubscriptionExpired",				"RedrawAll", self)
 	Apollo.RegisterEventHandler("CharacterList", 					"RedrawAll", self) -- Main most reliable method to RedrawAll
 
+	Apollo.RegisterEventHandler("QueueStatus",						"OnQueueStatus", self) -- This means the character has been queued
 	Apollo.RegisterEventHandler("CharacterRename", 					"OnCharacterRename", self)
 	Apollo.RegisterEventHandler("CREDDRedeemResult", 				"OnCREDDRedeemResult", self)
 	Apollo.RegisterEventHandler("RealmTransferResult", 				"OnRealmTransferResult", self)
@@ -121,6 +122,12 @@ function AccountServices:OnDocumentReady()
 	self.bCharacterRequiresRename = false
 
 	self:RedrawAll() -- We need to call this on start up and with AccountItemUpdate, so it'll draw no matter what
+end
+
+function AccountServices:OnQueueStatus() -- TODO TEMP, Hide everything if a player is in the queue. When they are done, CharacterList will fire.
+	if self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:Close()
+	end
 end
 
 function AccountServices:RedrawAll()

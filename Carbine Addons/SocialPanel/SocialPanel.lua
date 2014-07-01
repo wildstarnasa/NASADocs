@@ -13,6 +13,9 @@ function SocialPanel:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -65,24 +68,22 @@ function SocialPanel:OnDocumentReady()
 	Apollo.RegisterEventHandler("EventGeneric_FriendInviteSeen", 		"OnFriendshipInviteChange", self)
 	Apollo.RegisterEventHandler("FriendshipAccountDataUpdate",  		"CalcFriendInvites", self)
 	Apollo.RegisterEventHandler("FriendshipUpdateOnline", 				"CalcFriendInvites", self)
-
-    self.wndMain = nil
 end
 
 function SocialPanel:OnToggleSocialWindow(strArg) -- 1st Arg may be objects from code and such
 	self:Initialize()
 
-	if self.wndMain:IsShown() then
-		self.wndMain:Close()
+	if self.tWndRefs.wndMain:IsShown() then
+		self.tWndRefs.wndMain:Close()
 	else
-		self.wndMain:Invoke()
+		self.tWndRefs.wndMain:Invoke()
 		self:FullyDrawSplashScreen()
 
 		if strArg and type(strArg) == "string" and string.len(strArg) > 0 then
-			self.wndContactsFrame:Show(strArg == "ContactsFrame")
-			self.wndNeighborsFrame:Show(strArg == "NeighborsFrame")
-			self.wndGuildFrame:Show(strArg == "GuildFrame")
-			self.wndCirclesFrame:Show(strArg == "CirclesFrame")
+			self.tWndRefs.wndContactsFrame:Show(strArg == "ContactsFrame")
+			self.tWndRefs.wndNeighborsFrame:Show(strArg == "NeighborsFrame")
+			self.tWndRefs.wndGuildFrame:Show(strArg == "GuildFrame")
+			self.tWndRefs.wndCirclesFrame:Show(strArg == "CirclesFrame")
 
 			Event_FireGenericEvent("GenericEvent_DestroyFriends")
 			Event_FireGenericEvent("GenericEvent_DestroyNeighbors")
@@ -90,11 +91,11 @@ function SocialPanel:OnToggleSocialWindow(strArg) -- 1st Arg may be objects from
 			Event_FireGenericEvent("GenericEvent_DestroyCircles")
 
 			if strArg == "ContactsFrame" then
-				Event_FireGenericEvent("GenericEvent_InitializeFriends", self.wndContactsFrame)
+				Event_FireGenericEvent("GenericEvent_InitializeFriends", self.tWndRefs.wndContactsFrame)
 			elseif strArg == "NeighborsFrame" then
-				Event_FireGenericEvent("GenericEvent_InitializeNeighbors", self.wndNeighborsFrame)
+				Event_FireGenericEvent("GenericEvent_InitializeNeighbors", self.tWndRefs.wndNeighborsFrame)
 			elseif strArg == "GuildFrame" then
-				Event_FireGenericEvent("GenericEvent_InitializeGuild", self.wndGuildFrame)
+				Event_FireGenericEvent("GenericEvent_InitializeGuild", self.tWndRefs.wndGuildFrame)
 			end
 		end
 	end
@@ -123,7 +124,7 @@ function SocialPanel:OnFriendshipInviteChange(tInvite)
 end
 
 function SocialPanel:FullRedrawIfVisible()
-	if self.wndMain and self.wndMain:IsShown() then
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsShown() then
 		self:FullyDrawSplashScreen()
 	end
 end
@@ -133,27 +134,27 @@ end
 -----------------------------------------------------------------------------------------------
 
 function SocialPanel:Initialize()
-	if not self.wndMain or not self.wndMain:IsValid() then
-		self.wndMain = Apollo.LoadForm(self.xmlDoc, "SocialPanelForm", nil, self)
-		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Social")})
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "SocialPanelForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.tWndRefs.wndMain, strName = Apollo.GetString("InterfaceMenu_Social")})
 			
-		self.wndMain:FindChild("SplashFriendsBtnAlert"):Show(false, true)
+		self.tWndRefs.wndMain:FindChild("SplashFriendsBtnAlert"):Show(false, true)
 
-		self.wndContactsFrame	= self.wndMain:FindChild("ContactsFrame")
-		self.wndNeighborsFrame	= self.wndMain:FindChild("NeighborsFrame")
-		self.wndGuildFrame		= self.wndMain:FindChild("GuildFrame")
-		self.wndCirclesFrame	= self.wndMain:FindChild("CirclesFrame")
+		self.tWndRefs.wndContactsFrame	= self.tWndRefs.wndMain:FindChild("ContactsFrame")
+		self.tWndRefs.wndNeighborsFrame	= self.tWndRefs.wndMain:FindChild("NeighborsFrame")
+		self.tWndRefs.wndGuildFrame		= self.tWndRefs.wndMain:FindChild("GuildFrame")
+		self.tWndRefs.wndCirclesFrame	= self.tWndRefs.wndMain:FindChild("CirclesFrame")
 
-		self.wndMain:FindChild("SplashFriendsBtn"):AttachWindow(self.wndContactsFrame)
-		self.wndMain:FindChild("SplashNeighborsBtn"):AttachWindow(self.wndNeighborsFrame)
-		self.wndMain:FindChild("SplashGuildBtn"):AttachWindow(self.wndGuildFrame)
-		self.wndMain:FindChild("SplashCircleBtn"):AttachWindow(self.wndCirclesFrame)
+		self.tWndRefs.wndMain:FindChild("SplashFriendsBtn"):AttachWindow(self.tWndRefs.wndContactsFrame)
+		self.tWndRefs.wndMain:FindChild("SplashNeighborsBtn"):AttachWindow(self.tWndRefs.wndNeighborsFrame)
+		self.tWndRefs.wndMain:FindChild("SplashGuildBtn"):AttachWindow(self.tWndRefs.wndGuildFrame)
+		self.tWndRefs.wndMain:FindChild("SplashCircleBtn"):AttachWindow(self.tWndRefs.wndCirclesFrame)
 
 		--TODO: If we save tab settings then we need to update default load
-		Event_FireGenericEvent("GenericEvent_InitializeFriends", self.wndContactsFrame)
+		Event_FireGenericEvent("GenericEvent_InitializeFriends", self.tWndRefs.wndContactsFrame)
 
 		if self.locSavedWindowLoc then
-			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+			self.tWndRefs.wndMain:MoveToLocation(self.locSavedWindowLoc)
 		end
 		
 		self:CalcFriendInvites()
@@ -162,8 +163,8 @@ end
 
 function SocialPanel:FullyDrawSplashScreen(bHide)
 	self:Initialize()
-
-	self.wndMain:FindChild("SplashCircleItemContainer"):DestroyChildren() -- TODO: See if we can remove this
+	
+	self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"):DestroyChildren() -- TODO: See if we can remove this
 
 	-- Circles
 	local nNumberOfCircles = 0
@@ -173,7 +174,7 @@ function SocialPanel:FullyDrawSplashScreen(bHide)
 		if guildCurr:GetType() == GuildLib.GuildType_Circle then
 			nNumberOfCircles = nNumberOfCircles + 1
 
-			local wndCurr = Apollo.LoadForm(self.xmlDoc, "SplashCirclesPickerItem", self.wndMain:FindChild("SplashCircleItemContainer"), self)
+			local wndCurr = Apollo.LoadForm(self.xmlDoc, "SplashCirclesPickerItem", self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"), self)
 			wndCurr:FindChild("SplashCirclesPickerBtn"):SetData(guildCurr)
 			wndCurr:FindChild("SplashCirclesPickerBtnText"):SetText(guildCurr:GetName())
 		end
@@ -181,28 +182,28 @@ function SocialPanel:FullyDrawSplashScreen(bHide)
 
 	-- Circle Add Btn
 	if nNumberOfCircles < knMaxNumberOfCircles then
-		Apollo.LoadForm(self.xmlDoc, "SplashCirclesAddItem", self.wndMain:FindChild("SplashCircleItemContainer"), self)
+		Apollo.LoadForm(self.xmlDoc, "SplashCirclesAddItem", self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"), self)
 		nNumberOfCircles = nNumberOfCircles + 1
 	end
 
 	-- Circle Blank Btn
 	for idx = nNumberOfCircles + 1, knMaxNumberOfCircles do -- Fill in the rest with blanks
-		Apollo.LoadForm(self.xmlDoc, "SplashCirclesUnusedItem", self.wndMain:FindChild("SplashCircleItemContainer"), self)
+		Apollo.LoadForm(self.xmlDoc, "SplashCirclesUnusedItem", self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"), self)
 	end
-	self.wndMain:FindChild("SplashCircleItemContainer"):ArrangeChildrenHorz(0)
+	self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"):ArrangeChildrenHorz(0)
 
 	-- Neighbours
 	local bIsResidenceOwner = HousingLib.IsResidenceOwner()
-	self.wndMain:FindChild("SplashNeighborsBtn"):Show(bIsResidenceOwner)
-	self.wndMain:FindChild("SplashNeighborsDisabledBtn"):Show(not bIsResidenceOwner)
+	self.tWndRefs.wndMain:FindChild("SplashNeighborsBtn"):Show(bIsResidenceOwner)
+	self.tWndRefs.wndMain:FindChild("SplashNeighborsDisabledBtn"):Show(not bIsResidenceOwner)
 
 	-- Retry, in case Guild Lib is still loading
 	Apollo.StopTimer("RetryLoadingSocialPanel")
-	if nNumberOfCircles > 0 and GuildLib:IsLoading() and self.wndMain:IsShown() then
+	if nNumberOfCircles > 0 and GuildLib:IsLoading() and self.tWndRefs.wndMain:IsShown() then
 		Apollo.StartTimer("RetryLoadingSocialPanel")
 	end
 
-	self.wndMain:Show(true)
+	self.tWndRefs.wndMain:Show(true)
 	Event_ShowTutorial(GameLib.CodeEnumTutorial.General_Social)
 end
 
@@ -219,7 +220,7 @@ function SocialPanel:OnCloseBtn(wndHandler, wndControl)
 		Apollo.StopTimer("RecalculateInvitesTimer")
 		Apollo.StopTimer("RetryLoadingSocialPanel")
 		Event_FireGenericEvent("SocialWindowHasBeenClosed")
-		self.wndMain:Close()
+		self.tWndRefs.wndMain:Close()
 	end
 end
 
@@ -228,7 +229,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function SocialPanel:OnSplashContactsCheck(wndHandler, wndControl, eMouseButton, nPosX, nPosY, bDoubleClick)
-	Event_FireGenericEvent("GenericEvent_InitializeFriends", self.wndContactsFrame)
+	Event_FireGenericEvent("GenericEvent_InitializeFriends", self.tWndRefs.wndContactsFrame)
 end
 
 function SocialPanel:OnSplashContactsUncheck( wndHandler, wndControl)
@@ -236,7 +237,7 @@ function SocialPanel:OnSplashContactsUncheck( wndHandler, wndControl)
 end
 
 function SocialPanel:OnSplashNeighborCheck( wndHandler, wndControl)
-	Event_FireGenericEvent("GenericEvent_InitializeNeighbors", self.wndNeighborsFrame)
+	Event_FireGenericEvent("GenericEvent_InitializeNeighbors", self.tWndRefs.wndNeighborsFrame)
 end
 
 function SocialPanel:OnSplashNeighborUncheck( wndHandler, wndControl)
@@ -244,7 +245,7 @@ function SocialPanel:OnSplashNeighborUncheck( wndHandler, wndControl)
 end
 
 function SocialPanel:OnSplashGuildCheck( wndHandler, wndControl)
-	Event_FireGenericEvent("GenericEvent_InitializeGuild", self.wndGuildFrame)
+	Event_FireGenericEvent("GenericEvent_InitializeGuild", self.tWndRefs.wndGuildFrame)
 end
 
 function SocialPanel:OnSplashGuildUncheck( wndHandler, wndControl)
@@ -252,7 +253,7 @@ function SocialPanel:OnSplashGuildUncheck( wndHandler, wndControl)
 end
 
 function SocialPanel:OnCircleItemCheck( wndHandler, wndControl)
-	Event_FireGenericEvent("GenericEvent_InitializeCircles", self.wndCirclesFrame, wndHandler:GetData())
+	Event_FireGenericEvent("GenericEvent_InitializeCircles", self.tWndRefs.wndCirclesFrame, wndHandler:GetData())
 end
 
 function SocialPanel:OnCircleItemUncheck( wndHandler, wndControl)
@@ -261,15 +262,15 @@ end
 
 -- Special Circle Handlers
 function SocialPanel:OnSplashCirclesAddBtn(wndHandler, wndControl)
-	Event_FireGenericEvent("EventGeneric_OpenCircleRegistrationPanel", self.wndMain)
+	Event_FireGenericEvent("EventGeneric_OpenCircleRegistrationPanel", self.tWndRefs.wndMain)
 end
 
 function SocialPanel:OnSplashCirclesCheck( wndHandler, wndControl)
-	self.wndMain:FindChild("SplashCircleItemContainerFrame"):Show(true)
+	self.tWndRefs.wndMain:FindChild("SplashCircleItemContainerFrame"):Show(true)
 end
 
 function SocialPanel:OnSplashCirclesUncheck( wndHandler, wndControl)
-	self.wndMain:FindChild("SplashCircleItemContainerFrame"):Show(false)
+	self.tWndRefs.wndMain:FindChild("SplashCircleItemContainerFrame"):Show(false)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -277,12 +278,12 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function SocialPanel:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
-	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Social or not self.wndMain or not self.wndMain:IsValid() then
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Social or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return 
 	end
 
 	local tRect = {}
-	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	tRect.l, tRect.t, tRect.r, tRect.b = self.tWndRefs.wndMain:GetRect()
 	
 	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 end
@@ -324,8 +325,8 @@ function SocialPanel:CalcFriendInvites()
 	local tParams = nUnseenFriendInviteCount > 0 and {true, nil, nUnseenFriendInviteCount} or {false, nil, nOnlineFriendCount}
 	Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_Social"), tParams)
 	
-	if self.wndMain then
-		local wndFriendInviteCounter = self.wndMain:FindChild("HeaderButtons:SplashFriendsBtn:SplashFriendsBtnAlert")
+	if self.tWndRefs.wndMain then
+		local wndFriendInviteCounter = self.tWndRefs.wndMain:FindChild("HeaderButtons:SplashFriendsBtn:SplashFriendsBtnAlert")
 		wndFriendInviteCounter:FindChild("SplashFriendsBtnItemCount"):SetText(nUnseenFriendInviteCount)
 		wndFriendInviteCounter:Show(nUnseenFriendInviteCount > 0)
 	end

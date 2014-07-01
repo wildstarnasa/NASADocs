@@ -13,6 +13,7 @@ local Trading = {}
 
 local knSaveVersion = 1
 local knMaxTradeItems = 8
+local knMaxCopperTrade = 2147483648
 
 function Trading:new(o)
 	o = o or {}
@@ -95,7 +96,9 @@ function Trading:OnDocumentReady()
 	self.xmlDoc = nil
 
 	self.wndConfirmBlocker:Show(false)
-	self.wndTradeForm:FindChild("YourCash"):SetData(0)
+	local wndYourCash = self.wndTradeForm:FindChild("YourCashComplex:YourCash")
+	wndYourCash:SetData(0)
+	wndYourCash:SetAmountLimit(knMaxCopperTrade)
 
     self.tYourItem = {}
 	self.tPartnerItem = {}
@@ -285,7 +288,6 @@ function Trading:OnAcceptTradeBtn(wndHandler, wndControl)
 	self.wndTradeInvite:Show(false)
 	P2PTrading.AcceptInvite()
 	self.wndTradeForm:Show(true)
-	self.wndTradeForm:FindChild("YourCash"):SetAmountLimit(GameLib.GetPlayerCurrency():GetAmount())
 	self:UpdateTrade()
 end
 
@@ -311,7 +313,6 @@ function Trading:OnP2PTradeWithTarget(unitTarget, strType, itemData)
 		if strType and strType == "DDBagItem" then
 			self.tPendingItems[1] = itemData
 		end
-		self.wndTradeForm:FindChild("YourCash"):SetAmountLimit(GameLib.GetPlayerCurrency():GetAmount())
 		self.wndTradeForm:FindChild("YourCash"):Enable(false)
 	end
 end
@@ -461,10 +462,12 @@ end
 
 function Trading:HelperResetItems()
 	for idx = 1, knMaxTradeItems do
+		self.tYourItem[idx]:GetWindowSubclass():SetItem(nil)
 		self.tYourItem[idx]:SetText("")
 		self.tYourItem[idx]:SetSprite("")
 		self.tYourItem[idx]:SetData(nil)
 		self.tYourItem[idx]:SetTooltipDoc(nil)
+		self.tPartnerItem[idx]:GetWindowSubclass():SetItem(nil)
 		self.tPartnerItem[idx]:SetText("")
 		self.tPartnerItem[idx]:SetSprite("")
 		self.tPartnerItem[idx]:SetData(nil)

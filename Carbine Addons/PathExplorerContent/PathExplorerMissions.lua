@@ -91,6 +91,7 @@ end
 function PathExplorerMissions:HelperResetUI()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 

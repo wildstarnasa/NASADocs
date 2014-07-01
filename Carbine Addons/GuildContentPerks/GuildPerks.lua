@@ -56,6 +56,9 @@ function GuildPerks:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -91,9 +94,9 @@ function GuildPerks:Initialize(wndParent)
 	self.guildOwner = guildOwner
 	
 	-- load our forms
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildPerksForm", wndParent, self)
-    self.wndMain:Show(true)
-	self.wndConfirm = self.wndMain:FindChild("ConfirmOverlay")
+    self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildPerksForm", wndParent, self)
+    self.tWndRefs.wndMain:Show(true)
+	self.wndConfirm = self.tWndRefs.wndMain:FindChild("ConfirmOverlay")
 	self.wndConfirm:Show(false)
 
 	self.guildOwner = guildOwner
@@ -152,24 +155,24 @@ function GuildPerks:OnTogglePerks(wndParent)
 		return 
 	end
 	
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		self:Initialize(wndParent)
 	else
 		self.wndConfirm:Show(false)
-		self.wndMain:Show(true)
+		self.tWndRefs.wndMain:Show(true)
 	end
 end
 
 function GuildPerks:OnClose()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
-		self.wndMain = nil
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 end
 
 function GuildPerks:BuildTabDisplay(arBankTabsTemp)
 	for idx, tBankTab in pairs(arBankTabsTemp) do
-		tBankTab.wnd = self.wndMain:FindChild("TabDisplay"):FindChild("CapContainer" .. tBankTab.nPos)
+		tBankTab.wnd = self.tWndRefs.wndMain:FindChild("TabDisplay"):FindChild("CapContainer" .. tBankTab.nPos)
 		self.tTabContainers[tBankTab.idPerk] = tBankTab
 	end
 
@@ -178,7 +181,7 @@ end
 
 function GuildPerks:UpdateTabDisplay()
 	local nHighestTabUnlocked = 0
-	local wndContainer = self.wndMain:FindChild("TabDisplay")
+	local wndContainer = self.tWndRefs.wndMain:FindChild("TabDisplay")
 	wndContainer:FindChild("UpgradeCost"):SetText(Apollo.GetString("GuildBank_Max"))
 	wndContainer:FindChild("UpgradeCost"):SetTextColor(kcrDisabledText)
 	wndContainer:FindChild("UpgradeLabel"):SetTextColor(kcrDisabledText)
@@ -239,12 +242,12 @@ function GuildPerks:UpdateTabDisplay()
 end
 
 function GuildPerks:BuildTierDisplays(arTiersTemp)
-	self.wndMain:FindChild("TierContainer"):DestroyChildren() -- shouldn't be needed
+	self.tWndRefs.wndMain:FindChild("TierContainer"):DestroyChildren() -- shouldn't be needed
 	self.tTierContainers = {}
 
 	local tPerkInfo = {}
-	local wndFirst = Apollo.LoadForm(self.xmlDoc, "TierContainerForm", self.wndMain:FindChild("TierContainer"), self)
-	--local wndFirst = self.wndMain:FindChild("TierContainer"):FindChild("TierContainerForm0")
+	local wndFirst = Apollo.LoadForm(self.xmlDoc, "TierContainerForm", self.tWndRefs.wndMain:FindChild("TierContainer"), self)
+	--local wndFirst = self.tWndRefs.wndMain:FindChild("TierContainer"):FindChild("TierContainerForm0")
 	wndFirst:FindChild("LeftContainer"):FindChild("TierIndexLabel"):SetText("1")
 	wndFirst:FindChild("LeftContainer"):FindChild("TierCost"):Show(false)
 	wndFirst:FindChild("TierUnlockBtn"):Show(false)
@@ -255,7 +258,7 @@ function GuildPerks:BuildTierDisplays(arTiersTemp)
 	self.tTierContainers[0] = tPerkInfo
 
 	for idx, tTierPerk in pairs(arTiersTemp) do
-		local wndContainer = Apollo.LoadForm(self.xmlDoc, "TierContainerForm", self.wndMain:FindChild("TierContainer"), self)
+		local wndContainer = Apollo.LoadForm(self.xmlDoc, "TierContainerForm", self.tWndRefs.wndMain:FindChild("TierContainer"), self)
 		tTierPerk.wndContainer = wndContainer
 		self.tTierContainers[tTierPerk.idPerk] = tTierPerk
 	end
@@ -320,7 +323,7 @@ function GuildPerks:FormatTierDisplays()
 		tTierPerk.wndContainer:FindChild("LeftContainer"):ArrangeChildrenVert(1)
 	end
 
-	self.wndMain:FindChild("TierContainer"):ArrangeChildrenVert()
+	self.tWndRefs.wndMain:FindChild("TierContainer"):ArrangeChildrenVert()
 end
 
 function GuildPerks:BuildPerkEntries(arPerksTemp)
@@ -470,12 +473,12 @@ end
 
 
 function GuildPerks:UpdateInfluenceDisplay(nCurrent, nBonusRemaining)
-	self.wndMain:FindChild("InfluenceProgressBar"):SetMax(knMaxInfluence)
-	self.wndMain:FindChild("InfluenceProgressBar"):SetProgress(nCurrent)
-	self.wndMain:FindChild("InfluenceProgressBar"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_InfluenceListing"), nCurrent, knMaxInfluence, nBonusRemaining))
+	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetMax(knMaxInfluence)
+	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetProgress(nCurrent)
+	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_InfluenceListing"), nCurrent, knMaxInfluence, nBonusRemaining))
 
-	self.wndMain:FindChild("InfluenceBonusProgressBar"):SetMax(knMaxInfluence)
-	self.wndMain:FindChild("InfluenceBonusProgressBar"):SetProgress(nCurrent + nBonusRemaining)
+	self.tWndRefs.wndMain:FindChild("InfluenceBonusProgressBar"):SetMax(knMaxInfluence)
+	self.tWndRefs.wndMain:FindChild("InfluenceBonusProgressBar"):SetProgress(nCurrent + nBonusRemaining)
 end
 
 
@@ -504,7 +507,7 @@ end
 
 function GuildPerks:OnUpdateEntry(guildOwner, idPerk)
 	-- Our generic handler for updating all kids of perks when enabled/disabled/activated/deactivated
-	if not self.wndMain or not self.wndMain:IsValid() or self.guildOwner == nil or self.guildOwner ~= guildOwner or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or self.guildOwner == nil or self.guildOwner ~= guildOwner or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
@@ -548,7 +551,7 @@ function GuildPerks:UpdateEntryValues(tActivatablePerk, tUpdatedPerk) -- update 
 end
 
 function GuildPerks:OnAchievementUpdated(achUpdated)
-	if not self.wndMain or not self.wndMain:IsValid() or self.guildOwner == nil or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or self.guildOwner == nil or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
@@ -558,7 +561,7 @@ function GuildPerks:OnAchievementUpdated(achUpdated)
 end
 
 function GuildPerks:OnInfluenceUpdated(guildOwner, nInfluence, monCash)
-	if not self.wndMain or not self.wndMain:IsValid() or self.guildOwner == nil or self.guildOwner ~= guildOwner or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or self.guildOwner == nil or self.guildOwner ~= guildOwner or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 
@@ -594,7 +597,7 @@ function GuildPerks:DrawMoreInfoWindow(idEntry, nLeft, nTop)
 		end
 	end
 
-	self.wndMoreInfo = Apollo.LoadForm(self.xmlDoc, "GuildPerkDetail", self.wndMain:FindChild("MoreInfoOverlayContainer"), self)
+	self.wndMoreInfo = Apollo.LoadForm(self.xmlDoc, "GuildPerkDetail", self.tWndRefs.wndMain:FindChild("MoreInfoOverlayContainer"), self)
 	self.wndMoreInfo:SetData(idEntry)
 	self.wndMoreInfo:ToFront()
 
@@ -873,7 +876,7 @@ function GuildPerks:OnActivateBtn(wndHandler, wndControl)
 end
 
 function GuildPerks:OnCancel(wndHandler, wndControl)
-	self.wndMain:Show(false)
+	self.tWndRefs.wndMain:Show(false)
 end
 
 function GuildPerks:ApproveConfirmBtn(wndHandler, wndControl)
@@ -907,7 +910,7 @@ function GuildPerks:CancelConfirmBtn()
 end
 
 function GuildPerks:OnSocialPanelBtn(wndHandler, wndControl)
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+	local nLeft, nTop, nRight, nBottom = self.tWndRefs.wndMain:GetAnchorOffsets()
 	Event_FireGenericEvent("EventGeneric_OpenSocialPanel", { ["x"] = nLeft, ["y"] = nTop })
 	self:OnCancel()
 end

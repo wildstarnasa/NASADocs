@@ -22,7 +22,7 @@ end
 
 function CrowdControlGameplay:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CrowdControlGameplay.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function CrowdControlGameplay:OnDocumentReady()
@@ -44,6 +44,10 @@ end
 -----------------------------------------------------------------------------------------------
 
 function CrowdControlGameplay:OnActivateCCStateStun(eChosenDirection)
+	if self.wndProgress and self.wndProgress:IsValid() then
+		self.wndProgress:Destroy()
+	end
+
 	self.wndProgress = Apollo.LoadForm(self.xmlDoc, "ButtonHit_Progress", nil, self)
 	self.wndProgress:Show(true) -- to get the animation
 	self.wndProgress:FindChild("TimeRemainingContainer"):Show(false)
@@ -53,18 +57,19 @@ function CrowdControlGameplay:OnActivateCCStateStun(eChosenDirection)
 	local bRight 	= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Right
 	local bDown 	= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Backward
 
-	self.wndProgress:FindChild("ProgressButtonArtLeft"):SetText(bLeft and GameLib.GetKeyBinding("StrafeLeft") or "")
-	self.wndProgress:FindChild("ProgressButtonArtUp"):SetText(bUp and GameLib.GetKeyBinding("MoveForward") or "")
-	self.wndProgress:FindChild("ProgressButtonArtRight"):SetText(bRight and GameLib.GetKeyBinding("StrafeRight") or "")
-	self.wndProgress:FindChild("ProgressButtonArtDown"):SetText(bDown and GameLib.GetKeyBinding("MoveBackward") or "")
+	-- TODO: Swap to Stun Breakout Keys when they exist
+	self.wndProgress:FindChild("ProgressButtonArtLeft"):SetText(GameLib.GetKeyBinding("StunBreakoutLeft"))
+	self.wndProgress:FindChild("ProgressButtonArtUp"):SetText(GameLib.GetKeyBinding("StunBreakoutUp"))
+	self.wndProgress:FindChild("ProgressButtonArtRight"):SetText(GameLib.GetKeyBinding("StunBreakoutRight"))
+	self.wndProgress:FindChild("ProgressButtonArtDown"):SetText(GameLib.GetKeyBinding("StunBreakoutDown"))
 
+	-- Disabled is invisible text, which will hide the button text
 	self.wndProgress:FindChild("ProgressButtonArtLeft"):Enable(bLeft)
 	self.wndProgress:FindChild("ProgressButtonArtUp"):Enable(bUp)
 	self.wndProgress:FindChild("ProgressButtonArtRight"):Enable(bRight)
 	self.wndProgress:FindChild("ProgressButtonArtDown"):Enable(bDown)
 
-	if not bLeft and not bUp and not bRight and not bDown then
-		-- Error case:
+	if not bLeft and not bUp and not bRight and not bDown then -- Error Case
 		self:OnRemoveCCStateStun()
 		return
 	end

@@ -20,6 +20,8 @@ function Circles:new(o)
     setmetatable(o, self)
     self.__index = self
 
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -58,17 +60,17 @@ function Circles:OnDocumentReady()
 end
 
 function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
-	if not self.wndMain or not self.wndMain:IsValid() then
-		self.wndMain = Apollo.LoadForm(self.xmlDoc, "CirclesMainForm", wndParent, self)
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "CirclesMainForm", wndParent, self)
 	end
 
-	local wndRosterScreen = self.wndMain:FindChild("RosterScreen")
+	local wndRosterScreen = self.tWndRefs.wndMain:FindChild("RosterScreen")
 	local wndRosterBottom = wndRosterScreen:FindChild("RosterBottom")
 	wndRosterBottom:ArrangeChildrenHorz(2)
 	wndRosterBottom:FindChild("RosterOptionBtnAdd"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnAdd:AddMemberContainer"))
 	wndRosterBottom:FindChild("RosterOptionBtnLeave"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnLeave:LeaveBtnContainer"))
 	wndRosterBottom:FindChild("RosterOptionBtnRemove"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnRemove:RemoveMemberContainer"))
-	--self.wndMain:FindChild("RosterOptionBtnPromote"):AttachWindow(self.wndMain:FindChild("PromoteMemberContainer")) -- No Attach Window, we're doing this one manually
+	--self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):AttachWindow(self.tWndRefs.wndMain:FindChild("PromoteMemberContainer")) -- No Attach Window, we're doing this one manually
 	--wndRosterBottom:FindChild("RosterOptionBtnViewAlts"):AttachWindow(wndRosterScreen:FindChild("RosterPopout"))
 	
 	self.bViewingRemovedGuild = false
@@ -83,24 +85,25 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 	end
 	wndPermissionContainer:ArrangeChildrenVert()
 
-	self.wndRankPopout = wndRosterScreen:FindChild("RankPopout")
+	self.tWndRefs.wndRankPopout = wndRosterScreen:FindChild("RankPopout")
 
 	Apollo.StartTimer("OfflineTimeUpdate")
-	self.wndMain:SetData(guildCurr)
-	self.wndMain:Show(true)
+	self.tWndRefs.wndMain:SetData(guildCurr)
+	self.tWndRefs.wndMain:Show(true)
 	self:FullRedrawOfRoster()
 end
 
 function Circles:OnGenericEvent_DestroyCircles()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 end
 
 function Circles:OnClose()
 	Apollo.StopTimer("CircleAlertDisplayTimer")
 	Apollo.StopTimer("OfflineTimeUpdate")
-	self.wndMain:FindChild("AlertMessage"):Show(false)
+	self.tWndRefs.wndMain:FindChild("AlertMessage"):Show(false)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -108,13 +111,13 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Circles:FullRedrawOfRoster()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local eMyRank = guildCurr:GetMyRank()
-	local wndRosterScreen = self.wndMain:FindChild("RosterScreen")
+	local wndRosterScreen = self.tWndRefs.wndMain:FindChild("RosterScreen")
 
 	wndRosterScreen:Show(true)
 
@@ -122,10 +125,10 @@ function Circles:FullRedrawOfRoster()
 		self:OnRosterPromoteMemberCloseBtn()
 	end
 
-	self.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
-	self.wndMain:FindChild("BGFrame:HeaderTitleText"):SetText(guildCurr:GetName())
+	self.tWndRefs.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
+	self.tWndRefs.wndMain:FindChild("BGFrame:HeaderTitleText"):SetText(guildCurr:GetName())
 	--if guildCurr:GetType() == GuildLib.GuildType_Guild then
-	--	self.wndMain:FindChild("HeaderTitleText"):SetText(guildCurr:GetName().." ("..guildCurr:GetInfluence().." Influence)")
+	--	self.tWndRefs.wndMain:FindChild("HeaderTitleText"):SetText(guildCurr:GetName().." ("..guildCurr:GetInfluence().." Influence)")
 	--end
 
 	guildCurr:RequestMembers() -- This will send back an event "GuildRoster"
@@ -158,12 +161,12 @@ function Circles:FullRedrawOfRoster()
 end
 
 function Circles:OnGuildRoster(guildCurr, tRoster) -- Event from CPP
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 	
-	if guildCurr == self.wndMain:GetData() then -- Since Circles and Guild can be up at the same time
-		self.wndMain:FindChild("RosterScreen:RosterGrid"):DeleteAll()
+	if guildCurr == self.tWndRefs.wndMain:GetData() then -- Since Circles and Guild can be up at the same time
+		self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid"):DeleteAll()
 		self:BuildRosterList(guildCurr, self:SortRoster(tRoster, "RosterSortBtnName")) -- "RosterSortBtnName" is the default sort method to use
 	end
 
@@ -176,7 +179,7 @@ function Circles:BuildRosterList(guildCurr, tRoster)
 	end
 
 	local tRanks = guildCurr:GetRanks()
-	local wndGrid = self.wndMain:FindChild("RosterScreen:RosterGrid")
+	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
 	wndGrid:DeleteAll() -- TODO remove this for better performance eventually
 
 	for key, tCurr in pairs(tRoster) do
@@ -207,32 +210,32 @@ function Circles:BuildRosterList(guildCurr, tRoster)
 		wndGrid:SetCellDoc(iCurrRow, 6, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertPathToString(tCurr.ePathType)))
 		wndGrid:SetCellDoc(iCurrRow, 7, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertToTime(tCurr.fLastOnline)))
 	end
-	local wndAddContainer = self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer")
+	local wndAddContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer")
 	local wndAddMemberEditBox = wndAddContainer:FindChild("AddMemberEditBox")
 	wndAddContainer:FindChild("AddMemberYesBtn"):SetData(wndAddMemberEditBox)
 	wndAddMemberEditBox:SetData(wndAddMemberEditBox) -- Since they have the same event handler
-	self.wndMain:FindChild("RosterScreen:RosterHeaderContainer"):SetData(tRoster)
+	self.tWndRefs.wndMain:FindChild("RosterScreen:RosterHeaderContainer"):SetData(tRoster)
 
 	self:ResetRosterMemberButtons()
 end
 
 function Circles:OnRosterGridItemClick(wndControl, wndHandler, iRow, iCol, eMouseButton)
-	local wndRosterGrid = self.wndMain:FindChild("RosterScreen:RosterGrid")
+	local wndRosterGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
 	local wndData = wndRosterGrid:GetCellData(iRow, 1)
 	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndData and wndData.strName and wndData.strName ~= GameLib.GetPlayerUnit():GetName() then
-		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.wndMain, wndData.strName)
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.tWndRefs.wndMain, wndData.strName)
 		return
 	end
 
 	if wndRosterGrid:GetData() == wndData then
-		self.wndMain:FindChild("RosterScreen:RosterPopout"):Show(false)
+		self.tWndRefs.wndMain:FindChild("RosterScreen:RosterPopout"):Show(false)
 		wndRosterGrid:SetData(nil)
 		wndRosterGrid:SetCurrentRow(0) -- Deselect grid
 	else
 		wndRosterGrid:SetData(wndData)
 	end
 
-	if self.wndMain:FindChild("RosterScreen:RosterPopout"):IsShown() then
+	if self.tWndRefs.wndMain:FindChild("RosterScreen:RosterPopout"):IsShown() then
 		self:DrawRosterPopout()
 	else
 		self:ResetRosterMemberButtons()
@@ -244,7 +247,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Circles:OnRanksButtonSignal()
-	local wndRankPopout = self.wndMain:FindChild("RosterScreen:RankPopout")
+	local wndRankPopout = self.tWndRefs.wndMain:FindChild("RosterScreen:RankPopout")
 	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
 	local wndRankSettings = wndRankPopout:FindChild("RankSettingsEntry")
 
@@ -256,10 +259,10 @@ function Circles:OnRanksButtonSignal()
 end
 
 function Circles:OnAddRankBtnSignal(wndControl, wndHandler)
-	local wndRankPopout = self.wndMain:FindChild("RosterScreen:RankPopout")
+	local wndRankPopout = self.tWndRefs.wndMain:FindChild("RosterScreen:RankPopout")
 	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
 	local wndSettings = wndRankPopout:FindChild("RankSettingsEntry")
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local arRanks = guildCurr:GetRanks()
 
 	local tFirstInactiveRank = nil
@@ -280,7 +283,7 @@ function Circles:OnAddRankBtnSignal(wndControl, wndHandler)
 
 	--Default to nothing
 	wndSettings:FindChild("Name:OptionString"):SetText("")
-	local wndPermissionContainer = self.wndMain:FindChild("RosterScreen:RankPopout:RankSettingsEntry:Permissions:PermissionContainer")
+	local wndPermissionContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RankPopout:RankSettingsEntry:Permissions:PermissionContainer")
 	for key, wndPermission in pairs(wndPermissionContainer:GetChildren()) do
 		wndPermission:FindChild("PermissionBtn"):SetCheck(false)
 	end
@@ -289,12 +292,12 @@ function Circles:OnAddRankBtnSignal(wndControl, wndHandler)
 end
 
 function Circles:OnRemoveRankBtnSignal(wndControl, wndHandler)
-	local wndRankContainer = self.wndRankPopout:FindChild("RankContainer")
-	local wndSettings = self.wndRankPopout:FindChild("RankSettingsEntry")
-	local wndSettings = self.wndRankPopout:FindChild("RankSettingsEntry")
+	local wndRankContainer = self.tWndRefs.wndRankPopout:FindChild("RankContainer")
+	local wndSettings = self.tWndRefs.wndRankPopout:FindChild("RankSettingsEntry")
+	local wndSettings = self.tWndRefs.wndRankPopout:FindChild("RankSettingsEntry")
 	local nRankIdx = wndControl:GetParent():GetData().nRankIdx
 	local tRank = wndControl:GetParent():GetData().tRankData
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local arRanks = guildCurr:GetRanks()
 	local eMyRank = guildCurr:GetMyRank()
 
@@ -330,13 +333,13 @@ function Circles:OnRemoveRankBtnSignal(wndControl, wndHandler)
 end
 
 function Circles:OnRankSettingsSaveBtn(wndControl, wndHandler)
-	local wndRankPopout = self.wndMain:FindChild("RosterScreen:RankPopout")
+	local wndRankPopout = self.tWndRefs.wndMain:FindChild("RosterScreen:RankPopout")
 	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
 	local wndSettings = wndRankPopout:FindChild("RankSettingsEntry")
 	local bNew = wndControl:GetParent():GetData().bNew
 	local tRank = wndControl:GetParent():GetData().tRankData
 	local nRankIdx = wndControl:GetParent():GetData().nRankIdx
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 
 	wndRankPopout:FindChild("RankContainer"):Show(true)
 	wndSettings:Show(false)
@@ -370,12 +373,12 @@ function Circles:OnRankSettingsSaveBtn(wndControl, wndHandler)
 end
 
 function Circles:OnRankSettingsDeleteBtn(wndControl, wndHandler)
-	local wndRankPopout = self.wndMain:FindChild("RosterScreen:RankPopout")
+	local wndRankPopout = self.tWndRefs.wndMain:FindChild("RosterScreen:RankPopout")
 	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
 	local wndSettings = wndRankPopout:FindChild("RankSettingsEntry")
 
 	local nRankIdx = wndSettings:GetData().nRankIdx
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 
 	guildCurr:RemoveRank(nRankIdx)
 
@@ -384,11 +387,11 @@ function Circles:OnRankSettingsDeleteBtn(wndControl, wndHandler)
 end
 
 function Circles:OnRankSettingsNameChanging(wndControl, wndHandler, strText)
-	self:HelperValidateAndRefreshRankSettingsWindow(self.wndRankPopout:FindChild("RankSettingsEntry"))
+	self:HelperValidateAndRefreshRankSettingsWindow(self.tWndRefs.wndRankPopout:FindChild("RankSettingsEntry"))
 end
 
 function Circles:OnRankSettingsPermissionBtn(wndControl, wndHandler)
-	self:HelperValidateAndRefreshRankSettingsWindow(self.wndRankPopout:FindChild("RankSettingsEntry"))
+	self:HelperValidateAndRefreshRankSettingsWindow(self.tWndRefs.wndRankPopout:FindChild("RankSettingsEntry"))
 end
 
 function Circles:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
@@ -424,7 +427,7 @@ function Circles:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
 end
 
 function Circles:OnRankSettingsCloseBtn(wndControl, wndHandler)
-	local wndRankPopout = self.wndMain:FindChild("RosterScreen:RankPopout")
+	local wndRankPopout = self.tWndRefs.wndMain:FindChild("RosterScreen:RankPopout")
 	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
 	local wndSettings = wndRankPopout:FindChild("RankSettingsEntry")
 
@@ -433,11 +436,11 @@ function Circles:OnRankSettingsCloseBtn(wndControl, wndHandler)
 end
 
 function Circles:OnGuildRankChange(guildCurr)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 	
-	if guildCurr ~= self.wndMain:GetData() then
+	if guildCurr ~= self.tWndRefs.wndMain:GetData() then
 		return
 	end
 	self:FullRedrawOfRoster()
@@ -454,7 +457,7 @@ end
 
 function Circles:ResetRosterMemberButtons()
 	-- Defaults
-	local wndRosterBottom = self.wndMain:FindChild("RosterScreen:RosterBottom")
+	local wndRosterBottom = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom")
 	local wndAddBtn = wndRosterBottom:FindChild("RosterOptionBtnAdd")
 	local wndRemoveBtn = wndRosterBottom:FindChild("RosterOptionBtnRemove")
 	local wndDemoteBtn = wndRosterBottom:FindChild("RosterOptionBtnDemote")
@@ -472,11 +475,11 @@ function Circles:ResetRosterMemberButtons()
 	wndLeaveBtn:SetCheck(false)
 
 	-- Enable member options based on Permissions (note Code will also guard against this) -- TODO
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local eMyRank = guildCurr:GetMyRank()
 
 	if guildCurr and eMyRank then
-		local wndRosterGrid = self.wndMain:FindChild("RosterScreen:RosterGrid")
+		local wndRosterGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
 		local tMyRankPermissions = guildCurr:GetRanks()[eMyRank]
 		local bSomeRowIsPicked = wndRosterGrid:GetCurrentRow()
 		local bTargetIsUnderMyRank = bSomeRowIsPicked and eMyRank < wndRosterGrid:GetData().nRank
@@ -510,18 +513,18 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Circles:OnRosterAddMemberClick(wndHandler, wndControl)
-	self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer:AddMemberEditBox"):SetFocus()
+	self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer:AddMemberEditBox"):SetFocus()
 end
 
 function Circles:OnRosterRemoveMemberClick(wndHandler, wndControl)
-	self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnRemove:RemoveMemberContainer:RemoveMemberLabel"):SetText(String_GetWeaselString(Apollo.GetString("Circles_KickConfirmation"), self.wndMain:FindChild("RosterScreen:RosterGrid"):GetData().strName))
+	self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnRemove:RemoveMemberContainer:RemoveMemberLabel"):SetText(String_GetWeaselString(Apollo.GetString("Circles_KickConfirmation"), self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid"):GetData().strName))
 end
 
 function Circles:OnRosterPromoteMemberClick(wndHandler, wndControl) -- wndHandler is "RosterOptionBtnPromote"
 	-- This one is different, it'll fire right away unless promoting to leader
-	local guildCurr = self.wndMain:GetData()
-	local tMember = self.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
-	local wndPromoteBtn = self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnPromote")
+	local guildCurr = self.tWndRefs.wndMain:GetData()
+	local tMember = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
+	local wndPromoteBtn = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnPromote")
 	if tMember.nRank == 2 then
 		wndPromoteBtn:FindChild("PromoteMemberContainer"):Show(true)
 		wndPromoteBtn:SetCheck(true)
@@ -534,28 +537,28 @@ end
 
 -- Closing the Pop Up Bubbles
 function Circles:OnRosterAddMemberCloseBtn()
-	local wndAddMemberContainer = self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer")
+	local wndAddMemberContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer")
 	wndAddMemberContainer:FindChild("AddMemberEditBox"):SetText("")
 	wndAddMemberContainer:Show(false)
 end
 
 function Circles:OnRosterPromoteMemberCloseBtn()
-	local wndPromoteBtn = self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnPromote")
+	local wndPromoteBtn = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnPromote")
 	wndPromoteBtn:FindChild("PromoteMemberContainer"):Show(false)
 	wndPromoteBtn:SetCheck(false) -- Since we aren't using AttachWindow
 end
 
 function Circles:OnRosterRemoveMemberCloseBtn()
-	self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnRemove:RemoveMemberContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnRemove:RemoveMemberContainer"):Show(false)
 end
 
 function Circles:OnRosterLeaveCloseBtn()
-	self.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnLeave:LeaveBtnContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnLeave:LeaveBtnContainer"):Show(false)
 end
 
 -- Saying Yes to the Pop Up Bubbles
 function Circles:OnAddMemberYesClick(wndHandler, wndControl) -- wndHandler is 'AddMemberEditBox' or 'AddMemberYesBtn', and its data is 'AddMemberEditBox'
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local wndEditBox = wndHandler:GetData()
 
 	if wndEditBox and wndEditBox:GetData() and string.len(wndEditBox:GetText()) > 0 then -- TODO: Additional string validation
@@ -565,36 +568,36 @@ function Circles:OnAddMemberYesClick(wndHandler, wndControl) -- wndHandler is 'A
 end
 
 function Circles:OnRosterPromoteMemberYesClick(wndHandler, wndControl) -- wndHandler is 'PromoteMemberYesBtn'
-	local guildCurr = self.wndMain:GetData()
-	local tMember = self.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
+	local tMember = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
 
 	guildCurr:PromoteMaster(tMember.strName)
 	self:OnRosterPromoteMemberCloseBtn()
 end
 
 function Circles:OnRosterDemoteMemberYesClick(wndHandler, wndControl) -- wndHandler is 'RosterOptionBtnDemote' data should be guildCurr
-	local guildCurr = self.wndMain:GetData()
-	local tMember = self.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
+	local tMember = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
 	guildCurr:Demote(tMember.strName)
 	-- Note: Demote has no pop out
 end
 
 function Circles:OnRosterRemoveMemberYesClick(wndHandler, wndControl) -- wndHandler is 'RemoveMemberYesBtn'
-	local guildCurr = self.wndMain:GetData()
-	local tMember = self.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
+	local tMember = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid"):GetData()
 	guildCurr:Kick(tMember.strName)
 	self:OnRosterRemoveMemberCloseBtn()
 end
 
 function Circles:OnRosterLeaveYesClick(wndHandler, wndControl) -- wndHandler is "LeaveBtnYesBtn"
-	local guildCurr = self.wndMain:GetData()
+	local guildCurr = self.tWndRefs.wndMain:GetData()
 	if guildCurr and guildCurr:GetMyRank() == 1 then
 		guildCurr:Disband()
 	elseif guildCurr then
 		guildCurr:Leave()
 	end
 	wndHandler:GetParent():Close()
-	self.wndMain:Close()
+	self.tWndRefs.wndMain:Close()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -608,12 +611,12 @@ function Circles:OnGuildMemberChange( guildCurr )
 end
 
 function Circles:OnOfflineTimeUpdate()
-if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
-	return
-end
-	local tRoster = self.wndMain:GetData():RequestMembers()
-	local wndGrid = self.wndMain:FindChild("RosterScreen:RosterGrid")
-
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
+		return
+	end
+	local tRoster = self.tWndRefs.wndMain:GetData():RequestMembers()
+	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
+	
 	if tRoster then
 		for key, tCurr in pairs(tRoster) do
 			local strTextColor = "ffffffff"
@@ -631,41 +634,41 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Circles:OnGuildResult(guildCurr, strName, nRank, eResult)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsShown() then
 		return
 	end
 	-- Reload UI when a circle is made
 	if guildCurr and guildCurr:GetType() == GuildLib.GuildType_Circle then
-		local guildViewed = self.wndMain:GetData()
+		local guildViewed = self.tWndRefs.wndMain:GetData()
 		self.bViewingRemovedGuild = false -- is the affected guild shown?
 
-		if guildViewed ~= nil and self.wndMain:IsShown() and self.wndMain:FindChild("RosterScreen"):IsShown() and guildViewed:GetName() == strName then
+		if guildViewed ~= nil and self.tWndRefs.wndMain:IsShown() and self.tWndRefs.wndMain:FindChild("RosterScreen"):IsShown() and guildViewed:GetName() == strName then
 			self.bViewingRemovedGuild = true -- we need to redraw in these instances
 		end
 
 		-- if you've been kicked, left, or disbanded a circle and you're viewing it
-		if eResult == GuildLib.GuildResult_KickedYou and self.wndMain:IsShown() then
-			self.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Ouch"))
-			self.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_Kicked"), strName))
-			self.wndMain:FindChild("AlertMessage"):Invoke()
+		if eResult == GuildLib.GuildResult_KickedYou and self.tWndRefs.wndMain:IsShown() then
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Ouch"))
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_Kicked"), strName))
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):Invoke()
 			Apollo.StartTimer("CircleAlertDisplayTimer")
-		elseif eResult == GuildLib.GuildResult_YouQuit and self.wndMain:IsShown() then
-			self.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Bye"))
-			self.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_LeftCircle"), strName))
-			self.wndMain:FindChild("AlertMessage"):Invoke()
+		elseif eResult == GuildLib.GuildResult_YouQuit and self.tWndRefs.wndMain:IsShown() then
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Bye"))
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_LeftCircle"), strName))
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):Invoke()
 			Apollo.StartTimer("CircleAlertDisplayTimer")
-		elseif eResult == GuildLib.GuildResult_GuildDisbanded and self.wndMain:IsShown() then
-			self.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_CircleDisbanded"))
-			self.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_YouDisbanded"), strName))
-			self.wndMain:FindChild("AlertMessage"):Invoke()
+		elseif eResult == GuildLib.GuildResult_GuildDisbanded and self.tWndRefs.wndMain:IsShown() then
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_CircleDisbanded"))
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_YouDisbanded"), strName))
+			self.tWndRefs.wndMain:FindChild("AlertMessage"):Invoke()
 			Apollo.StartTimer("CircleAlertDisplayTimer")
 		end
 	end
 end
 
 function Circles:OnCircleAlertDisplayTimer()
-	self.wndMain:FindChild("AlertMessage"):Show(false)
-	self.wndMain:Close()
+	self.tWndRefs.wndMain:FindChild("AlertMessage"):Show(false)
+	self.tWndRefs.wndMain:Close()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -714,7 +717,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Circles:OnRosterSortToggle(wndHandler, wndControl)
-	self:BuildRosterList(self.wndMain:GetData(), self:SortRoster(self.wndMain:FindChild("RosterScreen:RosterHeaderContainer"):GetData(), wndHandler:GetName()))
+	self:BuildRosterList(self.tWndRefs.wndMain:GetData(), self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterScreen:RosterHeaderContainer"):GetData(), wndHandler:GetName()))
 end
 
 function Circles:SortRoster(tArg, strLastClicked)
@@ -724,7 +727,7 @@ function Circles:SortRoster(tArg, strLastClicked)
 	end
 
 	local tResult = tArg
-	local wndHeaderContainer = self.wndMain:FindChild("RosterScreen:RosterHeaderContainer")
+	local wndHeaderContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterHeaderContainer")
 
 	if wndHeaderContainer:FindChild("RosterSortBtnName"):IsChecked() then
 		table.sort(tResult, function(a,b) return (a.strName > b.strName) end)

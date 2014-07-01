@@ -47,6 +47,7 @@ function ResourceConversion:OnCloseBtn() -- Also WindowClosed and "ResourceConve
 	Event_CancelConverting()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 

@@ -773,6 +773,7 @@ function PublicEventStats:OnClose(wndHandler, wndControl) -- Also LeaveAdventure
 	end
 	if self.wndAdventure then
 		self.wndAdventure:Destroy()
+		self.wndAdventure = nil
 	end
 end
 

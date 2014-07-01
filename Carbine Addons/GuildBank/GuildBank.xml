@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <Forms>
     <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-440" TAnchorPoint=".5" TAnchorOffset="-314" RAnchorPoint=".5" RAnchorOffset="440" BAnchorPoint=".5" BAnchorOffset="314" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="GuildBankForm" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Tooltip="" IgnoreMouse="0" Sprite="" TestAlpha="0">
-        <Event Name="WindowClosed" Function="CloseBank"/>
+        <Event Name="WindowClosed" Function="OnCloseBtnSignal"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="27" TAnchorPoint="0" TAnchorOffset="138" RAnchorPoint="1" RAnchorOffset="-25" BAnchorPoint="1" BAnchorOffset="-20" RelativeToClient="1" Font="Default" Text="" Template="Holo_Background_General" TooltipType="OnCursor" Name="BGHolo" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" NewControlDepth="2" Border="1" UseTemplateBG="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Metal_Primary_Nav" TooltipType="OnCursor" Name="BGFrame" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" NewControlDepth="2" Border="1" UseTemplateBG="1"/>
         <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-854" TAnchorPoint="0" TAnchorOffset="136" RAnchorPoint="1" RAnchorOffset="-27" BAnchorPoint="1" BAnchorOffset="-22" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="BGMain" BGColor="ffffffff" TextColor="ffffffff" TooltipId="" Picture="1" IgnoreMouse="1" Sprite="" TooltipColor="" HideInEditor="0" Tooltip="">
@@ -189,7 +189,7 @@
             </Control>
         </Control>
         <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-52" TAnchorPoint="0" TAnchorOffset="26" RAnchorPoint="1" RAnchorOffset="-25" BAnchorPoint="0" BAnchorOffset="55" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="CloseBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff">
-            <Event Name="ButtonSignal" Function="CloseBank"/>
+            <Event Name="ButtonSignal" Function="OnCloseBtnSignal"/>
         </Control>
         <Control Class="BagWindow" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="0" RelativeToClient="1" Sprite="" SquareSize="50" BoxesPerRow="5" Template="CRB_Normal" TooltipType="OnCursor" SwallowMouseClicks="1" NewQuestOverlaySprite="ClientSprites:sprItem_NewQuest" Name="HiddenBagWindow" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Visible="0" Tooltip=""/>
     </Form>

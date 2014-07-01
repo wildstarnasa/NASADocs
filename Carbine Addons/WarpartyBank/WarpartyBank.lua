@@ -100,6 +100,7 @@ function WarpartyBank:Reinitialize(guildToInit)
         end
     elseif self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
     end
 end
 
@@ -139,6 +140,7 @@ end
 function WarpartyBank:CloseBank()
     if self.wndMain ~= nil then
 		self.wndMain:Destroy()
+		self.wndMain = nil
     end
 	
 	Event_CancelWarpartyBank()

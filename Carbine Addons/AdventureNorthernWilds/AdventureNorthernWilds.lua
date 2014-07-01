@@ -119,6 +119,7 @@ function NorthernWildsAdv:UIHide()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.locSavedLocation = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 	
 	local nGroupCount = GroupLib:GetMemberCount()

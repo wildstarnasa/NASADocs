@@ -404,12 +404,13 @@ function Character:OnAnimationFinished(actor, slot, modelSequence)
 	-- do something if you want to know when an animation finished
 end
 
-
----------------------------------------------------------------------------------------------------
+	---------------------------------------------------------------------------------------------------
 -- Entry Events
 ---------------------------------------------------------------------------------------------------
 -- Receiving this event means the player has been queued due to capacity; direct to that screen
 function Character:OnQueueStatus( nPositionInQueue, nEstimatedWaitInSeconds, bIsGuest )
+	local tRealmInfo = CharacterScreenLib.GetRealmInfo()
+	local strRealmType = tRealmInfo.nRealmPVPType == PreGameLib.CodeEnumRealmPVPType.PVP and Apollo.GetString("RealmSelect_PvP") or Apollo.GetString("RealmSelect_PvE")
 	self.wndRealmFull:Show(true)
 	self.wndRealmFull:FindChild("CapacityFormCenter"):FindChild("GuestOnlyMessage"):Show(bIsGuest)
 	self.wndRealmFull:FindChild("CapacityFormCenter"):FindChild("Title"):SetText(Apollo.GetString("Pregame_RealmFull"))
@@ -417,10 +418,10 @@ function Character:OnQueueStatus( nPositionInQueue, nEstimatedWaitInSeconds, bIs
 	self.wndRealmFull:FindChild("PositionInfoBacker"):Show(true)
 	self.wndRealmFull:FindChild("PositionInQueueEntry"):SetText(Apollo.GetString("Pregame_RealmQueue_Position") .. " " .. tostring(nPositionInQueue))
 	self.wndRealmFull:FindChild("WaitTimeEntry"):SetText(Apollo.GetString("MatchMaker_WaitTimeLabel").. " " .. self:HelperConvertToTime(nEstimatedWaitInSeconds or 0))
+	self.wndRealmFull:FindChild("QueuedRealm"):SetText(Apollo.GetString("Pregame_RealmQueue_RealmName").. " " .. tostring(tRealmInfo.strName).." (".. strRealmType ..")")
 
 	self.wndCharacterListPrompt:Show(false)
 end
-
 -- Receiving this event means the player's character list has come down. Note: can happen when on the queue screen.
 function Character:OnCharacterList( arCharacters, arCharacterInWorld )
 	if self.wndRealmFull:IsShown() then

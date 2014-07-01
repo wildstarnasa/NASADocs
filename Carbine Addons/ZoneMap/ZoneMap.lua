@@ -880,6 +880,8 @@ function ZoneMap:OnZoneComplexListBtn(wndHandler, wndControl) -- ZoneComplexList
 	self.wndZoneMap:SetDisplayMode(3)
 
 	self:HelperBuildZoneDropdown(tZoneInfo.continentId)
+
+	self:SetControls()
 end
 
 function ZoneMap:OnContinentNormalBtn(wndHandler, wndControl)
@@ -1130,6 +1132,11 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 	self.wndMain:FindChild("GhostBtn"):Enable(bPanning or eZoomLevel == tZoneMapEnums.Scaled)
 	self.wndMain:FindChild("ReturnBtn"):Enable(eZoomLevel ~= tZoneMapEnums.Scaled or not tHomeZone or tHomeZone.id ~= tCurrentInfo.id)
 
+	if eZoomLevel == tZoneMapEnums.Continent and (not tCurrentContinent or not tCurrentContinent.bCanDisplay) then -- Continent not visible
+		self.wndZoneMap:SetDisplayMode(self.eLastZoomLevel == tZoneMapEnums.Scaled and tZoneMapEnums.World or tZoneMapEnums.Scaled)
+		self:SetControls()
+		return
+	end
 
 	if self.eLastZoomLevel ~= eZoomLevel then
 		if eZoomLevel == tZoneMapEnums.SuperPanning then -- SuperPanning
@@ -1144,12 +1151,6 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 		elseif eZoomLevel == tZoneMapEnums.Scaled then -- Scaled
 			self.wndZoneMap:SetMinDisplayMode(self.wndZoneMap:CanZoomZone() and tZoneMapEnums.SuperPanning or tZoneMapEnums.Scaled)
 		elseif eZoomLevel == tZoneMapEnums.Continent then -- Continent
-			if not tCurrentContinent or not tCurrentContinent.bCanDisplay then -- Continent not visible
-				self.wndZoneMap:SetDisplayMode(self.eLastZoomLevel == tZoneMapEnums.Scaled and tZoneMapEnums.World or tZoneMapEnums.Scaled)
-				self:SetControls()
-				return
-			end
-
 			if not tHomeContinent or tCurrentContinent.id ~= tHomeContinent.id then
 				--self.wndZoneMap:SetMinDisplayMode(tZoneMapEnums.Continent)
 			else
@@ -1199,15 +1200,12 @@ function ZoneMap:HelperCheckAndBuildSubzones(tZoneInfo, eZoomLevel) -- This repe
 	end
 
 	local tSubZoneInfo = self.wndZoneMap:GetAllSubZoneInfo(tZoneInfo.parentZoneId ~= 0 and tZoneInfo.parentZoneId or tZoneInfo.id)
+
 	for idx, tZoneEntry in pairs(tSubZoneInfo or {}) do
 		local wndCurr = self:FactoryProduce(self.wndMain:FindChild("SubzoneListContent"), "ZoneComplexListEntry", tZoneEntry.id)
 		wndCurr:FindChild("ZoneComplexListBtn"):SetData(tZoneEntry)
 		wndCurr:FindChild("ZoneComplexListBtn"):SetCheck(tZoneInfo.id == tZoneEntry.id)
 		wndCurr:FindChild("ZoneComplextListTitle"):SetText(tZoneEntry.strName)
-
-		--local nWidth, nHeight = wndCurr:FindChild("ZoneComplextListTitle"):SetHeightToContentHeight()
-		--local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-		--wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 8)
 	end
 
 	self.wndMain:FindChild("SubzoneListContent"):ArrangeChildrenVert(0)
@@ -1221,10 +1219,6 @@ function ZoneMap:HelperBuildZoneDropdown(idContinent) -- This only calls on butt
 			local wndCurr = self:FactoryProduce(self.wndMain:FindChild("ZoneSelectItems"), "ZoneComplexListEntry", tZoneEntry.id)
 			wndCurr:FindChild("ZoneComplexListBtn"):SetData(tZoneEntry)
 			wndCurr:FindChild("ZoneComplextListTitle"):SetText(tZoneEntry.strName)
-
-			--local nWidth, nHeight = wndCurr:FindChild("ZoneComplextListTitle"):SetHeightToContentHeight()
-			--local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-			--wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 8)
 		end
 	end
 	self.wndMain:FindChild("ZoneSelectItems"):ArrangeChildrenVert(0)

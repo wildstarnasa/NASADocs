@@ -30,6 +30,9 @@ function AbilityVendor:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -53,8 +56,6 @@ function AbilityVendor:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerLevelChange", 					"RedrawAll", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 				"RedrawAll", self)
 	Apollo.RegisterEventHandler("CharacterEldanAugmentationsUpdated", 	"RedrawRespec", self)
-	
-	
 end
 
 function AbilityVendor:OnSave(eType)
@@ -62,7 +63,7 @@ function AbilityVendor:OnSave(eType)
 		return
 	end
 	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
+	local locWindowLocation = self.tWndRefs.wndMain and self.tWndRefs.wndMain:GetLocation() or self.locSavedWindowLoc
 
 	local tSave = 
 	{
@@ -82,10 +83,11 @@ function AbilityVendor:OnRestore(eType, tSavedData)
 end
 
 function AbilityVendor:OnClose(wndHandler, wndControl)
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
 		Event_CancelTraining()
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
-		self.wndMain:Destroy()
+		self.locSavedWindowLoc = self.tWndRefs.wndMain:GetLocation()
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 end
 
@@ -94,18 +96,19 @@ function AbilityVendor:OnAbilityVendorToggle(bAtVendor)
 		return
 	end
 
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Close()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Close()
 	else
-		self.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilityVendorForm", nil, self)
+		self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilityVendorForm", nil, self)
 	end
 
 	self.tNextAbilityId = nil
 
-	self.wndMain:FindChild("BGBottom:BuyBtn"):Enable(false)
+	self.tWndRefs.wndBuyBtn = self.tWndRefs.wndMain:FindChild("BGBottom:BuyBtn")
+	self.tWndRefs.wndBuyBtn:Enable(false)
 	
 	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+		self.tWndRefs.wndMain:MoveToLocation(self.locSavedWindowLoc)
 		self.locSavedWindowLoc = nil
 	end
 
@@ -113,13 +116,13 @@ function AbilityVendor:OnAbilityVendorToggle(bAtVendor)
 end
 
 function AbilityVendor:RedrawAll()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
 	local nPlayerLevel = GameLib.GetPlayerLevel()
 	local nPlayerMoney = GameLib.GetPlayerCurrency():GetAmount()
-	self.wndMain:FindChild("BGBottom:BottomInfoInnerBG:CurrentCash"):SetAmount(nPlayerMoney, false)
+	self.tWndRefs.wndMain:FindChild("BGBottom:BottomInfoInnerBG:CurrentCash"):SetAmount(nPlayerMoney, false)
 
 	-- TEMP HACK, until we have filter
 	local tHugeAbilityList =
@@ -139,7 +142,7 @@ function AbilityVendor:RedrawAll()
 	end
 
 	-- Build List
-	local wndItemList = self.wndMain:FindChild("ItemList")
+	local wndItemList = self.tWndRefs.wndMain:FindChild("ItemList")
 	local nVScrollPos = wndItemList:GetVScrollPos()
 	wndItemList:DestroyChildren()
 	for eCategory, tFilteredAbilityList in pairs(tHugeAbilityList) do
@@ -171,7 +174,7 @@ function AbilityVendor:RedrawAll()
 
 				if self.tNextAbilityId and self.tNextAbilityId == tTierOne.nId then
 					wndAbilityBtn:SetCheck(true)
-					self.wndMain:FindChild("BGBottom:BuyBtn"):Enable(tTierOne.nLevelReq <= nPlayerLevel and tTierOne.nTrainingCost <= nPlayerMoney)
+					self.tWndRefs.wndBuyBtn:Enable(tTierOne.nLevelReq <= nPlayerLevel and tTierOne.nTrainingCost <= nPlayerMoney)
 				end
 			end
 		end
@@ -187,16 +190,16 @@ function AbilityVendor:RedrawAll()
 end
 
 function AbilityVendor:RedrawRespec()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 	
 	local nPlayerLevel = GameLib.GetPlayerLevel()
 	local bAllPointsAvailable = AbilityBook.GetTotalPower() == AbilityBook.GetAvailablePower()
-	local wndRespec = self.wndMain:FindChild("ItemList:RespecAMPsItem")
+	local wndRespec = self.tWndRefs.wndMain:FindChild("ItemList:RespecAMPsItem")
 	
 	if not wndRespec or not wndRespec:IsValid() then
-		wndRespec = Apollo.LoadForm(self.xmlDoc, "RespecAMPsItem", self.wndMain:FindChild("ItemList"), self)
+		wndRespec = Apollo.LoadForm(self.xmlDoc, "RespecAMPsItem", self.tWndRefs.wndMain:FindChild("ItemList"), self)
 	end
 	
 	local wndRespecBtn = wndRespec:FindChild("RespecAMPsItemBtn")
@@ -224,7 +227,7 @@ function AbilityVendor:OnBuyBtn(wndHandler, wndControl) -- BuyBtn
 
 	self.tNextAbilityId = nil
 	local nAbilityIdToLearn = wndHandler:GetData()
-	local tListOfItems = self.wndMain:FindChild("ItemList"):GetChildren()
+	local tListOfItems = self.tWndRefs.wndMain:FindChild("ItemList"):GetChildren()
 
 	for idx, wndCurr in pairs(tListOfItems) do
 		if wndCurr:FindChild("AbilityItemBtn"):GetData() == nAbilityIdToLearn then
@@ -238,11 +241,11 @@ function AbilityVendor:OnBuyBtn(wndHandler, wndControl) -- BuyBtn
 	end
 
 	AbilityBook.ActivateSpell(nAbilityIdToLearn, true)
-	self.wndMain:FindChild("BGBottom:BuyBtn"):SetData(self.tNextAbilityId)
+	self.tWndRefs.wndBuyBtn:SetData(self.tNextAbilityId)
 end
 
 function AbilityVendor:OnAbilityItemToggle(wndHandler, wndControl) -- AbilityItemBtn, data is abilityId
-	local wndBuyBtn = self.wndMain:FindChild("BGBottom:BuyBtn")
+	local wndBuyBtn = self.tWndRefs.wndBuyBtn
 	wndBuyBtn:SetData(wndHandler:GetData())
 	wndBuyBtn:Enable(wndHandler:IsChecked())
 end

@@ -97,6 +97,7 @@ end
 function ContextMenuPlayer:SharedInitialize(wndParent)
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ContextMenuPlayerForm", "TooltipStratum", self)
@@ -162,12 +163,12 @@ function ContextMenuPlayer:RedrawAllFriend()
 	if bCanAccountWisper then
 		self:HelperBuildRegularButton(wndButtonList, "BtnAccountWhisper", Apollo.GetString("ContextMenu_AccountWhisper"))
 	end
-
-	if not bInGroup or (GroupLib.GetGroupMember(1).bCanInvite and bCanWhisper) then 
-	--In SocialPanel, we don't care if they are part of a group, because we can't reliably test it.
-	self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
+	
+	if not bInGroup or (GroupLib.GetGroupMember(1).bCanInvite and bCanWhisper) then
+		--In SocialPanel, we don't care if they are part of a group, because we can't reliably test it.
+		self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
 	end
-
+	
 	local btnSocialList = self:FactoryProduce(wndButtonList, "BtnSocialList", "BtnSocialList")
 	local wndSocialListItems = btnSocialList:FindChild("SocialListPopoutItems")
 	btnSocialList:AttachWindow(btnSocialList:FindChild("SocialListPopoutFrame"))
@@ -195,7 +196,7 @@ function ContextMenuPlayer:RedrawAllFriend()
 
 	if bIsNeighbor then
 		if tAccountFriend == nil then
-			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnneighbor", Apollo.GetString("ContextMenu_RemoveNeighbor"))
+		self:HelperBuildRegularButton(wndSocialListItems, "BtnUnneighbor", Apollo.GetString("ContextMenu_RemoveNeighbor"))
 		end
 	elseif tFriend ~= nil or bCanAccountWisper then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddNeighbor", Apollo.GetString("ContextMenu_AddNeighbor"))
@@ -498,6 +499,7 @@ function ContextMenuPlayer:ResizeAndRedraw()
 	local wndButtonList = self.wndMain:FindChild("ButtonList")
 	if next(wndButtonList:GetChildren()) == nil then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		return
 	end
 
@@ -701,7 +703,10 @@ end
 
 function ContextMenuPlayer:OnMainWindowClosed(wndHandler, wndControl)
 	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
+		local wndMain = self.wndMain
+		self.wndMain = nil
+		wndMain:Close()
+		wndMain:Destroy()
 	end
 end
 

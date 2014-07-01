@@ -192,7 +192,7 @@ function HousingList:OnDecoratePreview(wndControl, wndHandler)
 		Sound.Play(Sound.PlayUIHousingHardwareAddition)
 		self.nPreviewDecorHandle = nItemHandle
 		self.wndRecallButton:Enable(true)
-		self.wndDeleteButton:Enable(true)
+		self.wndDeleteButton:Enable(HousingLib:IsOnMyResidence())
 	end
 end
 

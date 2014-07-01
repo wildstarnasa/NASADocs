@@ -226,6 +226,9 @@ function CraftingGrid:RedrawAll()
 	self:BuildVariantItem(self.wndMain:FindChild("VariantsCurrentBox"), tSubSchematicInfo.itemOutput, false, false)
 	self.wndMain:FindChild("VariantsCurrentBox"):SetData(tSubSchematicInfo.itemOutput)
 
+	-- Top Left Materials Count
+	self.wndMain:FindChild("CraftMaterialsList"):DestroyChildren()
+
 	-- POTENTIAL EXIT: Not Known
 	self.wndMain:FindChild("BGNotKnownBlocker"):Show(false)
 	if not tSchematicInfo.bIsKnown and not tSchematicInfo.bIsOneUse then
@@ -235,7 +238,6 @@ function CraftingGrid:RedrawAll()
 
 	-- Count Raw Materials
 	local bHasEnoughRawMaterials = true
-	self.wndMain:FindChild("CraftMaterialsList"):DestroyChildren()
 	for idx, tMaterial in pairs(tSchematicInfo.tMaterials) do
 		if  tMaterial.itemMaterial:GetBackpackCount() < tMaterial.nAmount then
 			bHasEnoughRawMaterials = false
@@ -375,14 +377,6 @@ function CraftingGrid:RedrawAllDetailed(idSchematic, tSchematicInfo, tCurrentCra
 		local wndAdditiveMaterial = Apollo.LoadForm(self.xmlDoc, "CraftMaterialsItem", wndCraftMaterialsList, self)
 		wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetText(idx)
 
-		if self.wndMarker then
-			if itemAdditive then
-				self.wndMarker:SetSprite(itemAdditive:GetIcon())
-			end
-			self.wndMarker:FindChild("GridMarkerCircle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
-			self.wndMarker:FindChild("GridMarkerCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Red")
-		end
-
 		-- Material Numbered List
 		if not bCurrentCraftStarted or idx > tCurrentCraft.nAdditiveCount then -- Empty Slot
 			wndAdditiveMaterial:FindChild("CraftMaterialsTitle"):SetText("")
@@ -396,16 +390,25 @@ function CraftingGrid:RedrawAllDetailed(idSchematic, tSchematicInfo, tCurrentCra
 		end
 
 		-- Last stop
-		if bCurrentCraftStarted and bHitACircle and idx == tCurrentCraft.nAdditiveCount then
+		local bCurrent = bCurrentCraftStarted and idx == tCurrentCraft.nAdditiveCount
+		if bCurrent and bHitACircle then
 			wndAdditiveMaterial:FindChild("CraftMaterialsTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGreenNormal"))
 			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetTextColor(ApolloColor.new("UI_BtnTextGreenNormal"))
 			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Green")
 			Sound.Play(Sound.PlayUICraftingCoordinateHit)
-		elseif bCurrentCraftStarted and idx == tCurrentCraft.nAdditiveCount and tSchematicInfo.nMaxAdditives == tCurrentCraft.nAdditiveCount then
+		elseif bCurrent and tSchematicInfo.nMaxAdditives == tCurrentCraft.nAdditiveCount then
 			wndAdditiveMaterial:FindChild("CraftMaterialsTitle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
 			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
 			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Red")
 			Sound.Play(Sound.PlayUICraftingCoordinateMiss)
+		end
+
+		-- wndMarker
+		if self.wndMarker and bCurrent and not bHitACircle and tSchematicInfo.nMaxAdditives == tCurrentCraft.nAdditiveCount then
+			self.wndMarker:FindChild("GridMarkerCircle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
+			self.wndMarker:FindChild("GridMarkerCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Red")
+		elseif self.wndMarker and itemAdditive then
+			self.wndMarker:SetSprite(itemAdditive:GetIcon())
 		end
 	end
 	wndCraftMaterialsList:ArrangeChildrenVert(0)
@@ -510,6 +513,7 @@ function CraftingGrid:OnCraftingUpdateCurrent()
 		self.bFullDestroyNeeded = false
 		local idSchematic = self.wndMain:GetData()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		Event_FireGenericEvent("GenericEvent_StartCraftingGrid", idSchematic)
 	else
 		self:RedrawAll()
@@ -687,12 +691,18 @@ end
 function CraftingGrid:ExitAndReset(wndHandler, wndControl)
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 end
 
 function CraftingGrid:OnCloseBtn(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 
 		local tCurrentCraft = CraftingLib.GetCurrentCraft()
 		if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then

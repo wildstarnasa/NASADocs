@@ -52,6 +52,9 @@ function MarketplaceCREDD:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWindowMap = {}
+
     return o
 end
 
@@ -90,49 +93,50 @@ function MarketplaceCREDD:Initialize()
 	Apollo.CreateTimer("HidePostResultNotification", 2, false)
 	Apollo.StopTimer("HidePostResultNotification")
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceCREDDForm", nil, self)
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceCredd_Title")})
+	local wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceCREDDForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = wndMain, strName = Apollo.GetString("MarketplaceCredd_Title")})
 	Event_ShowTutorial(GameLib.CodeEnumTutorial.General_CREDD)
 
 	self.tWindowMap =
 	{
-		["HeaderBuyBtn"]						=	self.wndMain:FindChild("HeaderBuyBtn"),
-		["HeaderBuyBtn"]						=	self.wndMain:FindChild("HeaderBuyBtn"),
-		["HeaderLogBtn"]						=	self.wndMain:FindChild("HeaderLogBtn"),
-		["HeaderSellBtn"]						=	self.wndMain:FindChild("HeaderSellBtn"),
-		["HeaderSellCount"]						=	self.wndMain:FindChild("HeaderSellCount"),
-		["RefreshMarketBtn"]					=	self.wndMain:FindChild("RefreshMarketBtn"),
-		["RefreshAnimation"]					=	self.wndMain:FindChild("RefreshAnimation"),
-		["WaitingScreen"]						=	self.wndMain:FindChild("CommonAlertMessages:WaitingScreen"),
-		["LogMain"]								=	self.wndMain:FindChild("LogMain"),
-		["LogScroll"]							=	self.wndMain:FindChild("LogScroll"),
-		["ActNowPrice"]							=	self.wndMain:FindChild("ActNowPrice"),
-		["ActLaterPrice"]						=	self.wndMain:FindChild("ActLaterPrice"),
-		["ActNowNoCashIcon"]					=	self.wndMain:FindChild("ActNowNoCashIcon"),
-		["ActLaterNoCashIcon"]					=	self.wndMain:FindChild("ActLaterNoCashIcon"),
-		["CreateSellNowBtn"]					=	self.wndMain:FindChild("CreateSellNowBtn"),
-		["CreateSellOrderBtn"]					=	self.wndMain:FindChild("CreateSellOrderBtn"),
-		["CreateBuyNowBtn"]						=	self.wndMain:FindChild("CreateBuyNowBtn"),
-		["CreateBuyOrderBtn"]					=	self.wndMain:FindChild("CreateBuyOrderBtn"),
-		["OpenInventoryBtn"]					=	self.wndMain:FindChild("MetalRowFrame:OpenInventoryBtn"),
-		["OpenListingsBtn"]						=	self.wndMain:FindChild("MetalRowFrame:OpenListingsBtn"),
-		["MoreMarketStats"]						=	self.wndMain:FindChild("MoreMarketStats"),
-		["MainBuyContainer"]					=	self.wndMain:FindChild("MainBuyContainer"),
-		["MainSellContainer"]					=	self.wndMain:FindChild("MainSellContainer"),
-		["ConfirmationBlocker"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker"),
-		["ConfirmationTitle"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTitle"),
-		["ConfirmationSubtitle"]				=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationSubtitle"),
-		["ConfirmationBigCash"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBigCash"),
-		["ConfirmationBigText"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBigText"),
-		["ConfirmationTaxText"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTaxText"),
-		["ConfirmationTaxCash"]					=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTaxCash"),
-		["ConfirmationBaseText"]				=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseText"),
-		["ConfirmationBaseCash"]				=	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseCash"),
-		["PostResultNotification"]				=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification"),
-		["PostResultNotificationCheck"]			=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationCheck"),
-		["PostResultNotificationLabel"]			=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationLabel"),
-		["PostResultNotificationSubText"]		=	self.wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationSubText"),
-		["ConfirmationYesBtn"]					= 	self.wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationYesBtn"),
+		["Main"]								=	wndMain,
+		["HeaderBuyBtn"]						=	wndMain:FindChild("HeaderBuyBtn"),
+		["HeaderBuyBtn"]						=	wndMain:FindChild("HeaderBuyBtn"),
+		["HeaderLogBtn"]						=	wndMain:FindChild("HeaderLogBtn"),
+		["HeaderSellBtn"]						=	wndMain:FindChild("HeaderSellBtn"),
+		["HeaderSellCount"]						=	wndMain:FindChild("HeaderSellCount"),
+		["RefreshMarketBtn"]					=	wndMain:FindChild("RefreshMarketBtn"),
+		["RefreshAnimation"]					=	wndMain:FindChild("RefreshAnimation"),
+		["WaitingScreen"]						=	wndMain:FindChild("CommonAlertMessages:WaitingScreen"),
+		["LogMain"]								=	wndMain:FindChild("LogMain"),
+		["LogScroll"]							=	wndMain:FindChild("LogScroll"),
+		["ActNowPrice"]							=	wndMain:FindChild("ActNowPrice"),
+		["ActLaterPrice"]						=	wndMain:FindChild("ActLaterPrice"),
+		["ActNowNoCashIcon"]					=	wndMain:FindChild("ActNowNoCashIcon"),
+		["ActLaterNoCashIcon"]					=	wndMain:FindChild("ActLaterNoCashIcon"),
+		["CreateSellNowBtn"]					=	wndMain:FindChild("CreateSellNowBtn"),
+		["CreateSellOrderBtn"]					=	wndMain:FindChild("CreateSellOrderBtn"),
+		["CreateBuyNowBtn"]						=	wndMain:FindChild("CreateBuyNowBtn"),
+		["CreateBuyOrderBtn"]					=	wndMain:FindChild("CreateBuyOrderBtn"),
+		["OpenInventoryBtn"]					=	wndMain:FindChild("MetalRowFrame:OpenInventoryBtn"),
+		["OpenListingsBtn"]						=	wndMain:FindChild("MetalRowFrame:OpenListingsBtn"),
+		["MoreMarketStats"]						=	wndMain:FindChild("MoreMarketStats"),
+		["MainBuyContainer"]					=	wndMain:FindChild("MainBuyContainer"),
+		["MainSellContainer"]					=	wndMain:FindChild("MainSellContainer"),
+		["ConfirmationBlocker"]					=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker"),
+		["ConfirmationTitle"]					=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTitle"),
+		["ConfirmationSubtitle"]				=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationSubtitle"),
+		["ConfirmationBigCash"]					=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBigCash"),
+		["ConfirmationBigText"]					=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBigText"),
+		["ConfirmationTaxText"]					=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTaxText"),
+		["ConfirmationTaxCash"]					=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationTaxCash"),
+		["ConfirmationBaseText"]				=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseText"),
+		["ConfirmationBaseCash"]				=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseCash"),
+		["PostResultNotification"]				=	wndMain:FindChild("CommonAlertMessages:PostResultNotification"),
+		["PostResultNotificationCheck"]			=	wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationCheck"),
+		["PostResultNotificationLabel"]			=	wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationLabel"),
+		["PostResultNotificationSubText"]		=	wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationSubText"),
+		["ConfirmationYesBtn"]					= 	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationYesBtn"),
 	}
 
 	self.tWindowMap["HeaderLogBtn"]:AttachWindow(self.tWindowMap["LogMain"])
@@ -143,27 +147,32 @@ function MarketplaceCREDD:Initialize()
 	self.tWindowMap["ActLaterPrice"]:SetAmountLimit(knMaxPlat)
 
 	if self.locSavedWindowLoc then
-		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+		wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
 
 	self.arOrders = nil
 end
 
 function MarketplaceCREDD:OnToggleCREDDExchangeWindow()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	local wndMain = self.tWindowMap["Main"]
+	if not wndMain or not wndMain:IsValid() then
 		self:Initialize()
+		wndMain = self.tWindowMap["Main"]
 	end
 
-	self.wndMain:Show(not self.wndMain:IsShown())
-	if self.wndMain:IsShown() then
-		self.wndMain:ToFront()
+	wndMain:Show(not wndMain:IsShown())
+	if wndMain:IsShown() then
+		wndMain:ToFront()
 		CREDDExchangeLib.RequestExchangeInfo() -- Leads to OnCREDDExchangeInfoResults
 	end
 end
 
 function MarketplaceCREDD:OnClose(wndHandler, wndControl, eMouseButton)
 	if wndHandler == wndControl then
-		self.wndMain:Destroy()
+		if self.tWindowMap["Main"] ~= nil and self.tWindowMap["Main"]:IsValid() then
+			self.tWindowMap["Main"]:Destroy()
+		end
+		self.tWindowMap = {}
 		Event_CancelCREDDExchange()
 	end
 end
@@ -197,7 +206,8 @@ function MarketplaceCREDD:OnRefreshMarketBtn(wndHandler, wndControl, eMouseButto
 end
 
 function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) -- Main Redraw
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsVisible() then
+	local wndMain = self.tWindowMap["Main"]
+	if not wndMain or not wndMain:IsValid() or not wndMain:IsVisible() then
 		return
 	end
 
@@ -268,7 +278,8 @@ function MarketplaceCREDD:RefreshEscrow()
 end
 
 function MarketplaceCREDD:RefreshBoundCredd()
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+	local wndMain = self.tWindowMap["Main"]
+	if wndMain and wndMain:IsValid() and wndMain:IsVisible() then
 		local nPlayerCash = GameLib.GetPlayerCurrency():GetAmount()
 		local bBuyTabChecked = self.tWindowMap["HeaderBuyBtn"]:IsChecked()
 		local nNumBound = AccountItemLib.GetAccountCurrency(AccountItemLib.CodeEnumAccountCurrency.CREDD)
@@ -306,7 +317,7 @@ function MarketplaceCREDD:OnGenerateTooltipFullStats(wndHandler, wndControl, eTy
 		local strBuy = ""
 		local nBuyPrice = tStats.arBuyOrderPrices[nRowIdx].monPrice:GetAmount()
 		if nBuyPrice > 0 then
-			strBuy = self.wndMain:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nBuyPrice, true, "UI_TextHoloBody", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
+			strBuy = self.tWindowMap["Main"]:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nBuyPrice, true, "UI_TextHoloBody", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
 		else
 			strBuy = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">" .. Apollo.GetString("CRB_NoData") .. "</P>"
 		end
@@ -314,7 +325,7 @@ function MarketplaceCREDD:OnGenerateTooltipFullStats(wndHandler, wndControl, eTy
 		local strSell = ""
 		local nSellPrice = tStats.arSellOrderPrices[nRowIdx].monPrice:GetAmount()
 		if nSellPrice > 0 then
-			strSell = self.wndMain:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nSellPrice, true, "ffc2e57f", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
+			strSell = self.tWindowMap["Main"]:FindChild("HiddenCashWindow"):GetAMLDocForAmount(nSellPrice, true, "ffc2e57f", "CRB_InterfaceSmall", 0) -- 2nd is skip zeroes, 5th is align left
 		else
 			strSell = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffc2e57f\">" .. Apollo.GetString("CRB_NoData") .. "</P>"
 		end

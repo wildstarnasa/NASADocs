@@ -101,6 +101,7 @@ function CraftingResume:OnGenericEvent_CraftFromPL(idQueuedSchematic)
 	if self.wndMain and self.wndMain:IsValid() then
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	local tCurrentCraft = CraftingLib.GetCurrentCraft()
@@ -137,6 +138,7 @@ function CraftingResume:OnCoordPrevFinishOldBtn(wndHandler, wndControl) -- Coord
 	self:HelperStartCraft(wndHandler:GetData())
 	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
+	self.wndMain = nil
 end
 
 function CraftingResume:OnCoordPrevAbandonBtn(wndHandler, wndControl) -- CoordPrevAbandonBtn
@@ -151,6 +153,7 @@ function CraftingResume:OnCoordPrevAbandonBtn(wndHandler, wndControl) -- CoordPr
 	CraftingLib.BotchCraft()
 	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
+	self.wndMain = nil
 end
 
 function CraftingResume:HelperStartCraft(idSchematic)
@@ -175,6 +178,7 @@ end
 function CraftingResume:OnWindowClosed()
 	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
+	self.wndMain = nil
 	self.bCraftingStation = true
 end
 

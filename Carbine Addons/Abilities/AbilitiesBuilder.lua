@@ -15,6 +15,9 @@ function Abilities:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -86,7 +89,7 @@ function Abilities:OnToggleAbilitiesWindow(bAtTrainer)
 		return -- There is other dedicated UI for ability buying from a trainer
 	end
 
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() then
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsShown() then
 		self:OnClose()
 	else
 		self:BuildWindow()
@@ -98,30 +101,30 @@ function Abilities:OnToggleAbilitiesWindow(bAtTrainer)
 end
 
 function Abilities:BuildWindow()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		local nNumSpecs = AbilityBook.GetNumUnlockedSpecs()
 
-		self.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilitiesBuilderForm", nil, self)
-		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AbilityBuilder")})
+		self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "AbilitiesBuilderForm", nil, self)
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.tWndRefs.wndMain, strName = Apollo.GetString("InterfaceMenu_AbilityBuilder")})
 
-		local wndBGFrame = self.wndMain:FindChild("BGFrame")
+		local wndBGFrame = self.tWndRefs.wndMain:FindChild("BGFrame")
 		local wndAbilityBuilder = wndBGFrame:FindChild("AbilityBuilderMain")
 		local wndBottomContainer = wndAbilityBuilder:FindChild("BottomContainer")
 		local wndSpellFilterTabs = wndAbilityBuilder:FindChild("SpellFilterTabContainer")
 
-		self.wndGadgetSlot = wndBottomContainer:FindChild("HiddenGadgetSlot")
-		self.wndPathSlot = wndBottomContainer:FindChild("CurrentSetPath:PathSlotItem")
-		self.wndPathTabBtn = wndSpellFilterTabs:FindChild("SpellFilterTab_Path")
+		self.tWndRefs.wndGadgetSlot = wndBottomContainer:FindChild("HiddenGadgetSlot")
+		self.tWndRefs.wndPathSlot = wndBottomContainer:FindChild("CurrentSetPath:PathSlotItem")
+		self.tWndRefs.wndPathTabBtn = wndSpellFilterTabs:FindChild("SpellFilterTab_Path")
 
 		wndBGFrame:FindChild("ErrorContainer"):Show(false, true)
-		self.wndMain:FindChild("LeaveConfirmationContainer"):Show(false, true)
-		self.wndMain:SetSizingMaximum(1600, 975)
+		self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Show(false, true)
+		self.tWndRefs.wndMain:SetSizingMaximum(1600, 975)
 
 		local wndTopContainer = wndBGFrame:FindChild("BGTopContainer")
 		wndTopContainer:FindChild("AbilityBuilderTabBtn"):AttachWindow(wndAbilityBuilder)
 		wndTopContainer:FindChild("AMPTabBtn"):AttachWindow(wndBGFrame:FindChild("AMPBuilderMain"))
 
-		local wndTitleSet = self.wndMain:FindChild("BGPointsContainer:BGTitleSet")
+		local wndTitleSet = self.tWndRefs.wndMain:FindChild("BGPointsContainer:BGTitleSet")
 		wndTitleSet:FindChild("SetLeftBtn"):Enable(nNumSpecs > 1)
 		wndTitleSet:FindChild("SetRightBtn"):Enable(nNumSpecs > 1)
 
@@ -136,11 +139,11 @@ function Abilities:BuildWindow()
 		self.tCurrentDragData = nil
 
 		if self.locSavedLocation then
-			self.wndMain:MoveToLocation(self.locSavedLocation)
+			self.tWndRefs.wndMain:MoveToLocation(self.locSavedLocation)
 		end
 	end
 
-	self.wndMain:Invoke()
+	self.tWndRefs.wndMain:Invoke()
 	self:RedrawFromScratch()
 	Event_FireGenericEvent("AbilityWindowHasBeenToggled")
 	Event_FireGenericEvent("ToggleBlockBarsVisibility", true)
@@ -156,29 +159,35 @@ function Abilities:OnWindowClosed(wndHandler, wndControl)
 		return
 	end
 
-	if self.bDirtyBit and not self.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
-		self.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
-		self.wndMain:Invoke() -- Reshow
-	else
-		self:OnCloseFinal()
+	if self.tWndRefs.wndMain ~= nil and self.tWndRefs.wndMain:IsValid() then
+		if self.bDirtyBit and not self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
+			self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
+			self.tWndRefs.wndMain:Invoke() -- Reshow
+		else
+			self:OnCloseFinal()
+		end
 	end
 end
 
 function Abilities:OnClose()
-	if self.bDirtyBit and not self.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
-		self.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
+	if self.bDirtyBit and not self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
+		self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
 	else
 		self:OnCloseFinal()
 	end
 end
 
 function Abilities:OnCloseFinal() -- Window Escape Key also routes here
-	if self.wndMain then
-		self.locSavedLocation = self.wndMain:GetLocation()
-		self.wndMain:Close()
-		self.wndMain:Destroy()
+	if self.tWndRefs.wndMain then
+		self.locSavedLocation = self.tWndRefs.wndMain:GetLocation()
+		local wndMain = self.tWndRefs.wndMain
+		
+		self.tWndRefs = {}
 		AbilityBook.ClearCachedLASUpdates()
 		AbilityBook.ClearCachedEldanAugmentationSpec() -- If we fully exit, undo changes
+		
+		wndMain:Close()
+		wndMain:Destroy()
 	end
 
 	Event_FireGenericEvent("ToggleBlockBarsVisibility", false) -- TODO: Remove this, you can click close with a drag to circumvent the soft gate
@@ -193,11 +202,11 @@ function Abilities:OnSetResetClick(wndHandler, wndControl)
 	AbilityBook.ClearCachedLASUpdates()
 	AbilityBook.ClearCachedEldanAugmentationSpec()
 	self:RedrawFromScratch()
-	Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.wndMain:FindChild("BGFrame:AMPBuilderMain"))
+	Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.tWndRefs.wndMain:FindChild("BGFrame:AMPBuilderMain"))
 end
 
 function Abilities:OnSetActivateClick(wndHandler, wndControl)
-	local wndContainer = self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer")
+	local wndContainer = self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer")
 	if not wndContainer:GetChildren() then
 		return
 	end
@@ -212,8 +221,8 @@ function Abilities:OnSetActivateClick(wndHandler, wndControl)
 	for idx, wndCurr in pairs(wndContainer:GetChildren()) do
 		arSpellIds[idx] = wndCurr:FindChild("SlotDisplay"):GetAbilityId()
 	end
-	arSpellIds[9] = self.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):GetAbilityId()
-	arSpellIds[10] = self.wndPathSlot:FindChild("SlotDisplay"):GetAbilityId()
+	arSpellIds[9] = self.tWndRefs.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):GetAbilityId()
+	arSpellIds[10] = self.tWndRefs.wndPathSlot:FindChild("SlotDisplay"):GetAbilityId()
 
 	local tResultInfo = ActionSetLib.RequestActionSetChanges(arSpellIds)
 	if tResultInfo.eResult == ActionSetLib.CodeEnumLimitedActionSetResult.RestrictedInPVP or tResultInfo.eResult == ActionSetLib.CodeEnumLimitedActionSetResult.InCombat then
@@ -238,11 +247,11 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Abilities:RedrawFromScratch() -- Draw Slots destroys everything (Level up and keybind change also routes here)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
-	local wndSlotItemContainer = self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer")
+	local wndSlotItemContainer = self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer")
 	wndSlotItemContainer:DestroyChildren()
 	for idx = 1, 8 do
 		local wndCurrSlot = Apollo.LoadForm(self.xmlDoc, "SlotItem", wndSlotItemContainer, self)
@@ -256,7 +265,7 @@ function Abilities:RedrawFromScratch() -- Draw Slots destroys everything (Level 
 		wndCurrSlot:FindChild("SlotText"):SetText(GameLib.GetKeyBinding("LimitedActionSet"..idx) or idx) -- Reliance on exact string names
 	end
 	wndSlotItemContainer:ArrangeChildrenHorz(0)
-	self.wndPathSlot:FindChild("SlotText"):SetText(GameLib.GetKeyBinding("CastPathAbility"))
+	self.tWndRefs.wndPathSlot:FindChild("SlotText"):SetText(GameLib.GetKeyBinding("CastPathAbility"))
 
 	-- drawing from scratch, we should grab the current saved action bar set
 	local tActionSetIds = ActionSetLib.GetCurrentActionSet()
@@ -266,9 +275,9 @@ function Abilities:RedrawFromScratch() -- Draw Slots destroys everything (Level 
 
 	for idx, nAbilityId in pairs(tActionSetIds) do
 		if idx == 9 then
-			self.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):SetAbilityId(nAbilityId)
+			self.tWndRefs.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):SetAbilityId(nAbilityId)
 		elseif idx == 10 then
-			self.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(nAbilityId)
+			self.tWndRefs.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(nAbilityId)
 		else
 			local wndSlot = wndSlotItemContainer:GetChildren()[idx]
 			if wndSlot then
@@ -277,7 +286,7 @@ function Abilities:RedrawFromScratch() -- Draw Slots destroys everything (Level 
 			end
 		end
 	end
-
+	
 	-- Update rest
 	self.bDirtyBit = false
 	self:DrawSpellBook()
@@ -285,18 +294,18 @@ end
 
 function Abilities:OnAbilitiesTabCheck(wndHandler, wndControl)
 	Event_FireGenericEvent("GenericEvent_CloseEldanAugmentation")
-	self.wndMain:FindChild("BGPointsContainer:AbilityHighlight"):Show(true)
-	self.wndMain:FindChild("BGPointsContainer:AMPHighlight"):Show(false)
+	self.tWndRefs.wndMain:FindChild("BGPointsContainer:AbilityHighlight"):Show(true)
+	self.tWndRefs.wndMain:FindChild("BGPointsContainer:AMPHighlight"):Show(false)
 end
 
 function Abilities:OnAmpTabCheck(wndHandler, wndControl)
-	Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.wndMain:FindChild("BGFrame:AMPBuilderMain"))
-	self.wndMain:FindChild("BGPointsContainer:AbilityHighlight"):Show(false)
-	self.wndMain:FindChild("BGPointsContainer:AMPHighlight"):Show(true)
+	Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.tWndRefs.wndMain:FindChild("BGFrame:AMPBuilderMain"))
+	self.tWndRefs.wndMain:FindChild("BGPointsContainer:AbilityHighlight"):Show(false)
+	self.tWndRefs.wndMain:FindChild("BGPointsContainer:AMPHighlight"):Show(true)
 end
 
 function Abilities:DrawSpellBook()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsVisible() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:IsVisible() then
 		return
 	end
 
@@ -306,7 +315,7 @@ function Abilities:DrawSpellBook()
 	local nAbilityPoints = GameLib.GetAbilityPoints()
 	local nTotalAbilityPoints = GameLib.GetTotalAbilityPoints()
 
-	local wndBGPointsContainer = self.wndMain:FindChild("BGPointsContainer")
+	local wndBGPointsContainer = self.tWndRefs.wndMain:FindChild("BGPointsContainer")
 	local wndSpellbookAbilityPoints = wndBGPointsContainer:FindChild("SpellbookAbilityPointsBG")
 	wndSpellbookAbilityPoints:FindChild("SpellbookAbilityPointsTextSmall"):SetText(String_GetWeaselString(Apollo.GetString("AbilitiesBuilder_AvailablePoints"), nTotalAbilityPoints))
 	wndSpellbookAbilityPoints:FindChild("SpellbookAbilityPointsTextBig"):SetText(nAbilityPoints)
@@ -318,7 +327,7 @@ function Abilities:DrawSpellBook()
 
 	-- Spell Filter Tabs
 	local eSelectedFilter = nil
-	for idx, wndCurr in pairs(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellFilterTabContainer"):GetChildren()) do
+	for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellFilterTabContainer"):GetChildren()) do
 		wndCurr:FindChild("SpellFilterTabName"):SetTextColor(wndCurr:IsChecked() and "ff31fcf6" or "ff2f94ac")
 		if wndCurr:IsChecked() then
 			eSelectedFilter = wndCurr:GetData() -- e.g. SpellFilterTab_Assault with data Spell.CodeEnumSpellTag.Assault
@@ -345,14 +354,14 @@ function Abilities:DrawSpellBook()
 	-- refreshing the screen should always use the temp storage until the new set is commited
 	-- TODO REFACTOR
 	local arSpellIds = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-	for idx, wndCurr in pairs(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do
+	for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do
 		arSpellIds[idx] = wndCurr:FindChild("SlotDisplay"):GetAbilityId()
 	end
-	arSpellIds[9] = self.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):GetAbilityId()
-	arSpellIds[10] = self.wndPathSlot:FindChild("SlotDisplay"):GetAbilityId()
+	arSpellIds[9] = self.tWndRefs.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):GetAbilityId()
+	arSpellIds[10] = self.tWndRefs.wndPathSlot:FindChild("SlotDisplay"):GetAbilityId()
 
 	-- Build active abilities
-	local wndSpellbook = self.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer")
+	local wndSpellbook = self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer")
 	local nVScrollPos = wndSpellbook:GetVScrollPos()
 	wndSpellbook:DestroyChildren()
 
@@ -384,11 +393,11 @@ function Abilities:DrawSpellBook()
 
 	-- Set Title
 	local strSetTitle = String_GetWeaselString(Apollo.GetString("AbilityBuilder_ActionSetLabel"), AbilityBook.GetCurrentSpec() or 1)
-	self.wndMain:FindChild("BGPointsContainer:BGTitleSet:SetName"):SetText(self.bDirtyBit and strSetTitle.."*" or strSetTitle)
+	self.tWndRefs.wndMain:FindChild("BGPointsContainer:BGTitleSet:SetName"):SetText(self.bDirtyBit and strSetTitle.."*" or strSetTitle)
 end
 
 function Abilities:DrawALockedSpell(tHighestTier, nPlayerLevel)
-	local wndCurrSpell = self:FactoryProduce(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer"), "SpellbookItem_Locked", tHighestTier)
+	local wndCurrSpell = self:FactoryProduce(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer"), "SpellbookItem_Locked", tHighestTier)
 	local wndSpellbookItem = wndCurrSpell:FindChild("SpellbookItemBG")
 	wndSpellbookItem:FindChild("SpellbookItemName"):SetText(tHighestTier.strName or "???")
 	wndSpellbookItem:FindChild("SpellbookItemAbilityIcon"):SetAbilityId(tHighestTier.nId)
@@ -397,7 +406,7 @@ function Abilities:DrawALockedSpell(tHighestTier, nPlayerLevel)
 	local strSubText = ""
 	local bPurchaseThis = false
 	local nAbilityLevelReq = tHighestTier.nLevelReq or 0
-	if self.wndPathTabBtn:IsChecked() then
+	if self.tWndRefs.wndPathTabBtn:IsChecked() then
 		strSubText = String_GetWeaselString(Apollo.GetString("AbilityBuilder_PathUnlock"), nAbilityLevelReq)
 	elseif tHighestTier.bAMPUnlocked then
 		strSubText = Apollo.GetString("AbilityBuilder_AMPUnlock")
@@ -428,7 +437,7 @@ function Abilities:OnBuyAbilityBtn(wndHandler, wndControl)
 end
 
 function Abilities:DrawAnAddSpell(tBaseAbility, tHighestTier)
-	local wndCurrSpell = self:FactoryProduce(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer"), "SpellbookItem_Add", tHighestTier)
+	local wndCurrSpell = self:FactoryProduce(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer"), "SpellbookItem_Add", tHighestTier)
 	local wndSpellbookItem = wndCurrSpell:FindChild("SpellbookItemBG")
 	wndSpellbookItem:FindChild("SpellbookItemAdd"):SetData(tHighestTier)
 	wndSpellbookItem:FindChild("SpellbookItemName"):SetText(tHighestTier.strName or "???")
@@ -436,7 +445,7 @@ function Abilities:DrawAnAddSpell(tBaseAbility, tHighestTier)
 end
 
 function Abilities:DrawATiersSpell(tBaseAbility, tHighestTier, nPlayerLevel, nAbilityPoints)
-	local wndCurrSpell = self:FactoryProduce(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer"), "SpellbookItem_Tiers", tHighestTier)
+	local wndCurrSpell = self:FactoryProduce(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellbookContainer"), "SpellbookItem_Tiers", tHighestTier)
 	local wndSpellbookItem = wndCurrSpell:FindChild("SpellbookItemBG")
 	wndSpellbookItem:FindChild("SpellbookItemSubBtn"):SetData(tHighestTier)
 	wndSpellbookItem:FindChild("SpellbookItemName"):SetText(tHighestTier.strName or "???")
@@ -444,11 +453,11 @@ function Abilities:DrawATiersSpell(tBaseAbility, tHighestTier, nPlayerLevel, nAb
 
 	-- Path won't show tiers
 	local wndSpellbookProgPiecesContainer = wndSpellbookItem:FindChild("SpellbookItemProgPiecesContainer")
-	wndSpellbookProgPiecesContainer:Show(not self.wndPathTabBtn:IsChecked())
-	wndSpellbookItem:FindChild("SpellbookItemName"):Show(self.wndPathTabBtn:IsChecked())
+	wndSpellbookProgPiecesContainer:Show(not self.tWndRefs.wndPathTabBtn:IsChecked())
+	wndSpellbookItem:FindChild("SpellbookItemName"):Show(self.tWndRefs.wndPathTabBtn:IsChecked())
 
 
-	if not self.wndPathTabBtn:IsChecked() then
+	if not self.tWndRefs.wndPathTabBtn:IsChecked() then
 		-- Prog Pieces
 		wndSpellbookProgPiecesContainer:DestroyChildren()
 		local nStart = 0
@@ -490,8 +499,8 @@ end
 function Abilities:OnSpellbookItemAdd(wndHandler, wndControl)
 	self.bDirtyBit = true
 	local tCurrAbility = wndHandler:GetData()
-	if self.wndPathTabBtn:IsChecked() then
-		self.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(tCurrAbility.nId)
+	if self.tWndRefs.wndPathTabBtn:IsChecked() then
+		self.tWndRefs.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(tCurrAbility.nId)
 	else
 		self:HelperAddSlot(tCurrAbility.nId)
 	end
@@ -501,10 +510,10 @@ end
 function Abilities:OnSpellbookItemSubBtn(wndHandler, wndControl)
 	self.bDirtyBit = true
 	local tCurrAbility = wndHandler:GetData()
-	if self.wndPathTabBtn:IsChecked() then
-		self:HelperDeleteSlot(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetPath:PathSlotItem:SlotDisplay"), true)
+	if self.tWndRefs.wndPathTabBtn:IsChecked() then
+		self:HelperDeleteSlot(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetPath:PathSlotItem:SlotDisplay"), true)
 	else
-		for idx, wndCurr in pairs(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do
+		for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do
 			-- Find the window to remove
 			if wndCurr:FindChild("SlotDisplay"):GetAbilityId() == tCurrAbility.nId then
 				self:HelperDeleteSlot(wndCurr:FindChild("SlotDisplay"), true)
@@ -523,7 +532,7 @@ end
 
 function Abilities:OnSpellbookAbilityPointsReset(wndHandler, wndControl) -- SpellbookAbilityPointsReset
 	self.bDirtyBit = true
-	for idx, wndCurr in pairs(self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do -- Reset all to 1
+	for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do -- Reset all to 1
 		AbilityBook.UpdateSpellTier(wndCurr:FindChild("SlotDisplay"):GetAbilityId(), 1)
 	end
 	self:DrawSpellBook()
@@ -531,7 +540,7 @@ end
 
 function Abilities:OnCurrentSetSlotsClearAll(wndHandler, wndControl)
 	self.bDirtyBit = true
-	local wndBottomContainer = self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer")
+	local wndBottomContainer = self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer")
 	for idx, wndCurr in pairs(wndBottomContainer:FindChild("CurrentSetSlots:SlotItemContainer"):GetChildren()) do -- Find the window to remove
 		local wndSlot = wndCurr:FindChild("SlotDisplay")
 		if wndSlot:GetAbilityId() ~= 0 then
@@ -575,9 +584,9 @@ function Abilities:OnSlotMouseDown(wndHandler, wndControl, eMouseButton, nPosX, 
 
 	if (eMouseButton == GameLib.CodeEnumInputMouse.Left and bDoubleClick) or eMouseButton == GameLib.CodeEnumInputMouse.Right then
 		self.bDirtyBit = true
-		if self.wndPathSlot:FindChild("SlotMouseCatcher") == wndHandler then
-			self.wndPathSlot:FindChild("SlotCloseBtn"):Show(false)
-			self.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(0)
+		if self.tWndRefs.wndPathSlot:FindChild("SlotMouseCatcher") == wndHandler then
+			self.tWndRefs.wndPathSlot:FindChild("SlotCloseBtn"):Show(false)
+			self.tWndRefs.wndPathSlot:FindChild("SlotDisplay"):SetAbilityId(0)
 			self:DrawSpellBook()
 			-- TODO: Perhaps detect gadget and equip/unequip, or offer a picker
 		else
@@ -596,8 +605,8 @@ function Abilities:OnSlotCloseBtnClick(wndHandler, wndControl)
 
 	self.bDirtyBit = true
 
-	if self.wndPathSlot:FindChild("SlotCloseBtn") == wndHandler then
-		self:HelperDeleteSlot(self.wndPathSlot:FindChild("SlotDisplay"))
+	if self.tWndRefs.wndPathSlot:FindChild("SlotCloseBtn") == wndHandler then
+		self:HelperDeleteSlot(self.tWndRefs.wndPathSlot:FindChild("SlotDisplay"))
 	else
 		self:HelperDeleteSlot(wndHandler:GetData(), true)
 	end
@@ -655,29 +664,29 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Abilities:HelperShowError(strMessage)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
-	local wndError = self.wndMain:FindChild("BGFrame:ErrorContainer")
+	local wndError = self.tWndRefs.wndMain:FindChild("BGFrame:ErrorContainer")
 	wndError:Show(true)
 	wndError:FindChild("ErrorContainerMiddleBG:ErrorContainerText"):SetText(strMessage)
 	Apollo.CreateTimer("AbilitiesBuilder_HideErrorContainerTimer", 3, false)
 end
 
 function Abilities:OnErrorContainerHideBtn()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 	Apollo.StopTimer("AbilitiesBuilder_HideErrorContainerTimer")
-	self.wndMain:FindChild("BGFrame:ErrorContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("BGFrame:ErrorContainer"):Show(false)
 end
 
 function Abilities:OnLeaveConfirmationNo()
-	self.wndMain:FindChild("LeaveConfirmationContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Show(false)
 end
 
 function Abilities:OnLeaveConfirmationYes()
-	self.wndMain:FindChild("LeaveConfirmationContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Show(false)
 	self:OnCloseFinal()
 end
 
@@ -694,7 +703,7 @@ function Abilities:OnSetRightBtn(wndHandler, wndControl)
 end
 
 function Abilities:OnSpecChanged(newSpecIndex, specError)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
@@ -714,7 +723,7 @@ function Abilities:OnSpecChanged(newSpecIndex, specError)
 		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInVoid"))
 	elseif specError == AbilityBook.CodeEnumSpecError.Ok then
 		self:RedrawFromScratch()
-		Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.wndMain:FindChild("BGFrame:AMPBuilderMain"))
+		Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.tWndRefs.wndMain:FindChild("BGFrame:AMPBuilderMain"))
 	end
 end
 
@@ -738,19 +747,19 @@ end
 function Abilities:OnLevelUpUnlock_TierPointSystem()
 	self:BuildWindow()
 
-	local wndAbilityBuilderTabBtn = self.wndMain:FindChild("BGFrame:BGTopContainer:AbilityBuilderTabBtn")
+	local wndAbilityBuilderTabBtn = self.tWndRefs.wndMain:FindChild("BGFrame:BGTopContainer:AbilityBuilderTabBtn")
 	wndAbilityBuilderTabBtn:SetCheck(true)
 	self:OnAbilitiesTabCheck(wndAbilityBuilderTabBtn, wndAbilityBuilderTabBtn)
-	self.wndMain:FindChild("BGFrame:BGTopContainer:AMPTabBtn"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BGFrame:BGTopContainer:AMPTabBtn"):SetCheck(false)
 end
 
 function Abilities:OnLevelUpUnlock_AMPSystem()
 	self:BuildWindow()
 
-	local wndAMPTabBtn = self.wndMain:FindChild("BGFrame:BGTopContainer:AMPTabBtn")
+	local wndAMPTabBtn = self.tWndRefs.wndMain:FindChild("BGFrame:BGTopContainer:AMPTabBtn")
 	wndAMPTabBtn:SetCheck(true)
 	self:OnAmpTabCheck(wndAMPTabBtn, wndAMPTabBtn)
-	self.wndMain:FindChild("BGFrame:BGTopContainer:AbilityBuilderTabBtn"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BGFrame:BGTopContainer:AbilityBuilderTabBtn"):SetCheck(false)
 end
 
 function Abilities:OnLevelUpUnlock_Class_Ability(splAbility)
@@ -767,9 +776,9 @@ end
 
 function Abilities:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.Abilities then return end
-	if not self.wndMain or not self.wndMain:IsValid() then return end
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then return end
 	local tRect = {}
-	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	tRect.l, tRect.t, tRect.r, tRect.b = self.tWndRefs.wndMain:GetRect()
 
 	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 end
@@ -779,13 +788,13 @@ end
 -----------------------------------------------------------------------------------------------
 
 function Abilities:HelperRedrawPoints()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
 	local nTotalAMP = AbilityBook.GetTotalPower()
 	local nAvailableAMP = AbilityBook.GetAvailablePower()
-	local wndBGPointsContainer = self.wndMain:FindChild("BGPointsContainer")
+	local wndBGPointsContainer = self.tWndRefs.wndMain:FindChild("BGPointsContainer")
 	wndBGPointsContainer:FindChild("AMPPoints:AMPPointsTextSmall"):SetText(String_GetWeaselString(Apollo.GetString("AbilitiesBuilder_AvailablePoints"), nTotalAMP))
 	wndBGPointsContainer:FindChild("AMPPoints:AMPPointsTextBig"):SetText(nAvailableAMP)
 	wndBGPointsContainer:FindChild("AMPPoints:AMPPointsTextBig"):SetTextColor(nAvailableAMP == 0 and ApolloColor.new("ff56b381") or ApolloColor.new("UI_WindowTitleYellow")) -- TODO HEX
@@ -800,7 +809,7 @@ function Abilities:HelperAddSlot(nAbilityId) -- Path Skills will use another met
 
 	-- Try to put it into the first available empty slot
 	local bEmptySlotFound = false
-	local wndSlotItemContainer = self.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer")
+	local wndSlotItemContainer = self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer")
 	for idx, wndCurr in pairs(wndSlotItemContainer:GetChildren()) do
 		local wndSlotDisplay = wndCurr:FindChild("SlotDisplay")
 		if wndSlotDisplay:GetAbilityId() == 0 and not wndCurr:FindChild("SlotLockedBlocker"):IsShown() then
@@ -854,12 +863,12 @@ function Abilities:OnGenerateTooltip(wndHandler, wndControl, tType, splTarget)
 			splTarget = GameLib.GetSpell(wndControl:GetAbilityTierId())
 		end
 
-		Tooltip.GetSpellTooltipForm(self, wndHandler, splTarget, {bTiers = not self.wndPathTabBtn:IsChecked()})
+		Tooltip.GetSpellTooltipForm(self, wndHandler, splTarget, {bTiers = not self.tWndRefs.wndPathTabBtn:IsChecked()})
 	end
 end
 
 function Abilities:OnSpellbookProgPieceTooltip(wndHandler, wndControl, tType, splTarget)
-	Tooltip.GetSpellTooltipForm(self, wndHandler, wndHandler:GetData(), {bTiers = not self.wndPathTabBtn:IsChecked()})
+	Tooltip.GetSpellTooltipForm(self, wndHandler, wndHandler:GetData(), {bTiers = not self.tWndRefs.wndPathTabBtn:IsChecked()})
 end
 
 function Abilities:HelperSortLevelReqThenID(a, b) -- Priority1: Level Req. Priority2: Ability ID.

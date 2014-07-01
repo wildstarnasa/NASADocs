@@ -1,4 +1,4 @@
------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
 -- Client Lua Script for GuildBank
 -- Copyright (c) NCsoft. All rights reserved
 -----------------------------------------------------------------------------------------------
@@ -44,6 +44,9 @@ function GuildBank:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -53,14 +56,14 @@ end
 
 function GuildBank:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildBank.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function GuildBank:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("GuildBankerOpen", 			"GuildInitialize", self) -- notification you opened the bank.
 	Apollo.RegisterEventHandler("GuildBankTab", 			"OnGuildBankTab", self) -- noficiation that a guild bank tab is loaded.
 	Apollo.RegisterEventHandler("GuildBankItem", 			"OnGuildBankItem", self) -- noficiation of a change to a specific item that exists on a tab.
@@ -69,7 +72,7 @@ function GuildBank:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildPerkUnlocked", 		"OnGuildBankTabCount", self)
 	Apollo.RegisterEventHandler("GuildBankTabRename", 		"OnGuildBankTabRename", self) -- a bank tab was renamed.
 	Apollo.RegisterEventHandler("GuildInfluenceAndMoney", 	"OnGuildInfluenceAndMoney", self) -- When influence or money is updated
-	Apollo.RegisterEventHandler("GuildBankerClose", 		"CloseBank", self)
+	Apollo.RegisterEventHandler("GuildBankerClose", 		"OnCloseBank", self)
 	Apollo.RegisterEventHandler("GuildBankLog", 			"OnGuildBankLog", self) -- When a bank log comes in
 	Apollo.RegisterEventHandler("GuildChange", 				"OnGuildChange", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 		"OnPlayerCurrencyChanged", self)
@@ -79,16 +82,13 @@ function GuildBank:OnDocumentReady()
 end
 
 function GuildBank:GuildInitialize()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
-		self.wndBankItemSlot = nil
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
-	
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildBankForm", nil, self)
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("GuildBank_Title")})
-	
-	self.wndSplit = nil
-	
+
+	self.tWndRefs.wndSplit = nil
+
 	local guildSelected = nil
 	for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
 		if guildCurr:GetType() == GuildLib.GuildType_Guild then
@@ -96,22 +96,25 @@ function GuildBank:GuildInitialize()
 			local tMyRankData = guildCurr:GetRanks()[nMyRank]
 
 			guildSelected = guildCurr
-			self.wndMain:SetData(guildCurr)
-			self.wndMain:FindChild("PermissionsMain"):SetData(nMyRank)
-			self.wndMain:FindChild("BankTabBtnMgmt"):Enable(tMyRankData and (tMyRankData.bBankTabRename or tMyRankData.bSpendInfluence))
 			break
 		end
 	end
 
 	if not guildSelected then
 		ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_System, Apollo.GetString("Guild_YouAreNotInAGuild"), "" )
+		
 		Event_CancelGuildBank()
 		Event_CancelWarpartyBank()
-		self.wndMain:Destroy()
-		self.wndBankItemSlot = nil
 		return
 	end
 
+	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildBankForm", nil, self)
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.tWndRefs.wndMain, strName = Apollo.GetString("GuildBank_Title")})
+	
+	self.tWndRefs.wndMain:SetData(guildSelected)
+	self.tWndRefs.wndMain:FindChild("PermissionsMain"):SetData(nMyRank)
+	self.tWndRefs.wndMain:FindChild("BankTabBtnMgmt"):Enable(tMyRankData and (tMyRankData.bBankTabRename or tMyRankData.bSpendInfluence))
+	
 	self:Initialize(guildSelected)
 end
 
@@ -120,7 +123,7 @@ function GuildBank:Reinitialize(guildToInit)
 	if guildToInit ~= nil then
 		if guildToInit:GetType() ~= GuildLib.GuildType_WarParty then
 			local strCheckedTab
-			for idx, wndTab in pairs(self.wndMain:FindChild("BGTabsContainer"):GetChildren()) do
+			for idx, wndTab in pairs(self.tWndRefs.wndMain:FindChild("BGTabsContainer"):GetChildren()) do
 				if wndTab:IsChecked() then
 					strCheckedTab = wndTab:GetName()
 					break
@@ -130,7 +133,7 @@ function GuildBank:Reinitialize(guildToInit)
             self:GuildInitialize()
 
 			if strCheckedTab and strCheckedTab ~= "" then
-				for idx, wndTab in pairs(self.wndMain:FindChild("BGTabsContainer"):GetChildren()) do
+				for idx, wndTab in pairs(self.tWndRefs.wndMain:FindChild("BGTabsContainer"):GetChildren()) do
 					wndTab:SetCheck(wndTab:GetName() == strCheckedTab, true)
 				end
 			end
@@ -147,9 +150,9 @@ function GuildBank:Reinitialize(guildToInit)
 				self:OnBankTabBtnLog()
 			end
 		end
-	elseif self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
-		self.wndBankItemSlot = nil
+	elseif self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
+		self.tWndRefs = {}
 	end
 end
 
@@ -161,8 +164,8 @@ function GuildBank:Initialize(guildOwner)
 
 	local nBankTabCount = guildOwner:GetBankTabCount()
 	for idx = 1, knNumBankTabs do
-		local wndBankTab = self.wndMain:FindChild("BankTabBtn"..idx)
-		local wndBankTabLog = self.wndMain:FindChild("BankTabLogBtn"..idx)
+		local wndBankTab = self.tWndRefs.wndMain:FindChild("BankTabBtn"..idx)
+		local wndBankTabLog = self.tWndRefs.wndMain:FindChild("BankTabLogBtn"..idx)
 		local strBankTabName = guildOwner:GetBankTabName(idx)
 		if not strBankTabName or string.len(strBankTabName) == 0 then
 			strBankTabName = Apollo.GetString("GuildBank_BankTab")
@@ -181,34 +184,39 @@ function GuildBank:Initialize(guildOwner)
 		ktWithdrawLimit[idx] = nLimit
 	end
 
-	self.wndMain:FindChild("MoneyTabLogBtn"):SetData(-1)
-	self.wndMain:FindChild("RepairTabLogBtn"):SetData(-2)
+	self.tWndRefs.wndMain:FindChild("MoneyTabLogBtn"):SetData(-1)
+	self.tWndRefs.wndMain:FindChild("RepairTabLogBtn"):SetData(-2)
 
 	self.strTransferType = nil
 	self.tCurrentDragData = nil
 
-	self.wndMain:FindChild("BankTabBtnLog"):Enable(true)
-	self.wndMain:FindChild("BankTabBtnVault"):Enable(true)
-	self.wndMain:FindChild("BankTabBtnPermissions"):Enable(true)
-	self.wndMain:FindChild("PermissionsMoneyCashWindow"):SetAmountLimit(knMaxTransactionLimit)
-	self.wndMain:FindChild("PermissionsRepairCashWindow"):SetAmountLimit(knMaxTransactionLimit)
-	self.wndMain:FindChild("PlayerWithdrawAmountWindow"):SetAmountLimit(knMaxTransactionLimit)
-	self.wndMain:FindChild("GuildCashInteractEditCashWindow"):SetAmountLimit(knMaxTransactionLimit)
-	self.wndMain:FindChild("BankTabBtnCash"):AttachWindow(self.wndMain:FindChild("CashScreenMain"))
-	self.wndMain:FindChild("BankTabBtnLog"):AttachWindow(self.wndMain:FindChild("BankLogScreenMain"))
-	self.wndMain:FindChild("BankTabBtnMgmt"):AttachWindow(self.wndMain:FindChild("LeaderScreenMain"))
-	self.wndMain:FindChild("BankTabBtnVault"):AttachWindow(self.wndMain:FindChild("BankScreenMain")) -- TEMP
-	self.wndMain:FindChild("BankTabBtnPermissions"):AttachWindow(self.wndMain:FindChild("PermissionsMain"))
+	self.tWndRefs.wndMain:FindChild("BankTabBtnLog"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("BankTabBtnVault"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("BankTabBtnPermissions"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("PermissionsMoneyCashWindow"):SetAmountLimit(knMaxTransactionLimit)
+	self.tWndRefs.wndMain:FindChild("PermissionsRepairCashWindow"):SetAmountLimit(knMaxTransactionLimit)
+	self.tWndRefs.wndMain:FindChild("PlayerWithdrawAmountWindow"):SetAmountLimit(knMaxTransactionLimit)
+	self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):SetAmountLimit(knMaxTransactionLimit)
+	self.tWndRefs.wndMain:FindChild("BankTabBtnCash"):AttachWindow(self.tWndRefs.wndMain:FindChild("CashScreenMain"))
+	self.tWndRefs.wndMain:FindChild("BankTabBtnLog"):AttachWindow(self.tWndRefs.wndMain:FindChild("BankLogScreenMain"))
+	self.tWndRefs.wndMain:FindChild("BankTabBtnMgmt"):AttachWindow(self.tWndRefs.wndMain:FindChild("LeaderScreenMain"))
+	self.tWndRefs.wndMain:FindChild("BankTabBtnVault"):AttachWindow(self.tWndRefs.wndMain:FindChild("BankScreenMain")) -- TEMP
+	self.tWndRefs.wndMain:FindChild("BankTabBtnPermissions"):AttachWindow(self.tWndRefs.wndMain:FindChild("PermissionsMain"))
 
 	self:OnBankTabBtnCash()
 end
 
-function GuildBank:CloseBank()
-	if self.wndMain ~= nil then
-		self.wndMain:Destroy()
-		self.wndBankItemSlot = nil
+function GuildBank:OnCloseBank()
+	if self.tWndRefs.wndMain ~= nil and self.tWndRefs.wndMain:IsValid() then
+		self.tWndRefs.wndMain:Destroy()
 	end
 	
+		self.tWndRefs = {}
+	end
+
+function GuildBank:OnCloseBtnSignal(wndHandler, wndControl, eMouseButton)
+	self:OnCloseBank()
+
 	Event_CancelGuildBank()
 	Event_CancelWarpartyBank()
 end
@@ -220,28 +228,28 @@ end
 function GuildBank:OnBankTabBtnVault(wndHandler, wndControl)
 	self:HelperUpdateHeaderText(Apollo.GetString("GuildBank_Title"))
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	local nGuildBankTabNum = guildOwner:GetBankTabCount()
 
 	if nGuildBankTabNum ~= 0 then
 
-		for idx, wndCurr in pairs(self.wndMain:FindChild("TopRowBankTabItems"):GetChildren()) do
+		for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("TopRowBankTabItems"):GetChildren()) do
 			if idx == 1 then
 				self:OnBankTabCheck(wndCurr, wndCurr)
 			end
 			wndCurr:SetCheck(idx == 1)
 		end
 	else
-		self.wndMain:FindChild("wndNoBankTabsMessage"):SetText(Apollo.GetString("Bank_NoBankTabsMessage"))
-		self.wndMain:FindChild("wndNoBankTabsMessage"):Show(true)
-		self.wndMain:FindChild("bnkManagementButtonNoTab"):Show(true)
+		self.tWndRefs.wndMain:FindChild("wndNoBankTabsMessage"):SetText(Apollo.GetString("Bank_NoBankTabsMessage"))
+		self.tWndRefs.wndMain:FindChild("wndNoBankTabsMessage"):Show(true)
+		self.tWndRefs.wndMain:FindChild("bnkManagementButtonNoTab"):Show(true)
 	end
 
 end
 
 function GuildBank:OnBankTabMouseEnter(wndHandler, wndControl)
 	if self.tCurrentDragData and wndHandler:IsEnabled() then
-		for idx, wndCurr in pairs(self.wndMain:FindChild("TopRowBankTabItems"):GetChildren()) do
+		for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("TopRowBankTabItems"):GetChildren()) do
 			wndCurr:SetCheck(wndCurr == wndHandler)
 		end
 		self:OnBankTabCheck(wndHandler, wndControl)
@@ -250,36 +258,36 @@ end
 
 function GuildBank:OnBankTabCheck(wndHandler, wndControl)
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 
 	local nGuildBankTabNum = guildOwner:GetBankTabCount()
 
 	if nGuildBankTabNum ~= 0 then
-		self.wndMain:FindChild("MainBankNoVisibility"):Show(false)
+		self.tWndRefs.wndMain:FindChild("MainBankNoVisibility"):Show(false)
 		guildOwner:OpenBankTab(wndHandler:GetData()) -- Will call OnGuildBankTab
 	else
-		self.wndMain:FindChild("wndNoBankTabsMessage"):SetText(Apollo.GetString("Bank_NoBankTabsMessage"))
-		self.wndMain:FindChild("wndNoBankTabsMessage"):Show(true)
-		self.wndMain:FindChild("bnkManagementButtonNoTab"):Show(true)
+		self.tWndRefs.wndMain:FindChild("wndNoBankTabsMessage"):SetText(Apollo.GetString("Bank_NoBankTabsMessage"))
+		self.tWndRefs.wndMain:FindChild("wndNoBankTabsMessage"):Show(true)
+		self.tWndRefs.wndMain:FindChild("bnkManagementButtonNoTab"):Show(true)
 	end
 end
 
 function GuildBank:OnBankTabUncheck(wndHandler, wndControl)
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	if guildOwner then
 		guildOwner:CloseBankTab()
 	end
 
-	self.wndMain:FindChild("SharedBGMainFrame"):Show(true)
-	self.wndMain:FindChild("MainBankNoVisibility"):Show(false)
-	self.wndMain:FindChild("wndNoBankTabsMessage"):Show(false)
-	self.wndMain:FindChild("bnkManagementButtonNoTab"):Show(false)
+	self.tWndRefs.wndMain:FindChild("SharedBGMainFrame"):Show(true)
+	self.tWndRefs.wndMain:FindChild("MainBankNoVisibility"):Show(false)
+	self.tWndRefs.wndMain:FindChild("wndNoBankTabsMessage"):Show(false)
+	self.tWndRefs.wndMain:FindChild("bnkManagementButtonNoTab"):Show(false)
 	self:HelperEmptyMainBankScrollbar(false)
 end
 
 function GuildBank:OnGuildBankTab(guildOwner, nTab)
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
 
@@ -287,8 +295,8 @@ function GuildBank:OnGuildBankTab(guildOwner, nTab)
 	local tMyRankData = tRanksTable[guildOwner:GetMyRank()]
 	local tMyRankDataPermissions = tMyRankData.arBankTab[nTab]
 
-	self.wndMain:FindChild("BankScreenMain"):Show(true)
-	self.wndMain:FindChild("SharedBGMainFrame"):Show(false)
+	self.tWndRefs.wndMain:FindChild("BankScreenMain"):Show(true)
+	self.tWndRefs.wndMain:FindChild("SharedBGMainFrame"):Show(false)
 	if not self.tCurrentDragData then
 		self:DoFlashAnimation()
 	end
@@ -297,7 +305,7 @@ function GuildBank:OnGuildBankTab(guildOwner, nTab)
 	if not tMyRankData or not tMyRankDataPermissions or not tMyRankDataPermissions.bVisible then
 		self:HelperUpdateHeaderText()
 		self:HelperEmptyMainBankScrollbar(false)
-		self.wndMain:FindChild("MainBankNoVisibility"):Show(true)
+		self.tWndRefs.wndMain:FindChild("MainBankNoVisibility"):Show(true)
 		return
 	end
 
@@ -319,19 +327,19 @@ function GuildBank:OnGuildBankTab(guildOwner, nTab)
 
 	-- All Slots
 	self:HelperEmptyMainBankScrollbar(true)
-	self.wndMain:FindChild("MainBankScrollbar"):SetData(nTab)
+	self.tWndRefs.wndMain:FindChild("MainBankScrollbar"):SetData(nTab)
 	for idx, tCurrData in ipairs(guildOwner:GetBankTab(nTab)) do -- This doesn't hit the server, but we can still use GuildBankItem for updating afterwards
 		self:HelperDrawBankItem(tCurrData.itemInSlot, nTab, tCurrData.nIndex)
 	end
-	self.wndMain:FindChild("MainBankScrollbar"):ArrangeChildrenTiles(0)
+	self.tWndRefs.wndMain:FindChild("MainBankScrollbar"):ArrangeChildrenTiles(0)
 end
 
 function GuildBank:HelperDrawBankItem(itemDrawing, nTab, nInventorySlot)
-	if not self.wndBankItemSlot or not self.wndBankItemSlot[nInventorySlot] then
+	if not self.tWndRefs.tBankItemSlots or not self.tWndRefs.tBankItemSlots[nInventorySlot] then
 		return
 	end
 
-	local wndBankSlot = self.wndBankItemSlot[nInventorySlot]
+	local wndBankSlot = self.tWndRefs.tBankItemSlots[nInventorySlot]
 	wndBankSlot:FindChild("BankItemIcon"):SetData(itemDrawing)
 	wndBankSlot:FindChild("BankItemIcon"):SetSprite(itemDrawing:GetIcon())
 	self:HelperBuildItemTooltip(wndBankSlot:FindChild("BankItemIcon"), itemDrawing)
@@ -343,17 +351,17 @@ function GuildBank:HelperDrawBankItem(itemDrawing, nTab, nInventorySlot)
 end
 
 function GuildBank:OnGuildBankItem(guildOwner, nTab, nInventorySlot, itemUpdated, bRemoved)
-	if not self.wndBankItemSlot or
-	   not self.wndBankItemSlot[nInventorySlot] or
-	   not self.wndMain or
-	   not self.wndMain:IsValid() or
-	   nTab ~= self.wndMain:FindChild("MainBankScrollbar"):GetData() then
+	if not self.tWndRefs.tBankItemSlots or
+	   not self.tWndRefs.tBankItemSlots[nInventorySlot] or
+	   not self.tWndRefs.wndMain or
+	   not self.tWndRefs.wndMain:IsValid() or
+	   nTab ~= self.tWndRefs.wndMain:FindChild("MainBankScrollbar"):GetData() then
 
 		return
 	end -- Viewing same tab page
 
 	if bRemoved then
-		local wndItem = self.wndBankItemSlot[nInventorySlot]
+		local wndItem = self.tWndRefs.tBankItemSlots[nInventorySlot]
 		wndItem:FindChild("BankItemIcon"):SetData(nil)
 		wndItem:FindChild("BankItemIcon"):SetText("")
 		wndItem:FindChild("BankItemIcon"):SetSprite("")
@@ -364,8 +372,8 @@ function GuildBank:OnGuildBankItem(guildOwner, nTab, nInventorySlot, itemUpdated
 end
 
 function GuildBank:OnBankItemMouseButtonDown(wndHandler, wndControl, eMouseButton, bDoubleClick)
-	if eMouseButton == GameLib.CodeEnumInputMouse.Right and self.wndMain:GetData() and wndHandler:GetData() then
-		local guildOwner = self.wndMain:GetData()
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and self.tWndRefs.wndMain:GetData() and wndHandler:GetData() then
+		local guildOwner = self.tWndRefs.wndMain:GetData()
 		local itemSelected = wndHandler:GetData() -- wndHandler is BankItemIcon
 		guildOwner:MoveBankItemToInventory(itemSelected)
 		Event_FireGenericEvent("GuildBank_ShowPersonalInventory")
@@ -381,12 +389,12 @@ function GuildBank:OnBankItemBeginDragDrop(wndHandler, wndControl, nTransferStac
 	if wndHandler ~= wndControl then
 		return false
 	end
-	
+
 	if nTransferStackCount == nil then
 		nTransferStackCount  = 0 -- 0 is default for the whole stack.
 	end
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	local itemSelected = wndHandler:GetData()
 	if itemSelected then
 		self.strTransferType = guildOwner:BeginBankItemTransfer(itemSelected, nTransferStackCount) -- returns nil if item is bogus or "guild" can't do bank operations. (it is a circle or something)
@@ -422,20 +430,20 @@ function GuildBank:OnBankItemDragDropCancel() -- Also called from UI
 end
 
 function GuildBank:OnBankItemEndDragDrop(wndHandler, wndControl, nX, nY, wndSource, strType, nBagSlot) -- Bank Icon
-	if not wndHandler or not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() or wndSource == wndHandler then
+	if not wndHandler or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() or wndSource == wndHandler then
 		self:OnBankItemDragDropCancel()
 		return false
 	end
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	local nDestinationSlot = wndControl:GetParent():GetData() -- TODO refactor. BankItemIcon -> BankItem -> nIndex
-	local nDestinationTab = self.wndMain:FindChild("MainBankScrollbar"):GetData()
+	local nDestinationTab = self.tWndRefs.wndMain:FindChild("MainBankScrollbar"):GetData()
 
 	if strType == self.strTransferType then -- be sure to check, it could be a dd operation from a warparty or something.
 		guildOwner:EndBankItemTransfer(nDestinationTab, nDestinationSlot)
 
 	elseif strType == "DDBagItem" and nBagSlot then
-		local itemDepositing = self.wndMain:FindChild("HiddenBagWindow"):GetItem(nBagSlot)
+		local itemDepositing = self.tWndRefs.wndMain:FindChild("HiddenBagWindow"):GetItem(nBagSlot)
 		if itemDepositing ~= nil then
 			local nQuantity = 0 -- TODO, split stack functionality  (0 is default for the whole stack)
 			guildOwner:BeginBankItemTransfer(itemDepositing, nQuantity)
@@ -454,37 +462,37 @@ end
 function GuildBank:CreateSplitWindow(item, wndParent)
 	if not item then return end
 
-	if self.wndSplit and self.wndSplit:IsValid() then
-		self.wndSplit:Destroy()
+	if self.tWndRefs.wndSplit and self.tWndRefs.wndSplit:IsValid() then
+		self.tWndRefs.wndSplit:Destroy()
 	end
 
-	self.wndSplit = Apollo.LoadForm(self.xmlDoc, "SplitStackContainer", wndParent, self)
-	
+	self.tWndRefs.wndSplit = Apollo.LoadForm(self.xmlDoc, "SplitStackContainer", wndParent, self)
+
 	local nStackCount = item:GetStackCount()
 	if nStackCount < 2 then
-		self.wndSplit:Show(false)
+		self.tWndRefs.wndSplit:Show(false)
 		return
 	end
-	self.wndSplit:SetData(wndParent)
-	self.wndSplit:FindChild("SplitValue"):SetValue(1)
-	self.wndSplit:FindChild("SplitValue"):SetMinMax(1, nStackCount - 1)
-	self.wndSplit:Show(true)
+	self.tWndRefs.wndSplit:SetData(wndParent)
+	self.tWndRefs.wndSplit:FindChild("SplitValue"):SetValue(1)
+	self.tWndRefs.wndSplit:FindChild("SplitValue"):SetMinMax(1, nStackCount - 1)
+	self.tWndRefs.wndSplit:Show(true)
 end
 
 function GuildBank:OnSplitStackCloseClick()
-	if self.wndSplit == nil or not self.wndSplit:IsValid() then
+	if self.tWndRefs.wndSplit == nil or not self.tWndRefs.wndSplit:IsValid() then
 		return
 	end
-	
-	self.wndSplit:Show(false)
-	self.wndSplit:Destroy()
-	self.wndSplit = nil
+
+	self.tWndRefs.wndSplit:Show(false)
+	self.tWndRefs.wndSplit:Destroy()
+	self.tWndRefs.wndSplit = nil
 end
 
 function GuildBank:OnSplitStackConfirm(wndHandler, wndCtrl)
-	local wndParent = self.wndSplit:GetData()
-	self.wndSplit:Show(false)
-	self:OnBankItemBeginDragDrop(wndParent, wndParent, self.wndSplit:FindChild("SplitValue"):GetValue())
+	local wndParent = self.tWndRefs.wndSplit:GetData()
+	self.tWndRefs.wndSplit:Show(false)
+	self:OnBankItemBeginDragDrop(wndParent, wndParent, self.tWndRefs.wndSplit:FindChild("SplitValue"):GetValue())
 end
 
 -----------------------------------------------------------------------------------------------
@@ -492,15 +500,15 @@ end
 -----------------------------------------------------------------------------------------------
 
 function GuildBank:OnBankTabBtnCash()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	self.wndMain:SetFocus()
+	self.tWndRefs.wndMain:SetFocus()
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_MoneyAppend")))
 
-	local guildOwner = self.wndMain:GetData()
-	local wndParent = self.wndMain:FindChild("CashScreenMain")
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	local wndParent = self.tWndRefs.wndMain:FindChild("CashScreenMain")
 
 	local nTransactionAmount = wndParent:FindChild("GuildCashInteractEditCashWindow"):GetAmount()
 	wndParent:FindChild("GuildCashDeposit"):Enable(nTransactionAmount > 0)
@@ -530,8 +538,8 @@ function GuildBank:OnBankTabBtnCash()
 	wndParent:FindChild("PlayerWithdrawAmountLabel"):SetTooltip(strTooltip)
 
 	local nMyWithdrawlAmountLeft = (nMyWithdrawLimit - nMyWithdrawalToday)
-	local nWithdrawlAmount = self.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetCurrency()
-	
+	local nWithdrawlAmount = self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetCurrency()
+
 	if self.nWithdrawlAmount then
 		nMyWithdrawlAmountLeft =  nMyWithdrawlAmountLeft - self.nWithdrawlAmount
 		self.nWithdrawlAmount = 0;
@@ -546,59 +554,59 @@ function GuildBank:OnBankTabBtnCash()
 end
 
 function GuildBank:OnGuildCashDeposit(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	local guildOwner = self.wndMain:GetData()
-	guildOwner:DepositMoney(self.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetCurrency())
-	self.wndMain:FindChild("GuildCashInteractEditCashWindow"):SetAmount(0, true)
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	guildOwner:DepositMoney(self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetCurrency())
+	self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):SetAmount(0, true)
 	self:OnBankTabBtnCash()
 	wndHandler:SetFocus()
 end
 
 function GuildBank:OnGuildCashWithdraw(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	local guildOwner = self.wndMain:GetData()
-	guildOwner:WithdrawMoney(self.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetCurrency())
-	self.nWithdrawlAmount = self.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetAmount()
-	self.wndMain:FindChild("GuildCashInteractEditCashWindow"):SetAmount(0, true)
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	guildOwner:WithdrawMoney(self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetCurrency())
+	self.nWithdrawlAmount = self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):GetAmount()
+	self.tWndRefs.wndMain:FindChild("GuildCashInteractEditCashWindow"):SetAmount(0, true)
 	self:OnBankTabBtnCash()
 	wndHandler:SetFocus()
 end
 
 function GuildBank:OnGuildCashInteractEditCashWindow(wndHandler, wndControl) -- GuildCashInteractEditCashWindow
 	local nTransactionAmount = wndHandler:GetAmount()
-	local wndParent = self.wndMain:FindChild("CashScreenMain")
+	local wndParent = self.tWndRefs.wndMain:FindChild("CashScreenMain")
 	wndParent:FindChild("GuildCashDeposit"):Enable(nTransactionAmount > 0)
 	wndParent:FindChild("GuildCashWithdraw"):Enable(nTransactionAmount > 0)
 	wndParent:FindChild("GuildCashInteractEditHelpText"):Show(nTransactionAmount == 0)
 end
 
 function GuildBank:OnPlayerCurrencyChanged()
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:FindChild("CashScreenMain"):IsVisible() then
-		self.wndMain:FindChild("CashScreenMain"):FindChild("PlayerDepositAvailableWindow"):SetAmount(GameLib.GetPlayerCurrency())
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:FindChild("CashScreenMain"):IsVisible() then
+		self.tWndRefs.wndMain:FindChild("CashScreenMain"):FindChild("PlayerDepositAvailableWindow"):SetAmount(GameLib.GetPlayerCurrency())
 	end
 end
 
 function GuildBank:OnGuildInfluenceAndMoney(guildOwner, nInfluence, monCash)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:FindChild("CashScreenMain"):IsVisible() or self.wndMain:GetData() ~= guildOwner then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:FindChild("CashScreenMain"):IsVisible() or self.tWndRefs.wndMain:GetData() ~= guildOwner then
 		return
 	end
-	self.wndMain:FindChild("GuildCashAmountWindow"):SetAmount(guildOwner:GetMoney())
-	self.wndMain:FindChild("GuildInfluenceAmount"):SetText(String_GetWeaselString(Apollo.GetString("GuildBank_GuildInfluence"), guildOwner:GetInfluence()))
-	self.wndMain:FindChild("GuildCashTransSuccessText"):Show(true)
+	self.tWndRefs.wndMain:FindChild("GuildCashAmountWindow"):SetAmount(guildOwner:GetMoney())
+	self.tWndRefs.wndMain:FindChild("GuildInfluenceAmount"):SetText(String_GetWeaselString(Apollo.GetString("GuildBank_GuildInfluence"), guildOwner:GetInfluence()))
+	self.tWndRefs.wndMain:FindChild("GuildCashTransSuccessText"):Show(true)
 	Apollo.CreateTimer("GuildCashTransSuccessText", 1.5, false)
 end
 
 function GuildBank:OnGuildCashTransSuccessText()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:FindChild("GuildCashTransSuccessText") then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:FindChild("GuildCashTransSuccessText") then
 		return
 	end
-	self.wndMain:FindChild("GuildCashTransSuccessText"):Show(false)
+	self.tWndRefs.wndMain:FindChild("GuildCashTransSuccessText"):Show(false)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -614,14 +622,14 @@ function GuildBank:OnPermissionsResetBtn(wndHandler, wndControl)
 end
 
 function GuildBank:OnGuildRankChange() -- C++ Event
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() or not self.wndMain:FindChild("PermissionsMain"):IsShown() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() or not self.tWndRefs.wndMain:FindChild("PermissionsMain"):IsShown() then
 		return
 	end
 	self:DrawTabPermissions()
 end
 
 function GuildBank:OnPermissionsMoneyCashWindow(wndHandler, wndControl) -- PermissionsMoneyCashWindow
-	self.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
 	if not wndHandler:GetAmount() or wndHandler:GetAmount() == 0 then
 		wndHandler:GetParent():SetText(Apollo.GetString("GuildBank_CantWithdrawMoney")) -- PermissionsMoneyBG
 	else
@@ -630,7 +638,7 @@ function GuildBank:OnPermissionsMoneyCashWindow(wndHandler, wndControl) -- Permi
 end
 
 function GuildBank:OnPermissionsRepairCashWindow(wndHandler, wndControl) -- PermissionsRepairCashWindow
-	self.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
 	if not wndHandler:GetAmount() or wndHandler:GetAmount() == 0 then
 		wndHandler:GetParent():SetText(Apollo.GetString("GuildBank_NoRepairAllowed")) -- PermissionsRepairBG
 	else
@@ -639,18 +647,18 @@ function GuildBank:OnPermissionsRepairCashWindow(wndHandler, wndControl) -- Perm
 end
 
 function GuildBank:OnPermissionsCurrentBtnLeftRight(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	local tRankTable = guildOwner:GetRanks()
-	local nPreviousRank = self.wndMain:FindChild("PermissionsMain"):GetData()
+	local nPreviousRank = self.tWndRefs.wndMain:FindChild("PermissionsMain"):GetData()
 
 	if wndHandler:GetName() == "PermissionsCurrentRightBtn" then
 		for iRank, tRankData in pairs(tRankTable) do
 			if iRank > nPreviousRank and tRankData.bValid then
-				self.wndMain:FindChild("PermissionsMain"):SetData(iRank)
+				self.tWndRefs.wndMain:FindChild("PermissionsMain"):SetData(iRank)
 				break
 			end
 		end
@@ -658,7 +666,7 @@ function GuildBank:OnPermissionsCurrentBtnLeftRight(wndHandler, wndControl)
 		for iRank = #tRankTable, 1, -1 do
 			local tRankData = tRankTable[iRank]
 			if iRank < nPreviousRank and tRankData.bValid then
-				self.wndMain:FindChild("PermissionsMain"):SetData(iRank)
+				self.tWndRefs.wndMain:FindChild("PermissionsMain"):SetData(iRank)
 				break
 			end
 		end
@@ -668,16 +676,16 @@ function GuildBank:OnPermissionsCurrentBtnLeftRight(wndHandler, wndControl)
 end
 
 function GuildBank:DrawTabPermissions()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	self.wndMain:SetFocus()
+	self.tWndRefs.wndMain:SetFocus()
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_PermissionsLabel")))
 
-	local guildOwner = self.wndMain:GetData()
-	local wndParent = self.wndMain:FindChild("PermissionsMain")
-	local nGuildRank = self.wndMain:FindChild("PermissionsMain"):GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	local wndParent = self.tWndRefs.wndMain:FindChild("PermissionsMain")
+	local nGuildRank = self.tWndRefs.wndMain:FindChild("PermissionsMain"):GetData()
 	local tRanksTable = guildOwner:GetRanks()
 	local nTabCount = guildOwner:GetBankTabCount()
 	local tCurrRankData = tRanksTable[nGuildRank]
@@ -765,7 +773,7 @@ function GuildBank:BuildPermissionIndividualTab(wndParent, guildOwner, bCanEditR
 end
 
 function GuildBank:OnPermissionGridBtnWithdrawPlusSub(wndHandler, wndControl) -- PermissionGridBtnPlusWithdraw or PermissionGridBtnSubWithdraw
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
@@ -785,11 +793,11 @@ function GuildBank:OnPermissionGridBtnWithdrawPlusSub(wndHandler, wndControl) --
 	wndTab:FindChild("PermissionGridTextWithdraw"):SetData(nNewValue)
 	wndTab:FindChild("PermissionGridBtnSubWithdraw"):Enable(nNewValue > 1)
 	wndTab:FindChild("PermissionGridBtnPlusWithdraw"):Enable(nNewValue < #ktWithdrawLimit)
-	self.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
 end
 
 function GuildBank:OnPermissionGridBtnVisibleDeposit(wndHandler, wndControl) -- PermissionGridIconVisible or PermissionGridIconDeposit
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
@@ -805,19 +813,19 @@ function GuildBank:OnPermissionGridBtnVisibleDeposit(wndHandler, wndControl) -- 
 		wndTab:FindChild(strIcon):SetSprite("ClientSprites:Icon_Windows_UI_CRB_Checkmark")
 	end
 	wndTab:FindChild(strIcon):SetData(not wndTab:FindChild(strIcon):GetData())
-	self.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
+	self.tWndRefs.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
 end
 
 function GuildBank:OnPermissionsSaveBtn(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then return end
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then return end
 
-	local guildOwner = self.wndMain:GetData()
-	local wndParent = self.wndMain:FindChild("PermissionsMain")
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	local wndParent = self.tWndRefs.wndMain:FindChild("PermissionsMain")
 	local nGuildRank = wndParent:GetData()
 	local tPermissions = {}
 
 	local nTabCount = 0
-	for iTab, wndTab in pairs(self.wndMain:FindChild("PermissionsGridRowItems"):GetChildren()) do
+	for iTab, wndTab in pairs(self.tWndRefs.wndMain:FindChild("PermissionsGridRowItems"):GetChildren()) do
 		tPermissions[iTab] =
 		{
 			bAuthenticator = false, -- TODO
@@ -847,17 +855,17 @@ end
 
 function GuildBank:OnBankTabBtnLog(wndHandler, wndControl)
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_Log")))
-	self.wndMain:FindChild("SharedBGMainFrame"):Show(false)
+	self.tWndRefs.wndMain:FindChild("SharedBGMainFrame"):Show(false)
 
-	self.wndMain:FindChild("MoneyTabLogBtn"):SetCheck(true)
-	self.wndMain:FindChild("RepairTabLogBtn"):SetCheck(false)
-	self.wndMain:FindChild("BankTabLogBtn1"):SetCheck(false)
-	self.wndMain:FindChild("BankTabLogBtn2"):SetCheck(false)
-	self.wndMain:FindChild("BankTabLogBtn3"):SetCheck(false)
-	self.wndMain:FindChild("BankTabLogBtn4"):SetCheck(false)
-	self.wndMain:FindChild("BankTabLogBtn5"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("MoneyTabLogBtn"):SetCheck(true)
+	self.tWndRefs.wndMain:FindChild("RepairTabLogBtn"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BankTabLogBtn1"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BankTabLogBtn2"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BankTabLogBtn3"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BankTabLogBtn4"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BankTabLogBtn5"):SetCheck(false)
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	guildOwner:RequestMoneyLogs()
 end
 
@@ -893,13 +901,13 @@ function GuildBank:OnGuildBankLog(guildOwner, arLogs)
 		end
 	end
 
-	self.wndMain:FindChild("BankLogText"):SetDoc(xml)
+	self.tWndRefs.wndMain:FindChild("BankLogText"):SetDoc(xml)
 end
 
 function GuildBank:OnBankLogTabCheck(wndHandler, wndControl)
-	self.wndMain:FindChild("BankLogText"):SetText("")
+	self.tWndRefs.wndMain:FindChild("BankLogText"):SetText("")
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	local eTab = wndHandler:GetData()
 	if eTab == -1 then
 		guildOwner:RequestMoneyLogs() -- Get the money logs
@@ -915,15 +923,15 @@ end
 -----------------------------------------------------------------------------------------------
 
 function GuildBank:OnBankTabBtnMgmt()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	self.wndMain:SetFocus()
+	self.tWndRefs.wndMain:SetFocus()
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_Management")))
 
-	local guildOwner = self.wndMain:GetData()
-	local wndParent = self.wndMain:FindChild("LeaderScreenMain")
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	local wndParent = self.tWndRefs.wndMain:FindChild("LeaderScreenMain")
 	local nGuildInfluence = guildOwner:GetInfluence()
 	wndParent:FindChild("MgmtBankTabInfluenceText"):SetText(String_GetWeaselString(Apollo.GetString("GuildBank_GuildInfluence"), nGuildInfluence))
 
@@ -973,14 +981,14 @@ function GuildBank:OnBankTabBtnMgmt()
 end
 
 function GuildBank:OnBankTabBtnMgmtAssist()
-	self.wndMain:FindChild("BankTabBtnMgmt"):SetCheck(true)
+	self.tWndRefs.wndMain:FindChild("BankTabBtnMgmt"):SetCheck(true)
 	self:OnBankTabBtnMgmt()
-	self.wndMain:FindChild("BankTabBtnVault"):SetCheck(false)
+	self.tWndRefs.wndMain:FindChild("BankTabBtnVault"):SetCheck(false)
 	self:OnBankTabUncheck()
 end
 
 function GuildBank:OnLeaderOptionsEditBoxChanged(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
@@ -1001,35 +1009,35 @@ function GuildBank:OnLeaderOptionsEditBoxChanged(wndHandler, wndControl)
 end
 
 function GuildBank:OnLeaderOptionsTabRenameBtn(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	local wndParent = wndHandler:GetData()
 	guildOwner:RenameBankTab(wndParent:GetData(), wndParent:FindChild("LeaderOptionsEditBox"):GetText()) -- Fires GuildBankTabRename
 end
 
 function GuildBank:OnGuildBankTabRename(guildOwner)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 	self:Reinitialize(guildOwner)
 end
 
 function GuildBank:OnLeaderOptionsTabBuyBtn(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	guildOwner:PurchasePerk(wndHandler:GetData()) -- Will call GuildBankTabCount
 end
 
 function GuildBank:OnGuildBankTabCount()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
-	local guildOwner = self.wndMain:GetData()
+	local guildOwner = self.tWndRefs.wndMain:GetData()
 	self:Reinitialize(guildOwner)
 end
 
@@ -1038,17 +1046,17 @@ end
 -----------------------------------------------------------------------------------------------
 
 function GuildBank:HelperEmptyMainBankScrollbar(bShow)
-	wndMainBankScrollbar = self.wndMain:FindChild("MainBankScrollbar")
-	
-	if not self.wndBankItemSlot then
-		self.wndBankItemSlot = {}
+	local wndMainBankScrollbar = self.tWndRefs.wndMain:FindChild("MainBankScrollbar")
+
+	if not self.tWndRefs.tBankItemSlots then
+		self.tWndRefs.tBankItemSlots = {}
 	end
 
 	for idx = 1, knMaxBankSlots do
-		if not self.wndBankItemSlot[idx] then
-			self.wndBankItemSlot[idx] = Apollo.LoadForm(self.xmlDoc, "BankItem", wndMainBankScrollbar, self)
+		if not self.tWndRefs.tBankItemSlots[idx] then
+			self.tWndRefs.tBankItemSlots[idx] = Apollo.LoadForm(self.xmlDoc, "BankItem", wndMainBankScrollbar, self)
 		end
-		local wndItem = self.wndBankItemSlot[idx]
+		local wndItem = self.tWndRefs.tBankItemSlots[idx]
 		wndItem:SetData(idx)
 		local wndBankItemIcon = wndItem:FindChild("BankItemIcon")
 		if wndBankItemIcon ~= nil then
@@ -1058,7 +1066,7 @@ function GuildBank:HelperEmptyMainBankScrollbar(bShow)
 		end
 		wndItem:Show(bShow)
 	end
-	self.wndMain:FindChild("MainBankScrollbar"):RecalculateContentExtents()
+	self.tWndRefs.wndMain:FindChild("MainBankScrollbar"):RecalculateContentExtents()
 end
 
 function GuildBank:HelperUpdateHeaderText(strNewHeader)
@@ -1066,14 +1074,14 @@ function GuildBank:HelperUpdateHeaderText(strNewHeader)
 	if not strNewHeader or string.len(strNewHeader) == 0 then
 		strFinalHeader = Apollo.GetString("GuildBank_Title")
 	end
-	self.wndMain:FindChild("BGHeaderText"):SetText(strFinalHeader)
+	self.tWndRefs.wndMain:FindChild("BGHeaderText"):SetText(strFinalHeader)
 end
 
 function GuildBank:DoFlashAnimation()
-	if not self.wndMain or not self.wndMain:IsValid() then
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
-	self.wndMain:FindChild("FlashAnimation"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+	self.tWndRefs.wndMain:FindChild("FlashAnimation"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
 end
 
 function GuildBank:HelperBuildItemTooltip(wndArg, itemCurrent)
@@ -1139,7 +1147,7 @@ function GuildBank:OnGuildChange()
 		end
 	end
 
-	self:CloseBank()
+	self:OnCloseBank()
 end
 
 local GuildBankInst = GuildBank:new()

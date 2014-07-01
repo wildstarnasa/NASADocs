@@ -269,6 +269,7 @@ end
 function TradeskillTree:OnHAMItemBtnUncheck(wndHandler, wndControl)
 	if self.wndExtraInfoScreen and self.wndExtraInfoScreen:IsValid() and self.wndExtraInfoScreen:IsVisible() then
 		self.wndExtraInfoScreen:Destroy()
+		self.wndExtraInfoScreen = nil
 	end
 end
 
@@ -278,6 +279,7 @@ function TradeskillTree:OnExtraInfoScreenWindowClosed(wndHandler, wndControl)
 	end
 	if self.wndExtraInfoScreen then
 		self.wndExtraInfoScreen:Destroy()
+		self.wndExtraInfoScreen = nil
 	end
 end
 
@@ -288,6 +290,7 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 
 	if self.wndExtraInfoScreen and self.wndExtraInfoScreen:IsValid() then
 		self.wndExtraInfoScreen:Destroy()
+		self.wndExtraInfoScreen = nil
 	end
 
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "ExtraInfoScreen", self.wndMain:FindChild("TradeskillTreeScroll"), self)

@@ -13,13 +13,13 @@ local knNumCostumes = 10
 
 local karCostumeSlotNames = -- string name, then id, then button art
 {
-	{"Weapon", 		GameLib.CodeEnumItemSlots.Weapon,	"CharacterWindowSprites:btn_Armor_HandsNormal", 20},
-	{"Head", 		GameLib.CodeEnumItemSlots.Head, 	"CharacterWindowSprites:btnCh_Armor_Head", 		3},
-	{"Shoulder", 	GameLib.CodeEnumItemSlots.Shoulder,	"CharacterWindowSprites:btnCh_Armor_Shoulder", 	4},
-	{"Chest", 		GameLib.CodeEnumItemSlots.Chest, 	"CharacterWindowSprites:btnCh_Armor_Chest", 	1},
-	{"Hands", 		GameLib.CodeEnumItemSlots.Hands, 	"CharacterWindowSprites:btnCh_Armor_Hands", 	6},
-	{"Legs", 		GameLib.CodeEnumItemSlots.Legs, 	"CharacterWindowSprites:btnCh_Armor_Legs", 		2},
-	{"Feet", 		GameLib.CodeEnumItemSlots.Feet, 	"CharacterWindowSprites:btnCh_Armor_Feet", 		5},
+	{strSlot="Weapon", 	 eSlotId=GameLib.CodeEnumItemSlots.Weapon,	 strSprite="CharacterWindowSprites:btn_Armor_HandsNormal",},
+	{strSlot="Head", 	 eSlotId=GameLib.CodeEnumItemSlots.Head, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Head",},
+	{strSlot="Shoulder", eSlotId=GameLib.CodeEnumItemSlots.Shoulder, strSprite="CharacterWindowSprites:btnCh_Armor_Shoulder",},
+	{strSlot="Chest", 	 eSlotId=GameLib.CodeEnumItemSlots.Chest, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Chest",},
+	{strSlot="Hands", 	 eSlotId=GameLib.CodeEnumItemSlots.Hands, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Hands",},
+	{strSlot="Legs", 	 eSlotId=GameLib.CodeEnumItemSlots.Legs, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Legs",},
+	{strSlot="Feet", 	 eSlotId=GameLib.CodeEnumItemSlots.Feet, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Feet",},
 }
 
 function Costumes:new(o)
@@ -60,15 +60,15 @@ function Costumes:OnDocumentReady()
 	
 	self.wndMain:Show(false, true)
 	
+	self.tEquippedItems = {}
 	self.nCurrentCostume = nil
 	self.arCostumeSlots = {}
 	self.arDyeButtons = {{}, {}, {}}
 	
 	for idx, tInfo in ipairs(karCostumeSlotNames) do
 		local wndCostumeEntry = Apollo.LoadForm(self.xmlDoc, "CostumeEntryForm", self.wndMain:FindChild("CostumeListContainer"), self)
-		wndCostumeEntry:FindChild("CostumeSlot"):ChangeArt(tInfo[3])
-
-		wndCostumeEntry:FindChild("CostumeSlot"):SetData(tInfo[2])
+		wndCostumeEntry:FindChild("CostumeSlot"):ChangeArt(tInfo.strSprite)
+		wndCostumeEntry:FindChild("CostumeSlot"):SetData(tInfo.eSlotId)
 		
 		wndCostumeEntry:FindChild("DyeColor1Container:DyeSwatchArtHack:DyeSwatch"):Show(false)
 		wndCostumeEntry:FindChild("DyeColor2Container:DyeSwatchArtHack:DyeSwatch"):Show(false)
@@ -78,7 +78,7 @@ function Costumes:OnDocumentReady()
 		wndCostumeEntry:FindChild("DyeColor2"):Enable(false)
 		wndCostumeEntry:FindChild("DyeColor3"):Enable(false)
 		
-		if tInfo[2] == GameLib.CodeEnumItemSlots.Weapon then
+		if tInfo.eSlotId == GameLib.CodeEnumItemSlots.Weapon then
 			--spacer after weapon
 			self.wndSpacer = Apollo.LoadForm(self.xmlDoc, "CostumeEntrySpacer", self.wndMain:FindChild("CostumeListContainer"), self)
 			self.wndSpacer:FindChild("DyeColor1"):SetData(1)
@@ -92,17 +92,17 @@ function Costumes:OnDocumentReady()
 			wndCostumeEntry:FindChild("VisibleBtn"):Enable(false)
 			wndCostumeEntry:FindChild("VisibleBtn:VisibleBtnIcon"):SetBGColor(ApolloColor.new("UI_BtnTextHoloDisabled"))
 		else
-			wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo[2])
+			wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo.eSlotId)
 		end
 		
-		table.insert(self.arDyeButtons[1], wndCostumeEntry:FindChild("DyeColor1"))
-		table.insert(self.arDyeButtons[2], wndCostumeEntry:FindChild("DyeColor2"))
-		table.insert(self.arDyeButtons[3], wndCostumeEntry:FindChild("DyeColor3"))
+		self.arDyeButtons[1][tInfo.eSlotId] = wndCostumeEntry:FindChild("DyeColor1")
+		self.arDyeButtons[2][tInfo.eSlotId] = wndCostumeEntry:FindChild("DyeColor2")
+		self.arDyeButtons[3][tInfo.eSlotId] = wndCostumeEntry:FindChild("DyeColor3")
 		
-		wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo[2])
-		wndCostumeEntry:FindChild("RemoveSlotBtn"):SetData(tInfo[2])
+		wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo.eSlotId)
+		wndCostumeEntry:FindChild("RemoveSlotBtn"):SetData(tInfo.eSlotId)
 		
-		self.arCostumeSlots[tInfo[2]] = wndCostumeEntry
+		self.arCostumeSlots[tInfo.eSlotId] = wndCostumeEntry
 	end
 	
 	self.wndMain:FindChild("CostumeListContainer"):ArrangeChildrenVert(0)
@@ -160,21 +160,20 @@ end
 
 function Costumes:OnDyeSelect(wndHandler, wndControl, eMouseButton)
 	if wndHandler ~= wndControl then return end
-	local tDye = wndControl:GetData()
-
-	self:HelperPreviewItems(tDye)
+	
+	self:HelperPreviewItems(wndControl:GetData())
 end
 
 function Costumes:OnDyeCursorAll(wndHandler, wndControl, eMouseButton)
 	if wndHandler ~= wndControl then return end
 	
 	if wndControl:IsChecked() then
-		for idx, tButton in ipairs(self.arDyeButtons[wndControl:GetData()]) do
+		for idx, tButton in pairs(self.arDyeButtons[wndControl:GetData()]) do
 			tButton:SetCheck(true)
 			self:OnDyeChecked(tButton, false)
 		end
 	else
-		for idx, tButton in ipairs(self.arDyeButtons[wndControl:GetData()]) do
+		for idx, tButton in pairs(self.arDyeButtons[wndControl:GetData()]) do
 			tButton:SetCheck(false)
 			self:OnDyeChecked(tButton, false)
 		end
@@ -200,7 +199,7 @@ function Costumes:OnDyeCheckedHelper(wndControl, nDyeChannel, bCheckAll)
 	local nControlDyeChannel = wndControl:GetData() ~= nil and wndControl:GetData()[1] or 0
 	local bAllChecked = true
 	
-	for idx, tButton in ipairs(self.arDyeButtons[nDyeChannel]) do
+	for idx, tButton in pairs(self.arDyeButtons[nDyeChannel]) do
 		if tButton:IsEnabled() then
 			if tButton:IsChecked() then
 				bShowBlocker = false
@@ -236,6 +235,33 @@ end
 
 function Costumes:OnResetBtnClicked(wndHandler, wndControl)
 	self:Reset(true) -- tell the function to retain the slot selection
+end
+
+function Costumes:OnGenerateTooltip(wndHandler, wndControl, eType, itemCurr, idx)
+	wndControl:SetTooltipDoc(nil)
+
+	if not wndHandler:GetData() then return end
+	
+	local tButton = self.arDyeButtons[1][wndHandler:GetData()]
+	
+	if not tButton then return end
+	
+	local itemData = tButton:GetData() and tButton:GetData()[2] or nil
+	
+	if itemData then
+		local tPrimaryTooltipOpts = {}
+		local itemEquipped = itemData:GetEquippedItemForItemType() or itemData
+
+		tPrimaryTooltipOpts.bPrimary = true
+		
+		if itemData:GetItemId() ~= itemEquipped:GetItemId() then
+			tPrimaryTooltipOpts.itemCompare = itemEquipped
+		end
+
+		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
+			Tooltip.GetItemTooltipForm(self, wndHandler, itemData, tPrimaryTooltipOpts)
+		end
+	end
 end
 
 function Costumes:OnCostumeSlotBtn(wndHandler, wndControl, eMouseButton, nPosX, nPosY, bDoubleClick)
@@ -332,25 +358,95 @@ function Costumes:UpdateCostumeSlotIcons()
 		wndCostumeBtn:Show( idx <= self.nCostumeCount )
 	end
 	
-	if self.nCurrentCostume > 0 and self.nCurrentCostume ~= nil then
+	local tEquippedItems = unitPlayer and unitPlayer:GetEquippedItems() or {}
+	for nIdx, tInfo in ipairs(karCostumeSlotNames) do
+		local tCostumeItem = nil
+		
+		for nIdx2, tItemInfo in ipairs(tEquippedItems) do
+			if tItemInfo:GetSlotName() == tInfo.strSlot then
+				tCostumeItem = tItemInfo
+				self.tEquippedItems[tInfo.eSlotId] = tItemInfo
+				break
+			end
+		end
+		
+		if tCostumeItem ~= nil then
+			local tDyeChannels = tCostumeItem:GetAvailableDyeChannel()
+			
+			if self.arDyeButtons[1][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[1][tInfo.eSlotId]:SetData({1, tCostumeItem, self.wndSpacer:FindChild("DyeColor1"), tInfo.eSlotId})
+				self.arDyeButtons[1][tInfo.eSlotId]:Enable(tDyeChannels.bDyeChannel1)
+				self.arDyeButtons[1][tInfo.eSlotId]:SetTooltip(tDyeChannels.bDyeChannel1 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
+			end
+			if self.arDyeButtons[2][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[2][tInfo.eSlotId]:SetData({2, tCostumeItem, self.wndSpacer:FindChild("DyeColor2"), tInfo.eSlotId})
+				self.arDyeButtons[2][tInfo.eSlotId]:Enable(tDyeChannels.bDyeChannel2)
+				self.arDyeButtons[2][tInfo.eSlotId]:SetTooltip(tDyeChannels.bDyeChannel2 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
+			end
+			if self.arDyeButtons[3][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[3][tInfo.eSlotId]:SetData({3, tCostumeItem, self.wndSpacer:FindChild("DyeColor3"), tInfo.eSlotId})
+				self.arDyeButtons[3][tInfo.eSlotId]:Enable(tDyeChannels.bDyeChannel3)
+				self.arDyeButtons[3][tInfo.eSlotId]:SetTooltip(tDyeChannels.bDyeChannel3 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
+			end
+		else
+			if self.arDyeButtons[1][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[1][tInfo.eSlotId]:SetData(nil)
+				self.arDyeButtons[1][tInfo.eSlotId]:Enable(false)
+				self.arDyeButtons[1][tInfo.eSlotId]:SetTooltip("")
+			end
+			if self.arDyeButtons[2][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[2][tInfo.eSlotId]:SetData(nil)
+				self.arDyeButtons[2][tInfo.eSlotId]:Enable(false)
+				self.arDyeButtons[2][tInfo.eSlotId]:SetTooltip("")
+			end
+			if self.arDyeButtons[3][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[3][tInfo.eSlotId]:SetData(nil)
+				self.arDyeButtons[3][tInfo.eSlotId]:Enable(false)
+				self.arDyeButtons[3][tInfo.eSlotId]:SetTooltip("")
+			end
+		end
+	end
+	
+	wndHeaderFrame:FindChild("SelectCostumeWindowToggle"):SetText(Apollo.GetString("Character_CostumeSelectDefault"))
+		
+	for idx, wndSlot in pairs(self.arCostumeSlots) do
+		local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
+		
+		local tCurrItem = nil
+		for nIdx2, tItemInfo in ipairs(tEquippedItems) do
+			if tItemInfo:GetSlot() == idx-1 then
+				tCurrItem = tItemInfo
+				break
+			end
+		end
+		
+		wndCostumeIcon:SetSprite(tCurrItem ~= nil and tCurrItem:GetIcon() or "")
+		wndCostumeIcon:GetWindowSubclass():SetItem(tCurrItem)
+		
+		wndSlot:FindChild("VisibleBtn"):SetCheck(false)
+		wndSlot:FindChild("VisibleBtn"):Enable(false)
+		wndSlot:FindChild("RemoveSlotBtn"):Enable(false)
+	end
+	
+	if self.nCurrentCostume > 0 then
 		for nIdx, tInfo in ipairs(karCostumeSlotNames) do
-			local tCostumeItem = GameLib.GetCostumeItem(self.nCurrentCostume, tInfo[4])
+			local tCostumeItem = GameLib.GetCostumeItem(self.nCurrentCostume, tInfo.eSlotId) or self.tEquippedItems[tInfo.eSlotId]
 			local tDyeChannels = tCostumeItem ~= nil and tCostumeItem:GetAvailableDyeChannel() or {bDyeChannel1=false, bDyeChannel2=false, bDyeChannel3=false}
 			
-			if self.arDyeButtons[1][nIdx] ~= nil then
-				self.arDyeButtons[1][nIdx]:SetData({1, tCostumeItem, self.wndSpacer:FindChild("DyeColor1"), nIdx})
-				self.arDyeButtons[1][nIdx]:Enable(tDyeChannels.bDyeChannel1)
-				self.arDyeButtons[1][nIdx]:SetTooltip(tDyeChannels.bDyeChannel1 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))				
+			if self.arDyeButtons[1][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[1][tInfo.eSlotId]:SetData({1, tCostumeItem, self.wndSpacer:FindChild("DyeColor1"), tInfo.eSlotId})
+				self.arDyeButtons[1][tInfo.eSlotId]:Enable(tDyeChannels.bDyeChannel1)
+				self.arDyeButtons[1][tInfo.eSlotId]:SetTooltip(tDyeChannels.bDyeChannel1 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))				
 			end
-			if self.arDyeButtons[2][nIdx] ~= nil then
-				self.arDyeButtons[2][nIdx]:SetData({2, tCostumeItem, self.wndSpacer:FindChild("DyeColor2"), nIdx})
-				self.arDyeButtons[2][nIdx]:Enable(tDyeChannels.bDyeChannel2)
-				self.arDyeButtons[2][nIdx]:SetTooltip(tDyeChannels.bDyeChannel2 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
+			if self.arDyeButtons[2][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[2][tInfo.eSlotId]:SetData({2, tCostumeItem, self.wndSpacer:FindChild("DyeColor2"), tInfo.eSlotId})
+				self.arDyeButtons[2][tInfo.eSlotId]:Enable(tDyeChannels.bDyeChannel2)
+				self.arDyeButtons[2][tInfo.eSlotId]:SetTooltip(tDyeChannels.bDyeChannel2 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
 			end
-			if self.arDyeButtons[3][nIdx] ~= nil then
-				self.arDyeButtons[3][nIdx]:SetData({3, tCostumeItem, self.wndSpacer:FindChild("DyeColor3"), nIdx})
-				self.arDyeButtons[3][nIdx]:Enable(tDyeChannels.bDyeChannel3)
-				self.arDyeButtons[3][nIdx]:SetTooltip(tDyeChannels.bDyeChannel3 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
+			if self.arDyeButtons[3][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[3][tInfo.eSlotId]:SetData({3, tCostumeItem, self.wndSpacer:FindChild("DyeColor3"), tInfo.eSlotId})
+				self.arDyeButtons[3][tInfo.eSlotId]:Enable(tDyeChannels.bDyeChannel3)
+				self.arDyeButtons[3][tInfo.eSlotId]:SetTooltip(tDyeChannels.bDyeChannel3 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
 			end
 		end
 		
@@ -361,13 +457,13 @@ function Costumes:UpdateCostumeSlotIcons()
 		local strName = wndCurrentCostume:GetText()
 		wndHeaderFrame:FindChild("SelectCostumeWindowToggle"):SetText(strName)
 		
-		for idx, wndSlot in pairs(self.arCostumeSlots) do
-			local tCostumeItem = GameLib.GetCostumeItem(self.nCurrentCostume, idx)
+		for eSlotId, wndSlot in pairs(self.arCostumeSlots) do
+			local tCostumeItem = GameLib.GetCostumeItem(self.nCurrentCostume, eSlotId) or self.tEquippedItems[eSlotId]
 			local strIcon = tCostumeItem ~= nil and tCostumeItem:GetIcon() or ""
-			local bShown = GameLib.IsCostumeSlotVisible(self.nCurrentCostume, idx)
+			local bShown = GameLib.IsCostumeSlotVisible(self.nCurrentCostume, eSlotId)
 			local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
 			
-			GameLib.SetCostumeSlotVisible(self.nCurrentCostume, idx, bShown)
+			GameLib.SetCostumeSlotVisible(self.nCurrentCostume, eSlotId, bShown)
 			wndSlot:FindChild("VisibleBtn"):SetCheck(bShown)
 			wndSlot:FindChild("VisibleBtn"):Enable(true)
 			wndSlot:FindChild("HiddenBlocker"):Show(not bShown)
@@ -376,77 +472,7 @@ function Costumes:UpdateCostumeSlotIcons()
 			wndCostumeIcon:SetSprite(tCurrItem ~= nil and strIcon or "")
 			wndCostumeIcon:GetWindowSubclass():SetItem(tCostumeItem)
 			
-			local wndCostumeIconCurrent = self.arCostumeSlots[idx]:FindChild("Middle:BG_IconFrameCurrent:CostumeIconCurrent")
-		end
-	else
-		local tEquippedItems = unitPlayer:GetEquippedItems()
-		
-		for nIdx, tInfo in ipairs(karCostumeSlotNames) do
-			local tCostumeItem = nil
-			
-			for nIdx2, tItemInfo in ipairs(tEquippedItems) do
-				if tItemInfo:GetSlotName() == tInfo[1] then
-					tCostumeItem = tItemInfo
-					break
-				end
-			end
-			
-			if tCostumeItem ~= nil then
-				local tDyeChannels = tCostumeItem:GetAvailableDyeChannel()
-				
-				if self.arDyeButtons[1][nIdx] ~= nil then
-					self.arDyeButtons[1][nIdx]:SetData({1, tCostumeItem, self.wndSpacer:FindChild("DyeColor1"), nIdx})
-					self.arDyeButtons[1][nIdx]:Enable(tDyeChannels.bDyeChannel1)
-					self.arDyeButtons[1][nIdx]:SetTooltip(tDyeChannels.bDyeChannel1 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
-				end
-				if self.arDyeButtons[2][nIdx] ~= nil then
-					self.arDyeButtons[2][nIdx]:SetData({2, tCostumeItem, self.wndSpacer:FindChild("DyeColor2"), nIdx})
-					self.arDyeButtons[2][nIdx]:Enable(tDyeChannels.bDyeChannel2)
-					self.arDyeButtons[2][nIdx]:SetTooltip(tDyeChannels.bDyeChannel2 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
-				end
-				if self.arDyeButtons[3][nIdx] ~= nil then
-					self.arDyeButtons[3][nIdx]:SetData({3, tCostumeItem, self.wndSpacer:FindChild("DyeColor3"), nIdx})
-					self.arDyeButtons[3][nIdx]:Enable(tDyeChannels.bDyeChannel3)
-					self.arDyeButtons[3][nIdx]:SetTooltip(tDyeChannels.bDyeChannel3 and "" or Apollo.GetString("Costumes_DyeChannelDisabled"))
-				end
-			else
-				if self.arDyeButtons[1][nIdx] ~= nil then
-					self.arDyeButtons[1][nIdx]:SetData(nil)
-					self.arDyeButtons[1][nIdx]:Enable(false)
-					self.arDyeButtons[1][nIdx]:SetTooltip("")
-				end
-				if self.arDyeButtons[2][nIdx] ~= nil then
-					self.arDyeButtons[2][nIdx]:SetData(nil)
-					self.arDyeButtons[2][nIdx]:Enable(false)
-					self.arDyeButtons[2][nIdx]:SetTooltip("")
-				end
-				if self.arDyeButtons[3][nIdx] ~= nil then
-					self.arDyeButtons[3][nIdx]:SetData(nil)
-					self.arDyeButtons[3][nIdx]:Enable(false)
-					self.arDyeButtons[3][nIdx]:SetTooltip("")
-				end
-			end
-		end
-		
-		wndHeaderFrame:FindChild("SelectCostumeWindowToggle"):SetText(Apollo.GetString("Character_CostumeSelectDefault"))
-			
-		for idx, wndSlot in pairs(self.arCostumeSlots) do
-			local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
-			
-			local tCurrItem = nil
-			for nIdx2, tItemInfo in ipairs(tEquippedItems) do
-				if tItemInfo:GetSlot() == idx-1 then
-					tCurrItem = tItemInfo
-					break
-				end
-			end
-			
-			wndCostumeIcon:SetSprite(tCurrItem ~= nil and tCurrItem:GetIcon() or "")
-			wndCostumeIcon:GetWindowSubclass():SetItem(tCurrItem)
-			
-			wndSlot:FindChild("VisibleBtn"):SetCheck(false)
-			wndSlot:FindChild("VisibleBtn"):Enable(false)
-			wndSlot:FindChild("RemoveSlotBtn"):Enable(false)
+			local wndCostumeIconCurrent = self.arCostumeSlots[eSlotId]:FindChild("Middle:BG_IconFrameCurrent:CostumeIconCurrent")
 		end
 	end
 end
@@ -489,7 +515,7 @@ end
 
 function Costumes:ResetInputs()
 	for nDyeChannel = 1,#self.arDyeButtons do
-		for idx, tButton in ipairs(self.arDyeButtons[nDyeChannel]) do
+		for idx, tButton in pairs(self.arDyeButtons[nDyeChannel]) do
 			tButton:SetCheck(false)
 			tButton:GetParent():FindChild("DyeSwatchArtHack:DyeSwatch"):SetSprite("")
 		end
@@ -547,10 +573,10 @@ function Costumes:GetSelectedItems(tDye)
 	
 	for nDyeChannel = 1,#self.arDyeButtons do
 		for idx, tInfo in ipairs(karCostumeSlotNames) do
-			local tButton = self.arDyeButtons[nDyeChannel][idx]
+			local wndButton = self.arDyeButtons[nDyeChannel][tInfo.eSlotId]
 			
-			if tButton:GetData() ~= nil then				
-				local tItem = tButton:GetData()[2]
+			if wndButton and wndButton:GetData() ~= nil then
+				local tItem = wndButton:GetData()[2]
 				
 				if tItem ~= nil then
 					if self.tSelectedItems[tItem:GetItemId()] == nil then
@@ -561,10 +587,10 @@ function Costumes:GetSelectedItems(tDye)
 						self.tSelectedItems[tItem:GetItemId()][nDyeChannel] = 0
 					end
 					
-					if nDyeId > 0 and tButton:IsChecked() then
+					if nDyeId > 0 and wndButton:IsChecked() then
 						self.tSelectedItems[tItem:GetItemId()][nDyeChannel] = nDyeId
-						tButton:GetParent():FindChild("DyeSwatch"):SetSprite(tDye.strSprite)
-						tButton:GetParent():FindChild("DyeSwatch"):Show(true)
+						wndButton:GetParent():FindChild("DyeSwatch"):SetSprite(tDye.strSprite)
+						wndButton:GetParent():FindChild("DyeSwatch"):Show(true)
 					end
 				end
 			end

@@ -288,11 +288,13 @@ function InstanceSettings:DestroyAll()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.locSavedMainLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	if self.wndWaiting and self.wndWaiting:IsValid() then
 		self.locSavedWatingLoc = self.wndWaiting:GetLocation()
 		self.wndWaiting:Destroy()
+		self.wndWaiting = nil
 	end
 end
 

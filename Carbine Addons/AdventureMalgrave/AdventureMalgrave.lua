@@ -112,6 +112,7 @@ end
 function MalgraveAdventureResources:OnHide()
 	if self.wndMain then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		self.tAdventureInfo.bIsShown = false
 	end
 end

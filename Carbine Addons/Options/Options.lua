@@ -62,9 +62,11 @@ local ktVideoSettingLevels =
 {
 	["UltraHigh"] =
 	{
+		["video.framerateMax"] = 100,
 		["lod.viewDistance"] = 920,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
+		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 0,
 		["lod.textureFilter"] = 2,
 		["lod.landLod"] = 1,
@@ -79,9 +81,11 @@ local ktVideoSettingLevels =
 	},
 	["High"] =
 	{
+		["video.framerateMax"] = 100,
 		["lod.viewDistance"] = 768,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
+		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 0,
 		["lod.textureFilter"] = 2,
 		["lod.landLod"] = 1,
@@ -96,9 +100,11 @@ local ktVideoSettingLevels =
 	},
 	["Medium"] =
 	{
+		["video.framerateMax"] = 100,
 		["lod.viewDistance"] = 640,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
+		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 1,
 		["lod.textureFilter"] = 2,
 		["lod.landLod"] = 1,
@@ -113,9 +119,11 @@ local ktVideoSettingLevels =
 	},
 	["Low"] =
 	{
+		["video.framerateMax"] = 100,
 		["lod.viewDistance"] = 512,
 		["lod.farFogDistance"] = 1536,
 		["camera.distanceMax"] = 32,
+		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 2,
 		["lod.textureFilter"] = 1,
 		["lod.landLod"] = 0,
@@ -130,9 +138,11 @@ local ktVideoSettingLevels =
 	},
 	["UltraLow"] =
 	{
+		["video.framerateMax"] = 100,
 		["lod.viewDistance"] = 256,
 		["lod.farFogDistance"] = 1024,
 		["camera.distanceMax"] = 32,
+		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 2,
 		["lod.textureFilter"] = 0,
 		["lod.landLod"] = 0,
@@ -221,6 +231,8 @@ function OptionsAddon:OnDocumentReady()
 
 	self.nDemoAutoTimeout = 0 -- TODO: more demo
 
+	self.wndVideo:FindChild("VerticalSync"):AttachWindow(self.wndVideo:FindChild("VerticalSyncBLocker"))
+	
 	self.mapCB2CVs =  -- these are auto-mapped options than don't need custom handlers
 	{
 		{wnd = self.wndVideo:FindChild("VerticalSync"), 		consoleVar = "video.verticalSync"},
@@ -255,10 +267,12 @@ function OptionsAddon:OnDocumentReady()
 	self.mapSB2CVs =  -- these are auto-mapped sliders that don't need custom handlers
 	{
 		-- video options
+		{wnd = self.wndVideo:FindChild("MaxFPSSlider"), 			consoleVar = "video.framerateMax",		buddy = self.wndVideo:FindChild("MaxFPSEditBox")},
 		{wnd = self.wndVideo:FindChild("ViewDistanceSlider"), 		consoleVar = "lod.viewDistance",		buddy = self.wndVideo:FindChild("ViewDistanceEditBox")},
 		{wnd = self.wndVideo:FindChild("VDFogSlider"), 				consoleVar = "lod.farFogDistance",		buddy = self.wndVideo:FindChild("VDFogEditBox")},
 		{wnd = self.wndVideo:FindChild("ClutterDistanceSlider"), 	consoleVar = "lod.clutterDistance",		buddy = self.wndVideo:FindChild("ClutterDistanceEditBox")},
 		{wnd = self.wndVideo:FindChild("CameraDistanceSlider"),		consoleVar = "camera.distanceMax",		buddy = self.wndVideo:FindChild("CameraDistanceEditBox")},
+		{wnd = self.wndVideo:FindChild("FieldOfVisionSlider"),		consoleVar = "camera.fovY",				buddy = self.wndVideo:FindChild("FieldOfVisionEditBox")},
 		{wnd = self.wndVideo:FindChild("GammaScaleSlider"),			consoleVar = "ppp.gamma",				buddy = self.wndVideo:FindChild("GammaScaleEditBox"), 			 format = "%.02f"},
 
 		-- audio options
@@ -1122,7 +1136,6 @@ function OptionsAddon:OnMappedOptionsCheckboxHider(wndHandler, wndControl)
 	self.wndTargeting:FindChild("AllyPlayerBeneficialDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
 	self.wndTargeting:FindChild("AllyPlayerDetrimentalDisplayBtn"):Enable(self.wndTargeting:FindChild("AllyDisplayBtn"):IsChecked())
 end
-
 
 function OptionsAddon:OnOptionsSliderChanged(wndHandler, wndControl, fValue, fOldValue)
 	local mapping = wndControl:GetData()

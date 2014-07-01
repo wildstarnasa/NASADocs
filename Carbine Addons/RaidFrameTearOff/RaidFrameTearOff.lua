@@ -183,7 +183,7 @@ function RaidFrameTearOff:Initialize(nMemberIdx)
 	end
 	
 	self.unitPlayerDisposComparison = GameLib.GetPlayerUnit()
-	self.tTrackedMemberIdx[nMemberIdx] = nMemberIdx -- Add a member to the tracked list TODO: Remove
+	self.tTrackedMemberIdx[nMemberIdx] = GroupLib.GetUnitForGroupMember(nMemberIdx) -- Add a member to the tracked list TODO: Remove
 	self:MainUpdateTimer()
 end
 
@@ -220,12 +220,37 @@ function RaidFrameTearOff:MainUpdateTimer()
 		return
 	end
 
-	local unitTarget = GameLib.GetTargetUnit()
-	for key, nMemberIdx in pairs(self.tTrackedMemberIdx) do
-		local tMemberData = GroupLib.GetGroupMember(nMemberIdx)
-		if tMemberData then
-			self:UpdateSpecificMember(nMemberIdx, tMemberData, unitTarget)
+	for nMemberIdx, unitMember in pairs(self.tTrackedMemberIdx) do
+		local unitCurrentUnit = GroupLib.GetUnitForGroupMember(nMemberIdx)
+		
+		if unitCurrentUnit ~= nil then
+		
+			local tMemberData = GroupLib.GetGroupMember(nMemberIdx)
+			local bOutOfRange = tMemberData.nHealthMax == 0
+			
+			if bOutOfRange or not tMemberData.bIsOnline then
+				Event_FireGenericEvent("GenericEvent_Raid_ToggleRaidUnTear", nMemberIdx)
+				self.tTrackedMemberIdx[nMemberIdx] = nil
+			else
+				if unitCurrentUnit == unitMember then
+					self:UpdateSpecificMember(nMemberIdx, unitMember, tMemberData)
+				else
+					local unitDisplacedUnit = GroupLib.GetUnitForGroupMember(nMemberIdx - 1)
+					if unitDisplacedUnit == unitMember then
+						self.tTrackedMemberIdx[nMemberIdx] = nil
+						self.tTrackedMemberIdx[nMemberIdx - 1] = unitMember
+						self:UpdateSpecificMember(nMemberIdx - 1, unitMember, tMemberData)
+					else
+						Event_FireGenericEvent("GenericEvent_Raid_ToggleRaidUnTear", nMemberIdx)
+						self.tTrackedMemberIdx[nMemberIdx] = nil
+					end
+				end
+			end
+		else	
+			Event_FireGenericEvent("GenericEvent_Raid_ToggleRaidUnTear", nMemberIdx)
+			self.tTrackedMemberIdx[nMemberIdx] = nil
 		end
+		
 	end
 
 	-- Remove zombie entries
@@ -249,8 +274,10 @@ function RaidFrameTearOff:MainUpdateTimer()
 	self.wndMain:SetSizingMaximum(1000, self.wndMain:GetHeight())
 end
 
-function RaidFrameTearOff:UpdateSpecificMember(nMemberIdx, tMemberData, unitTarget)
+function RaidFrameTearOff:UpdateSpecificMember(nMemberIdx, unitMember, tMemberData)
 	local wndRaidMember = self:LoadByName("RaidTearMember", self.wndMain:FindChild("RaidTearOffContainer"), nMemberIdx)
+	local unitTarget = GameLib.GetTargetUnit()
+	
 	wndRaidMember:SetSprite("sprRaidTear_BaseHoloBlue")
 	wndRaidMember:FindChild("RaidMemberToTFrame"):Show(false)
 	wndRaidMember:FindChild("RaidMemberUntearBtn"):Show(false)
@@ -298,16 +325,15 @@ function RaidFrameTearOff:UpdateSpecificMember(nMemberIdx, tMemberData, unitTarg
 	end
 
 	-- Unit
-	local unitCurr = GroupLib.GetUnitForGroupMember(nMemberIdx)
-	if unitCurr then
-		if unitTarget and unitTarget == unitCurr then
+	if unitMember then
+		if unitTarget and unitTarget == unitMember then
 			wndRaidMember:SetSprite("sprRaidTear_BaseHoloBlueBright")
 			wndRaidMember:FindChild("RaidMemberUntearBtn"):Show(not self.wndMain:FindChild("RaidLockFrameBtn"):IsChecked())
 		end
 
 		-- Target of Target
 		if tMemberData.bIsLeader or tMemberData.bMainTank or tMemberData.bMainAssist then
-			local unitToT = unitCurr:GetTarget()
+			local unitToT = unitMember:GetTarget()
 			if unitToT and self.wndMain:FindChild("RaidCustomizeAssistTargets"):IsChecked() then
 				wndRaidMember:FindChild("RaidMemberToTName"):SetData(unitToT)
 				wndRaidMember:FindChild("RaidMemberToTName"):SetText(unitToT:GetName())
@@ -324,7 +350,7 @@ function RaidFrameTearOff:UpdateSpecificMember(nMemberIdx, tMemberData, unitTarg
 
 		-- Buffs
 		if self.wndMain:FindChild("RaidCustomizeBuffs"):IsChecked() then
-			wndRaidMember:FindChild("RaidMemberBeneBuffBar"):SetUnit(unitCurr)
+			wndRaidMember:FindChild("RaidMemberBeneBuffBar"):SetUnit(unitMember)
 		else
 			wndRaidMember:FindChild("RaidMemberBeneBuffBar"):SetUnit(nil)
 		end
@@ -332,13 +358,13 @@ function RaidFrameTearOff:UpdateSpecificMember(nMemberIdx, tMemberData, unitTarg
 
 		-- Debuffs
 		if self.wndMain:FindChild("RaidCustomizeDebuffs"):IsChecked() then
-			wndRaidMember:FindChild("RaidMemberHarmBuffBar"):SetUnit(unitCurr)
+			wndRaidMember:FindChild("RaidMemberHarmBuffBar"):SetUnit(unitMember)
 		else
 			wndRaidMember:FindChild("RaidMemberHarmBuffBar"):SetUnit(nil)
 		end
 		wndRaidMember:FindChild("RaidMemberHarmBuffBar"):Show(self.wndMain:FindChild("RaidCustomizeDebuffs"):IsChecked())
 
-		self:DoHPAndShieldResizing(wndRaidMember:FindChild("RaidMemberBaseVitals"), unitCurr, true)
+		self:DoHPAndShieldResizing(wndRaidMember:FindChild("RaidMemberBaseVitals"), unitMember, true)
 	end
 
 	-- Resize

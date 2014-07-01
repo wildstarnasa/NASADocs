@@ -71,13 +71,13 @@ function MarketplaceCommodity:OnDocumentReady()
 	Apollo.RegisterEventHandler("MarketplaceWindowClose", 							"OnDestroy", self)
 
 	Apollo.RegisterTimerHandler("PostResultTimer", 									"OnPostResultTimer", self)
-	Apollo.RegisterTimerHandler("MarketplaceCommodity_HelperCheckScrollListEmpty", 	"HelperCheckScrollListEmpty", self)
 end
 
 function MarketplaceCommodity:OnDestroy()
 	if self.wndMain and self.wndMain:IsValid() then
 		self:OnSearchClearBtn()
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 	Event_CancelCommodities()
 end
@@ -166,19 +166,19 @@ function MarketplaceCommodity:InitializeCategories()
 
 		-- Add an "All" button
 		local wndAllBtn = Apollo.LoadForm(self.xmlDoc, "CategoryMidItem", wndTop:FindChild("CategoryTopList"), self)
-		wndAllBtn:FindChild("CategoryMidBtn"):SetData({ tTopCategory.nId, tMidCategory.nId, 0 })
+		wndAllBtn:FindChild("CategoryMidBtn"):SetData({ nTopCategory = tTopCategory.nId, nMidCategory = tMidCategory.nId, nBotCategory = 0 })
 		wndAllBtn:FindChild("CategoryMidBtn"):SetText(Apollo.GetString("CRB_All"))
 		wndAllBtn:SetName("CategoryMidItem_All")
 
 		-- Add the rest of the middle buttons
 		for idx3, tBotCategory in pairs(MarketplaceLib.GetCommodityTypes(tMidCategory.nId)) do
 			local wndMid = Apollo.LoadForm(self.xmlDoc, "CategoryMidItem", wndTop:FindChild("CategoryTopList"), self)
-			wndMid:FindChild("CategoryMidBtn"):SetData({ tTopCategory.nId, tMidCategory.nId, tBotCategory.nId })
+			wndMid:FindChild("CategoryMidBtn"):SetData({ nTopCategory = tTopCategory.nId, nMidCategory = tMidCategory.nId, nBotCategory = tBotCategory.nId })
 			wndMid:FindChild("CategoryMidBtn"):SetText(tBotCategory.strName)
 		end
 	end
 
-	self.wndMain:FindChild("MainCategoryContainer"):SetData({ 0, 0, 0 })
+	self.wndMain:FindChild("MainCategoryContainer"):SetData({ nTopCategory = 0, nMidCategory = 0, nBotCategory = 0 })
 end
 
 function MarketplaceCommodity:OnResizeCategories() -- Can come from XML
@@ -187,7 +187,7 @@ function MarketplaceCommodity:OnResizeCategories() -- Can come from XML
 		local nLeft, nTop, nRight, nBottom = wndTop:GetAnchorOffsets()
 		wndTop:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nListHeight + 44)
 	end
-
+	self.wndMain:FindChild("MainCategoryContainer"):RecalculateContentExtents()
 	self.wndMain:FindChild("MainCategoryContainer"):ArrangeChildrenVert(0)
 end
 
@@ -201,40 +201,86 @@ function MarketplaceCommodity:OnHeaderBtnToggle()
 	local bFilterActive = wndFilter:FindChild("FilterClearBtn"):GetData() or false
 	wndFilter:FindChild("FilterOptionsContainer"):Show(false)
 	wndFilter:FindChild("FilterClearBtn"):Show(bFilterActive) -- GOTCHA: Visibility update is delayed until a manual reset
-	--wndFilter:FindChild("FilterOptionsBtn"):SetText(bFilterActive and Apollo.GetString("MarketplaceCommodity_ViewActiveFilters") or Apollo.GetString("MarketplaceCommodity_ViewFilters"))
 
+	-- Main Build
 	self.wndMain:FindChild("MainScrollContainer"):DestroyChildren() -- TODO refactor
 	if self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderSellOrderBtn"):IsChecked() then
-		self.wndMain:FindChild("MainCategorySellBlocker"):Show(true)
-		self.wndMain:FindChild("SearchContainer"):Show(false)
-		self.wndMain:FindChild("FilterContainer"):Show(false)
 		self:InitializeSell()
 	elseif self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked() then
-		self.wndMain:FindChild("MainCategorySellBlocker"):Show(false)
-		self.wndMain:FindChild("SearchContainer"):Show(true)
-		self.wndMain:FindChild("FilterContainer"):Show(true)
 		self:InitializeBuy()
 	end
 
-	self:HelperCheckScrollListEmpty()
+	-- Empty message (if applicable)
+	local strMessage = ""
+	local bNoResults = #self.wndMain:FindChild("MainScrollContainer"):GetChildren() == 0
+	if bNoResults and string.len(self.wndMain:FindChild("SearchEditBox"):GetText()) > 0 then
+		strMessage = Apollo.GetString("MarketplaceCommodity_NoResults")
+	elseif bNoResults then -- If it's a buy tab, and they haven't clicked a category, do a custom message
+		local bAnyCategoryChecked = false
+		if self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderSellOrderBtn"):IsChecked() then
+			bAnyCategoryChecked = true
+		else
+			for idx, wndCurr in pairs(self.wndMain:FindChild("MainCategoryContainer"):GetChildren()) do
+				if wndCurr:FindChild("CategoryTopBtn") and wndCurr:FindChild("CategoryTopBtn"):IsChecked() then
+					bAnyCategoryChecked = true
+					break
+				end
+			end
+		end
+		strMessage = bAnyCategoryChecked and Apollo.GetString("MarketplaceCommodity_NoResults") or Apollo.GetString("MarketplaceCommodity_PickACategory")
+	end
+	self.wndMain:FindChild("MainScrollContainer"):SetText(strMessage)
+	self.wndMain:FindChild("MainScrollContainer"):ArrangeChildrenVert(0)
 	self.wndMain:FindChild("MainScrollContainer"):SetVScrollPos(0)
+	self:OnResizeCategories()
 end
 
 function MarketplaceCommodity:InitializeSell()
-	local unitPlayer = GameLib.GetPlayerUnit()
 	local tBothItemTables = {}
+	local tAllCategoryNames = {}
+	local unitPlayer = GameLib.GetPlayerUnit()
+
+	-- Helper method
+	local tCategoryFilterDataIds = self.wndMain:FindChild("MainCategoryContainer"):GetData() or { nTopCategory = 0, nMidCategory = 0, nBotCategory = 0 }
+	local function HelperValidateCategory(tCategoryFilterDataIds, itemCurr)
+		if tCategoryFilterDataIds.nBotCategory ~= 0 then
+			return tCategoryFilterDataIds.nBotCategory == itemCurr:GetItemType()
+		elseif tCategoryFilterDataIds.nMidCategory ~= 0 or tCategoryFilterDataIds.nTopCategory ~= 0 then -- Mid and top get merged
+			return tCategoryFilterDataIds.nMidCategory == itemCurr:GetItemFamily() or tCategoryFilterDataIds.nMidCategory == itemCurr:GetItemCategory()
+		else
+			return true -- No filter set
+		end
+	end
+
+	-- Build Table
 	for key, tCurrData in pairs(unitPlayer:GetInventoryItems()) do
-		table.insert(tBothItemTables, tCurrData.itemInBag:GetItemId(), tCurrData.itemInBag)
+		if HelperValidateCategory(tCategoryFilterDataIds, tCurrData.itemInBag) then
+			table.insert(tBothItemTables, { tCurrItem = tCurrData.itemInBag, strName = tCurrData.itemInBag:GetName() })
+		end
+		tAllCategoryNames[tCurrData.itemInBag:GetItemCategoryName()] = true
 	end
 	for key, tSatchelItemCategory in pairs(unitPlayer:GetSupplySatchelItems(1)) do
 		for key2, tCurrData in pairs(tSatchelItemCategory) do
-			table.insert(tBothItemTables, tCurrData.itemMaterial:GetItemId(), tCurrData.itemMaterial)
+			if HelperValidateCategory(tCategoryFilterDataIds, tCurrData.itemMaterial) then
+				table.insert(tBothItemTables, { tCurrItem = tCurrData.itemMaterial, strName = tCurrData.itemMaterial:GetName() })
+			end
+			tAllCategoryNames[tCurrData.itemMaterial:GetItemCategoryName()] = true
 		end
 	end
-	table.sort(tBothItemTables, function(a,b) return a:GetName() < b:GetName() end)
+	table.sort(tBothItemTables, function(a,b) return a.strName < b.strName end)
 
-	for key, tCurrItem in pairs(tBothItemTables) do
-		if tCurrItem and tCurrItem:IsCommodity() then
+	-- Show only the relevant categories
+	self.wndMain:FindChild("FilterContainer"):Show(false)
+	for idx, wndCurr in pairs(self.wndMain:FindChild("MainCategoryContainer"):GetChildren()) do
+		wndCurr:Show(tAllCategoryNames[wndCurr:GetName()]) -- Compare name against window name
+	end
+
+	-- Now build the window and do another layer of filtering
+	local strSearchFilter = string.lower(self.wndMain:FindChild("SearchEditBox"):GetText() or "")
+	local bSkipSearchFilter = string.len(strSearchFilter) == 0
+	for key, tCurrData in pairs(tBothItemTables) do
+		local tCurrItem = tCurrData.tCurrItem
+		if tCurrItem and tCurrItem:IsCommodity() and (bSkipSearchFilter or string.find(string.lower(tCurrData.strName), strSearchFilter)) then
 			local bSellNow = self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked()
 			local strWindow = bSellNow and "SimpleListItem" or "AdvancedListItem"
 			local strButtonText = bSellNow and Apollo.GetString("MarketplaceCommodity_SellNow") or Apollo.GetString("MarketplaceCommodity_CreateSellOrder")
@@ -247,7 +293,22 @@ function MarketplaceCommodity:InitializeSell()
 end
 
 function MarketplaceCommodity:InitializeBuy()
-	local tCategoryFilterDataIds = self.wndMain:FindChild("MainCategoryContainer"):GetData() or { 0, 0, 0 } -- tTopCategory, tMidCategory, tBotCategory
+	-- Category showing / hiding
+	local bAnyCategoryChecked = false
+	self.wndMain:FindChild("FilterContainer"):Show(true)
+	for idx, wndCurr in pairs(self.wndMain:FindChild("MainCategoryContainer"):GetChildren()) do
+		wndCurr:Show(true) -- Sell may hide the irrelevant categories
+		if not bAnyCategoryChecked and wndCurr:FindChild("CategoryTopBtn") and wndCurr:FindChild("CategoryTopBtn"):IsChecked() then
+			bAnyCategoryChecked = true
+		end
+	end
+
+	-- Early exit if no search or category (completely blank UI)
+	local strSearchFilter = self.wndMain:FindChild("SearchEditBox"):GetText()
+	if not bAnyCategoryChecked and string.len(strSearchFilter) == 0 then
+		return
+	end
+
 	local bBuyNow = self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked()
 	local strWindow = bBuyNow and "SimpleListItem" or "AdvancedListItem"
 	local strBtnText = bBuyNow and Apollo.GetString("MarketplaceCommodity_BuyNow") or Apollo.GetString("MarketplaceCommodity_CreateBuyOrder")
@@ -281,13 +342,11 @@ function MarketplaceCommodity:InitializeBuy()
 		end
 	end
 
-	-- Search
-	local strSearchFilter = self.wndMain:FindChild("SearchEditBox"):GetText()
-	local tSearchResults, bHitMax = MarketplaceLib.SearchCommodityItems(strSearchFilter, tCategoryFilterDataIds[1], tCategoryFilterDataIds[2], tCategoryFilterDataIds[3], fnFilter)
+	local tCategoryFilter = self.wndMain:FindChild("MainCategoryContainer"):GetData() or { nTopCategory = 0, nMidCategory = 0, nBotCategory = 0 }
+	local tSearchResults, bHitMax = MarketplaceLib.SearchCommodityItems(strSearchFilter, tCategoryFilter.nTopCategory, tCategoryFilter.nMidCategory, tCategoryFilter.nBotCategory, fnFilter)
 
 	-- Draw results then request info for each result
 	for idx, tCurrData in pairs(tSearchResults) do
-		-- wndFilter:FindChild("FilterOptionsShowAll"):IsChecked() checked later, as that info isn't available yet
 		self:BuildListItem(Item.GetDataFromId(tCurrData.nId), strWindow, strBtnText)
 		MarketplaceLib.RequestCommodityInfo(tCurrData.nId) -- Leads to OnCommodityInfoResults
 		-- TODO: Count the number of request and load spinner until they all come back
@@ -507,12 +566,6 @@ function MarketplaceCommodity:OnFilterEditBoxChanged(wndHandler, wndControl)
 	self.wndMain:FindChild("FilterContainer:FilterClearBtn"):SetData(true) -- GOTCHA: It will flag as dirty bit when the Refresh event gets called
 end
 
-function MarketplaceCommodity:OnFilterOptionsShowAllToggle(wndHandler, wndControl)
-	wndHandler:FindChild("FilterOptionsShowAllCheck"):SetSprite(wndHandler:IsChecked() and "sprCharC_NameCheckYes" or "sprRaid_RedXClose_Centered")
-	self.wndMain:FindChild("FilterClearBtn"):SetData(wndHandler:IsChecked() or self.wndMain:FindChild("FilterClearBtn"):GetData()) -- Uncheck to false only if already also false
-	self:OnRefreshBtn()
-end
-
 function MarketplaceCommodity:OnFilterOptionsRarityItemToggle(wndHandler, wndControl) -- FilterOptionsRarityItemBtn
 	self.tFilteredRarity[wndHandler:GetData()] = wndHandler:IsChecked()
 	wndHandler:FindChild("FilterOptionsRarityItemCheck"):SetSprite(wndHandler:IsChecked() and "sprCharC_NameCheckYes" or "sprRaid_RedXClose_Centered")
@@ -533,16 +586,6 @@ function MarketplaceCommodity:OnResetFilterBtn(wndHandler, wndControl)
 	wndFilter:FindChild("FilterClearBtn"):SetData(false)
 	wndFilter:FindChild("FilterOptionsLevelMinContainer"):FindChild("FilterOptionsLevelEditBox"):SetText(knMinLevel)
 	wndFilter:FindChild("FilterOptionsLevelMaxContainer"):FindChild("FilterOptionsLevelEditBox"):SetText(knMaxLevel)
-	wndFilter:FindChild("FilterOptionsShowAllCheck"):SetSprite("sprRaid_RedXClose_Centered")
-	wndFilter:FindChild("FilterOptionsShowAll"):SetCheck(false)
-	self:OnRefreshBtn()
-end
-
-function MarketplaceCommodity:OnEmptyListShowAllBtn(wndHandler, wndControl)
-	local wndFilter = self.wndMain:FindChild("FilterContainer")
-	wndFilter:FindChild("FilterOptionsShowAllCheck"):SetSprite("sprCharC_NameCheckYes")
-	wndFilter:FindChild("FilterOptionsShowAll"):SetCheck(true)
-	wndFilter:FindChild("FilterClearBtn"):SetData(true)
 	self:OnRefreshBtn()
 end
 
@@ -613,14 +656,14 @@ function MarketplaceCommodity:HelperCheckValidLevelValues(wndChanged)
 end
 
 -----------------------------------------------------------------------------------------------
--- Buy Btns
+-- Category Btns
 -----------------------------------------------------------------------------------------------
 
 function MarketplaceCommodity:OnCategoryTopBtnToggle(wndHandler, wndControl)
 	local wndParent = wndHandler:GetData()
 	self.wndMain:SetGlobalRadioSel("MarketplaceCommodity_CategoryMidBtn_GlobalRadioGroup", -1)
 
-	local tSearchData = { 0, 0, 0 }
+	local tSearchData = { nTopCategory = 0, nMidCategory = 0, nBotCategory = 0 }
 	if wndHandler:IsChecked() then
 		local wndAllBtn = wndParent:FindChild("CategoryTopList") and wndParent:FindChild("CategoryTopList"):FindChild("CategoryMidItem_All") or nil
 		if wndAllBtn then
@@ -635,7 +678,7 @@ function MarketplaceCommodity:OnCategoryTopBtnToggle(wndHandler, wndControl)
 end
 
 function MarketplaceCommodity:OnCategoryMidBtnCheck(wndHandler, wndControl)
-	self.wndMain:FindChild("MainCategoryContainer"):SetData(wndHandler:GetData())
+	self.wndMain:FindChild("MainCategoryContainer"):SetData(wndHandler:GetData()) -- { nTopCategory, nMidCategory, nBotCategory }
 	self:OnRefreshBtn()
 end
 
@@ -741,28 +784,13 @@ function MarketplaceCommodity:OnCommodityInfoResults(nItemId, tStats, tOrders)
 		return
 	end
 
+	wndMatch:Show(true)
 	wndMatch:FindChild("ListItemStatsBubble"):SetData(tStats) -- For OnGenerateTooltipFullStats
+	wndMatch:FindChild("ListItemStatsBubble"):Show(tStats.nSellOrderCount and tStats.nSellOrderCount > 0)
 	if self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() then -- Else it'll use inventory bag count
 		wndMatch:FindChild("ListCount"):SetData(tStats.nSellOrderCount)
 		wndMatch:FindChild("ListCount"):SetText(tStats.nSellOrderCount)
 	end
-
-	-- Quantity > 0 Filtering
-	local wndFilter = self.wndMain:FindChild("FilterContainer")
-	local bSellNowOrSellOrder = self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderSellOrderBtn"):IsChecked()
-	if tStats.nSellOrderCount == 0 and wndFilter:FindChild("FilterOptionsShowAll"):IsChecked() and not bSellNowOrSellOrder then
-		wndMatch:Destroy()
-		Apollo.StopTimer("MarketplaceCommodity_HelperCheckScrollListEmpty")
-		Apollo.CreateTimer("MarketplaceCommodity_HelperCheckScrollListEmpty", 0.1, false)
-		if wndFilter:FindChild("FilterClearBtn"):GetData() and #self.wndMain:FindChild("MainScrollContainer"):GetChildren() <= 1 then
-			local wndSearchFail = self:LoadByName("TooManySearchResultsText", self.wndMain:FindChild("MainScrollContainer"), "TooManySearchResultsText")
-			wndSearchFail:SetText(Apollo.GetString("MarketplaceCommodity_TooManyResultsFilterEmpty"))
-		end
-		return
-	end
-
-	wndMatch:Show(true)
-	self.wndMain:FindChild("MainScrollContainer"):ArrangeChildrenVert(0)
 
 	-- Average Small
 	local nSmall = nil
@@ -852,6 +880,8 @@ function MarketplaceCommodity:OnCommodityInfoResults(nItemId, tStats, tOrders)
 	wndMatch:FindChild("ListInputPrice"):SetTextColor(bCanAfford and "white" or "UI_BtnTextRedNormal")
 	wndMatch:FindChild("ListSubtitlePriceLeft"):Show(nValueForLeftPrice)
 	wndMatch:FindChild("ListSubtitlePriceLeft"):SetAmount(nValueForLeftPrice or 0)
+
+	self.wndMain:FindChild("MainScrollContainer"):ArrangeChildrenVert(0)
 end
 
 function MarketplaceCommodity:OnPostCommodityOrderResult(eAuctionPostResult, orderSource, nActualCost)
@@ -965,13 +995,6 @@ function MarketplaceCommodity:OnPostResultNotificationClick(wndHandler, wndContr
 	if wndHandler == wndControl then
 		wndHandler:Show(false)
 	end
-end
-
-function MarketplaceCommodity:HelperCheckScrollListEmpty()
-	local bNoResults = #self.wndMain:FindChild("MainScrollContainer"):GetChildren() == 0
-	self.wndMain:FindChild("MainScrollContainer"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("MainScrollContainer"):SetText(bNoResults and Apollo.GetString("MarketplaceCommodity_NoResults") or "")
-	self.wndMain:FindChild("EmptyListShowAllBtn"):Show(bNoResults)
 end
 
 function MarketplaceCommodity:LoadByName(strForm, wndParent, strCustomName)

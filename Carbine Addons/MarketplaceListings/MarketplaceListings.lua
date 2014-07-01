@@ -76,6 +76,7 @@ end
 function MarketplaceListings:OnToggle()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	else
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceListingsForm", nil, self)
 		self.wndMain:SetSizingMinimum(400, 300)
@@ -92,6 +93,7 @@ end
 function MarketplaceListings:OnDestroy()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		Apollo.StopTimer("MarketplaceUpdateTimer")
 	end
 end
