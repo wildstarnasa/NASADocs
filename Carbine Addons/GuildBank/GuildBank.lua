@@ -90,17 +90,20 @@ function GuildBank:GuildInitialize()
 	self.tWndRefs.wndSplit = nil
 
 	local guildSelected = nil
+	local nMyRank = nil
+	local tMyRankData = nil
+	
 	for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
 		if guildCurr:GetType() == GuildLib.GuildType_Guild then
-			local nMyRank = guildCurr:GetMyRank()
-			local tMyRankData = guildCurr:GetRanks()[nMyRank]
+			nMyRank = guildCurr:GetMyRank()
+			tMyRankData = guildCurr:GetRanks()[nMyRank]
 
 			guildSelected = guildCurr
 			break
 		end
 	end
 
-	if not guildSelected then
+	if not guildSelected or not nMyRank or not tMyRankData then
 		ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_System, Apollo.GetString("Guild_YouAreNotInAGuild"), "" )
 		
 		Event_CancelGuildBank()

@@ -287,7 +287,7 @@ function CircuitBoardSchematic:Initialize(tSchematicInfo)
 			local bFoundAnItem = false
 			local tPowerCorePickerDupeList = {}
 			wndPowerPicker:FindChild("PowerCorePickerList"):DestroyChildren()
-			for idx, tCurrentPowerCore in pairs(CraftingLib.GetAvailablePowerCores(tSchematicInfo.nSchematicId)) do
+			for idx, tCurrentPowerCore in pairs(CraftingLib.GetAvailablePowerCores(tSchematicInfo.nSchematicId) or {}) do -- Can be invalid for locked chips
 				if not tPowerCorePickerDupeList[tCurrentPowerCore:GetItemId()] then
 					bFoundAnItem = true
 					tPowerCorePickerDupeList[tCurrentPowerCore:GetItemId()] = true
@@ -295,8 +295,8 @@ function CircuitBoardSchematic:Initialize(tSchematicInfo)
 					local wndCurrItem = Apollo.LoadForm(self.xmlDoc, "PowerCoreItemBtn", wndPowerPicker:FindChild("PowerCorePickerList"), self)
 					wndCurrItem:FindChild("PowerCoreItemSprite"):SetSprite(tCurrentPowerCore:GetIcon())
 					wndCurrItem:FindChild("PowerCoreItemSprite"):SetText(tCurrentPowerCore:GetBackpackCount())
-					self:HelperBuildItemTooltip(wndCurrItem, tCurrentPowerCore)
 					wndCurrItem:SetData(tCurrentPowerCore)
+					self:HelperBuildItemTooltip(wndCurrItem, tCurrentPowerCore)
 				end
 			end
 			wndPowerPicker:FindChild("PowerCorePickerList"):ArrangeChildrenTiles(0)
@@ -410,6 +410,11 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 		elseif tItemChipInfo.eType == Item.CodeEnumMicrochipType.Inductor then
 			wndSocketButton:FindChild("CircuitPickerIcon"):SetBGColor("ff00ff00")
 		end
+	end
+
+	-- If Locked Power Core
+	if wndSocketButton:FindChild("PowerCorePickerBtn") then
+		wndSocketButton:FindChild("PowerCorePickerBtn"):Show(tSocketIdxData.bIsChangeable)
 	end
 
 	-- Not Power Core or weird sockets

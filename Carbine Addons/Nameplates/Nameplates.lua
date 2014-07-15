@@ -369,7 +369,7 @@ function Nameplates:UpdateAllNameplateVisibility()
 			self:UpdateNameplateRewardInfo(tNameplate)
 		end
 	end
-	
+
 	self.bRedrawRewardIcons = false
 end
 
@@ -378,13 +378,13 @@ function Nameplates:UpdateNameplateVisibility(tNameplate)
 	local wndNameplate = tNameplate.wndNameplate
 	local bIsMounted = unitOwner:IsMounted()
 	local unitWindow = wndNameplate:GetUnit()
-	
+
 	if bIsMounted and unitWindow == unitOwner then
 		wndNameplate:SetUnit(unitOwner:GetUnitMount(), 1)
 	elseif not bIsMounted and unitWindow ~= unitOwner then
 		wndNameplate:SetUnit(unitOwner, 1)
 	end
-	
+
 	tNameplate.bOnScreen = wndNameplate:IsOnScreen()
 	tNameplate.bOccluded = wndNameplate:IsOccluded()
 	tNameplate.eDisposition = unitOwner:GetDispositionTo(self.unitPlayer)
@@ -621,7 +621,7 @@ function Nameplates:DrawName(tNameplate)
 		else
 			strNewName = unitOwner:GetName()
 		end
-		
+
 		if wndName:GetText() ~= strNewName then
 			wndName:SetText(strNewName)
 
@@ -635,6 +635,7 @@ function Nameplates:DrawName(tNameplate)
 			local wndNameplate = tNameplate.wndNameplate
 			local nLeft, nTop, nRight, nBottom = wndNameplate:GetAnchorOffsets()
 			local nHalfNameWidth = math.ceil(math.max(Apollo.GetTextWidth("Nameplates", strNewName), Apollo.GetTextWidth("CRB_Interface9_BO", strNewGuild)) / 2)
+			nHalfNameWidth = math.max(nHalfNameWidth, self.nHealthWidth / 2)
 			wndNameplate:SetAnchorOffsets(-nHalfNameWidth - 15, nTop, nHalfNameWidth + tNameplate.wnd.nameRewardContainer:ArrangeChildrenHorz(0) + 15, nBottom)
 		end
 	end
@@ -658,7 +659,7 @@ function Nameplates:DrawGuild(tNameplate)
 
 	if bShow and strNewGuild ~= wndGuild:GetText() then
 		wndGuild:SetTextRaw(strNewGuild)
-		
+
 		-- Need to consider name as well for the resize code
 		local strNewName
 		if self.bShowTitle then
@@ -666,10 +667,11 @@ function Nameplates:DrawGuild(tNameplate)
 		else
 			strNewName = unitOwner:GetName()
 		end
-		
+
 		-- Resize
 		local nLeft, nTop, nRight, nBottom = wndNameplate:GetAnchorOffsets()
 		local nHalfNameWidth = math.ceil(math.max(Apollo.GetTextWidth("Nameplates", strNewName), Apollo.GetTextWidth("CRB_Interface9_BO", strNewGuild)) / 2)
+		nHalfNameWidth = math.max(nHalfNameWidth, self.nHealthWidth / 2)
 		wndNameplate:SetAnchorOffsets(-nHalfNameWidth - 15, nTop, nHalfNameWidth + tNameplate.wnd.nameRewardContainer:ArrangeChildrenHorz(0) + 15, nBottom)
 	end
 
@@ -814,10 +816,10 @@ function Nameplates:CheckDrawDistance(tNameplate)
 	    return false
 	end
 
-	tPosTarget = unitOwner:GetPosition()
-	tPosPlayer = unitPlayer:GetPosition()
+	local tPosTarget = unitOwner:GetPosition()
+	local tPosPlayer = unitPlayer:GetPosition()
 
-	if tPosTarget == nil then
+	if tPosTarget == nil or tPosPlayer == nil then
 		return
 	end
 

@@ -29,13 +29,16 @@ function ActionBarFrame:Init()
 end
 
 function ActionBarFrame:OnLoad()
+	g_ActionBarLoaded = false
+	
+	self.nSelectedMount = nil
+	self.nSelectedPotion = nil
+	
 	self.xmlDoc = XmlDoc.CreateFromFile("ActionBarFrame.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function ActionBarFrame:OnDocumentReady()
-	g_ActionBarLoaded = false
-
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 						"OnUnitEnteredCombat", self)
 	Apollo.RegisterEventHandler("PlayerChanged", 							"InitializeBars", self)
 	Apollo.RegisterEventHandler("WindowSizeChanged", 						"InitializeBars", self)
@@ -72,10 +75,7 @@ function ActionBarFrame:OnDocumentReady()
 	g_wndActionBarResources	= Apollo.LoadForm(self.xmlDoc, "Resources", "FixedHudStratumLow", self) -- Do not rename. This is global and used by other forms as a parent.
 
 	Event_FireGenericEvent("ActionBarLoaded")
-
-	self.nSelectedMount = nil
-	self.nSelectedPotion = nil
-
+	
 	self.wndMountFlyout = Apollo.LoadForm(self.xmlDoc, "MountFlyout", nil, self)
 	self.wndMountFlyout:FindChild("MountPopoutBtn"):AttachWindow(self.wndMountFlyout:FindChild("MountPopoutFrame"))
 

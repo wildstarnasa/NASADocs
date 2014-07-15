@@ -722,7 +722,7 @@ function TutorialPrompts:ShowNext(wndHandler, wndControl)
 	
 	if self.bAllViewSetting then
 		Event_FireGenericEvent("HideAllTutorials")
-		wndHandler:GetParent():Close()
+		self:OnClose(wndHandler, wndControl)
 	end
 
 	local nCurrPage = wndHandler:GetData()[1]

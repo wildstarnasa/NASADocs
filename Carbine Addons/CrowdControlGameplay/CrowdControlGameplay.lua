@@ -26,7 +26,7 @@ function CrowdControlGameplay:OnLoad()
 end
 
 function CrowdControlGameplay:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	Apollo.RegisterEventHandler("ActivateCCStateStun", "OnActivateCCStateStun", self) -- Starting the UI
@@ -46,6 +46,7 @@ end
 function CrowdControlGameplay:OnActivateCCStateStun(eChosenDirection)
 	if self.wndProgress and self.wndProgress:IsValid() then
 		self.wndProgress:Destroy()
+		self.wndProgress = nil
 	end
 
 	self.wndProgress = Apollo.LoadForm(self.xmlDoc, "ButtonHit_Progress", nil, self)
@@ -77,7 +78,7 @@ function CrowdControlGameplay:OnActivateCCStateStun(eChosenDirection)
 	self:OnCalculateTimeRemaining()
 end
 
-function CrowdControlGameplay:OnRemoveCCStateStun()
+function CrowdControlGameplay:OnRemoveCCStateStun() -- Also from lua
 	if self.wndProgress and self.wndProgress:IsValid() then
 		self.wndProgress:Destroy()
 		self.wndProgress = nil
@@ -100,15 +101,18 @@ end
 
 function CrowdControlGameplay:OnCalculateTimeRemaining()
 	local nTimeRemaining = GameLib.GetCCStateStunTimeRemaining()
-	if not nTimeRemaining or nTimeRemaining == 0 then
+	if not nTimeRemaining or nTimeRemaining <= 0 then
 		if self.wndProgress and self.wndProgress:IsValid() then
+			self.wndProgress:Show(false)
 			Apollo.CreateTimer("CalculateTimeRemaining", 0.1, false) -- Try again, in case it hasn't initialized yet
 		end
 		return
 	end
 
-	if self.wndProgress and self.wndProgress:IsShown() and self.wndProgress:FindChild("TimeRemainingContainer") then
+	if self.wndProgress and self.wndProgress:IsValid() and self.wndProgress:FindChild("TimeRemainingContainer") then
+		self.wndProgress:Show(true)
 		self.wndProgress:FindChild("TimeRemainingContainer"):Show(true)
+		
 		local nMaxTime = self.wndProgress:FindChild("TimeRemainingBar"):GetData()
 		if not nMaxTime or nTimeRemaining > nMaxTime then
 			nMaxTime = nTimeRemaining

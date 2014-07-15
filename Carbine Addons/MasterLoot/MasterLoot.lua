@@ -45,7 +45,9 @@ function MasterLoot:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("MasterLootUpdate",	"OnMasterLootUpdate", self)
 	Apollo.RegisterEventHandler("LootAssigned",	"OnLootAssigned", self)
-
+	
+	Apollo.RegisterEventHandler("Group_Updated", "OnGroupUpdated", self)
+	
 	Apollo.RegisterEventHandler("GenericEvent_ToggleGroupBag", "OnToggleGroupBag", self)
 
 	-- Master Looter Window
@@ -310,6 +312,22 @@ function MasterLoot:RefreshLooterItemList(tLooterItemList)
 
 	self.wndLooter_ItemList:ArrangeChildrenVert(0)
 	
+end
+	
+----------------------------
+
+function MasterLoot:OnGroupUpdated()
+	if GroupLib.AmILeader() then
+		if self.wndLooter:IsShown() then
+			self:OnCloseLooterWindow()
+			self:OnMasterLootUpdate(true)
+		end
+	else
+		if self.wndMasterLoot:IsShown() then
+			self:OnCloseMasterWindow()
+			self:OnMasterLootUpdate(true)
+		end
+	end
 end
 
 ----------------------------
