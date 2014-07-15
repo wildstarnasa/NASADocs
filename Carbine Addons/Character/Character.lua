@@ -179,6 +179,7 @@ function Character:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerTitleUpdate", 								"OnDrawEditNamePopout", self)
 	Apollo.RegisterEventHandler("Death", 											"DrawAttributes", self)
 	Apollo.RegisterEventHandler("GuildChange", 										"OnGuildChange", self)
+	Apollo.RegisterEventHandler("ItemConfirmSoulboundOnEquip",						"OnItemConfirmSoulboundOnEquip", self)
 	--Apollo.RegisterEventHandler("ShowItemInDressingRoom", 						"OnShowItemInDressingRoom", self)
 
 	-- Open Tab UIs
@@ -230,6 +231,9 @@ function Character:OnDocumentReady()
 	self.wndCharacter:FindChild("ClassTitleGuild"):AttachWindow(self.wndCharacter:FindChild("NameEditGuildTagContainer"))
 
 	self.wndCharacter:Show(false)
+
+	self.wndSoulbindConfirm	= Apollo.LoadForm(self.xmlDoc, "SoulbindConfirm", nil, self)
+	self.wndSoulbindConfirm:Show(false, true)
 
 	self.bStatsValid 		= false
 	self.listAttributes 	= {}
@@ -1415,6 +1419,24 @@ end
 function Character:OnLevelUpUnlock_Character_Generic()
 	-- TODO: I suppose there is capability to differentiate between the events later
 	self:ShowCharacterWindow()
+end
+
+---------------------------------------------------------------------------------------------------
+-- SoulbindConfirm Functions
+---------------------------------------------------------------------------------------------------
+
+function Character:OnItemConfirmSoulboundOnEquip(eEquipmentSlot, iDDItemEquip, iDDItemDestination)
+	self.wndSoulbindConfirm:FindChild("ConfirmBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.EquipItem, iDDItemEquip, iDDItemDestination)
+	self.wndSoulbindConfirm:Show(true)
+	self.wndSoulbindConfirm:ToFront()
+end
+
+function Character:OnEquipConfirm()
+	self.wndSoulbindConfirm:Show(false)
+end
+
+function Character:OnCancelSoulbindBtn( wndHandler, wndControl, eMouseButton )
+	self.wndSoulbindConfirm:Show(false)
 end
 
 local CharacterInstance = Character:new()
