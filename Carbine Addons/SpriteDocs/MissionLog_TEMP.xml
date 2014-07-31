@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<Sprites>
-    <Sprite Name="spr_TEMP_MLog_CheckMark" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\DialogBubbles_TEMP_229_209.tga" x0="6" x1="6" x2="6" x3="6" x4="28" x5="28" y0="10" y1="10" y2="10" y3="10" y4="32" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
-    </Sprite>
-</Sprites>

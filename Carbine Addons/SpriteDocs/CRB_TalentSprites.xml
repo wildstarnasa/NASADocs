@@ -1,4 +1,0 @@
-<?xml version="1.0" ?>
-<Sprites>
-    <AutoButton Name="btnTalentSelect" Texture="UI\Assets\TexPieces\UI_CRB_Talents_TEMP_0_1.tga" x0="0" x1="0" x2="0" x3="6" x4="16" x5="21" y0="0" y1="0" y2="0" y3="6" y4="14" y5="20" Stretchy="1" StateBits="31" Direction="Across"/>
-</Sprites>
