@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="spr_BaseTexture" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_0.tga" x0="0" x1="473" x2="473" x3="473" x4="473" x5="473" y0="0" y1="730" y2="730" y3="730" y4="730" y5="730" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_SelectionBorder" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CharacterWindow_207_893.tga" x0="0" x1="65" x2="65" x3="65" x4="65" x5="65" y0="0" y1="64" y2="64" y3="64" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCh_CharacterInset" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterWindow_TEMP_1_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="297" y0="0" y1="0" y2="0" y3="0" y4="0" y5="503" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCh_ItemBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterWindow_TEMP_299_2.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="54" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCh_CharacterHeader" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterWindow_TEMP_1_505.tga" x0="0" x1="0" x2="0" x3="191" x4="204" x5="476" y0="0" y1="0" y2="0" y3="0" y4="0" y5="89" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btn_DefensiveTab" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_731.tga" x0="0" x1="413" x2="413" x3="413" x4="413" x5="413" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" Stretchy="1" StateBits="1" Direction="Down"/>
+    <AutoButton Name="btn_OffensiveTab" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_768.tga" x0="0" x1="413" x2="413" x3="413" x4="413" x5="413" y0="0" y1="37" y2="37" y3="37" y4="37" y5="37" Stretchy="1" StateBits="1" Direction="Down"/>
+    <AutoButton Name="btn_AbilitiesWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_806.tga" x0="0" x1="41" x2="41" x3="41" x4="41" x5="41" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_CurrencyWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_1011.tga" x0="0" x1="41" x2="41" x3="41" x4="41" x5="41" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_ReputationWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_888.tga" x0="0" x1="41" x2="41" x3="41" x4="41" x5="41" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_WardrobeWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_929.tga" x0="0" x1="41" x2="41" x3="41" x4="41" x5="41" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_PetWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_970.tga" x0="0" x1="41" x2="41" x3="41" x4="41" x5="41" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_ArrowTurnRight" Texture="UI\Assets\TexPieces\UI_CharacterWindow_206_806.tga" x0="0" x1="45" x2="45" x3="45" x4="45" x5="45" y0="0" y1="25" y2="25" y3="25" y4="25" y5="25" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_ArrowTurnLeft" Texture="UI\Assets\TexPieces\UI_CharacterWindow_206_833.tga" x0="0" x1="45" x2="45" x3="45" x4="45" x5="45" y0="0" y1="25" y2="25" y3="25" y4="25" y5="25" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Head" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_0.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Face" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_57.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Shoulder" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_114.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Neck" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_172.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_LeftRing" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_229.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Trinket1" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_287.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_PowerSource" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_345.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Chest" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_402.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Hands" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_459.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Buckle" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_516.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Legs" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_573.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_RightRing" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_630.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Feet" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_688.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Trinket2" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_745.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_TitleSelect" Texture="UI\Assets\TexPieces\UI_CharacterWindow_205_858.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="34" y2="34" y3="34" y4="34" y5="34" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btn_CloseWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_206_959.tga" x0="0" x1="37" x2="37" x3="37" x4="37" x5="37" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCharacterInvoke" Texture="UI\Assets\TexPieces\UI_CharacterWindow_339_898.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="38" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnTradeskillsWindow" Texture="UI\Assets\TexPieces\UI_CharacterWindow_0_847.tga" x0="0" x1="41" x2="41" x3="41" x4="41" x5="41" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_ArrowTurnRightScaling" Texture="UI\Assets\TexPieces\UI_CharacterWindow_206_806.tga" x0="0" x1="0" x2="45" x3="45" x4="45" x5="45" y0="0" y1="0" y2="25" y3="25" y4="25" y5="25" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_ArrowTurnLeftScaling" Texture="UI\Assets\TexPieces\UI_CharacterWindow_206_833.tga" x0="0" x1="0" x2="45" x3="45" x4="45" x5="45" y0="0" y1="0" y2="25" y3="25" y4="25" y5="25" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Head" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_0.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="2" y1="54" y2="54" y3="54" y4="54" y5="54" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Shoulder" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_114.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="3" y1="55" y2="55" y3="55" y4="55" y5="55" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Augmentation" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_345.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="3" y1="55" y2="55" y3="55" y4="55" y5="55" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Tool" Texture="UI\Assets\TexPieces\UI_CharacterWindow_477_805.tga" x0="0" x1="50" x2="50" x3="50" x4="50" x5="50" y0="0" y1="52" y2="52" y3="52" y4="52" y5="52" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Chest" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_402.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="2" y1="54" y2="54" y3="54" y4="54" y5="54" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Hands" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_459.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="3" y1="55" y2="55" y3="55" y4="55" y5="55" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Legs" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_573.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="3" y1="55" y2="55" y3="55" y4="55" y5="55" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Gadget" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_745.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="3" y1="55" y2="55" y3="55" y4="55" y5="55" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btnCh_Armor_Feet" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_688.tga" x0="3" x1="53" x2="53" x3="53" x4="53" x5="53" y0="2" y1="54" y2="54" y3="54" y4="54" y5="54" Stretchy="1" StateBits="1" Direction="Across"/>
+    <AutoButton Name="btn_Armor_Trinket2" Texture="UI\Assets\TexPieces\UI_CharacterWindow_474_745.tga" x0="0" x1="56" x2="56" x3="56" x4="56" x5="56" y0="0" y1="56" y2="56" y3="56" y4="56" y5="56" Stretchy="1" StateBits="5" Direction="Across"/>
+</Sprites>

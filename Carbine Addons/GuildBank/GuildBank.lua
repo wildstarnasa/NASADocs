@@ -1066,6 +1066,7 @@ function GuildBank:HelperEmptyMainBankScrollbar(bShow)
 			wndBankItemIcon:SetData(nil)
 			wndBankItemIcon:SetText("")
 			wndBankItemIcon:SetSprite("")
+			wndBankItemIcon:SetTooltip("")
 		end
 		wndItem:Show(bShow)
 	end

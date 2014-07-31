@@ -9,7 +9,7 @@ require "AttributeMilestonesLib"
 
 local ActionBarShortcut = {}
 local knVersion			= 1
-local knMaxBars			= ActionSetLib.ShortcutSet.Count
+local knMaxBars			= ActionSetLib.CodeEnumShortcutSet.Count
 local knStartingBar		= 4 -- Skip 1 to 3, as that is the Engineer Bar and Engineer Pet Bars, which is handled in EngineerResource
 
 function ActionBarShortcut:new(o)

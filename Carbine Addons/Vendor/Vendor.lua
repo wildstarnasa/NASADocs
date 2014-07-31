@@ -29,6 +29,17 @@ local ktVendorRespondEvent =
 	[Item.CodeEnumItemUpdateReason.Buyback] 	= Apollo.GetString("Vendor_BoughtBack"),
 }
 
+local karEvalColors =
+{
+	[Item.CodeEnumItemQuality.Inferior] 		= "ItemQuality_Inferior",
+	[Item.CodeEnumItemQuality.Average] 			= "ItemQuality_Average",
+	[Item.CodeEnumItemQuality.Good] 			= "ItemQuality_Good",
+	[Item.CodeEnumItemQuality.Excellent] 		= "ItemQuality_Excellent",
+	[Item.CodeEnumItemQuality.Superb] 			= "ItemQuality_Superb",
+	[Item.CodeEnumItemQuality.Legendary] 		= "ItemQuality_Legendary",
+	[Item.CodeEnumItemQuality.Artifact]		 	= "ItemQuality_Artifact",
+}
+
 function Vendor:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -276,7 +287,7 @@ function Vendor:DrawListItems(wndParent, tItems)
 			wndCurr:FindChild("VendorListItemBtn"):SetData(tCurrItem)
 			wndCurr:FindChild("VendorListItemTitle"):SetText(tCurrItem.strName)
 			wndCurr:FindChild("VendorListItemCantUse"):Show(self:HelperPrereqFailed(tCurrItem))
-
+			
 			if tCurrItem.eType == Item.CodeEnumLootItemType.StaticItem then
 				wndCurr:FindChild("VendorListItemIcon"):GetWindowSubclass():SetItem(tCurrItem.itemData)
 			else
@@ -329,7 +340,8 @@ function Vendor:DrawListItems(wndParent, tItems)
 			end
 
 			local bTextColorRed = self:HelperIsTooExpensive(tCurrItem) or self:HelperPrereqBuyFailed(tCurrItem)
-			wndCurr:FindChild("VendorListItemTitle"):SetTextColor(bTextColorRed and "UI_WindowTextRed" or "UI_TextHoloBody")
+			local strQualityColor = tCurrItem.itemData and tCurrItem.itemData:GetItemQuality() and karEvalColors[tCurrItem.itemData:GetItemQuality()] or "UI_TextHoloBody"
+			wndCurr:FindChild("VendorListItemTitle"):SetTextColor(bTextColorRed and "UI_WindowTextRed" or strQualityColor)
 			wndCurr:FindChild("VendorListItemCashWindow"):SetTextColor(bTextColorRed and "UI_WindowTextRed" or "white")
 		end
 	end

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprCashCopper" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Currency_490_13.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="1" y3="15" y4="16" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCashSilver" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Currency_508_13.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="1" y3="15" y4="16" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCashGold" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Currency_526_13.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="1" y3="15" y4="16" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCashPlatinum" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Currency_544_13.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="1" y3="15" y4="16" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprRadiantWrit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_973_63.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="19" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprExploreTier1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_673_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprExploreTier2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_673_64.tga" x0="17" x1="17" x2="17" x3="17" x4="17" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprExploreTier3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_710_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCompetitionTier1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_619_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCompetitionTier2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_619_64.tga" x0="17" x1="17" x2="17" x3="17" x4="17" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCompetitionTier3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_654_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="19" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprConquestTier1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_730_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprConquestTier2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_748_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprConquestTier3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_765_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="19" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprHeroicTier1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_563_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprHeroicTier2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_582_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprHeroicTier3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_601_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprArtTier1" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Currency.tga" x0="901" x1="901" x2="901" x3="901" x4="901" x5="901" y0="64" y1="64" y2="64" y3="64" y4="64" y5="82" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprArtTier2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_902_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="19" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprArtTier3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_922_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="19" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprArtTier4" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Currency_TEMP.tga" x0="96" x1="96" x2="96" x3="96" x4="96" x5="128" y0="96" y1="96" y2="96" y3="96" y4="96" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCompetitionTier4" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Currency_TEMP.tga" x0="224" x1="224" x2="224" x3="224" x4="224" x5="256" y0="32" y1="32" y2="32" y3="32" y4="32" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprConquestTier4" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Currency_TEMP.tga" x0="96" x1="96" x2="96" x3="96" x4="96" x5="128" y0="64" y1="64" y2="64" y3="64" y4="64" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprExploreTier4" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Currency_TEMP.tga" x0="96" x1="96" x2="96" x3="96" x4="96" x5="128" y0="32" y1="32" y2="32" y3="32" y4="32" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprHeroicTier4" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Currency_TEMP.tga" x0="224" x1="224" x2="224" x3="224" x4="224" x5="256" y0="64" y1="64" y2="64" y3="64" y4="64" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprHeadingFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="6" x1="6" x2="6" x3="10" x4="12" x5="16" y0="579" y1="579" y2="579" y3="583" y4="585" y5="589" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprWinGrid" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="288" y0="720" y1="720" y2="720" y3="720" y4="720" y5="1006" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprWinGridOverlay" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="133" y0="262" y1="262" y2="262" y3="262" y4="262" y5="385" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1A" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="40" x1="40" x2="40" x3="40" x4="40" x5="100" y0="230" y1="230" y2="230" y3="230" y4="230" y5="250" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1B" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="35" x1="35" x2="35" x3="35" x4="35" x5="107" y0="206" y1="206" y2="206" y3="206" y4="206" y5="228" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1C" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="27" x1="27" x2="27" x3="27" x4="27" x5="112" y0="183" y1="183" y2="183" y3="183" y4="183" y5="206" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1D" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="23" x1="23" x2="23" x3="23" x4="23" x5="118" y0="158" y1="158" y2="158" y3="158" y4="158" y5="182" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1E" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="19" x1="19" x2="19" x3="19" x4="19" x5="122" y0="133" y1="133" y2="133" y3="133" y4="133" y5="159" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1F" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="13" x1="13" x2="13" x3="13" x4="13" x5="126" y0="109" y1="109" y2="109" y3="109" y4="109" y5="133" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1G" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="7" x1="7" x2="7" x3="7" x4="7" x5="129" y0="83" y1="83" y2="83" y3="83" y4="83" y5="108" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1H" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="6" x1="6" x2="6" x3="6" x4="6" x5="134" y0="57" y1="57" y2="57" y3="57" y4="57" y5="83" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1I" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="3" x1="3" x2="3" x3="3" x4="3" x5="136" y0="32" y1="32" y2="32" y3="32" y4="32" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_1J" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="139" y0="6" y1="6" y2="6" y3="6" y4="6" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2A" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="404" y0="5" y1="5" y2="5" y3="5" y4="5" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2B" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="410" y0="64" y1="64" y2="64" y3="64" y4="64" y5="134" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2C" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="376" x1="376" x2="376" x3="376" x4="376" x5="414" y0="136" y1="136" y2="136" y3="136" y4="136" y5="220" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2D" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="376" x1="376" x2="376" x3="376" x4="376" x5="418" y0="222" y1="222" y2="222" y3="222" y4="222" y5="315" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2E" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="419" y0="317" y1="317" y2="317" y3="317" y4="317" y5="418" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2F" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="376" x1="376" x2="376" x3="376" x4="376" x5="423" y0="420" y1="420" y2="420" y3="420" y4="420" y5="530" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2G" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="423" y0="531" y1="531" y2="531" y3="531" y4="531" y5="646" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2H" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="426" y0="647" y1="647" y2="647" y3="647" y4="647" y5="770" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2I" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="429" y0="771" y1="771" y2="771" y3="771" y4="771" y5="901" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_2J" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="375" x1="375" x2="375" x3="375" x4="375" x5="430" y0="902" y1="902" y2="902" y3="902" y4="902" y5="1037" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3A" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="142" x1="142" x2="142" x3="142" x4="142" x5="193" y0="4" y1="4" y2="4" y3="4" y4="4" y5="48" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3B" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="142" x1="142" x2="142" x3="142" x4="142" x5="203" y0="49" y1="49" y2="49" y3="49" y4="49" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3C" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="142" x1="142" x2="142" x3="142" x4="142" x5="213" y0="103" y1="103" y2="103" y3="103" y4="103" y5="161" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3D" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="141" x1="141" x2="141" x3="141" x4="141" x5="222" y0="163" y1="163" y2="163" y3="163" y4="163" y5="228" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3E" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="142" x1="142" x2="142" x3="142" x4="142" x5="228" y0="231" y1="231" y2="231" y3="231" y4="231" y5="299" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3F" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="141" x1="141" x2="141" x3="141" x4="141" x5="235" y0="302" y1="302" y2="302" y3="302" y4="302" y5="373" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3G" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="142" x1="142" x2="142" x3="142" x4="142" x5="240" y0="371" y1="371" y2="371" y3="371" y4="371" y5="449" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3H" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="141" x1="141" x2="141" x3="141" x4="141" x5="247" y0="449" y1="449" y2="449" y3="449" y4="449" y5="530" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3I" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="141" x1="141" x2="141" x3="141" x4="141" x5="252" y0="531" y1="531" y2="531" y3="531" y4="531" y5="616" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_3J" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="141" x1="141" x2="141" x3="141" x4="141" x5="257" y0="616" y1="616" y2="616" y3="616" y4="616" y5="705" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4A" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="322" x1="322" x2="322" x3="322" x4="322" x5="373" y0="6" y1="6" y2="6" y3="6" y4="6" y5="48" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4B" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="311" x1="311" x2="311" x3="311" x4="311" x5="374" y0="50" y1="50" y2="50" y3="50" y4="50" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4C" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="301" x1="301" x2="301" x3="301" x4="301" x5="374" y0="103" y1="103" y2="103" y3="103" y4="103" y5="161" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4D" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="292" x1="292" x2="292" x3="292" x4="292" x5="374" y0="164" y1="164" y2="164" y3="164" y4="164" y5="227" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4E" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="286" x1="286" x2="286" x3="286" x4="286" x5="373" y0="232" y1="232" y2="232" y3="232" y4="232" y5="298" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4F" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="279" x1="279" x2="279" x3="279" x4="279" x5="374" y0="300" y1="300" y2="300" y3="300" y4="300" y5="371" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4G" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="274" x1="274" x2="274" x3="274" x4="274" x5="374" y0="372" y1="372" y2="372" y3="372" y4="372" y5="447" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4H" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="268" x1="268" x2="268" x3="268" x4="268" x5="374" y0="450" y1="450" y2="450" y3="450" y4="450" y5="529" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4I" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="263" x1="263" x2="263" x3="263" x4="263" x5="374" y0="533" y1="533" y2="533" y3="533" y4="533" y5="616" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_4J" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="258" x1="258" x2="258" x3="258" x4="258" x5="374" y0="616" y1="616" y2="616" y3="616" y4="616" y5="703" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5A" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="433" x1="433" x2="433" x3="433" x4="433" x5="462" y0="6" y1="6" y2="6" y3="6" y4="6" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5B" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="466" y0="64" y1="64" y2="64" y3="64" y4="64" y5="134" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5C" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="470" y0="138" y1="138" y2="138" y3="138" y4="138" y5="219" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5D" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="473" y0="222" y1="222" y2="222" y3="222" y4="222" y5="315" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5E" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="474" y0="318" y1="318" y2="318" y3="318" y4="318" y5="417" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5F" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="476" y0="421" y1="421" y2="421" y3="421" y4="421" y5="529" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5G" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="434" x1="434" x2="434" x3="434" x4="434" x5="479" y0="531" y1="531" y2="531" y3="531" y4="531" y5="645" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5H" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="481" y0="647" y1="647" y2="647" y3="647" y4="647" y5="769" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5I" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="482" y0="773" y1="773" y2="773" y3="773" y4="773" y5="900" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid_5J" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="433" x1="433" x2="433" x3="433" x4="433" x5="486" y0="902" y1="902" y2="902" y3="902" y4="902" y5="1036" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprLargeCashPlatinum" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_163_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="53" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMediumCashPlatinum" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Currency_87_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="28" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btnHighlight" Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="18" x1="18" x2="18" x3="18" x4="26" x5="26" y0="581" y1="581" y2="581" y3="581" y4="589" y5="589" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnGraphView" Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="2" x1="2" x2="2" x3="2" x4="2" x5="41" y0="422" y1="422" y2="422" y3="422" y4="422" y5="452" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnListView" Texture="UI\Textures\UI_CRB_CurrencyWin_TEMP.tga" x0="40" x1="40" x2="40" x3="40" x4="40" x5="79" y0="422" y1="422" y2="422" y3="422" y4="422" y5="452" Stretchy="1" StateBits="31" Direction="Down"/>
+</Sprites>

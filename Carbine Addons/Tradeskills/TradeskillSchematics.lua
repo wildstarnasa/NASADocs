@@ -125,6 +125,7 @@ function TradeskillSchematics:Initialize(wndParent, nSchematicId, strSearchQuery
 	end
 
 	if strSearchQuery and string.len(strSearchQuery) > 0 then
+		self.wndMain:FindChild("RightSide"):Show(false)
 		self.wndMain:FindChild("SearchTopLeftInputBox"):SetText(strSearchQuery)
 		self:OnSearchTopLeftInputBoxChanged()
 	end
@@ -374,7 +375,9 @@ function TradeskillSchematics:OnFiltersChanged(wndHandler, wndControl)
 
 	self.tSavedData.bFilterLocked = self.wndMain:FindChild("LeftSideFilterLocked"):IsChecked()
 	self.tSavedData.bFilterMats = self.wndMain:FindChild("LeftSideFilterMaterials"):IsChecked()
-
+	if self.wndMain:FindChild("SearchTopLeftInputBox"):GetText() ~= "" then 
+		self:OnSearchTopLeftInputBoxChanged()--reset the search results to use filters
+	end
 	self:FullRedraw()
 	self.wndMain:FindChild("LeftSideScroll"):SetVScrollPos(0)
 end
@@ -617,17 +620,38 @@ function TradeskillSchematics:HelperSearchBuildResult(tSchematic, tSubSchem)
 	local bShowLock = not tSchematicToUse.bIsKnown
 	local bShowMatsWarning = not bShowLock and not self:HelperHaveEnoughMaterials(tSchematicToUse)
 	local bOneTime = not bShowLock and not bShowMatsWarning and tSchematicToUse.bIsOneUse
-	local wndBottomItem = self:LoadByName("BottomItem", self.wndMain:FindChild("LeftSideSearchResultsList"), tSchematicToUse.strName)
-	wndBottomItem:FindChild("BottomItemBtn"):SetData(tSchematic) -- GOTCHA: The Button will intentionally always open the parent schematic
-	wndBottomItem:FindChild("BottomItemLockIcon"):Show(bShowLock)
-	wndBottomItem:FindChild("BottomItemOneTimeIcon"):Show(bOneTime)
-	wndBottomItem:FindChild("BottomItemMatsWarningIcon"):Show(bShowMatsWarning)
-	wndBottomItem:FindChild("BottomItemBtnText"):SetText(tSubSchem and String_GetWeaselString(Apollo.GetString("Tradeskills_SubAbrev"), tSubSchem.strName) or tSchematic.strName)
+	
+	-- Helper will determine if the schematic should be included in the results 
+	local bAddSchematic = self:HelperTestSchematic(tSchematicToUse)
+	if bAddSchematic then 
+		local wndBottomItem = self:LoadByName("BottomItem", self.wndMain:FindChild("LeftSideSearchResultsList"), tSchematicToUse.strName..tSchematicToUse.nSchematicId)
+		wndBottomItem:FindChild("BottomItemBtn"):SetData(tSchematic) -- GOTCHA: The Button will intentionally always open the parent schematic
+		wndBottomItem:FindChild("BottomItemLockIcon"):Show(bShowLock)
+		wndBottomItem:FindChild("BottomItemOneTimeIcon"):Show(bOneTime)
+		wndBottomItem:FindChild("BottomItemMatsWarningIcon"):Show(bShowMatsWarning)
+		wndBottomItem:FindChild("BottomItemBtnText"):SetText(tSubSchem and String_GetWeaselString(Apollo.GetString("Tradeskills_SubAbrev"), tSubSchem.strName) or tSchematic.strName)
+	end	
+end
+
+function TradeskillSchematics:HelperTestSchematic(tSchematicToUse)
+	local bFilterLocked = self.wndMain:FindChild("LeftSideFilterLocked"):IsChecked()
+	local bFilterMaterials = self.wndMain:FindChild("LeftSideFilterMaterials"):IsChecked()	
+	if not bFilterLocked and not bFilterMaterials then --neither filter buttons are pressed
+		return tSchematicToUse.bIsKnown
+		
+	elseif not bFilterLocked and bFilterMaterials then --only have materials is pressed
+		return tSchematicToUse.bIsKnown and self:HelperHaveEnoughMaterials(tSchematicToUse)
+		
+	elseif bFilterLocked and not bFilterMaterials then --only show locked is pressed
+		return true --show everything
+	
+	elseif bFilterLocked and bFilterMaterials then --both filter buttons are pressed
+		return self:HelperHaveEnoughMaterials(tSchematicToUse)
+	end
 end
 
 function TradeskillSchematics:HelperSearchNameMatch(tSchematic, strInput) -- strInput already :lower()
 	local strBase = tSchematic.strName
-
 	if strBase:lower():find(strInput, 1, true) then
 		return tSchematic
 	else

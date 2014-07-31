@@ -69,9 +69,10 @@ function InterfaceMenuList:OnDocumentReady()
 	Apollo.RegisterTimerHandler("QueueRedrawTimer", 					"OnQueuedRedraw", self)
 	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", 		"ButtonListRedraw", self)
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc , "InterfaceMenuListForm", nil, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc , "InterfaceMenuListForm", "FixedHudStratumHigh", self)
+	self.wndList = Apollo.LoadForm(self.xmlDoc , "FullListFrame", nil, self)
 
-	self.wndMain:FindChild("OpenFullListBtn"):AttachWindow(self.wndMain:FindChild("FullListFrame"))
+	self.wndMain:FindChild("OpenFullListBtn"):AttachWindow(self.wndList)
 	self.wndMain:FindChild("OpenFullListBtn"):Enable(false)
 
 	Apollo.CreateTimer("QueueRedrawTimer", 0.3, false)
@@ -156,9 +157,9 @@ end
 
 function InterfaceMenuList:FullListRedraw()
 	local strUnbound = Apollo.GetString("Keybinding_Unbound")
-	local wndParent = self.wndMain:FindChild("FullListScroll")
+	local wndParent = self.wndList:FindChild("FullListScroll")
 	
-	local strQuery = string.lower(tostring(self.wndMain:FindChild("SearchEditBox"):GetText()) or "")
+	local strQuery = string.lower(tostring(self.wndList:FindChild("SearchEditBox"):GetText()) or "")
 	if strQuery == nil or strQuery == "" or not strQuery:match("[%w%s]+") then
 		strQuery = ""
 	end
@@ -259,21 +260,21 @@ end
 -----------------------------------------------------------------------------------------------
 
 function InterfaceMenuList:OnSearchEditBoxChanged(wndHandler, wndControl)
-	self.wndMain:FindChild("SearchClearBtn"):Show(string.len(wndHandler:GetText() or "") > 0)
+	self.wndList:FindChild("SearchClearBtn"):Show(string.len(wndHandler:GetText() or "") > 0)
 	self:FullListRedraw()
 end
 
 function InterfaceMenuList:OnSearchClearBtn(wndHandler, wndControl)
-	self.wndMain:FindChild("SearchFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
-	self.wndMain:FindChild("SearchFlash"):SetFocus()
-	self.wndMain:FindChild("SearchClearBtn"):Show(false)
-	self.wndMain:FindChild("SearchEditBox"):SetText("")
+	self.wndList:FindChild("SearchFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+	self.wndList:FindChild("SearchFlash"):SetFocus()
+	self.wndList:FindChild("SearchClearBtn"):Show(false)
+	self.wndList:FindChild("SearchEditBox"):SetText("")
 	self:FullListRedraw()
 end
 
 function InterfaceMenuList:OnSearchCommitBtn(wndHandler, wndControl)
-	self.wndMain:FindChild("SearchFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
-	self.wndMain:FindChild("SearchFlash"):SetFocus()
+	self.wndList:FindChild("SearchFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+	self.wndList:FindChild("SearchFlash"):SetFocus()
 	self:FullListRedraw()
 end
 
@@ -317,7 +318,7 @@ function InterfaceMenuList:OnDrawAlert(strWindowName, tParams)
 		end
 	end
 	
-	local wndParent = self.wndMain:FindChild("FullListScroll")
+	local wndParent = self.wndList:FindChild("FullListScroll")
 	for idx, wndTarget in pairs(wndParent:GetChildren()) do
 		local wndButton = wndTarget:FindChild("ShortcutBtn")
 		local wndIcon = wndButton:FindChild("Icon")
@@ -358,7 +359,7 @@ function InterfaceMenuList:OnMenuListItemClick(wndHandler, wndControl)
 	else
 		InvokeOptionsScreen()
 	end
-	self.wndMain:FindChild("FullListFrame"):Show(false)
+	self.wndList:Show(false)
 end
 
 function InterfaceMenuList:OnPinBtnChecked(wndHandler, wndControl)
@@ -391,7 +392,7 @@ end
 
 function InterfaceMenuList:OnListBtnMouseEnter(wndHandler, wndControl)
 	wndHandler:SetBGColor("ffffffff")
-	if wndHandler ~= wndControl or self.wndMain:FindChild("FullListFrame"):IsVisible() then
+	if wndHandler ~= wndControl or self.wndList:IsVisible() then
 		return
 	end
 end
@@ -401,7 +402,7 @@ function InterfaceMenuList:OnListBtnMouseExit(wndHandler, wndControl) -- Also se
 end
 
 function InterfaceMenuList:OnOpenFullListCheck(wndHandler, wndControl)
-	self.wndMain:FindChild("SearchEditBox"):SetFocus()
+	self.wndList:FindChild("SearchEditBox"):SetFocus()
 	self:FullListRedraw()
 end
 

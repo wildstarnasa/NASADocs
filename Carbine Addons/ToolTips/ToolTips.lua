@@ -1460,7 +1460,7 @@ local function ItemTooltipRuneHelper(wndParent, tItemInfo) -- If mousing over a 
 		table.sort(tBonuses, function(a,b) return a.nRequiredPower < b.nRequiredPower end)
 
 		for idx, tCur in pairs(tBonuses) do
-			local strColor = tCur.bActive and kUIGreen or "UI_TextMetalBodyHighlight"
+			local strColor = tCur.bActive and kUIGreen or "UI_TextHoloBodyCyan"
 			local wndBonus = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndParent)
 			wndBonus:SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strColor, String_GetWeaselString(Apollo.GetString("Tooltips_RuneDetails"), tCur.nRequiredPower, tCur.strName, tCur.strFlavor or "")))
 			wndBonus:SetHeightToContentHeight()
@@ -1509,7 +1509,7 @@ local function ItemTooltipFlavorHelper(wndParent, tItemInfo)
 	-- Resize
 	local nTextWidth, nTextHeight = wnd:FindChild("ItemTooltip_FlavorML"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wnd:GetAnchorOffsets()
-	wnd:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 20)
+	wnd:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 23)
 end
 
 -- #############################
@@ -1542,7 +1542,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 	-- Salvage
 	if tItemInfo.bSalvagable and not tFlags.bBuying then
 		wndBox:SetText(tItemInfo.bAutoSalvage and Apollo.GetString("Tooltips_RightClickSalvage") or Apollo.GetString("Tooltips_Salvageable"))
-		wndBox:SetTextColor("UI_TextMetalBodyHighlight")
+		wndBox:SetTextColor("UI_TextHoloBodyCyan")
 	end
 
 	-- Buy Buyback
@@ -1558,7 +1558,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 
 				local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox)
 				xml = XmlDoc.new()
-				xml:AddLine(strSellCaption, "UI_TextMetalBodyHighlight", "CRB_InterfaceSmall", "Right")
+				xml:AddLine(strSellCaption, "UI_TextHoloBodyCyan", "CRB_InterfaceSmall", "Right")
 				monPrice:AppendToTooltip(xml)
 				wnd:SetDoc(xml)
 				wnd:SetHeightToContentHeight()
@@ -1581,7 +1581,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 
 				local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox)
 				xml = XmlDoc.new()
-				xml:AddLine(strSellCaption, "UI_TextMetalBodyHighlight", "CRB_InterfaceSmall", "Right")
+				xml:AddLine(strSellCaption, "UI_TextHoloBodyCyan", "CRB_InterfaceSmall", "Right")
 				monPrice:AppendToTooltip(xml)
 				wnd:SetDoc(xml)
 				wnd:SetHeightToContentHeight()
@@ -1592,7 +1592,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 	if tItemInfo.tCost.bHasRestockingFee then
 		local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox)
 		xml = XmlDoc.new()
-		xml:AddLine(Apollo.GetString("CRB_RestockFee"), "UI_TextMetalBodyHighlight", "CRB_InterfaceSmall", "Right")
+		xml:AddLine(Apollo.GetString("CRB_RestockFee"), "UI_TextHoloBodyCyan", "CRB_InterfaceSmall", "Right")
 		wnd:SetDoc(xml)
 		wnd:SetHeightToContentHeight()
 	end
@@ -1605,7 +1605,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 		local strTimeRemaining = String_GetWeaselString(Apollo.GetString("CRB_SellToVendorTime"), tTimeInfo)
 
 		xml = XmlDoc.new()
-		xml:AddLine(strTimeRemaining, "UI_TextMetalBodyHighlight", "CRB_InterfaceSmall", "Right")
+		xml:AddLine(strTimeRemaining, "UI_TextHoloBodyCyan", "CRB_InterfaceSmall", "Right")
 		wnd:SetDoc(xml)
 		wnd:SetHeightToContentHeight()
 	end
@@ -1620,7 +1620,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 
 		local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox)
 		xml = XmlDoc.new()
-		xml:AddLine(strSellCaption, "UI_TextMetalBodyHighlight", "CRB_InterfaceSmall", "Right")
+		xml:AddLine(strSellCaption, "UI_TextHoloBodyCyan", "CRB_InterfaceSmall", "Right")
 		monPrice:AppendToTooltip(xml)
 		wnd:SetDoc(xml)
 		wnd:SetHeightToContentHeight()

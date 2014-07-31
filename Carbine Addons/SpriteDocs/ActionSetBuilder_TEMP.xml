@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Sprites>
+    <Sprite Name="spr_TEMP_ActionSetBigBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_DEMO_Assets_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="652" x5="652" y0="0" y1="0" y2="0" y3="0" y4="541" y5="541" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetBottomBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_0_0.tga" x0="74" x1="74" x2="74" x3="74" x4="280" x5="377" y0="405" y1="405" y2="405" y3="432" y4="464" y5="464" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetBarFrame_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_447.tga" x0="0" x1="0" x2="0" x3="44" x4="685" x5="729" y0="0" y1="0" y2="0" y3="7" y4="8" y5="66" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetBarGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_238_146.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetGradiant" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="512" x5="512" y0="0" y1="0" y2="0" y3="0" y4="24" y5="24" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetCircle" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_237_65.tga" x0="0" x1="0" x2="0" x3="0" x4="29" x5="29" y0="0" y1="0" y2="0" y3="0" y4="29" y5="29" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetCircleBar" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_268_72.tga" x0="0" x1="0" x2="0" x3="0" x4="30" x5="30" y0="0" y1="0" y2="0" y3="0" y4="14" y5="14" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionSetBottomTierBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_40_289.tga" x0="0" x1="0" x2="0" x3="0" x4="342" x5="342" y0="0" y1="0" y2="0" y3="0" y4="116" y5="116" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionBarReplacement" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_240.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="590" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionBarFrame2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_346.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="519" y0="0" y1="0" y2="0" y3="0" y4="0" y5="46" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionBarFrame2_NoTop" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_395.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="519" y0="0" y1="0" y2="0" y3="0" y4="0" y5="46" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionBarFrame3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_297.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="519" y0="0" y1="0" y2="0" y3="0" y4="0" y5="46" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_ActionBarFrame4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_346.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="519" y0="8" y1="8" y2="8" y3="8" y4="36" y5="36" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btn_TEMP_ThinFrameBtn" Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_106.tga" x0="0" x1="13" x2="13" x3="13" x4="46" x5="59" y0="0" y1="13" y2="13" y3="13" y4="46" y5="59" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btn_TEMP_ThinFrameBtn_Hollow" Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_0_46.tga" x0="0" x1="13" x2="13" x3="13" x4="46" x5="59" y0="0" y1="13" y2="13" y3="13" y4="46" y5="59" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btn_TEMP_DropDownBtn" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_146_6.tga" x0="0" x1="18" x2="43" x3="43" x4="43" x5="46" y0="0" y1="0" y2="0" y3="0" y4="16" y5="16" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_TEMP_SmallPlusMinus" Texture="UI\Assets\TexPieces\UI_TEMP_ActionSetBuilder_237_46.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" StateBits="31" Direction="Across"/>
+</Sprites>

@@ -45,7 +45,7 @@ function Macros:OnDocumentReady()
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 	
-	Apollo.RegisterEventHandler("InterfaceMenu_ToggleMacro", "OnMacrosOn", self)
+	Apollo.RegisterEventHandler("InterfaceMenu_ToggleMacro", "OnInterfaceMenu_ToggleMacro", self)
 	Apollo.RegisterSlashCommand("macros", "OnMacrosOn", self)
 	Apollo.RegisterSlashCommand("reloadui", "OnRequestReloadUI", self)
 	Apollo.RegisterSlashCommand("RequestReloadUI", "OnRequestReloadUI", self)
@@ -80,6 +80,13 @@ function Macros:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMacros, strName = Apollo.GetString("InterfaceMenu_Macro")})
 end
 	
+function Macros:OnInterfaceMenu_ToggleMacro()
+	if self.wndMacros and self.wndMacros:IsValid() and self.wndMacros:IsVisible() then
+		self.wndMacros:Close()
+	else
+		self:OnMacrosOn()
+	end
+end
 ---------------------------------------------------------------------------------------------------
 -- Functions
 ---------------------------------------------------------------------------------------------------

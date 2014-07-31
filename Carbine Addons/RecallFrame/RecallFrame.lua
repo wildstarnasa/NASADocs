@@ -49,12 +49,8 @@ function RecallFrame:OnLoad()
 	Apollo.RegisterEventHandler("ActionBarReady", "OnDocumentReady", self)
 end
 
-function RecallFrame:OnDocumentReady(wndParent)
-	if wndParent ~= nil then
-		self.wndParent = wndParent
-	end
-	
-	if self.xmlDoc == nil or self.wndParent == nil then
+function RecallFrame:OnDocumentReady()
+	if self.xmlDoc == nil then
 		return
 	end
 	
@@ -71,7 +67,7 @@ function RecallFrame:OnDocumentReady(wndParent)
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 	"OnTutorial_RequestUIAnchor", self)
 	
 	-- load our forms
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "RecallFrameForm", wndParent, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc, "RecallFrameForm", "FixedHudStratum", self)
     self.wndMain:Show(false)
 	
 	self.wndMenu = Apollo.LoadForm(self.xmlDoc, "RecallSelectionMenu", nil, self)

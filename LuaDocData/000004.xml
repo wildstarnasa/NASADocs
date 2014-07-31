@@ -48,6 +48,9 @@
         <Event Name="AcceptProgressInput" Id="6853" Desc="Fires when CSIs turn player input on and off.  This is only used for the &quot;Memory&quot; CSI.">
             <Param Name="bShouldAccept" Desc="Whether or not the CSI will accept user input." Type="Boolean" Id="9442"/>
         </Event>
+        <Event Name="AlternateTargetUnitChanged" Incomplete="true" Id="6936" Desc="Fires when the player&apos;s focus target changes">
+            <Param Name="idUnit" Desc="The id number of the new focus target" Type="Integer" Id="13352"/>
+        </Event>
         <Event Name="AlertMailInfo" Incomplete="true" Id="6979" Desc="Fires when the player gets new mail"/>
         <Event Name="RefreshHealthShieldBar" Incomplete="true" Id="8209"/>
         <Event Name="ToggleChallengesWindow" Incomplete="true" Id="8210"/>
@@ -3784,6 +3787,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         </Event>
         <Event Name="StringCoppiedToClipboard" Id="13345"/>
         <Event Name="AccountCREDDRedeemed" Id="13348"/>
+        <Event Name="CraftingBotched" Id="13351"/>
         <Event Name="MatchingGameRespondedToPending" Id="13440">
             <Param Name="bResponse" Desc="Was the matching game accepted or declined" Type="Boolean" Id="13442"/>
         </Event>

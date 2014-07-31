@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Sprites>
+    <Sprite Name="sprEsper_BaseFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_0_0.tga" x0="0" x1="92" x2="93" x3="317" x4="318" x5="406" y0="0" y1="0" y2="0" y3="0" y4="0" y5="75" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ProgressBar" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_520_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="366" y0="0" y1="0" y2="0" y3="0" y4="0" y5="19" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_MiddleBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_437_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="82" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatIndicatorLeft" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_766_22.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="22" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatIndicatorRight" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_766_45.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="22" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatCount1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_520_22.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatCount2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_569_22.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatCount3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_618_22.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatCount4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_667_22.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_CombatCount5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_716_22.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece1Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_0_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece1On" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_73_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_73_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece2Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_292_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece2On" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_336_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_336_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece3Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_455_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="46" y0="0" y1="0" y2="0" y3="0" y4="0" y5="17" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece3On" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_455_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="46" y0="0" y1="0" y2="0" y3="0" y4="0" y5="17" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_455_65.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="46" y0="0" y1="0" y2="0" y3="0" y4="0" y5="17" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece4Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_520_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece4On" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_564_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_564_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece5Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_146_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsper_ComboPiece5On" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_219_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Esper_219_76.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_BaseFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_642.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_ProgressBar" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_683.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="280" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_CombatCircle" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_281_683.tga" x0="0" x1="26" x2="26" x3="26" x4="26" x5="26" y0="0" y1="0" y2="0" y3="0" y4="0" y5="26" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Number0" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_391_642.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Number1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_427_642.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Number2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_463_642.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Number3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_499_642.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Number4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_535_642.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Number5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_571_642.tga" x0="0" x1="35" x2="35" x3="35" x4="35" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_BG0" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_0.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_BG1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_107.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Solid1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_214.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Glow1" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_321.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_321.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Fade1" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_321.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Solid2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_428.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Glow2" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_535.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_535.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Fade2" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_0_535.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Solid3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_0.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Glow3" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_107.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_107.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Fade3" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_107.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Solid4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_214.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Glow4" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_321.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_321.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Fade4" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_321.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Solid5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_302_428.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Glow5" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_304_535.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_304_535.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprEsperResource_Fade5" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Esper_304_535.tga" x0="0" x1="301" x2="301" x3="301" x4="301" x5="301" y0="0" y1="0" y2="0" y3="0" y4="0" y5="106" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Composite Name="sprEsperResource_CompFade1" Cycle="0">
+        <Layer Name="sprEsperResource_Fade1"/>
+    </Composite>
+    <Composite Name="sprEsperResource_CompFade2" Cycle="0">
+        <Layer Name="sprEsperResource_Fade1"/>
+        <Layer Name="sprEsperResource_Fade2"/>
+    </Composite>
+    <Composite Name="sprEsperResource_CompFade3" Cycle="0">
+        <Layer Name="sprEsperResource_Fade1"/>
+        <Layer Name="sprEsperResource_Fade2"/>
+        <Layer Name="sprEsperResource_Fade3"/>
+    </Composite>
+    <Composite Name="sprEsperResource_CompFade4" Cycle="0">
+        <Layer Name="sprEsperResource_Fade1"/>
+        <Layer Name="sprEsperResource_Fade2"/>
+        <Layer Name="sprEsperResource_Fade3"/>
+        <Layer Name="sprEsperResource_Fade4"/>
+    </Composite>
+    <Composite Name="sprEsperResource_CompFade5" Cycle="0">
+        <Layer Name="sprEsperResource_Fade1"/>
+        <Layer Name="sprEsperResource_Fade2"/>
+        <Layer Name="sprEsperResource_Fade3"/>
+        <Layer Name="sprEsperResource_Fade4"/>
+        <Layer Name="sprEsperResource_Fade5"/>
+    </Composite>
+</Sprites>

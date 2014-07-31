@@ -123,10 +123,11 @@ end
 function Warplots:DrawEnergy(peoEnergy, wndBar, wndProgress)
 	local nMaxEnergy = peoEnergy:GetRequiredCount()
 	local nCurrentEnergy = peoEnergy:GetCount()
+	local strTeam = Apollo.GetString(peoEnergy:GetTeam() == self.peMatch:GetJoinedTeam() and "MatchTracker_MyTeam" or "MatchTracker_EnemyTeam")
 		
 	wndBar:SetMax(nMaxEnergy)
 	wndBar:SetProgress(nCurrentEnergy)
-	wndBar:SetTooltip(string.format("%s / %s", Apollo.FormatNumber(nCurrentEnergy, 0, true), Apollo.FormatNumber(nMaxEnergy, 0, true)))
+	wndBar:SetTooltip(string.format("%s: %s / %s", strTeam, Apollo.FormatNumber(nCurrentEnergy, 0, true), Apollo.FormatNumber(nMaxEnergy, 0, true)))
 	wndProgress:SetText(Apollo.FormatNumber(nCurrentEnergy / nMaxEnergy * 100, 1, true).."%")
 end
 

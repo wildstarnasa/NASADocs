@@ -135,7 +135,14 @@ end
 
 function AccountInventory:OnAccountOperationResults(eOperationType, eResult)
 	local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
-	local strMessage = bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString(ktResultErrorCodeStrings[eResult])
+	local strMessage = ""
+	if bSuccess then
+		strMessage = Apollo.GetString("MarketplaceCredd_TransactionSuccess") 
+	elseif ktResultErrorCodeStrings[eResult] then
+		strMessage = Apollo.GetString(ktResultErrorCodeStrings[eResult])
+	else
+		strMessage = Apollo.GetString("MarketplaceCredd_Error_GenericFail")
+	end
 	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strMessage)
 end
 

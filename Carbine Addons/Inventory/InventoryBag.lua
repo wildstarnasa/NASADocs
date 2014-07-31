@@ -14,6 +14,7 @@ local knSmallIconOption = 42
 local knLargeIconOption = 48
 local knMaxBags = 4 -- how many bags can the player have
 local knSaveVersion = 3
+local knPaddingTop = 20
 
 local karCurrency =  	-- Alt currency table; re-indexing the enums so they don't have to be in sequence code-side (and removing cash)
 {						-- To add a new currency just add an entry to the table; the UI will do the rest. Idx == 1 will be the default one shown
@@ -211,6 +212,7 @@ function InventoryBag:OnDocumentReady()
 	self.wndDeleteConfirm 	= Apollo.LoadForm(self.xmlDoc, "InventoryDeleteNotice", nil, self)
 	self.wndSalvageConfirm 	= Apollo.LoadForm(self.xmlDoc, "InventorySalvageNotice", nil, self)
 	self.wndMain 			= Apollo.LoadForm(self.xmlDoc, "InventoryBag", nil, self)
+	self.wndSplit 			= Apollo.LoadForm(self.xmlDoc, "SplitStackContainer", nil, self)
 	self.wndMain:FindChild("VirtualInvToggleBtn"):AttachWindow(self.wndMain:FindChild("VirtualInvContainer"))
 	self.wndMain:Show(false, true)
 	self.wndSalvageConfirm:Show(false, true)
@@ -769,27 +771,30 @@ end
 
 function InventoryBag:OnSplitItemStack(item)
 	if not item then return end
-	local wndSplit = self.wndMain:FindChild("SplitStackContainer")
 	local nStackCount = item:GetStackCount()
 	if nStackCount < 2 then
-		wndSplit:Show(false)
+		self.wndSplit:Show(false)
 		return
 	end
-	wndSplit:SetData(item)
-	wndSplit:FindChild("SplitValue"):SetValue(1)
-	wndSplit:FindChild("SplitValue"):SetMinMax(1, nStackCount - 1)
-	wndSplit:Show(true)
+	self.wndSplit:Invoke()
+	local tMouse = Apollo.GetMouse()
+	self.wndSplit:Move(tMouse.x - math.floor(self.wndSplit:GetWidth() / 2) , tMouse.y - knPaddingTop - self.wndSplit:GetHeight(), self.wndSplit:GetWidth(), self.wndSplit:GetHeight())
+	
+	
+	self.wndSplit:SetData(item)
+	self.wndSplit:FindChild("SplitValue"):SetValue(1)
+	self.wndSplit:FindChild("SplitValue"):SetMinMax(1, nStackCount - 1)
+	self.wndSplit:Show(true)
 end
 
 function InventoryBag:OnSplitStackCloseClick()
-	self.wndMain:FindChild("SplitStackContainer"):Show(false)
+	self.wndSplit:Show(false)
 end
 
 function InventoryBag:OnSplitStackConfirm(wndHandler, wndCtrl)
-	local wndSplit = self.wndMain:FindChild("SplitStackContainer")
-	local tItem = wndSplit:GetData()
-	wndSplit:Show(false)
-	self.wndMain:FindChild("MainBagWindow"):StartSplitStack(tItem, wndSplit:FindChild("SplitValue"):GetValue())
+	local tItem = self.wndSplit:GetData()
+	self.wndSplit:Show(false)
+	self.wndMain:FindChild("MainBagWindow"):StartSplitStack(tItem, self.wndSplit:FindChild("SplitValue"):GetValue())
 end
 
 function InventoryBag:OnGenerateTooltip(wndControl, wndHandler, tType, item)

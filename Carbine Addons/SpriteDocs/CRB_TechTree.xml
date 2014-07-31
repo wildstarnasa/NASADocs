@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="CRB_TechTree_BG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="800" x5="800" y0="0" y1="0" y2="0" y3="1681" y4="1761" y5="1761" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_kitMetalHeader" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_800_402.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="801" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_Grid" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1602_402.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_kitTopHoloAccent" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_801_483.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="799" y0="0" y1="0" y2="0" y3="0" y4="0" y5="197" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_kitTopHoloConnector" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1697_402.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ProgBarBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_2104_690.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="35" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ProgBarFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_2090_671.tga" x0="0" x1="0" x2="0" x3="15" x4="36" x5="51" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ProgCheckmark" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_2235_209.tga" x0="0" x1="0" x2="0" x3="0" x4="29" x5="29" y0="0" y1="0" y2="0" y3="0" y4="29" y5="29" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLTRB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_801_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLTR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_882_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLTB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_963_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLRB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1044_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowTRB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1125_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowTB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_801_762.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="40" HotspotY="10" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_882_762.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowRB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_963_762.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1044_762.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLT" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1125_762.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowTR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1206_762.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowTR2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1206_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLT2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1287_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowLB2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1368_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ArrowRB2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_1449_681.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_kitMetalHeader_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TechTree_800_402.tga" x0="0" x1="0" x2="0" x3="0" x4="801" x5="801" y0="0" y1="0" y2="0" y3="0" y4="0" y5="80" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="CRB_TechTree_ProgCheckmark2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Basekit_2104_691.tga" x0="0" x1="0" x2="0" x3="0" x4="39" x5="39" y0="0" y1="0" y2="0" y3="0" y4="19" y5="19" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="CRB_TechTree_BlueBtn" Texture="UI\Assets\TexPieces\UI_CRB_TechTree_801_0.tga" x0="0" x1="0" x2="0" x3="0" x4="200" x5="200" y0="0" y1="0" y2="0" y3="0" y4="200" y5="200" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="CRB_TechTree_GreenBtn" Texture="UI\Assets\TexPieces\UI_CRB_TechTree_801_201.tga" x0="0" x1="0" x2="0" x3="0" x4="200" x5="200" y0="0" y1="0" y2="0" y3="0" y4="200" y5="200" Stretchy="1" StateBits="31" Direction="Across"/>
+</Sprites>

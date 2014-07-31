@@ -417,18 +417,23 @@ function MarketplaceCREDD:OnCREDDExchangeOrderSubmitted(wndHandler, wndControl)
 end
 
 function MarketplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResult)
-	local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
-	self.tWindowMap["WaitingScreen"]:Show(false)
-	self.tWindowMap["PostResultNotification"]:Show(true)
-	self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
-	self.tWindowMap["PostResultNotificationCheck"]:SetSprite(bSuccess and "Icon_Windows_UI_CRB_Checkmark" or "LootCloseBox")
-	self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString(ktResultErrorCodeStrings[eResult]))
+	if self.tWindowMap["WaitingScreen"] then
+		local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
+		self.tWindowMap["WaitingScreen"]:Show(false)
+		self.tWindowMap["PostResultNotification"]:Show(true)
+		self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
+		self.tWindowMap["PostResultNotificationCheck"]:SetSprite(bSuccess and "Icon_Windows_UI_CRB_Checkmark" or "LootCloseBox")
+		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString(ktResultErrorCodeStrings[eResult]))
+	end
+	
 	Apollo.StartTimer("HidePostResultNotification")
 	self:RefreshBoundCredd()
 end
 
 function MarketplaceCREDD:OnHidePostResultNotification() -- Both Timer and Mouse Click
-	self.tWindowMap["PostResultNotification"]:Show(false)
+	if self.tWindowMap["PostResultNotification"] then
+		self.tWindowMap["PostResultNotification"]:Show(false)
+	end
 end
 
 -----------------------------------------------------------------------------------------------

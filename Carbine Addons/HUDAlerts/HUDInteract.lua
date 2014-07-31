@@ -20,12 +20,11 @@ end
 
 function HUDInteract:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
 	self.xmlDoc = XmlDoc.CreateFromFile("HUDInteract.xml")
-	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function HUDInteract:OnDocumentReady()
-	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() or not g_InterfaceOptionsLoaded or self.wndMain then
+	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
 		return
 	end
 
@@ -55,7 +54,11 @@ function HUDInteract:OnDocumentReady()
 end
 
 function HUDInteract:OnOptionsUpdated()
-	self.bInteractTextOnUnit = g_InterfaceOptions.Carbine.bInteractTextOnUnit
+	if g_InterfaceOptions and g_InterfaceOptions.Carbine.bInteractTextOnUnit ~= nil then
+		self.bInteractTextOnUnit = g_InterfaceOptions.Carbine.bInteractTextOnUnit
+	else
+		self.bInteractTextOnUnit = false
+	end
 	
 	if self.wndInteractMarkerOnUnit and self.wndInteractMarkerOnUnit:IsValid() then
 		self.wndInteractMarkerOnUnit:FindChild("InteractionOnUnitPopout"):Show(self.bInteractTextOnUnit)

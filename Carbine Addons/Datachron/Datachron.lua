@@ -14,8 +14,6 @@ require "MatchingGame"
 
 local Datachron = {}
 
-local knDatachronShift = 215 -- TODO: Hardcoded. How far to shift the tracker when the Datachron is minimized/restored
-
 local kstrModeLabelZone = Apollo.GetString("CRB_Zone_Objectives")
 local kstrModeLabelInterface = Apollo.GetString("CRB_Interfaces")
 
@@ -216,7 +214,7 @@ function Datachron:OnMinimizeDatachron()
 	self.wndMinimized:FindChild("DisableCommBtnMin"):SetTooltip(Apollo.GetString("Datachron_Maximize"))
 
 	g_wndDatachron:Show(false)
-	Event_FireGenericEvent("DatachronMinimized", knDatachronShift)
+	Event_FireGenericEvent("DatachronMinimized")
 	g_wndDatachron:FindChild("QueuedCallsContainer"):Show(false)
 
 	Sound.Play(Sound.PlayUI38CloseRemoteWindowDigital)
@@ -227,7 +225,7 @@ function Datachron:OnRestoreDatachron()
 	self.wndMinimized:FindChild("DisableCommBtnMin"):SetTooltip(Apollo.GetString("CRB_Datachron_MinimizeBtn_Desc"))
 
 	g_wndDatachron:Show(true)
-	Event_FireGenericEvent("DatachronRestored", knDatachronShift)
+	Event_FireGenericEvent("DatachronRestored")
 
 	Sound.Play(Sound.PlayUI37OpenRemoteWindowDigital)
 end

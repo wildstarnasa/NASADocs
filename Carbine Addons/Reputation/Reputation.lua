@@ -246,10 +246,10 @@ function Reputation:BuildListItemProgress(wndCurr, tFaction)
 	wndCurr:FindChild("ProgressLevelBar"):SetProgress(tFaction.nCurrent)
 	wndCurr:FindChild("ProgressLevelBar"):SetBarColor(karRepToColor[tFaction.nLevel + 1])
 	wndCurr:FindChild("ProgressLevelBar"):EnableGlow(tFaction.nCurrent > tLevelData.nMin)
-	wndCurr:FindChild("ProgressLevelBarText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), tFaction.nCurrent, tLevelData.nMax))
+	wndCurr:FindChild("ProgressLevelBarText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), Apollo.FormatNumber(tFaction.nCurrent, 0, true), Apollo.FormatNumber(tLevelData.nMax,0,true)))
 
 	local strTooltip = String_GetWeaselString(Apollo.GetString("Reputation_ProgressText"), tFaction.strName, tLevelData.strName, tFaction.nCurrent, tLevelData.nMax)
-	wndCurr:SetTooltip(string.format("<P Font=\"CRB_InterfaceMedium\">%s</P>", strTooltip))
+	wndCurr:SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\">%s</P>", strTooltip))
 	return wndCurr
 end
 

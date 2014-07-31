@@ -13,7 +13,7 @@ require "ChatChannelLib"
 local Circles = {}
 local knMaxNumberOfCircles = 5
 local crGuildNameLengthError = ApolloColor.new("red")
-local crGuildNameLengthGood = ApolloColor.new("ffffffff")
+local crGuildNameLengthGood = ApolloColor.new("UI_TextHoloBodyCyan")
 
 function Circles:new(o)
     o = o or {}
@@ -33,6 +33,16 @@ function Circles:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CirclesMain.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
+end
+
+function Circles:OnRestore(eType, tSavedData)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+		return
+	end
+
+	if tSavedData.bShowOffline then
+		self.bShowOffline = tSavedData.bShowOffline
+	end
 end
 
 function Circles:OnDocumentReady()
@@ -70,8 +80,9 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 	wndRosterBottom:FindChild("RosterOptionBtnAdd"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnAdd:AddMemberContainer"))
 	wndRosterBottom:FindChild("RosterOptionBtnLeave"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnLeave:LeaveBtnContainer"))
 	wndRosterBottom:FindChild("RosterOptionBtnRemove"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnRemove:RemoveMemberContainer"))
-	--self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):AttachWindow(self.tWndRefs.wndMain:FindChild("PromoteMemberContainer")) -- No Attach Window, we're doing this one manually
-	--wndRosterBottom:FindChild("RosterOptionBtnViewAlts"):AttachWindow(wndRosterScreen:FindChild("RosterPopout"))
+	
+	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
+	self.tWndRefs.wndMain:FindChild("ShowOffline"):SetCheck(self.bShowOffline)
 	
 	self.bViewingRemovedGuild = false
 
@@ -127,10 +138,7 @@ function Circles:FullRedrawOfRoster()
 
 	self.tWndRefs.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
 	self.tWndRefs.wndMain:FindChild("BGFrame:HeaderTitleText"):SetText(guildCurr:GetName())
-	--if guildCurr:GetType() == GuildLib.GuildType_Guild then
-	--	self.tWndRefs.wndMain:FindChild("HeaderTitleText"):SetText(guildCurr:GetName().." ("..guildCurr:GetInfluence().." Influence)")
-	--end
-
+	
 	guildCurr:RequestMembers() -- This will send back an event "GuildRoster"
 
 	local wndRankPopout = wndRosterScreen:FindChild("RankPopout")
@@ -141,7 +149,6 @@ function Circles:FullRedrawOfRoster()
 	local arRanks = guildCurr:GetRanks()
 	if arRanks then
 		for idx, tRankInfo in ipairs(arRanks) do
-
 			if tRankInfo.bValid then
 				local wndRank = Apollo.LoadForm(self.xmlDoc, "RankEntry", wndRankContainer, self)
 				wndRank:SetData({ nRankIdx = idx, tRankData = tRankInfo, bNew = false })
@@ -183,33 +190,36 @@ function Circles:BuildRosterList(guildCurr, tRoster)
 	wndGrid:DeleteAll() -- TODO remove this for better performance eventually
 
 	for key, tCurr in pairs(tRoster) do
-		local strIcon = "CRB_DEMO_WrapperSprites:btnDemo_CharInvisibleNormal"
-		if tCurr.nRank == 1 then -- Special icons for guild leader and council (TEMP Placeholder)
-			strIcon = "CRB_Basekit:kitIcon_Holo_Profile"
-		elseif tCurr.nRank == 2 then
-			strIcon = "CRB_Basekit:kitIcon_Holo_Actions"
-		end
+		if self.bShowOffline or tCurr.fLastOnline == 0 then
+			local strIcon = "CRB_DEMO_WrapperSprites:btnDemo_CharInvisibleNormal"
+			if tCurr.nRank == 1 then -- Special icons for guild leader and council (TEMP Placeholder)
+				strIcon = "CRB_Basekit:kitIcon_Holo_Profile"
+			elseif tCurr.nRank == 2 then
+				strIcon = "CRB_Basekit:kitIcon_Holo_Actions"
+			end
 
-		local strRank = Apollo.GetString("Circles_UnknownRank")
-		if tRanks[tCurr.nRank] and tRanks[tCurr.nRank].strName then
-			strRank = tRanks[tCurr.nRank].strName
-		end
+			local strRank = Apollo.GetString("Circles_UnknownRank")
+			if tRanks[tCurr.nRank] and tRanks[tCurr.nRank].strName then
+				strRank = tRanks[tCurr.nRank].strName
+			end
 
-		local strTextColor = "UI_TextHoloBodyHighlight"
-		if tCurr.fLastOnline ~= 0 then -- offline
-			strTextColor = "UI_BtnTextGrayNormal"
-		end
+			local strTextColor = "UI_TextHoloBodyHighlight"
+			if tCurr.fLastOnline ~= 0 then -- offline
+				strTextColor = "UI_BtnTextGrayNormal"
+			end
 
-		local iCurrRow = wndGrid:AddRow("")
-		wndGrid:SetCellLuaData(iCurrRow, 1, tCurr)
-		wndGrid:SetCellImage(iCurrRow, 1, strIcon)
-		wndGrid:SetCellDoc(iCurrRow, 2, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.strName))
-		wndGrid:SetCellDoc(iCurrRow, 3, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, strRank))
-		wndGrid:SetCellDoc(iCurrRow, 4, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.nLevel))
-		wndGrid:SetCellDoc(iCurrRow, 5, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.strClass))
-		wndGrid:SetCellDoc(iCurrRow, 6, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertPathToString(tCurr.ePathType)))
-		wndGrid:SetCellDoc(iCurrRow, 7, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertToTime(tCurr.fLastOnline)))
+			local iCurrRow = wndGrid:AddRow("")
+			wndGrid:SetCellLuaData(iCurrRow, 1, tCurr)
+			wndGrid:SetCellImage(iCurrRow, 1, strIcon)
+			wndGrid:SetCellDoc(iCurrRow, 2, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.strName))
+			wndGrid:SetCellDoc(iCurrRow, 3, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, strRank))
+			wndGrid:SetCellDoc(iCurrRow, 4, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.nLevel))
+			wndGrid:SetCellDoc(iCurrRow, 5, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.strClass))
+			wndGrid:SetCellDoc(iCurrRow, 6, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertPathToString(tCurr.ePathType)))
+			wndGrid:SetCellDoc(iCurrRow, 7, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertToTime(tCurr.fLastOnline)))
+		end
 	end
+	
 	local wndAddContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer")
 	local wndAddMemberEditBox = wndAddContainer:FindChild("AddMemberEditBox")
 	wndAddContainer:FindChild("AddMemberYesBtn"):SetData(wndAddMemberEditBox)
@@ -256,6 +266,7 @@ function Circles:OnRanksButtonSignal()
 	wndRankPopout:Show(bShow)
 	wndRankContainer:Show(bShow)
 	wndRankSettings:Show(false)
+	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):Show(false)
 end
 
 function Circles:OnAddRankBtnSignal(wndControl, wndHandler)
@@ -454,6 +465,12 @@ end
 -----------------------------------------------------------------------------------------------
 -- Bottom Panel Roster Actions
 -----------------------------------------------------------------------------------------------
+
+function Circles:OnOfflineBtn(wndHandler, wndControl)
+	self.bShowOffline = wndControl:IsChecked()
+	
+	self:FullRedrawOfRoster()
+end
 
 function Circles:ResetRosterMemberButtons()
 	-- Defaults

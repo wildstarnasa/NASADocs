@@ -38,7 +38,7 @@ local karMissionTypeToFormattedString =
 	[Apollo.GetString("ExplorerMission_OperationsKey")]			= Apollo.GetString("ExplorerMission_Operations"),
 	[Apollo.GetString("ExplorerMission_ExplorationKey")]		= Apollo.GetString("ExplorerMission_Exploration"),
 	[Apollo.GetString("ExplorerMission_StakingClaimKey")]		= Apollo.GetString("ExplorerMission_StakingClaim"),
-	[Apollo.GetString("ExplorerMission_ScavengerHuntKey")]		= Apollo.GetString("ExplorerMission_ScavengerHunt"),	
+	[Apollo.GetString("ExplorerMission_ScavengerHuntKey")]		= Apollo.GetString("ExplorerMission_ScavengerHunt"),
 	[Apollo.GetString("ExplorerMission_InvestigationKey")]		= Apollo.GetString("ExplorerMission_Investigation"),
 	[Apollo.GetString("ExplorerMission_TrackingKey")]			= Apollo.GetString("ExplorerMission_Tracking"),
 }
@@ -61,7 +61,7 @@ end
 
 function PathExplorerMain:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("PathExplorerMain.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function PathExplorerMain:OnSave(eType)
@@ -153,7 +153,6 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function PathExplorerMain:BuildListItem(pmCurrMission)
-	
 	if not pmCurrMission then
 		return
 	end
@@ -223,14 +222,14 @@ function PathExplorerMain:BuildListItem(pmCurrMission)
 	if string.len(strPercent) > 0 then
 		strMissionType = String_GetWeaselString(Apollo.GetString("ExplorerMissions_PercentSubtitle"),  strPercent, strMissionType)
 	end
-		
+
 	wndListItem:FindChild("ListItemSubtitle"):SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">%s</P>", strMissionType))
 
 
 	-- Resize
 	local nWidth, nHeight = wndListItem:FindChild("ListItemName"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wndListItem:GetAnchorOffsets()
-	wndListItem:SetAnchorOffsets(nLeft, nTop, nRight, math.max(56, nTop + nHeight + 38))
+	wndListItem:SetAnchorOffsets(nLeft, nTop, nRight, math.max(56, nTop + nHeight + 37))
 end
 
 function PathExplorerMain:OnListItemMouseEnter(wndHandler, wndControl)
@@ -327,11 +326,6 @@ function PathExplorerMain:OnPathUpdate()
 	end
 
 	if nActiveMissionCount == 0 then
-		local wndAvailableMissions = self.wndMain:FindChildByUserData("AvailableMissionsHeader")
-		if wndAvailableMissions then
-			local nLeft, nTop, nRight, nBottom = wndAvailableMissions:GetAnchorOffsets()
-			wndAvailableMissions:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 22) -- TODO Hardcoded formatting, quick hack
-		end
 		self.wndMain:FindChild("MissionList"):FindChildByUserData("ActiveMissionsHeader"):Destroy()
 	end
 	self.wndMain:FindChild("MissionList"):Show(bThereIsAMission)
@@ -465,15 +459,15 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function PathExplorerMain:OnListItemRightArrowClick(wndHandler, wndControl) -- wndHandler is "RightSubscreenBtn" and its data is the mission object
-	if wndHandler ~= wndControl or not wndHandler:GetData() then 
-		return 
-	end 
+	if wndHandler ~= wndControl or not wndHandler:GetData() then
+		return
+	end
 	Event_FireGenericEvent("LoadExplorerMission", wndHandler:GetData())
 end
 
 function PathExplorerMain:OnListItemHintArrow(wndControl, wndHandler)
-	if not wndHandler or not wndHandler:GetData() or wndHandler:GetId() ~= wndControl:GetId() then 
-		return 
+	if not wndHandler or not wndHandler:GetData() or wndHandler:GetId() ~= wndControl:GetId() then
+		return
 	end
 
 	local pmMission = wndHandler:GetData()
@@ -502,8 +496,8 @@ function PathExplorerMain:OnListItemHintArrow(wndControl, wndHandler)
 end
 
 function PathExplorerMain:OnMouseEnter(wndHandler, wndControl)
-	if not wndHandler or not wndHandler:GetData() then 
-		return 
+	if not wndHandler or not wndHandler:GetData() then
+		return
 	end
 	if ZoneMapLibrary and ZoneMapLibrary.wndZoneMap then
 		ZoneMapLibrary.wndZoneMap:HighlightRegionsByUserData(wndHandler:GetData())
@@ -511,8 +505,8 @@ function PathExplorerMain:OnMouseEnter(wndHandler, wndControl)
 end
 
 function PathExplorerMain:OnMouseExit(wndHandler, wndControl)
-	if not wndHandler or not wndHandler:GetData() then 
-		return 
+	if not wndHandler or not wndHandler:GetData() then
+		return
 	end
 	if ZoneMapLibrary and ZoneMapLibrary.wndZoneMap then
 		ZoneMapLibrary.wndZoneMap:UnhighlightRegionsByUserData(wndHandler:GetData())

@@ -427,6 +427,7 @@ end
 
 function Character:OnNameEditClearTitleBtn()
 	CharacterTitle.SetTitle(nil)
+	self.strTitle = ""
 end
 
 function Character:ShowCharacterWindow()
@@ -735,23 +736,28 @@ function Character:DrawAttributes()
 			{
 				strName 	= Apollo.GetString("Character_MaxHealthLabel"),
 				nValue 		= math.ceil(unitPlayer:GetMaxHealth()),
-				strTooltip 	= Apollo.GetString("CRB_Health_Description")},
+				strTooltip 	= Apollo.GetString("CRB_Health_Description")
+			},
 			{
 				strName 	= Apollo.GetString("Character_MaxShieldLabel"),
 				nValue 		= math.ceil(unitPlayer:GetShieldCapacityMax()),
-				strTooltip 	= Apollo.GetString("Character_MaxShieldTooltip")},
+				strTooltip 	= Apollo.GetString("Character_MaxShieldTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("AttributeAssaultPower"),
 				nValue 		= math.floor(unitPlayer:GetAssaultPower()),
-				strTooltip 	= Apollo.GetString("Character_AssaultTooltip")},
+				strTooltip 	= Apollo.GetString("Character_AssaultTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("AttributeSupportPower"),
 				nValue 		= math.floor(unitPlayer:GetSupportPower()),
-				strTooltip 	= Apollo.GetString("Character_SupportTooltip")},
+				strTooltip 	= Apollo.GetString("Character_SupportTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("CRB_Armor"),
 				nValue 		= math.floor(arProperties.Armor.fValue),
-				strTooltip 	= Apollo.GetString("Character_ArmorTooltip")}
+				strTooltip 	= Apollo.GetString("Character_ArmorTooltip")
+			}
 		}
 	}
 
@@ -760,91 +766,117 @@ function Character:DrawAttributes()
 		{
 			{
 				strName 	= Apollo.GetString("Character_StrikethroughLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetStrikethroughChance() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_StrikethroughTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_AvoidReduce).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetStrikethroughChance() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_StrikethroughTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_AvoidReduce).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_CritChanceLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetCritChance() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_CritTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_CritChanceIncrease).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetCritChance() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_CritTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_CritChanceIncrease).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_CritSeverityLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetCritSeverity() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_CritSevTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.RatingCritSeverityIncrease).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetCritSeverity() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_CritSevTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.RatingCritSeverityIncrease).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_ArmorPenLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetIgnoreArmorBase() + 0.000005) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_ArmorPenTooltip")},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetIgnoreArmorBase() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_ArmorPenTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("Character_ShieldPenLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetIgnoreShieldBase() + 0.000005) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_ShieldPenTooltip")},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetIgnoreShieldBase() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_ShieldPenTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("Character_LifestealLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetBaseLifesteal() + 0.000005) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_LifestealTooltip")},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetBaseLifesteal() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_LifestealTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("Character_HasteLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (-1 * math.floor((unitPlayer:GetCooldownReductionModifier() + 0.000005 - 1) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_HasteTooltip")}
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(-1 * math.floor((unitPlayer:GetCooldownReductionModifier() + 0.000005 - 1) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_HasteTooltip")
+			}
 		},
 		{
 			{
 				strName 	= Apollo.GetString("Character_ShieldRegenPercentLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetShieldRegenPct() + 0.000005) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_ShieldRegenPercentTooltip")},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetShieldRegenPct() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_ShieldRegenPercentTooltip")
+			},
 			{
 				strName 	= Apollo.GetString("Character_ShieldRebootLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_SecondsLabel"), unitPlayer:GetShieldRebootTime() / 1000),
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_SecondsLabel"), Apollo.FormatNumber(unitPlayer:GetShieldRebootTime() / 1000, 2, true)),
 				strTooltip 	= Apollo.GetString("Character_ShieldRebootTooltip")
 			}
 		},
 		{
 			{
 				strName 	= Apollo.GetString("Character_PhysicalMitLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetPhysicalMitigation() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PhysMitTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ResistPhysical).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetPhysicalMitigation() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PhysMitTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ResistPhysical).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_TechMitLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetTechMitigation() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_TechMitTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ResistTech).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetTechMitigation() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_TechMitTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ResistTech).fValue))
+			},
 			{
 				strName 	= Apollo.GetString("Character_MagicMitLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetMagicMitigation() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_MagicMitTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ResistMagic).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetMagicMitigation() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_MagicMitTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ResistMagic).fValue, 2, true))
+			},
 		},
 		{
 			{
 				strName 	= Apollo.GetString("Character_DeflectLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetDeflectChance() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_DeflectTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_AvoidIncrease).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetDeflectChance() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_DeflectTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_AvoidIncrease).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_DeflectCritLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetDeflectCritChance() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_CritDeflectTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_CritChanceDecrease).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetDeflectCritChance() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_CritDeflectTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.Rating_CritChanceDecrease).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_ResilianceLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((math.abs(unitPlayer:GetCCDurationModifier() -1) + 0.000005) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_ResilianceTooltip")}
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((math.abs(unitPlayer:GetCCDurationModifier() -1) + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_ResilianceTooltip")
+			}
 		},
 		{
 			{
 				strName 	= Apollo.GetString("Character_ManaRecoveryLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PerSecLabel"), unitPlayer:GetManaRegenInCombat() * 2),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_ManaRecoveryTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ManaPerFiveSeconds).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PerSecLabel"), Apollo.FormatNumber(unitPlayer:GetManaRegenInCombat() * 2, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_ManaRecoveryTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.ManaPerFiveSeconds).fValue, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_ManaCostRedLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((math.abs(unitPlayer:GetManaCostModifier() -1) + 0.000005) * 10000) / 100)),
-				strTooltip 	= Apollo.GetString("Character_ManaCostRedTooltip")}
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((math.abs(unitPlayer:GetManaCostModifier() -1) + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= Apollo.GetString("Character_ManaCostRedTooltip")
+			}
 		},
 		{
 			{
 				strName 	= Apollo.GetString("Character_PvPOffenseLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetPvPOffensePercent() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PvPOffenseTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.PvPOffensiveRating).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetPvPDamageI() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PvPOffenseTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.PvPOffensiveRating).fValue, 2, true),
+							  Apollo.FormatNumber(math.floor((unitPlayer:GetPvPDamageO() + 0.000005) * 10000) / 100, 2, true))
+			},
+			{	-- GOTCHA: Healing actually uses PvPOffenseRating, which is called PvP Power to the player
+				strName 	= Apollo.GetString("Character_PvPHealLabel"),
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((unitPlayer:GetPvPHealingI() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PvPHealingTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.PvPOffensiveRating).fValue, 2, true),
+							  Apollo.FormatNumber(math.floor((unitPlayer:GetPvPHealingO() + 0.000005) * 10000) / 100, 2, true))
+			},
 			{
 				strName 	= Apollo.GetString("Character_PvPDefLabel"),
-				nValue 		= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), (math.floor((unitPlayer:GetPvPDefensePercent() + 0.000005) * 10000) / 100)),
-				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PvPDefenseTooltip"), tostring(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.PvPDefensiveRating).fValue))},
+				strValue 	= String_GetWeaselString(Apollo.GetString("Character_PercentAppendLabel"), Apollo.FormatNumber(math.floor((1 - unitPlayer:GetPvPDefenseI() + 0.000005) * 10000) / 100, 2, true)),
+				strTooltip 	= String_GetWeaselString(Apollo.GetString("Character_PvPDefenseTooltip"), Apollo.FormatNumber(unitPlayer:GetUnitProperty(Unit.CodeEnumProperties.PvPDefensiveRating).fValue, 2, true),
+							  Apollo.FormatNumber(math.floor((1 - unitPlayer:GetPvPDefenseO() + 0.000005) * 10000) / 100, 2, true))
+			},
 		}
 	}
 
@@ -867,12 +899,12 @@ function Character:DrawAttributes()
 
 	for idx, tCur in pairs (arSecondaryAttributes) do
 		local wndItemContainer = Apollo.LoadForm(self.xmlDoc, "SecondaryAttributeContainer", wndParent, self)
-		local wndItemHolder = Apollo.LoadForm(self.xmlDoc, "SecAtContHolder", wndItemContainer , self)
+		local wndItemHolder = Apollo.LoadForm(self.xmlDoc, "SecondaryAttributeContHolder", wndItemContainer , self)
 		local nContainerLeft, nContainerTop, nContainerRight, nContainerBottom = wndItemHolder:GetAnchorOffsets()
 
 		local strIcon = ""
 		for idxInner, tCurInner in pairs (arSecondaryAttributes[idx]) do
-			self:SecondaryStatsDrawHelper(wndItemHolder , tCurInner.strName, tCurInner.nValue, strIcon, "ff39b5d4", tCurInner.strTooltip)
+			self:SecondaryStatsDrawHelper(wndItemHolder , tCurInner.strName, tCurInner.strValue, strIcon, "ff39b5d4", tCurInner.strTooltip)
 		end
 
 		local nNewBottom = wndItemHolder:ArrangeChildrenVert()
@@ -927,33 +959,17 @@ function Character:DrawAttributes()
 	end
 end
 
-function Character:PrimaryStatsDrawHelper(wndContainer, name, value, strIcon, color, strTooltip)
+function Character:PrimaryStatsDrawHelper(wndContainer, strName, nValue, strIcon, crTextColor, strTooltip)
 	local wndItem = Apollo.LoadForm(self.xmlDoc, "CalloutAttributeItem", wndContainer, self)
-	wndItem:FindChild("StatLabel"):SetAML(string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", color, name))
-	wndItem:FindChild("StatValue"):SetAML(string.format("<P Font=\"CRB_InterfaceMedium_B\" Align=\"Right\" TextColor=\"%s\">%s</P>", color, value))
-
-	if strIcon ~= "" then
-		wndItem:FindChild("StatIcon"):SetSprite(strIcon)
-		wndItem:FindChild("StatIcon"):Show(false)
-	else
-		wndItem:FindChild("StatIcon"):Show(false)
-	end
-
+	wndItem:FindChild("StatLabel"):SetAML(string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", crTextColor, strName))
+	wndItem:FindChild("StatValue"):SetAML(string.format("<P Font=\"CRB_InterfaceMedium_B\" Align=\"Right\" TextColor=\"%s\">%s</P>", crTextColor, Apollo.FormatNumber(nValue, 0, true)))
 	wndItem:SetTooltip(strTooltip)
 end
 
-function Character:SecondaryStatsDrawHelper(wndContainer, name, value, strIcon, color, strTooltip)
+function Character:SecondaryStatsDrawHelper(wndContainer, strName, strValue, strIcon, crTextColor, strTooltip)
 	local wndItem = Apollo.LoadForm(self.xmlDoc, "SecondaryAttributeItem", wndContainer, self)
-	wndItem:FindChild("StatLabel"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", color, name))
-	wndItem:FindChild("StatValue"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", color, value))
-
-	if strIcon ~= "" then
-		wndItem:FindChild("StatIcon"):SetSprite(strIcon)
-		wndItem:FindChild("StatIcon"):Show(true)
-	else
-		wndItem:FindChild("StatIcon"):Show(false)
-	end
-
+	wndItem:FindChild("StatLabel"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", crTextColor, strName))
+	wndItem:FindChild("StatValue"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", crTextColor, strValue))
 	wndItem:SetTooltip(strTooltip)
 end
 
@@ -1038,10 +1054,10 @@ function Character:UpdateMilestones()
 			wndMilestone:FindChild("ProgressPoints"):SetStyleEx("EdgeGlow", bShowGlow)
 
 			wndMilestone:FindChild("AttributeRank"):SetText(strRank)
-			wndMilestone:FindChild("AttributeName"):SetText(ktAttributeIconsText[tCurrent.idProperty][2] .. ": " .. math.floor(tCurrent.fValue) or 0)
+			wndMilestone:FindChild("AttributeName"):SetText(ktAttributeIconsText[tCurrent.idProperty][2] .. ": " .. Apollo.FormatNumber(math.floor(tCurrent.fValue, 0, true)) or 0)
 			wndMilestone:FindChild("AttributeNameIcon"):SetSprite(ktAttributeIconsText[tCurrent.idProperty][1])
-			wndMilestone:FindChild("CurrentPoints"):SetText(nRankFloor)
-			wndMilestone:FindChild("MaxPoints"):SetText(math.floor(nRankMax))
+			wndMilestone:FindChild("CurrentPoints"):SetText(Apollo.FormatNumber(nRankFloor, 0, true))
+			wndMilestone:FindChild("MaxPoints"):SetText(Apollo.FormatNumber(math.floor(nRankMax), 0, true))
 
 			----------------------------------------------------------------------------
 			-- Now set up mini-milestones just for the tiers we're in
@@ -1061,7 +1077,7 @@ function Character:UpdateMilestones()
 					local nLeft2, nTop2, nRight2, nBottom2 = wndMini:GetAnchorOffsets()
 					local nHalf = (nRight2 - nLeft2) / 2
 					local strReqColor = "ffff5555"
-					local strMiniReq = String_GetWeaselString(Apollo.GetString("Character_MiniMileReq"), tMilestone.nRequiredAmount, ktAttributeIconsText[tCurrent.idProperty][2])
+					local strMiniReq = String_GetWeaselString(Apollo.GetString("Character_MiniMileReq"), Apollo.FormatNumber(tMilestone.nRequiredAmount, 0, true), ktAttributeIconsText[tCurrent.idProperty][2])
 					wndMini:SetAnchorOffsets(nPosition - nHalf, nTop2, nPosition + nHalf, nBottom2)
 
 					if tMilestone.nRequiredAmount <= tCurrent.fValue then
@@ -1080,7 +1096,7 @@ function Character:UpdateMilestones()
 						wndMini:FindChild("Icon"):SetSprite(ktAttributeIconsText[tMilestone.eUnitProperty][1])
 					end
 
-					local strMiniAmount = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">+%.2f %s</P>", tMilestone.fModifier, ktAttributeIconsText[tMilestone.eUnitProperty][2])
+					local strMiniAmount = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">+%s %s</P>", Apollo.FormatNumber(tMilestone.fModifier, 2, true), ktAttributeIconsText[tMilestone.eUnitProperty][2])
 					strMiniReq = string.format("<P><P Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</P></P>", strReqColor, strMiniReq)
 					wndMini:SetTooltip(strMiniAmount .. strMiniReq)
 				end
@@ -1125,7 +1141,7 @@ function Character:OnAttributeIconToolip(wndHandler, wndControl, eType, arg1, ar
 	for idx, tValue in pairs(tData.tSecondaries) do
 		local wndSecondary = Apollo.LoadForm(self.xmlDoc, "RankSecondaryEntry", wndSecondaries, self)
 		local nBonus = string.format("%.02f", tValue.fBonus)
-		wndSecondary:FindChild("RankSecondaryEntryText"):SetText("+" .. nBonus .. " " .. ktAttributeIconsText[tValue.eUnitProperty][2])
+		wndSecondary:FindChild("RankSecondaryEntryText"):SetText("+" .. Apollo.FormatNumber(nBonus, 0, true) .. " " .. ktAttributeIconsText[tValue.eUnitProperty][2])
 		wndSecondary:FindChild("RankSecondaryEntryText"):SetHeightToContentHeight()
 		wndSecondary:FindChild("RankSecondaryEntryIcon"):SetSprite(ktAttributeIconsText[tValue.eUnitProperty][1])
 		nSecondaryHeight = nSecondaryHeight + math.max(wndSecondary:FindChild("RankSecondaryEntryText"):GetHeight(), 19)
@@ -1142,7 +1158,7 @@ function Character:OnAttributeIconToolip(wndHandler, wndControl, eType, arg1, ar
 	for idx, tValue in pairs(tData.tContributions) do
 		local wndMilestone = Apollo.LoadForm(self.xmlDoc, "RankSecondaryEntry", wndMilestones, self)
 		local nBonus = string.format("%.02f", tValue)
-		wndMilestone:FindChild("RankSecondaryEntryText"):SetText("+" .. nBonus .. " " .. ktAttributeIconsText[idx][2])
+		wndMilestone:FindChild("RankSecondaryEntryText"):SetText("+" .. Apollo.FormatNumber(nBonus, 0, true) .. " " .. ktAttributeIconsText[idx][2])
 		wndMilestone:FindChild("RankSecondaryEntryText"):SetHeightToContentHeight()
 		wndMilestone:FindChild("RankSecondaryEntryIcon"):SetSprite(ktAttributeIconsText[idx][1])
 		nMilestoneHeight = nMilestoneHeight + math.max(wndMilestone:FindChild("RankSecondaryEntryText"):GetHeight(), 19)
@@ -1254,9 +1270,11 @@ function Character:OnTitleSelected(wndHandler, wndControl)
 		local ttlSelected = wndHandler:GetData()
 		if CharacterTitle.CanUseTitle(ttlSelected) then
 			CharacterTitle.SetTitle(ttlSelected)
+			self.strTitle = ttlSelected:GetTitle()
 		end
 	else
 		CharacterTitle.SetTitle(nil)
+		self.strTitle = ""
 	end
 
 	self:OnDrawEditNamePopout()
@@ -1281,7 +1299,17 @@ function Character:DrawNames()
 	local tStats = unitPlayer:GetBasicStats()
 	local strGuildName = unitPlayer:GetGuildName() or ""
 	local strTitleName = unitPlayer:GetTitleOrName() or ""
-	local strTitle = unitPlayer:GetTitle() or ""
+	if not self.strTitle then
+		self.strTitle = ""
+		local tTitles = CharacterTitle.GetAvailableTitles()
+		table.sort(tTitles, function(a,b) return a:GetCategory() < b:GetCategory() end)
+		for idx, titleCurr in pairs(tTitles) do
+			if CharacterTitle.IsActiveTitle(titleCurr) then
+				self.strTitle = titleCurr:GetTitle()
+			end
+		end 
+	end
+	
 	local strClass = karClassToString[unitPlayer:GetClassId()] or ""
 	local strClassIcon = karClassToIcon[unitPlayer:GetClassId()] or ""
 	local strFaction = karFactionToString[unitPlayer:GetFaction()] or ""
@@ -1313,9 +1341,9 @@ function Character:DrawNames()
 		strResult = String_GetWeaselString(Apollo.GetString("Character_Title"), strTitleName, strLevel, strFaction, karRaceToString[nRaceID], strPath, strClass)
 	end
 
-	self.wndCharacter:FindChild("BGArt_OverallFrame:PlayerName"):SetAML("<P Font=\"CRB_HeaderMedium\" TextColor=\"UI_WindowTitleYellow\" Align=\"Center\">"..strTitleName.."</P>")
+	self.wndCharacter:FindChild("BGArt_OverallFrame:PlayerName"):SetText(strTitleName)
 	self.wndCharacter:FindChild("ClassTitleGuild"):SetText((string.len(strGuildName) > 0) and strGuildName or "")
-	self.wndCharacter:FindChild("TitleSelectionBtn"):SetText((string.len(strTitle) > 0) and strTitle or "")
+	self.wndCharacter:FindChild("TitleSelectionBtn"):SetText(self.strTitle)
 	self.wndCharacter:FindChild("CharDataLevelBig"):SetText(strLevel)
 	self.wndCharacter:FindChild("CharDataClass"):SetText(strClass)
 	self.wndCharacter:FindChild("CharDataClassIcon"):SetSprite(strClassIcon)
@@ -1392,6 +1420,7 @@ function Character:OnDrawEditNamePopout()
 	--self.wndCharacter:FindChild("NameEditGuildTagContainer"):Show(bInAGuild)
 	self.wndCharacter:FindChild("FrameGuild"):Show(bInAGuild or bInACircle)
 	self.wndCharacter:FindChild("NameEditGuildHolomarkContainer"):Show(bInAGuild)
+
 
 	self:DrawNames()
 end

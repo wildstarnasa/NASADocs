@@ -281,8 +281,7 @@ function GroupDisplayOptions:OnConvertToRaid()
 	self.wndMain:Show(false)
 
 	self.wndRaidConfirm = Apollo.LoadForm(self.xmlDoc, "RaidConvertConfirmForm", nil, self)
-	self.wndRaidConfirm:Show(true)
-	self.wndRaidConfirm:ToFront()
+	self.wndRaidConfirm:Invoke()
 end
 
 function GroupDisplayOptions:OnGroupFormatClose() -- clean up on close

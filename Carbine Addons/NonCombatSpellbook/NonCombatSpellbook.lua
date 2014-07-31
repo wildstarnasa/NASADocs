@@ -92,6 +92,7 @@ function NonCombatSpellbook:OnDocumentReady()
 	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 	
 	Apollo.RegisterEventHandler("GenericEvent_OpenNonCombatSpellbook", "OnNonCombatSpellbookOn", self)
+	Apollo.RegisterEventHandler("ToggleNonCombatSpellbook", "OnToggleNonCombatSpellbook", self)
 	Apollo.RegisterEventHandler("AbilityBookChange", "OnAbilityBookChange", self)
 	
 	-- load our forms
@@ -112,7 +113,15 @@ function NonCombatSpellbook:OnWindowManagementReady()
 end
 
 function NonCombatSpellbook:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_NonCombatAbilities"), {"GenericEvent_OpenNonCombatSpellbook", "", "Icon_Windows32_UI_CRB_InterfaceMenu_NonCombatAbility"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_NonCombatAbilities"), {"ToggleNonCombatSpellbook", "", "Icon_Windows32_UI_CRB_InterfaceMenu_NonCombatAbility"})
+end
+
+function NonCombatSpellbook:OnToggleNonCombatSpellbook()
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+		self.wndMain:Close()
+	else
+		self:OnNonCombatSpellbookOn()
+	end
 end
 
 function NonCombatSpellbook:OnAbilityBookChange()

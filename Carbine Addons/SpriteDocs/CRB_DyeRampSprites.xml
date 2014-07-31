@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprDyeRamp_0" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_0.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_1.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_2.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_3.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_4.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_5.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_6" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_6.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_7" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_7.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_8" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_8.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_9" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_9.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_10" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_10.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_11" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_11.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_12" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_12.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_13" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_13.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_14" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_14.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_15" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_15.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_16" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_16.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_17" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_17.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_18" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_18.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_19" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_19.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_20" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_20.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_21" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_21.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_22" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_22.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_23" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_23.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_24" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_24.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_25" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_25.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_26" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_26.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_27" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_27.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_28" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_28.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_29" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_29.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_30" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_30.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_31" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_31.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_32" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_32.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_33" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_33.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_34" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_34.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_35" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_35.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_36" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_36.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_37" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_37.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_38" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_38.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_39" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_39.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_40" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_40.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_41" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_41.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_42" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_42.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_43" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_43.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_44" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_44.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_45" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_45.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_46" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_46.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_47" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_47.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_48" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_48.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_49" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_49.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_50" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_50.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_51" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_51.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_52" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_52.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_53" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_53.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_54" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_54.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_55" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_55.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_56" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_56.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_57" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_57.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_58" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_58.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_59" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_59.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_60" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_60.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_61" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_61.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_62" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_62.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_63" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_63.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_64" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_64.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_65" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_65.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_66" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_66.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_67" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_67.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_68" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_68.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_69" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_69.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_70" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_70.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_71" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_71.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_72" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_72.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_73" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_73.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_74" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_74.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_75" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_75.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_76" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_76.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_77" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_77.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_78" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_78.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_79" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_79.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_80" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_80.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_81" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_81.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_82" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_82.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_83" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_83.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_84" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_84.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_85" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_85.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_86" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_86.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_87" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_87.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_88" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_88.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_89" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_89.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_90" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_90.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_91" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_91.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_92" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_92.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_93" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_93.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_94" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_94.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_95" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_95.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_96" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_96.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_97" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_97.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_98" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_98.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_99" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_99.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_100" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_100.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_101" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_101.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_102" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_102.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_103" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_103.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_104" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_104.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_105" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_105.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_106" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_106.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_107" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_107.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_108" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_108.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_109" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_109.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_110" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_110.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_111" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_111.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_112" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_112.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_113" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_113.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_114" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_114.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_115" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_115.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_116" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_116.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_117" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_117.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_118" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_118.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_119" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_119.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_120" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_120.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_121" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_121.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_122" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_122.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_123" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_123.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_124" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_124.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_125" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_125.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_126" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_126.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_127" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_127.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_128" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_128.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_129" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_129.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_130" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_130.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_131" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_131.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_132" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_132.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_133" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_133.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_134" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_134.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_135" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_135.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_136" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_136.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_137" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_137.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_138" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_138.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_139" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_139.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_140" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_140.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_141" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_141.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_142" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_142.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_143" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_143.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_144" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_144.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_145" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_145.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_146" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_146.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_147" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_147.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_148" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_148.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_149" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_149.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_150" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_150.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_151" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_151.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_152" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_152.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_153" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_153.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_154" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_154.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_155" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_155.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_156" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_156.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_157" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_157.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_158" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_158.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_159" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_159.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_160" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_160.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_161" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_161.tga" x0="0" x1="0" x2="0" x3="0" x4="70" x5="70" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_162" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_162.tga" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_163" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_163.tga" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_164" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_164.tga" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_165" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_166.tex" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_166" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_167.tex" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_167" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_168.tex" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_168" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_169.tex" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprDyeRamp_169" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ArmorDyeRamps_3_166.tex" x0="0" x1="0" x2="0" x3="0" x4="85" x5="85" y0="0" y1="0" y2="0" y3="0" y4="1" y5="1" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

@@ -10,10 +10,14 @@ local SupplySatchel = {}
 local knItemWndWidth 			= 40
 local knItemWndHeight 			= 40
 local knCategoryScrollbarWidth 	= 21
-local kclrWhite = ApolloColor.new("ffffffff")
+local kclrWhite = ApolloColor.new("white")
 local kclrGray 	= ApolloColor.new("ff555555")
-local kclrRed 	= ApolloColor.new("ffff0000")
+local kclrRed 	= ApolloColor.new("ItemQuantityFull")
+local kclrOrange 	= ApolloColor.new("ItemQuantityNearFull")
 local knUnloadWaitTime = 300 -- unload from memory if unused for 5 minutes
+local knEmptyThreshold = 0
+local knFullThreshold = 250
+local knMediumThreshold = knFullThreshold * .90
 
 function SupplySatchel:new(o)
 	o = o or {}
@@ -99,12 +103,17 @@ function SupplySatchel:OnInitializeSatchelPart2()
 			wndItem:SetData(tCurrItem)
 			wndItem:FindChild("Icon"):SetSprite(tCurrItem.itemMaterial:GetIcon())
 			wndItem:FindChild("Icon"):GetWindowSubclass():SetItem(tCurrItem.itemMaterial)
-			if tCurrItem.nCount > 199 then
+			if tCurrItem.nCount == knFullThreshold then
 				wndItem:FindChild("HighCountWarnFrame"):Show(true)
-				wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount).."\n/250")
+				wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount).."\n/"..knFullThreshold)
 				wndItem:FindChild("Count"):SetTextColor(kclrRed)
-			elseif tCurrItem.nCount > 0 then
+			elseif tCurrItem.nCount >= knMediumThreshold then
+				wndItem:FindChild("HighCountWarnFrame"):Show(true)
+				wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount).."\n/"..knFullThreshold)
+				wndItem:FindChild("Count"):SetTextColor(kclrOrange)
+			elseif tCurrItem.nCount > knEmptyThreshold then
 				wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount))
+				wndItem:FindChild("Count"):SetTextColor(kclrWhite)
 			else
 				wndItem:FindChild("Icon"):SetBGColor(kclrGray)
 			end
@@ -247,12 +256,16 @@ function SupplySatchel:PopulateSatchel(bRescroll)
 				if tCacheItem.nCount ~= tCurrItem.nCount then
 					tCacheItem.nCount = tCurrItem.nCount
 					tCacheItem.wndItem:SetData(tCurrItem)
-					tCacheItem.wndItem:FindChild("HighCountWarnFrame"):Show(tCurrItem.nCount > 199)
-					if tCurrItem.nCount > 199 then
-						tCacheItem.wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount).."\n/250")
+					tCacheItem.wndItem:FindChild("HighCountWarnFrame"):Show(tCurrItem.nCount > knFullThreshold)
+					if tCurrItem.nCount == knFullThreshold then
+						tCacheItem.wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount).."\n/"..knFullThreshold)
 						tCacheItem.wndItem:FindChild("Count"):SetTextColor(kclrRed)
 						tCacheItem.wndItem:FindChild("Icon"):SetBGColor(kclrWhite)
-					elseif tCurrItem.nCount > 0 then
+					elseif tCurrItem.nCount >= knMediumThreshold then
+						tCacheItem.wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount).."\n/"..knFullThreshold)
+						tCacheItem.wndItem:FindChild("Count"):SetTextColor(kclrOrange)
+						tCacheItem.wndItem:FindChild("Icon"):SetBGColor(kclrWhite)
+					elseif tCurrItem.nCount > knEmptyThreshold then
 						tCacheItem.wndItem:FindChild("Count"):SetText(tostring(tCurrItem.nCount))
 						tCacheItem.wndItem:FindChild("Count"):SetTextColor(kclrWhite)
 						tCacheItem.wndItem:FindChild("Icon"):SetBGColor(kclrWhite)

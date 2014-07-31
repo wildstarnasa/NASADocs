@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <AutoButton Name="btnRecall_Button" Texture="UI\Textures\UI_CRB_HUD_RecallShard.tga" x0="0" x1="52" x2="52" x3="52" x4="52" x5="52" y0="0" y1="52" y2="52" y3="52" y4="52" y5="52" StateBits="31" Direction="Across" />
+</Sprites>

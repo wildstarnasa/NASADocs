@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="spr_TEMP_Bag_HolderFrame_NonVStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_Inventory_0_0.tga" x0="0" x1="0" x2="0" x3="76" x4="187" x5="263" y0="0" y1="0" y2="0" y3="0" y4="0" y5="110" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_Bag_HolderFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_Inventory_0_0.tga" x0="0" x1="0" x2="0" x3="76" x4="187" x5="263" y0="0" y1="0" y2="0" y3="58" y4="63" y5="110" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_Bag_Separator" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_TEMP_Inventory_266_19.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="9" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TEMP_Bag_HeaderFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_LookingForGroup.tga" x0="5" x1="5" x2="5" x3="135" x4="253" x5="424" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btn_TEMP_Bag_ReplaceBtn" Texture="UI\Assets\TexPieces\UI_TEMP_Inventory_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="45" y0="109" y1="109" y2="109" y3="109" y4="109" y5="154" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_TEMP_Bag_VirtualInvBtn" Texture="UI\Assets\TexPieces\UI_TEMP_Inventory_0_159.tga" x0="0" x1="0" x2="0" x3="0" x4="41" x5="41" y0="0" y1="0" y2="0" y3="0" y4="40" y5="40" Stretchy="1" StateBits="31" Direction="Across"/>
+</Sprites>

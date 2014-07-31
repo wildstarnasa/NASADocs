@@ -179,6 +179,7 @@ function LevelUpUnlocks:OnDocumentReady()
 	Apollo.RegisterEventHandler("PathLevelUp", 					"OnPathLevelUp", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 			"OnPlayerLevelChange", self)
 	Apollo.RegisterEventHandler("ToggleLevelUpUnlocks", 		"DisplayLevelUpUnlockPermanentWindow", self)
+	Apollo.RegisterEventHandler("ToggleLevelUpUnlockWindow", 	"OnToggleLevelUpUnlockWindow", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 			"Initialize", self)
 
 	Apollo.RegisterTimerHandler("LevelUp_ReminderAutoHide", 	"OnClose", self)
@@ -198,13 +199,21 @@ function LevelUpUnlocks:OnDocumentReady()
 end
 
 function LevelUpUnlocks:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_LevelUpUnlocks"), {"ToggleLevelUpUnlocks", "", "Icon_Windows32_UI_CRB_InterfaceMenu_LevelUpUnlock"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_LevelUpUnlocks"), {"ToggleLevelUpUnlockWindow", "", "Icon_Windows32_UI_CRB_InterfaceMenu_LevelUpUnlock"})
 end
 
 function LevelUpUnlocks:Initialize()
 	local tPending = GameLib.GetPendingLevelUpUnlocks()
 	if tPending and next(tPending) then -- At least one item
 		self:OnCloseToReminder()
+	end
+end
+
+function LevelUpUnlocks:OnToggleLevelUpUnlockWindow()
+	if self.wndPermanent and self.wndPermanent:IsValid() and self.wndPermanent:IsVisible() then
+		self.wndPermanent:Close()
+	else
+		self:DisplayLevelUpUnlockPermanentWindow()
 	end
 end
 
@@ -231,7 +240,7 @@ function LevelUpUnlocks:DisplayLevelUpUnlockPermanentWindow(nSpecificLevel)
 			self.wndPermanent:Move(self.wndPermanentLocX, self.wndPermanentLocY, self.wndPermanent:GetWidth(), self.wndPermanent:GetHeight())
 		end
 	end
-
+	self.wndPermanent:Show(true)
 	-- Path or Level
 	local bShowPath = self.wndPermanent:FindChild("LevelUpPathFilterBtn"):IsChecked()
 	if not nSpecificLevel then

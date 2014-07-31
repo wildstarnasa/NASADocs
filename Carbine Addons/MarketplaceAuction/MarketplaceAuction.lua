@@ -184,7 +184,7 @@ function MarketplaceAuction:Initialize()
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceAuctionForm", nil, self)
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceAuction_AuctionHouse")})
 
-	self.wndOrderLimitText = self.wndMain:FindChild("OpenMarketListingsBtn")
+	self.wndOrderLimitText = self.wndMain:FindChild("OpenMarketListingsTitle")
 	self.wndPlayerCashWindow = self.wndMain:FindChild("PlayerCashWindow")
 
 	self.wndMain:SetSizingMinimum(self.wndMain:GetWidth(), 600)
@@ -1007,13 +1007,13 @@ function MarketplaceAuction:HelperValidateBidEditBoxInput()
 		bValidBidPrice = false
 		wndParent:FindChild("BottomBidPriceUpBtn"):Enable(true)
 		wndParent:FindChild("BottomBidPriceDownBtn"):Enable(false)
-	elseif nBuyoutPrice > 0 and nAttemptPrice > nBuyoutPrice then
+	elseif nBuyoutPrice > 0 and nBuyoutPrice < nAttemptPrice then
 		bValidBidPrice = false
 		wndParent:FindChild("BottomBidPriceUpBtn"):Enable(false)
 		wndParent:FindChild("BottomBidPriceDownBtn"):Enable(true)
 	else
-		wndParent:FindChild("BottomBidPriceUpBtn"):Enable(true)
-		wndParent:FindChild("BottomBidPriceDownBtn"):Enable(true)
+		wndParent:FindChild("BottomBidPriceUpBtn"):Enable(nAttemptPrice < nBuyoutPrice)
+		wndParent:FindChild("BottomBidPriceDownBtn"):Enable(nAttemptPrice > nMinBidPrice and nAttemptPrice > nCurrBidPrice)
 	end
 
 	-- Buttons

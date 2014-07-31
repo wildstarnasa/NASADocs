@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprStalker_VerticalGoo" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="61" y1="61" y2="61" y3="61" y4="61" y5="107" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_ActuatorRight" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="49" y0="108" y1="108" y2="108" y3="108" y4="108" y5="155" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_ActuatorLeft" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="49" x1="49" x2="49" x3="49" x4="49" x5="98" y0="108" y1="108" y2="108" y3="108" y4="108" y5="155" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_ActuatorGooRight" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="49" y0="156" y1="156" y2="156" y3="156" y4="156" y5="200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_ActuatorGooLeft" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="49" x1="49" x2="49" x3="49" x4="49" x5="98" y0="156" y1="156" y2="156" y3="156" y4="156" y5="200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_ActuatorCover" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="81" x1="81" x2="81" x3="81" x4="81" x5="103" y0="201" y1="201" y2="201" y3="201" y4="201" y5="223" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_BaseFrame" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="28" x1="28" x2="28" x3="28" x4="28" x5="362" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_BaseFrameGlow" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="153" x1="153" x2="153" x3="153" x4="153" x5="271" y0="77" y1="77" y2="77" y3="77" y4="77" y5="119" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_VerticalGooBright" Cycle="1">
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="45" x1="45" x2="45" x3="45" x4="45" x5="88" y0="61" y1="61" y2="61" y3="61" y4="61" y5="106" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="45" x1="45" x2="45" x3="45" x4="45" x5="88" y0="61" y1="61" y2="61" y3="61" y4="61" y5="106" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="45" x1="45" x2="45" x3="45" x4="45" x5="88" y0="61" y1="61" y2="61" y3="61" y4="61" y5="106" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Textures\StalkerResource_TEMP.tga" x0="45" x1="45" x2="45" x3="45" x4="45" x5="88" y0="61" y1="61" y2="61" y3="61" y4="61" y5="106" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprStalker_TEMP_ResourceBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ClassMechanics_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="208" x5="208" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Composite Name="sprStalker_VerticalGooPulse" Cycle="1">
+        <Layer Name="sprStalker_VerticalGoo"/>
+        <Layer Name="sprStalker_VerticalGooBright"/>
+    </Composite>
+</Sprites>

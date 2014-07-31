@@ -244,7 +244,7 @@ function Character:OnLoad()
 	Apollo.RegisterTimerHandler("InitialLoadTimer", "OnInitialLoadTimer", self)
 	Apollo.RegisterTimerHandler("CreateFailedTimer", "OnCreateFailedTimer", self)
 	Apollo.RegisterTimerHandler("RealmBroadcastTimer", "OnRealmBroadcastTimer", self)
-	
+
 	Apollo.CreateTimer("RealmBroadcastTimer", 10.0, false)
 	Apollo.StopTimer("RealmBroadcastTimer")
 
@@ -369,7 +369,7 @@ function Character:OnLoad()
 	self.wndServerMessagesContainer = Apollo.LoadForm(self.xmlDoc, "RealmMessagesContainer", nil, self)
 	self.wndServerMessage = self.wndServerMessagesContainer:FindChild("RealmMessage")
 	self:HelperServerMessages()
-	
+
 
 	self.wndRealmBroadcast = Apollo.LoadForm(self.xmlDoc, "RealmBroadcastMessage", nil, self)
 	self.wndRealmBroadcast:Show(false)
@@ -639,7 +639,7 @@ function Character:SetCreateForms()
 
 	self.wndInfoPane:Show(true)
 	self.wndCustOptionPanel:Show(false)
-	
+
 	--Display realm information
 	local tRealmInfo = CharacterScreenLib.GetRealmInfo()
 	local tRealm = {}
@@ -685,12 +685,12 @@ function Character:OnSelectDefiance()
 	if s_isInSelectButtons then
 		return
 	end
-	
+
 	local tSelectedOptions = self:GetSelectedOptionsCopy()
-	
+
 	--lets always do a random race and gender of the correct class
 	local possibleCharacterCreateIndex = self:GetCharacterCreateId(PreGameLib.CodeEnumFaction.Exile, nil, tSelectedOptions.classId, nil)
-	
+
 	-- dont change if we dont find it
 	if possibleCharacterCreateIndex ~= 0 then
 		self:SetCharacterCreateIndex( possibleCharacterCreateIndex )
@@ -710,9 +710,9 @@ function Character:OnSelectDominion()
 	if s_isInSelectButtons then
 		return
 	end
-	
+
 	local tSelectedOptions = self:GetSelectedOptionsCopy()
-	
+
 	--lets always do a random race and gender of the correct class
 	local possibleCharacterCreateIndex = self:GetCharacterCreateId(PreGameLib.CodeEnumFaction.Dominion, nil, tSelectedOptions.classId, nil)
 
@@ -1097,7 +1097,7 @@ function Character:OnRaceSelectCheckMale(wndHandler, wndControl)
 
 	local idGender = PreGameLib.CodeEnumGender.Male
 	local idRace = wndControl:GetData()
-	
+
 	local tSelectedOptions = self:GetSelectedOptionsCopy()
 
 	local possibleCharacterCreateIndex = self:GetCharacterCreateId(tSelectedOptions.factionId, idRace, tSelectedOptions.classId, idGender)
@@ -1124,7 +1124,7 @@ function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
 
 	local idGender = PreGameLib.CodeEnumGender.Female
 	local idRace = wndControl:GetData()
-	
+
 	local tSelectedOptions = self:GetSelectedOptionsCopy()
 
 	local possibleCharacterCreateIndex = self:GetCharacterCreateId(tSelectedOptions.factionId, idRace, tSelectedOptions.classId, idGender)
@@ -1148,7 +1148,7 @@ function Character:OnClassSelect(wndHandler, wndControl)
 
 	local tSelectedOptions = self:GetSelectedOptionsCopy()
 	local idClass = wndControl:GetData()
-	
+
 	local possibleCharacterCreateIndex = self:GetCharacterCreateId(tSelectedOptions.factionId, tSelectedOptions.raceId, idClass, tSelectedOptions.genderId)
 
 	-- dont change if we dont find it
@@ -1158,7 +1158,7 @@ function Character:OnClassSelect(wndHandler, wndControl)
 
 	self:SelectButtons()
 	self:EnableButtons()
-	
+
 	if g_arActors.primary then
 		self.arCustomizeLookOptions = g_arActors.primary:GetLooks()
 
@@ -1485,7 +1485,7 @@ function Character:FillCustomizePagination() -- we can assume this only happens 
 	for i, wnd in pairs(self.arCustomizePaginationBtns) do
 		wnd:Destroy()
 	end
-	
+
 	local arCurrentLooks = g_arActors.primary:GetLooks()
 
 	if self.arCustomizeLookOptions == nil or #self.arCustomizeLookOptions < 1  then
@@ -1598,9 +1598,10 @@ function Character:FillCustomizeOptions(bNoShow)
 	for i = 1, iOption.count do  -- count is the number of choices for an option
 		local wnd = Apollo.LoadForm(self.xmlDoc, "CustomizeOptionEntry", self.wndCustOptionList:FindChild("CustomizeContent"), self)
 		g_arActors.shadow:SetLook(iOption.sliderId, iOption.values[ i ] ) -- set the shadow actor to each option
-		
+
 		wnd:FindChild("CustomizeEntryPreview"):SetCostumeToActor(g_arActors.shadow) -- set a portrait on each button
 		wnd:FindChild("CustomizeEntryPreview"):SetItemsByCreationId( self.arCharacterCreateOptions[self.characterCreateIndex].characterCreateId )
+		wnd:FindChild("CustomizeEntryPreview"):SetModelSequence(c_customizePlayerAnimation)
 
 		if iOption.sliderId == 25 then -- body type
 			wnd:FindChild("CustomizeEntryPreview"):SetCamera("Datachron")
@@ -2026,6 +2027,7 @@ function Character:OnRealmBroadcast(strRealmBroadcast, nTier)
 	if nTier < 2 then
 		Apollo.StopTimer("RealmBroadcastTimer")
 		Apollo.StartTimer("RealmBroadcastTimer")
+
 		self.wndRealmBroadcast:FindChild("RealmMessage_Body"):SetText(strRealmBroadcast)
 		self.wndRealmBroadcast:Show(true)
 	end
@@ -2056,7 +2058,7 @@ function Character:BuildOptionsMap()
 		if not self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId][tCharacterOption.classId] then
 			self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId][tCharacterOption.classId] = {}
 		end
-		
+
 		self.mapCharacterCreateOptions[tCharacterOption.factionId][tCharacterOption.raceId][tCharacterOption.classId][tCharacterOption.genderId] = idx
 	end
 end
@@ -2066,7 +2068,7 @@ function Character:GetCharacterCreateId(idFaction, idRace, idClass, idGender)
 	if not self.mapCharacterCreateOptions then
 		self:BuildOptionsMap()
 	end
-	
+
 	--if we pass no race or an invalid one, get a new one
 	if not idRace or not self.mapCharacterCreateOptions[idFaction][idRace] then
 		local tRaces = {}
@@ -2077,14 +2079,14 @@ function Character:GetCharacterCreateId(idFaction, idRace, idClass, idGender)
 		end
 		idRace = tRaces[math.random(1, #tRaces)]
 	end
-	
+
 	--if we pass no class or an invalid one, get a new one
 	if not idClass or not self.mapCharacterCreateOptions[idFaction][idRace][idClass] then
-		local tClasses = {}	
+		local tClasses = {}
 		for idx, idOption in pairs(self.mapCharacterCreateOptions[idFaction][idRace]) do
 			table.insert(tClasses, idx)
 		end
-		
+
 		idClass = tClasses[math.random(1, #tClasses)]
 	end
 
@@ -2094,13 +2096,13 @@ function Character:GetCharacterCreateId(idFaction, idRace, idClass, idGender)
 		for idx, idOption in pairs(self.mapCharacterCreateOptions[idFaction][idRace][idClass]) do
 			table.insert(tGenders, idx)
 		end
-		
+
 		idGender = tGenders[math.random(1, #tGenders)]
 	end
-	
+
 	return self.mapCharacterCreateOptions[idFaction][idRace][idClass][idGender]
 end
-	
+
 
 function Character:GetSelectedOptionsCopy()
 	if 	self.arCharacterCreateOptions == nil then -- initial load; TODO: helpers would be in here.
@@ -2176,16 +2178,25 @@ end
 
 function Character:HelperServerMessages(strExtra)
 	local strAllMessage = ""
-	for _, strMessage in ipairs(self.arServerMessages) do
-		strAllMessage = strAllMessage .. strMessage .. "\n"
+	local strColor = "xkcdBurntYellow"
+	if CharacterScreenLib.WasDisconnectedForLag() then
+		strColor = "AddonError"
+		strAllMessage = Apollo.GetString("CharacterSelect_LagDisconnectExplain")
+	else
+		for idx, strMessage in ipairs(self.arServerMessages) do
+			strAllMessage = strAllMessage .. strMessage .. "\n"
+		end
+		if strExtra ~= nil then
+			strAllMessage = strAllMessage .. strExtra .. "\n"
+		end
 	end
-	if strExtra ~= nil then
-		strAllMessage = strAllMessage .. strExtra .. "\n"
-	end
-	
-	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
+
+	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"%s\">%s</T>", strColor, strAllMessage))
 	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
-	self.wndServerMessage:SetHeightToContentHeight()
+
+	local nWidth, nHeight = self.wndServerMessage:SetHeightToContentHeight()
+	local nLeft, nTop, nRight, nBottom = self.wndServerMessagesContainer:GetAnchorOffsets()
+	self.wndServerMessagesContainer:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.min(75, nHeight + 5))
 end
 
 function Character:OnRealmBtn(wndHandler, wndControl)

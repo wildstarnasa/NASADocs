@@ -135,6 +135,7 @@ end
 function PathScientistContent:ClearMissionList()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:FindChild("MissionList"):DestroyChildren()
+		self:OnCollapseChecklistClick()
 		self:OnScientistPathUpdate()
 	end
 end

@@ -29,7 +29,8 @@ function TradeskillTalents:OnDocumentReady()
 		return
 	end
 
-	Apollo.RegisterEventHandler("GenericEvent_InitializeTradeskillTalents", "Initialize", self)
+	Apollo.RegisterEventHandler("GenericEvent_InitializeTradeskillTalents", "Initialize", 	 	self)
+	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 					"BuildTradeskills", self)
 
 	Apollo.RegisterTimerHandler("TradeskillTalents_DelayedRedraw", "OnTradeskillTalents_DelayedRedraw", self)
 	Apollo.CreateTimer("TradeskillTalents_DelayedRedraw", 1, false)
@@ -46,6 +47,7 @@ function TradeskillTalents:Initialize(wndParent)
 end
 
 function TradeskillTalents:BuildTradeskills()
+	if not self.wndMain then return end
 	local tValidTradeskills = {}
 	for idx, tCurrTradeskill in ipairs(CraftingLib.GetKnownTradeskills()) do
 		local tCurrInfo = CraftingLib.GetTradeskillInfo(tCurrTradeskill.eId)

@@ -326,7 +326,7 @@ end
 
 ------------------------------------//------------------------------
 function Death:OnExitInstance()
-	self.wndExitConfirm:Show(true)	
+	self.wndExitConfirm:Invoke()
 	self.wndResurrect:Show(false)
 end
 
@@ -335,7 +335,7 @@ function Death:OnConfirmExit()
 		GameLib.GetPlayerUnit():Resurrect(RezType.ExitInstance, 0)
 	end
 
-	self.wndExitConfirm:Show(false)	
+	self.wndExitConfirm:Close()	
 	self.wndResurrect:Show(false)
 	self.bDead = false
 	
@@ -344,7 +344,7 @@ function Death:OnConfirmExit()
 end
 
 function Death:OnCancelExit()
-	self.wndExitConfirm:Show(false)	
+	self.wndExitConfirm:Close()	
 	self.wndResurrect:Show(true)
 end
 

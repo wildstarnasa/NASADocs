@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprSchemBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="658" y0="0" y1="0" y2="0" y3="0" y4="0" y5="507" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemeBtnBlock" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_391_524.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="180" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemIngredientFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_503_566.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="54" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemIngredientMark" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_561_564.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="11" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemIntroArt" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_Art_474_3.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="269" y0="0" y1="0" y2="0" y3="0" y4="0" y5="330" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemArtImage" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_Art_470_335.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="245" y0="0" y1="0" y2="0" y3="0" y4="0" y5="141" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemBlocker" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_Tradeskills_Art.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="396" y0="724" y1="724" y2="724" y3="724" y4="724" y5="1072" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemCheckMark" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_572_522.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemLockMark" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_572_522.tga" x0="15" x1="15" x2="15" x3="15" x4="15" x5="33" y0="1" y1="1" y2="1" y3="1" y4="1" y5="23" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprSchemLockMarkExpandable" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_572_522.tga" x0="15" x1="15" x2="16" x3="32" x4="33" x5="33" y0="1" y1="1" y2="2" y3="22" y4="23" y5="23" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btnSchemCraft" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_0_565.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="101" y0="0" y1="0" y2="0" y3="0" y4="0" y5="43" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnSchemClose" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_170_512.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="44" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnSchemDropdown" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_Art_0_697.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="26" y0="1" y1="1" y2="1" y3="1" y4="1" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnSchemQuantity" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_391_509.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="17" y0="0" y1="0" y2="0" y3="0" y4="0" y5="14" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnSchemScroller" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_0_509.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="18" y2="21" y3="33" y4="36" y5="54" Stretchy="1" StateBits="3" Direction="Across"/>
+    <AutoButton Name="btnSchemScrollUp" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_49_509.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="0" y2="0" y3="0" y4="0" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnSchemScrollDown" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_49_534.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="0" y2="0" y3="0" y4="0" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnRecipeItem" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_0_629.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="209" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnSchemDropdown_BottomAnchor" Texture="UI\Assets\TexPieces\UI_CRB_Tradeskills_Art_0_697.tga" x0="0" x1="0" x2="0" x3="25" x4="25" x5="26" y0="0" y1="0" y2="0" y3="0" y4="1" y5="25" StateBits="31" Direction="Across"/>
+</Sprites>

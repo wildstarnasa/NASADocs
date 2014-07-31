@@ -33,12 +33,38 @@ end
 function GuildRoster:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildRoster.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	
+	self.bShowOffline = true
+end
+
+function GuildRoster:OnSave(eType)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+		return
+	end
+
+	local tSavedData =
+	{
+		bShowOffline = self.bShowOffline,
+	}
+
+	return tSavedData
+end
+
+function GuildRoster:OnRestore(eType, tSavedData)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+		return
+	end
+
+	if tSavedData.bShowOffline ~= nil then
+		self.bShowOffline = tSavedData.bShowOffline
+	end
 end
 
 function GuildRoster:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+	
     Apollo.RegisterEventHandler("Guild_ToggleRoster",               "OnToggleRoster", self)
 	Apollo.RegisterEventHandler("GuildWindowHasBeenClosed", 		"OnClose", self)
 	
@@ -67,6 +93,9 @@ function GuildRoster:Initialize(wndParent)
 	self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):AttachWindow(self.tWndRefs.wndMain:FindChild("RemoveMemberContainer"))
 	self.tWndRefs.wndMain:FindChild("RosterOptionBtnEditNotes"):AttachWindow(self.tWndRefs.wndMain:FindChild("EditNotesContainer"))
 	self.tWndRefs.wndMain:FindChild("EditRanksButton"):AttachWindow(self.tWndRefs.wndEditRankPopout)
+
+	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
+	self.tWndRefs.wndMain:FindChild("ShowOffline"):SetCheck(self.bShowOffline)	
 	
 	local wndPermissionContainer = self.tWndRefs.wndMain:FindChild("PermissionContainer")
 	for idx, tPermission in pairs(GuildLib.GetPermissions(GuildLib.GuildType_Guild)) do
@@ -150,7 +179,7 @@ function GuildRoster:FullRedrawOfRoster()
 end
 
 function GuildRoster:OnGuildRoster(guildCurr, tRoster) -- Event from CPP
-	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and guildCurr == self.tWndRefs.wndMain:GetData() then
 		self.tWndRefs.wndMain:FindChild("RosterGrid"):DeleteAll()
 		self:BuildRosterList(guildCurr, self:SortRoster(tRoster, "RosterSortBtnName")) -- "RosterSortBtnName" is the default sort method to use	
 		self.tRoster = tRoster
@@ -175,44 +204,45 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 	wndGrid:DeleteAll() -- TODO remove this for better performance eventually
 
 	for key, tCurr in pairs(tRoster) do
-		local strIcon = "CRB_DEMO_WrapperSprites:btnDemo_CharInvisibleNormal"
-		if tCurr.nRank == 1 then -- Special icons for guild leader and council (TEMP Placeholder)
-			strIcon = "CRB_Basekit:kitIcon_Holo_Profile"
-		elseif tCurr.nRank == 2 then
-			strIcon = "CRB_Basekit:kitIcon_Holo_Actions"
+		if self.bShowOffline or tCurr.fLastOnline == 0 then
+			local strIcon = "CRB_DEMO_WrapperSprites:btnDemo_CharInvisibleNormal"
+			if tCurr.nRank == 1 then -- Special icons for guild leader and council (TEMP Placeholder)
+				strIcon = "CRB_Basekit:kitIcon_Holo_Profile"
+			elseif tCurr.nRank == 2 then
+				strIcon = "CRB_Basekit:kitIcon_Holo_Actions"
+			end
+
+			local strRank = Apollo.GetString("Circles_UnknownRank")
+			if tRanks[tCurr.nRank] and tRanks[tCurr.nRank].strName then
+				strRank = tRanks[tCurr.nRank].strName
+				strRank = FixXMLString(strRank)
+			end
+
+			local strTextColor = "UI_TextHoloBodyHighlight"
+			if tCurr.fLastOnline ~= 0 then -- offline
+				strTextColor = "UI_BtnTextGrayNormal"
+			end
+
+			if not self.strPlayerName then
+				self.strPlayerName = GameLib.GetPlayerUnit():GetName()
+			end
+
+			if self.strPlayerName == tCurr.strName then
+				self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):SetText(tCurr.strNote)
+			end
+			
+			local iCurrRow = wndGrid:AddRow("")
+			wndGrid:SetCellLuaData(iCurrRow, 1, tCurr)
+			wndGrid:SetCellImage(iCurrRow, 1, strIcon)
+			wndGrid:SetCellDoc(iCurrRow, 2, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.strName.."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 3, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..strRank.."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 4, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.nLevel.."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 5, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.strClass.."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 6, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertPathToString(tCurr.ePathType).."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 7, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertToTime(tCurr.fLastOnline).."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 8, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..FixXMLString(tCurr.strNote).."</T>")
+			wndGrid:SetCellLuaData(iCurrRow, 8, String_GetWeaselString(Apollo.GetString("GuildRoster_ActiveNoteTooltip"), tCurr.strName, string.len(tCurr.strNote) > 0 and tCurr.strNote or "N/A")) -- For tooltip
 		end
-
-		local strRank = Apollo.GetString("Circles_UnknownRank")
-		if tRanks[tCurr.nRank] and tRanks[tCurr.nRank].strName then
-			strRank = tRanks[tCurr.nRank].strName
-			strRank = FixXMLString(strRank)
-		end
-
-		local strTextColor = "UI_TextHoloBodyHighlight"
-		if tCurr.fLastOnline ~= 0 then -- offline
-			strTextColor = "UI_BtnTextGrayNormal"
-		end
-
-		if not self.strPlayerName then
-			self.strPlayerName = GameLib.GetPlayerUnit():GetName()
-		end
-
-		if self.strPlayerName == tCurr.strName then
-			self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):SetText(tCurr.strNote)
-		end
-
-		local iCurrRow = wndGrid:AddRow("")
-		wndGrid:SetCellLuaData(iCurrRow, 1, tCurr)
-		wndGrid:SetCellImage(iCurrRow, 1, strIcon)
-		wndGrid:SetCellDoc(iCurrRow, 2, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.strName.."</T>")
-		wndGrid:SetCellDoc(iCurrRow, 3, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..strRank.."</T>")
-		wndGrid:SetCellDoc(iCurrRow, 4, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.nLevel.."</T>")
-		wndGrid:SetCellDoc(iCurrRow, 5, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.strClass.."</T>")
-		wndGrid:SetCellDoc(iCurrRow, 6, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertPathToString(tCurr.ePathType).."</T>")
-		wndGrid:SetCellDoc(iCurrRow, 7, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertToTime(tCurr.fLastOnline).."</T>")
-
-		wndGrid:SetCellDoc(iCurrRow, 8, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">".. FixXMLString(tCurr.strNote) .."</T>")
-		wndGrid:SetCellLuaData(iCurrRow, 8, String_GetWeaselString(Apollo.GetString("GuildRoster_ActiveNoteTooltip"), tCurr.strName, string.len(tCurr.strNote) > 0 and tCurr.strNote or "N/A")) -- For tooltip
 	end
 
 	self.tWndRefs.wndMain:FindChild("AddMemberYesBtn"):SetData(self.tWndRefs.wndMain:FindChild("AddMemberEditBox"))
@@ -408,11 +438,18 @@ function GuildRoster:OnGuildRankChange(guildCurr)
 	if not self.tWndRefs.wndMain or guildCurr ~= self.tWndRefs.wndMain:GetData() then
 		return
 	end
+	
 	self:FullRedrawOfRoster()
 end
 
 function GuildRoster:OnRankPopoutCloseBtn(wndControl, wndHandler)
 	self.tWndRefs.wndEditRankPopout:Show(false)
+end
+
+function GuildRoster:OnOfflineBtn(wndHandler, wndControl)
+	self.bShowOffline = wndControl:IsChecked()
+	
+	self:FullRedrawOfRoster()
 end
 
 -----------------------------------------------------------------------------------------------

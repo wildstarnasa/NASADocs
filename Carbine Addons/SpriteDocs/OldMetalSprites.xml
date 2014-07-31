@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="OldMetalFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="0" x1="22" x2="158" x3="158" x4="300" x5="322" y0="0" y1="21" y2="41" y3="41" y4="59" y5="82" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="OldMetalTitleFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="9" x1="9" x2="9" x3="9" x4="9" x5="313" y0="90" y1="90" y2="90" y3="90" y4="90" y5="147" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="OldMetalTabBottom" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="11" x1="23" x2="23" x3="23" x4="301" x5="313" y0="182" y1="182" y2="182" y3="182" y4="229" y5="241" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="OldMetalClientFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="21" x1="21" x2="21" x3="21" x4="302" x5="302" y0="18" y1="18" y2="18" y3="18" y4="63" y5="63" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="OldMetalHorzLine" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="11" x1="15" x2="22" x3="22" x4="31" x5="35" y0="351" y1="351" y2="351" y3="351" y4="351" y5="353" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="OldMetalControlFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="9" x1="13" x2="28" x3="28" x4="44" x5="48" y0="367" y1="372" y2="389" y3="389" y4="398" y5="403" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="OldMetalControlClientFrame" Cycle="1">
+        <Frame Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="12" x1="16" x2="28" x3="28" x4="41" x5="45" y0="369" y1="373" y2="382" y3="382" y4="396" y5="399" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Composite Name="OldMetal_Tab1Selected" Cycle="1">
+        <Layer Name="OldMetal_Tab0"/>
+        <Layer Name="OldMetal_Tab1"/>
+    </Composite>
+    <Composite Name="OldMetal_Tab0Selected" Cycle="1">
+        <Layer Name="OldMetal_Tab1"/>
+        <Layer Name="OldMetal_Tab0"/>
+    </Composite>
+    <AutoButton Name="OldMetalButton" Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="342" x1="364" x2="371" x3="371" x4="378" x5="398" y0="14" y1="14" y2="14" y3="14" y4="14" y5="56" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalTab0Button" Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="10" x1="10" x2="10" x3="10" x4="10" x5="313" y0="154" y1="154" y2="154" y3="154" y4="154" y5="186" StateBits="1" Direction="Down"/>
+    <AutoButton Name="OldMetalTab2Button" Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="10" x1="10" x2="10" x3="10" x4="10" x5="313" y0="251" y1="251" y2="251" y3="251" y4="251" y5="283" StateBits="1" Direction="Down"/>
+    <AutoButton Name="OldMetalTab1Button" Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="10" x1="10" x2="10" x3="10" x4="10" x5="313" y0="496" y1="496" y2="496" y3="496" y4="496" y5="528" StateBits="1" Direction="Down"/>
+    <AutoButton Name="OldMetalUpButton" Texture="UI\Assets\TexPieces\UI_GroupWindowTexture_OldMetal_343_242.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="13" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalDownButton" Texture="UI\Assets\TexPieces\UI_GroupWindowTexture_OldMetal_343_262.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="13" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalGrid" Texture="UI\Assets\TexPieces\UI_GroupWindowTexture_OldMetal_344_135.tga" x0="0" x1="5" x2="25" x3="25" x4="44" x5="49" y0="0" y1="7" y2="15" y3="15" y4="24" y5="30" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalGridHeader" Texture="UI\Assets\TexPieces\UI_GroupWindowTexture_OldMetal_344_182.tga" x0="0" x1="15" x2="21" x3="21" x4="34" x5="41" y0="0" y1="3" y2="6" y3="6" y4="11" y5="14" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalAscendingCheck" Texture="UI\Assets\TexPieces\UI_GroupWindowTexture_OldMetal_423_216.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="9" y0="0" y1="0" y2="0" y3="0" y4="0" y5="7" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalCloseButton" Texture="UI\Textures\UI_GroupWindowTexture_OldMetal.tga" x0="351" x1="351" x2="351" x3="351" x4="351" x5="390" y0="78" y1="78" y2="78" y3="78" y4="78" y5="124" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="OldMetalVScrollThumb" Texture="UI\Assets\TexPieces\UI_GroupWindowTexture_OldMetal_343_210.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="14" y0="0" y1="2" y2="6" y3="15" y4="18" y5="21" Stretchy="1" StateBits="7" Direction="Across"/>
+</Sprites>

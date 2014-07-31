@@ -380,7 +380,6 @@ function MiniMap:OnDocumentReady()
 	if self.unitPlayerDisposition ~= nil then
 		self:OnCharacterCreated()
 	end
-	self.bQuestTrackerByDistance 		= g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or false
 
 	if not self.tToggledIcons then
 		self.tToggledIcons =
@@ -445,6 +444,8 @@ function MiniMap:OnDocumentReady()
 	if g_wndTheMiniMap == nil then
 		g_wndTheMiniMap = self.wndMiniMap
 	end
+	
+	self:OnOptionsUpdated()
 end
 
 function MiniMap:OnCharacterCreated()
@@ -465,7 +466,12 @@ function MiniMap:OnCharacterCreated()
 end
 
 function MiniMap:OnOptionsUpdated()
-	self.bQuestTrackerByDistance = g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or false
+	if g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance ~= nil then
+		self.bQuestTrackerByDistance = g_InterfaceOptions.Carbine.bQuestTrackerByDistance
+	else
+		self.bQuestTrackerByDistance = true
+	end
+	
 	self:OnQuestStateChanged()
 end
 
@@ -749,6 +755,8 @@ function MiniMap:OnMapPing(idUnit, tPos )
 		crEdge = CColor.new(1, 1, 1, 1),
 		bAboveOverlay = true,
 	}
+	
+	Sound.Play(Sound.PlayUIMiniMapPing)
 	
 	table.insert(self.tPingObjects, {["idUnit"] = idUnit, ["objMapPing"] = self.wndMiniMap:AddObject(self.eObjectTypePing, tPos, "", tInfo), ["nTime"] = GameLib.GetGameTime()})
 	

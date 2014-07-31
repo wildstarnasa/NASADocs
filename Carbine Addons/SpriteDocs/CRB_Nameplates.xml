@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprNP_RedProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_279_65.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_GreenProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_174_65.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_YellowProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_279_79.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_PurpleProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_174_93.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_ThinProgBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_173_55.tga" x0="0" x1="0" x2="0" x3="5" x4="104" x5="109" y0="0" y1="0" y2="0" y3="0" y4="0" y5="8" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_ThinPurpleProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_173_109.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="2" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_172_35.tga" x0="0" x1="0" x2="1" x3="129" x4="130" x5="130" y0="0" y1="0" y2="1" y3="19" y4="20" y5="20" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseGreen" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_172_35.tga" x0="0" x1="0" x2="1" x3="129" x4="130" x5="130" y0="0" y1="0" y2="1" y3="19" y4="20" y5="20" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseYellow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_172_35.tga" x0="0" x1="0" x2="1" x3="129" x4="130" x5="130" y0="0" y1="0" y2="1" y3="19" y4="20" y5="20" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseSelectedYellow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_0_51.tga" x0="0" x1="0" x2="1" x3="171" x4="172" x5="172" y0="0" y1="0" y2="1" y3="49" y4="50" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_BlueProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_174_79.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="12" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseSelectedRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_0_102.tga" x0="0" x1="0" x2="1" x3="171" x4="172" x5="172" y0="0" y1="0" y2="1" y3="49" y4="50" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseSelectedGreen" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_0_0.tga" x0="0" x1="0" x2="1" x3="171" x4="172" x5="172" y0="0" y1="0" y2="1" y3="49" y4="50" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_ThinRedProgEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_297_120.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" HotspotX="8" HotspotY="10" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_ThinRedProg" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_173_106.tga" x0="0" x1="0" x2="0" x3="5" x4="98" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="2" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_ThinPurpleProgEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_267_120.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" HotspotX="8" HotspotY="10" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_GreenProgEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_177_120.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" HotspotX="12" HotspotY="12" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_BlueProgEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_207_120.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" HotspotX="12" HotspotY="12" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprNP_BaseSelectedPurple" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Nameplates_0_153.tga" x0="0" x1="0" x2="1" x3="171" x4="172" x5="172" y0="0" y1="0" y2="1" y3="49" y4="50" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprNP_HighLevel" Cycle="1">
+        <Frame Texture="UI\Textures\UI_HighLevel.tga" x0="0" x1="0" x2="0" x3="0" x4="64" x5="64" y0="0" y1="0" y2="0" y3="0" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

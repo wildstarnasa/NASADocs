@@ -114,7 +114,7 @@ function InstanceSettings:OnShowDialog(tData)
 	self.wndMain:FindChild("LevelScalingButton"):Show(self.bScalingIsAllowed)
 	
 	-- start off w/ scaling/rallying off
-	self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
+	self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
 	
 	if self.locSavedMainLoc then
 		self.wndMain:MoveToLocation(self.locSavedMainLoc)
@@ -135,9 +135,9 @@ function InstanceSettings:OnShowDialog(tData)
 		end
 
 		if tData.bExistingScaling == false then
-			self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
+			self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
 		else
-			self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
+			self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
 		end
 
 		self.wndMain:FindChild("DifficultyButton1"):Enable(false)
@@ -232,10 +232,10 @@ function InstanceSettings:OnNoExistingInstance()
 	-- scaling settings
 	if 	self.bScalingIsAllowed then
 		self.wndMain:FindChild("LevelScalingButton"):Enable(true)
-		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
+		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
 	else
 		self.wndMain:FindChild("LevelScalingButton"):Enable(false)
-		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
+		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
 	end
 
 	-- turn on the enter button
@@ -258,7 +258,7 @@ function InstanceSettings:OnOK()
 		eDifficulty = GroupLib.Difficulty.Normal
 	end
 	
-	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:GetRadioSel("InstanceSettings_LocalRadioGroup_Rallying"))
+	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:FindChild("ContentFrame"):GetRadioSel("InstanceSettings_LocalRadioGroup_Rallying"))
 	self:DestroyAll()
 end
 

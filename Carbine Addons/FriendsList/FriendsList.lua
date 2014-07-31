@@ -316,11 +316,6 @@ function FriendsList:OnGenericEvent_InitializeFriends(wndParent)
 
 	self.tWndRefs.wndMain:FindChild("ListBlocker"):Show(true)
 	self.tWndRefs.wndMain:FindChild("BlockBtn"):SetCheck(not FriendshipLib.IsLocked())
-	if FriendshipLib.IsLocked() then
-		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsDisabled"))
-	else
-		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsEnabled"))
-	end
 
 	local bIgnoreAccountFriendInvites = FriendshipLib.GetPersonalStatus().bIgnoreStrangerInvites
 	self.tWndRefs.wndAccountBlockBtn:SetCheck(not bIgnoreAccountFriendInvites)
@@ -354,7 +349,7 @@ function FriendsList:OnGenericEvent_InitializeFriends(wndParent)
 
 	self.wndRequest = Apollo.LoadForm(self.xmlDoc, "FriendRequestPopup", nil, self)
 	self.wndRequest:Show(false)
-
+		
 	self.tWndRefs.wndMain:FindChild("MessageText"):Show(false)
 
 		
@@ -1525,12 +1520,6 @@ end
 function FriendsList:OnBlockBtn(wndHandler, wndControl)
 	local bBlocked = not wndControl:IsChecked() -- art is reversed
 	FriendshipLib.SetLock(bBlocked)
-
-	if bBlocked == true then
-		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsDisabled"))
-	else
-		self.tWndRefs.wndMain:FindChild("BlockBtn"):SetTooltip(Apollo.GetString("Friends_RequestsEnabled"))
-	end
 end
 
 function FriendsList:OnAccountBlockBtn(wndHandler, wndControl)

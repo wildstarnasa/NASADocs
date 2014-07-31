@@ -34,13 +34,11 @@ local eEnduranceFlash =
 
 function HealthShieldBar:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
 	self.xmlDoc = XmlDoc.CreateFromFile("HealthShieldBar.xml")
-	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
-
 end
 
 function HealthShieldBar:OnDocumentReady()
-	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() or not g_InterfaceOptionsLoaded or self.wndMain then
+	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
 		return
 	end
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 			"OnTutorial_RequestUIAnchor", self)

@@ -210,6 +210,8 @@ function HousingDecorate:OnLoad()
 	self.wndAdvToggle 				= self.wndDecorIconOptionsWindow:FindChild("ToggleAdvanced")
 	self.wndDecorIconName           = self.wndToggleFrame:FindChild("DecorNameLabel")
 	self.wndDecorBuffIcon           = self.wndToggleFrame:FindChild("BuffIcon")
+	self.wndDecorChairIcon          = self.wndToggleFrame:FindChild("ChairIcon")
+	self.wndDecorDisableIcon        = self.wndToggleFrame:FindChild("DisableIcon")
 	self.wndToggleFrame:Show(false)
 	
 	local nWidth = self.wndDecorate:GetWidth()
@@ -373,18 +375,9 @@ function HousingDecorate:PrepUi(idPropertyInfo, idZone, bPlayerIsInside)
 	self.bIsWarplot = HousingLib.IsWarplotResidence()
 	
 	if self.bIsWarplot then
-		self.wndDecorate:FindChild("DecorLimitsWindow:LightLimitsLabel"):Show(false)
-		self.wndDecorate:FindChild("DecorLimitsWindow:MannequinLimitsLabel"):Show(false)
+		self.wndDecorate:FindChild("VendorAssets:TitleFrame:TitleFrame"):SetText(Apollo.GetString("HousingDecorate_WarplotVendorLabel"))
 	else
-		self.wndDecorate:FindChild("DecorLimitsWindow:LightLimitsLabel"):Show(true)
-		self.wndDecorate:FindChild("DecorLimitsWindow:MannequinLimitsLabel"):Show(true)
-	end
-	
-	local strVendorLabel = ""
-	if self.bIsWarplot then
-		strVendorLabel = Apollo.GetString("HousingDecorate_WarplotVendorLabel")
-	else
-		strVendorLabel = Apollo.GetString("HousingDecorate_VendorLabel")
+		self.wndDecorate:FindChild("VendorAssets:TitleFrame:TitleFrame"):SetText(Apollo.GetString("HousingDecorate_VendorLabel"))
 	end
 end
 
@@ -594,6 +587,7 @@ function HousingDecorate:OnCancelBtn(wndControl, wndHandler) -- cancel a preview
     self.eSelectedItemType = nil
 	self.wndListView:SetCurrentRow(0)
 	self.wndBuyToCrateButton:Enable(false)
+	self:OnCancelFreePlace()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -792,34 +786,32 @@ function HousingDecorate:ShowDecorateWindow(bClear)
 	if not self.bPlayerIsInside then
         local nPlacedDecor = HousingLib.GetNumPlacedDecorExterior()
         local nMaxDecor = HousingLib.GetMaxPlacedDecorExterior()
-        local strCount = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedDecor"), nPlacedDecor, nMaxDecor)
-        strCount = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ffc0c0c0\">%s</T>", strCount)
-        self.wndDecorate:FindChild("DecorLimitsLabel"):SetText(strCount)
+        strCountDecor = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedDecor"), nPlacedDecor, nMaxDecor)
     else
         local nPlacedDecor = HousingLib.GetNumPlacedDecorInterior()
         local nMaxDecor = HousingLib.GetMaxOwnedDecor()
-        local strCount = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedDecor"), nPlacedDecor, nMaxDecor)
-        strCount = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ffc0c0c0\">%s</T>", strCount)
-        self.wndDecorate:FindChild("DecorLimitsLabel"):SetText(strCount) 
+        strCountDecor = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedDecor"), nPlacedDecor, nMaxDecor)
 	end
 	
 	local nOwnedDecor = HousingLib.GetNumOwnedDecor()
     nMaxDecor = HousingLib.GetMaxOwnedDecor()
-	local strCount = String_GetWeaselString(Apollo.GetString("HousingDecorate_OwnedDecor"), nOwnedDecor, nMaxDecor)
-	strCount = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ffc0c0c0\">%s</T>", strCount)
-	self.wndDecorate:FindChild("CrateLimitsLabel"):SetText(strCount)
+	local strCount2 = String_GetWeaselString(Apollo.GetString("HousingDecorate_OwnedDecor"), nOwnedDecor, nMaxDecor)
 	
-	nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin)
-	nMaxDecor = HousingLib.GetMaxPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin)
-	strCount = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedMannequins"), nPlacedDecor, nMaxDecor)
-	strCount = string.format("<T Font=\CRB_InterfaceSmall\" TextColor=\"ffc0c0c0\">%s</T>", strCount)
-	self.wndDecorate:FindChild("MannequinLimitsLabel"):SetText(strCount)
-	
-	nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light)
-	nMaxDecor = HousingLib.GetMaxPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light)
-	strCount = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedLights"), nPlacedDecor, nMaxDecor)
-	strCount = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ffc0c0c0\">%s</T>", strCount)
-	self.wndDecorate:FindChild("LightLimitsLabel"):SetText(strCount)
+	if self.bIsWarplot then
+		local strWarplot = (strCountDecor.." - "..strCount2)
+		self.wndDecorate:FindChild("EverythingLimitLabel"):SetText(strWarplot)
+	else
+		nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin)
+		nMaxDecor = HousingLib.GetMaxPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin)
+		local strCount3 = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedMannequins"), nPlacedDecor, nMaxDecor)
+		
+		nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light)
+		nMaxDecor = HousingLib.GetMaxPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light)
+		local strCount4 = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedLights"), nPlacedDecor, nMaxDecor)
+		
+		local strHousing = (strCountDecor.." - "..strCount2.." - "..strCount3.." - "..strCount4)
+		self.wndDecorate:FindChild("EverythingLimitLabel"):SetText(strHousing)
+	end
 	
 	self.wndCashDecorate:SetMoneySystem(self.eDisplayedCurrencyType, self.eDisplayedGroupCurrencyType)
 	self.wndCashDecorate:SetAmount(GameLib.GetPlayerCurrency(self.eDisplayedCurrencyType, self.eDisplayedGroupCurrencyType), true)
@@ -981,6 +973,7 @@ function HousingDecorate:OnCancelFreePlace(wndHandler, wndControl) -- from UI bu
 		self.nFreePlaceDecorHandle = 0
 		self.bCanPlaceHere = false
 	end
+	self.wndAdvToggle:SetCheck(false)
 	self:ResetPopups()
 end
 
@@ -1764,7 +1757,11 @@ function HousingDecorate:OnFreePlaceDecorQuery(nItemHandle, bFreePlaceMode, eDec
             self:OnFreePlaceDecor_FromVendor()
         else
             self:OnFreePlaceDecor_FromCrate()
-        end    
+        end
+        self.wndDecorIconOptionsWindow:FindChild("LinkBtn"):Show(false)
+        self.wndDecorIconOptionsWindow:FindChild("UnlinkBtn"):Show(false)
+        self.wndDecorIconOptionsWindow:FindChild("UnlinkAllBtn"):Show(false)
+        self.wndDecorIconOptionsWindow:FindChild("RecallBtn"):Show(false)    
     elseif 	self.nFreePlaceDecorHandle ~= nItemHandle then -- select a decor item to edit it
 		-- shut down the vender UI
 		self:OnCloseHousingDecorateWindow()
@@ -1783,6 +1780,7 @@ function HousingDecorate:OnFreePlaceDecorQuery(nItemHandle, bFreePlaceMode, eDec
             self.wndDecorIconOptionsWindow:FindChild("LinkBtn"):Show(false)
             self.wndDecorIconOptionsWindow:FindChild("UnlinkBtn"):Show(false)
             self.wndDecorIconOptionsWindow:FindChild("UnlinkAllBtn"):Show(false)
+            self.wndDecorIconOptionsWindow:FindChild("RecallBtn"):Show(true)
             self.wndAdvToggle:Show(false)
             
             if not self.bIsWarplot then
@@ -1969,6 +1967,11 @@ function HousingDecorate:UpdateDecorIconPosition(nDecorHandle) -- this is third 
 			self.wndDecorIconFrame:Show(false)
 			return
 		end
+		
+		if (self.bPlayerIsInside and tScreenInfo.fWorldPosY >= -80) or (not self.bPlayerIsInside and tScreenInfo.fWorldPosY < -80) then
+            self.wndDecorIconFrame:Show(false)
+			return    
+		end
         
         -- update position
         local nIconLeft, nIconTop, nIconRight, nIconBottom = self.wndToggleFrame:GetRect()
@@ -1989,6 +1992,9 @@ function HousingDecorate:UpdateDecorIconPosition(nDecorHandle) -- this is third 
 		else
             self.wndDecorBuffIcon:SetSprite("")
 		end    
+		
+		self.wndDecorChairIcon:Show(tScreenInfo.bIsChair)
+		self.wndDecorDisableIcon:Show(not tScreenInfo.bIsUsable)
 		
         -- update windows/buttons
         if tScreenInfo.bOnScreen and tScreenInfo.bWasDrawn then

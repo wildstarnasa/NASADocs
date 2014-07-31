@@ -24,12 +24,9 @@ function FloatText:Init()
 	Apollo.RegisterAddon(self)
 end
 
-function FloatText:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
+function FloatText:OnLoad()
 	Apollo.RegisterEventHandler("OptionsUpdated_Floaters", 					"OnOptionsUpdated", self)
-	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", 					"Initialize", self)
-end
 
-function FloatText:Initialize()
 	Apollo.RegisterEventHandler("LootedMoney", 								"OnLootedMoney", self)
 	Apollo.RegisterEventHandler("SpellCastFailed", 							"OnSpellCastFailed", self)
 	Apollo.RegisterEventHandler("DamageOrHealingDone",				 		"OnDamageOrHealing", self)
@@ -82,11 +79,15 @@ function FloatText:Initialize()
 	self.fLastDamageTime = GameLib.GetGameTime()
 	self.fLastOffset = 0
 
-	self.bSpellErrorMessages = g_InterfaceOptions.Carbine.bSpellErrorMessages
+	self:OnOptionsUpdated()
 end
 
 function FloatText:OnOptionsUpdated()
-	self.bSpellErrorMessages = g_InterfaceOptions.Carbine.bSpellErrorMessages
+	if g_InterfaceOptions and g_InterfaceOptions.Carbine.bSpellErrorMessages ~= nil then
+		self.bSpellErrorMessages = g_InterfaceOptions.Carbine.bSpellErrorMessages
+	else
+		self.bSpellErrorMessages = true
+	end
 end
 
 function FloatText:GetDefaultTextOption()
@@ -350,9 +351,9 @@ function FloatText:OnCombatLogTransference(tEventArgs)
 	end
 
 	-- healing data is stored in a table where each subtable contains a different vital that was healed
-	for _, tHeal in ipairs(tEventArgs.tHealData) do
+	for idx, tHeal in ipairs(tEventArgs.tHealData) do
 		if tEventArgs.unitCaster == GameLib.GetPlayerUnit() then -- source recieves the transference from the taker
-			self:OnPlayerDamageOrHealing( tEventArgs.unitCaster, tEventArgs.eDamageType, math.abs(tHeal.nHealAmount), 0, 0, bCritical )
+			self:OnPlayerDamageOrHealing(tEventArgs.unitCaster, GameLib.CodeEnumDamageType.Heal, math.abs(tHeal.nHealAmount), 0, 0, bCritical )
 		else
 			self:OnDamageOrHealing(tEventArgs.unitTarget, tEventArgs.unitCaster, tEventArgs.eDamageType, math.abs(tHeal.nHealAmount), 0, 0, bCritical )
 		end

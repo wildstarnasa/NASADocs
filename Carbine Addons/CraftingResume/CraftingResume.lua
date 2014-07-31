@@ -109,11 +109,14 @@ function CraftingResume:OnGenericEvent_CraftFromPL(idQueuedSchematic)
 		local tSchematicInfo = CraftingLib.GetSchematicInfo(tCurrentCraft.nSchematicId)
 		self.wndMain = Apollo.LoadForm(self.xmlDoc , "CraftingResumeForm", nil, self)
 		self.wndMain:FindChild("CoordPrevAbandonBtn"):SetData(idQueuedSchematic)
+		self.wndMain:FindChild("CoordPrevAbandonBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.CraftingAbandon)
 		self.wndMain:FindChild("CoordPrevFinishOldBtn"):SetData(tCurrentCraft.nSchematicId)
 		self.wndMain:FindChild("CoordPrevFinishOldBtn"):Enable(self.bCraftingStation)
 		self.wndMain:FindChild("CoordPrevWindowPopupOldName"):SetText(tSchematicInfo.strName)
 		self.wndMain:FindChild("CoordPrevWindowPopupOldIcon"):SetSprite(tSchematicInfo.itemOutput:GetIcon())
-		Tooltip.GetItemTooltipForm(self, self.wndMain:FindChild("CoordPrevWindowPopupOldIcon"), tSchematicInfo.itemOutput, {bPrimary = true, bSelling = false})
+		if Tooltip ~= nil and Tooltip.GetItemTooltipForm ~= nil then
+			Tooltip.GetItemTooltipForm(self, self.wndMain:FindChild("CoordPrevWindowPopupOldIcon"), tSchematicInfo.itemOutput, {bPrimary = true, bSelling = false})
+		end
 
 		-- Build materials list
 		self.wndMain:FindChild("CoordPrevWindowMaterials"):DestroyChildren()
@@ -141,7 +144,7 @@ function CraftingResume:OnCoordPrevFinishOldBtn(wndHandler, wndControl) -- Coord
 	self.wndMain = nil
 end
 
-function CraftingResume:OnCoordPrevAbandonBtn(wndHandler, wndControl) -- CoordPrevAbandonBtn
+function CraftingResume:OnCoordPrevAbandoned(wndHandler, wndControl) -- CoordPrevAbandonBtn
 	if self.bCraftingStation then
 		Event_FireGenericEvent("AlwaysShowTradeskills")
 	else
@@ -150,7 +153,6 @@ function CraftingResume:OnCoordPrevAbandonBtn(wndHandler, wndControl) -- CoordPr
 
 	Event_FireGenericEvent("GenericEvent_LootChannelMessage", Apollo.GetString("CraftingResume_Abandon"))
 	Event_FireGenericEvent("GenericEvent_BotchCraft")
-	CraftingLib.BotchCraft()
 	self.locSavedWindowLoc = self.wndMain:GetLocation()
 	self.wndMain:Destroy()
 	self.wndMain = nil

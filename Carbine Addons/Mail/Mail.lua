@@ -45,21 +45,21 @@ function Mail:OnSave(eType)
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
 		return
 	end
-
+	
 	wndMessage = next(self.tOpenMailMessages)
-
+	
 	local locMessageWindowLocation = wndMessage and self.tOpenMailMessages[wndMessage].wndMain and self.tOpenMailMessages[wndMessage].wndMain:GetLocation() or self.locSavedMessageWindowLoc
-	local tSave =
+	local tSave = 
 	{
 		tMessageLocation = locMessageWindowLocation and locMessageWindowLocation:ToTable() or nil,
 		nSavedVersion = knSaveVersion,
 	}
-
+	
 	return tSave
 end
 --------------------//-----------------------------
 function Mail:OnRestore(eType, tSavedData)
-	if tSavedData and tSavedData.nSavedVersion  == knSaveVersion then
+	if tSavedData and tSavedData.nSavedVersion  == knSaveVersion then	
 		if tSavedData.tMessageLocation then
 			self.locSavedMessageWindowLoc = WindowLocation.new(tSavedData.tMessageLocation)
 		end
@@ -69,17 +69,17 @@ end
 --------------------//-----------------------------
 function Mail:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MailForms.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
 function Mail:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
-
+	
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
-
+	
 	Apollo.RegisterEventHandler("SubZoneChanged", 			"CalculateMailAlert", self)
 	Apollo.RegisterEventHandler("AvailableMail", 			"OnAvailableMail", self)
 	Apollo.RegisterEventHandler("UnavailableMail", 			"OnUnavailableMail", self)
@@ -110,7 +110,7 @@ function Mail:OnDocumentReady()
 	self.nCascade = 0
 	self.strPendingCOD = ""
 	self.tMailQueue = Queue:new()
-
+	
 	self:CalculateMailAlert()
 end
 
@@ -189,7 +189,7 @@ function Mail:UpdateAllListItems()
 	local bNeedPopulate = false
 	local bItemsSelected = false
 	local bCanDelete = true
-
+	
 	for idx, wndMail in pairs(self.tMailItemWnds) do
 		if wndMail:FindChild("SelectMarker"):IsChecked() then
 			bItemsSelected = true
@@ -249,17 +249,17 @@ function Mail:CascadeWindow(wndMailItem)
 	local nLeft, nTop, nRight, nBottom = wndMailItem:GetRect()
 	local nWidth = nRight - nLeft
 	local nHeight = nBottom - nTop
-
+	
 	local nMaxScreenWidth, nMaxScreenHeight = Apollo.GetScreenSize()
 	local nMaxLeft = nMaxScreenWidth - nWidth
 	local nMaxTop = nMaxScreenHeight - nHeight
-
-	local nNewLeft = nLeft + self.nCascade * 25
+	
+	local nNewLeft = nLeft + self.nCascade * 25 
 	local nNewTop = nTop + self.nCascade * 25
 
 	nNewLeft = nNewLeft <= nMaxLeft and nNewLeft or nMaxLeft
 	nNewTop = nNewTop <= nMaxTop and nNewTop or nMaxTop
-
+	
 	wndMailItem:Move(nNewLeft, nNewTop, nWidth, nHeight)
 	self.nCascade = self.nCascade + 1
 	if self.nCascade == 8 then
@@ -304,7 +304,7 @@ function Mail:PopulateList()
 
 			arRemovedMessages[msgMail:GetIdStr()] = nil
 		end
-
+		
 		nMailCount = nMailCount + 1;
 	end
 
@@ -320,12 +320,12 @@ function Mail:CalculateMailAlert()
 	local nUnreadMessages = 0
 	for idx, tMessage in pairs(MailSystemLib.GetInbox()) do
 		local tMessageInfo = tMessage:GetMessageInfo()
-
+		
 		if tMessageInfo and not tMessageInfo.bIsRead then
 			nUnreadMessages = nUnreadMessages + 1
 		end
 	end
-
+	
 	Event_FireGenericEvent("InterfaceMenuList_AlertAddOn", Apollo.GetString("InterfaceMenu_Mail"), {nUnreadMessages > 0, nil, nUnreadMessages})
 end
 
@@ -367,8 +367,7 @@ function Mail:OnRefreshMail(strMailId)
 end
 
 function Mail:OnMailResult(eResult)
-
-	local tMailResultError =
+	local tMailResultError	=
 	{
 		[GameLib.CodeEnumGenericError.Mail_CannotFindPlayer] 			= 	"GenericError_Mail_CannotFindPlayer",
 		[GameLib.CodeEnumGenericError.Mail_FailedToCreate] 				= 	"GenericError_Mail_FailedToCreate",
@@ -387,38 +386,29 @@ function Mail:OnMailResult(eResult)
 		[GameLib.CodeEnumGenericError.Mail_CannotMailSelf] 				= 	"GenericError_Mail_CannotMailSelf",
 		[GameLib.CodeEnumGenericError.Mail_CannotReturn] 				= 	"GenericError_Mail_CannotReturn",
 		[GameLib.CodeEnumGenericError.Item_InventoryFull]				=   "GenericError_Item_InventoryFull",
+		[GameLib.CodeEnumGenericError.MissingEntitlement]				=   "GenericError_Mail_GuestAccount",
 		[GameLib.CodeEnumGenericError.Mail_Squelched] 					= 	"GenericError_Mail_Squelched"
 	}
-
-	local tMailHeaderError =
+	
+	local tMailHeaderError = 
 	{
 		[GameLib.CodeEnumGenericError.Item_InventoryFull]				=	"CRB_Mail"
 	}
-
-	local strErrorMessage = ""
-	local strErrorHeader = Apollo.GetString("CRB_Mail_ErrorGeneric")
-
+	
 	if tMailResultError[eResult] then
-		if tMailHeaderError[eResult] then
-			strErrorHeader = Apollo.GetString(tMailHeaderError[eResult])
-		end
-		strErrorMessage = Apollo.GetString(tMailResultError[eResult])
-
 		if self.wndErrorMsg == nil then
 			self.wndErrorMsg = Apollo.LoadForm(self.xmlDoc, "ErrorMessage", nil, self)
 		end
-		self.wndErrorMsg:FindChild("ErrorMessageBody"):SetText(strErrorMessage)
-		self.wndErrorMsg:FindChild("ErrorMessageHeader"):SetText(strErrorHeader)
-		self.wndErrorMsg:Show(true)
-		self.wndErrorMsg:ToFront()
-	else 
-		return 
-	end
 
+		local strErrorHeader = tMailHeaderError[eResult] and Apollo.GetString(tMailHeaderError[eResult]) or Apollo.GetString("CRB_Mail_ErrorGeneric")
+		self.wndErrorMsg:FindChild("ErrorMessageBody"):SetText(Apollo.GetString(tMailResultError[eResult]))
+		self.wndErrorMsg:FindChild("ErrorMessageHeader"):SetText(strErrorHeader)
+		self.wndErrorMsg:Invoke()
+	end
 end
 
 function Mail:OnMailAddAttachment(nValue)
-	-- this is done here incase someone wants to make
+	-- this is done here incase someone wants to make 
 	if self.luaComposeMail ~= nil then
 		self.luaComposeMail:WindowToFront()
 		self.luaComposeMail:OnMailAddAttachment(nValue)
@@ -622,7 +612,7 @@ function Mail:OpenReceivedMessage(msgMail)
 		self.tOpenMailMessages[strId] = MailReceived:new()
 		self.tOpenMailMessages[strId]:Init(self, msgMail)
 		self.tMailQueue:Push(strId)
-
+		
 		if self.tMailQueue:GetSize() > 16 then
 			local strMailId = self.tMailQueue:Pop()
 			if self.tOpenMailMessages[strMailId] then
@@ -630,7 +620,7 @@ function Mail:OpenReceivedMessage(msgMail)
 			end
 		end
 	end
-
+	
 end
 
 function Mail:OnTooltipAttachment( wndHandler, wndControl, eToolTipType, x, y )
@@ -653,7 +643,7 @@ function Mail:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 
 	local tRect = {}
 	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
-
+	
 	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 end
 
@@ -677,7 +667,7 @@ function MailCompose:Init(luaMailSystem)
 	self.tMyBlocks 				= {}
 	self.wndMain 				= Apollo.LoadForm(self.luaMailSystem.xmlDoc, "ComposeMessage", nil, self) --The compose mail form.
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Mail_ComposeLabel")})
-
+	
 	self.wndNameEntry 			= self.wndMain:FindChild("NameEntryText")  --The player inputs the recipient here
 	self.wndRealmEntry 			= self.wndMain:FindChild("RealmEntryText")  --The player inputs the recipient here
 	self.wndSubjectEntry 		= self.wndMain:FindChild("SubjectEntryText")  --The player inputs the subject here
@@ -701,7 +691,7 @@ function MailCompose:Init(luaMailSystem)
 	self.wndCashCODBtn:SetCheck(false)
 	self.wndCashWindow:Enable(false)
 	self.wndCashEntryBlock:Show(true)
-
+	
 	if self.luaMailSystem.locSavedComposeWindowLoc then
 		self.wndMain:MoveToLocation(self.luaMailSystem.locSavedComposeWindowLoc)
 	end
@@ -1082,7 +1072,7 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 	if  luaMailSystem.xmlDoc == nil then
 		return
 	end
-
+	
 	if msgMail == nil then
 		return
 	end
@@ -1102,7 +1092,7 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 	self.wndMain:FindChild("ReceiveDeleteBtn"):AttachWindow(self.wndMain:FindChild("DeleteConfirmationWnd"))
 
 	self.arWndAttachmentIcon = {}
-
+	
 	if self.luaMailSystem.locSavedMessageWindowLoc then
 		self.wndMain:MoveToLocation(self.luaMailSystem.locSavedMessageWindowLoc)
 	end
@@ -1151,7 +1141,7 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 
 	self:UpdateControls()
 	self:WindowToFront()
-
+	
 end
 
 function MailReceived:WindowToFront()
@@ -1242,7 +1232,7 @@ function MailReceived:UpdateControls()
 		self.wndReceiveTakeCashBtn:Show(false)
 
 		local nLeftMessage, nTopMessage, nRightMessage, nBottomMessage = self.wndMain:FindChild("MessageText"):GetAnchorOffsets()
-		self.wndMain:FindChild("MessageText"):SetAnchorOffsets(nLeftMessage, nTopMessage, nRightMessage, -2)
+		self.wndMain:FindChild("MessageText"):SetAnchorOffsets(nLeftMessage, nTopMessage, nRightMessage, nBottomMessage)
 	end
 end
 
@@ -1259,11 +1249,11 @@ function MailReceived:OnClosed(wndHandler)
 	local nRemovePoint = 0
 	for idx, strCurrId in pairs(self.luaMailSystem.tMailQueue:GetItems()) do
 		if strId == strCurrId then
-			if self.luaMailSystem.tMailQueue:GetSize() == 1 then
+			if self.luaMailSystem.tMailQueue:GetSize() == 1 then 
 				self.luaMailSystem.locSavedMessageWindowLoc = self.luaMailSystem.tOpenMailMessages[strId].wndMain:GetLocation()
 			end
 			self.luaMailSystem.tMailQueue:Remove(nRemovePoint)
-
+			
 			if self.luaMailSystem.nCascade then
 				self.luaMailSystem.nCascade = self.luaMailSystem.nCascade - 1
 			end

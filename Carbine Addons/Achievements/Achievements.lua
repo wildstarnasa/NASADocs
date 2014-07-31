@@ -897,7 +897,7 @@ function Achievements:BuildTieredItem(achData, wndTierBox)
 	else
 		wndTierItem:FindChild("TierItemCash"):Show(false)
 		wndTierItem:FindChild("TierItemNeeded"):Show(true)
-		wndTierItem:FindChild("TierItemNeeded"):SetText(achData:GetNumNeeded())
+		wndTierItem:FindChild("TierItemNeeded"):SetText(Apollo.FormatNumber(achData:GetNumNeeded(), 0, true))
 	end
 
 	if achData:IsComplete() then

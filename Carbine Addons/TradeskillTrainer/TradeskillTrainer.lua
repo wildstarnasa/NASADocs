@@ -154,6 +154,10 @@ function TradeskillTrainer:OnProfListItemClick(wndHandler, wndControl) -- wndHan
 	elseif not bAtMax and not bAlreadyKnown then
 		self.wndMain:FindChild("LearnTradeskillBtn"):Show(true)
 	end
+
+	-- Current Craft Blocker
+	local tCurrentCraft = CraftingLib.GetCurrentCraft()
+	self.wndMain:FindChild("RightContainer:BottomBG:BotchCraftBlocker"):Show(tCurrentCraft and tCurrentCraft.nSchematicId)
 end
 
 function TradeskillTrainer:OnHobbyListItemClick(wndHandler, wndControl)
@@ -192,14 +196,6 @@ end
 function TradeskillTrainer:OnSwapTradeskillBtn(wndHandler, wndControl) --SwapTradeskillBtn1 or SwapTradeskillBtn2, data is nTradeskillId
 	if not wndHandler or not wndHandler:GetData() then
 		return
-	end
-
-	-- Abandon a craft if it's the matching ID
-	local tCurrentCraft = CraftingLib.GetCurrentCraft()
-	local tSchematicInfo = tCurrentCraft and tCurrentCraft.nSchematicId and CraftingLib.GetSchematicInfo(tCurrentCraft.nSchematicId)
-	if tSchematicInfo and tonumber(tSchematicInfo.eTradeskillId) == tonumber(wndHandler:GetData()) then
-		CraftingLib.BotchCraft()
-		Event_FireGenericEvent("GenericEvent_BotchCraft") -- This is just used to close UIs
 	end
 
 	Event_FireGenericEvent("TradeskillLearnedFromTHOR")

@@ -126,18 +126,18 @@ function AbilityAMPs:OnPlayerCurrencyChanged()
 	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsVisible() then
 		local nAmount = AbilityBook.GetEldanAugmentationRespecCost()
 		local bCanAfford = nAmount < GameLib.GetPlayerCurrency():GetAmount()
-		local bAtMaxPoints = AbilityBook.GetAvailablePower() == AbilityBook.GetTotalPower()
+		local bLockedInPoints = AbilityBook.GetAvailableLockedInPower() < AbilityBook.GetTotalPower()
 
 		local strColor = ApolloColor.new("UI_TextHoloBodyHighlight")
 		if not bCanAfford then
 			strColor = ApolloColor.new("UI_WindowTextRed")
-		elseif bAtMaxPoints then
+		elseif not bLockedInPoints then
 			strColor = ApolloColor.new("UI_BtnTextBlueDisabled")
 		end
 		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetLabel"):SetTextColor(strColor)
 		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetCost"):SetTextColor(strColor)
 		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetCost"):SetAmount(nAmount, true)
-		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):Enable(bCanAfford and not bAtMaxPoints)
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):Enable(bCanAfford and bLockedInPoints)
 	end
 end
 

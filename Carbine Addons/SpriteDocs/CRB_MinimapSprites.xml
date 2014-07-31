@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprMM_Ring" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_265_0.tga" x0="0" x1="0" x2="264" x3="264" x4="264" x5="264" y0="0" y1="0" y2="257" y3="257" y4="257" y5="257" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_CompassLit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_0.tga" x0="30" x1="30" x2="30" x3="30" x4="30" x5="234" y0="31" y1="31" y2="31" y3="31" y4="31" y5="235" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_PlayerMarker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" Stretchy="1" HotspotX="30" HotspotY="30" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexBlock" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_hex_0_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="56" y3="56" y4="56" y5="56" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexEdge0" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_0_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="57" y3="57" y4="57" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexEdge1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_64_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="57" y3="57" y4="57" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexEdge2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_128_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="57" y3="57" y4="57" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexEdge3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_192_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="57" y3="57" y4="57" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexEdge4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_256_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="57" y3="57" y4="57" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="HexEdge5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_320_0.tga" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="57" y3="57" y4="57" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_POI" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_231_319.tga" x0="0" x1="0" x2="32" x3="32" x4="32" x5="32" y0="0" y1="0" y2="32" y3="32" y4="32" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_IndicatorRing" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_MiniMapIndicatorRing.tga" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="0" y1="0" y2="128" y3="128" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_SmallIconSoldier" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_99_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_SmallIconScientist" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_33_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_SmallIconSettler" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_SmallIconExplorer" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_66_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="WhiteNoise" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="260" x5="260" y0="0" y1="0" y2="0" y3="0" y4="263" y5="263" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="62" x1="62" x2="62" x3="62" x4="322" x5="322" y0="28" y1="28" y2="28" y3="28" y4="291" y5="291" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="127" x1="127" x2="127" x3="127" x4="387" x5="387" y0="6" y1="6" y2="6" y3="6" y4="269" y5="269" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="4" x1="4" x2="4" x3="4" x4="264" x5="264" y0="33" y1="33" y2="33" y3="33" y4="296" y5="296" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="140" x1="140" x2="140" x3="140" x4="400" x5="400" y0="33" y1="33" y2="33" y3="33" y4="296" y5="296" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="8" x1="8" x2="8" x3="8" x4="268" x5="268" y0="3" y1="3" y2="3" y3="3" y4="266" y5="266" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Static_0_0.tga" x0="148" x1="148" x2="148" x3="148" x4="408" x5="408" y0="4" y1="4" y2="4" y3="4" y4="267" y5="267" HotspotX="0" HotspotY="0" Duration="0.160" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestGiver" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_132_320.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_ActiveQuestArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_396_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="32" Duration="0.250" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_396_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="32" Duration="0.250" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestCompleteTracked" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_263_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestCompleteUntracked" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_263_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_VendorGeneral" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_PathArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_495_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="28" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestCompleteOngoing" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_296_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestTracked" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_243_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="30" HotspotY="30" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestZonePulse" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="160" y0="0" y1="0" y2="0" y3="0" y4="0" y5="160" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="160" x1="160" x2="160" x3="160" x4="160" x5="320" y0="0" y1="0" y2="0" y3="0" y4="0" y5="160" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="320" x1="320" x2="320" x3="320" x4="320" x5="480" y0="0" y1="0" y2="0" y3="0" y4="0" y5="160" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="480" x1="480" x2="480" x3="480" x4="480" x5="640" y0="0" y1="0" y2="0" y3="0" y4="0" y5="160" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="640" x1="640" x2="640" x3="640" x4="640" x5="800" y0="0" y1="0" y2="0" y3="0" y4="0" y5="160" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="160" y0="160" y1="160" y2="160" y3="160" y4="160" y5="320" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="160" x1="160" x2="160" x3="160" x4="160" x5="320" y0="160" y1="160" y2="160" y3="160" y4="160" y5="320" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="320" x1="320" x2="320" x3="320" x4="320" x5="480" y0="160" y1="160" y2="160" y3="160" y4="160" y5="320" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="480" x1="480" x2="480" x3="480" x4="480" x5="640" y0="160" y1="160" y2="160" y3="160" y4="160" y5="320" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="640" x1="640" x2="640" x3="640" x4="640" x5="800" y0="160" y1="160" y2="160" y3="160" y4="160" y5="320" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="160" y0="320" y1="320" y2="320" y3="320" y4="320" y5="480" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="160" x1="160" x2="160" x3="160" x4="160" x5="320" y0="320" y1="320" y2="320" y3="320" y4="320" y5="480" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="320" x1="320" x2="320" x3="320" x4="320" x5="480" y0="320" y1="320" y2="320" y3="320" y4="320" y5="480" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="480" x1="480" x2="480" x3="480" x4="480" x5="640" y0="320" y1="320" y2="320" y3="320" y4="320" y5="480" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="640" x1="640" x2="640" x3="640" x4="640" x5="800" y0="320" y1="320" y2="320" y3="320" y4="320" y5="480" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SonarAnimation.tga" x0="640" x1="640" x2="640" x3="640" x4="640" x5="800" y0="320" y1="320" y2="320" y3="320" y4="320" y5="480" Stretchy="1" HotspotX="80" HotspotY="80" Duration="0.750" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="MiniMapCompassOverlayB" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_0.tga" x0="0" x1="0" x2="264" x3="264" x4="264" x5="264" y0="0" y1="0" y2="257" y3="257" y4="257" y5="257" Stretchy="1" HotspotX="132" HotspotY="129" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_EldanGateInactive" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_297_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_EldanGateActive" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_330_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_InstancePortal" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_198_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="MiniMapCompassOverlay" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_559_31.tga" x0="0" x1="0" x2="204" x3="204" x4="204" x5="204" y0="0" y1="0" y2="204" y3="204" y4="204" y5="204" Stretchy="1" HotspotX="103" HotspotY="103" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMMIndicator" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_365_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="30" HotspotY="30" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_363_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="32" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestGiverOngoing" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_164_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestTrackedActivate" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_182_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="30" HotspotY="30" Duration="0.200" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_182_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="30" HotspotY="30" Duration="0.200" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_ActivePathArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_528_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="28" Duration="0.200" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_528_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="28" Duration="0.200" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_SolidPathArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_528_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="28" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_ChallengeArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_528_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="28" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_GhostFlashBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_305_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_GhostFlashHighlight" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_365_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_365_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_GhostFlashFadedBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_305_258.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Battleground" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_429_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_BattlegroundActive" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_462_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_QuestHub" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_264_319.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_EldanStone" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_198_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_VendorArmor" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_165_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_VendorFlight" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_33_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_VendorHouse" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_65_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_VendorMount" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_98_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_VendorWeapon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_131_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Transit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_231_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_AuctionHouse" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Bank" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_165_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Mailbox" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_131_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Dungeon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_98_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Group" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_66_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Chat" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_32_352.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_TargetCreature" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_330_353.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="31" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_TargetObjective" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_363_353.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="31" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_ZoneHazard" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_396_353.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="31" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_ZoneBenefit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_429_353.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="31" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMM_Tradeskill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_230_385.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="16" HotspotY="16" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Composite Name="sprMM_QuestArrowActivate" Cycle="0">
+        <Layer Name="sprMM_QuestArrow"/>
+        <Layer Name="sprMM_ActiveQuestArrow"/>
+    </Composite>
+    <Composite Name="ActiveQuestIcon" Cycle="1">
+        <Layer Name="sprMM_QuestTracked"/>
+        <Layer Name="sprMM_QuestTrackedActivate"/>
+    </Composite>
+    <Composite Name="sprMM_PathArrowActive" Cycle="0">
+        <Layer Name="sprMM_PathArrow"/>
+        <Layer Name="sprMM_ActivePathArrow"/>
+    </Composite>
+    <Composite Name="sprMM_GhostFlash" Cycle="1">
+        <Layer Name="sprMM_GhostFlashBase"/>
+        <Layer Name="sprMM_GhostFlashHighlight"/>
+    </Composite>
+    <AutoButton Name="btnMM_ZoomIn" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_442.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="19" y2="19" y3="19" y4="19" y5="19" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMM_ZoomOut" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_91_442.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="19" y2="19" y3="19" y4="19" y5="19" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMM_ToggleMenu" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_0_418.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="24" y2="24" y3="24" y4="24" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="HexButton" Texture="UI\Assets\TexPieces\UI_CRB_HexButton_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="64" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btnMM_ToggleMap" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_121_418.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="24" y2="24" y3="24" y4="24" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMM_ToggleMapGhost" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_242_418.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="24" y2="24" y3="24" y4="24" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMM_ToggleActiveMarker" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_363_418.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="24" y2="24" y3="24" y4="24" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMM_ResizeToggle" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_182_443.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="19" Stretchy="1" StateBits="31" Direction="Across"/>
+</Sprites>

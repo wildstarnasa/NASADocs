@@ -221,7 +221,7 @@ function CombatLog:OnCombatLogImmunity(tEventArgs)
 	local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_BaseSkillUse"), tCastInfo.strCaster, tCastInfo.strSpellName, tCastInfo.strTarget)
 	strResult = String_GetWeaselString(Apollo.GetString("CombatLog_Immune"), strResult)
 
-	self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", tCastInfo.strDamageColor, strResult))
+	self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", tCastInfo.strColor, strResult))
 end
 
 function CombatLog:OnCombatLogDispel(tEventArgs)

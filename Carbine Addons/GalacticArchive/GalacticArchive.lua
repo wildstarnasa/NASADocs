@@ -492,7 +492,11 @@ function GalacticArchive:OnIndexItemUncheck(wndHandler, wndControl) -- ArchiveIn
 	end
 end
 
-function GalacticArchive:OnIndexItemCheck(wndHandler, wndControl) -- ArchiveIndexItem
+function GalacticArchive:OnIndexItemCheck(wndHandler, wndControl, eMouseButton) -- ArchiveIndexItem
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and Apollo.IsShiftKeyDown() then
+		Event_FireGenericEvent("GenericEvent_ArchiveArticleLink", wndControl:GetData())
+		return true
+	end
 	if wndHandler and wndHandler:FindChild("NewIndicator") then
 		wndHandler:FindChild("NewIndicator"):Show(false)
 	end

@@ -229,11 +229,11 @@ end
 
 function FloatTextPanel:OnAchievementUpdated(achUpdated)
 	if self.tMainWindow and self.tMainWindow[8] then
-		self.tMainWindow[8]:SetData(achUpdated)
+		self.tMainWindow[8]:FindChild("AchievementOpenBtn"):SetData(achUpdated)
 	end
 end
 
-function FloatTextPanel:OnMainContent_AchievementMouseUp(wndHandler, wndControl)
+function FloatTextPanel:OnAchievementOpenBtn(wndHandler, wndControl)
 	Event_FireGenericEvent("FloatTextPanel_ToggleAchievementWindow", wndHandler:GetData())
 end
 

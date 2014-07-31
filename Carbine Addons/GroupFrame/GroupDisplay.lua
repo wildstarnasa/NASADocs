@@ -347,8 +347,7 @@ function GroupDisplay:OnDocumentReady()
 	self.wndLeaveGroup 			= self.wndGroupHud:FindChild("GroupHudLeaveDialog")
 	self.wndLeaveGroup:Show(false,true)
 	self.wndGroupMessage 		= self.wndGroupHud:FindChild("GroupHudMessage")
-	self.bMessagesQueued 		= false
-	self.tMessageQueue 			= {nFirst = 0, nLast = -1}
+	self.tMessageQueue 			= Queue:new()
 
 	self.wndGroupPortraitContainer = self.wndGroupHud:FindChild("GroupPortraitContainer")
 
@@ -787,7 +786,7 @@ function GroupDisplay:ShowConfirmLeaveDisband(nType)
 		self.wndLeaveGroup:FindChild("ConfirmLeaveBtn"):Show(true)
 	end
 
-	self.wndLeaveGroup:Show(true)
+	self.wndLeaveGroup:Invoke()
 	self:HelperResizeGroupContents()
 end
 
@@ -812,7 +811,7 @@ function GroupDisplay:OnConfirmDisband()
 end
 
 function GroupDisplay:OnCancelLeave()
-	self.wndLeaveGroup:Show(false)
+	self.wndLeaveGroup:Close()
 	self:HelperResizeGroupContents()
 end
 
@@ -1299,12 +1298,8 @@ function GroupDisplay:OnGroupRequestResult(strCharacterName, eResult, bIsJoin)
 end
 
 function GroupDisplay:CloseGroupHUD() -- see if the HUD can be closed
-	if GroupLib.InGroup() and GroupLib.GetMemberCount() > 0 then
-		return false
-	end
-
-	if self.bMessagesQueued == true then
-		return false
+	if (GroupLib.InGroup() and GroupLib.GetMemberCount() > 0) or not self.tMessageQueue:Empty() then
+		return
 	end
 
 	self.wndGroupHud:Close()
@@ -1315,9 +1310,7 @@ end
 ---------------------------------------------------------------------------------------------------
 function GroupDisplay:AddToQueue(nMessageIcon, strMessageText)
 	local tMessageInfo = {nIcon = nMessageIcon, strText = strMessageText}
-	local nLast = self.tMessageQueue.nLast + 1
-	self.tMessageQueue.nLast = nLast
-	self.tMessageQueue[nLast] = tMessageInfo
+	self.tMessageQueue:Push(tMessageInfo)
 
 	ChatSystemLib.PostOnChannel(self.eChatChannel, strMessageText, "")
 
@@ -1331,18 +1324,13 @@ end
 function GroupDisplay:ProcessAlerts()
 	self:ClearFields()
 
-	local nFirst = self.tMessageQueue.nFirst
-	if nFirst > self.tMessageQueue.nLast then
-		self.bMessagesQueued = false -- no messages queued up
+	if self.tMessageQueue:Empty() then
 		self:HelperResizeGroupContents()
 		self:CloseGroupHUD()
 		return
 	end
-	self.bMessagesQueued = true -- messages queued up
-	local tMessage = self.tMessageQueue[nFirst]
-	self.tMessageQueue[nFirst] = nil
-	self.tMessageQueue.nFirst = nFirst + 1
 
+	local tMessage = self.tMessageQueue:Pop()
 	self:DisplayAlert(tMessage.nIcon, tMessage.strText)
 end
 
@@ -1361,7 +1349,7 @@ function GroupDisplay:DisplayAlert(nMessageIcon, strMessageText)
 		self.wndGroupHud:Show(true)
 	end
 
-	self.wndGroupMessage:Show(true)
+	self.wndGroupMessage:Invoke()
 	self:HelperResizeGroupContents()
 
 	self.wndGroupMessage:FindChild("MessageBirthAnimation"):ToFront()

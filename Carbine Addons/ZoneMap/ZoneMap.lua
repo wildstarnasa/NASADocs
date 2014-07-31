@@ -452,14 +452,14 @@ end
 function ZoneMap:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ZoneMapForms.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 end
 
 function ZoneMap:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
-
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 
 	Apollo.RegisterEventHandler("ToggleZoneMap", 						"ToggleWindow", self)
 	Apollo.RegisterEventHandler("ToggleGhostModeMap",					"OnToggleGhostModeMap", self)
@@ -757,7 +757,12 @@ function ZoneMap:OnInterfaceMenuListHasLoaded()
 end
 
 function ZoneMap:OnOptionsUpdated()
-	self.bQuestTrackerByDistance = g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or false
+	if g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance ~= nil then
+		self.bQuestTrackerByDistance = g_InterfaceOptions.Carbine.bQuestTrackerByDistance
+	else
+		self.bQuestTrackerByDistance = true
+	end
+	
 	self:OnQuestStateChanged()
 end
 

@@ -286,7 +286,7 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 		strSubtitleAppend = string.format("<P Font=\"CRB_InterfaceLarge_B\" TextColor=\"%s\" Align=\"%s\">%s</P>", strTextColor, strLeftOrRight, strSubTitleText)
 	end
 
-	self.wndMain:FindChild("DialogName"):SetAML(string.format("<P Font=\"CRB_Interface14_B\" TextColor=\"%s\" Align=\"%s\">%s</P>", "UI_TextHoloTitle", strLeftOrRight, strCreatureName))
+	self.wndMain:FindChild("DialogName"):SetAML(string.format("<P Font=\"CRB_HeaderMedium\" TextColor=\"%s\" Align=\"%s\">%s</P>", "UI_TextHoloTitle", strLeftOrRight, strCreatureName))
 	self.wndMain:FindChild("DialogText"):SetAML(string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"%s\" Align=\"%s\">%s</P>", strSubtitleAppend, strTextColor, strLeftOrRight, strMessageText))
 
 	-- Draw Rewards
@@ -307,7 +307,7 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 
 	if nContentY > 68 then
 		nOffsetY = nContentY - 68 + 5 -- The +5 is for lower g-height
-		self.wndMain:FindChild("DialogFraming"):SetAnchorOffsets(self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom + nContentY - 58)
+		self.wndMain:FindChild("DialogFraming"):SetAnchorOffsets(self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom + nContentY - 64)
 
 	end
 	-- Excess text expands down, & Rewards expand down

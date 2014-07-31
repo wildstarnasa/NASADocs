@@ -555,8 +555,8 @@ function ClassResources:OnPetBtn(wndHandler, wndControl)
 	 wndPetContainer:Show(not wndPetContainer:IsShown())
 end
 
-function ClassResources:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNumShortcuts)
-	if nWhichBar ~= 1 or not self.wndMain or not self.wndMain:IsValid() then -- 1 is hardcoded to be the engineer pet bar
+function ClassResources:OnShowActionBarShortcut(eWhichBar, bIsVisible, nNumShortcuts)
+	if eWhichBar ~= ActionSetLib.CodeEnumShortcutSet.PrimaryPetBar  or not self.wndMain or not self.wndMain:IsValid() then -- the engineer pet bar
 		return
 	end
 

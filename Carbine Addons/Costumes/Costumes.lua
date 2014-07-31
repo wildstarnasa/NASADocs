@@ -11,9 +11,9 @@ local Costumes = {}
 
 local knNumCostumes = 10
 
-local karCostumeSlotNames = -- string name, then id, then button art
+local karCostumeSlots = -- string name, then id, then button art
 {
-	{strSlot="Weapon", 	 eSlotId=GameLib.CodeEnumItemSlots.Weapon,	 strSprite="CharacterWindowSprites:btn_Armor_HandsNormal",},
+	{strSlot="Primary Weapon", 	 eSlotId=GameLib.CodeEnumItemSlots.Weapon,	 strSprite="CharacterWindowSprites:btn_Armor_HandsNormal",},
 	{strSlot="Head", 	 eSlotId=GameLib.CodeEnumItemSlots.Head, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Head",},
 	{strSlot="Shoulder", eSlotId=GameLib.CodeEnumItemSlots.Shoulder, strSprite="CharacterWindowSprites:btnCh_Armor_Shoulder",},
 	{strSlot="Chest", 	 eSlotId=GameLib.CodeEnumItemSlots.Chest, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Chest",},
@@ -60,12 +60,11 @@ function Costumes:OnDocumentReady()
 	
 	self.wndMain:Show(false, true)
 	
-	self.tEquippedItems = {}
 	self.nCurrentCostume = nil
 	self.arCostumeSlots = {}
 	self.arDyeButtons = {{}, {}, {}}
 	
-	for idx, tInfo in ipairs(karCostumeSlotNames) do
+	for idx, tInfo in ipairs(karCostumeSlots) do
 		local wndCostumeEntry = Apollo.LoadForm(self.xmlDoc, "CostumeEntryForm", self.wndMain:FindChild("CostumeListContainer"), self)
 		wndCostumeEntry:FindChild("CostumeSlot"):ChangeArt(tInfo.strSprite)
 		wndCostumeEntry:FindChild("CostumeSlot"):SetData(tInfo.eSlotId)
@@ -85,12 +84,9 @@ function Costumes:OnDocumentReady()
 			self.wndSpacer:FindChild("DyeColor2"):SetData(2)
 			self.wndSpacer:FindChild("DyeColor3"):SetData(3)
 			
-			wndCostumeEntry:FindChild("DyeColor1"):Show(false)
-			wndCostumeEntry:FindChild("DyeColor2"):Show(false)
-			wndCostumeEntry:FindChild("DyeColor3"):Show(false)
-			
-			wndCostumeEntry:FindChild("VisibleBtn"):Enable(false)
-			wndCostumeEntry:FindChild("VisibleBtn:VisibleBtnIcon"):SetBGColor(ApolloColor.new("UI_BtnTextHoloDisabled"))
+			wndCostumeEntry:FindChild("DyeColor1Container"):Show(false)
+			wndCostumeEntry:FindChild("DyeColor2Container"):Show(false)
+			wndCostumeEntry:FindChild("DyeColor3Container"):Show(false)
 		else
 			wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo.eSlotId)
 		end
@@ -234,7 +230,7 @@ function Costumes:OnDyeBtnClicked(wndHandler, wndControl)
 end
 
 function Costumes:OnResetBtnClicked(wndHandler, wndControl)
-	self:Reset(true) -- tell the function to retain the slot selection
+	self:Reset() -- tell the function to retain the slot selection
 end
 
 function Costumes:OnGenerateTooltip(wndHandler, wndControl, eType, itemCurr, idx)
@@ -261,6 +257,8 @@ function Costumes:OnGenerateTooltip(wndHandler, wndControl, eType, itemCurr, idx
 		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
 			Tooltip.GetItemTooltipForm(self, wndHandler, itemData, tPrimaryTooltipOpts)
 		end
+	else
+		return nil
 	end
 end
 
@@ -271,7 +269,6 @@ function Costumes:OnCostumeSlotBtn(wndHandler, wndControl, eMouseButton, nPosX, 
 
 	if eMouseButton == GameLib.CodeEnumInputMouse.Right	then
 		GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), -1)
-		self:Reset()
 	end
 end
 
@@ -293,7 +290,6 @@ function Costumes:OnCostumeSlotDragDrop(wndHandler, wndControl, nX, nY, wndSourc
 	end
 
 	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), nValue)
-	self:Reset()
 end
 
 function Costumes:OnSheatheCheck(wndHandler, wndControl)
@@ -312,7 +308,7 @@ function Costumes:OnVisibleBtnCheck(wndHandler, wndControl)
 		GameLib.SetCostumeSlotVisible(self.nCurrentCostume, iSlot, bVisible)
 	end
 
-	self:UpdateCostumeSlotIcons()
+	self:HelperPreviewItems()
 end
 
 function Costumes:OnRemoveSlotBtn(wndHandler, wndControl)
@@ -321,7 +317,8 @@ function Costumes:OnRemoveSlotBtn(wndHandler, wndControl)
 	end
 
 	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), -1)
-	self:Reset()
+	self:UpdateCostumeSlotIcons()
+	self:HelperPreviewItems()
 end
 
 function Costumes:OnRotateRight()
@@ -358,8 +355,13 @@ function Costumes:UpdateCostumeSlotIcons()
 		wndCostumeBtn:Show( idx <= self.nCostumeCount )
 	end
 	
+	self.tEquippedItems = {}
 	local tEquippedItems = unitPlayer and unitPlayer:GetEquippedItems() or {}
-	for nIdx, tInfo in ipairs(karCostumeSlotNames) do
+	local tSlotNames = {}
+	
+	for nIdx, tInfo in ipairs(karCostumeSlots) do
+		tSlotNames[tInfo.eSlotId] = tInfo.strSlot
+		
 		local tCostumeItem = nil
 		
 		for nIdx2, tItemInfo in ipairs(tEquippedItems) do
@@ -409,17 +411,18 @@ function Costumes:UpdateCostumeSlotIcons()
 	
 	wndHeaderFrame:FindChild("SelectCostumeWindowToggle"):SetText(Apollo.GetString("Character_CostumeSelectDefault"))
 		
-	for idx, wndSlot in pairs(self.arCostumeSlots) do
+	for eSlotId, wndSlot in pairs(self.arCostumeSlots) do
 		local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
 		
 		local tCurrItem = nil
 		for nIdx2, tItemInfo in ipairs(tEquippedItems) do
-			if tItemInfo:GetSlot() == idx-1 then
+			if tItemInfo:GetSlotName() == tSlotNames[eSlotId] then
 				tCurrItem = tItemInfo
 				break
 			end
 		end
 		
+		wndSlot:FindChild("CostumeShadow"):Show(true)
 		wndCostumeIcon:SetSprite(tCurrItem ~= nil and tCurrItem:GetIcon() or "")
 		wndCostumeIcon:GetWindowSubclass():SetItem(tCurrItem)
 		
@@ -429,7 +432,7 @@ function Costumes:UpdateCostumeSlotIcons()
 	end
 	
 	if self.nCurrentCostume > 0 then
-		for nIdx, tInfo in ipairs(karCostumeSlotNames) do
+		for nIdx, tInfo in ipairs(karCostumeSlots) do
 			local tCostumeItem = GameLib.GetCostumeItem(self.nCurrentCostume, tInfo.eSlotId) or self.tEquippedItems[tInfo.eSlotId]
 			local tDyeChannels = tCostumeItem ~= nil and tCostumeItem:GetAvailableDyeChannel() or {bDyeChannel1=false, bDyeChannel2=false, bDyeChannel3=false}
 			
@@ -462,14 +465,14 @@ function Costumes:UpdateCostumeSlotIcons()
 			local strIcon = tCostumeItem ~= nil and tCostumeItem:GetIcon() or ""
 			local bShown = GameLib.IsCostumeSlotVisible(self.nCurrentCostume, eSlotId)
 			local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
-			
-			GameLib.SetCostumeSlotVisible(self.nCurrentCostume, eSlotId, bShown)
+						
 			wndSlot:FindChild("VisibleBtn"):SetCheck(bShown)
-			wndSlot:FindChild("VisibleBtn"):Enable(true)
+			wndSlot:FindChild("VisibleBtn"):Enable(eSlotId ~= GameLib.CodeEnumItemSlots.Weapon and strIcon ~= "")
 			wndSlot:FindChild("HiddenBlocker"):Show(not bShown)
 			wndSlot:FindChild("RemoveSlotBtn"):Enable(strIcon ~= "")
 			
-			wndCostumeIcon:SetSprite(tCurrItem ~= nil and strIcon or "")
+			wndSlot:FindChild("CostumeShadow"):Show(self.tEquippedItems[eSlotId] and self.tEquippedItems[eSlotId]:GetItemId() == tCostumeItem:GetItemId())
+			wndCostumeIcon:SetSprite(strIcon)
 			wndCostumeIcon:GetWindowSubclass():SetItem(tCostumeItem)
 			
 			local wndCostumeIconCurrent = self.arCostumeSlots[eSlotId]:FindChild("Middle:BG_IconFrameCurrent:CostumeIconCurrent")
@@ -572,7 +575,7 @@ function Costumes:GetSelectedItems(tDye)
 	local nDyeId = tDye ~= nil and tDye.id or 0
 	
 	for nDyeChannel = 1,#self.arDyeButtons do
-		for idx, tInfo in ipairs(karCostumeSlotNames) do
+		for idx, tInfo in ipairs(karCostumeSlots) do
 			local wndButton = self.arDyeButtons[nDyeChannel][tInfo.eSlotId]
 			
 			if wndButton and wndButton:GetData() ~= nil then

@@ -45,6 +45,24 @@ local ktSlotWindowNameToTooltip =
 	["WeaponSlot"] 				= Apollo.GetString("Character_WeaponEmpty"),
 }
 
+--These Should Be Enums
+--arProperties can be nil
+local ktCharacterSecondaryStats = 
+{
+	[7]  = Apollo.GetString("CRB_Health_Description"),
+	[8]  = Apollo.GetString("Character_MaxShieldTooltip"),
+	[9]  = Apollo.GetString("Character_DeflectTooltip"),
+	[10] = Apollo.GetString("Character_StrikethroughTooltip"),
+	[11] = Apollo.GetString("Character_CritTooltip"),
+	[12] = Apollo.GetString("Character_CritDeflectTooltip"),
+	[16] = Apollo.GetString("Character_ArmorTooltip"),
+	[17] = Apollo.GetString("Character_PhysMitTooltip"),
+	[18] = Apollo.GetString("Character_TechMitTooltip"),
+	[19] = Apollo.GetString("Character_MagicMitTooltip"),
+	[21] = Apollo.GetString("Character_CritSevTooltip"),
+	[22] = Apollo.GetString("Character_CombatRecoveryTooltip")
+}
+
 -- TODO: localize these
 local karPrimaryStatStrings = 
 {
@@ -415,29 +433,18 @@ function Inspect:DrawAttributes()
 	-- TODO: Swap to just loading in forms instead of having the 20+ StatValue forms in xml
 	local tCharacterSecondaryStats = 
 	{
-	--[[tCharacterSecondaryStats[1] = arProperties and math.floor(arProperties.Strength.nValue) or 0
-		[2] 	= arProperties and math.floor(arProperties.Dexterity.nValue) or 0
-		[3] 	= arProperties and math.floor(arProperties.Magic.nValue) or 0
-		[4] 	= arProperties and math.floor(arProperties.Technology.nValue) or 0
-		[5] 	= arProperties and math.floor(arProperties.Wisdom.nValue) or 0
-		[6] 	= arProperties and math.floor(arProperties.Stamina.nValue) or 0--]]
 		[7] 	= math.ceil(self.unitInspecting:GetMaxHealth()) or 0,
 		[8] 	= math.ceil(self.unitInspecting:GetShieldCapacityMax()) or 0,
 		[9] 	= math.floor((self.unitInspecting:GetDeflectChance() or 0) * 10000) / 100,
 		[10] 	= math.floor((self.unitInspecting:GetStrikethroughChance() or 0) * 10000) / 100,
 		[11] 	= math.floor((self.unitInspecting:GetCritChance() or 0)* 10000) / 100,
 		[12] 	= math.floor((self.unitInspecting:GetDeflectCritChance() or 0) * 10000) / 100,
-	-- 13
-	-- 14
-	-- 15
 		[16] 	= arProperties and math.floor(arProperties.Armor.fValue) or 0,
 		[17] 	= math.floor((self.unitInspecting:GetPhysicalMitigation() or 0) * 10000) / 100,
 		[18] 	= math.floor((self.unitInspecting:GetTechMitigation() or 0) * 10000) /100,
 		[19] 	= math.floor((self.unitInspecting:GetMagicMitigation() or 0) * 10000) / 100,
-	-- 20
 		[21] 	= math.floor((self.unitInspecting:GetCritSeverity() or 0) * 10000) / 100,
 		[22] 	= 2 * (self.unitInspecting:GetManaRegenInCombat() or 0),
-	--	[23] 	= string.format("%.02f", 2 * unit:GetManaRegenNonCombat() or 0)
 	}
 
 	for idx, nCurrValue in pairs(tCharacterSecondaryStats) do
@@ -787,33 +794,8 @@ function Inspect:OnRankDisplayClose(wndHandler, wndControl)
 end
 
 function Inspect:HelperBuildSecondaryTooltips(idx, arProperties)
-	--These Should Be Enums
-	--arProperties can be nil
-	local tCharacterSecondaryStats = 
-	{
-	--[[[1]  = Apollo.GetString("CRB_Strength_Description")
-		[2]  = Apollo.GetString("CRB_Dexterity_Description")
-		[3]  = Apollo.GetString("CRB_Magic_Description")
-		[4]  = Apollo.GetString("CRB_Technology_Description")
-		[5]  = Apollo.GetString("CRB_Wisdom_Description")
-		[6]  = Apollo.GetString("CRB_Stamina_Description")--]]
-		[7]  = Apollo.GetString("CRB_Health_Description"),
-		[8]  = Apollo.GetString("Character_MaxShieldTooltip"),
-		[9]  = Apollo.GetString("Character_DeflectTooltip"),
-		[10] = Apollo.GetString("Character_StrikethroughTooltip"),
-		[11] = Apollo.GetString("Character_CritTooltip"),
-		[12] = Apollo.GetString("Character_CritDeflectTooltip"),
-		[16] = Apollo.GetString("Character_ArmorTooltip"),
-		[17] = Apollo.GetString("Character_PhysMitTooltip"),
-		[18] = Apollo.GetString("Character_TechMitTooltip"),
-		[19] = Apollo.GetString("Character_MagicMitTooltip"),
-		[21] = Apollo.GetString("Character_CritSevTooltip"),
-		[22] = Apollo.GetString("Character_CombatRecoveryTooltip")
-	--	[23] = "Out of Combat Recovery is a measure of how much Mana or Energy you will recover every second while out of combat.\n \nThis value is calculated from your base Out of Combat Recovery rate and your Recovery Rating of %s, and may be subject to diminishing returns."
-	}
-	
 	if idx <= 8 or idx == 16 then
-		return tCharacterSecondaryStats[idx]
+		return ktCharacterSecondaryStats[idx]
 	end
 
 	--These Should Be Enums
@@ -828,10 +810,9 @@ function Inspect:HelperBuildSecondaryTooltips(idx, arProperties)
 		[19] = string.format("%.01f", arProperties and arProperties.ResistMagic.fValue or 0),
 		[21] = string.format("%.01f", arProperties and arProperties.RatingCritSeverityIncrease.fValue or 0),
 		[22] = string.format("%.01f", arProperties and arProperties.ManaPerFiveSeconds.fValue or 0),
-	--	[23] = arProperties and arProperties.ManaPerFiveSeconds.nValue or 0
 	}
 
-	return String_GetWeaselString(Apollo.GetString(tCharacterSecondaryStats[idx]), tProperties[idx]) or ""
+	return String_GetWeaselString(ktCharacterSecondaryStats[idx], tProperties[idx]) or ""
 end
 
 function Inspect:OnGenerateInspectTooltip(wndHandler, wndControl, eToolTipType, x, y)

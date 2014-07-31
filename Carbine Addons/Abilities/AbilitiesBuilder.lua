@@ -40,13 +40,17 @@ function Abilities:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 						"DrawSpellBook", self)
 	Apollo.RegisterEventHandler("AbilityBookChange", 							"DrawSpellBook", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 							"DrawSpellBook", self)
+	Apollo.RegisterEventHandler("PathLevelUp", 									"DrawSpellBook", self)
 	Apollo.RegisterEventHandler("SpecChanged", 									"OnSpecChanged", self)
 	Apollo.RegisterEventHandler("ActionSetError", 								"OnActionSetError", self)
 	Apollo.RegisterEventHandler("AbilityAMPs_ToggleDirtyBit", 					"OnToggleDirtyBit", self)
+	Apollo.RegisterEventHandler("CharacterUnlockedInlaidEldanAugmentation", 	"OnLevelUpUnlock_AMPSystem", self)
 
 	Apollo.RegisterEventHandler("PlayerChanged", 								"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 							"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("ToggleAbilitiesWindow", 						"OnToggleAbilitiesWindow", self)
+	Apollo.RegisterEventHandler("PlayerEnteredWorld", 							"OnPlayerEnteredWorld", self)
+	Apollo.RegisterEventHandler("ChangeWorld", 									"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 					"OnTutorial_RequestUIAnchor", self)
 
 	Apollo.RegisterEventHandler("LevelUpUnlock_AMPSystem",						"OnLevelUpUnlock_AMPSystem", self)
@@ -75,7 +79,8 @@ function Abilities:OnDocumentReady()
 end
 
 function Abilities:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AbilityBuilder"), {"ToggleAbilitiesWindow", "LimitedActionSetBuilder", "Icon_Windows32_UI_CRB_InterfaceMenu_Abilities"})
+	local tData = {"ToggleAbilitiesWindow", "LimitedActionSetBuilder", "Icon_Windows32_UI_CRB_InterfaceMenu_Abilities"}
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AbilityBuilder"), tData)
 	self:UpdateInterfaceMenuAlerts()
 end
 
@@ -97,6 +102,18 @@ function Abilities:OnToggleAbilitiesWindow(bAtTrainer)
 
 	if GameLib.GetPlayerUnit() then
 		self:OnCharacterCreated()
+	end
+end
+
+function Abilities:OnPlayerEnteredWorld()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsShown() then
+		self:BuildWindow()
+	end
+end
+
+function Abilities:OnChangeWorld()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsShown() then
+		self:OnCloseFinal()
 	end
 end
 

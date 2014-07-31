@@ -97,7 +97,7 @@ function OptionsInterface:OnWindowManagementResizeTimer()
 	self:ReDrawTrackedWindows()
 end
 
-function OptionsInterface:OnRestore(eType, tSavedData)	
+function OptionsInterface:OnRestore(eType, tSavedData)
 	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		g_InterfaceOptions = tSavedData.tSavedInterfaceOptions
 		

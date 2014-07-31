@@ -41,7 +41,8 @@ end
 function ActionBarFrame:OnDocumentReady()
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 						"OnUnitEnteredCombat", self)
 	Apollo.RegisterEventHandler("PlayerChanged", 							"InitializeBars", self)
-	Apollo.RegisterEventHandler("WindowSizeChanged", 						"InitializeBars", self)
+	Apollo.RegisterEventHandler("ResolutionChanged",						"InitializeBars", self)
+	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", 			"InitializeBars", self)
 	Apollo.RegisterEventHandler("OptionsUpdated_HUDPreferences", 			"InitializeBars", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 						"InitializeBars", self)
 
@@ -76,8 +77,9 @@ function ActionBarFrame:OnDocumentReady()
 
 	Event_FireGenericEvent("ActionBarLoaded")
 	
-	self.wndMountFlyout = Apollo.LoadForm(self.xmlDoc, "MountFlyout", nil, self)
-	self.wndMountFlyout:FindChild("MountPopoutBtn"):AttachWindow(self.wndMountFlyout:FindChild("MountPopoutFrame"))
+	self.wndMountFlyout = Apollo.LoadForm(self.xmlDoc, "MountFlyout", "FixedHudStratum", self)
+	self.wndMountFlyoutFrame = Apollo.LoadForm(self.xmlDoc, "MountPopoutFrame", nil, self)
+	self.wndMountFlyout:FindChild("MountPopoutBtn"):AttachWindow(self.wndMountFlyoutFrame)
 
 	self.wndArt:Show(false)
 	self.wndMain:Show(false)
@@ -235,6 +237,7 @@ function ActionBarFrame:InitializeBars()
 				wndCurr:Show(false)
 			end
 		end
+		
 		self.arBarButtons[idx] = wndActionBarBtn
 	end
 
@@ -312,7 +315,7 @@ function ActionBarFrame:RedrawBarVisibility()
 		self.wndBar3:Show(false)
 	end
 
-	if next(self.wndMountFlyout:FindChild("MountPopoutList"):GetChildren()) ~= nil then
+	if next(self.wndMountFlyoutFrame:FindChild("MountPopoutList"):GetChildren()) ~= nil then
 		if nMountVisibility == 2 then --always off
 			self.wndMountFlyout:Show(false)
 		elseif nMountVisibility == 3 then --on in combat
@@ -385,8 +388,7 @@ function ActionBarFrame:RedrawSelectedMounts()
 end
 
 function ActionBarFrame:RedrawMounts()
-	local wndPopoutFrame = self.wndMountFlyout:FindChild("MountPopoutFrame")
-	local wndMountPopout = wndPopoutFrame:FindChild("MountPopoutList")
+	local wndMountPopout = self.wndMountFlyoutFrame:FindChild("MountPopoutList")
 	wndMountPopout:DestroyChildren()
 
 	local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
@@ -425,9 +427,9 @@ function ActionBarFrame:RedrawMounts()
 
 		nHeight = nHeight <= nMaxHeight and nHeight or nMaxHeight
 
-		local nLeft, nTop, nRight, nBottom = wndPopoutFrame:GetAnchorOffsets()
+		local nLeft, nTop, nRight, nBottom = self.wndMountFlyoutFrame:GetAnchorOffsets()
 
-		wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
 		self:RedrawBarVisibility()
 	else
 		self.wndMountFlyout:Show(false)
@@ -437,7 +439,7 @@ end
 function ActionBarFrame:OnMountBtn(wndHandler, wndControl)
 	self.nSelectedMount = wndControl:GetData():GetId()
 
-	self.wndMountFlyout:FindChild("MountPopoutFrame"):Show(false)
+	self.wndMountFlyoutFrame:Show(false)
 	self:RedrawSelectedMounts()
 end
 
@@ -519,15 +521,14 @@ function ActionBarFrame:OnPotionBtn(wndHandler, wndControl)
 	self:RedrawPotions()
 end
 
-function ActionBarFrame:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNumShortcuts)
-	if nWhichBar == 0 and self.wndMain and self.wndMain:IsValid() then
+function ActionBarFrame:OnShowActionBarShortcut(eWhichBar, bIsVisible, nNumShortcuts)
+	if eWhichBar == ActionSetLib.CodeEnumShortcutSet.VehicleBar and self.wndMain and self.wndMain:IsValid() then
 		if self.arBarButtons then
 			for idx, wndBtn in pairs(self.arBarButtons) do
 				wndBtn:Enable(not bIsVisible) -- Turn on or off all buttons
 			end
 		end
-		
-		self:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts) -- show/hide vehicle bar if nWhichBar matches
+		self:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts) -- show/hide vehicle bar if eWhichBar matches
 	end
 end
 
@@ -536,8 +537,8 @@ function ActionBarFrame:OnShowActionBarShortcutDocked(bVisible)
 	self:RedrawBarVisibility()
 end
 
-function ActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
-	if nWhichBar ~= 0 or not self.wndMain or not self.wndMain:IsValid() then
+function ActionBarFrame:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts)
+	if eWhichBar ~= ActionSetLib.CodeEnumShortcutSet.VehicleBar or not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
 
@@ -548,8 +549,10 @@ function ActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
 	self.wndMain:FindChild("Bar1ButtonSmallContainer"):Show(not bIsVisible)
 
 	self.wndBar1:Show(not bIsVisible)
-	
-	self.tCurrentVehicleInfo = nil
+	local unitPlayer = GameLib:GetPlayerUnit()
+	if unitPlayer and not unitPlayer:IsInVehicle() then
+		self.tCurrentVehicleInfo = nil
+	end
 
 	if bIsVisible then
 		for idx = 1, 6 do -- TODO hardcoded formatting

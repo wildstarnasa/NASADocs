@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Sprites>
+    <Sprite Name="sprDemo_CCFrame" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_Frame.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="1247" y0="0" y1="0" y2="0" y3="0" y4="0" y5="838" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCHeader" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAccents.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="419" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCSelectFrameRight" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAssets.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="466" y0="0" y1="0" y2="0" y3="0" y4="0" y5="530" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAssets.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="466" y0="0" y1="0" y2="0" y3="0" y4="0" y5="530" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFrameBG" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameBG.tex" x0="0" x1="0" x2="0" x3="0" x4="1400" x5="1400" y0="0" y1="0" y2="0" y3="0" y4="882" y5="882" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_LangBG" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_LangSplash.tex" x0="0" x1="0" x2="0" x3="0" x4="1920" x5="1920" y0="0" y1="0" y2="0" y3="0" y4="1200" y5="1200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFooterBlue" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAccents.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="329" y0="76" y1="76" y2="76" y3="76" y4="76" y5="132" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFooterRed" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAccents.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="329" y0="132" y1="132" y2="132" y3="132" y4="132" y5="188" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFactionLogoDom" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAccents.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="114" y0="188" y1="188" y2="188" y3="188" y4="188" y5="320" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFactionLogoExile" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAccents.tex" x0="114" x1="114" x2="114" x3="114" x4="114" x5="219" y0="188" y1="188" y2="188" y3="188" y4="188" y5="304" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCSelectFrameLeft" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAssets.tex" x0="466" x1="466" x2="466" x3="466" x4="466" x5="923" y0="0" y1="0" y2="0" y3="0" y4="0" y5="530" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAssets.tex" x0="466" x1="466" x2="466" x3="466" x4="466" x5="923" y0="0" y1="0" y2="0" y3="0" y4="0" y5="530" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCSelectFrameOverlay" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAssets.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="456" y0="542" y1="542" y2="542" y3="542" y4="542" y5="1064" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCSelectFrameDivider" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_FrameAssets.tex" x0="456" x1="456" x2="456" x3="456" x4="456" x5="491" y0="542" y1="542" y2="542" y3="542" y4="542" y5="1045" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_FrameInsertFaction" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_Inserts.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="914" y0="0" y1="0" y2="0" y3="0" y4="0" y5="521" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_FrameInsertExperience" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_Inserts.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="914" y0="523" y1="523" y2="523" y3="523" y4="523" y5="1044" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_FrameInsertControls" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_InsertControls.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="914" y0="0" y1="0" y2="0" y3="0" y4="0" y5="525" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFactionSelectBG_EN" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_Faction_EN.tex" x0="0" x1="0" x2="0" x3="0" x4="1800" x5="1800" y0="0" y1="0" y2="0" y3="0" y4="1200" y5="1200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_CCFactionSelectBG_DE" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_Faction_DE.tex" x0="0" x1="0" x2="0" x3="0" x4="1800" x5="1800" y0="0" y1="0" y2="0" y3="0" y4="1200" y5="1200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_DungeonTile_Granok" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_DungeonTiles.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="134" y0="0" y1="0" y2="0" y3="0" y4="0" y5="385" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_DungeonTile_HumanM" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_DungeonTiles.tex" x0="134" x1="134" x2="134" x3="134" x4="134" x5="268" y0="0" y1="0" y2="0" y3="0" y4="0" y5="385" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_DungeonTile_Mordesh" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_DungeonTiles.tex" x0="268" x1="268" x2="268" x3="268" x4="268" x5="402" y0="0" y1="0" y2="0" y3="0" y4="0" y5="385" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_DungeonTile_HumanF" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_DungeonTiles.tex" x0="402" x1="402" x2="402" x3="402" x4="402" x5="536" y0="0" y1="0" y2="0" y3="0" y4="0" y5="385" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprDemo_DungeonTile_Aurin" Cycle="1">
+        <Frame Texture="UI\Textures\Demo\UI_CRB_DEMO_DungeonTiles.tex" x0="536" x1="536" x2="536" x3="536" x4="536" x5="670" y0="0" y1="0" y2="0" y3="0" y4="0" y5="385" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

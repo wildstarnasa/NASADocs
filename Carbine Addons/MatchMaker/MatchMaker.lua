@@ -179,7 +179,6 @@ function MatchMaker:OnDocumentReady()
 	self.wndCancelReplacements 		= self.wndMain:FindChild("CancelReplacementsBtn")
 	self.wndAltLeaveGame 			= self.wndMain:FindChild("AltLeaveMatchBtn")
 	self.wndAltTeleportIntoGame 	= self.wndMain:FindChild("AltTeleportIntoMatchBtn")
-	self.wndJoinGame 				= Apollo.LoadForm(self.xmlDoc, "JoinGame", nil, self)
 	self.wndQueueInfo 				= self.wndMain:FindChild("MatchQueueInfo")
 	self.wndTimeInQueue 			= self.wndQueueInfo:FindChild("TimeInQueue")
 	self.wndAverageWaitTime 		= self.wndQueueInfo:FindChild("AverageWaitTime")
@@ -195,6 +194,9 @@ function MatchMaker:OnDocumentReady()
 	self.wndDuelWarning				= Apollo.LoadForm(self.xmlDoc, "DuelWarning", nil, self)
 	self.wndRoleBlocker				= self.wndRole:FindChild("RoleBlocker")
 	self.wndRealmFilterBlocker		= self.wndRealmFilterContainer:FindChild("RealmBlocker")
+	
+	self.wndJoinGame 				= Apollo.LoadForm(self.xmlDoc, "JoinGame", nil, self)
+	self.nJoinGameLeft, self.nJoinGameTop, self.nJoinGameRight, self.nJoinGameBottom = self.wndJoinGame:GetAnchorOffsets()
 
 	self.wndMyRating 				= self.wndMain:FindChild("RatingWindow")
 	self.wndMyRating:Show(false)
@@ -827,6 +829,7 @@ function MatchMaker:RefreshStatus()
 
 			self.wndModeListToggle:Enable(false)
 			self.wndVoteDisband:Show(bCanDisband and not bLeader)
+			self.wndVoteDisband:SetText(Apollo.GetString(self.eSelectedTab == MatchingGame.MatchType.Warplot and "MatchMaker_SurrenderMatch" or "MatchMaker_VoteDisband"))
 
 			if not bInInstance then
 				if bLeader and MatchingGame.CanLookForReplacements() then
@@ -926,9 +929,25 @@ function MatchMaker:OnGameReady(bInProgress)
 	else
 		strMessage = String_GetWeaselString(Apollo.GetString("MatchMaker_Found"), strMessage)
 	end
+	
+	local bRatedMatch = 
+		self.eQueuedTab == MatchingGame.MatchType.RatedArena or 
+		self.eQueuedTab == MatchingGame.MatchType.RatedBattleground or 
+		self.eQueuedTab == MatchingGame.MatchType.Warplot
+	
+	local wndWarning = self.wndJoinGame:FindChild("RatedWarning")
+	local nWarningHeight = self.nJoinGameTop > 0 and wndWarning:GetHeight() or wndWarning:GetHeight() * - 1
+	local nOffsetTop  = bRatedMatch and self.nJoinGameTop or self.nJoinGameTop - nWarningHeight
+		
+	wndWarning:Show(bRatedMatch)
+	self.wndJoinGame:SetAnchorOffsets(
+		self.nJoinGameLeft,
+		nOffsetTop,
+		self.nJoinGameRight,
+		self.nJoinGameBottom
+	)
 
 	self.wndJoinGame:FindChild("Title"):SetText(strMessage)
-
 	self.wndJoinGame:Show(true)
 	self.wndJoinGame:ToFront()
 end

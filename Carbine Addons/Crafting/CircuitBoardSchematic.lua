@@ -596,7 +596,6 @@ function CircuitBoardSchematic:UpdateOverchargeBars(tMicrochips, tThresholds)
 	self.wndMain:FindChild("FailChargeFrameFlair"):SetSprite(fRawCurrCharge > fRawMaxOvercharge and "sprCircuit_HandStopIcon" or "sprCircuit_CheckIcon")
 
 	local bWasPercentShown = self.wndMain:FindChild("FailPercentText"):IsShown()
-	Event_FireGenericEvent("SendVarToRover", "nPreviousFailChance", strPreviousFailChance)
 	-- Chance to fail text
 	local nFailPercent = fRawCurrCharge > fRawMaxOvercharge and 100 or math.max(math.floor(nChanceToFail), 1)
 	self.wndMain:FindChild("FailPercentText"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Percent"), nFailPercent))

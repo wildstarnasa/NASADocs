@@ -304,7 +304,7 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	end
 
 	local strDescription = achCurr:IsComplete() and achCurr:GetDescription() or achCurr:GetProgressText()
-	strDescription = "<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\" Align=\"Center\">" .. strDescription .. "</P>"
+	strDescription = "<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff7fffb9\" Align=\"Center\">" .. strDescription .. "</P>"
 
 	local nNumNeeded = achCurr:GetNumNeeded()
 	local nNumCompleted = achCurr:GetNumCompleted()
@@ -315,7 +315,7 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	if wndParent:FindChild("ItemTitle") and wndParent:FindChild("ItemTitle"):GetData() and string.len(wndParent:FindChild("ItemTitle"):GetData()) > 0 then
 		strDescription = strDescription .. wndParent:FindChild("ItemTitle"):GetData()
 	end
-
+	
 	wndCurr:FindChild("ExtraInfoDescription"):SetText(strDescription)
 
 	-- Checklist Special formatting TODO TEMP

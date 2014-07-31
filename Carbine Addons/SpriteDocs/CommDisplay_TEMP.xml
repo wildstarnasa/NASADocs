@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprCommDisplay_BGNormal" Cycle="1">
+        <Frame Texture="UI\Textures\CommDisplay_TEMP.tga" x0="0" x1="81" x2="283" x3="283" x4="283" x5="358" y0="0" y1="56" y2="192" y3="192" y4="192" y5="242" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCommDisplay_BGExiles" Cycle="1">
+        <Frame Texture="UI\Textures\CommDisplay_TEMP.tga" x0="0" x1="81" x2="283" x3="283" x4="283" x5="358" y0="243" y1="299" y2="435" y3="435" y4="435" y5="485" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCommDisplay_BGDominion" Cycle="1">
+        <Frame Texture="UI\Textures\CommDisplay_TEMP.tga" x0="0" x1="81" x2="283" x3="283" x4="283" x5="358" y0="486" y1="542" y2="678" y3="678" y4="678" y5="728" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

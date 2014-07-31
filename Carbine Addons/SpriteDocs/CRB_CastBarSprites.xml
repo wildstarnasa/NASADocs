@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprCB_Backer_Normal" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="231" y0="58" y1="58" y2="58" y3="58" y4="58" y5="87" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Backer_PHR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_89.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="231" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Backer_RT" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="83" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_FlashCycle" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_187.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="228" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_187.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="228" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_Flash" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_187.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="228" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_187.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="228" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_187.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="228" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_Regular" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_130.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffff9800" EndColor="ffff9800"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_PH" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_149.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff6dacff" EndColor="ff6dacff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_PHR_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_168.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00d5f2" EndColor="ff00d5f2"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_PHR_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_168.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00e6e4" EndColor="ff00e6e4"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_PHR_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_168.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00e6af" EndColor="ff00e6af"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_PHR_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_168.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff36ff78" EndColor="ff36ff78"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_PHR_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_168.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="219" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff8cff48" EndColor="ff8cff48"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_RT" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="84" x1="84" x2="84" x3="84" x4="84" x5="155" y0="12" y1="12" y2="12" y3="12" y4="12" y5="58" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Cap_PH" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_221_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="7" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="4" HotspotY="10" Duration="1.000" StartColor="ffbcdbff" EndColor="ffbcdbff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Cap_PHR_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_221_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="7" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="4" HotspotY="10" Duration="1.000" StartColor="ffa9eaf2" EndColor="ffa9eaf2"/>
+    </Sprite>
+    <Sprite Name="sprCB_Cap_PHR_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_221_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="7" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="4" HotspotY="10" Duration="1.000" StartColor="ff96e6e5" EndColor="ff96e6e5"/>
+    </Sprite>
+    <Sprite Name="sprCB_Cap_PHR_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_221_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="7" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="4" HotspotY="10" Duration="1.000" StartColor="ffa1e6d6" EndColor="ffa1e6d6"/>
+    </Sprite>
+    <Sprite Name="sprCB_Cap_PHR_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_221_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="7" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="4" HotspotY="10" Duration="1.000" StartColor="ffc0ffd5" EndColor="ffc0ffd7"/>
+    </Sprite>
+    <Sprite Name="sprCB_Cap_PHR_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_221_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="7" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="4" HotspotY="10" Duration="1.000" StartColor="ffdcffc7" EndColor="ffdcffc7"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerEmpty_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="161" x1="161" x2="161" x3="161" x4="161" x5="171" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00d5f2" EndColor="ff00d5f2"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerEmpty_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="161" x1="161" x2="161" x3="161" x4="161" x5="171" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00e6e4" EndColor="ff00e6e4"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerEmpty_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="161" x1="161" x2="161" x3="161" x4="161" x5="171" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00e6af" EndColor="ff00e6af"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerEmpty_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="161" x1="161" x2="161" x3="161" x4="161" x5="171" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff36ff78" EndColor="ff36ff78"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerEmpty_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="161" x1="161" x2="161" x3="161" x4="161" x5="171" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff8cff48" EndColor="ff8cff48"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerFull_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="171" x1="171" x2="171" x3="171" x4="171" x5="181" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00d5f2" EndColor="ff00d5f2"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerFull_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="171" x1="171" x2="171" x3="171" x4="171" x5="181" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00e6e4" EndColor="ff00e6e4"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerFull_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="171" x1="171" x2="171" x3="171" x4="171" x5="181" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff00e6af" EndColor="ff00e6af"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerFull_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="171" x1="171" x2="171" x3="171" x4="171" x5="181" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff36ff78" EndColor="ff36ff78"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerFull_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="171" x1="171" x2="171" x3="171" x4="171" x5="181" y0="49" y1="49" y2="49" y3="49" y4="49" y5="59" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff8cff48" EndColor="ff8cff48"/>
+    </Sprite>
+    <Sprite Name="sprCB_PHRMarkerFlash" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="184" x1="184" x2="184" x3="184" x4="184" x5="204" y0="39" y1="39" y2="39" y3="39" y4="39" y5="58" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="184" x1="184" x2="184" x3="184" x4="184" x5="204" y0="39" y1="39" y2="39" y3="39" y4="39" y5="58" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="184" x1="184" x2="184" x3="184" x4="184" x5="204" y0="39" y1="39" y2="39" y3="39" y4="39" y5="58" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCB_Fill_RTFlash" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="209" x1="209" x2="209" x3="209" x4="209" x5="290" y0="3" y1="3" y2="3" y3="3" y4="3" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="209" x1="209" x2="209" x3="209" x4="209" x5="290" y0="3" y1="3" y2="3" y3="3" y4="3" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CastBar_Temp_0_0.tga" x0="209" x1="209" x2="209" x3="209" x4="209" x5="290" y0="3" y1="3" y2="3" y3="3" y4="3" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+</Sprites>

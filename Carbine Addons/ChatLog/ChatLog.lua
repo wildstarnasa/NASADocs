@@ -290,11 +290,9 @@ function ChatLog:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-
+	
 	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
-end
-
-function ChatLog:OnWindowManagementReady()
+	
 	Apollo.RegisterEventHandler("ChatMessage", 					"OnChatMessage", self)
 	Apollo.RegisterEventHandler("ChatFlag", 					"OnChatFlag", self)
 	Apollo.RegisterEventHandler("ChatZone", 					"OnChatZone", self)
@@ -583,8 +581,14 @@ function ChatLog:OnWindowManagementReady()
 	end
 end
 
+function ChatLog:OnWindowManagementReady()
+	for key, wndChat in pairs(self.tChatWindows) do
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = wndChat, strName = wndChat:GetText(), bIsTabWindow = true})
+	end
+end
+
 function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombatLog, channelCurrent)
-	local wndChatWindow = Apollo.LoadForm(self.xmlDoc, "ChatWindow", "FixedHudStratum", self)
+	local wndChatWindow = Apollo.LoadForm(self.xmlDoc, "ChatWindow", "FixedHudStratumHigh", self)
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = wndChatWindow, strName = strTitle})
 
 	wndChatWindow:SetSizingMinimum(240, 240)
@@ -2392,6 +2396,7 @@ function ChatLog:OnWndMainMouseEnter(wndHandler, wndControl) -- wndHandler is Mo
 		for idx, wndCurr in pairs(wndHandler:GetData()) do
 			wndCurr:Show(true)
 		end
+		wndHandler:GetParent():FindChild("InputType"):Show(string.len(wndHandler:GetParent():FindChild("Input"):GetText()) == 0)
 	end
 end
 

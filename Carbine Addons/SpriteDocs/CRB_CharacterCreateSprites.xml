@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprCC_FactionBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="1800" y0="0" y1="0" y2="0" y3="0" y4="0" y5="1200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceAurin" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_0_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceGranok" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_50_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceDraken" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_100_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceMordesh" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_150_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceChua" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_200_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceMechari" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_250_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_RaceHuman" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_300_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_FactionBG2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_2_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="1800" x5="1800" y0="0" y1="0" y2="0" y3="0" y4="1200" y5="1200" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_ExileIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_2_353_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="111" y0="0" y1="0" y2="0" y3="0" y4="0" y5="117" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_DominionIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_2_468_1200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="128" y0="0" y1="0" y2="0" y3="0" y4="0" y5="148" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_DominionIconBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_2_596_1200.tga" x0="0" x1="0" x2="0" x3="36" x4="64" x5="107" y0="0" y1="0" y2="0" y3="23" y4="70" y5="93" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCC_ExileIconBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_TEMP_2_703_1200.tga" x0="0" x1="0" x2="0" x3="28" x4="75" x5="107" y0="0" y1="0" y2="0" y3="23" y4="62" y5="93" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_ListBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_0_0.tga" x0="0" x1="0" x2="0" x3="158" x4="266" x5="329" y0="0" y1="0" y2="0" y3="63" y4="344" y5="504" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_RealmBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_0_505.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="504" y0="0" y1="0" y2="0" y3="0" y4="0" y5="70" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_EnterBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_0_816_3.tex" x0="0" x1="0" x2="9" x3="567" x4="577" x5="577" y0="0" y1="0" y2="0" y3="0" y4="0" y5="159" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_EnterBackerGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_0_596.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="439" y0="0" y1="0" y2="0" y3="0" y4="0" y5="140" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_EntryFactFrameE" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_231_858.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="74" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_EntryFactFrameD" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_231_909.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="74" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_EntryLevelGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_443_580.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_EntryPathClassBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_506_575.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_NameBackBlack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_506_505.tga" x0="0" x1="0" x2="0" x3="9" x4="18" x5="27" y0="0" y1="0" y2="0" y3="6" y4="28" y5="34" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_NameBackBlue" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_506_540.tga" x0="0" x1="0" x2="0" x3="9" x4="18" x5="27" y0="0" y1="0" y2="0" y3="6" y4="28" y5="34" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_ExitBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_329_342.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="214" y0="0" y1="0" y2="0" y3="0" y4="0" y5="162" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_OptionBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_224_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="271" y0="0" y1="0" y2="0" y3="0" y4="0" y5="550" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_CustomizeBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_495_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="252" y0="0" y1="0" y2="0" y3="149" y4="449" y5="583" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_OptionPickerBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_388_575.tga" x0="0" x1="0" x2="0" x3="27" x4="74" x5="103" y0="0" y1="0" y2="0" y3="29" y4="232" y5="263" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_OptionPickerInset" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_387_840.tga" x0="0" x1="0" x2="0" x3="29" x4="74" x5="105" y0="0" y1="0" y2="0" y3="17" y4="102" y5="118" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_SliderBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_117_797.tga" x0="0" x1="8" x2="28" x3="34" x4="54" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_SliderFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_121_828.tga" x0="0" x1="0" x2="0" x3="3" x4="49" x5="52" y0="0" y1="0" y2="0" y3="0" y4="0" y5="6" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_BlackIconInset" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_0_932.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="27" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_BlueInsetLit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_42_797.tga" x0="0" x1="0" x2="0" x3="8" x4="33" x5="41" y0="0" y1="0" y2="0" y3="8" y4="126" y5="134" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_ClassFooterIconDisabled" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_28_932.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_ClassFooterIconBlue" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_72_932.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_ClassFooterIconWhite" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_116_932.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_GlowBackerMain" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="361" y0="0" y1="0" y2="0" y3="0" y4="0" y5="812" Stretchy="1" HotspotX="0" HotspotY="0" Duration="2.000" StartColor="aaffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="361" y0="0" y1="0" y2="0" y3="0" y4="0" y5="812" Stretchy="1" HotspotX="0" HotspotY="0" Duration="2.000" StartColor="ffffffff" EndColor="aaffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_GlowFrameTop" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_392_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="236" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="66ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_392_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="236" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="ffffffff" EndColor="66ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_GlowFrameSide" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_393_132.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="356" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="66ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_393_132.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="356" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="ffffffff" EndColor="66ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_GlowOrangeArrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_432_130.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="5" y1="5" y2="5" y3="5" y4="5" y5="287" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_432_130.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="5" y1="5" y2="5" y3="5" y4="5" y5="287" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_Anim_ButtonOverlay" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="50" y1="50" y2="50" y3="50" y4="50" y5="100" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="100" y1="100" y2="100" y3="100" y4="100" y5="150" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="150" y1="150" y2="150" y3="150" y4="150" y5="200" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="200" y1="200" y2="200" y3="200" y4="200" y5="250" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="250" y1="250" y2="250" y3="250" y4="250" y5="300" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="300" y1="300" y2="300" y3="300" y4="300" y5="350" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="350" y1="350" y2="350" y3="350" y4="350" y5="400" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="400" y1="400" y2="400" y3="400" y4="400" y5="450" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="183" y0="450" y1="450" y2="450" y3="450" y4="450" y5="500" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="50" y1="50" y2="50" y3="50" y4="50" y5="100" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="100" y1="100" y2="100" y3="100" y4="100" y5="150" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="150" y1="150" y2="150" y3="150" y4="150" y5="200" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="200" y1="200" y2="200" y3="200" y4="200" y5="250" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="250" y1="250" y2="250" y3="250" y4="250" y5="300" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="300" y1="300" y2="300" y3="300" y4="300" y5="350" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="350" y1="350" y2="350" y3="350" y4="350" y5="400" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="400" y1="400" y2="400" y3="400" y4="400" y5="450" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="366" y0="450" y1="450" y2="450" y3="450" y4="450" y5="500" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="50" y1="50" y2="50" y3="50" y4="50" y5="100" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="100" y1="100" y2="100" y3="100" y4="100" y5="150" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="150" y1="150" y2="150" y3="150" y4="150" y5="200" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="200" y1="200" y2="200" y3="200" y4="200" y5="250" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="250" y1="250" y2="250" y3="250" y4="250" y5="300" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="300" y1="300" y2="300" y3="300" y4="300" y5="350" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="350" y1="350" y2="350" y3="350" y4="350" y5="400" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="400" y1="400" y2="400" y3="400" y4="400" y5="450" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="366" x1="366" x2="366" x3="366" x4="366" x5="549" y0="450" y1="450" y2="450" y3="450" y4="450" y5="500" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="50" y1="50" y2="50" y3="50" y4="50" y5="100" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="100" y1="100" y2="100" y3="100" y4="100" y5="150" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="150" y1="150" y2="150" y3="150" y4="150" y5="200" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="200" y1="200" y2="200" y3="200" y4="200" y5="250" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="250" y1="250" y2="250" y3="250" y4="250" y5="300" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="300" y1="300" y2="300" y3="300" y4="300" y5="350" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="350" y1="350" y2="350" y3="350" y4="350" y5="400" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="400" y1="400" y2="400" y3="400" y4="400" y5="450" HotspotX="0" HotspotY="0" Duration="0.060" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_ANIM_Selected.tga" x0="549" x1="549" x2="549" x3="549" x4="549" x5="732" y0="450" y1="450" y2="450" y3="450" y4="450" y5="500" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_GlowFrameSideCustom" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_505_205.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="74" y0="0" y1="0" y2="0" y3="96" y4="389" y5="501" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="66ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_505_205.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="74" y0="0" y1="0" y2="0" y3="96" y4="389" y5="501" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="ffffffff" EndColor="66ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_GlowOrangeArrowNoBorder" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_432_130.tga" x0="69" x1="69" x2="69" x3="69" x4="69" x5="145" y0="0" y1="0" y2="0" y3="0" y4="0" y5="75" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_432_130.tga" x0="69" x1="69" x2="69" x3="69" x4="69" x5="145" y0="0" y1="0" y2="0" y3="0" y4="0" y5="75" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_EnterBackerName" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_0_816_2.tex" x0="0" x1="0" x2="9" x3="569" x4="577" x5="577" y0="0" y1="0" y2="0" y3="0" y4="0" y5="159" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCharC_NameCheckNo" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_126_893.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="22" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCharC_NameCheckYes" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_126_852.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="22" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharS_ListBackerReverse" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CharacterSelect_0_0_reverse.tex" x0="0" x1="0" x2="0" x3="70" x4="148" x5="329" y0="0" y1="0" y2="0" y3="63" y4="344" y5="504" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCharC_EnterBackerNameOld" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_2_0_816.tex" x0="0" x1="0" x2="83" x3="152" x4="152" x5="152" y0="0" y1="26" y2="26" y3="26" y4="26" y5="26" Stretchy="1" HotspotX="0" HotspotY="0" Duration="3.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="btnCharS_ZoomPortrait" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_0_908.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="46" y0="0" y1="0" y2="0" y3="0" y4="0" y5="48" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCharS_ZoomModel" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_0_858.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="46" y0="0" y1="0" y2="0" y3="0" y4="0" y5="48" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCharS_ListNew" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_329_0.tga" x0="0" x1="0" x2="0" x3="74" x4="114" x5="207" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharS_ListEntryTop" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_545_0.tga" x0="0" x1="0" x2="0" x3="15" x4="141" x5="156" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharS_ListEntryNorm" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_545_0.tga" x0="0" x1="0" x2="0" x3="15" x4="141" x5="156" y0="241" y1="241" y2="241" y3="241" y4="241" y5="301" Stretchy="1" StateBits="15" Direction="Down"/>
+    <AutoButton Name="btnCharS_ListDelete" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_702_505.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="126" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharS_EnterGame" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_702_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="322" y0="0" y1="0" y2="0" y3="0" y4="0" y5="89" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharS_GoBack" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_566_505.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="135" y0="0" y1="0" y2="0" y3="0" y4="0" y5="121" StateBits="15" Direction="Down"/>
+    <AutoButton Name="btnCharS_ListEntryBottom" Texture="UI\Assets\TexPieces\UI_CRB_CharacterSelect_703_746.tga" x0="0" x1="0" x2="0" x3="15" x4="67" x5="156" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" StateBits="15" Direction="Down"/>
+    <AutoButton Name="btnCharC_FactionExile" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="111" y0="0" y1="0" y2="0" y3="0" y4="0" y5="111" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_FactionDominion" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_112_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="111" y0="0" y1="0" y2="0" y3="0" y4="0" y5="111" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_Accept" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_0_556.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="187" y0="0" y1="0" y2="0" y3="0" y4="0" y5="48" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_OptionMain" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_195_574.tga" x0="0" x1="0" x2="0" x3="8" x4="176" x5="184" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_ResetAll" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_748_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="172" y0="0" y1="0" y2="0" y3="0" y4="0" y5="26" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_Randomize" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_748_130.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="172" y0="0" y1="0" y2="0" y3="0" y4="0" y5="26" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_OptionInterior" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_497_587.tga" x0="0" x1="0" x2="0" x3="15" x4="96" x5="116" y0="0" y1="0" y2="0" y3="0" y4="0" y5="74" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCharC_OptionSquare" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_618_588.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="116" y0="0" y1="0" y2="0" y3="0" y4="0" y5="118" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnCharC_ScrollkitScroller" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_1_86_797.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="28" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnCharC_RG_HuF_Ex" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_HuM_Ex" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_120.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_AuF" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_240.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_AuM" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_360.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_GrF" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_480.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_GrM" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_600.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_MoM" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_720.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_MoF" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_0_840.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_HuM_Dom" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_DrF" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_121.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_DrM" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_241.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_HuF_Dom" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_361.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_MeM" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_481.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_MeF" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_601.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnCharC_RG_Chua" Texture="UI\Assets\TexPieces\UI_CRB_CharacterCreate_3_358_721.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="119" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" Stretchy="1" StateBits="7" Direction="Across"/>
+</Sprites>

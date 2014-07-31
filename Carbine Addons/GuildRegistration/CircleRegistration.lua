@@ -123,10 +123,22 @@ end
 
 function CircleRegistration:OnCircleRegNameChanging(wndHandler, wndControl)
 	local strInput = self.wndCircleRegName:GetText() or ""
+	local wndLimit = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:Limit")
+	local bIsValid = GameLib.IsTextValid(strInput, GameLib.CodeEnumUserText.GuildName, eProfanityFilter)
 	self.tCreate.strName = strInput
 	self:UpdateCircleRegOptions()
+		
+	if wndLimit ~= nil then
+		local nNameLength = string.len(strInput or "")
 
-	self.wndMain:FindChild("InvalidInputWarning"):Show(strInput ~= "" and not GameLib.IsTextValid(strInput, GameLib.CodeEnumUserText.GuildName, eProfanityFilter))
+		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
+
+		if not bIsValid or nNameLength < 3 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
+			wndLimit:SetTextColor(ApolloColor.new("red"))
+		else
+			wndLimit:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+		end
+	end
 end
 
 function CircleRegistration:OnCircleRegOptionChanging(wndHandler, wndControl)
@@ -165,6 +177,44 @@ function CircleRegistration:UpdateCircleRegOptions()
 	local bHasCouncil = self:HelperCheckForEmptyString(strCouncilName) and GameLib.IsTextValid(strCouncilName, GameLib.CodeEnumUserText.GuildRankName, eProfanityFilter)
 	local bHasMember = self:HelperCheckForEmptyString(strMemberName) and GameLib.IsTextValid(strMemberName, GameLib.CodeEnumUserText.GuildRankName, eProfanityFilter)
 	self.wndRegisterCircleBtn:Enable(bHasName and bNameValid and bHasMaster and bHasCouncil and bHasMember)
+	
+	if strMasterName ~= nil then
+		local nNameLength = string.len(strMasterName or "")
+		local wndLimitMaster = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:LimitMaster")
+		wndLimitMaster:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
+
+		if not bHasMaster or nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName) then
+			wndLimitMaster:SetTextColor(ApolloColor.new("red"))
+		else
+			wndLimitMaster:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+		end
+	end
+	
+	if strCouncilName ~= nil then
+		local nNameLength = string.len(strCouncilName or "")
+		local wndLimitCouncil = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:LimitCouncil")
+		wndLimitCouncil:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
+
+		if not bHasCouncil or nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName) then
+			wndLimitCouncil:SetTextColor(ApolloColor.new("red"))
+		else
+			wndLimitCouncil:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+		end
+	end
+	
+	if strMemberName ~= nil then
+		local nNameLength = string.len(strMemberName or "")
+		local wndLimitMember = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:LimitMember")
+		wndLimitMember:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
+
+		if not bHasMember or nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName) then
+			wndLimitMember:SetTextColor(ApolloColor.new("red"))
+		else
+			wndLimitMember:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+		end
+	end
+	
+	
 end
 
 function CircleRegistration:HelperCheckForEmptyString(strText) -- make sure there's a valid string

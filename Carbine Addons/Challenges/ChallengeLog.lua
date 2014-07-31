@@ -518,7 +518,7 @@ function ChallengeLog:DrawLeftPanelUI(tChallengeList)
 	local nLootCount = 0
 	local strRewardsText = self.strRewardsTabText
 	for idx, clgCurrent in pairs(tChallengeList) do
-		if clgCurrent:ShouldCollectReward() then
+		if clgCurrent:ShouldCollectReward() and (clgCurrent:GetZoneInfo().idZone == self.nSelectedBigZone or self.nSelectedBigZone == -1) then
 			nLootCount = nLootCount + 1
 			strRewardsText = String_GetWeaselString(Apollo.GetString("Vendor_TabLabelMultiple"), self.strRewardsTabText, nLootCount)
 		end

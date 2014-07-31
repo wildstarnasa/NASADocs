@@ -338,6 +338,21 @@ function OptionsAddon:OnDocumentReady()
 		Apollo.CreateTimer("AddonsUpdateTimer", 1.0, true)
 		self.bAddonsTimerCreated = true
 	end
+
+	local tDisplayMode = Apollo.GetConsoleVariable("video.exclusiveDisplayMode")
+	if tDisplayMode.x == 0 and tDisplayMode.y == 0 and tDisplayMode.z == 0 then --no console variable data
+		local arModes = EnumerateDisplayModes()
+		local tModeDisplay
+		for i, tMode in ipairs(arModes) do
+			if tMode.bCurrent then
+				tModeDisplay = tMode
+				break
+			end
+		end
+
+		Apollo.SetConsoleVariable("video.exclusiveDisplayMode", tModeDisplay.vec)
+		self.wndVideo:FindChild("DropToggleExclusive"):Enable(Apollo.GetConsoleVariable("video.exclusive"))
+	end
 end
 
 ---------------------------------------------------------------------------------------------------

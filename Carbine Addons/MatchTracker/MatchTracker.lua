@@ -47,6 +47,16 @@ local ktHoldLinePoint3 =
 	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 	 ApolloColor.new("UI_BtnTextRedNormal")},
 }
 
+local ktPvPEventTypes =
+{
+	[PublicEvent.PublicEventType_PVP_Warplot] 					= 1,
+	[PublicEvent.PublicEventType_PVP_Battleground_Vortex] 		= 1,
+	[PublicEvent.PublicEventType_PVP_Arena] 					= 1,
+	[PublicEvent.PublicEventType_PVP_Battleground_HoldTheLine] 	= 1,
+	[PublicEvent.PublicEventType_PVP_Battleground_Sabotage] 	= 1,
+	[PublicEvent.PublicEventType_PVP_Battleground_Cannon] 		= 1,
+}
+
 local knSaveVersion = 1
 
 function MatchTracker:new(o)
@@ -193,6 +203,8 @@ function MatchTracker:OnLoadFromDatachron()
 	Apollo.RegisterEventHandler("PVPMatchFinished", 					"OnPVPMatchFinished", self)
 	Apollo.RegisterEventHandler("PVPMatchStateUpdated", 				"OnOneSecMatchTimer", self) -- For Immediate updating
 	Apollo.RegisterEventHandler("PVPDeathmatchPoolUpdated", 			"OnOneSecMatchTimer", self) -- For Immediate updating
+	
+	Apollo.RegisterEventHandler("PublicEventEnd",						"OnPublicEventEnd", self)
 
 	-- CTF Events
 	Apollo.RemoveEventHandler("PvP_CTF_FlagSpawned",				self)
@@ -273,6 +285,8 @@ function MatchTracker:OnMatchExited()
 			self.tLastResTeam[idx].nTrendOverall = 0
 		end
 	end
+	
+	tZombieEvent = nil
 end
 
 function MatchTracker:OnMatchPvpInactivityAlert(nRemainingTimeMs)
@@ -714,19 +728,40 @@ end
 -- Helpers
 -----------------------------------------------------------------------------------------------
 
+function MatchTracker:OnPublicEventEnd(peEvent, eReason, tStats)
+	if (eReason == PublicEvent.PublicEventParticipantRemoveReason_CompleteSuccess or eReason == PublicEvent.PublicEventParticipantRemoveReason_CompleteFailure)
+	and ktPvPEventTypes[peEvent:GetEventType()] then
+		self.tZombieEvent =
+		{
+			["peEvent"] = peEvent, 
+			["eReason"] = eReason, 
+			["tStats"] = tStats
+		}
+	end
+end
+
 function MatchTracker:OnViewEventStatsBtn(wndHandler, wndControl) -- ViewEventStatsBtn
-	for idx, peCurrent in pairs(PublicEvent.GetActiveEvents()) do
-		if peCurrent:HasLiveStats() then
-			local eType = peCurrent:GetEventType()
-			if eType == PublicEvent.PublicEventType_PVP_Warplot or eType == PublicEvent.PublicEventType_PVP_Battleground_Vortex or eType == PublicEvent.PublicEventType_PVP_Arena
-			or eType == PublicEvent.PublicEventType_PVP_Battleground_HoldTheLine or eType == PublicEvent.PublicEventType_PVP_Battleground_Sabotage
-			or eType == PublicEvent.PublicEventType_PVP_Battleground_Cannon then
-				local tLiveStats = peCurrent:GetLiveStats()
-				
-				Event_FireGenericEvent("GenericEvent_OpenEventStats", peCurrent, peCurrent:GetMyStats(), tLiveStats.arTeamStats, tLiveStats.arParticipantStats)
-				return
+	local peDisplay = nil
+	local tDisplayedStats = nil
+	if self.tZombieEvent then
+		if ktPvPEventTypes[self.tZombieEvent.peEvent:GetEventType()] then
+			peDisplay = self.tZombieEvent.peEvent
+			tDisplayedStats = self.tZombieEvent.tStats
+		end
+		
+	else		
+		for idx, peCurrent in pairs(PublicEvent.GetActiveEvents()) do
+			if not peDisplay and peCurrent:HasLiveStats() then
+				if ktPvPEventTypes[peCurrent:GetEventType()] then
+					peDisplay = peCurrent
+					tDisplayedStats = peCurrent:GetLiveStats()
+				end
 			end
 		end
+	end
+	
+	if peDisplay and tDisplayedStats then
+		Event_FireGenericEvent("GenericEvent_OpenEventStats", peDisplay, peDisplay:GetMyStats(), tDisplayedStats.arTeamStats, tDisplayedStats.arParticipantStats)
 	end
 end
 
