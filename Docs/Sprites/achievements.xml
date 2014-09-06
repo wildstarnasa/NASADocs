@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprAchievements_Icon_Complete" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Achievement_Icon_CheckComplete.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="36" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprAchievements_Icon_Group" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Achievement_Icon_Group.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprAchievements_Icon_Solo" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Achievement_Icon_Solo.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

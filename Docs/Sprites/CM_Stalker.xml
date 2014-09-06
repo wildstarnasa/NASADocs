@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_CM_Stalker_Base_OutOfCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="120" x2="132" x3="610" x4="622" x5="743" y0="0" y1="0" y2="0" y3="0" y4="0" y5="84" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Base_InCombatFull" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="120" x2="132" x3="610" x4="622" x5="743" y0="85" y1="85" y2="85" y3="85" y4="85" y5="169" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Base_InCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="120" x2="132" x3="610" x4="622" x5="743" y0="170" y1="170" y2="170" y3="170" y4="170" y5="254" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Base_InCombatEmpty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="120" x2="132" x3="610" x4="622" x5="743" y0="255" y1="255" y2="255" y3="255" y4="255" y5="339" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Innate1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="340" y1="340" y2="340" y3="340" y4="340" y5="504" HotspotX="0" HotspotY="0" Duration="1.0" StartColor="4cffffff" EndColor="ffffffff"/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="340" y1="340" y2="340" y3="340" y4="340" y5="504" HotspotX="0" HotspotY="0" Duration="0.3" StartColor="ffffffff" EndColor="ffffffff"/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="340" y1="340" y2="340" y3="340" y4="340" y5="504" HotspotX="0" HotspotY="0" Duration="1.0" StartColor="ffffffff" EndColor="4cffffff"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Innate2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="505" y1="505" y2="505" y3="505" y4="505" y5="669" HotspotX="0" HotspotY="0" Duration="1.0" StartColor="4cffffff" EndColor="bbffffff"/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="505" y1="505" y2="505" y3="505" y4="505" y5="669" HotspotX="0" HotspotY="0" Duration="0.3" StartColor="bbffffff" EndColor="bbffffff"/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="505" y1="505" y2="505" y3="505" y4="505" y5="669" HotspotX="0" HotspotY="0" Duration="1.0" StartColor="bbffffff" EndColor="4cffffff"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Innate3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="670" y1="670" y2="670" y3="670" y4="670" y5="834" HotspotX="0" HotspotY="0" Duration="1.0" StartColor="4cffffff" EndColor="ffffffff"/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="670" y1="670" y2="670" y3="670" y4="670" y5="834" HotspotX="0" HotspotY="0" Duration="0.3" StartColor="ffffffff" EndColor="ffffffff"/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="670" y1="670" y2="670" y3="670" y4="670" y5="834" HotspotX="0" HotspotY="0" Duration="1.0" StartColor="ffffffff" EndColor="4cffffff"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Innate4" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="652" y0="835" y1="835" y2="835" y3="835" y4="835" y5="999" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Fill1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="653" x1="653" x2="653" x3="653" x4="653" x5="979" y0="340" y1="340" y2="340" y3="340" y4="340" y5="375" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Fill2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="653" x1="653" x2="653" x3="653" x4="653" x5="979" y0="376" y1="376" y2="376" y3="376" y4="376" y5="411" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Dot1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="744" x1="744" x2="744" x3="744" x4="744" x5="802" y0="0" y1="0" y2="0" y3="0" y4="0" y5="58" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Dot2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="744" x1="744" x2="744" x3="744" x4="744" x5="802" y0="59" y1="59" y2="59" y3="59" y4="59" y5="117" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_Dot3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="744" x1="744" x2="744" x3="744" x4="744" x5="802" y0="118" y1="118" y2="118" y3="118" y4="118" y5="176" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_CM_Stalker_FillEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Stalker_1.tga" x0="744" x1="744" x2="744" x3="744" x4="744" x5="819" y0="177" y1="177" y2="177" y3="177" y4="177" y5="253" HotspotX="38" HotspotY="38" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

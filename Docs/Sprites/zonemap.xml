@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="UI_ZoneMap_GlobeBG" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WorldMapBG.tex" x0="0" x1="24" x2="1908" x3="1920" x4="1920" x5="1920" y0="0" y1="28" y2="1000" y3="1024" y4="1024" y5="1024" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_ZoneMap_Frame" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="0" x1="69" x2="190" x3="259" x4="259" x5="259" y0="0" y1="70" y2="289" y3="360" y4="360" y5="360" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+        <Frame Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="0" x1="69" x2="190" x3="259" x4="259" x5="259" y0="0" y1="70" y2="289" y3="360" y4="360" y5="360" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="UI_WorldMap_Grabber" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="744" x1="819" x2="819" x3="819" x4="819" x5="819" y0="392" y1="392" y2="396" y3="904" y4="912" y5="912" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_WorldMap_ButtonBacker" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="0" x1="4" x2="739" x3="743" x4="743" x5="743" y0="430" y1="432" y2="909" y3="912" y4="912" y5="912" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="btnWorldMap_Zone1" Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="260" x1="496" x2="496" x3="496" x4="496" x5="496" y0="0" y1="232" y2="232" y3="232" y4="232" y5="232" Stretchy="1" StateBits="7" Direction="Across"/>
+    <AutoButton Name="btnWorldMap_GrabberExpandCollapse" Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="260" x1="313" x2="313" x3="313" x4="313" x5="313" y0="232" y1="342" y2="342" y3="342" y4="342" y5="342" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnWorldMap_Zone2" Texture="UI\Assets\Textures\UI_WorldMap_1.tex" x0="0" x1="310" x2="310" x3="310" x4="310" x5="310" y0="0" y1="299" y2="299" y3="299" y4="299" y5="299" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnWorldMap_Zone3" Texture="UI\Assets\Textures\UI_WorldMap_1.tex" x0="310" x1="635" x2="635" x3="635" x4="635" x5="635" y0="2" y1="310" y2="310" y3="310" y4="310" y5="310" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnWorldMap_Zone4" Texture="UI\Assets\Textures\UI_WorldMap_1.tex" x0="631" x1="949" x2="949" x3="949" x4="949" x5="949" y0="0" y1="300" y2="300" y3="300" y4="300" y5="300" Stretchy="1" StateBits="7" Direction="Down"/>
+    <Sprite Name="UI_WorldMap_Position" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WorldMap_2.tex" x0="340" x1="340" x2="340" x3="340" x4="411" x5="411" y0="347" y1="347" y2="347" y3="347" y4="414" y5="414" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

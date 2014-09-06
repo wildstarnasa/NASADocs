@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+	<Sprite Name="sprMedic_Anim_OutOfCombatGreenFade" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="737" x5="737" y0="483" y1="483" y2="483" y3="483" y4="557" y5="557" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.0" StartRAnchorPoint="1.0" StartBAnchorPoint="1.0"
+			EndLAnchorPoint="0.5" EndTAnchorPoint="0.5" EndRAnchorPoint="0.5" EndBAnchorPoint="0.5"
+		/>
+    </Sprite>
+	<Sprite Name="sprMedic_Anim_OutOfCombatGreenGrow" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="737" x5="737" y0="483" y1="483" y2="483" y3="483" y4="557" y5="557" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.5" StartTAnchorPoint="0.5" StartRAnchorPoint="0.5" StartBAnchorPoint="0.5"
+			EndLAnchorPoint="-0.25" EndTAnchorPoint="-0.25" EndRAnchorPoint="1.25" EndBAnchorPoint="1.25"
+		/>
+    </Sprite>
+	<Sprite Name="sprMedic_Anim_BrightGreenFade" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="737" x5="737" y0="558" y1="558" y2="558" y3="558" y4="632" y5="632" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.0" StartRAnchorPoint="1.0" StartBAnchorPoint="1.0"
+			EndLAnchorPoint="0.5" EndTAnchorPoint="0.5" EndRAnchorPoint="0.5" EndBAnchorPoint="0.5"
+		/>
+    </Sprite>
+	<Sprite Name="sprMedic_Anim_BrightGreenGrow" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="737" x5="737" y0="558" y1="558" y2="558" y3="558" y4="632" y5="632" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.5" StartTAnchorPoint="0.5" StartRAnchorPoint="0.5" StartBAnchorPoint="0.5"
+			EndLAnchorPoint="-0.25" EndTAnchorPoint="-0.25" EndRAnchorPoint="1.25" EndBAnchorPoint="1.25"
+		/>
+    </Sprite>
+	<Sprite Name="sprMedic_Anim_7Squares" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="0" x1="0" x2="0" x3="639" x4="639" x5="639" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="6.250" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="0" x1="0" x2="0" x3="639" x4="639" x5="639" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+    <Sprite Name="sprMedic_Anim_Bit_1" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="639" x1="639" x2="639" x3="639" x4="639" x5="700" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.25" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="639" x1="639" x2="639" x3="639" x4="639" x5="700" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.83" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="639" x1="639" x2="639" x3="639" x4="639" x5="700" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.25" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="639" x1="639" x2="639" x3="639" x4="639" x5="700" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.83" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="639" x1="639" x2="639" x3="639" x4="639" x5="700" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.25" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+		<Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="639" x1="639" x2="639" x3="639" x4="639" x5="700" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.83" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+    <Sprite Name="sprMedic_Anim_Bit_2" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="701" x1="701" x2="701" x3="701" x4="701" x5="762" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.45" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="701" x1="701" x2="701" x3="701" x4="701" x5="762" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.96" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="701" x1="701" x2="701" x3="701" x4="701" x5="762" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.45" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="701" x1="701" x2="701" x3="701" x4="701" x5="762" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.96" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+    <Sprite Name="sprMedic_Anim_Bit_3" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="763" x1="763" x2="763" x3="763" x4="763" x5="824" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.5" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="763" x1="763" x2="763" x3="763" x4="763" x5="824" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.01" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="763" x1="763" x2="763" x3="763" x4="763" x5="824" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.5" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="763" x1="763" x2="763" x3="763" x4="763" x5="824" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.01" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="763" x1="763" x2="763" x3="763" x4="763" x5="824" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.5" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="763" x1="763" x2="763" x3="763" x4="763" x5="824" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.01" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+    <Sprite Name="sprMedic_Anim_Bit_4" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="825" x1="825" x2="825" x3="825" x4="825" x5="886" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="2.1" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="825" x1="825" x2="825" x3="825" x4="825" x5="886" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.4" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>z
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="825" x1="825" x2="825" x3="825" x4="825" x5="886" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="2.1" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="825" x1="825" x2="825" x3="825" x4="825" x5="886" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.4" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+    <Sprite Name="sprMedic_Anim_Bit_5" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="886" x1="886" x2="886" x3="886" x4="886" x5="947" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.25" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="886" x1="886" x2="886" x3="886" x4="886" x5="947" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.83" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="886" x1="886" x2="886" x3="886" x4="886" x5="947" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.25" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="886" x1="886" x2="886" x3="886" x4="886" x5="947" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.83" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="886" x1="886" x2="886" x3="886" x4="886" x5="947" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.25" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="886" x1="886" x2="886" x3="886" x4="886" x5="947" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.83" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+    <Sprite Name="sprMedic_Anim_Bit_6" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="948" x1="948" x2="948" x3="948" x4="948" x5="1009" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.1" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="948" x1="948" x2="948" x3="948" x4="948" x5="1009" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.73" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="948" x1="948" x2="948" x3="948" x4="948" x5="1009" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.1" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="948" x1="948" x2="948" x3="948" x4="948" x5="1009" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.73" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="948" x1="948" x2="948" x3="948" x4="948" x5="1009" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="1.1" StartColor="white" EndColor="white"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.25" StartRAnchorPoint="1.0" StartBAnchorPoint="1.25"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0.1" EndRAnchorPoint="1.0" EndBAnchorPoint="1.1"
+		/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic_2.tga" x0="948" x1="948" x2="948" x3="948" x4="948" x5="1009" y0="0" y1="0" y2="0" y3="0" y4="0" y5="512" HotspotX="0" HotspotY="0" Duration="0.73" StartColor="white" EndColor="00ffffff"
+			UseAnchors="1"
+			StartLAnchorPoint="0.0" StartTAnchorPoint="0.1" StartRAnchorPoint="1.0" StartBAnchorPoint="1.1"
+			EndLAnchorPoint="0.0" EndTAnchorPoint="0" EndRAnchorPoint="1.0" EndBAnchorPoint="1.0"
+		/>
+    </Sprite>
+</Sprites>

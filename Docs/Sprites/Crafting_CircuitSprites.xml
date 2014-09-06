@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprCircuit_FrameBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="0" x1="0" x2="0" x3="150" x4="270" x5="726" y0="0" y1="0" y2="0" y3="0" y4="0" y5="743" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_FailchargeDull" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_872_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="152" y0="0" y1="0" y2="0" y3="0" y4="0" y5="136" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_FailchargeBright" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_872_137.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="152" y0="0" y1="0" y2="0" y3="0" y4="0" y5="136" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Failcharge_ProgBlue" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_873_274.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="85" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Failcharge_ProgRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_873_351.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="85" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_GreenPlus_Flat" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_960_273.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="56" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_GreenPlus_Glow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_960_330.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="56" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="aaffffff" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_960_330.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="56" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_960_330.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="56" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="aaffffff"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_HandStopIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_960_388.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_CheckIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_991_388.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_FrameInnerBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="883" y0="0" y1="0" y2="0" y3="0" y4="0" y5="710" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Overcharge_Prog" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_0_711.tga" x0="0" x1="0" x2="0" x3="90" x4="333" x5="383" y0="0" y1="0" y2="0" y3="0" y4="0" y5="133" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Overcharge_ProgEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_398_711.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="22" y0="0" y1="0" y2="0" y3="0" y4="0" y5="133" HotspotX="3" HotspotY="66" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Blue_Adorn3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Green_Adorn3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_145_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Red_Adorn3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_290_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Silver_Adorn3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_435_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Blue_Adorn2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_0_145.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Green_Adorn2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_145_145.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Red_Adorn2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_290_145.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Silver_Adorn2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_435_145.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Blue_Adorn1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_0_297.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Green_Adorn1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_145_297.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Red_Adorn1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_290_297.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Circle_Silver_Adorn1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_3_435_297.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="144" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_LargeBlocker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_4.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="832" y0="0" y1="0" y2="0" y3="0" y4="0" y5="704" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Holo_Flyout" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="724" x1="724" x2="724" x3="783" x4="811" x5="870" y0="0" y1="0" y2="0" y3="0" y4="0" y5="280" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_TitleBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_384_778.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="320" y0="0" y1="0" y2="0" y3="0" y4="0" y5="65" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_BtnHolderFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_421_711.tga" x0="0" x1="0" x2="0" x3="70" x4="218" x5="288" y0="0" y1="0" y2="0" y3="0" y4="0" y5="133" Stretchy="1" HotspotX="-39" HotspotY="17" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_BtnHolderFrame_HoloLeftRight" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_710_711.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="166" y0="0" y1="0" y2="0" y3="0" y4="0" y5="109" Stretchy="1" HotspotX="-39" HotspotY="17" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_BlueVertical" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="727" x1="727" x2="728" x3="756" x4="757" x5="757" y0="280" y1="280" y2="280" y3="300" y4="305" y5="341" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_RedVertical" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="758" x1="758" x2="759" x3="787" x4="788" x5="788" y0="280" y1="280" y2="280" y3="300" y4="305" y5="341" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_GreenVertical" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="727" x1="727" x2="728" x3="756" x4="757" x5="757" y0="342" y1="342" y2="342" y3="362" y4="367" y5="403" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_WhiteVertical" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="758" x1="758" x2="759" x3="787" x4="788" x5="788" y0="342" y1="342" y2="342" y3="362" y4="367" y5="403" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_RedHorizontal" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="788" x1="788" x2="788" x3="808" x4="829" x5="849" y0="280" y1="280" y2="280" y3="280" y4="280" y5="310" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_GreenHorizontal" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="788" x1="788" x2="788" x3="808" x4="829" x5="849" y0="311" y1="311" y2="311" y3="311" y4="311" y5="341" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_BlueHorizontal" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="788" x1="788" x2="788" x3="808" x4="829" x5="849" y0="342" y1="342" y2="342" y3="342" y4="342" y5="372" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Line_WhiteHorizontal_LR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="518" y0="744" y1="744" y2="744" y3="744" y4="744" y5="777" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Accent_BottomDull" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_880_700.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Accent_BottomFull" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_Accent_BottomBright" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="2.000" StartColor="66ffffff" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="ddffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ddffffff" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="ddffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ddffffff" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="ddffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ddffffff" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="ddffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ddffffff" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="66ffffff"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_BottomAccent_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="698" y1="698" y2="698" y3="698" y4="698" y5="747" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_BottomAccent_Green" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="808" x1="808" x2="808" x3="808" x4="808" x5="880" y0="748" y1="748" y2="748" y3="748" y4="748" y5="797" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_BottomAccent_Red" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_808_798.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCircuit_BottomAccent_White" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_808_848.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="72" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Composite Name="sprCircuit_GreenPlus_Anim" Cycle="1">
+        <Layer Name="sprCircuit_GreenPlus_Flat"/>
+        <Layer Name="sprCircuit_GreenPlus_Glow"/>
+    </Composite>
+    <Composite Name="sprCircuit_Accent_BottomAnim" Cycle="1">
+        <Layer Name="sprCircuit_Accent_BottomDull"/>
+        <Layer Name="sprCircuit_Accent_BottomBright"/>
+    </Composite>
+    <AutoButton Name="btnCircuit_Circle_Bubble" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="727" x1="727" x2="727" x3="727" x4="727" x5="808" y0="428" y1="428" y2="428" y3="428" y4="428" y5="509" Stretchy="1" StateBits="15" Direction="Down"/>
+    <AutoButton Name="btnCircuit_Glass_GreenOrange" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_0_851.tga" x0="0" x1="0" x2="0" x3="30" x4="161" x5="191" y0="0" y1="0" y2="0" y3="0" y4="0" y5="71" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCircuit_SquareGlass_Red" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_855.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="61" y0="3" y1="3" y2="3" y3="3" y4="3" y5="64" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCircuit_SquareGlass_Green" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_855.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="61" y0="78" y1="78" y2="78" y3="78" y4="78" y5="139" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCircuit_SquareGlass_Blue" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_855.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="61" y0="157" y1="157" y2="157" y3="157" y4="157" y5="217" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCircuit_Holo_LeftArrow" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_885_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="46" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCircuit_Holo_RightArrow" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_2_932_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="46" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnCircuit_LineNode_Plus" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_913_430.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="52" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" StateBits="15" Direction="Down"/>
+    <AutoButton Name="btnCircuit_LineNode_Right" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="861" x1="861" x2="861" x3="861" x4="861" x5="913" y0="430" y1="430" y2="430" y3="430" y4="430" y5="483" Stretchy="1" StateBits="15" Direction="Down"/>
+    <AutoButton Name="btnCircuit_LineNode_Left" Texture="UI\Assets\TexPieces\UI_CRB_Crafting_1_0_0.tga" x0="809" x1="809" x2="809" x3="809" x4="809" x5="861" y0="430" y1="430" y2="430" y3="430" y4="430" y5="483" Stretchy="1" StateBits="15" Direction="Down"/>
+</Sprites>

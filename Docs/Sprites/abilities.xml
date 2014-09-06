@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="AbilitiesFraming" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_Framing.tga" x0="0" x1="326" x2="339" x3="362" x4="362" x5="362" y0="0" y1="19" y2="107" y3="202" y4="202" y5="202" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="Points_Abilities" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_CalloutAbility.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="156" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="Points_AMPs" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_CalloutAMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="168" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprAbility_Frame" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_Frame.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="64" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="sprAbility_CapInactive" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_CapInactive.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="64" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="sprAbility_CapActive" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_CapActive.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="64" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="sprAbility_CapRight" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_CapRight.tga" x0="0" x1="68" x2="68" x3="68" x4="68" x5="68" y0="0" y1="80" y2="80" y3="80" y4="80" y5="80" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="sprAbility_FrameExtension" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_FrameExtension.tga" x0="0" x1="85" x2="643" x3="643" x4="643" x5="724" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="sprAbility_CapEnd1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_Icon_Power.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprAbility_CapEnd2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_Icon_Power.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="46" y1="46" y2="46" y3="46" y4="46" y5="88" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprAbility_CapEnd3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_Icon_Power.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="48" y0="92" y1="92" y2="92" y3="92" y4="92" y5="136" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprAbility_BasePoint" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Abilities_Icon_BasePoint.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="52" y0="10" y1="10" y2="10" y3="10" y4="10" y5="56" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="btnAbilities" Texture="UI\Assets\Textures\UI_Abilities_Btn_1Point.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="66" y0="0" y1="0" y2="0" y3="0" y4="0" y5="70" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnAbilitiesLarge" Texture="UI\Assets\Textures\UI_Abilities_Btn_5Point.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="180" y0="0" y1="0" y2="0" y3="0" y4="0" y5="70" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnAbilities_AddPlus" Texture="UI\Assets\Textures\UI_Abilities_OpenCloseButtons.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="36" y0="83" y1="83" y2="83" y3="83" y4="83" y5="107" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnAbilities_RemoveMinus" Texture="UI\Assets\Textures\UI_Abilities_OpenCloseButtons.tga" x0="183" x1="183" x2="183" x3="183" x4="183" x5="221" y0="83" y1="83" y2="83" y3="83" y4="83" y5="107" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnAbilities_Expand" Texture="UI\Assets\Textures\UI_Abilities_OpenButton.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="112" y0="0" y1="0" y2="0" y3="0" y4="0" y5="81" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnAbilitiesLargeEnd" Texture="UI\Assets\Textures\UI_Abilities_Btn_5PointEnd.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="206" y0="0" y1="0" y2="0" y3="0" y4="0" y5="72" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnAbilitiesBasePoint" Texture="UI\Assets\Textures\UI_Abilities_Icon_BasePoint.tex" x0="0" x1="51" x2="51" x3="51" x4="51" x5="51" y0="9" y1="56" y2="56" y3="56" y4="56" y5="56" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnAbilities_Collapse" Texture="UI\Assets\Textures\UI_Abilities_CloseButton2.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="112" y0="0" y1="0" y2="0" y3="0" y4="0" y5="81" Stretchy="1" StateBits="31" Direction="Down"/>
+</Sprites>

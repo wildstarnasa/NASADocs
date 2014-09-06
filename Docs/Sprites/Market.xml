@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="UI_Auction_Icon_TimeGreen" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Auction_Icon_TimeGreen.tga" x0="0" x1="32" x2="32" x3="32" x4="32" x5="32" y0="0" y1="32" y2="32" y3="32" y4="32" y5="32" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_Auction_Icon_TimeRed" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Auction_Icon_TimeRed.tga" x0="0" x1="40" x2="40" x3="40" x4="40" x5="40" y0="0" y1="40" y2="40" y3="40" y4="40" y5="40" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_Auction_Icon_Star" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Auction_Icon_HighBidder.tga" x0="0" x1="28" x2="28" x3="28" x4="28" x5="28" y0="0" y1="28" y2="28" y3="28" y4="28" y5="28" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_Auction_Icon_Mine" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Auction_Icon_Mine.tga" x0="0" x1="32" x2="32" x3="32" x4="32" x5="32" y0="0" y1="32" y2="32" y3="32" y4="32" y5="32" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_Auction_Footer" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Auction_Footer.tga" x0="0" x1="54" x2="280" x3="304" x4="304" x5="304" y0="0" y1="124" y2="124" y3="124" y4="124" y5="124" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_Auction_Header" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Auction_Header.tga" x0="0" x1="12" x2="209" x3="228" x4="228" x5="228" y0="0" y1="21" y2="39" y3="64" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="btnMarket_BuyNow" Texture="UI\Assets\Textures\UI_Market_Btn_BuyNow.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMarket_Trends" Texture="UI\Assets\Textures\UI_Market_Btn_MarketTrend.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnMarket_Green" Texture="UI\Assets\Textures\UI_Auction_Btn_Green.tga" x0="0" x1="29" x2="114" x3="144" x4="144" x5="144" y0="0" y1="43" y2="43" y3="43" y4="43" y5="43" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnMarket_Blue" Texture="UI\Assets\Textures\UI_Auction_Btn_Blue.tga" x0="0" x1="29" x2="114" x3="144" x4="144" x5="144" y0="0" y1="45" y2="45" y3="45" y4="45" y5="45" Stretchy="1" StateBits="31" Direction="Down"/>
+</Sprites>

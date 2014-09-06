@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+<Fonts>
+    <Font Name="Default" Face="Segoe UI" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="0"/> <!--Default font for tooltips if no font is set-->
+    <Font Name="Courier" Face="Courier" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="0"/> 
+
+    <Font Name="CRB_Pixel" Face="Segoe UI" Size="8" GfxFont_3D="0" GfxFont_Bold="1" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Pixel_O" Face="Segoe UI" Size="8" GfxFont_3D="0" GfxFont_Bold="1" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_Interface7_BB" Face="Segoe UI Bold" Size="7" GfxFont_3D="0" GfxFont_Bold="1" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="0"/>
+
+	<Font Name="CRB_Interface9" Face="Segoe UI" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface9_I" Face="Segoe UI Italic" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface9_O" Face="Segoe UI" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Interface9_B" Face="Segoe UI Semibold" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface9_BO" Face="Segoe UI Semibold" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Interface9_BB" Face="Segoe UI Bold" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface9_BBO" Face="Segoe UI Bold" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_Interface10" Face="Segoe UI" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface10_I" Face="Segoe UI Italic" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface10_O" Face="Segoe UI" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Interface10_B" Face="Segoe UI Semibold" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface10_BO" Face="Segoe UI Semibold" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Interface10_BB" Face="Segoe UI Bold" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface10_BBO" Face="Segoe UI Bold" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_Interface11" Face="Segoe UI" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface11_I" Face="Segoe UI Italic" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface11_O" Face="Segoe UI" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Interface11_B" Face="Segoe UI Semibold" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface11_BO" Face="Segoe UI Semibold" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Interface11_BB" Face="Segoe UI Bold" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface11_BBO" Face="Segoe UI Bold" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_Interface12" Face="Segoe UI" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface12_I" Face="Segoe UI Italic" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface12_O" Face="Segoe UI" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Interface12_B" Face="Segoe UI Semibold" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface12_BO" Face="Segoe UI Semibold" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Interface12_BB" Face="Segoe UI Bold" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface12_BBO" Face="Segoe UI Bold" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_Interface14" Face="Segoe UI" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface14_I" Face="Segoe UI Italic" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface14_O" Face="Segoe UI" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Interface14_B" Face="Segoe UI Semibold" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface14_BO" Face="Segoe UI Semibold" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Interface14_BB" Face="Segoe UI Bold" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface14_BBO" Face="Segoe UI Bold" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_Interface16" Face="Segoe UI" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface16_I" Face="Segoe UI Italic" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface16_O" Face="Segoe UI" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Interface16_B" Face="Segoe UI Semibold" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface16_BO" Face="Segoe UI Semibold" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Interface16_BB" Face="Segoe UI Bold" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Interface16_BBO" Face="Segoe UI Bold" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+    <Font Name="CRB_Dialog" Face="Segoe UI" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+    <Font Name="CRB_Dialog_I" Face="Segoe UI Italic" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_Dialog_Heading_Small" Face="Segoe UI" Size="13" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Dialog_Heading" Face="Segoe UI" Size="15" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+    <Font Name="CRB_Dialog_Heading_Huge" Face="Segoe UI" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_ButtonHeader" Face="Cube Offc Cond" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="0"/>
+	<Font Name="CRB_Button" Face="Cube Offc Cond" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="0"/>
+
+	<Font Name="CRB_Header9" Face="Cube Offc Cond" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header9_O" Face="Cube Offc Cond" Size="9" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header10" Face="Cube Offc Cond" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header10_O" Face="Cube Offc Cond" Size="10" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header11" Face="Cube Offc Cond" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header11_O" Face="Cube Offc Cond" Size="11" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header12" Face="Cube Offc Cond" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header12_O" Face="Cube Offc Cond" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header13" Face="Cube Offc Cond" Size="13" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header13_O" Face="Cube Offc Cond" Size="13" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header14" Face="Cube Offc Cond" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header14_O" Face="Cube Offc Cond" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header16" Face="Cube Offc Cond" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header16_O" Face="Cube Offc Cond" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header20" Face="Cube Offc Cond" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header20_O" Face="Cube Offc Cond" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header24" Face="Cube Offc Cond" Size="24" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header24_O" Face="Cube Offc Cond" Size="24" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+    <Font Name="CRB_FloaterSmall" Face="Eras Medium" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+    <Font Name="CRB_FloaterMedium" Face="Eras Medium" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+    <Font Name="CRB_FloaterLarge" Face="Eras Medium" Size="28" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+    <Font Name="CRB_FloaterHuge" Face="Eras Medium" Size="34" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_FloaterHuge_O" Face="Eras Medium" Size="34" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+    <Font Name="CRB_FloaterGigantic" Face="Eras Medium" Size="36" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_FloaterGigantic_O" Face="Eras Medium" Size="36" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="1" GfxFont_Shadow="1" GfxFont_Outline="1"/>
+
+	<Font Name="CRB_AlienSmall" Face="WildStarFontSmall" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_AlienMedium" Face="WildStarFontSmall" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_AlienLarge" Face="WildStarFontSmall" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+
+	<Font Name="Subtitle" Face="Cube Offc Cond" Size="30" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+
+	<Alias Name="Thick" Font="CRB_Interface12_B"/>
+	<Alias Name="Nameplates" Font="CRB_Header10_O"/>
+	
+	<Alias Name="DefaultButton" Font="CRB_Interface10_B"/>
+
+	<Alias Name="CRB_InterfaceTiny_BB" Font="CRB_Interface7_BB"/>
+
+	<Alias Name="CRB_InterfaceSmall" Font="CRB_Interface9"/>
+	<Alias Name="CRB_InterfaceSmall_I" Font="CRB_Interface9_I"/>
+	<Alias Name="CRB_InterfaceSmall_O" Font="CRB_Interface9_O"/>
+
+	<Alias Name="CRB_InterfaceMedium" Font="CRB_Interface10"/>
+	<Alias Name="CRB_InterfaceMedium_I" Font="CRB_Interface10_I"/>
+	<Alias Name="CRB_InterfaceMedium_O" Font="CRB_Interface10_O"/>
+	<Alias Name="CRB_InterfaceMedium_B" Font="CRB_Interface10_B"/>
+	<Alias Name="CRB_InterfaceMedium_BB" Font="CRB_Interface10_BB"/>
+	<Alias Name="CRB_InterfaceMedium_BO" Font="CRB_Interface10_BO"/>
+	<Alias Name="CRB_InterfaceMedium_BBO" Font="CRB_Interface10_BBO"/>
+
+	<Alias Name="CRB_InterfaceLarge" Font="CRB_Interface11"/>
+	<Alias Name="CRB_InterfaceLarge_I" Font="CRB_Interface11_I"/>
+	<Alias Name="CRB_InterfaceLarge_O" Font="CRB_Interface11_O"/>
+	<Alias Name="CRB_InterfaceLarge_B" Font="CRB_Interface11_B"/>
+	<Alias Name="CRB_InterfaceLarge_BB" Font="CRB_Interface11_BB"/>
+	<Alias Name="CRB_InterfaceLarge_BO" Font="CRB_Interface11_BO"/>
+	<Alias Name="CRB_InterfaceLarge_BBO" Font="CRB_Interface11_BBO"/>
+
+	<Alias Name="CRB_ResourceOnly" Font="CRB_Header10"/>
+	<Alias Name="CRB_HeaderTiny" Font="CRB_Header11"/>
+	<Alias Name="CRB_HeaderTiny_O" Font="CRB_Header11_O"/>
+	<Alias Name="CRB_HeaderSmall" Font="CRB_Header12"/>
+	<Alias Name="CRB_HeaderSmall_O" Font="CRB_Header12_O"/>
+	<Alias Name="CRB_HeaderMedium" Font="CRB_Header13"/>
+	<Alias Name="CRB_HeaderMedium_O" Font="CRB_Header13_O"/>
+	<Alias Name="CRB_HeaderLarge" Font="CRB_Header14"/>
+	<Alias Name="CRB_HeaderLarge_O" Font="CRB_Header14_O"/>
+	<Alias Name="CRB_HeaderHuge" Font="CRB_Header16"/>
+	<Alias Name="CRB_HeaderHuge_O" Font="CRB_Header16_O"/>
+	<Alias Name="CRB_HeaderGigantic" Font="CRB_Header20"/>
+	<Alias Name="CRB_HeaderGigantic_O" Font="CRB_Header20_O"/>
+</Fonts>

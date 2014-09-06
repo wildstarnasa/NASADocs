@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprMedic_Base_OutOfCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="80" x2="81" x3="729" x4="730" x5="809" y0="0" y1="0" y2="0" y3="0" y4="0" y5="135" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Base_InCombatGreen" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="80" x2="81" x3="729" x4="730" x5="809" y0="136" y1="136" y2="136" y3="136" y4="136" y5="271" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Base_InCombatRed" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="80" x2="81" x3="729" x4="730" x5="809" y0="272" y1="272" y2="272" y3="272" y4="272" y5="407" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_BG_12Squares" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="0" x2="0" x3="667" x4="667" x5="667" y0="408" y1="408" y2="408" y3="408" y4="408" y5="639" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_BG_7Squares" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="0" x2="0" x3="639" x4="639" x5="639" y0="640" y1="640" y2="640" y3="640" y4="640" y5="830" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_ProgBar_InCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="0" x2="0" x3="0" x4="0" x5="305" y0="831" y1="831" y2="831" y3="831" y4="831" y5="845" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Cube_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="408" y1="408" y2="408" y3="408" y4="408" y5="482" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Cube_DullGreen" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="483" y1="483" y2="483" y3="483" y4="483" y5="557" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Cube_BrightGreen_3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="558" y1="558" y2="558" y3="558" y4="558" y5="632" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Cube_FlashGreen" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="633" y1="633" y2="633" y3="633" y4="633" y5="707" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="0" EndColor="33ffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="633" y1="633" y2="633" y3="633" y4="633" y5="707" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="33ffffff" EndColor="0"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Bit_1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="738" x1="738" x2="738" x3="738" x4="738" x5="799" y0="408" y1="408" y2="408" y3="408" y4="408" y5="485" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Bit_2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="738" x1="738" x2="738" x3="738" x4="738" x5="799" y0="486" y1="486" y2="486" y3="486" y4="486" y5="563" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Bit_3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="738" x1="738" x2="738" x3="738" x4="738" x5="799" y0="564" y1="564" y2="564" y3="564" y4="564" y5="641" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Bit_4" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="738" x1="738" x2="738" x3="738" x4="738" x5="799" y0="642" y1="642" y2="642" y3="642" y4="642" y5="719" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Bit_5" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="738" x1="738" x2="738" x3="738" x4="738" x5="799" y0="720" y1="720" y2="720" y3="720" y4="720" y5="797" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Bit_6" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="738" x1="738" x2="738" x3="738" x4="738" x5="799" y0="798" y1="798" y2="798" y3="798" y4="798" y5="875" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_ProgBar_OutOfCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="0" x1="0" x2="0" x3="0" x4="0" x5="305" y0="846" y1="846" y2="846" y3="846" y4="846" y5="860" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Cube_BrightGreen_1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="707" y1="707" y2="707" y3="707" y4="707" y5="782" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMedic_Cube_BrightGreen_2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Medic.TGA" x0="668" x1="668" x2="668" x3="668" x4="668" x5="737" y0="782" y1="782" y2="782" y3="782" y4="782" y5="856" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

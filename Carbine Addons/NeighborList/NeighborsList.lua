@@ -216,7 +216,10 @@ end
 
 function NeighborsList:OnChangeWorld()
 	self.wndRandomList:Show(false)
-	self.wndMain:Show(true)
+	
+	if self.wndMain then
+		self.wndMain:Show(true)
+	end
 end
 
 function NeighborsList:OnNeighborSortToggle(wndHandler, wndControl)

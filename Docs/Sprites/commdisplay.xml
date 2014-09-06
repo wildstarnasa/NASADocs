@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprComm_Static01" Cycle="1">
+        <Frame Texture="UI\CommDisplay\Comm_Static_01.tga" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="38" y1="38" y2="218" y3="218" y4="218" y5="218" Stretchy="1" HotspotX="0" HotspotY="0" Duration="7.000" StartColor="white" EndColor="white"
+        UseAnchors="1" 
+        StartLAnchorPoint="0" StartTAnchorPoint="0.0" StartRAnchorPoint="1" StartBAnchorPoint="0.66"
+        EndLAnchorPoint="0" EndTAnchorPoint="0.33" EndRAnchorPoint="1" EndBAnchorPoint="1"
+        />
+    </Sprite>
+    <Sprite Name="sprComm_Static01b" Cycle="1">
+        <Frame Texture="UI\CommDisplay\Comm_Static_01.tga" x0="0" x1="0" x2="50" x3="1500" x4="50" x5="50" y0="38" y1="38" y2="218" y3="218" y4="218" y5="218" Stretchy="1" HotspotX="0" HotspotY="0" Duration="20.000" StartColor="white" EndColor="white"
+        UseAnchors="1" 
+        StartLAnchorPoint="0" StartTAnchorPoint="0.0" StartRAnchorPoint="1" StartBAnchorPoint="0.66"
+        EndLAnchorPoint="0" EndTAnchorPoint="0.33" EndRAnchorPoint="1" EndBAnchorPoint="1"
+        />
+    </Sprite>
+    <Sprite Name="sprComm_Static02" Cycle="1">
+        <Frame Texture="UI\CommDisplay\Comm_Static_02.tga" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="38" y1="38" y2="218" y3="218" y4="218" y5="218" Stretchy="1" HotspotX="0" HotspotY="0" Duration="10.000" StartColor="white" EndColor="white"
+        UseAnchors="1" 
+        StartLAnchorPoint="0" StartTAnchorPoint="0.0" StartRAnchorPoint="1" StartBAnchorPoint="0.66"
+        EndLAnchorPoint="0" EndTAnchorPoint="0.33" EndRAnchorPoint="1" EndBAnchorPoint="1"
+        />
+    </Sprite>
+    <Sprite Name="sprComm_Static03" Cycle="1">
+        <Frame Texture="UI\CommDisplay\Comm_Static_03.tga" x0="0" x1="0" x2="90" x3="90" x4="90" x5="90" y0="38" y1="38" y2="129" y3="129" y4="129" y5="129" HotspotX="0" HotspotY="0" Duration="0.05" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\CommDisplay\Comm_Static_03.tga" x0="97" x1="97" x2="190" x3="190" x4="190" x5="190" y0="38" y1="38" y2="129" y3="129" y4="129" y5="129" HotspotX="0" HotspotY="0" Duration="0.05" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\CommDisplay\Comm_Static_03.tga" x0="97" x1="97" x2="190" x3="190" x4="190" x5="190" y0="92" y1="92" y2="185" y3="185" y4="185" y5="185" HotspotX="0" HotspotY="0" Duration="0.05" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\CommDisplay\Comm_Static_03.tga" x0="126" x1="126" x2="216" x3="216" x4="216" x5="216" y0="58" y1="58" y2="151" y3="151" y4="151" y5="151" HotspotX="0" HotspotY="0" Duration="0.05" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\CommDisplay\Comm_Static_03.tga" x0="26" x1="26" x2="116" x3="116" x4="116" x5="116" y0="109" y1="109" y2="202" y3="202" y4="202" y5="202" HotspotX="0" HotspotY="0" Duration="0.05" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Composite Name="sprComm_StaticComposite" Cycle="1">
+        <Layer Name="sprComm_Static01"/>
+        <Layer Name="sprComm_Static01b"/>
+        <Layer Name="sprComm_Static02"/>
+        <Layer Name="sprComm_Static03"/>
+    </Composite>
+</Sprites>

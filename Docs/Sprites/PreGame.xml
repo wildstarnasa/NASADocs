@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="UI_Login_Frame" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Login_Input_BG.tex" x0="0" x1="192" x2="267" x3="464" x4="464" x5="464" y0="0" y1="156" y2="210" y3="368" y4="368" y5="368" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_Login_Logo" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Login_Logo.tex" x0="0" x1="628" x2="628" x3="628" x4="628" x5="628" y0="0" y1="140" y2="140" y3="140" y4="140" y5="140" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

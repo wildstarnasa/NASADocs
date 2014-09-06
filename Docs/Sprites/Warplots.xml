@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_WarPlots_Base" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="366" x2="366" x3="366" x4="367" x5="733" y0="0" y1="0" y2="0" y3="0" y4="0" y5="79" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_NanoPack" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="734" x1="734" x2="734" x3="734" x4="734" x5="766" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP1_Empty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="74" x2="74" x3="74" x4="74" x5="74" y0="80" y1="80" y2="80" y3="80" y4="80" y5="117" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP2_Empty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="75" x1="106" x2="107" x3="107" x4="107" x5="136" y0="80" y1="80" y2="80" y3="80" y4="80" y5="117" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP3_Empty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="137" x1="150" x2="151" x3="151" x4="151" x5="209" y0="80" y1="80" y2="80" y3="80" y4="80" y5="117" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP4_Empty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="210" x1="239" x2="240" x3="240" x4="240" x5="271" y0="80" y1="80" y2="80" y3="80" y4="80" y5="117" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP5_Empty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="272" x1="272" x2="272" x3="272" x4="272" x5="345" y0="80" y1="80" y2="80" y3="80" y4="80" y5="117" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP1_BlueFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="74" x2="74" x3="74" x4="74" x5="74" y0="118" y1="118" y2="118" y3="118" y4="118" y5="155" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP2_BlueFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="75" x1="106" x2="107" x3="107" x4="107" x5="136" y0="118" y1="118" y2="118" y3="118" y4="118" y5="155" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP3_BlueFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="137" x1="150" x2="151" x3="151" x4="151" x5="209" y0="118" y1="118" y2="118" y3="118" y4="118" y5="155" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP4_BlueFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="210" x1="239" x2="240" x3="240" x4="240" x5="271" y0="118" y1="118" y2="118" y3="118" y4="118" y5="155" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP5_BlueFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="272" x1="272" x2="272" x3="272" x4="272" x5="345" y0="118" y1="118" y2="118" y3="118" y4="118" y5="155" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP1_BlueCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="74" x2="74" x3="74" x4="74" x5="74" y0="156" y1="156" y2="156" y3="156" y4="156" y5="193" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP2_BlueCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="75" x1="95" x2="96" x3="115" x4="116" x5="136" y0="156" y1="156" y2="156" y3="156" y4="156" y5="193" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP3_BlueCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="137" x1="157" x2="158" x3="188" x4="189" x5="209" y0="156" y1="156" y2="156" y3="156" y4="156" y5="193" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP4_BlueCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="210" x1="230" x2="231" x3="250" x4="251" x5="271" y0="156" y1="156" y2="156" y3="156" y4="156" y5="193" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP5_BlueCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="272" x1="272" x2="272" x3="272" x4="272" x5="345" y0="156" y1="156" y2="156" y3="156" y4="156" y5="193" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP1_RedFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="74" x2="74" x3="74" x4="74" x5="74" y0="194" y1="194" y2="194" y3="194" y4="194" y5="231" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP2_RedFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="75" x1="106" x2="107" x3="107" x4="107" x5="136" y0="194" y1="194" y2="194" y3="194" y4="194" y5="231" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP3_RedFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="137" x1="180" x2="181" x3="181" x4="181" x5="209" y0="194" y1="194" y2="194" y3="194" y4="194" y5="231" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP4_RedFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="210" x1="239" x2="240" x3="240" x4="240" x5="271" y0="194" y1="194" y2="194" y3="194" y4="194" y5="231" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP5_RedFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="272" x1="272" x2="272" x3="272" x4="272" x5="345" y0="194" y1="194" y2="194" y3="194" y4="194" y5="231" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP1_RedCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="74" x2="74" x3="74" x4="74" x5="74" y0="232" y1="232" y2="232" y3="232" y4="232" y5="269" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP2_RedCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="75" x1="95" x2="96" x3="115" x4="116" x5="136" y0="232" y1="232" y2="232" y3="232" y4="232" y5="269" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP3_RedCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="137" x1="157" x2="158" x3="188" x4="189" x5="209" y0="232" y1="232" y2="232" y3="232" y4="232" y5="269" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP4_RedCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="210" x1="230" x2="231" x3="250" x4="251" x5="271" y0="232" y1="232" y2="232" y3="232" y4="232" y5="269" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_CP5_RedCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="272" x1="272" x2="272" x3="272" x4="272" x5="345" y0="232" y1="232" y2="232" y3="232" y4="232" y5="269" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_LeftBarEmpty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="122" x2="122" x3="122" x4="122" x5="122" y0="270" y1="270" y2="270" y3="270" y4="270" y5="314" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_RightBarEmpty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="123" x1="123" x2="123" x3="123" x4="123" x5="245" y0="270" y1="270" y2="270" y3="270" y4="270" y5="314" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_LeftBarFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="0" x1="128" x2="128" x3="128" x4="128" x5="128" y0="315" y1="315" y2="315" y3="315" y4="315" y5="359" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_RightBarFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="123" x1="123" x2="123" x3="123" x4="123" x5="245" y0="315" y1="315" y2="315" y3="315" y4="315" y5="359" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_LeftBarEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="258" x1="258" x2="258" x3="258" x4="258" x5="296" y0="270" y1="270" y2="270" y3="270" y4="270" y5="308" HotspotX="19" HotspotY="19" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_RightBarEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="258" x1="258" x2="258" x3="258" x4="258" x5="296" y0="309" y1="309" y2="309" y3="309" y4="309" y5="347" HotspotX="19" HotspotY="19" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Generator_Base" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="346" x1="346" x2="346" x3="346" x4="346" x5="436" y0="80" y1="80" y2="80" y3="80" y4="80" y5="170" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Generator_Inactive" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="346" x1="346" x2="346" x3="346" x4="346" x5="436" y0="171" y1="171" y2="171" y3="171" y4="171" y5="261" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Generator_FillBlue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="437" x1="437" x2="437" x3="437" x4="437" x5="527" y0="80" y1="80" y2="80" y3="80" y4="80" y5="170" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Generator_FillRed" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="437" x1="437" x2="437" x3="437" x4="437" x5="527" y0="171" y1="171" y2="171" y3="171" y4="171" y5="261" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Generator_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="80" y1="80" y2="80" y3="80" y4="80" y5="170" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="anim_WarPlots_Generator_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="80" y1="80" y2="80" y3="80" y4="80" y5="170" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="66ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="80" y1="80" y2="80" y3="80" y4="80" y5="170" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="80" y1="80" y2="80" y3="80" y4="80" y5="170" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="66ffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Generator_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="171" y1="171" y2="171" y3="171" y4="171" y5="261" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="anim_WarPlots_Generator_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="171" y1="171" y2="171" y3="171" y4="171" y5="261" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="66ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="171" y1="171" y2="171" y3="171" y4="171" y5="261" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="171" y1="171" y2="171" y3="171" y4="171" y5="261" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="66ffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btn_MatchTracker_Score" Texture="UI\Assets\Textures\UI_CRB_Warplots.tga" x0="619" x1="619" x2="619" x3="775" x4="777" x5="934" y0="80" y1="80" y2="80" y3="80" y4="80" y5="113" StateBits="31" Direction="Down"/>
+    <Sprite Name="spr_WarPlots_Bomb_Neutral" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="346" x1="346" x2="346" x3="346" x4="346" x5="436" y0="262" y1="262" y2="262" y3="262" y4="262" y5="352" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Bomb_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="437" x1="437" x2="437" x3="437" x4="437" x5="527" y0="262" y1="262" y2="262" y3="262" y4="262" y5="352" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_WarPlots_Bomb_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_Warplots.tex" x0="528" x1="528" x2="528" x3="528" x4="528" x5="618" y0="262" y1="262" y2="262" y3="262" y4="262" y5="352" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

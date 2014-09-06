@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <AutoButton Name="btn_Costume_Toggle" Texture="UI\Assets\Textures\UI_Costumes_BtnToggle.tex" x0="3" x1="3" x2="3" x3="3" x4="3" x5="45" y0="0" y1="0" y2="0" y3="0" y4="0" y5="50" Stretchy="1" StateBits="31" Direction="Across"/>
+</Sprites>

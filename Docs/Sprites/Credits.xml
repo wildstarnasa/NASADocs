@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="CarbineLogo" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\logo_carbine_white.tex" x0="18" x1="18" x2="18" x3="18" x4="18" x5="237" y0="33" y1="33" y2="33" y3="33" y4="33" y5="95" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="NCSoftLogo" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\logo_ncsoft_white.tex" x0="42" x1="42" x2="42" x3="42" x4="42" x5="214" y0="53" y1="53" y2="53" y3="53" y4="53" y5="203" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

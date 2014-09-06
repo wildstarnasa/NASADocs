@@ -95,15 +95,15 @@ function AccountServices:OnDocumentReady()
 	Apollo.RegisterEventHandler("Pregame_CharacterSelected", 		"OnPregame_CharacterSelected", self)
 	Apollo.RegisterEventHandler("OpenCharacterCreateBtn", 			"OnOpenCharacterCreateBtn", self)
 
+	Apollo.RegisterTimerHandler("Pregame_RedeemCreddDelay",			"OnPregame_RedeemCreddDelay", self)
+
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "AccountServicesForm", "AccountServices", self)
 	self.wndMinimized = Apollo.LoadForm(self.xmlDoc, "MinimizedPicker", "AccountServices", self)
 
 	self.wndMainPicker = self.wndMain:FindChild("MainPicker")
-	self.wndCreddFlyout = self.wndMain:FindChild("CreddFlyout")
 	self.wndRenameFlyout = self.wndMain:FindChild("RenameFlyout")
 	self.wndPaidTransferFlyout = self.wndMain:FindChild("PaidTransferFlyout")
 	self.wndFreeTransferFlyout = self.wndMain:FindChild("FreeTransferFlyout")
-	self.wndMainPicker:FindChild("AvailablePaidCreddBtn"):AttachWindow(self.wndCreddFlyout)
 	self.wndMainPicker:FindChild("AvailablePaidRenameBtn"):AttachWindow(self.wndRenameFlyout)
 	self.wndMainPicker:FindChild("AvailablePaidRealmBtn"):AttachWindow(self.wndPaidTransferFlyout)
 	self.wndMainPicker:FindChild("AvailableFreeRealmBtn"):AttachWindow(self.wndFreeTransferFlyout)
@@ -112,6 +112,7 @@ function AccountServices:OnDocumentReady()
 	self.wndRenameConfirm = nil
 	self.wndTransferConfirm = nil
 	self.wndGroupBindConfirm = nil
+	self.wndRedeemCreddDelay = nil
 
 	self.bFireCreddOnUpdate = nil
 	self.strFireRenameOnUpdate = nil
@@ -164,20 +165,37 @@ function AccountServices:RedrawAll()
 
 	-- Early exit if subscription expired
 	local bLoadLapsedAccount = CharacterScreenLib.GetSubscriptionExpired()
-	if bLoadLapsedAccount then
-		self.wndBlackFill = Apollo.LoadForm(self.xmlDoc, "FullScreenBlackFill", "AccountServices", self)
-		self.wndBlackFill:Invoke()
+	if bLoadLapsedAccount and not self.bCREDDRedeemResultSuccess then
+		if not self.wndBlackFill or not self.wndBlackFill:IsValid() then
+			self.wndBlackFill = Apollo.LoadForm(self.xmlDoc, "FullScreenBlackFill", "AccountServices", self)
+			self.wndBlackFill:Invoke()
+		end
 
-		self.wndLapsedBlocker = Apollo.LoadForm(self.xmlDoc, "LapsedButtonBlocker", "AccountServices", self)
-		self.wndLapsedBlocker:Invoke()
+		if not self.wndLapsedBlocker or not self.wndLapsedBlocker:IsValid() then
+			self.wndLapsedBlocker = Apollo.LoadForm(self.xmlDoc, "LapsedButtonBlocker", "AccountServices", self)
+			self.wndLapsedBlocker:Invoke()
+		end
 
-		self.wndLapsedPopup = Apollo.LoadForm(self.xmlDoc, "LapsedAccountWithCREDD", "AccountServices", self)
-		self.wndLapsedPopup:Invoke()
+		if AccountItemLib.IsRedeemCREDDInProgress() then
+			if not self.wndRedeemCreddDelay or not self.wndRedeemCreddDelay:IsValid() then
+				self.wndRedeemCreddDelay = Apollo.LoadForm(self.xmlDoc, "RedeemCreddDelaySpinner", "AccountServices", self)
+			end
+		else
+			if not self.wndLapsedPopup or not self.wndLapsedPopup:IsValid() then
+				self.wndLapsedPopup = Apollo.LoadForm(self.xmlDoc, "LapsedAccountWithCREDD", "AccountServices", self)
+				self.wndLapsedPopup:Invoke()
+			end
+			
+			if self.wndRedeemCreddDelay and self.wndRedeemCreddDelay:IsValid() then -- As this may fire multiple times with invalid data
+				self.wndRedeemCreddDelay:Destroy()
+			end
 
-		local bHaveCredd = nCreddBound > 0 or nCreddEscrow > 0
-		self.wndLapsedPopup:FindChild("LapsedSubtitleHaveCREDD"):Show(bHaveCredd)
-		self.wndLapsedPopup:FindChild("LapsedSubtitleNoCREDD"):Show(not bHaveCredd)
-		self.wndLapsedPopup:FindChild("LapsedStartRedeemBtn"):Enable(bHaveCredd)
+			local bHaveCredd = nCreddBound > 0 or nCreddEscrow > 0
+			self.wndLapsedPopup:FindChild("LapsedSubtitleHaveCREDD"):Show(bHaveCredd)
+			self.wndLapsedPopup:FindChild("LapsedSubtitleNoCREDD"):Show(not bHaveCredd)
+			self.wndLapsedPopup:FindChild("LapsedStartRedeemBtn"):Enable(bHaveCredd) -- and not AccountItemLib.IsRedeemCREDDInProgress()
+			self.wndLapsedPopup:FindChild("LapsedStartRedeemBtn"):SetData({ nCreddBound = nCreddBound, nCreddEscrow = nCreddEscrow })
+		end
 	end
 
 	-- Initialize if > 0
@@ -189,7 +207,6 @@ function AccountServices:RedrawAll()
 		self.wndMain:Show(not bDefaultMinimized, true)
 		self.wndMinimized:Show(bDefaultMinimized, true)
 
-		self:DrawCreddFlyout(nCreddBound, nCreddEscrow)
 		self:DrawRenameFlyout(nRenameBound, nRenameEscrow)
 		self:DrawFreeTransferFlyout()
 		self:DrawPaidTransferFlyout(nTransferBound, nTransferEscrow)
@@ -233,7 +250,6 @@ function AccountServices:OnPregame_CharacterSelected(tData)
 	end
 
 	self:OnRenameCloseBtn()
-	self:OnCreddFlyoutCloseBtn()
 	self:OnPaidTransferFlyoutCloseBtn()
 end
 
@@ -281,97 +297,43 @@ function AccountServices:OnLapsedExitToLogin(wndHandler, wndControl)
 	CharacterScreenLib.ExitToLogin()
 end
 
-function AccountServices:OnLapsedStartRedeemBtn(wndHandler, wndControl)
-	local bUsingEscrow = self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):IsChecked()
-	local tEscrowData, bGiftableGroup = self:HelperDeterminePayment(bUsingEscrow, PreGameLib.CodeEnumAccountCurrency.CREDD)
+function AccountServices:OnLapsedStartRedeemBtn(wndHandler, wndControl) -- LapsedStartRedeemBtn
+	local nCreddBound = wndHandler:GetData().nCreddBound
+	local nCreddEscrow = wndHandler:GetData().nCreddEscrow
+	local tEscrowData, bGiftableGroup = self:HelperDeterminePayment(true, PreGameLib.CodeEnumAccountCurrency.CREDD)
 
-	if AccountItemLib.GetAccountCurrency(PreGameLib.CodeEnumAccountCurrency.CREDD) > 0 then
-		AccountItemLib.RedeemCREDD()
+	if nCreddBound > 0 then
+		self.bFireCreddOnUpdate = true
+		self:HelperCheckTriggers()
+	elseif nCreddEscrow > 0 then
+		if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
+			self.wndCreddConfirm:Destroy()
+		end
+		self.wndCreddConfirm = Apollo.LoadForm(self.xmlDoc, "RedeemCREDDConfirmation", "AccountServices", self)
+		self.wndCreddConfirm:FindChild("RedeemCREDDYesBtn"):SetData(tEscrowData)
+		self.wndCreddConfirm:Invoke()
 	elseif bGiftableGroup then
 		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnCredd })
+	end
+end
+
+function AccountServices:OnRedeemCREDDYesBtn(wndHandler, wndControl) -- From ShowCreddRedemptionConfirmation
+	-- HelperCatchTriggers will catch the event, detect a non nil self.bFireCreddOnUpdate, then call Redeem
+	local tEscrowData = wndHandler:GetData()
+	if tEscrowData.items then -- It's a group
+		AccountItemLib.ClaimPendingItemGroup(tEscrowData.index)
 	else
-		self:ShowCreddRedemptionConfirmation(tEscrowData)
-	end
-end
-
------------------------------------------------------------------------------------------------
--- Credd
------------------------------------------------------------------------------------------------
-
-function AccountServices:DrawCreddFlyout(nCreddBound, nCreddEscrow)
-	local bBoundEnable = nCreddBound > 0
-	local bEscrowEnable = nCreddEscrow > 0
-	self.wndCreddFlyout:FindChild("CreddPaymentBound"):Show(bBoundEnable)
-	self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):Show(bEscrowEnable)
-	self.wndCreddFlyout:FindChild("CreddPaymentBound"):SetCheck(bBoundEnable)
-	self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):SetCheck(not bBoundEnable and bEscrowEnable)
-	self.wndCreddFlyout:FindChild("BoundBtnSubtitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nCreddBound))
-	self.wndCreddFlyout:FindChild("EscrowBtnSubtitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nCreddEscrow))
-	self.wndCreddFlyout:FindChild("BoundBtnSubtitle"):SetTextColor(bBoundEnable and ApolloColor.new("UI_BtnTextBlueNormal") or ApolloColor.new("UI_TextMetalBodyHighlight"))
-	self.wndCreddFlyout:FindChild("EscrowBtnSubtitle"):SetTextColor(bEscrowEnable and ApolloColor.new("UI_BtnTextBlueNormal") or ApolloColor.new("UI_TextMetalBodyHighlight"))
-	self.wndCreddFlyout:FindChild("CreddPaymentArrangeVert"):ArrangeChildrenVert(0)
-end
-
-function AccountServices:OnCreddFlyoutCloseBtn(wndHandler, wndControl)
-	if self.wndCreddFlyout and self.wndCreddFlyout:IsValid() then
-		self.wndCreddFlyout:Close()
-		self.bFireCreddOnUpdate = nil
-	end
-end
-
-function AccountServices:OnCreddConfirmBtn(wndHandler, wndControl)
-	local bUsingEscrow = self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):IsChecked()
-	local tEscrowData, bGiftableGroup = self:HelperDeterminePayment(bUsingEscrow, PreGameLib.CodeEnumAccountCurrency.CREDD)
-
-	if bGiftableGroup then
-		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnCredd })
-	else
-		self:ShowCreddRedemptionConfirmation(tEscrowData)
+		AccountItemLib.ClaimPendingSingleItem(tEscrowData.index)
 	end
 
-	self.wndCreddFlyout:Close()
-end
-
-function AccountServices:ShowCreddRedemptionConfirmation(tEscrowData)
-	if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
-		self.wndCreddConfirm:Destroy()
-	end
-
-	-- The actual confirmation button will need to be protected
-	self.wndCreddConfirm = Apollo.LoadForm(self.xmlDoc, "RedeemCREDDConfirmation", "AccountServices", self)
-	self.wndCreddConfirm:FindChild("RedeemCREDDYesBtn"):SetData(tEscrowData and tEscrowData.index)
-	self.wndCreddConfirm:Invoke()
-end
-
-function AccountServices:OnRedeemCREDDYesBtn(wndHandler, wndControl) -- Note Lapsed account may skip this step if it can just bind right away
-	if self.wndCreddFlyout:FindChild("CreddPaymentEscrow"):IsChecked() then
-		AccountItemLib.ClaimPendingSingleItem(wndHandler:GetData()) -- HelperCatchTriggers will catch the event, detect a non nil self.bFireCreddOnUpdate, then call Redeem
-		self.bFireCreddOnUpdate = true
-	else
-		AccountItemLib.RedeemCREDD()
-	end
-
-	if self.wndBlackFill and self.wndBlackFill:IsValid() then
-		self.wndBlackFill:Destroy()
-	end
-
-	if self.wndLapsedBlocker and self.wndLapsedBlocker:IsValid() then
-		self.wndLapsedBlocker:Destroy()
-	end
-
-	if self.wndLapsedPopup and self.wndLapsedPopup:IsValid() then
-		self.wndLapsedPopup:Destroy()
-	end
-
-	if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
-		self.wndCreddConfirm:Destroy()
-	end
+	self.wndCreddConfirm:Destroy()
+	self.bFireCreddOnUpdate = true
 end
 
 function AccountServices:OnCloseRedeemConfirmation(wndHandler, wndControl)
 	if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
-		self.bFireCreddOnUpdate = nil
 		self.wndCreddConfirm:Destroy()
+		self.bFireCreddOnUpdate = nil
 	end
 end
 
@@ -690,7 +652,8 @@ function AccountServices:HelperCheckTriggers()
 	end
 
 	if self.bFireCreddOnUpdate ~= nil then
-		AccountItemLib.RedeemCREDD()
+		Apollo.CreateTimer("Pregame_RedeemCreddDelay", 1, false)
+		Apollo.StartTimer("Pregame_RedeemCreddDelay")
 		self.bFireCreddOnUpdate = nil
 		return
 	end
@@ -702,6 +665,19 @@ function AccountServices:HelperCheckTriggers()
 		return
 	end
 	-- Free Transfers not needed
+end
+
+function AccountServices:OnPregame_RedeemCreddDelay()
+	Apollo.StopTimer("Pregame_RedeemCreddDelay")
+	AccountItemLib.RedeemCREDD()
+	if not self.wndRedeemCreddDelay then
+		self.wndRedeemCreddDelay = Apollo.LoadForm(self.xmlDoc, "RedeemCreddDelaySpinner", "AccountServices", self)
+	end
+
+	if self.wndLapsedPopup and self.wndLapsedPopup:IsValid() then
+		self.wndLapsedPopup:Destroy()
+		self.wndLapsedPopup = nil
+	end
 end
 
 function AccountServices:HelperDeterminePayment(bUsingEscrow, ePendingTypeRequested)
@@ -751,6 +727,12 @@ end
 function AccountServices:OnCREDDRedeemResult(eResult)
 	if self.wndErrorMessage and self.wndErrorMessage:IsValid() then
 		self.wndErrorMessage:Destroy()
+		self.wndErrorMessage = nil
+	end
+
+	if self.wndRedeemCreddDelay and self.wndRedeemCreddDelay:IsValid() then
+		self.wndRedeemCreddDelay:Destroy()
+		self.wndRedeemCreddDelay = nil
 	end
 
 	local bSuccess = eResult == PreGameLib.CodeEnumCharacterModifyResults.RedeemCREDDOk
@@ -760,6 +742,8 @@ function AccountServices:OnCREDDRedeemResult(eResult)
 	self.wndErrorMessage:FindChild("ErrorMessageBody"):SetText(Apollo.GetString(ktCreddRedeemResults[eResult]))
 
 	if bSuccess then
+		self.bCREDDRedeemResultSuccess = true
+		
 		if self.wndBlackFill and self.wndBlackFill:IsValid() then
 			self.wndBlackFill:Destroy()
 		end
@@ -770,10 +754,6 @@ function AccountServices:OnCREDDRedeemResult(eResult)
 
 		if self.wndLapsedPopup and self.wndLapsedPopup:IsValid() then
 			self.wndLapsedPopup:Destroy()
-		end
-
-		if self.wndCreddConfirm and self.wndCreddConfirm:IsValid() then
-			self.wndCreddConfirm:Destroy()
 		end
 	end
 

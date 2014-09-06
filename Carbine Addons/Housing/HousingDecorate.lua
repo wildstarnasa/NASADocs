@@ -1083,31 +1083,31 @@ function HousingDecorate:OnFreePlace_Move(wndHandler, wndControl)
 	local kfBigMove = 0.5
 		
 	if wndControl == self.wndFreePlaceFrame:FindChild("MoveForwardBtn") then
-		HousingLib.TranslateDecor(kfSmallMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, kfSmallMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveBackBtn") then
-		HousingLib.TranslateDecor(-kfSmallMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, -kfSmallMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveUpBtn") then
 		HousingLib.TranslateDecor(0, kfSmallMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveDownBtn") then
 		HousingLib.TranslateDecor(0, -kfSmallMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveLeftBtn") then
-		HousingLib.TranslateDecor(0, 0, kfSmallMove)
+		HousingLib.TranslateDecor(kfSmallMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveRightBtn") then
-		HousingLib.TranslateDecor(0, 0, -kfSmallMove)
+		HousingLib.TranslateDecor(-kfSmallMove, 0, -0)
 	
 	
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveForwardLongBtn") then
-		HousingLib.TranslateDecor(kfBigMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, kfBigMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveBackLongBtn") then
-		HousingLib.TranslateDecor(-kfBigMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, -kfBigMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveUpLongBtn") then
 		HousingLib.TranslateDecor(0, kfBigMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveDownLongBtn") then
 		HousingLib.TranslateDecor(0, -kfBigMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveLeftLongBtn") then
-		HousingLib.TranslateDecor(0, 0, kfBigMove)
+		HousingLib.TranslateDecor(kfBigMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveRightLongBtn") then
-		HousingLib.TranslateDecor(0, 0, -kfBigMove)
+		HousingLib.TranslateDecor(-kfBigMove, 0, 0)
 	end
 end
 

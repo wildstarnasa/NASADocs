@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_TargetFrame_FrameFriendly" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameFriendly.tex" x0="0" x1="175" x2="175" x3="175" x4="223" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutral" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameNeutral.tex" x0="0" x1="175" x2="175" x3="175" x4="223" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostile" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameHostile.tex" x0="0" x1="175" x2="175" x3="175" x4="223" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameTapped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameGrey.tex" x0="0" x1="175" x2="175" x3="175" x4="223" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ToTFriendly" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ToTFriendly.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="57" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ToTNeutral" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ToTNeutral.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="57" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ToTHostile" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ToTHostile.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="57" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="244" x1="244" x2="244" x3="244" x4="244" x5="292" y0="858" y1="858" y2="858" y3="858" y4="858" y5="906" HotspotX="24" HotspotY="24" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillGreen" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthGreen.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillYellow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthYellow.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillRed" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthRed.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillVulernable" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthVulnerable.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ShieldFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthShield.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="75" y0="0" y1="0" y2="0" y3="0" y4="0" y5="51" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_TempShieldFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthShieldTemp.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="75" y0="0" y1="0" y2="0" y3="0" y4="0" y5="51" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthSplitFriendly" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthSplitFriendly.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthSplitNeutral" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthSplitNeutral.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthSplitHostile" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthSplitHostile.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_PortraitCover" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_PortraitCover.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="64" y0="0" y1="0" y2="0" y3="0" y4="0" y5="64" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClusterCover" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterCover.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_TargetFrame_ClusterCoverShield" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterCoverShield.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClusterFrame" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterFrame.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_TargetFrame_ClusterHealthShield" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterHealthShield.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClusterHealthGreen" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterHealthGreen.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClusterHealthYellow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterHealthYellow.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClusterHealthRed" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterHealthRed.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_Simple" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="0" x1="52" x2="52" x3="52" x4="185" x5="243" y0="858" y1="858" y2="858" y3="858" y4="858" y5="929" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameFriendlyIconicDominion" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="0" x1="0" x2="0" x3="211" x4="217" x5="339" y0="143" y1="143" y2="143" y3="143" y4="143" y5="285" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameFriendlyIconicExile" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="0" x1="0" x2="0" x3="211" x4="217" x5="339" y0="286" y1="286" y2="286" y3="286" y4="286" y5="428" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameVehicle" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="0" x1="0" x2="0" x3="211" x4="217" x5="339" y0="429" y1="429" y2="429" y3="429" y4="429" y5="571" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralBoss" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="340" x1="340" x2="340" x3="551" x4="557" x5="679" y0="143" y1="143" y2="143" y3="143" y4="143" y5="285" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralRare" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="340" x1="340" x2="340" x3="551" x4="557" x5="679" y0="286" y1="286" y2="286" y3="286" y4="286" y5="428" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralElite" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="340" x1="340" x2="340" x3="551" x4="557" x5="679" y0="429" y1="429" y2="429" y3="429" y4="429" y5="571" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileBoss" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="680" x1="680" x2="680" x3="891" x4="897" x5="1019" y0="143" y1="143" y2="143" y3="143" y4="143" y5="285" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileRare" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="680" x1="680" x2="680" x3="891" x4="897" x5="1019" y0="286" y1="286" y2="286" y3="286" y4="286" y5="428" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileElite" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="680" x1="680" x2="680" x3="891" x4="897" x5="1019" y0="429" y1="429" y2="429" y3="429" y4="429" y5="571" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileIconicDominion" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="680" x1="680" x2="680" x3="891" x4="897" x5="1019" y0="572" y1="572" y2="572" y3="572" y4="572" y5="714" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileIconicExile" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="680" x1="680" x2="680" x3="891" x4="897" x5="1019" y0="715" y1="715" y2="715" y3="715" y4="715" y5="857" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameIconic" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="0" x1="0" x2="0" x3="211" x4="217" x5="339" y0="715" y1="715" y2="715" y3="715" y4="715" y5="857" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClassIcon_Fodder" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="122" x1="122" x2="122" x3="122" x4="122" x5="152" y0="930" y1="930" y2="930" y3="930" y4="930" y5="970" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClassIcon_Minion" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="153" x1="153" x2="153" x3="153" x4="153" x5="183" y0="930" y1="930" y2="930" y3="930" y4="930" y5="970" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClassIcon_Standard" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="184" x1="184" x2="184" x3="184" x4="184" x5="214" y0="930" y1="930" y2="930" y3="930" y4="930" y5="970" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClassIcon_Champion" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="215" x1="215" x2="215" x3="215" x4="215" x5="245" y0="930" y1="930" y2="930" y3="930" y4="930" y5="970" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClassIcon_Superior" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="246" x1="246" x2="246" x3="246" x4="246" x5="276" y0="930" y1="930" y2="930" y3="930" y4="930" y5="970" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ClassIcon_Elite" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="277" x1="277" x2="277" x3="277" x4="277" x5="307" y0="930" y1="930" y2="930" y3="930" y4="930" y5="970" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_InterruptArmor_Value" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="930" y1="930" y2="930" y3="930" y4="930" y5="1001" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_InterruptArmor_Infinite" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="61" x1="61" x2="61" x3="61" x4="61" x5="121" y0="930" y1="930" y2="930" y3="930" y4="930" y5="1001" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_CastBar" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="122" x1="162" x2="162" x3="162" x4="267" x5="308" y0="971" y1="971" y2="971" y3="971" y4="971" y5="1015" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_CastFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrames.tga" x0="309" x1="349" x2="349" x3="349" x4="454" x5="495" y0="971" y1="971" y2="971" y3="971" y4="971" y5="1015" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_IconShadow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_IconShadow.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="56" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

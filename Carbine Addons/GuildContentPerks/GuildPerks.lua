@@ -209,7 +209,7 @@ function GuildPerks:UpdateTabDisplay()
 		end
 
 		if tBankTab.nPos == nHighestTabUnlocked + 1 then
-			wndContainer:FindChild("UpgradeCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tBankTab.nPurchaseInfluenceCost))
+			wndContainer:FindChild("UpgradeCost"):SetText("(" .. tBankTab.nPurchaseInfluenceCost .. ")")
 			wndContainer:FindChild("UpgradeButton"):SetData(tBankTab.idPerk)
 
 			local bUnlocked = true
@@ -275,11 +275,14 @@ function GuildPerks:FormatTierDisplays()
 	for idx, tTierPerk in pairs(self.tTierContainers) do
 		tTierPerk.wndContainer:FindChild("LeftContainer"):FindChild("TierIndexLabel"):SetText(tTierPerk.nTier)
 		tTierPerk.wndContainer:FindChild("LeftContainer"):FindChild("TierCost"):Show(not tTierPerk.bIsUnlocked)
-		tTierPerk.wndContainer:FindChild("LeftContainer"):FindChild("TierCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_TierCost"), tTierPerk.nPurchaseInfluenceCost))
 		tTierPerk.wndContainer:FindChild("TierUnlockBtn"):Show(not tTierPerk.bIsUnlocked)
 		tTierPerk.wndContainer:FindChild("TierBGArt_LeftBack"):Show(true)
 		tTierPerk.wndContainer:FindChild("TierBGArt_LeftBackNext"):Show(false)
 		--tTierPerk.wndContainer:FindChild("TierBGArt_RightBackFrame"):Show(tTierPerk.bIsUnlocked)
+		
+		if tTierPerk.nPurchaseInfluenceCost and tTierPerk.nPurchaseInfluenceCost > 0 then
+			tTierPerk.wndContainer:FindChild("LeftContainer"):FindChild("TierCost"):SetText("{" .. tTierPerk.nPurchaseInfluenceCost .. "}")
+		end
 
 		if tTierPerk.bIsUnlocked == true then
 			--tTierPerk.wndContainer:FindChild("LeftContainer"):FindChild("TierLabel"):SetTextColor(UI_TextHoloTitle)
@@ -388,7 +391,7 @@ function GuildPerks:FormatPerkWindow(idPerk)
 		wndFrameToUse:FindChild("BGArtTierOpen"):Show(false)
 		wndFrameToUse:FindChild("BGArtTierClosed"):Show(true)
 		wndFrameToUse:FindChild("BGArtTierClosed"):FindChild("Icon"):SetSprite(tPerkEntry.strSprite)
-		wndFrameToUse:FindChild("UnlockCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tPerkEntry.nPurchaseInfluenceCost))
+		wndFrameToUse:FindChild("UnlockCost"):SetText("(" .. tPerkEntry.nPurchaseInfluenceCost .. ")")
 		--wndFrameToUse:FindChild("UnlockCost"):SetTextColor(kcrDisabledText)
 		wndFrameToUse:FindChild("LockOverlay"):Show(true) -- not needed since the whole tier is locked
 		wndFrameToUse:FindChild("ActivateFrame"):Show(false)
@@ -399,7 +402,7 @@ function GuildPerks:FormatPerkWindow(idPerk)
 			wndFrameToUse:FindChild("BGArtTierClosed"):Show(false)
 			wndFrameToUse:FindChild("ActivateBtn"):Show(true)
 			wndFrameToUse:FindChild("UnlockBtn"):Show(false)
-			wndFrameToUse:FindChild("UnlockCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tPerkEntry.nActivateInfluenceCost))
+			wndFrameToUse:FindChild("UnlockCost"):SetText("(" .. tPerkEntry.nActivateInfluenceCost .. ")")
 			wndFrameToUse:FindChild("UnlockBtn"):Enable(self.guildOwner:GetInfluence() >= tPerkEntry.nActivateInfluenceCost)
 			wndFrameToUse:FindChild("ActivateBtn"):SetData(tPerkEntry.idPerk)
 			wndFrameToUse:FindChild("Icon"):SetSprite(tPerkEntry.strSprite)
@@ -457,7 +460,7 @@ function GuildPerks:FormatPerkWindow(idPerk)
 		end
 
 		wndFrameToUse:FindChild("ActivateFrame"):Show(false)
-		wndFrameToUse:FindChild("UnlockCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tPerkEntry.nPurchaseInfluenceCost))
+		wndFrameToUse:FindChild("UnlockCost"):SetText("(" .. tPerkEntry.nPurchaseInfluenceCost .. ")")
 		wndFrameToUse:FindChild("BGArtTierOpen"):Show(true)
 		wndFrameToUse:FindChild("BGArtTierClosed"):Show(false)
 
@@ -473,9 +476,23 @@ end
 
 
 function GuildPerks:UpdateInfluenceDisplay(nCurrent, nBonusRemaining)
+	local nMaxBonus = knMaxInfluence / 10
+	
 	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetMax(knMaxInfluence)
 	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetProgress(nCurrent)
-	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_InfluenceListing"), nCurrent, knMaxInfluence, nBonusRemaining))
+	
+	local strText = String_GetWeaselString(
+		Apollo.GetString("GuildPerk_InfluenceListing"), 
+		Apollo.FormatNumber(nCurrent, 0, true),
+		Apollo.FormatNumber(knMaxInfluence, 0, true), 
+		Apollo.FormatNumber(nCurrent / knMaxInfluence * 100, 1, true), 
+		
+		Apollo.FormatNumber(nBonusRemaining, 0, true),
+		Apollo.FormatNumber(nMaxBonus, 0, true), 
+		Apollo.FormatNumber(nBonusRemaining / nMaxBonus * 100, 1, true)
+	)
+	
+	self.tWndRefs.wndMain:FindChild("InfluenceProgressBar"):SetText(strText)
 
 	self.tWndRefs.wndMain:FindChild("InfluenceBonusProgressBar"):SetMax(knMaxInfluence)
 	self.tWndRefs.wndMain:FindChild("InfluenceBonusProgressBar"):SetProgress(nCurrent + nBonusRemaining)
@@ -616,7 +633,7 @@ function GuildPerks:DrawMoreInfoWindow(idEntry, nLeft, nTop)
 		wndFrameToUse = self.wndMoreInfo:FindChild("NoButtonAssets")
 		wndFrameToUse:FindChild("ActivateFrame"):Show(false)
 		wndFrameToUse:FindChild("UnlockCost"):SetTextColor(ApolloColor.new("vdarkgray"))
-		wndFrameToUse:FindChild("UnlockCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tPerkEntry.nPurchaseInfluenceCost))
+		wndFrameToUse:FindChild("UnlockCost"):SetText("(" .. tPerkEntry.nPurchaseInfluenceCost .. ")")
 		self.wndMoreInfo:FindChild("Status"):SetText(Apollo.GetString("GuildPerk_TierLocked"))
 
 	elseif tPerkEntry.bIsUnlocked == true then -- tier unlocked, tPerkEntry unlocked, draws the same for everyone
@@ -624,7 +641,7 @@ function GuildPerks:DrawMoreInfoWindow(idEntry, nLeft, nTop)
 			wndFrameToUse = self.wndMoreInfo:FindChild("ButtonAssets")
 			wndFrameToUse:FindChild("ActivateBtn"):Show(true)
 			wndFrameToUse:FindChild("UnlockBtn"):Show(false)
-			wndFrameToUse:FindChild("UnlockCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tPerkEntry.nActivateInfluenceCost))
+			wndFrameToUse:FindChild("UnlockCost"):SetText("(" .. tPerkEntry.nActivateInfluenceCost .. ")")
 			wndFrameToUse:FindChild("UnlockBtn"):Enable(self.guildOwner:GetInfluence() >= tPerkEntry.nActivateInfluenceCost)
 			wndFrameToUse:FindChild("ActivateBtn"):SetData(tPerkEntry.idPerk)
 
@@ -683,7 +700,7 @@ function GuildPerks:DrawMoreInfoWindow(idEntry, nLeft, nTop)
 		end
 
 		wndFrameToUse:FindChild("ActivateFrame"):Show(false)
-		wndFrameToUse:FindChild("UnlockCost"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_Cost"), tPerkEntry.nPurchaseInfluenceCost))
+		wndFrameToUse:FindChild("UnlockCost"):SetText("(" .. tPerkEntry.nPurchaseInfluenceCost .. ")")
 
 		if bCanAfford == false then
 			wndFrameToUse:FindChild("UnlockCost"):SetTextColor(kcrDisabledTextRed)
@@ -748,7 +765,7 @@ function GuildPerks:DrawMoreInfoWindow(idEntry, nLeft, nTop)
 	self.wndMoreInfo:FindChild("PerkBuffer"):Show(nPerksRequired > 0)
 
 	-- Activation Costs
-	self.wndMoreInfo:FindChild("ActivateCost"):FindChild("Amount"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_TierCost"), tPerkEntry.nActivateInfluenceCost))
+	self.wndMoreInfo:FindChild("ActivateCost"):FindChild("Amount"):SetText("{" .. tPerkEntry.nActivateInfluenceCost .. "}")
 	self.wndMoreInfo:FindChild("ActivateCost"):Show(tPerkEntry.nActivateInfluenceCost > 0)
 	if self.guildOwner:GetInfluence() < tPerkEntry.nActivateInfluenceCost then
 		self.wndMoreInfo:FindChild("ActivateCost"):FindChild("Amount"):SetTextColor(kcrDisabledTextRed)
@@ -757,7 +774,7 @@ function GuildPerks:DrawMoreInfoWindow(idEntry, nLeft, nTop)
 	end
 
 	-- Unlock Costs
-	self.wndMoreInfo:FindChild("UnlockCostDisplay"):FindChild("Amount"):SetText(String_GetWeaselString(Apollo.GetString("GuildPerk_TierCost"), tPerkEntry.nPurchaseInfluenceCost))
+	self.wndMoreInfo:FindChild("UnlockCostDisplay"):FindChild("Amount"):SetText("{" .. tPerkEntry.nPurchaseInfluenceCost .. "}")
 	if tPerkEntry.bIsUnlocked then
 		self.wndMoreInfo:FindChild("UnlockCostDisplay"):FindChild("Amount"):SetTextColor(kcrDisabledText)
 	elseif self.guildOwner:GetInfluence() < tPerkEntry.nPurchaseInfluenceCost then

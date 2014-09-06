@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="WhiteFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WhiteBG.bmp" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="64" y3="64" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="LineFill" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_LineFill.bmp" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="64" y3="64" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="BlackFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WhiteBG.bmp" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="64" y3="64" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff000000" EndColor="ff000000"/>
+    </Sprite>	
+	<Sprite Name="RedFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WhiteBG.bmp" x0="0" x1="0" x2="64" x3="64" x4="64" x5="64" y0="0" y1="0" y2="64" y3="64" y4="64" y5="64" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffff0000" EndColor="ffff0000"/>
+    </Sprite>
+    <Sprite Name="WhiteCircle" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_WhiteCircle.bmp" x0="0" x1="0" x2="256" x3="256" x4="256" x5="256" y0="0" y1="0" y2="256" y3="256" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

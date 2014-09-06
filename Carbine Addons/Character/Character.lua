@@ -47,23 +47,22 @@ local ktSlotWindowNameToTooltip =
 
 local ktAttributeIconsText =
 {
-	[Unit.CodeEnumProperties.Dexterity] 					= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Finesse", 			Apollo.GetString("CRB_Finesse")},
-	[Unit.CodeEnumProperties.Technology] 					= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Technology", 		Apollo.GetString("CRB_Tech_Attribute")},
-	[Unit.CodeEnumProperties.Magic] 						= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Moxie", 			Apollo.GetString("CRB_Moxie")},
-	[Unit.CodeEnumProperties.Wisdom] 						= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Insight", 			Apollo.GetString("UnitPropertyInsight")},
-	[Unit.CodeEnumProperties.Stamina] 						= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Grit", 				Apollo.GetString("CRB_Grit")},
-	[Unit.CodeEnumProperties.Strength] 						= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_BruteForce", 		Apollo.GetString("CRB_Brutality")},
-
-	[Unit.CodeEnumProperties.AssaultPower] 					= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_AssaultPower", 		Apollo.GetString("CRB_Assault_Power")},
-	[Unit.CodeEnumProperties.SupportPower] 					= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_SupportPower", 		Apollo.GetString("CRB_Support_Power")},
-	[Unit.CodeEnumProperties.Rating_AvoidReduce] 			= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Strikethrough", 	Apollo.GetString("CRB_Strikethrough_Rating")},
-	[Unit.CodeEnumProperties.Rating_CritChanceIncrease] 	= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_CriticalHit", 		Apollo.GetString("CRB_Critical_Chance")},
-	[Unit.CodeEnumProperties.RatingCritSeverityIncrease] 	= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_CriticalSeverity", 	Apollo.GetString("CRB_Critical_Severity")},
-	[Unit.CodeEnumProperties.Rating_AvoidIncrease] 			= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Deflect", 			Apollo.GetString("CRB_Deflect_Rating")},
-	[Unit.CodeEnumProperties.Rating_CritChanceDecrease] 	= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_DeflectCritical", 	Apollo.GetString("CRB_Deflect_Critical_Hit_Rating")},
-	[Unit.CodeEnumProperties.ManaPerFiveSeconds] 			= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Recovery", 			Apollo.GetString("CRB_Attribute_Recovery_Rating")},
-	[Unit.CodeEnumProperties.HealthRegenMultiplier] 		= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Recovery", 			Apollo.GetString("CRB_Health_Regen_Factor")},
-	[Unit.CodeEnumProperties.BaseHealth] 					= {"ClientSprites:Icon_Windows_UI_CRB_Attribute_Health", 			Apollo.GetString("CRB_Health_Max")},
+	[Unit.CodeEnumProperties.Dexterity] 					= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Finesse", 			strName = Apollo.GetString("CRB_Finesse")},
+	[Unit.CodeEnumProperties.Technology] 					= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Technology", 			strName = Apollo.GetString("CRB_Tech_Attribute")},
+	[Unit.CodeEnumProperties.Magic] 						= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Moxie", 				strName = Apollo.GetString("CRB_Moxie")},
+	[Unit.CodeEnumProperties.Wisdom] 						= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Insight", 			strName = Apollo.GetString("UnitPropertyInsight")},
+	[Unit.CodeEnumProperties.Stamina] 						= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Grit", 				strName = Apollo.GetString("CRB_Grit")},
+	[Unit.CodeEnumProperties.Strength] 						= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_BruteForce", 			strName = Apollo.GetString("CRB_Brutality")},
+	[Unit.CodeEnumProperties.AssaultPower] 					= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_AssaultPower", 		strName = Apollo.GetString("CRB_Assault_Power")},
+	[Unit.CodeEnumProperties.SupportPower] 					= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_SupportPower", 		strName = Apollo.GetString("CRB_Support_Power")},
+	[Unit.CodeEnumProperties.Rating_AvoidReduce] 			= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Strikethrough", 		strName = Apollo.GetString("CRB_Strikethrough_Rating")},
+	[Unit.CodeEnumProperties.Rating_CritChanceIncrease] 	= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_CriticalHit", 		strName = Apollo.GetString("CRB_Critical_Chance")},
+	[Unit.CodeEnumProperties.RatingCritSeverityIncrease] 	= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_CriticalSeverity", 	strName = Apollo.GetString("CRB_Critical_Severity")},
+	[Unit.CodeEnumProperties.Rating_AvoidIncrease] 			= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Deflect", 			strName = Apollo.GetString("CRB_Deflect_Rating")},
+	[Unit.CodeEnumProperties.Rating_CritChanceDecrease] 	= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_DeflectCritical", 	strName = Apollo.GetString("CRB_Deflect_Critical_Hit_Rating")},
+	[Unit.CodeEnumProperties.ManaPerFiveSeconds] 			= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Recovery", 			strName = Apollo.GetString("CRB_Attribute_Recovery_Rating")},
+	[Unit.CodeEnumProperties.HealthRegenMultiplier] 		= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Recovery", 			strName = Apollo.GetString("CRB_Health_Regen_Factor")},
+	[Unit.CodeEnumProperties.BaseHealth] 					= {strIcon = "ClientSprites:Icon_Windows_UI_CRB_Attribute_Health", 				strName = Apollo.GetString("CRB_Health_Max")},
 }
 
 local karClassToString =
@@ -116,7 +115,7 @@ local karFactionToIcon =
 
 local karRaceToString =
 {
-	[GameLib.CodeEnumRace.Human] 	= Apollo.GetString("RaceHuman"),
+	[GameLib.CodeEnumRace.Human] 	= Apollo.GetString("CRB_ExileHuman"),
 	[GameLib.CodeEnumRace.Granok] 	= Apollo.GetString("RaceGranok"),
 	[GameLib.CodeEnumRace.Aurin] 	= Apollo.GetString("RaceAurin"),
 	[GameLib.CodeEnumRace.Draken] 	= Apollo.GetString("RaceDraken"),
@@ -167,12 +166,12 @@ function Character:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded",						"OnInterfaceMenuListHasLoaded", self)
 	Apollo.RegisterEventHandler("WindowManagementReady",							"OnWindowManagementReady", self)
-	
-	Apollo.RegisterTimerHandler("Character_DelayedPlayerTitleChange", 				"OnDrawEditNamePopout", self) -- TODO: replace with a guild update event
 
+	self.timerTitleChange = ApolloTimer.Create(1.0, false, "OnDrawEditNamePopout", self)
+	self.timerTitleChange:Stop()
 	Apollo.RegisterEventHandler("PersonaUpdateCharacterStats", 						"OnPersonaUpdateCharacterStats", self)
 	Apollo.RegisterEventHandler("ToggleCharacterWindow", 							"OnToggleCharacterWindow", self)
 	Apollo.RegisterEventHandler("PlayerTitleChange", 								"DrawNames", self)
@@ -183,13 +182,13 @@ function Character:OnDocumentReady()
 	--Apollo.RegisterEventHandler("ShowItemInDressingRoom", 						"OnShowItemInDressingRoom", self)
 
 	-- Open Tab UIs
-	Apollo.RegisterEventHandler("ToggleReputationInterface", 						"OnToggleReputation", self)
-	Apollo.RegisterEventHandler("GenericEvent_OpenReputation", 						"OnGenericEvent_OpenReputation", self)
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleSets", 						"OnInterfaceMenu_ToggleSets", self)
-	Apollo.RegisterEventHandler("GenericEvent_OpenMountCustomize", 					"OnGenericEvent_OpenMountCustomize", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_Customization_Mount",				"OnGenericEvent_OpenMountCustomize", self)
-	Apollo.RegisterEventHandler("MountUnlocked",									"OnGenericEvent_OpenMountCustomize", self)
-	Apollo.RegisterEventHandler("PetFlairUnlocked", 								"OnPetFlairUnlocked", self) -- Eventually routes to OnGenericEvent_OpenMountCustomize
+	Apollo.RegisterEventHandler("LevelUpUnlock_Customization_Mount",				"OpenMountCustomize", self)
+	Apollo.RegisterEventHandler("MountUnlocked",									"OpenMountCustomize", self)
+	Apollo.RegisterEventHandler("PetFlairUnlocked", 								"OnPetFlairUnlocked", self) -- Eventually routes to OpenMountCustomize
+	Apollo.RegisterEventHandler("GenericEvent_ToggleMountCustomize", 				"OnGenericEvent_ToggleMountCustomize", self) -- Eventually routes to OpenMountCustomize
+	Apollo.RegisterEventHandler("GenericEvent_ToggleReputation", 					"OnToggleReputation", self)
+	Apollo.RegisterEventHandler("ToggleReputationInterface", 						"OnToggleReputation", self)
 
 	-- TODO: There is capability to differentiate between the events later
 	Apollo.RegisterEventHandler("LevelUpUnlock_Character_CostumeSystem",			"OnLevelUpUnlock_Character_Generic", self)
@@ -212,6 +211,7 @@ function Character:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 		"OnTutorial_RequestUIAnchor", self)
 
+	self.wndAttributeTooltip		= nil
 	self.wndCharacter 				= Apollo.LoadForm(self.xmlDoc, "CharacterWindow", nil, self)
 	self.wndCostume 				= self.wndCharacter:FindChild("CharFrame_BGArt:Costume")
 
@@ -223,6 +223,7 @@ function Character:OnDocumentReady()
 	self.wndCharacterReputationList	= self.wndCharacter:FindChild("CharacterReputationList")
 
 	self.wndCharacter:FindChild("CharacterTitleBtn"):AttachWindow(self.wndCharacterTitles)
+	self.wndCharacter:FindChild("SelectCostumeWindowToggle"):AttachWindow(self.wndCharacter:FindChild("CostumeBtnHolder"))
 	self.wndCharacter:FindChild("BonusTab"):AttachWindow(self.wndBonusFrame)
 	self.wndCharacter:FindChild("CharacterStatsBtn"):AttachWindow(self.wndCharacterStats)
 	self.wndCharacter:FindChild("CharacterMountsBtn"):AttachWindow(self.wndCharacterMounts)
@@ -336,7 +337,7 @@ end
 
 function Character:OnInterfaceMenuListHasLoaded()
 	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Character"), {"ToggleCharacterWindow", "CharacterPanel", "Icon_Windows32_UI_CRB_InterfaceMenu_Character"})
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Reputation"), {"GenericEvent_OpenReputation", "Reputation", "Icon_Windows32_UI_CRB_InterfaceMenu_Character"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_Reputation"), {"GenericEvent_ToggleReputation", "Reputation", "Icon_Windows32_UI_CRB_InterfaceMenu_Character"})
 end
 
 function Character:OnWindowManagementReady()
@@ -357,21 +358,28 @@ function Character:OnToggleCharacterWindow()
 	end
 end
 
+function Character:OnGenericEvent_ToggleMountCustomize()
+	if self.wndCharacterMounts:IsVisible() then
+		self.wndCharacter:Close()
+	else
+		self:OpenMountCustomize()
+	end
+end
 
 function Character:OnPetFlairUnlocked(petFlair)
 	local eFlairType = petFlair:GetFlairType()
 	if eFlairType == PetCustomizationLib.PetFlairType_GroundMountFront or eFlairType == PetCustomizationLib.PetFlairType_GroundMountBack
 		or eFlairType == PetCustomizationLib.PetFlairType_GroundMountSide or eFlairType == PetCustomizationLib.PetFlairType_HoverMountFront
 		or eFlairType == PetCustomizationLib.PetFlairType_HoverMountBack or eFlairType == PetCustomizationLib.PetFlairType_HoverMountSide then
-		self:OnGenericEvent_OpenMountCustomize()
+		self:OpenMountCustomize()
 	end
 end
 
-function Character:OnGenericEvent_OpenMountCustomize()
+function Character:OpenMountCustomize(idMount)
 	self:ShowCharacterWindow()
 
 	if not self.wndCharacterReputation:IsShown() then
-		Event_FireGenericEvent("GenericEvent_InitializeMountsCustomization", self.wndCharacterMounts)
+		Event_FireGenericEvent("GenericEvent_InitializeMountsCustomization", self.wndCharacterMounts, idMount)
 	end
 
 	self.wndCharacterTitles:Show(false)
@@ -382,16 +390,14 @@ function Character:OnGenericEvent_OpenMountCustomize()
 end
 
 function Character:OnToggleReputation()
-	if not self.wndCharacter:IsVisible() then
-		self:OnGenericEvent_OpenReputation()
+	if self.wndCharacterReputation:IsVisible() then
+		self.wndCharacter:Close()
 	else
-		self.wndCharacter:Show(false)
-		Event_FireGenericEvent("CharacterWindowHasBeenClosed")
-		Sound.Play(Sound.PlayUI01ClosePhysical)
+		self:OpenReputation()
 	end
 end
 
-function Character:OnGenericEvent_OpenReputation()
+function Character:OpenReputation()
 	self:ShowCharacterWindow()
 
 	if not self.wndCharacterReputation:IsShown() then
@@ -443,7 +449,7 @@ function Character:ShowCharacterWindow()
 	end
 
 	local nLeft, nTop, nRight, nBottom = self.wndCharacter:FindChild("CostumeBtnHolder"):GetAnchorOffsets()
-	self.wndCharacter:FindChild("CostumeBtnHolder"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + (74 + 28 * self.nCostumeCount))
+	self.wndCharacter:FindChild("CostumeBtnHolder"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + (91 + 28 * self.nCostumeCount))
 
 	self.wndCostumeSelectionList:Show(false)
 	self.wndCharacterStats:Show(true)
@@ -669,14 +675,6 @@ function Character:OnEditCostumeCheck(wndHandler, wndControl)
 	self:UpdateCostumeSlotIcons()  -- sets the toggle for us
 end
 
-function Character:CostumeSelectionWindowCheck()
-	self.wndCostumeSelectionList:Show(true)
-end
-
-function Character:CostumeSelectionWindowUnCheck()
-	self.wndCostumeSelectionList:Show(false)
-end
-
 function Character:OnPersonaUpdateCharacterStats()
 	if self.wndCharacter:IsShown() then
 		self:DrawAttributes()
@@ -717,7 +715,7 @@ function Character:OnBonusTabBtn(wndHandler, wndControl)
 	self.wndCharacter:FindChild("SecondaryAttributeFrame"):Show(false)
 	self.wndBonusFrame:Show(true)
 	Event_FireGenericEvent("InterfaceMenu_ToggleSets", self.wndBonusFrame)
-	
+
 end
 
 function Character:DrawAttributes()
@@ -962,14 +960,14 @@ end
 function Character:PrimaryStatsDrawHelper(wndContainer, strName, nValue, strIcon, crTextColor, strTooltip)
 	local wndItem = Apollo.LoadForm(self.xmlDoc, "CalloutAttributeItem", wndContainer, self)
 	wndItem:FindChild("StatLabel"):SetAML(string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", crTextColor, strName))
-	wndItem:FindChild("StatValue"):SetAML(string.format("<P Font=\"CRB_InterfaceMedium_B\" Align=\"Right\" TextColor=\"%s\">%s</P>", crTextColor, Apollo.FormatNumber(nValue, 0, true)))
+	wndItem:FindChild("StatValue"):SetAML(string.format("<P Font=\"CRB_Header10\" Align=\"Right\" TextColor=\"%s\">%s</P>", crTextColor, Apollo.FormatNumber(nValue, 0, true)))
 	wndItem:SetTooltip(strTooltip)
 end
 
 function Character:SecondaryStatsDrawHelper(wndContainer, strName, strValue, strIcon, crTextColor, strTooltip)
 	local wndItem = Apollo.LoadForm(self.xmlDoc, "SecondaryAttributeItem", wndContainer, self)
 	wndItem:FindChild("StatLabel"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", crTextColor, strName))
-	wndItem:FindChild("StatValue"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", crTextColor, strValue))
+	wndItem:FindChild("StatValue"):SetAML(string.format("<T Font=\"CRB_Header9\" TextColor=\"%s\">%s</T>", crTextColor, strValue))
 	wndItem:SetTooltip(strTooltip)
 end
 
@@ -1054,8 +1052,8 @@ function Character:UpdateMilestones()
 			wndMilestone:FindChild("ProgressPoints"):SetStyleEx("EdgeGlow", bShowGlow)
 
 			wndMilestone:FindChild("AttributeRank"):SetText(strRank)
-			wndMilestone:FindChild("AttributeName"):SetText(ktAttributeIconsText[tCurrent.idProperty][2] .. ": " .. Apollo.FormatNumber(math.floor(tCurrent.fValue, 0, true)) or 0)
-			wndMilestone:FindChild("AttributeNameIcon"):SetSprite(ktAttributeIconsText[tCurrent.idProperty][1])
+			wndMilestone:FindChild("AttributeName"):SetText(ktAttributeIconsText[tCurrent.idProperty].strName .. ": " .. Apollo.FormatNumber(math.floor(tCurrent.fValue, 0, true)) or 0)
+			wndMilestone:FindChild("AttributeNameIcon"):SetSprite(ktAttributeIconsText[tCurrent.idProperty].strIcon)
 			wndMilestone:FindChild("CurrentPoints"):SetText(Apollo.FormatNumber(nRankFloor, 0, true))
 			wndMilestone:FindChild("MaxPoints"):SetText(Apollo.FormatNumber(math.floor(nRankMax), 0, true))
 
@@ -1077,7 +1075,7 @@ function Character:UpdateMilestones()
 					local nLeft2, nTop2, nRight2, nBottom2 = wndMini:GetAnchorOffsets()
 					local nHalf = (nRight2 - nLeft2) / 2
 					local strReqColor = "ffff5555"
-					local strMiniReq = String_GetWeaselString(Apollo.GetString("Character_MiniMileReq"), Apollo.FormatNumber(tMilestone.nRequiredAmount, 0, true), ktAttributeIconsText[tCurrent.idProperty][2])
+					local strMiniReq = String_GetWeaselString(Apollo.GetString("Character_MiniMileReq"), Apollo.FormatNumber(tMilestone.nRequiredAmount, 0, true), ktAttributeIconsText[tCurrent.idProperty].strName)
 					wndMini:SetAnchorOffsets(nPosition - nHalf, nTop2, nPosition + nHalf, nBottom2)
 
 					if tMilestone.nRequiredAmount <= tCurrent.fValue then
@@ -1089,14 +1087,13 @@ function Character:UpdateMilestones()
 						wndMini:FindChild("Icon"):SetBGColor(CColor.new(.8,.8,.8,.7))
 						--wndMini:FindChild("Backer"):SetBGColor(CColor.new(1,1,1,1))
 						wndMini:FindChild("Backer"):SetBGColor(ApolloColor.new("UI_TextHoloBody"))
-						strMiniReq = "x " .. strMiniReq
 					end
 
 					if ktAttributeIconsText[tMilestone.eUnitProperty] ~= nil then
-						wndMini:FindChild("Icon"):SetSprite(ktAttributeIconsText[tMilestone.eUnitProperty][1])
+						wndMini:FindChild("Icon"):SetSprite(ktAttributeIconsText[tMilestone.eUnitProperty].strIcon)
 					end
 
-					local strMiniAmount = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">+%s %s</P>", Apollo.FormatNumber(tMilestone.fModifier, 2, true), ktAttributeIconsText[tMilestone.eUnitProperty][2])
+					local strMiniAmount = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">+%s %s</P>", Apollo.FormatNumber(tMilestone.fModifier, 2, true), ktAttributeIconsText[tMilestone.eUnitProperty].strName)
 					strMiniReq = string.format("<P><P Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</P></P>", strReqColor, strMiniReq)
 					wndMini:SetTooltip(strMiniAmount .. strMiniReq)
 				end
@@ -1123,27 +1120,37 @@ function Character:UpdateMilestones()
 	end
 end
 
+function Character:OnAttributeIconMouseExit(wndHandler, wndControl)
+	if self.wndAttributeTooltip and self.wndAttributeTooltip:IsValid() then
+		self.wndAttributeTooltip:Destroy()
+		self.wndAttributeTooltip = nil
+	end
+end
+
 function Character:OnAttributeIconToolip(wndHandler, wndControl, eType, arg1, arg2)
 	if wndHandler ~= wndControl or wndControl:GetData() == nil then
 		return
 	end
-	local tData = wndControl:GetData()
 
+	if self.wndAttributeTooltip and self.wndAttributeTooltip:IsValid() then
+		self.wndAttributeTooltip:Destroy()
+	end
+
+	local tData = wndControl:GetData()
 	local wndRankDisplay = wndControl:LoadTooltipForm("Character.xml", "MilestoneTooltip", self)
-	wndRankDisplay:FindChild("AttributeName"):SetText(ktAttributeIconsText[tData.id][2])
-	--wndRankDisplay:FindChild("AttributeNameIcon"):SetSprite(ktAttributeIconsText[tData.id][1])
-	wndRankDisplay:FindChild("AttributeSecHeader"):SetText(String_GetWeaselString(Apollo.GetString("Character_AttributeHeader"), ktAttributeIconsText[tData.id][2]))
+	wndRankDisplay:FindChild("AttributeName"):SetText(ktAttributeIconsText[tData.id].strName)
+	--wndRankDisplay:FindChild("AttributeNameIcon"):SetSprite(ktAttributeIconsText[tData.id].strIcon)
+	wndRankDisplay:FindChild("AttributeSecHeader"):SetText(String_GetWeaselString(Apollo.GetString("Character_AttributeHeader"), ktAttributeIconsText[tData.id].strName))
 
 	-- Secondaries
 	local nSecondaryHeight = 0
 	local wndSecondaries = wndRankDisplay:FindChild("AttributeSecondaries")
-
 	for idx, tValue in pairs(tData.tSecondaries) do
 		local wndSecondary = Apollo.LoadForm(self.xmlDoc, "RankSecondaryEntry", wndSecondaries, self)
 		local nBonus = string.format("%.02f", tValue.fBonus)
-		wndSecondary:FindChild("RankSecondaryEntryText"):SetText("+" .. Apollo.FormatNumber(nBonus, 0, true) .. " " .. ktAttributeIconsText[tValue.eUnitProperty][2])
+		wndSecondary:FindChild("RankSecondaryEntryText"):SetText("+" .. Apollo.FormatNumber(nBonus, 2, true) .. " " .. ktAttributeIconsText[tValue.eUnitProperty].strName)
 		wndSecondary:FindChild("RankSecondaryEntryText"):SetHeightToContentHeight()
-		wndSecondary:FindChild("RankSecondaryEntryIcon"):SetSprite(ktAttributeIconsText[tValue.eUnitProperty][1])
+		wndSecondary:FindChild("RankSecondaryEntryIcon"):SetSprite(ktAttributeIconsText[tValue.eUnitProperty].strIcon)
 		nSecondaryHeight = nSecondaryHeight + math.max(wndSecondary:FindChild("RankSecondaryEntryText"):GetHeight(), 19)
 	end
 
@@ -1158,9 +1165,9 @@ function Character:OnAttributeIconToolip(wndHandler, wndControl, eType, arg1, ar
 	for idx, tValue in pairs(tData.tContributions) do
 		local wndMilestone = Apollo.LoadForm(self.xmlDoc, "RankSecondaryEntry", wndMilestones, self)
 		local nBonus = string.format("%.02f", tValue)
-		wndMilestone:FindChild("RankSecondaryEntryText"):SetText("+" .. Apollo.FormatNumber(nBonus, 0, true) .. " " .. ktAttributeIconsText[idx][2])
+		wndMilestone:FindChild("RankSecondaryEntryText"):SetText("+" .. Apollo.FormatNumber(nBonus, 2, true) .. " " .. ktAttributeIconsText[idx].strName)
 		wndMilestone:FindChild("RankSecondaryEntryText"):SetHeightToContentHeight()
-		wndMilestone:FindChild("RankSecondaryEntryIcon"):SetSprite(ktAttributeIconsText[idx][1])
+		wndMilestone:FindChild("RankSecondaryEntryIcon"):SetSprite(ktAttributeIconsText[idx].strIcon)
 		nMilestoneHeight = nMilestoneHeight + math.max(wndMilestone:FindChild("RankSecondaryEntryText"):GetHeight(), 19)
 	end
 
@@ -1176,7 +1183,9 @@ function Character:OnAttributeIconToolip(wndHandler, wndControl, eType, arg1, ar
 	vertContL, vertContT, vertContR, vertContB = wndRankDisplay:FindChild("ArrangeVertContainer"):GetAnchorOffsets()
 
 	local nWndLeft, nWndTop, nWndRight, nWndBottom = wndRankDisplay:GetAnchorOffsets()
-	wndRankDisplay:SetAnchorOffsets(nWndLeft, nWndTop, nWndRight, vertContB + 11 )
+	wndRankDisplay:SetAnchorOffsets(nWndLeft, nWndTop, nWndRight, vertContB + 11)
+
+	self.wndAttributeTooltip = wndRankDisplay
 end
 
 function Character:HelperBuildSecondaryTooltips(idx, arProperties)
@@ -1245,7 +1254,7 @@ function Character:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 
 	local tRect = {}
 	tRect.l, tRect.t, tRect.r, tRect.b = self.wndCharacter:GetRect()
-	
+
 	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 end
 
@@ -1278,7 +1287,7 @@ function Character:OnTitleSelected(wndHandler, wndControl)
 	end
 
 	self:OnDrawEditNamePopout()
-	Apollo.CreateTimer("Character_DelayedPlayerTitleChange", 1, false) -- Also DrawNames() in 1 second, for lag
+	self.timerTitleChange:Start()
 	self.wndCharacter:FindChild("NameEditTitleContainer"):Close()
 end
 
@@ -1287,7 +1296,7 @@ function Character:OnPickGuildTag(wndHandler, wndControl) -- GuildTagBtn
 	self.wndCharacter:FindChild("NameEditGuildTagContainer"):Close()
 
 	self:OnDrawEditNamePopout()
-	Apollo.CreateTimer("Character_DelayedPlayerTitleChange", 1, false) -- Also DrawNames() in 1 second, for lag
+	self.timerTitleChange:Start()
 end
 
 function Character:OnCharacterNameEditBtn(wndHandler, wndControl)
@@ -1307,9 +1316,9 @@ function Character:DrawNames()
 			if CharacterTitle.IsActiveTitle(titleCurr) then
 				self.strTitle = titleCurr:GetTitle()
 			end
-		end 
+		end
 	end
-	
+
 	local strClass = karClassToString[unitPlayer:GetClassId()] or ""
 	local strClassIcon = karClassToIcon[unitPlayer:GetClassId()] or ""
 	local strFaction = karFactionToString[unitPlayer:GetFaction()] or ""
@@ -1398,28 +1407,40 @@ function Character:OnDrawEditNamePopout()
 	end
 
 	local bInAGuild = false
-	local bInACircle = false
+	local bInATeam = false
 	local strGuildNameCompare = unitPlayer:GetGuildName() or ""
 	self.wndCharacter:FindChild("NameEditGuildTagList"):DestroyChildren()
+	local guildSelected
 	for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
 		local strGuildName = guildCurr:GetName()
 		local wndCurr = Apollo.LoadForm(self.xmlDoc, "GuildTagBtn", self.wndCharacter:FindChild("NameEditGuildTagList"), self)
 		wndCurr:Enable(true)
 		wndCurr:SetData(guildCurr)
 		wndCurr:SetCheck(strGuildName == strGuildNameCompare)
+		if strGuildName == strGuildNameCompare then
+			guildSelected = guildCurr
+		end
+
 		wndCurr:FindChild("GuildTagBtnText"):SetText(strGuildName)
 
 		if guildCurr:GetType() == GuildLib.GuildType_Guild then
 			bInAGuild = true
-		--	self.wndCharacter:FindChild("NameEditGuildHolomarkContainerTitle"):SetText(String_GetWeaselString(Apollo.GetString("Character_HolomarkVisibility"), strGuildName))
-		elseif guildCurr:GetType() == GuildLib.GuildType_Circle then
-			bInACircle = true
 		end
+		
+		bInATeam = true
 	end
 	self.wndCharacter:FindChild("NameEditGuildTagList"):ArrangeChildrenVert(0)
-	--self.wndCharacter:FindChild("NameEditGuildTagContainer"):Show(bInAGuild)
-	self.wndCharacter:FindChild("FrameGuild"):Show(bInAGuild or bInACircle)
+	self.wndCharacter:FindChild("FrameGuild"):Show(bInAGuild or bInATeam)
 	self.wndCharacter:FindChild("NameEditGuildHolomarkContainer"):Show(bInAGuild)
+
+	wndHolomarkContainer = self.wndCharacter:FindChild("NameEditGuildHolomarkContainer")
+	bSelectedWasGuild = guildSelected and guildSelected:GetType() == GuildLib.GuildType_Guild
+
+	wndHolomarkContainer:FindChild("GuildHolomarkLeftBtn"):Enable(bSelectedWasGuild)
+	wndHolomarkContainer:FindChild("GuildHolomarkRightBtn"):Enable(bSelectedWasGuild)
+	wndHolomarkContainer:FindChild("GuildHolomarkBackBtn"):Enable(bSelectedWasGuild)
+	wndHolomarkContainer:FindChild("GuildHolomarkNearBtn"):Enable(bSelectedWasGuild)
+	wndHolomarkContainer:FindChild("GuildHolomarkFarBtn"):Enable(bSelectedWasGuild)
 
 
 	self:DrawNames()

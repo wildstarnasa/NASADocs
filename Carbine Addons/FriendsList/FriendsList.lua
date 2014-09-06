@@ -608,7 +608,7 @@ end
 
 
 function FriendsList:OnFriendshipLocation(tLocations)
-	if not self.tWndRefs.wndMain:IsShown() or self.tWndRefs.wndMain:IsShown() and self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
+	if self.tWndRefs.wndMain == nil or self.tWndRefs.wndMain:IsShown() and self.tWndRefs.wndListContainer:GetData() ~= LuaCodeEnumTabTypes.Friend then
 		return
 	end
 

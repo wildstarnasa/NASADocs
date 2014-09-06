@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_TargetFrame_FrameFriendlyFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameFriendlyFlipped.tex" x0="0" x1="0" x2="0" x3="70" x4="118" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameNeutralFlipped.tex" x0="0" x1="0" x2="0" x3="72" x4="118" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameHostileFlipped.tex" x0="0" x1="0" x2="0" x3="70" x4="118" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameTappedFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_FrameGreyFlipped.tex" x0="0" x1="0" x2="0" x3="70" x4="118" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="104" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillEdgeGlowFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="293" x1="293" x2="293" x3="293" x4="293" x5="341" y0="858" y1="858" y2="858" y3="858" y4="858" y5="906" HotspotX="24" HotspotY="24" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillGreenFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthGreenFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillYellowFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthYellowFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillRedFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthRedFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthFillVulernableFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthVulnerableFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="173" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_ShieldFillFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthShieldFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="75" y0="0" y1="0" y2="0" y3="0" y4="0" y5="51" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_TempShieldFillFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthShieldTempFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="75" y0="0" y1="0" y2="0" y3="0" y4="0" y5="51" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthSplitFriendlyFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthSplitFriendlyFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthSplitNeutralFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthSplitNeutralFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_HealthSplitHostileFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_HealthSplitHostileFlipped.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="0" y1="0" y2="0" y3="0" y4="0" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameFriendlyIconicDominionFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="0" x1="0" x2="0" x3="122" x4="128" x5="339" y0="143" y1="143" y2="143" y3="143" y4="143" y5="285" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameFriendlyIconicExileFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="0" x1="0" x2="0" x3="122" x4="128" x5="339" y0="286" y1="286" y2="286" y3="286" y4="286" y5="428" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameVehicleFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="0" x1="0" x2="0" x3="122" x4="128" x5="339" y0="429" y1="429" y2="429" y3="429" y4="429" y5="571" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralBossFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="340" x1="340" x2="340" x3="462" x4="468" x5="679" y0="143" y1="143" y2="143" y3="143" y4="143" y5="285" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralRareFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="340" x1="340" x2="340" x3="462" x4="468" x5="679" y0="286" y1="286" y2="286" y3="286" y4="286" y5="428" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameNeutralEliteFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="340" x1="340" x2="340" x3="462" x4="468" x5="679" y0="429" y1="429" y2="429" y3="429" y4="429" y5="571" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileBossFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="680" x1="680" x2="680" x3="802" x4="808" x5="1019" y0="143" y1="143" y2="143" y3="143" y4="143" y5="285" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileRareFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="680" x1="680" x2="680" x3="802" x4="808" x5="1019" y0="286" y1="286" y2="286" y3="286" y4="286" y5="428" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileEliteFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="680" x1="680" x2="680" x3="802" x4="808" x5="1019" y0="429" y1="429" y2="429" y3="429" y4="429" y5="571" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileIconicDominionFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="680" x1="680" x2="680" x3="802" x4="808" x5="1019" y0="572" y1="572" y2="572" y3="572" y4="572" y5="714" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameHostileIconicExileFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="680" x1="680" x2="680" x3="802" x4="808" x5="1019" y0="715" y1="715" y2="715" y3="715" y4="715" y5="857" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_FrameIconicFlipped" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFramesFlipped.tga" x0="0" x1="0" x2="0" x3="122" x4="128" x5="339" y0="715" y1="715" y2="715" y3="715" y4="715" y5="857" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

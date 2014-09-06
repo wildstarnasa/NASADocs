@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <AutoButton Name="BtnBuildMap_Options" Texture="UI\Assets\Textures\UI_BuildMap_Btn.tga" x0="0" x1="12" x2="87" x3="87" x4="87" x5="116" y0="0" y1="7" y2="22" y3="68" y4="83" y5="91" Stretchy="1" StateBits="31" Direction="Down"/>
+</Sprites>

@@ -197,6 +197,9 @@ function MatchMaker:OnDocumentReady()
 	
 	self.wndJoinGame 				= Apollo.LoadForm(self.xmlDoc, "JoinGame", nil, self)
 	self.nJoinGameLeft, self.nJoinGameTop, self.nJoinGameRight, self.nJoinGameBottom = self.wndJoinGame:GetAnchorOffsets()
+	
+	local wndWarning = self.wndJoinGame:FindChild("RatedWarning")
+	self.nWarningHeight = self.nJoinGameTop > 0 and wndWarning:GetHeight() or wndWarning:GetHeight() * - 1
 
 	self.wndMyRating 				= self.wndMain:FindChild("RatingWindow")
 	self.wndMyRating:Show(false)
@@ -935,14 +938,9 @@ function MatchMaker:OnGameReady(bInProgress)
 		self.eQueuedTab == MatchingGame.MatchType.RatedBattleground or 
 		self.eQueuedTab == MatchingGame.MatchType.Warplot
 	
-	local wndWarning = self.wndJoinGame:FindChild("RatedWarning")
-	local nWarningHeight = self.nJoinGameTop > 0 and wndWarning:GetHeight() or wndWarning:GetHeight() * - 1
-	local nOffsetTop  = bRatedMatch and self.nJoinGameTop or self.nJoinGameTop - nWarningHeight
-		
-	wndWarning:Show(bRatedMatch)
 	self.wndJoinGame:SetAnchorOffsets(
 		self.nJoinGameLeft,
-		nOffsetTop,
+		bRatedMatch and self.nJoinGameTop or self.nJoinGameTop - self.nWarningHeight,
 		self.nJoinGameRight,
 		self.nJoinGameBottom
 	)
@@ -1267,7 +1265,7 @@ end
 end--]]
 
 function MatchMaker:OnPendingGameResponded(wndHandler, wndControl, bResponse)
-	if bResponse then
+	if not bResponse then
 		self.eSelectedTab = self.eQueuedTab
 		self:OnMatchMakerOn()
 	else

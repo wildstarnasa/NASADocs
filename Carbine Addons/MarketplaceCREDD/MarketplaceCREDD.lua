@@ -154,6 +154,11 @@ function MarketplaceCREDD:Initialize()
 end
 
 function MarketplaceCREDD:OnToggleCREDDExchangeWindow()
+	if AccountItemLib.CodeEnumEntitlement.EconomyParticipation and AccountItemLib.GetEntitlementCount(AccountItemLib.CodeEnumEntitlement.EconomyParticipation) == 0 then
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", Apollo.GetString("CRB_FeatureDisabledForGuests"))
+		return
+	end
+
 	local wndMain = self.tWindowMap["Main"]
 	if not wndMain or not wndMain:IsValid() then
 		self:Initialize()
@@ -271,10 +276,12 @@ function MarketplaceCREDD:RefreshEscrow()
 		end
 	end
 
-	local strText = nCreddEscrow > 0 and String_GetWeaselString(Apollo.GetString("MarketplaceCredd_AccountInventoryCount"), nCreddEscrow) or Apollo.GetString("AccountInv_TitleText")
-	local strTooltip = nCreddEscrow > 0 and Apollo.GetString("MarketplaceCredd_HaveInventoryTooltip") or Apollo.GetString("MarketplaceCredd_OpenInventoryTooltip")
-	self.tWindowMap["OpenInventoryBtn"]:SetText(strText)
-	self.tWindowMap["OpenInventoryBtn"]:SetTooltip(strTooltip)
+	if self.tWindowMap["OpenInventoryBtn"] then
+		local strText = nCreddEscrow > 0 and String_GetWeaselString(Apollo.GetString("MarketplaceCredd_AccountInventoryCount"), nCreddEscrow) or Apollo.GetString("AccountInv_TitleText")
+		local strTooltip = nCreddEscrow > 0 and Apollo.GetString("MarketplaceCredd_HaveInventoryTooltip") or Apollo.GetString("MarketplaceCredd_OpenInventoryTooltip")
+		self.tWindowMap["OpenInventoryBtn"]:SetText(strText)
+		self.tWindowMap["OpenInventoryBtn"]:SetTooltip(strTooltip)
+	end
 end
 
 function MarketplaceCREDD:RefreshBoundCredd()
@@ -401,7 +408,7 @@ function MarketplaceCREDD:OnCreddTransactionBtn(wndHandler, wndControl, eMouseBu
 	self.tWindowMap["ConfirmationTaxCash"]:SetAmount(nCurrAmount * 0.05)
 	self.tWindowMap["ConfirmationBaseCash"]:SetAmount(nCurrAmount)
 	self.tWindowMap["ConfirmationBigCash"]:SetAmount(bBuy and (nCurrAmount * 1.05) or nCurrAmount)
-	
+
 	self.tWindowMap["ConfirmationBigText"]:SetText(strBigText)
 	self.tWindowMap["ConfirmationYesBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.CREDDExchangeSubmit, bBuy, wndCurrAmount:GetCurrency(), bNow)
 end
@@ -425,7 +432,7 @@ function MarketplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResul
 		self.tWindowMap["PostResultNotificationCheck"]:SetSprite(bSuccess and "Icon_Windows_UI_CRB_Checkmark" or "LootCloseBox")
 		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString(ktResultErrorCodeStrings[eResult]))
 	end
-	
+
 	Apollo.StartTimer("HidePostResultNotification")
 	self:RefreshBoundCredd()
 end

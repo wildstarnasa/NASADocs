@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_ActionBarShortcut_Base" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ActionBarShortcut.tex" x0="0" x1="340" x2="618" x3="618" x4="618" x5="958" y0="0" y1="0" y2="0" y3="0" y4="0" y5="186" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_ActionBarShortcut_Float" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ActionBarShortcut.tex" x0="266" x1="359" x2="669" x3="669" x4="669" x5="762" y0="187" y1="187" y2="187" y3="187" y4="187" y5="296" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_ActionBarShortcut_FloatVert" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ActionBarShortcut_2.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="108" y0="0" y1="60" y2="284" y3="284" y4="513" y5="572" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btn_ActionBarShortcut_Dock" Texture="UI\Assets\Textures\UI_CRB_ActionBarShortcut.tga" x0="0" x1="53" x2="53" x3="53" x4="53" x5="53" y0="187" y1="187" y2="187" y3="187" y4="187" y5="229" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_ActionBarShortcut_Orientation" Texture="UI\Assets\Textures\UI_CRB_ActionBarShortcut.tga" x0="0" x1="53" x2="53" x3="53" x4="53" x5="53" y0="230" y1="230" y2="230" y3="230" y4="230" y5="272" StateBits="31" Direction="Across"/>
+    <Sprite Name="spr_ActionBarShortcut_Slot" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ActionBarShortcut.tex" x0="959" x1="959" x2="959" x3="959" x4="959" x5="1001" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

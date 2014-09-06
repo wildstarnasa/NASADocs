@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="BinkLogo" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BinkLogo.bmp" x0="0" x1="0" x2="448" x3="448" x4="448" x5="448" y0="0" y1="0" y2="455" y3="455" y4="455" y5="455" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="WwiseLogo" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Wwise.tga" x0="0" x1="0" x2="400" x3="400" x4="400" x5="400" y0="0" y1="0" y2="400" y3="400" y4="400" y5="400" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>
