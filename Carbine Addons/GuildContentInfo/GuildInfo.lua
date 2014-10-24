@@ -421,11 +421,15 @@ function GuildInfo:OnGuildLoaded(guildLoaded)
 end
 
 function GuildInfo:OnGuildFlags(guildUpdated)
-	guildUpdated:GetChannel():Post(Apollo.GetString("Guild_FlagsChanged"))
+	if guildUpdated and guildUpdated:GetChannel() then
+		guildUpdated:GetChannel():Post(Apollo.GetString("Guild_FlagsChanged"))
+	end
 end
 
 function GuildInfo:OnGuildName(guildUpdated)
-	guildUpdated:GetChannel():Post(String_GetWeaselString(Apollo.GetString("Guild_NameChanged"), guildUpdated:GetName() ))
+	if guildUpdated and guildUpdated:GetChannel() then
+		guildUpdated:GetChannel():Post(String_GetWeaselString(Apollo.GetString("Guild_NameChanged"), guildUpdated:GetName() ))
+	end
 end
 
 local GuildInst = GuildInfo:new()

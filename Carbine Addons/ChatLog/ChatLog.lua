@@ -31,7 +31,7 @@ local knChannelListHeight = 275
 
 local knWindowStayOnScreenOffset = 50
 
-local knSaveVersion = 3
+local knSaveVersion = 4
 
 local karEvalColors =
 {
@@ -56,6 +56,8 @@ local karChannelTypeToColor = -- TODO Merge into one table like this
 	[ChatSystemLib.ChatChannel_Emote] 			= { Channel = "ChannelEmote", 			},
 	[ChatSystemLib.ChatChannel_AnimatedEmote] 	= { Channel = "ChannelEmote", 			},
 	[ChatSystemLib.ChatChannel_Zone] 			= { Channel = "ChannelZone", 			},
+	[ChatSystemLib.ChatChannel_ZoneGerman]		= { Channel = "ChannelZone", 			},
+	[ChatSystemLib.ChatChannel_ZoneFrench]		= { Channel = "ChannelZone", 			},
 	[ChatSystemLib.ChatChannel_ZonePvP] 		= { Channel = "ChannelPvP", 			},
 	[ChatSystemLib.ChatChannel_Trade] 			= { Channel = "ChannelTrade",			},
 	[ChatSystemLib.ChatChannel_Guild] 			= { Channel = "ChannelGuild", 			},
@@ -74,6 +76,8 @@ local karChannelTypeToColor = -- TODO Merge into one table like this
 	[ChatSystemLib.ChatChannel_WarParty] 		= { Channel = "ChannelWarParty",		},
 	[ChatSystemLib.ChatChannel_WarPartyOfficer] = { Channel = "ChannelWarPartyOfficer", },
 	[ChatSystemLib.ChatChannel_Advice] 			= { Channel = "ChannelAdvice", 			},
+	[ChatSystemLib.ChatChannel_AdviceGerman]	= { Channel = "ChannelAdvice", 			},
+	[ChatSystemLib.ChatChannel_AdviceFrench]	= { Channel = "ChannelAdvice", 			},
 	[ChatSystemLib.ChatChannel_AccountWhisper] 	= { Channel = "ChannelAccountWisper", 	},
 }
 
@@ -88,6 +92,8 @@ local ktDefaultChannels =
 	[ChatSystemLib.ChatChannel_Emote] 			= true,
 	[ChatSystemLib.ChatChannel_AnimatedEmote] 	= true,
 	[ChatSystemLib.ChatChannel_Zone]			= true,
+	[ChatSystemLib.ChatChannel_ZoneGerman]	 	= true,
+	[ChatSystemLib.ChatChannel_ZoneFrench]	 	= true,
 	[ChatSystemLib.ChatChannel_ZonePvP] 		= true,
 	[ChatSystemLib.ChatChannel_Trade] 			= true,
 	[ChatSystemLib.ChatChannel_Guild] 			= true,
@@ -106,6 +112,8 @@ local ktDefaultChannels =
 	[ChatSystemLib.ChatChannel_PlayerPath] 		= true,
 	[ChatSystemLib.ChatChannel_Instance] 		= true,
 	[ChatSystemLib.ChatChannel_Advice] 			= true,
+	[ChatSystemLib.ChatChannel_AdviceGerman] 	= true,
+	[ChatSystemLib.ChatChannel_AdviceFrench] 	= true,
 	[ChatSystemLib.ChatChannel_AccountWhisper]	= true,
 }
 
@@ -343,6 +351,8 @@ function ChatLog:OnDocumentReady()
 		[ChatSystemLib.ChatChannel_Party] 			= ApolloColor.new("ChatParty"),
 		[ChatSystemLib.ChatChannel_AnimatedEmote] 	= ApolloColor.new("ChatEmote"),
 		[ChatSystemLib.ChatChannel_Zone] 			= ApolloColor.new("ChatZone"),
+		[ChatSystemLib.ChatChannel_ZoneGerman]		= ApolloColor.new("ChatZone"),
+		[ChatSystemLib.ChatChannel_ZoneFrench]		= ApolloColor.new("ChatZone"),
 		[ChatSystemLib.ChatChannel_ZonePvP] 		= ApolloColor.new("ChatPvP"),
 		[ChatSystemLib.ChatChannel_Trade] 			= ApolloColor.new("ChatTrade"),
 		[ChatSystemLib.ChatChannel_Guild] 			= ApolloColor.new("ChatGuild"),
@@ -362,6 +372,8 @@ function ChatLog:OnDocumentReady()
 		[ChatSystemLib.ChatChannel_WarParty] 		= ApolloColor.new("ChatWarParty"),
 		[ChatSystemLib.ChatChannel_WarPartyOfficer] = ApolloColor.new("ChatWarPartyOfficer"),
 		[ChatSystemLib.ChatChannel_Advice] 			= ApolloColor.new("ChatAdvice"),
+		[ChatSystemLib.ChatChannel_AdviceGerman]	= ApolloColor.new("ChatAdvice"),
+		[ChatSystemLib.ChatChannel_AdviceFrench]	= ApolloColor.new("ChatAdvice"),
 		[ChatSystemLib.ChatChannel_AccountWhisper]	= ApolloColor.new("ChatAccountWisper"),
 	}
 
@@ -816,6 +828,20 @@ end
 
 function ChatLog:OnChatJoin( channelJoined )
 	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Command, String_GetWeaselString(Apollo.GetString("ChatLog_JoinChannel"),  channelJoined:GetName()), "" );
+		
+	-- ChatJoin event is called both on startup and on join. 
+
+	for idx, wndChatWindow in pairs(self.tChatWindows) do
+		wndChatWindow:FindChild("InputWindow"):Close()
+				
+		-- explicit check for nil, it means we have have no saved setting for this channel displaying in this window.
+
+		local tChatData = wndChatWindow:GetData()
+		if not tChatData.bCombatLog and tChatData.tViewedChannels[channelType] == nil then   
+			self:HelperAddChannelToAll(channelJoined:GetType())
+			tChatData.tViewedChannels[channelJoined:GetType()] = true
+		end
+	end
 end
 
 function ChatLog:OnChatLeave( channelLeft, bKicked, bBanned )
@@ -839,7 +865,6 @@ function ChatLog:OnChatLeave( channelLeft, bKicked, bBanned )
 			wndInputType:SetTextColor(tChatData.crText)
 		end
 	end
-
 end
 
 function ChatLog:OnChatList( channelSource )
@@ -1189,7 +1214,9 @@ function ChatLog:OnCloseChatWindow(wndHandler, wndControl)
 
 	if tChatData ~= nil then -- remove this window's channels from the total list
 		for idx, value in pairs(tChatData.tViewedChannels) do
-			self:HelperRemoveChannelFromAll(idx)
+			if tChatData.tViewedChannels[idx] then
+				self:HelperRemoveChannelFromAll(idx)
+			end
 		end
 	end
 
@@ -1262,7 +1289,6 @@ end
 function ChatLog:VerifyChannelVisibility(channelChecking, tInput, wndChat)
 	local tChatData = wndChat:GetData()
 
-	--if tChatData.tViewedChannels[ channelChecking:GetType() ] ~= nil then
 	if self.tAllViewedChannels[ channelChecking:GetType() ] ~= nil then -- see if this channelChecking is viewed
 		local strMessage = tInput.strMessage
 		if channelChecking:GetType() == ChatSystemLib.ChatChannel_AccountWhisper then
@@ -1462,7 +1488,7 @@ function ChatLog:OnViewCheck(wndHandler, wndControl)
 	end
 
 	if tData.tViewedChannels[channelType] then
-		tData.tViewedChannels[channelType] = nil
+		tData.tViewedChannels[channelType] = false
 		self:HelperRemoveChannelFromAll(channelType)
 	else
 		tData.tViewedChannels[channelType] = true
@@ -1763,7 +1789,6 @@ function ChatLog:BuildInputTypeMenu(wndChat) -- setting this up externally so we
 	local nCount = 0 --number of joined channels
 
 	for idx, channelCurrent in pairs(tChannels) do -- gives us our viewed channels
-		--if tData.tViewedChannels[ channelCurrent:GetType() ] ~= nil then
 		if self.tAllViewedChannels[ channelCurrent:GetType() ] ~= nil then
 			if channelCurrent:GetCommand() ~= nil and channelCurrent:GetCommand() ~= "" then -- make sure it's a channelCurrent that can be spoken into
 				local strCommand = channelCurrent:GetAbbreviation()

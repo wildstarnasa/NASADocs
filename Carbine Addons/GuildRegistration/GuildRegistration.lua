@@ -22,14 +22,21 @@ require "Tooltip"
 require "GroupLib"
 require "PlayerPathLib"
 
------------------------------------------------------------------------------------------------
--- GuildRegistration Module Definition
------------------------------------------------------------------------------------------------
 local GuildRegistration = {}
 
 local kcrDefaultText = CColor.new(135/255, 135/255, 135/255, 1.0)
 local kcrHighlightedText = CColor.new(0, 1.0, 1.0, 1.0)
 local eProfanityFilter = GameLib.CodeEnumUserTextFilterClass.Strict
+
+local ktstrGuildTypes =
+{
+	[GuildLib.GuildType_Guild]			= Apollo.GetString("Guild_GuildTypeGuild"),
+	[GuildLib.GuildType_Circle]			= Apollo.GetString("Guild_GuildTypeCircle"),
+	[GuildLib.GuildType_ArenaTeam_2v2]	= Apollo.GetString("Guild_GuildTypeArena"),
+	[GuildLib.GuildType_ArenaTeam_3v3]	= Apollo.GetString("Guild_GuildTypeArena"),
+	[GuildLib.GuildType_ArenaTeam_5v5]	= Apollo.GetString("Guild_GuildTypeArena"),
+	[GuildLib.GuildType_WarParty]		= Apollo.GetString("Guild_GuildTypeWarparty"),
+}
 
 local kstrDefaultOption =
 {
@@ -53,16 +60,20 @@ end
 
 function GuildRegistration:OnLoad() -- TODO: Only load when needed
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildRegistration.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function GuildRegistration:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
+	Apollo.RegisterTimerHandler("GuildRegistration_CheckForcedRename", "OnGuildRegistration_CheckForcedRename", self)
+	Apollo.CreateTimer("GuildRegistration_CheckForcedRename", 1.50, false)
+	Apollo.StartTimer("GuildRegistration_CheckForcedRename")
+
 	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
-	
+
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", "OnGuildResultInterceptResponse", self)
 	Apollo.RegisterTimerHandler("SuccessfulMessageTimer", 	"OnSuccessfulMessageTimer", self)
 	Apollo.RegisterTimerHandler("ErrorMessageTimer", 		"OnErrorMessageTimer", self)
@@ -306,7 +317,7 @@ end
 function GuildRegistration:OnRegisterBtn(wndHandler, wndControl)
 	local tGuildInfo = self.tCreate
 
-	local arGuldResultsExpected = { GuildLib.GuildResult_Success,  GuildLib.GuildResult_AtMaxGuildCount, GuildLib.GuildResult_InvalidGuildName, 
+	local arGuldResultsExpected = { GuildLib.GuildResult_Success,  GuildLib.GuildResult_AtMaxGuildCount, GuildLib.GuildResult_InvalidGuildName,
 									 GuildLib.GuildResult_GuildNameUnavailable, GuildLib.GuildResult_NotEnoughRenown, GuildLib.GuildResult_NotEnoughCredits,
 									 GuildLib.GuildResult_InsufficientInfluence, GuildLib.GuildResult_NotHighEnoughLevel, GuildLib.GuildResult_YouJoined,
 									 GuildLib.GuildResult_YouCreated, GuildLib.GuildResult_MaxArenaTeamCount, GuildLib.GuildResult_MaxWarPartyCount,
@@ -490,6 +501,61 @@ function GuildRegistration:OnHolomarkPartItemSelected(wndHandler, wndControl)
 	self:UpdateOptions()
 
 	self:OnHolomarkPartSelectionClosed(wndHandler, wndControl)
+end
+
+-----------------------------------------------------------------------------------------------
+-- Forced Rename Code
+-----------------------------------------------------------------------------------------------
+
+function GuildRegistration:OnGuildRegistration_CheckForcedRename()
+	for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
+		if guildCurr and guildCurr:GetFlags() and guildCurr:GetFlags().bRename and guildCurr:GetMyRank() == 1 then
+			local strGuildType = ktstrGuildTypes[guildCurr:GetType()]
+			self.wndForcedRename = Apollo.LoadForm(self.xmlDoc, "RenameSocialAlert", nil, self)
+			self.wndForcedRename:FindChild("TitleBlock"):SetText(String_GetWeaselString(Apollo.GetString("ForceRenameSocial_TitleBlock"), strGuildType, guildCurr:GetName()))
+			--self.wndForcedRename:FindChild("RenameEditBox"):SetPrompt(guildCurr:GetName())
+			self.wndForcedRename:FindChild("RenameEditBox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName))
+			self.wndForcedRename:FindChild("StatusValidAlert"):Show(true)
+			self.wndForcedRename:FindChild("RenameSocialConfirm"):SetData(guildCurr)
+			self.wndForcedRename:FindChild("RenameSocialConfirm"):Enable(false)
+			self.wndForcedRename:Invoke()
+
+			-- Resize
+			local strRenameBodyText = String_GetWeaselString(Apollo.GetString("ForceRenameSocial_BodyBlock"), strGuildType)
+			local nLeft, nTop, nRight, nBottom = self.wndForcedRename:GetAnchorOffsets()
+			self.wndForcedRename:FindChild("BodyBlock"):SetAML(string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</T>", strRenameBodyText))
+			self.wndForcedRename:FindChild("BodyBlock"):SetHeightToContentHeight()
+			self.wndForcedRename:SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.wndForcedRename:FindChild("BodyBlock"):GetHeight() + 310)
+
+			-- Hack for descenders
+			nLeft, nTop, nRight, nBottom = self.wndForcedRename:FindChild("BodyBlock"):GetAnchorOffsets()
+			self.wndForcedRename:FindChild("BodyBlock"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.wndForcedRename:FindChild("BodyBlock"):GetHeight() + 5)
+
+			return -- Do them one at a time
+		end
+	end
+end
+
+function GuildRegistration:OnRenameSocialCancel()
+	if self.wndForcedRename and self.wndForcedRename:IsValid() then
+		self.wndForcedRename:Destroy()
+		self.wndForcedRename = nil
+	end
+end
+
+function GuildRegistration:OnRenameEditBoxChanged(wndHandler, wndControl)
+	local strInput = wndHandler:GetText()
+	local bValid = strInput and GameLib.IsTextValid(strInput, GameLib.CodeEnumUserText.GuildName, eProfanityFilter)
+	self.wndForcedRename:FindChild("RenameSocialConfirm"):Enable(bValid)
+	self.wndForcedRename:FindChild("StatusValidAlert"):Show(not bValid)
+end
+
+function GuildRegistration:OnRenameSocialConfirm(wndHandler, wndControl)
+	wndHandler:GetData():Rename(self.wndForcedRename:FindChild("RenameEditBox"):GetText())
+	self:OnRenameSocialCancel()
+	--self.timerForcedRename:Start() -- Do it again if we have a 2nd one to do
+
+	Apollo.StartTimer("GuildRegistration_CheckForcedRename")
 end
 
 -----------------------------------------------------------------------------------------------

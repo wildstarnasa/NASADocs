@@ -1051,22 +1051,22 @@ end
 
 function QuestTracker:OnEpisodeMinimizedBtnChecked(wndHandler, wndControl, eMouseButton)
 	self.tMinimized.tEpisode[wndHandler:GetData()] = true
-	self:ResizeAll()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnEpisodeMinimizedBtnUnChecked(wndHandler, wndControl, eMouseButton)
 	self.tMinimized.tEpisode[wndHandler:GetData()] = nil
-	self:ResizeAll()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnEpisodeGroupMinimizedBtnChecked(wndHandler, wndControl, eMouseButton)
 	self.tMinimized.tEpisodeGroup[wndHandler:GetData()] = true
-	self:ResizeAll()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnEpisodeGroupMinimizedBtnUnChecked(wndHandler, wndControl, eMouseButton)
 	self.tMinimized.tEpisodeGroup[wndHandler:GetData()] = nil
-	self:ResizeAll()
+	self:RedrawAll()
 end
 
 function QuestTracker:OnEventMinimizedBtnChecked(wndHandler, wndControl, eMouseButton)

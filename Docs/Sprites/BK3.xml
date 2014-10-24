@@ -261,6 +261,21 @@
     <Sprite Name="UI_BK3_Holo_Framing_3_StoryPanel" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_Framing_StoryPanel.tex" x0="0" x1="47" x2="110" x3="110" x4="110" x5="160" y0="0" y1="47" y2="196" y3="196" y4="196" y5="248" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="UI_BK3_Holo_ProgressBar_BG_orange" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_ProgressBar_BG_orange.tex" x0="0" x1="30" x2="333" x3="333" x4="333" x5="364" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_BK3_Holo_ProgressBar_Fill_orange" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_ProgressBar_fill_orange.tex" x0="0" x1="0" x2="363" x3="363" x4="363" x5="363" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="UI_BK3_Holo_ProgressBar_Cap_orange" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_ProgressBar_cap_orange.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="6" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="2" HotspotY="19" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+	<Sprite Name="UI_BK3_Holo_InsetDark" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_InsetDark.tex" x0="0" x1="10" x2="12" x3="12" x4="12" x5="22" y0="0" y1="10" y2="12" y3="12" y4="12" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+	<Sprite Name="sprHolo_Alert_Notify_Orange" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BK3_Holo_Framing_Alert.tga" x0="0" x1="84" x2="299" x3="299" x4="299" x5="380" y0="0" y1="74" y2="98" y3="98" y4="98" y5="172" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <AutoButton Name="btnMetal_TabMainLeft" Texture="UI\Assets\Textures\UI_BK3_Metal_Btn_NavPrimary_Left.tex" x0="0" x1="22" x2="73" x3="131" x4="182" x5="204" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" Stretchy="1" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnMetal_TabMainMid" Texture="UI\Assets\Textures\UI_BK3_Metal_Btn_NavPrimary_Mid.tex" x0="0" x1="22" x2="73" x3="131" x4="182" x5="204" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" Stretchy="1" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnMetal_TabMainRight" Texture="UI\Assets\Textures\UI_BK3_Metal_Btn_NavPrimary_Right.tex" x0="0" x1="22" x2="73" x3="131" x4="182" x5="204" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" Stretchy="1" StateBits="31" Direction="Across"/>
@@ -305,9 +320,9 @@
     <AutoButton Name="btnMetal_Scroll_Bar_Horiz" Texture="UI\Assets\Textures\UI_BK3_Metal_ExpandMenu_Scroll_Bars_Horiz.tga" x0="1" x1="10" x2="49" x3="49" x4="49" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" StateBits="31" Direction="Down"/>
     <AutoButton Name="btnMetal_Scroll_Left_Horiz" Texture="UI\Assets\Textures\UI_BK3_Metal_ExpandMenu_Scroll_Horiz_Btn.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="20" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" StateBits="31" Direction="Down"/>
     <AutoButton Name="btnMetal_Scroll_Right_Horiz" Texture="UI\Assets\Textures\UI_BK3_Metal_ExpandMenu_Scroll_Horiz_Btn.tga" x0="20" x1="20" x2="20" x3="20" x4="20" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" StateBits="31" Direction="Down"/>
-    <AutoButton Name="btnPreGame_CornerRed" Texture="UI\Assets\Textures\UI_BK3_PregameExit_Btn.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="139" y0="0" y1="0" y2="0" y3="0" y4="0" y5="121" StateBits="15" Direction="Across"/>
-    <AutoButton Name="btnPreGame_CornerBlue" Texture="UI\Assets\Textures\UI_BK3_PregameConfig_Btn.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="139" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" StateBits="15" Direction="Across"/>
-    <AutoButton Name="btnMetal_Flyout" Texture="UI\Assets\Textures\UI_BK3_Metal_BtnFlyout.tga" x0="0" x1="34" x2="60" x3="104" x4="104" x5="104" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnPreGame_CornerRed" Texture="UI\Assets\Textures\UI_BK3_PregameExit_Btn.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="121" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btnPreGame_CornerBlue" Texture="UI\Assets\Textures\UI_BK3_PregameConfig_Btn.tga" x0="0" x1="0" x2="1" x3="144" x4="144" x5="144" y0="0" y1="0" y2="0" y3="0" y4="0" y5="120" StateBits="15" Direction="Across"/>
+     <AutoButton Name="btnMetal_Flyout" Texture="UI\Assets\Textures\UI_BK3_Metal_BtnFlyout.tga" x0="0" x1="34" x2="60" x3="104" x4="104" x5="104" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" Stretchy="1" StateBits="31" Direction="Down"/>
     <AutoButton Name="btnMetal_Search" Texture="UI\Assets\Textures\UI_BK3_Btn_Search.tga" x0="0" x1="36" x2="36" x3="36" x4="36" x5="36" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnMetal_SearchClear" Texture="UI\Assets\Textures\UI_BK3_Btn_SearchClear.tga" x0="0" x1="36" x2="36" x3="36" x4="36" x5="36" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnMetal_Dropdown" Texture="UI\Assets\Textures\UI_BK3_Metal_BtnDropdownt.tex" x0="0" x1="22" x2="65" x3="100" x4="100" x5="100" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" Stretchy="1" StateBits="31" Direction="Down"/>
@@ -319,4 +334,5 @@
     <AutoButton Name="btnHolo_Pin_01" Texture="UI\Assets\Textures\UI_BK3_Holo_Btn_PinItem.tex" x0="0" x1="23" x2="23" x3="23" x4="23" x5="23" y0="0" y1="22" y2="22" y3="22" y4="22" y5="22" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnHolo_Pin_2" Texture="UI\Assets\Textures\UI_BK3_Holo_InterfaceTack.tga" x0="0" x1="20" x2="20" x3="20" x4="20" x5="20" y0="0" y1="20" y2="20" y3="20" y4="20" y5="20" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnMetal_Flyout_Flipped" Texture="UI\Assets\Textures\UI_BK3_Metal_BtnFlyout_Flipped.tex" x0="0" x1="34" x2="60" x3="102" x4="102" x5="102" y0="0" y1="36" y2="36" y3="36" y4="36" y5="36" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnHolo_Dice" Texture="UI\Assets\Textures\UI_BK3_Holo_Btn_Dice.tex" x0="0" x1="0" x2="48" x3="48" x4="48" x5="48" y0="0" y1="0" y2="48" y3="48" y4="48" y5="48" Stretchy="1" StateBits="31" Direction="Across"/>
 </Sprites>

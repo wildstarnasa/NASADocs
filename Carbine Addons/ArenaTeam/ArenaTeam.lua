@@ -59,7 +59,7 @@ function ArenaTeam:OnDocumentReady()
 end
 
 function ArenaTeam:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Guild_GuildTypeArena")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Guild_GuildTypeArena"), nSaveVersion=2})
 end
 
 function ArenaTeam:OnClose()

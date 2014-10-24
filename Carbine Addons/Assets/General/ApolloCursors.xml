@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<ApolloCursors>
+	<ApolloCursor Name="Default" Filename="UI\Cursors\point.dds" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="DefaultResizeNS" Filename="UI\Cursors\resizeNS.dds" HotspotX="5" HotspotY="10"/>
+	<ApolloCursor Name="DefaultResizeEW" Filename="UI\Cursors\resizeEW.dds" HotspotX="10" HotspotY="5"/>
+	<ApolloCursor Name="DefaultResizeNESW" Filename="UI\Cursors\resizeNESW.dds" HotspotX="10" HotspotY="10"/>
+	<ApolloCursor Name="DefaultResizeNWSE" Filename="UI\Cursors\resizeNWSE.dds" HotspotX="10" HotspotY="10"/>
+	<ApolloCursor Name="DragDropIgnore" Filename="UI\Cursors\UI_CRB_Cursor_DragDropIgnore.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="DragDropValid" Filename="UI\Cursors\UI_CRB_Cursor_DragDropAccept.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="DragDropInvalid" Filename="UI\Cursors\UI_CRB_Cursor_DragDropCancel.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="DragDropTrash" Filename="UI\Cursors\UI_CRB_Cursor_DragDropCancel.dds" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="DragDropTrade" Filename="UI\Cursors\UI_CRB_Cursor_HandOpenTrade.dds" HotspotX="5" HotspotY="16"/>
+
+	<ApolloCursor Name="DefaultGame" Filename="UI\Cursors\UI_CRB_Cursor_PointBlue.tga" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="Attack" Filename="UI\Cursors\Attack.tex" HotspotX="0" HotspotY="6"/>
+	<ApolloCursor Name="AttackWarrior" Filename="UI\Cursors\UI_CRB_Cursor_AttackWarrior.tga" HotspotX="0" HotspotY="6"/>
+	<ApolloCursor Name="AttackSpellslinger" Filename="UI\Cursors\UI_CRB_Cursor_AttackSpellslinger.tex" HotspotX="2" HotspotY="8"/>
+	<ApolloCursor Name="AttackESPer" Filename="UI\Cursors\UI_CRB_Cursor_AttackBlade.tex" HotspotX="15" HotspotY="15"/>
+	<ApolloCursor Name="AttackMedic" Filename="UI\Cursors\UI_CRB_Cursor_AttackMedic.tex" HotspotX="7" HotspotY="4"/>
+
+	<ApolloCursor Name="PendingSpell" Filename="UI\Cursors\cursor_spell_target.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="PendingSpellInvalid" Filename="UI\Cursors\cursor_loot_inactive.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="PathExplorer" Filename="UI\Cursors\UI_CRB_Cursor_PathExplorer.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="PathExplorerInactive" Filename="UI\Cursors\UI_CRB_Cursor_PathExplorer.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="PathSettler" Filename="UI\Cursors\UI_CRB_Cursor_PathSettler.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="PathSettlerInactive" Filename="UI\Cursors\UI_CRB_Cursor_PathSettler.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="PathSoldier" Filename="UI\Cursors\UI_CRB_Cursor_PathSoldier.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="PathSoldierInactive" Filename="UI\Cursors\UI_CRB_Cursor_PathSoldier.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="PathScientist" Filename="UI\Cursors\UI_CRB_Cursor_PathScientist.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="PathScientistInactive" Filename="UI\Cursors\UI_CRB_Cursor_PathScientist.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="Hammer" Filename="UI\Cursors\hammer.tex" HotspotX="5" HotspotY="3"/>
+	<ApolloCursor Name="HammerInactive" Filename="UI\Cursors\hammer_inactive.tex" HotspotX="5" HotspotY="3"/>
+
+	<ApolloCursor Name="Recall" Filename="UI\Cursors\UI_CRB_Cursor_Recall.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="RecallInactive" Filename="UI\Cursors\UI_CRB_Cursor_Recall.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="Feather" Filename="UI\Cursors\feather.tex" HotspotX="2" HotspotY="9"/>
+	<ApolloCursor Name="FeatherInactive" Filename="UI\Cursors\feather_inactive.tex" HotspotX="2" HotspotY="9"/>
+
+	<ApolloCursor Name="Vendor" Filename="UI\Cursors\UI_CRB_Cursor_Vendor.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="VendorInactive" Filename="UI\Cursors\UI_CRB_Cursor_Vendor.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="Interact" Filename="UI\Cursors\cursor_interact_active.tex" HotspotX="7" HotspotY="7"/>
+	<ApolloCursor Name="InteractInactive" Filename="UI\Cursors\cursor_interact_inactive.tex" HotspotX="7" HotspotY="7"/>
+
+	<ApolloCursor Name="QuestReward" Filename="UI\Cursors\UI_Cursor_QuestReward.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="QuestRewardInactive" Filename="UI\Cursors\UI_Cursor_QuestReward_Grayed.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="NewQuest" Filename="UI\Cursors\UI_Cursor_NewQuest.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="NewQuestInactive" Filename="UI\Cursors\UI_Cursor_NewQuest_Grayed.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="Loot" Filename="UI\Cursors\cursor_loot_active.tex" HotspotX="0" HotspotY="1"/>
+	<ApolloCursor Name="LootInactive" Filename="UI\Cursors\cursor_loot_inactive.tex" HotspotX="0" HotspotY="1"/>
+
+	<ApolloCursor Name="Instance" Filename="UI\Cursors\UI_CRB_Cursor_Instance.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="InstanceInactive" Filename="UI\Cursors\UI_CRB_Cursor_Instance.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="Gossip" Filename="UI\Cursors\UI_Cursor_Gossip.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="GossipInactive" Filename="UI\Cursors\UI_Cursor_Gossip_Grayed.tex" HotspotX="0" HotspotY="0"/>
+
+	<ApolloCursor Name="QuestContinue" Filename="UI\Cursors\UI_Cursor_QuestContinue.tex" HotspotX="0" HotspotY="0"/>
+	<ApolloCursor Name="QuestContinueInactive" Filename="UI\Cursors\UI_Cursor_QuestContinue_Grayed.tex" HotspotX="0" HotspotY="0"/>
+	
+	<ApolloCursor Name="Link" Filename="UI\Cursors\UI_CRB_Cursor_MapInfo.tex" HotspotX="0" HotspotY="0"/>
+
+</ApolloCursors>

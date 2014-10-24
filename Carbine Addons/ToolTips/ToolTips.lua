@@ -651,7 +651,7 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 		wndClassIcon:Show(false)
 		wndLevelString:Show(true)
 		wndXpAwardString:Show(eDisposition == Unit.CodeEnumDisposition.Hostile or eDisposition == Unit.CodeEnumDisposition.Neutral)
-		wndBreakdownString:Show(true)
+		wndBreakdownString:Show(unitSource:ShouldShowNamePlate())
 
 	elseif karSimpleDispositionUnitTypes[strUnitType] then
 
@@ -709,12 +709,12 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 		local strHarvestRequiredTradeskillName = unitSource:GetHarvestRequiredTradeskillName()
 		local wndInfo = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Info", wndMiddleDataBlockContent, self)
 		wndInfo:FindChild("Label"):SetText(strHarvestRequiredTradeskillName)
-
+		
 		if strHarvestRequiredTradeskillName then
 			wndBreakdownString:SetText(string.format(Apollo.GetString("CRB_Requires_Tradeskill_Tier"), strHarvestRequiredTradeskillName, unitSource:GetHarvestRequiredTradeskillTier()))
 		end
-
-		wndBottomDataBlock:Show(true)
+			
+			wndBottomDataBlock:Show(true)
 		wndPathIcon:Show(false)
 		wndClassIcon:Show(false)
 		wndLevelString:Show(false)
@@ -1488,15 +1488,16 @@ local function ItemTooltipFlavorHelper(wndParent, tItemInfo)
 	if tItemInfo.tExpirationTimeRemaining ~= nil and tItemInfo.tExpirationTimeRemaining.nMinutes > 0 and tItemInfo.tExpirationTimeRemaining.nSeconds > 0 then
 		local nMinutes = tItemInfo.tExpirationTimeRemaining.nMinutes
 		local nSeconds = tItemInfo.tExpirationTimeRemaining.nSeconds
-		strResult = string.format("%s<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", strResult, String_GetWeaselString(Apollo.GetString("Tooltip_ExpiringTime"), nMinutes, nSeconds))
+		local strMinutesAndSeconds = String_GetWeaselString(Apollo.GetString("Tooltip_ExpiringTime"), nMinutes, nSeconds)
+		strResult = string.format("%s<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", strResult, strMinutesAndSeconds)
 	elseif (tItemInfo.nExpirationTime and tItemInfo.nExpirationTime or 0) > 0 then
-		local nMinutes = tItemInfo.nExpirationTime
-		strResult = string.format("%s<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", strResult, String_GetWeaselString(Apollo.GetString("Tooltip_ExpireTime"), nMinutes))
+		local strExpireTime = String_GetWeaselString(Apollo.GetString("Tooltip_ExpireTime"), tItemInfo.nExpirationTime)
+		strResult = string.format("%s<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", strResult, strExpireTime)
 	end
 
-	if tItemInfo.strMakersMark and string.len(tItemInfo.strMakersMark) > 0 then
-		local strFormatted = string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", tItemInfo.strMakersMark)
-		strResult = string.format("%s<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", strResult, String_GetWeaselString(Apollo.GetString("Tooltips_CraftedBy"), strResult, strFormatted))
+	if tItemInfo.strMakersMark and string.len(tItemInfo.strMakersMark) > 0 and tItemInfo.strMakersMark ~= Apollo.GetString("CRB_Unknown") then
+		local strCraftedBy = String_GetWeaselString(Apollo.GetString("Tooltips_CraftedBy"), tItemInfo.strMakersMark)
+		strResult = string.format("%s<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", strResult, strCraftedBy)
 	end
 
 	if strResult == " " or string.len(strResult) == 0 then

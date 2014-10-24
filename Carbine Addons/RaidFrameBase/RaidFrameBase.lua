@@ -630,6 +630,10 @@ function RaidFrameBase:UpdateRaidOptions(nCodeIdx, tMemberData)
 end
 
 function RaidFrameBase:UpdateSpecificMember(tRaidMember, nCodeIdx, tMemberData, nGroupMemberCount, bFrameLocked)
+	if not tRaidMember then
+		return
+	end
+	
 	local wndRaidMember = tRaidMember.wnd
 	if not wndRaidMember or not wndRaidMember:IsValid() then
 		return

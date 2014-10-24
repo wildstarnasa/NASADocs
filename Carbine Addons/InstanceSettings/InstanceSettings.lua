@@ -232,10 +232,10 @@ function InstanceSettings:OnNoExistingInstance()
 	-- scaling settings
 	if 	self.bScalingIsAllowed then
 		self.wndMain:FindChild("LevelScalingButton"):Enable(true)
-		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
+		self.wndMain:FindChild("LevelScalingButton"):SetCheck(true)
 	else
 		self.wndMain:FindChild("LevelScalingButton"):Enable(false)
-		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
+		self.wndMain:FindChild("LevelScalingButton"):SetCheck(false)
 	end
 
 	-- turn on the enter button
@@ -258,7 +258,8 @@ function InstanceSettings:OnOK()
 		eDifficulty = GroupLib.Difficulty.Normal
 	end
 	
-	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:FindChild("ContentFrame"):GetRadioSel("InstanceSettings_LocalRadioGroup_Rallying"))
+	Print(tostring(self.wndMain:FindChild("LevelScalingButton"):IsChecked()))
+	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:FindChild("LevelScalingButton"):IsChecked())
 	self:DestroyAll()
 end
 

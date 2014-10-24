@@ -83,7 +83,6 @@ function MarketplaceListings:OnToggle()
 		self.wndMain:Show(false, true)
 		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AuctionListings")})
 
-		self.wndMain:FindChild("TitleBGText"):SetData(GameLib.GetPlayerUnit())
 		self:RequestData()
 
 		Apollo.StartTimer("MarketplaceUpdateTimer")
@@ -178,13 +177,11 @@ function MarketplaceListings:OnCREDDExchangeInfoResults(arMarketStats, arOrders)
 end
 
 function MarketplaceListings:SharedDrawMain()
-	local strPlayerName = self.wndMain:FindChild("TitleBGText"):GetData()
 	local nNumChildren = #self.wndMain:FindChild("MainScroll"):GetChildren()
 
 	self.wndMain:Show(true)
 	self.wndMain:FindChild("MainScroll"):Show(true)
 	self.wndMain:FindChild("WaitScreen"):Show(false)
-	self.wndMain:FindChild("TitleBGText"):SetText(String_GetWeaselString(Apollo.GetString("MarketplaceListings_PlayerPrefixListings"), strPlayerName))
 	self.wndMain:FindChild("MainScroll"):SetText(nNumChildren == 0 and Apollo.GetString("MarketplaceListings_NoActiveListings") or "")
 	self.wndMain:FindChild("MainScroll"):ArrangeChildrenVert(0, function(a,b) return a:GetName() > b:GetName() end)
 end

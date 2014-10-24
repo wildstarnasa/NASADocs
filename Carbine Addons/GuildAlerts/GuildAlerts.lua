@@ -298,6 +298,7 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	elseif eResult == GuildLib.GuildResult_BankTabInvalidPermissions then			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BankTabInvalidPermissions"), tName, strGuildType)
 	elseif eResult == GuildLib.GuildResult_Busy then								strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Busy"), strGuildType)
 	elseif eResult == GuildLib.GuildResult_CannotCreateWhileInQueue then			strResult = Apollo.GetString("GuildResult_CannotCreateWhileInQueue")
+	elseif eResult == GuildLib.GuildResult_RenameNotAvailable then					strResult = Apollo.GetString("GuildResult_RenameNotAvialable")
 	end
 
 	return strResult

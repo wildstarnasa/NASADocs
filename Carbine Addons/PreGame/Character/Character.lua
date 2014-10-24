@@ -17,7 +17,7 @@ LuaEnumState =
 	Delete 		= 3,
 	Customize 	= 4,
 }
-
+local knMaxCharacterName = 29
 local k_idCassian = 100	-- Humans (Dominion - fabricated value)
 
 local s_isInSelectButtons = false
@@ -344,8 +344,13 @@ function Character:OnLoad()
 	self.wndControlFrame:FindChild("ClassOptionToggle"):AttachWindow(self.wndClassPicker)
 	self.wndControlFrame:FindChild("PathOptionToggle"):AttachWindow(self.wndPathPicker)
 
-	self.wndName = g_controls:FindChild("NameEntryForm")
-	self.wndNameEntry = self.wndName:FindChild("EnterNameEntry")
+	self.wndFirstName = g_controls:FindChild("FirstNameEntryForm")
+	self.wndFirstNameEntry = self.wndFirstName:FindChild("EnterNameEntry")
+	self.wndFirstNameEntry:SetMaxTextLength(knMaxCharacterName)
+	
+	self.wndLastName = g_controls:FindChild("LastNameEntryForm")
+	self.wndLastNameEntry = self.wndLastName:FindChild("EnterNameEntry")
+	self.wndLastNameEntry:SetMaxTextLength(knMaxCharacterName)
 
 	self.wndCreateCode = g_controls:FindChild("CodeEntryForm")
 	self.wndCreateCodeEntry = self.wndCreateCode:FindChild("CreateCodeEditBox")
@@ -423,7 +428,11 @@ function Character:OnQueueStatus( nPositionInQueue, nEstimatedWaitInSeconds, bIs
 	self.wndCharacterListPrompt:Show(false)
 end
 -- Receiving this event means the player's character list has come down. Note: can happen when on the queue screen.
-function Character:OnCharacterList( arCharacters, arCharacterInWorld )
+function Character:OnCharacterList( nMaxNumCharacters, arCharacters, arCharacterInWorld )
+	g_arCharacters = arCharacters
+	g_arCharacterInWorld = arCharacterInWorld
+	g_nMaxNumCharacters = nMaxNumCharacters
+
 	if self.wndRealmFull:IsShown() then
 		Apollo.StopTimer("InitialLoadTimer")
 		self.wndRealmFull:Show(false)
@@ -432,16 +441,12 @@ function Character:OnCharacterList( arCharacters, arCharacterInWorld )
 		self.wndRealmFull:FindChild("PositionInfoBacker"):Show(false)
 		self.wndRealmFull:FindChild("CapacityFormCenter"):FindChild("Title"):SetText(Apollo.GetString("Pregame_RealmAvailable"))
 		self.wndRealmFull:FindChild("CapacityFormCenter"):FindChild("Body"):SetText(kstrRealmFullOpen)
-		g_arCharacters = arCharacters
-		g_arCharacterInWorld = arCharacterInWorld
-
+	
 		Sound.Play(Sound.PlayUIQueuePopsAdventure)
 		self:OpenCharacterSelect()
 		return
 	end
 
-	g_arCharacters = arCharacters
-	g_arCharacterInWorld = arCharacterInWorld
 	self.bHaveCharacters = true
 end
 
@@ -470,10 +475,16 @@ function Character:OpenCharacterSelect()
 	self:HideCharacterCreate()
 	self.wndServerMessagesContainer:Show(true)
 	g_controls:Show(true)
-	self.wndName:Show(false)
-	self.wndNameEntry:SetText("")
+	g_controls:FindChild("CharacterNameText"):Show(false)
+	
 	self.wndCreateCode:Show(false)
-	self.wndName:FindChild("CheckMarkIcon"):SetSprite("")
+	self.wndFirstName:Show(false)
+	self.wndFirstNameEntry:SetText("")
+	self.wndFirstName:FindChild("CheckMarkIcon"):SetSprite("")
+	self.wndLastName:Show(false)
+	self.wndLastNameEntry:SetText("")
+	self.wndLastName:FindChild("CheckMarkIcon"):SetSprite("")
+	
 	g_controls:FindChild("EnterForm"):Show(true)
 
 	g_nState = LuaEnumState.Select
@@ -502,7 +513,7 @@ end
 
 function Character:OnEnterBtn(wndHandler, wndControl)
 	if g_nState == LuaEnumState.Create then
-		self.strName = self.wndNameEntry:GetText()
+		self.strName = string.format("%s %s", self.wndFirstNameEntry:GetText(), self.wndLastNameEntry:GetText())
 		if string.len(self.strName) > 0 and self.arCharacterCreateOptions[self.characterCreateIndex] then
 			CharacterScreenLib.CreateCharacter(self.strName, self.arCharacterCreateOptions[self.characterCreateIndex].characterCreateId, g_arActors.primary, self.iSelectedPath)
 		end
@@ -534,7 +545,6 @@ end
 -- Visiblity Settings
 ---------------------------------------------------------------------------------------------------
 function Character:HideCharacterCreate()
-
 	g_controls:Show(false)
 
 	self.wndCreateFrame:Show(false)
@@ -543,10 +553,13 @@ function Character:HideCharacterCreate()
 	self.wndPathPicker:Show(false)
 	self.wndControlFrame:FindChild("GlowAssets"):Show(false)
 
-	self.wndName:Show(false)
-	self.wndNameEntry:SetText("")
-	self.wndName:FindChild("CheckMarkIcon"):SetSprite("")
+	self.wndFirstName:Show(false)
+	self.wndFirstNameEntry:SetText("")
+	self.wndFirstName:FindChild("CheckMarkIcon"):SetSprite("")
 
+	self.wndLastName:Show(false)
+	self.wndLastNameEntry:SetText("")
+	self.wndLastName:FindChild("CheckMarkIcon"):SetSprite("")
 
 	self.wndInfoPane:Show(false)
 	self.wndCustOptionPanel:Show(false)
@@ -558,7 +571,6 @@ function Character:SetInitialCreateForms()
 	g_controls:Show(false)
 	g_nState = LuaEnumState.Create
 	g_controls:FindChild("EnterBtn"):Enable(false)
-	g_controls:FindChild("EnterForm"):FindChild("EnterLabel"):SetTextColor(ApolloColor.new("ff3c524f"))
 
 	g_controls:FindChild("EnterForm"):FindChild("BGArt_BottomRunnerName"):Show(true)
 	g_controls:FindChild("EnterForm"):FindChild("BGArt_BottomRunner"):Show(false)
@@ -578,8 +590,9 @@ function Character:SetInitialCreateForms()
 
 	self.wndInfoPane:Show(false)
 	self.wndCustOptionPanel:Show(false)
-	self.wndNameEntry:SetText("")
-
+	self.wndFirstNameEntry:SetText("")
+	self.wndLastNameEntry:SetText("")
+	
 	self:SetOptionsFaction()
 end
 
@@ -627,12 +640,13 @@ function Character:SetCreateForms()
 	self.wndPathPicker:Show(false)
 	self.wndCustOptionList:Show(false)
 	self.wndCustAdvanced:Show(false)
-	self.wndName:Show(true)
+	self.wndFirstNameEntry:SetFocus()
+	self.wndFirstName:Show(true)
+	self.wndLastName:Show(true)
 	self.wndControlFrame:FindChild("GlowAssets"):Show(false)
 
 	g_controls:Show(true)
 	g_controls:FindChild("EnterForm"):Show(true)
-	g_controls:FindChild("EnterForm"):FindChild("EnterLabel"):SetText(Apollo.GetString("Pregame_Create"))
 	g_controls:FindChild("ExitForm"):Show(true)
 	g_controls:FindChild("ExitForm"):FindChild("BackBtnLabel"):SetText(Apollo.GetString("CRB_Cancel"))
 	g_controls:FindChild("OptionsContainer"):Show(true)
@@ -672,8 +686,9 @@ function Character:SetVisibleCustomizeForms()
 	g_controls:FindChild("ExitForm"):Show(false)
 	g_controls:FindChild("ExitForm"):FindChild("BackBtnLabel"):SetText(Apollo.GetString("CRB_Cancel"))
 	g_controls:FindChild("OptionsContainer"):Show(true)
-	self.wndName:Show(false)
-
+	self.wndFirstName:Show(false)
+	self.wndLastName:Show(false)
+	
 	self.wndInfoPane:Show(false)
 	self.wndCustOptionPanel:Show(true)
 end
@@ -868,7 +883,7 @@ function Character:EnableButtons()
 		end
 	end
 
-	self.strName = self.wndNameEntry:GetText()
+	self.strName = string.format("%s %s", self.wndFirstNameEntry:GetText(), self.wndLastNameEntry:GetText())
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1235,6 +1250,7 @@ function Character:OnCustomizeBtn()
 	end
 
 	self.wndCustAdvanced:Show(false)
+	g_controls:FindChild("CharacterNameText"):Show(false)
 
 	self:FillCustomizePagination()
 
@@ -1271,6 +1287,7 @@ function Character:OnRandomizeBtn()
 
 		for i, option in pairs(self.arCustomizeLookOptions) do
 			option.valueIdx = math.random( 1, option.count );
+			
 			g_arActors.primary:SetLook(option.sliderId, option.values[ option.valueIdx ] )
 			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
 		end
@@ -1282,27 +1299,51 @@ function Character:OnRandomizeBtn()
 end
 
 ---------------------------------------------------------------------------------------------------
-function Character:OnNameChanged()
-	self.strName = self.wndNameEntry:GetText()
-	local bIsNameValid = CharacterScreenLib.IsCharacterNameValid(self.strName)
-	g_controls:FindChild("EnterBtn"):Enable(string.len(self.strName) > 0 and bIsNameValid)
-	self.wndName:FindChild("CharacterNameText"):Show(self.strName ~= "")
 
-	if string.len(self.strName) > 0 and self.arCharacterCreateOptions[self.characterCreateIndex] ~= nil and self.iSelectedPath ~= nil and bIsNameValid then
-		self.wndName:FindChild("CheckMarkIcon"):SetSprite("CRB_CharacterCreateSprites:sprCharC_NameCheckYes")
-		g_controls:FindChild("EnterForm"):FindChild("EnterLabel"):SetTextColor(ApolloColor.new("ff72f2a0"))
-		self.wndName:FindChild("CharacterNameText"):Show(false)
-		return
-	elseif string.len(self.strName) == 0 then
-		self.wndName:FindChild("CheckMarkIcon"):SetSprite("")
+function Character:OnNameChanged()
+	local strFirstName = self.wndFirstNameEntry:GetText()
+	local strLastName = self.wndLastNameEntry:GetText()
+	self.strName = string.len(strFirstName) + string.len(strLastName) > 0 and string.format("%s %s", strFirstName, strLastName) or ""
+	
+	local bIsFirstNameValid = CharacterScreenLib.IsCharacterNamePartValid(strFirstName)
+	local bIsLastNameValid = CharacterScreenLib.IsCharacterNamePartValid(strLastName)
+	local bIsNameValid = CharacterScreenLib.IsCharacterNameValid(self.strName)
+	
+	local bCharacterSettingsValid = self.arCharacterCreateOptions[self.characterCreateIndex] ~= nil and self.iSelectedPath ~= nil
+
+	if bIsFirstNameValid and bCharacterSettingsValid then
+		self.wndFirstName:FindChild("CheckMarkIcon"):SetSprite("CRB_CharacterCreateSprites:sprCharC_NameCheckYes")
+	elseif string.len(strFirstName) == 0 then
+		self.wndFirstName:FindChild("CheckMarkIcon"):SetSprite("")
 	else
-		self.wndName:FindChild("CheckMarkIcon"):SetSprite("CRB_CharacterCreateSprites:sprCharC_NameCheckNo")
+		self.wndFirstName:FindChild("CheckMarkIcon"):SetSprite("CRB_CharacterCreateSprites:sprCharC_NameCheckNo")
 	end
 
-	g_controls:FindChild("EnterForm"):FindChild("EnterLabel"):SetTextColor(ApolloColor.new("ff3c524f"))
+	if bIsLastNameValid and bCharacterSettingsValid then
+		self.wndLastName:FindChild("CheckMarkIcon"):SetSprite("CRB_CharacterCreateSprites:sprCharC_NameCheckYes")
+	elseif string.len(strLastName) == 0 then
+		self.wndLastName:FindChild("CheckMarkIcon"):SetSprite("")
+	else
+		self.wndLastName:FindChild("CheckMarkIcon"):SetSprite("CRB_CharacterCreateSprites:sprCharC_NameCheckNo")
+	end
+
+	local nNameLength = string.len(strFirstName) + string.len(strLastName)
+	local strColor = nNameLength > knMaxCharacterName and "UI_BtnTextRedNormal" or "UI_TextHoloTitle"
+	local strHelpText = string.format(
+		"%s [%s/%s]", 
+		Apollo.GetString("CharacterCreate_NameRules"), 
+		nNameLength, 
+		knMaxCharacterName
+	)
+	
+	g_controls:FindChild("CharacterNameText"):Show(self.strName ~= "")
+	g_controls:FindChild("CharacterNameText"):SetTextColor(ApolloColor.new(strColor))
+	g_controls:FindChild("CharacterNameText"):SetText(strHelpText)
+	g_controls:FindChild("EnterBtn"):Enable(bIsNameValid)
 end
 
 ---------------------------------------------------------------------------------------------------
+
 function Character:OnRotateCatcherDown(wndHandler, wndControl, iButton, x, y, bDouble)
 	if wndHandler ~= wndControl then return false end
 	self.nStartPoint = x
@@ -1774,6 +1815,8 @@ function Character:OnAcceptCustomizeBtn()
 
 	g_cameraSlider = 0
 	g_arActors.mainScene:Animate(0, g_cameraAnimation, 0, true, false, 0, g_cameraSlider)
+	
+	g_controls:FindChild("CharacterNameText"):Show(self.strName ~= "")
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2201,6 +2244,21 @@ end
 
 function Character:OnRealmBtn(wndHandler, wndControl)
 	CharacterScreenLib.ExitToRealmSelect()
+end
+
+function Character:OnRandomLastName(characterCreateIndex)
+
+	local nRaceId = self.arCharacterCreateOptions[self.characterCreateIndex].raceId
+	local nFactionId = self.arCharacterCreateOptions[self.characterCreateIndex].factionId
+	local nGenderId = self.arCharacterCreateOptions[self.characterCreateIndex].genderId
+			
+	--Pulled from CharacterNames.lua
+	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+	
+	self.wndLastNameEntry:SetText(tLastName)
+	self.wndFirstNameEntry:SetText(tFirstName)
+	
+	self:OnNameChanged()
 end
 
 ---------------------------------------------------------------------------------------------------

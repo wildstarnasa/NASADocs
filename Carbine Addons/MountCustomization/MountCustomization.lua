@@ -62,7 +62,9 @@ function MountScreen:OnDocumentReady()
 end
 
 function MountScreen:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_MountCustomization"), {"GenericEvent_OpenMountCustomize", "", "Icon_Windows32_UI_CRB_InterfaceMenu_MountCustomization"})
+	local strEvent = "GenericEvent_ToggleMountCustomize"
+	local strIcon = "Icon_Windows32_UI_CRB_InterfaceMenu_MountCustomization"
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_MountCustomization"), {strEvent, "", strIcon})
 end
 
 function MountScreen:OpenMounts()

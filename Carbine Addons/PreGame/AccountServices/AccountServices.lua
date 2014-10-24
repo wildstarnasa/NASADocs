@@ -12,6 +12,8 @@ local AccountServices = {}
 local keFireOnPaidTransfer = "Transfer" -- Random Enum (GOTCHA: Free doesn't need to worry about this)
 local keFireOnRename = "Rename" -- Random Enum
 local keFireOnCredd = "Credd" -- Random Enum
+local knMaxCharacterName = 29 --TODO replace with the max length of a character name from PreGameLib once the enum has been created in PreGameLib
+
 
 local ktRealmPopToString =
 {
@@ -94,6 +96,7 @@ function AccountServices:OnDocumentReady()
 	Apollo.RegisterEventHandler("Pregame_CreationToSelection", 		"OnPregame_CreationToSelection", self)
 	Apollo.RegisterEventHandler("Pregame_CharacterSelected", 		"OnPregame_CharacterSelected", self)
 	Apollo.RegisterEventHandler("OpenCharacterCreateBtn", 			"OnOpenCharacterCreateBtn", self)
+	Apollo.RegisterEventHandler("CloseAllOpenAccountWindows", 		"OnCloseAllOpenAccountWindows", self)
 
 	Apollo.RegisterTimerHandler("Pregame_RedeemCreddDelay",			"OnPregame_RedeemCreddDelay", self)
 
@@ -345,34 +348,59 @@ function AccountServices:DrawRenameFlyout(nRenameBound, nRenameEscrow)
 	local bBoundEnable = nRenameBound > 0
 	local bEscrowEnable = nRenameEscrow > 0
 	self.wndRenameFlyout:FindChild("RenameConfirmBtn"):Enable(false)
-	self.wndRenameFlyout:FindChild("RenamePaymentBound"):Show(bBoundEnable)
-	self.wndRenameFlyout:FindChild("RenamePaymentEscrow"):Show(bEscrowEnable)
+	self.wndRenameFlyout:FindChild("RenamePaymentBound"):Enable(bBoundEnable)
+	self.wndRenameFlyout:FindChild("RenamePaymentEscrow"):Enable(bEscrowEnable)
 	self.wndRenameFlyout:FindChild("RenamePaymentBound"):SetCheck(bBoundEnable)
 	self.wndRenameFlyout:FindChild("RenamePaymentEscrow"):SetCheck(not bBoundEnable and bEscrowEnable)
-	self.wndRenameFlyout:FindChild("RenameInputBox"):SetPrompt(Apollo.GetString("AccountServices_NewName"))
+	self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetPrompt(Apollo.GetString("CRB_FirstName"))
+	self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetPrompt(Apollo.GetString("CRB_LastName"))
 	self.wndRenameFlyout:FindChild("BoundBtnSubtitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nRenameBound))
 	self.wndRenameFlyout:FindChild("EscrowBtnSubtitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nRenameEscrow))
 	self.wndRenameFlyout:FindChild("BoundBtnSubtitle"):SetTextColor(bBoundEnable and ApolloColor.new("UI_BtnTextBlueNormal") or ApolloColor.new("UI_TextMetalBodyHighlight"))
 	self.wndRenameFlyout:FindChild("EscrowBtnSubtitle"):SetTextColor(bEscrowEnable and ApolloColor.new("UI_BtnTextBlueNormal") or ApolloColor.new("UI_TextMetalBodyHighlight"))
-	self.wndRenameFlyout:FindChild("RenamePaymentArrangeVert"):ArrangeChildrenVert(0)
+	self.wndRenameFlyout:FindChild("CharacterLimit"):SetText(string.format("[%s/%s]", 0, knMaxCharacterName))
 end
 
 function AccountServices:OnRenameCloseBtn(wndHandler, wndControl)
 	if self.wndRenameFlyout and self.wndRenameFlyout:IsValid() then
-		self.wndRenameFlyout:FindChild("RenameInputCheck"):SetSprite("sprCharC_NameCheckNo")
-		self.wndRenameFlyout:FindChild("RenameInputBox"):SetText("")
+		self.wndRenameFlyout:FindChild("StatusFirstValidAlert"):Show(false)
+		self.wndRenameFlyout:FindChild("StatusLastValidAlert"):Show(false)
+		self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetText("")
+		self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText("")
+		self.wndRenameFlyout:FindChild("CharacterLimit"):SetText(string.format("[%s/%s]", 0, knMaxCharacterName))
+		self.wndRenameFlyout:FindChild("RenameConfirmBtn"):Enable(false)
 		self.wndRenameFlyout:Close()
 		self.strFireRenameOnUpdate = nil
 	end
 end
 
 function AccountServices:OnRenameInputBoxChanged(wndHandler, wndControl)
-	local strText = wndHandler:GetText() or ""
-	local bTextValid = CharacterScreenLib.IsCharacterNameValid(strText)
-	self.wndRenameFlyout:FindChild("RenameConfirmBtn"):SetData(strText)
-	self.wndRenameFlyout:FindChild("RenameConfirmBtn"):Enable(bTextValid)
-	self.wndRenameFlyout:FindChild("RenameInputCheck"):Show(string.len(strText) > 0)
-	self.wndRenameFlyout:FindChild("RenameInputCheck"):SetSprite(bTextValid and "sprCharC_NameCheckYes" or "sprCharC_NameCheckNo")
+	local strFullName = string.format("%s %s", 
+		self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):GetText(), 
+		self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):GetText()
+	)
+	
+	local strFirstName = self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):GetText()
+	local nFirstLength = string.len(strFirstName)
+	
+	local strLastName = self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):GetText()
+	local nLastLength = string.len(strLastName)
+	
+	local strCharacterLimit = string.format("[%s/%s]", nFirstLength+nLastLength, knMaxCharacterName)
+	local strColor = nFirstLength+nLastLength > knMaxCharacterName and "xkcdReddish" or "UI_TextHoloBodyCyan"
+	self.wndRenameFlyout:FindChild("CharacterLimit"):SetTextColor(ApolloColor.new(strColor))
+	self.wndRenameFlyout:FindChild("CharacterLimit"):SetText(strCharacterLimit)
+	
+	local bFirstValid = CharacterScreenLib.IsCharacterNamePartValid(strFirstName)
+	self.wndRenameFlyout:FindChild("StatusFirstValidAlert"):Show(not bFirstValid and nFirstLength > 0)
+	
+	local bLastValid = CharacterScreenLib.IsCharacterNamePartValid(strLastName)
+	self.wndRenameFlyout:FindChild("StatusLastValidAlert"):Show(not bLastValid and nLastLength > 0)
+	
+	local bFullValid = CharacterScreenLib.IsCharacterNameValid(strFullName)
+	self.wndRenameFlyout:FindChild("RenameConfirmBtn"):SetData(strFullName)
+	self.wndRenameFlyout:FindChild("RenameConfirmBtn"):Enable(bFullValid)
+	
 end
 
 function AccountServices:OnRenameConfirmBtn(wndHandler, wndControl)
@@ -385,7 +413,7 @@ function AccountServices:OnRenameConfirmBtn(wndHandler, wndControl)
 	end
 
 	if bGiftableGroup then
-		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnRename, strText = wndHandler:GetData() })
+		self:ShowGroupBindConfirmation(tEscrowData, { eType = keFireOnRename, strFullName = wndHandler:GetData() })
 	else
 		self:ShowRenameConfirmation(wndHandler:GetData(), tEscrowData)
 	end
@@ -393,23 +421,23 @@ function AccountServices:OnRenameConfirmBtn(wndHandler, wndControl)
 	self.wndRenameFlyout:Close()
 end
 
-function AccountServices:ShowRenameConfirmation(strText, tEscrowData)
+function AccountServices:ShowRenameConfirmation(strFullName, tEscrowData)
 	self.wndRenameConfirm = Apollo.LoadForm(self.xmlDoc, "RenameConfirmation", "AccountServices", self)
-	self.wndRenameConfirm:FindChild("RenameExplanation"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_RenameExplanation"), strText))
-	self.wndRenameConfirm:FindChild("RenameYesBtn"):SetData({ strText = strText, nEscrowIndex = tEscrowData and tEscrowData.index })
+	self.wndRenameConfirm:FindChild("RenameExplanation"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_RenameExplanation"), strFullName))
+	self.wndRenameConfirm:FindChild("RenameYesBtn"):SetData({ strFullName = strFullName, nEscrowIndex = tEscrowData and tEscrowData.index })
 	self.wndRenameConfirm:Invoke()
 end
 
 function AccountServices:OnRenameYesBtn(wndHandler, wndControl)
-	local strText = wndHandler:GetData().strText
+	local strFullName = wndHandler:GetData().strFullName
 	local nEscrowIndex = wndHandler:GetData().nEscrowIndex
 
 	if self.wndRenameFlyout:FindChild("RenamePaymentEscrow"):IsChecked() then
 		AccountItemLib.ClaimPendingSingleItem(nEscrowIndex)
-		self.strFireRenameOnUpdate = strText
+		self.strFireRenameOnUpdate = strFullName
 		-- HelperCatchTriggers will catch the event, detect a non nil self.strFireRenameOnUpdate, then call Rename
 	else
-		CharacterScreenLib.RenameCharacter(self.nCharacterSelectedId, strText)
+		CharacterScreenLib.RenameCharacter(self.nCharacterSelectedId, strFullName)
 	end
 	self.wndRenameConfirm:Destroy()
 end
@@ -417,6 +445,10 @@ end
 function AccountServices:OnRenameNoBtn(wndHandler, wndControl)
 	self.strFireRenameOnUpdate = nil
 	self.wndRenameConfirm:Destroy()
+end
+
+function AccountServices:OnRenameNameEscape(wndHandler, wndControl)
+	self.wndRenameFlyout:Close()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -583,8 +615,8 @@ end
 function AccountServices:DrawPaidTransferFlyout(nTransferBound, nTransferEscrow)
 	local bBoundEnable = nTransferBound > 0
 	local bEscrowEnable = nTransferEscrow > 0
-	self.wndPaidTransferFlyout:FindChild("TransferPaymentBound"):Show(bBoundEnable)
-	self.wndPaidTransferFlyout:FindChild("TransferPaymentEscrow"):Show(bEscrowEnable)
+	self.wndPaidTransferFlyout:FindChild("TransferPaymentBound"):Enable(bBoundEnable)
+	self.wndPaidTransferFlyout:FindChild("TransferPaymentEscrow"):Enable(bEscrowEnable)
 	self.wndPaidTransferFlyout:FindChild("TransferPaymentBound"):SetCheck(bBoundEnable)
 	self.wndPaidTransferFlyout:FindChild("TransferPaymentEscrow"):SetCheck(not bBoundEnable and bEscrowEnable)
 	self.wndPaidTransferFlyout:FindChild("BoundBtnSubtitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_NumAvailable"), nTransferBound))
@@ -643,6 +675,16 @@ end
 -----------------------------------------------------------------------------------------------
 -- Confirmations
 -----------------------------------------------------------------------------------------------
+
+function AccountServices:OnCloseAllOpenAccountWindows(wndHandler, wndControl) -- This is triggered from other Pregame
+	self:CloseAllOpenAccountWindows()
+end
+
+function AccountServices:CloseAllOpenAccountWindows(wndHandler, wndControl)
+	self:OnPaidTransferFlyoutCloseBtn()
+	self:OnFreeTransferFlyoutCloseBtn()
+	self:OnRenameCloseBtn()
+end
 
 function AccountServices:HelperCheckTriggers()
 	if self.strFireRenameOnUpdate ~= nil then
@@ -833,6 +875,26 @@ end
 function AccountServices:OnGroupBindNoBtn(wndHandler, wndControl)
 	self.wndGroupBindConfirm:Destroy()
 end
+
+function AccountServices:OnRandomLastName()
+	
+	local nId = g_controls:FindChild("EnterBtn"):GetData()
+	local tSelected = g_arCharacters[nId]
+	
+	local nRaceId = tSelected.idRace
+	local nFactionId = tSelected.idFaction
+	local nGenderId = tSelected.idGender
+			
+	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+			
+	
+	self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText(tLastName)
+	self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetText(tFirstName)
+	
+	self:OnRenameInputBoxChanged()
+	
+end
+
 
 local AccountServicesInst = AccountServices:new()
 AccountServicesInst:Init()

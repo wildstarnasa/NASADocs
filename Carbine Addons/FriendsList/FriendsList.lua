@@ -1299,7 +1299,7 @@ function FriendsList:OnAddMemberYesClick(wndHandler, wndControl)
 	local strAddFriendRealm = nil
 
 	if wndAdd:FindChild("AddMemberRealmEditBox") ~= nil then
-		wndAdd:FindChild("AddMemberRealmEditBox"):GetText()
+		strAddFriendRealm = wndAdd:FindChild("AddMemberRealmEditBox"):GetText()
 	end
 
 	if strName ~= nil and strName ~= "" then
@@ -1316,7 +1316,7 @@ function FriendsList:OnAccountAddMemberYesClick(wndHandler, wndControl)
 	local strAddFriendRealm = nil
 
 	if wndAdd:FindChild("AddMemberRealmEditBox") ~= nil then
-		wndAdd:FindChild("AddMemberRealmEditBox"):GetText()
+		strAddFriendRealm = wndAdd:FindChild("AddMemberRealmEditBox"):GetText()
 	end
 	if strName ~= nil and strName ~= "" then
 		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Account, strName, strAddFriendRealm, strAddFriendNote)

@@ -122,6 +122,16 @@ local ktClassToSupportPowerString =
 	[GameLib.CodeEnumClass.Spellslinger] 	= Apollo.GetString("AttributeWisdom"),
 }
 
+local ktGuildDisplays =
+{
+	[GuildLib.GuildType_Guild]			= Apollo.GetString("Inspect_GuildDisplay"),
+	[GuildLib.GuildType_Circle]			= Apollo.GetString("Inspect_CircleDisplay"),
+	[GuildLib.GuildType_ArenaTeam_2v2]	= Apollo.GetString("Inspect_2v2ArenaDisplay"),
+	[GuildLib.GuildType_ArenaTeam_3v3]	= Apollo.GetString("Inspect_3v3ArenaDisplay"),
+	[GuildLib.GuildType_ArenaTeam_5v5]	= Apollo.GetString("Inspect_5v5ArenaDisplay"),
+	[GuildLib.GuildType_WarParty]		= Apollo.GetString("Inspect_WarpartyDisplay")
+}
+
 function Inspect:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -854,7 +864,22 @@ function Inspect:OnUnitTitleChange(unitUpdated)
 	if unitUpdated ~= self.unitInspecting then
 		return
 	end
-	self.wndCharacter:FindChild("PlayerName"):SetText(String_GetWeaselString(Apollo.GetString("Inspect_Inspecting"), self.unitInspecting:GetTitleOrName()))
+
+	local strResult = ""
+	local eGuildTagType = self.unitInspecting:GetGuildType()
+	if eGuildTagType and ktGuildDisplays[eGuildTagType] ~= nil then
+		strResultAffiliation = String_GetWeaselString(ktGuildDisplays[eGuildTagType], self.unitInspecting:GetAffiliationName())
+		strResultName = String_GetWeaselString(Apollo.GetString("Inspect_Inspecting"), self.unitInspecting:GetTitleOrName())
+		self.wndCharacter:FindChild("PlayerNameOnly"):SetText("")
+		self.wndCharacter:FindChild("PlayerName"):SetText(strResultName)
+		self.wndCharacter:FindChild("PlayerNameAffiliation"):SetText(strResultAffiliation)
+	else
+		strResult = String_GetWeaselString(Apollo.GetString("Inspect_Inspecting"), self.unitInspecting:GetTitleOrName())
+		self.wndCharacter:FindChild("PlayerName"):SetText("")
+		self.wndCharacter:FindChild("PlayerNameOnly"):SetText(strResult)
+		self.wndCharacter:FindChild("PlayerNameAffiliation"):SetText("")
+	end
+
 end
 
 function Inspect:OnRotateRight()

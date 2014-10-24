@@ -278,6 +278,9 @@ function Trading:OnP2PCancelTrade(eResult)
 
 	if eResult == P2PTrading.P2PTradeResultCode_ErrorInitiating then
 		self.wndErrorNotice:Show(true)
+	elseif eResult == P2PTrading.P2PTradeResultCode_TargetNotAllowedToTrade then
+		self.wndDeclineNotice:FindChild("DeclineText"):SetText(Apollo.GetString("Trading_DisabledForThatPlayer"))
+		self.wndDeclineNotice:Show(true)
 	end
 end
 

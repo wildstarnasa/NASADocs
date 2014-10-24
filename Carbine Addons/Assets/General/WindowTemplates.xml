@@ -1,0 +1,179 @@
+<?xml version="1.0" ?>
+<WindowTemplates>
+    <WindowSoundTemplate Name="Custom" ButtonDown="" ButtonUpCancel="" ButtonClick="" WindowInvoke="" WindowClose="" MouseEnter="" MouseLeave="" ButtonCheck="" ButtonUncheck=""/>
+    <WindowSoundTemplate Name="DefaultSounds" ButtonDown="TestPlaySoftClick"/>
+    <WindowSoundTemplate Name="ActionBarButton" ButtonDown="PlayUIAbilityClick"/>
+    <WindowSoundTemplate Name="CloseWindowPhys" ButtonDown="PlayUI01ClosePhysical"/>
+    <WindowSoundTemplate Name="CloseWindowDigi" ButtonDown="PlayUI38CloseRemoteWindowDigital"/>
+    <WindowSoundTemplate Name="TogglePhys01" ButtonDown="PlayUI08To10GenericPushButtonOnPhysical01"/>
+    <WindowSoundTemplate Name="TogglePhys02" ButtonDown="PlayUI08To10GenericPushButtonOnPhysical02"/>
+    <WindowSoundTemplate Name="TogglePhys03" ButtonDown="PlayUI08To10GenericPushButtonOnPhysical03"/>
+    <WindowSoundTemplate Name="TogglePhys04" ButtonDown="PlayUI23And25GenericToggleOnPhysical01"/>
+    <WindowSoundTemplate Name="TogglePhys05" ButtonDown="PlayUI23And25GenericToggleOnPhysical02"/>
+    <WindowSoundTemplate Name="ToggleDigi01" ButtonDown="PlayUI33DropDownExpandDigital"/>
+    <WindowSoundTemplate Name="ToggleDigi02" ButtonDown="PlayUI37OpenRemoteWindowDigital"/>
+    <WindowSoundTemplate Name="PushbuttonDigi01" ButtonDown="PlayUI11To13GenericPushButtonDigital01"/>
+    <WindowSoundTemplate Name="PushbuttonDigi02" ButtonDown="PlayUI11To13GenericPushButtonDigital02"/>
+    <WindowSoundTemplate Name="PushbuttonDigi03" ButtonDown="PlayUI11To13GenericPushButtonDigital03"/>
+    <WindowSoundTemplate Name="ScrollUpDigital" ButtonDown="PlayUI05ArrowScrollUpDigital"/>
+    <WindowSoundTemplate Name="ScrollDownDigital" ButtonDown="PlayUI06ArrowScrollDownDigital"/>
+    <WindowSoundTemplate Name="SlideUpDigi" ButtonDown="PlayUI53SlideUpDigital"/>
+    <WindowSoundTemplate Name="SlideDownDigi" ButtonDown="PlayUI54SlideDownDigital"/>
+    <WindowSoundTemplate Name="SelectTabPhys" ButtonDown="PlayUI07SelectTabPhysical"/>
+    <WindowSoundTemplate Name="HoloWindow" WindowInvoke="PlayUIWindowHoloOpen" WindowClose="PlayUIWindowHoloClose"/>
+    <WindowSoundTemplate Name="HoloButtonSmall" ButtonCheck="PlayUIButtonHoloSmall" ButtonClick="PlayUIButtonHoloSmall" ButtonUncheck="PlayUIButtonHoloSmall"/>
+    <WindowSoundTemplate Name="HoloButtonLarge" ButtonCheck="PlayUIButtonHoloLarge" ButtonClick="PlayUIButtonHoloLarge" ButtonUncheck="PlayUIButtonHoloLarge"/>
+	<WindowSoundTemplate Name="HoloDropdownToggle" ButtonCheck="PlayUIWindowHoloOpen" ButtonUncheck="PlayUIWindowHoloClose"/>
+    <WindowSoundTemplate Name="HoloNotification" WindowInvoke="PlayUINotificationBannerHolo"/>
+    <WindowSoundTemplate Name="HoloPulse" WindowInvoke="PlayUIAnimPulseHolo"/>
+    <WindowSoundTemplate Name="MetalWindow" WindowInvoke="PlayUIWindowMetalOpen" WindowClose="PlayUIWindowMetalClose"/>
+    <WindowSoundTemplate Name="MetalButtonSmall" ButtonCheck="PlayUIButtonMetalSmall" ButtonClick="PlayUIButtonMetalSmall" ButtonUncheck="PlayUIButtonMetalSmall"/>
+    <WindowSoundTemplate Name="MetalButtonLarge" ButtonCheck="PlayUIButtonMetalLarge" ButtonClick="PlayUIButtonMetalLarge" ButtonUncheck="PlayUIButtonMetalSmall"/>
+    <WindowSoundTemplate Name="MetalDropdownToggle" ButtonCheck="PlayUIWindowAccordionClose" ButtonUncheck="PlayUIWindowAccordionOpen"/>
+    <WindowSoundTemplate Name="MetalCollapse" ButtonClick="PlayUIWindowAccordionClose"/>
+    <WindowSoundTemplate Name="MetalExpand" ButtonClick="PlayUIWindowAccordionOpen"/>
+	<WindowSoundTemplate Name="InviteReceived" WindowInvoke="PlayUISocialPartyInviteAccept"/>
+    <WindowTemplate Name="HoloWindowSound" WindowSoundTemplate="HoloWindow"/>
+    <WindowTemplate Name="MetalWindowSound" WindowSoundTemplate="MetalWindow"/>
+    <WindowTemplate Name="HoloNotificationSound" WindowSoundTemplate="HoloNotification"/>
+	<WindowTemplate Name="Invite" WindowSoundTemplate="InviteReceived"/>
+    <WindowTemplate Name="Holo_Small" SingleBorderFrame="" UseMargins="1" TopMargin="0" LeftMargin="0" RightMargin="0" BottomMargin="0" ClientFrame="BK3:UI_BK3_Holo_Framing_1" WindowSoundTemplate="HoloWindow"/>
+    <WindowTemplate Name="Holo_Medium" SingleBorderFrame="BK3:UI_BK3_Holo_Framing_2" UseMargins="1" TopMargin="50" LeftMargin="50" RightMargin="50" BottomMargin="50" WindowSoundTemplate="HoloWindow"/>
+    <WindowTemplate Name="Holo_Large" SingleBorderFrame="BK3:UI_BK3_Holo_Framing_3" UseMargins="1" TopMargin="40" LeftMargin="40" RightMargin="40" BottomMargin="40" WindowSoundTemplate="HoloWindow"/>
+    <WindowTemplate Name="Holo_List" SingleBorderFrame="Basekit3:sprHolo_Alert_Flyout" UseMargins="1" TopMargin="45" LeftMargin="45" RightMargin="40" BottomMargin="45" WindowSoundTemplate="HoloWindow">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpSmall"/>
+        </VScroll>
+    </WindowTemplate>
+    <WindowTemplate Name="Metal_ScrollList" SingleBorderFrame="CRB_Basekit:kitBase_MetalGrey_Large" UseMargins="1" TopMargin="0" LeftMargin="0" RightMargin="0" BottomMargin="0">
+        <VScroll Internal="BK3:sprMetal_Scroll_Framing">
+            <Thumb Auto="Basekit3:btnMetal_Scroll_Bar"/>
+            <IncButton Auto="Basekit3:btnMetal_Scroll_Down"/>
+            <DecButton Auto="Basekit3:btnMetal_Scroll_Up"/>
+        </VScroll>
+        <HScroll Internal="BK3:sprMetal_Scroll_Framing">
+            <DecButton Auto="BK3:btnMetal_Scroll_Left_Horiz"/>
+            <IncButton Auto="BK3:btnMetal_Scroll_Right_Horiz"/>
+            <Thumb Auto="BK3:btnMetal_Scroll_Bar_Horiz"/>
+        </HScroll>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_ScrollList" SingleBorderFrame="BK3:UI_BK3_Holo_InsetSimple" UseMargins="1" TopMargin="2" LeftMargin="2" RightMargin="2" BottomMargin="2">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarLarge"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpLarge"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_Inset_Callout" SingleBorderFrame="BK3:UI_BK3_Holo_InsetFramed" UseMargins="1" TopMargin="10" LeftMargin="10" RightMargin="10" BottomMargin="10" ClientFrame="" BorderTopLeft="">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarLarge"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpLarge"/>
+        </VScroll>
+        <BlankButton Auto="BK3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="BK3:btnHolo_Check"/>
+        <RadioButton Auto="BK3:btnHolo_Radio_Big"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_Background_General" SingleBorderFrame="BasicSprites:BlackFill" UseMargins="1" TopMargin="10" LeftMargin="10" RightMargin="10" BottomMargin="10">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarLarge"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpLarge"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+        <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="CRB_Basekit:kitBase_HoloTeal_NoBorder" BGColor="white" Rotation="0"/>
+        <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="CRB_Basekit:kitAccent_Scanlines" BGColor="white" Rotation="0"/>
+        <Adornment LAnchorPoint="1" LAnchorOffset="-128" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="129" Sprite="BK3:UI_BK3_Holo_Framing_Crack" BGColor="white" Rotation="0"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Metal_Primary_Nav" SingleBorderFrame="BK3:UI_BK3_Metal_Framing_WithNav" UseMargins="1" TopMargin="0" LeftMargin="30" RightMargin="30" BottomMargin="27" ClientFrame=""/>
+    <WindowTemplate Name="Metal_Primary_NoNav" SingleBorderFrame="BK3:UI_BK3_Metal_Framing_NoNav" UseMargins="1" TopMargin="0" LeftMargin="30" RightMargin="30" BottomMargin="27" ClientFrame=""/>
+    <WindowTemplate Name="Metal_Primary_Nav_SubNav" SingleBorderFrame="BK3:UI_BK3_Metal_Framing_WithNav" UseMargins="1" TopMargin="0" LeftMargin="30" RightMargin="30" BottomMargin="27" ClientFrame="">
+        <Adornment LAnchorPoint="0" LAnchorOffset="25" TAnchorPoint="0" TAnchorOffset="134" RAnchorPoint="1" RAnchorOffset="-25" BAnchorPoint="0" BAnchorOffset="185" Sprite="BK3:UI_BK3_Metal_TabSub_BG" BGColor="white" Rotation="0"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_ScrollListSmall" SingleBorderFrame="BK3:UI_BK3_Holo_InsetSimple" UseMargins="1" TopMargin="3" LeftMargin="2" RightMargin="2" BottomMargin="3">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpSmall"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+        <HScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_LeftSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_RightSmall"/>
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_HorzBarSmall"/>
+        </HScroll>
+    </WindowTemplate>
+    <WindowTemplate Name="Metal_Primary_Nav_Vendor" SingleBorderFrame="BK3:sprMetal_FramingVendor" UseMargins="1" TopMargin="0" LeftMargin="30" RightMargin="30" BottomMargin="27" ClientFrame=""/>
+    <WindowTemplate Name="Holo_Scrolllist_Options" SingleBorderFrame="BK3:UI_BK3_Holo_InsetSimple" UseMargins="1" TopMargin="2" LeftMargin="2" RightMargin="2" BottomMargin="2">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+        <HScroll>
+            <Thumb Auto="CRB_CharacterCreateSprites:btnCharC_ScrollkitScroller"/>
+            <IncButton Auto="BK3:btnHolo_Options_DragRight"/>
+            <DecButton Auto="BK3:btnHolo_Options_DragLeft"/>
+        </HScroll>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_Small_YesNoFlyout" ClientFrame="" UseMargins="1" TopMargin="40" LeftMargin="40" RightMargin="40" BottomMargin="40" SingleBorderFrame="BK3:sprHolo_Alert_Flyout"/>
+    <WindowTemplate Name="Holo_Background_Datachron" SingleBorderFrame="" UseMargins="0" TopMargin="10" LeftMargin="10" RightMargin="10" BottomMargin="10">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpSmall"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+        <HScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_LeftSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_RightSmall"/>
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_HorzBarSmall"/>
+        </HScroll>
+        <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="BK3:UI_BK3_Holo_InsetDivider" BGColor="white" Rotation="0"/>
+        <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-25" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="CRB_Basekit:kitBase_HoloTeal_NoBorder" BGColor="white" Rotation="0"/>
+        <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="CRB_Basekit:kitAccent_Scanlines_Lighter" BGColor="white" Rotation="0"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_InputBox" SingleBorderFrame="BK3:UI_BK3_Holo_Snippet" UseMargins="1" TopMargin="7" LeftMargin="9" RightMargin="10" BottomMargin="4">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarLarge"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpLarge"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_TextCallout" SingleBorderFrame="BK3:UI_BK3_Holo_InsetSimple" UseMargins="1" TopMargin="10" LeftMargin="10" RightMargin="10" BottomMargin="10">
+        <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarLarge"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpLarge"/>
+        </VScroll>
+        <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
+        <CheckButton Auto="Basekit3:btnHolo_Check"/>
+        <RadioButton Auto="Basekit3:btnHolo_Radio_Big"/>
+    </WindowTemplate>
+    <WindowTemplate Name="Holo_Tutorial" SingleBorderFrame="BK3:UI_BK3_Holo_Framing_3_Tutorial" UseMargins="1" TopMargin="40" LeftMargin="40" RightMargin="40" BottomMargin="40"/>
+    <WindowTemplate Name="Holo_ChatLog" SingleBorderFrame="" UseMargins="1" TopMargin="45" LeftMargin="45" RightMargin="40" BottomMargin="45" BorderTopLeft="ChatLogSprites:ChatBorderTopLeft" BorderTop="ChatLogSprites:ChatBorderTop" BorderTopRight="ChatLogSprites:ChatBorderTopRight" BorderLeft="ChatLogSprites:ChatBorderLeft" BorderRight="ChatLogSprites:ChatBorderRight" BorderBottomLeft="CRB_ChatLogSprites:sprChatBorderBottomLeft" BorderBottom="ChatLogSprites:ChatBorderBottom" BorderBottomRight="ChatLogSprites:ChatBorderBigBottomRight" ClientFrame="ChatLogSprites:sprChatBackground">
+        <VScroll Internal="ClientSprites:DefaultScrollInternal">
+            <Thumb Auto="ChatLogSprites:ChatScrollThumb"/>
+            <IncButton Auto="ChatLogSprites:ChatLogVScrollDown"/>
+            <DecButton Auto="ChatLogSprites:ChatLogVScrollUp"/>
+        </VScroll>
+        <BlankButton Auto="ClientSprites:DefaultBlankButton"/>
+    </WindowTemplate>
+</WindowTemplates>
