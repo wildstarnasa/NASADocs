@@ -43,7 +43,6 @@ function HUDAlerts:OnDocumentReady()
 	Apollo.RegisterTimerHandler("HUDAlerts_HideDurabilityTimer", 				"OnHUDAlerts_HideDurabilityTimer", self)
 
 	-- Datacube Events
-	Apollo.RegisterEventHandler("GenericEvent_Collections_DatacubePlayFromPL", 	"DrawDatacubePlayback", self)
 	Apollo.RegisterEventHandler("GenericEvent_Collections_StopDatacube", 		"OnStopPlayingDatacube", self)
 	Apollo.RegisterEventHandler("DatacubePlaybackEnded", 						"OnStopPlayingDatacube", self)
 	Apollo.RegisterEventHandler("DatacubeUpdated", 								"OnDatacubeUpdated", self)

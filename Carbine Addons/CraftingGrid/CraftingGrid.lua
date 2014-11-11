@@ -135,6 +135,7 @@ function CraftingGrid:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("GenericEvent_CraftingResume_CloseCraftingWindows", "ExitAndReset", self)
 	Apollo.RegisterEventHandler("GenericEvent_BotchCraft", 							"ExitAndReset", self)
+	Apollo.RegisterEventHandler("GenericEvent_StopCraftingGrid", 					"ExitAndReset", self)
 	Apollo.RegisterEventHandler("GenericEvent_CraftingSummaryIsFinished", 			"OnCloseBtn", self)
 	Apollo.RegisterEventHandler("GenericEvent_StartCraftingGrid", 					"OnGenericEvent_StartCraftingGrid", self)
 	Apollo.RegisterEventHandler("CraftingDiscoveryHotCold", 						"OnCraftingDiscoveryHotCold", self)
@@ -143,13 +144,14 @@ function CraftingGrid:OnDocumentReady()
 	Apollo.RegisterEventHandler("UpdateInventory", 									"RedrawAll", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 							"RedrawCash", self)
 
-	Apollo.RegisterTimerHandler("CraftingGrid_CraftBtnTimer", 						"OnCraftingGrid_CraftBtnTimer", self)
 	Apollo.RegisterEventHandler("CraftingInterrupted",								"OnCraftingGrid_CraftBtnTimer", self)
-	Apollo.CreateTimer("CraftingGrid_CraftBtnTimer", 3.25, false)
-	Apollo.StopTimer("CraftingGrid_CraftBtnTimer")
+	Apollo.RegisterEventHandler("P2PTradeInvite", 									"OnP2PTradeExitAndReset", self)
+	Apollo.RegisterEventHandler("P2PTradeWithTarget", 								"OnP2PTradeExitAndReset", self)
 
-	Apollo.RegisterTimerHandler("CraftingGrid_TimerCraftingStationCheck", 			"OnCraftingGrid_TimerCraftingStationCheck", self)
-	Apollo.CreateTimer("CraftingGrid_TimerCraftingStationCheck", 1, true)
+	self.timerBtn = ApolloTimer.Create(3.25, false, "OnCraftingGrid_CraftBtnTimer", self)
+	self.timerBtn:Stop()
+
+	self.timerCraftingSation = ApolloTimer.Create(1.0, true, "OnCraftingGrid_TimerCraftingStationCheck", self)
 
 	self.wndArrowTutorial = -1 -- This is -1 if not set yet, then 0 after it's been set (and we no longer ever want to show it)
 
@@ -239,7 +241,7 @@ function CraftingGrid:RedrawAll()
 	-- Count Raw Materials
 	local bHasEnoughRawMaterials = true
 	for idx, tMaterial in pairs(tSchematicInfo.tMaterials) do
-		if  tMaterial.itemMaterial:GetBackpackCount() < tMaterial.nAmount then
+		if tMaterial.nAmount > (tMaterial.itemMaterial:GetBackpackCount() + tMaterial.itemMaterial:GetBankCount()) then
 			bHasEnoughRawMaterials = false
 			break
 		end
@@ -251,12 +253,12 @@ function CraftingGrid:RedrawAll()
 	if not bCurrentCraftStarted and not bHasEnoughRawMaterials then
 		wndBlockerParent:FindChild("BGNoMaterialsList"):DestroyChildren()
 		for idx, tMaterial in pairs(tSchematicInfo.tMaterials) do
-			local nBackpackCount = tMaterial.itemMaterial:GetBackpackCount()
+			local nOwnedCount = tMaterial.itemMaterial:GetBackpackCount() + tMaterial.itemMaterial:GetBankCount()
 			local wndNoMaterials = Apollo.LoadForm(self.xmlDoc, "RawMaterialsItem", wndBlockerParent:FindChild("BGNoMaterialsList"), self)
 			wndNoMaterials:FindChild("RawMaterialsIcon"):SetTextColor("ffff0000")
-			wndNoMaterials:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nBackpackCount, tMaterial.nAmount))
+			wndNoMaterials:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), nOwnedCount, tMaterial.nAmount))
 			wndNoMaterials:FindChild("RawMaterialsIcon"):SetSprite(tMaterial.itemMaterial:GetIcon())
-			wndNoMaterials:FindChild("RawMaterialsNotEnough"):Show(nBackpackCount < tMaterial.nAmount)
+			wndNoMaterials:FindChild("RawMaterialsNotEnough"):Show(nOwnedCount < tMaterial.nAmount)
 			self:HelperBuildItemTooltip(wndNoMaterials, tMaterial.itemMaterial)
 		end
 		wndBlockerParent:FindChild("BGNoMaterialsList"):ArrangeChildrenHorz(1)
@@ -307,7 +309,7 @@ function CraftingGrid:RedrawAll()
 			-- Build multi line tooltip
 			local strLastTooltip = Apollo.GetString("CoordCrafting_NoExtraMats")
 			if tCurrData.strTooltip then
-				strLastTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", tCurrData.strHotOrCold or "")
+				strLastTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", ktLastAttemptHotOrColdString[tCurrData.eHotOrCold] or "")
 				strLastTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\">%s</P>", strLastTooltip, tCurrData.strTooltip)
 			end
 
@@ -315,8 +317,14 @@ function CraftingGrid:RedrawAll()
 			local nLastTopLeftX = tCurrData.nPosX or 0
 			local nLastTopLeftY = tCurrData.nPosY or 0
 			local wndLastMarker = Apollo.LoadForm(self.xmlDoc, "GridLastMarker", self.wndMain:FindChild("CoordinateSchematic"), self)
+			local strLastMarkerSpriteAppend = ""
+			if tCurrData.eHotOrCold == CraftingLib.CodeEnumCraftingDiscoveryHotCold.Cold then
+				strLastMarkerSpriteAppend = "_Blue" -- Requires exact icon naming
+			elseif tCurrData.eHotOrCold == CraftingLib.CodeEnumCraftingDiscoveryHotCold.Hot then
+				strLastMarkerSpriteAppend = "_Red"
+			end
 			wndLastMarker:SetAnchorPoints(nLastTopLeftX, nLastTopLeftY, nLastTopLeftX, nLastTopLeftY)
-			wndLastMarker:SetSprite(ktHotOrColdToSprite[tCurrData.eDirection])
+			wndLastMarker:SetSprite(ktHotOrColdToSprite[tCurrData.eDirection] .. strLastMarkerSpriteAppend)
 			wndLastMarker:SetTooltip(strLastTooltip)
 			wndLastMarker:ToFront()
 		end
@@ -397,15 +405,15 @@ function CraftingGrid:RedrawAllDetailed(idSchematic, tSchematicInfo, tCurrentCra
 			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Green")
 			Sound.Play(Sound.PlayUICraftingCoordinateHit)
 		elseif bCurrent and tSchematicInfo.nMaxAdditives == tCurrentCraft.nAdditiveCount then
-			wndAdditiveMaterial:FindChild("CraftMaterialsTitle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
-			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
+			wndAdditiveMaterial:FindChild("CraftMaterialsTitle"):SetTextColor(ApolloColor.new("xkcdReddish"))
+			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetTextColor(ApolloColor.new("xkcdReddish"))
 			wndAdditiveMaterial:FindChild("CraftMaterialsCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Red")
 			Sound.Play(Sound.PlayUICraftingCoordinateMiss)
 		end
 
 		-- wndMarker
 		if self.wndMarker and bCurrent and not bHitACircle and tSchematicInfo.nMaxAdditives == tCurrentCraft.nAdditiveCount then
-			self.wndMarker:FindChild("GridMarkerCircle"):SetTextColor(ApolloColor.new("UI_BtnTextRedNormal"))
+			self.wndMarker:FindChild("GridMarkerCircle"):SetTextColor(ApolloColor.new("xkcdReddish"))
 			self.wndMarker:FindChild("GridMarkerCircle"):SetSprite("Crafting_CoordSprites:sprCoord_SmallCircle_Red")
 		elseif self.wndMarker and itemAdditive then
 			self.wndMarker:SetSprite(itemAdditive:GetIcon())
@@ -443,7 +451,7 @@ function CraftingGrid:RedrawAllDetailed(idSchematic, tSchematicInfo, tCurrentCra
 					wndCurr:SetData(itemCurr)
 					wndCurr:FindChild("AdditiveMouseCatcher"):SetData(itemCurr)
 					wndCurr:FindChild("AdditiveCashWindow"):SetAmount(nAdditivePrice)
-					wndCurr:FindChild("AdditiveCashWindow"):SetTextColor(bCanAfford and ApolloColor.new("UI_BtnTextGoldListPressed") or ApolloColor.new("AddonError"))
+					wndCurr:FindChild("AdditiveCashWindow"):SetTextColor(bCanAfford and ApolloColor.new("UI_BtnTextGoldListPressed") or ApolloColor.new("xkcdReddish"))
 					wndCurr:FindChild("AdditiveIcon"):SetSprite(bCanAfford and itemCurr:GetIcon() or "ClientSprites:LootCloseBox")
 					wndCurr:FindChild("AdditiveTitleText"):SetAML("<P Font=\"CRB_InterfaceMedium_BO\" TextColor=\"UI_BtnTextGoldListPressed\">"..itemCurr:GetName().."</P>")
 
@@ -511,7 +519,11 @@ end
 function CraftingGrid:OnCraftingUpdateCurrent()
 	if self.bFullDestroyNeeded then
 		self.bFullDestroyNeeded = false
-		local idSchematic = self.wndMain:GetData()
+
+		local idSchematic = nil
+		if self.wndMain and self.wndMain:IsValid() and self.wndMain:GetData() then
+			idSchematic = self.wndMain:GetData()
+		end
 		self.wndMain:Destroy()
 		self.wndMain = nil
 		Event_FireGenericEvent("GenericEvent_StartCraftingGrid", idSchematic)
@@ -542,12 +554,12 @@ function CraftingGrid:OnCraftBtn(wndHandler, wndControl) -- CraftBtn
 	local nSchematicId = self.wndMain:GetData()
 	self.tPendingDiscoveryResultData =
 	{
-		--eDirection (This is Set Later)
+		--eDirection (This is set later)
+		--eHotOrCold (this is set later)
 		["nPosX"] = nNewPosX,
 		["nPosY"] = nNewPosY,
 		["idSchematic"] = nSchematicId,
 		["strTooltip"] = strTooltipSaved,
-		["strHotOrCold"] = Apollo.GetString("CoordCrafting_ViewLastCraft"),
 	}
 
 	-- Order is important, must clear first
@@ -565,11 +577,11 @@ function CraftingGrid:OnCraftBtn(wndHandler, wndControl) -- CraftBtn
 	self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(true)
 	self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("MouseBlocker"):Show(true)
 	self.wndMain:FindChild("BGPostCraftBlocker"):Show(true)
-	Apollo.StartTimer("CraftingGrid_CraftBtnTimer")
+	self.timerBtn:Start()
 end
 
 function CraftingGrid:OnCraftingGrid_CraftBtnTimer()
-	Apollo.StopTimer("CraftingGrid_CraftBtnTimer")
+	self.timerBtn:Stop()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("MouseBlocker"):Show(false)
 		self.wndMain:FindChild("BGPostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(false)
@@ -585,7 +597,12 @@ function CraftingGrid:OnCraftingSchematicLearned(idTradeskill, idSchematic)
 	local nParentId = tSchematicInfo and tSchematicInfo.nParentSchematicId or idSchematic
 	self.tLastMarkersList[idSchematic] = nil
 	self.tLastMarkersList[nParentId] = nil
-	self.bFullDestroyNeeded = true
+	
+	-- Clear the discoverable graphics and keep the result window up
+	self.wndMain:FindChild("Discoverables"):DestroyChildren()
+	self:BuildNewGrid(idSchematic)
+	self:RedrawAll()
+	self.wndMain:FindChild("BGPostCraftBlocker"):Show(true)
 end
 
 function CraftingGrid:OnCraftingDiscoveryHotCold(eHotCold, eDirection)
@@ -596,15 +613,14 @@ function CraftingGrid:OnCraftingDiscoveryHotCold(eHotCold, eDirection)
 	local tTempData = self.tPendingDiscoveryResultData
 	local tCurrentCraft = CraftingLib.GetCurrentCraft()
 	if tCurrentCraft and tCurrentCraft.nSchematicId and tTempData then
-		--tPendingDiscoveryResultData has:
+		--tPendingDiscoveryResultData is part of a two step process, earlier in step one it received:
 		--	["nPosX"] = nNewPosX,
 		--	["nPosY"] = nNewPosY,
 		--	["idSchematic"] = nSchematicId,
 		--	["strTooltip"] = strTooltipSaved,
-		--	["strHotOrCold"] = Apollo.GetString("CoordCrafting_ViewLastCraft"),
+		tTempData.eHotOrCold = eHotCold
 		tTempData.eDirection = eDirection
 		tTempData.idSchematic = tCurrentCraft.nSchematicId
-		tTempData.strHotOrCold = ktLastAttemptHotOrColdString[eHotCold]
 
 		if not self.tLastMarkersList[tCurrentCraft.nSchematicId] then
 			self.tLastMarkersList[tCurrentCraft.nSchematicId] = {}
@@ -700,7 +716,7 @@ function CraftingGrid:OnCloseBtn(wndHandler, wndControl)
 		return
 	end
 
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
 		self.wndMain:Destroy()
 		self.wndMain = nil
 
@@ -708,8 +724,16 @@ function CraftingGrid:OnCloseBtn(wndHandler, wndControl)
 		if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
 			Event_FireGenericEvent("GenericEvent_LootChannelMessage", Apollo.GetString("CoordCrafting_CraftingInterrupted"))
 		end
+
+		Event_FireGenericEvent("AlwaysShowTradeskills")
 	end
-	Event_FireGenericEvent("AlwaysShowTradeskills")
+end
+
+function CraftingGrid:OnP2PTradeExitAndReset()
+	local tCurrentCraft = CraftingLib.GetCurrentCraft()
+	if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 and self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+		self:ExitAndReset()
+	end
 end
 
 function CraftingGrid:OnAdditiveMouseEnter(wndHandler, wndControl) -- AdditiveItem's AdditiveMouseCatcher, data is an itemData
@@ -847,11 +871,11 @@ function CraftingGrid:BuildNewGrid(idSchematic)
 		self.wndMarker:Destroy()
 		self.wndMarker = nil
 	end
-	if wndMarkerParent:FindChild("GridMarker1") then
-		wndMarkerParent:FindChild("GridMarker1"):Destroy()
-	end
-	if wndMarkerParent:FindChild("GridMarker2") then
-		wndMarkerParent:FindChild("GridMarker2"):Destroy()
+
+	for idx = 1, tSchematicInfo.nMaxAdditives do
+		if wndMarkerParent:FindChild("GridMarker"..idx) then -- From "GridMarker"
+			wndMarkerParent:FindChild("GridMarker"..idx):Destroy()
+		end
 	end
 
 	-- Reset
@@ -920,7 +944,7 @@ end
 
 function CraftingGrid:BuildNewDiscoverable(tSchem) -- discoveryAngle, discoveryDistanceMin, discoveryDistanceMax
 	local fLocalRotation = tSchem.fDiscoveryAngle + 45
-	local wndResult = Apollo.LoadForm(self.xmlDoc, "GridDiscoverableItem", self.wndMain:FindChild("Discoverables"), self)
+	local wndResult = Apollo.LoadForm(self.xmlDoc, "GridDiscoverableItem", self.wndMain:FindChild("Discoverables"), self) -- Discoverables is also destroyed on SchematicLearned
 	wndResult:SetData(tSchem)
 
 	-- Size the discoverable area

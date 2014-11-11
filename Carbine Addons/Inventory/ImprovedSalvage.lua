@@ -126,7 +126,7 @@ function ImprovedSalvage:RedrawAll()
 			wndCurr:FindChild("SalvageListItemTitle"):SetText(tItem:GetName())
 			
 			local bTextColorRed = self:HelperPrereqFailed(tItem)
-			wndCurr:FindChild("SalvageListItemType"):SetTextColor(bTextColorRed and "UI_WindowTextRed" or "UI_TextHoloBodyCyan")
+			wndCurr:FindChild("SalvageListItemType"):SetTextColor(bTextColorRed and "xkcdReddish" or "UI_TextHoloBodyCyan")
 			wndCurr:FindChild("SalvageListItemType"):SetText(tItem:GetItemTypeName())
 			
 			wndCurr:FindChild("SalvageListItemCantUse"):Show(bTextColorRed)

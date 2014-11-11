@@ -42,7 +42,8 @@ function BankViewer:OnDocumentReady()
 	Apollo.RegisterEventHandler("BankSlotPurchased", "OnBankSlotPurchased", self)
 	Apollo.RegisterEventHandler("PersonaUpdateCharacterStats", "RefreshBagCount", self)
 
-	Apollo.RegisterTimerHandler("BankViewer_NewBagPurchasedAlert", "OnBankViewer_NewBagPurchasedAlert", self)
+	self.timerNewBagPurchasedAlert = ApolloTimer.Create(12.0, false, "OnBankViewer_NewBagPurchasedAlert", self)
+	self.timerNewBagPurchasedAlert:Stop()
 
 	self.wndMain = nil -- TODO RESIZE CODE
 end
@@ -75,9 +76,15 @@ function BankViewer:Build()
 			wndCurr:FindChild("BagCount"):SetText(wndBagBtn:GetItem():GetBagSlots())
 		end
 		wndCurr:FindChild("BagCount"):SetData(wndBagBtn)
-		wndCurr:FindChild("BagLocked"):Show(idx > nNumBagSlots)
 		wndCurr:FindChild("NewBagPurchasedAlert"):Show(false, true)
 		wndBagBtn:Enable(idx <= nNumBagSlots)
+		
+		if idx > nNumBagSlots then
+			wndCurr:FindChild("BagLocked"):Show(true)
+			wndCurr:SetTooltip(Apollo.GetString("Bank_LockedTooltip"))
+		else
+			wndCurr:SetTooltip(Apollo.GetString("Bank_SlotTooltip"))
+		end
 	end
 	self.wndMain:FindChild("ConfigureBagsContainer"):ArrangeChildrenHorz(1)
 
@@ -139,16 +146,15 @@ function BankViewer:ComputeCashLimits()
 	local nNextBankBagCost = GameLib.GetNextBankBagCost():GetAmount()
 	local nPlayerCash = GameLib.GetPlayerCurrency():GetAmount()
 	if nNextBankBagCost > nPlayerCash then
-		self.wndMain:FindChild("BankBuyPrice"):SetTextColor(ApolloColor.new("red"))
+		self.wndMain:FindChild("BankBuyPrice"):SetTextColor(ApolloColor.new("xkcdReddish"))
 		self.wndMain:FindChild("BankBuyPrice"):SetTooltip(Apollo.GetString("Bank_CanNotAfford"))
 		self.wndMain:FindChild("BankBuySlotBtn"):Enable(false)
 	else
-		self.wndMain:FindChild("BankBuyPrice"):SetTextColor(ApolloColor.new("white"))
+		self.wndMain:FindChild("BankBuyPrice"):SetTextColor(ApolloColor.new("UI_TextMetalBodyHighlight"))
 		self.wndMain:FindChild("BankBuyPrice"):SetTooltip(Apollo.GetString("Bank_SlotPriceTooltip"))
 		self.wndMain:FindChild("BankBuySlotBtn"):Enable(true)
 	end
 	self.wndMain:FindChild("BankBuyPrice"):SetAmount(nNextBankBagCost, true)
-	self.wndMain:FindChild("PlayerMoney"):SetAmount(nPlayerCash)
 end
 
 function BankViewer:ResizeBankSlots()
@@ -165,7 +171,6 @@ function BankViewer:ResizeBankSlots()
 	-- Money
 	local nNextBankBagCost = GameLib.GetNextBankBagCost():GetAmount()
 	local nPlayerCash = GameLib.GetPlayerCurrency():GetAmount()
-	self.wndMain:FindChild("PlayerMoney"):SetAmount(nPlayerCash)
 	self.wndMain:FindChild("BankBuySlotBtn"):Enable(nNextBankBagCost <= nPlayerCash)
 end
 
@@ -194,7 +199,7 @@ end
 
 function BankViewer:OnBankSlotPurchased()
 	self.wndMain:FindChild("BankTitleText"):SetText(Apollo.GetString("Bank_BuySuccess"))
-	Apollo.CreateTimer("BankViewer_NewBagPurchasedAlert", 12, false)
+	self.timerNewBagPurchasedAlert:Start()
 	self:Build()
 end
 

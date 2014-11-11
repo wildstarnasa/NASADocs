@@ -291,6 +291,7 @@ function PathSettlerMain:BuildListItem(pmMission) -- the bool lets us draw hubs/
 	end
 
 	local wndListItem = self:FactoryProduce(self.tWndRefs.wndMissionList, "SettlerListItem", pmMission)
+	wndListItem:FindChild("ListItemBig"):SetData(pmMission)
 	wndListItem:FindChild("ListItemBigBtn"):SetData(pmMission)
 	wndListItem:FindChild("ListItemCodexBtn"):SetData(pmMission)
 	wndListItem:FindChild("ListItemCompleteBtn"):SetData(pmMission)
@@ -302,15 +303,20 @@ function PathSettlerMain:BuildListItem(pmMission) -- the bool lets us draw hubs/
 	local nColonPosition = string.find(strName, ": ") -- TODO HACK!
 	local strMissionType = karMissionTypeToFormattedString[nColonPosition and string.sub(pmMission:GetName(), 0, nColonPosition) or ""] or ""
 	local strListItemName = string.len(strMissionType) > 0 and string.sub(strName, nColonPosition + 2) or strName
-	wndListItem:FindChild("ListItemBigBtn"):SetTooltip(pmMission:GetSummary() or "")
+	wndListItem:FindChild("ListItemBig"):SetTooltip(pmMission:GetSummary() or "")
 	wndListItem:FindChild("ListItemIcon"):SetSprite(pmMission:IsComplete() and "Icon_Windows_UI_CRB_Checkmark" or ktTypeIconStrings[eType])
 	wndListItem:FindChild("ListItemName"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff2f94ac\">"..strListItemName.."</P>")
 
+	local bIsSettlerHub = eType == PathMission.PathMissionType_Settler_Hub
+	wndListItem:FindChild("ListItemBigBtn"):Show(not bIsSettlerHub)
+	wndListItem:FindChild("ListItemBigBlocker"):Show(bIsSettlerHub)
+
+	
 	-- Has Mouse
 	local bHasMouse = wndListItem:FindChild("ListItemMouseCatcher"):ContainsMouse()
 	wndListItem:FindChild("ListItemCodexBtn"):Show(bHasMouse)
-	wndListItem:FindChild("ListItemHintArrowArt"):Show(bHasMouse)
-	wndListItem:FindChild("ListItemIcon"):SetBGColor(bHasMouse and "44ffffff" or "ffffffff")
+	wndListItem:FindChild("ListItemHintArrowArt"):Show(bHasMouse and not bIsSettlerHub)
+	wndListItem:FindChild("ListItemIcon"):SetBGColor((bHasMouse and not bIsSettlerHub) and "44ffffff" or "ffffffff")
 	wndListItem:FindChild("ListItemName"):SetTextColor(bHasMouse and ApolloColor.new("white") or ApolloColor.new("ff2f94ac"))
 
 	-- Mission specific formatting
@@ -339,8 +345,8 @@ function PathSettlerMain:BuildListItem(pmMission) -- the bool lets us draw hubs/
 			end
 		end
 
-		wndListItem:FindChild("ListItemMeterBG"):Show(true)
-		local wndLIM = wndListItem:FindChild("ListItemMeter")
+		wndListItem:FindChild("ListItemProgressBG"):Show(true)
+		local wndLIM = wndListItem:FindChild("ListItemProgress")
 		wndLIM:SetMax(nTotal)
 		wndLIM:SetProgress(nCompleted, knRate)
 		wndLIM:EnableGlow(nCompleted > 0)

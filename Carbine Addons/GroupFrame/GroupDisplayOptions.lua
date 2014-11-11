@@ -106,6 +106,8 @@ function GroupDisplayOptions:OnSubOptionSet(wndHandler, wndControl)
 	elseif strSubOptionName == "Referral" then
 		GroupLib.SetReferralMethod(wndHandler:GetData())
 	end
+	
+	self:HelperRedrawSpecific(strSubOptionName, wndHandler:GetData())
 end
 
 function GroupDisplayOptions:RedrawAll() -- The button check and various UI calls route here

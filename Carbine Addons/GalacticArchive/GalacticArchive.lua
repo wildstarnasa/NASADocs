@@ -6,6 +6,7 @@
 require "Window"
 require "GalacticArchiveArticle"
 require "GalacticArchiveEntry"
+require "ApolloTimer"
 
 local GalacticArchive = {}
 
@@ -13,12 +14,28 @@ local kclrDefault = "ff62aec1"
 
 local knHeaderHeightClosed = 0
 
+local karCategoryToIcon =
+{
+	"CRB_GuildSprites:sprGuild_Potion",
+	"ClientSprites:Icon_Guild_UI_Guild_Hand",
+	"ClientSprites:Icon_Guild_UI_Guild_Blueprint",
+	"ClientSprites:Icon_Guild_UI_Guild_Pearl",
+	"ClientSprites:Icon_Guild_UI_Guild_Blueprint",
+	"ClientSprites:Icon_Guild_UI_Guild_Candles",
+	"ClientSprites:Icon_Guild_UI_Guild_Key",
+	"CRB_GuildSprites:sprGuild_Leaf",
+	"ClientSprites:Icon_Guild_UI_Guild_Syringe",
+	"CRB_GuildSprites:sprGuild_Flute",
+	"CRB_GuildSprites:sprGuild_Skull",
+	"CRB_GuildSprites:sprGuild_Lopp",
+}
+	
+
 function GalacticArchive:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
 
-	o.tArticleTitleCache = {}
 	o.tWindowCache = {}
 
     return o
@@ -46,6 +63,12 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 	Apollo.RegisterEventHandler("GalacticArchiveEntryAdded", 		"OnGalacticArchiveEntryAdded", self)
 	Apollo.RegisterEventHandler("GalacticArchiveRefresh", 			"OnGalacticArchiveRefresh", self)
 	Apollo.RegisterEventHandler("GenericEvent_ShowGalacticArchive", "OnGenericEvent_ShowGalacticArchive", self)
+	
+	self.eCategoryNameLookup = {}
+	
+	for idx, strName in pairs(GalacticArchiveArticle.GetAllCategories()) do
+		self.eCategoryNameLookup[strName] = idx
+	end
 
 	if self.wndArchiveIndexForm and self.wndArchiveIndexForm:IsValid() then
 		self.wndArchiveIndexForm:Destroy()
@@ -68,8 +91,6 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 	self.artDisplayed = nil
 	self.wndMostTopLevel = wndMostTopLevel
 	self.wndArticleDisplay:Show(false, true)
-	--self.wndArchiveIndexForm:SetSizingMinimum(362, 300)
-	--self.wndArchiveIndexForm:SetSizingMaximum(362, 1200)
 
 	-- My variables
 	self.tWndTopFilters = {}
@@ -95,7 +116,7 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 		local wndCurr = Apollo.LoadForm(self.xmlDoc, "FilterTypeItem", self.wndArchiveIndexForm:FindChild("TypeFilterContainer"), self)
 		wndCurr:FindChild("FilterIcon"):SetTooltip(string.format(
 			"<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff9d9d9d\">%s<P TextColor=\"ffffffff\">%s</P></P>", Apollo.GetString("Archive_ShowArticlesOnTopic"), strCurrCategory))
-		self:HelperDrawTypeIcon(wndCurr:FindChild("FilterIcon"), nil, strCurrCategory)
+		self:HelperDrawTypeIcon(wndCurr:FindChild("FilterIcon"), nil, idx)
 		wndCurr:FindChild("FilterTypeBtn"):SetData(strCurrCategory)
 		table.insert(self.tWndTopFilters, wndCurr)
 	end
@@ -196,7 +217,7 @@ function GalacticArchive:HelperShouldShowArticle(artCurr)
 		strCatChoice = nil
 	end
 
-	local strTitle = self:GetTitleMinusThe(artCurr)
+	local strTitle = artCurr:GetTitle()
 	if strCatChoice and strCatChoice ~= Apollo.GetString("Archive_ShowAll") and strCatChoice ~= Apollo.GetString("Archive_Updated") and not artCurr:GetCategories()[strCatChoice] then
 		return false
 	elseif strCatChoice and strCatChoice == Apollo.GetString("Archive_Updated") and not self:HelperIsNew(artCurr) then
@@ -241,21 +262,43 @@ function GalacticArchive:PopulateArchiveIndex()
 		return
 	end
 	
-	local tArticlesToAdd = GalacticArchiveArticle.GetArticles()
+	self.arArticlesToAdd = GalacticArchiveArticle.GetArticles()
+	self.nNumOfNewArticles = 0
+	
+	self.timerPopulateArchiveIndex = ApolloTimer.Create(0.5, true, "OnPopulateArchiveIndexTimer", self)
+	self:OnPopulateArchiveIndexTimer()
+end
+
+function GalacticArchive:OnPopulateArchiveIndexTimer()
+	local nCurrentTime = GameLib.GetTickCount()
 	
 	local nNumOfNewArticles = 0
-	for idx, artCurr in ipairs(tArticlesToAdd) do
+	
+	local artCurr = nil
+	while #self.arArticlesToAdd > 0 do
+		artCurr = table.remove(self.arArticlesToAdd, #self.arArticlesToAdd)
 		self:BuildAHeader(artCurr)
 		
 		if self:HelperIsNew(artCurr) then
-			nNumOfNewArticles = nNumOfNewArticles + 1
+			self.nNumOfNewArticles = self.nNumOfNewArticles + 1
+		end
+		
+		if GameLib.GetTickCount() - nCurrentTime > 250 then
+			return
 		end
 	end
-
-	if nNumOfNewArticles == 0 then
+	
+	self.timerPopulateArchiveIndex:Stop()
+	self.timerPopulateArchiveIndex = nil
+	
+	for idx, wndHeader in pairs(self.wndHeaderContainer:GetChildren()) do
+		self:FormatHeaderDisplay(wndHeader)
+	end
+	
+	if self.nNumOfNewArticles == 0 then
 		self.wndFilterUpdated:SetText(Apollo.GetString("Archive_UpdatedArticles"))
 	else
-		self.wndFilterUpdated:SetText(String_GetWeaselString(Apollo.GetString("Archive_UpdatedArticlesNumber"), nNumOfNewArticles))
+		self.wndFilterUpdated:SetText(String_GetWeaselString(Apollo.GetString("Archive_UpdatedArticlesNumber"), self.nNumOfNewArticles))
 	end
 
 	local nHeight = self.wndHeaderContainer:ArrangeChildrenVert(0, function (a,b)
@@ -264,7 +307,7 @@ function GalacticArchive:PopulateArchiveIndex()
 	
 	for idx, wndHeader in pairs(self.wndHeaderContainer:GetChildren()) do
 		wndHeader:FindChild("HeaderItemContainer"):ArrangeChildrenVert(0, function (a,b)
-			return (self:GetTitleMinusThe(a:GetData()) < self:GetTitleMinusThe(b:GetData()))
+			return (a:GetData():GetTitle() < b:GetData():GetTitle())
 		end)
 	end
 	
@@ -278,15 +321,17 @@ function GalacticArchive:PopulateArchiveIndex()
 			self.wndBGTitleText:SetText(String_GetWeaselString(Apollo.GetString("Archive_TitleWithFilter"), self.strCurrTypeFilter))
 		end
 	end
-	
+
+	self.arArticlesToAdd = nil
+	self.nNumOfNewArticles = nil
 end
 
 function GalacticArchive:FilterArchiveIndex()
 	local nNumOfNewArticles = 0
 	local tArticlesToAdd = GalacticArchiveArticle.GetArticles()
 	for idx, artCurr in ipairs(tArticlesToAdd) do
-		
-		local strLetter = string.sub(self:GetTitleMinusThe(artCurr), 0, 1):lower()
+	
+		local strLetter = string.sub(artCurr:GetTitle(), 0, 1):lower()
 		if strLetter == nil or strLetter == "" then
 			strLetter = Apollo.GetString("Archive_Unspecified")
 		end
@@ -355,25 +400,22 @@ function GalacticArchive:FormatHeaderDisplay(wndHeader)
 end
 
 function GalacticArchive:BuildAHeader(artBuilding)
-	local strLetter = string.sub(self:GetTitleMinusThe(artBuilding), 0, 1):lower()
+	local strLetter = string.sub(artBuilding:GetTitle(), 0, 1):lower()
 	if strLetter == nil or strLetter == "" then
-		strLetter = Apollo.GetString("Archive_Unspecified")
+		strLetter = Apollo.GetString("Archive_Unspecified"):lower()
 	end
-
+	
 	local bIsNew = self.tWindowCache[strLetter:lower()] == nil
-	local wndHeader = self:FactoryCacheProduce(self.wndHeaderContainer, "HeaderItem", strLetter:lower())
+	local wndHeader = self:FactoryCacheProduce(self.wndHeaderContainer, "HeaderItem", strLetter)
 	wndHeader:SetData(strLetter)
 	if bIsNew then
-		wndHeader:FindChild("HeaderBtn"):SetCheck(true)
+		wndHeader:FindChild("HeaderBtn"):SetCheck(false)		
+		wndHeader:FindChild("HeaderBtn"):SetData(strLetter)
+		wndHeader:FindChild("HeaderBtnText"):SetText(strLetter:upper())
 	end
 	
-	local wndHeader = self:FactoryCacheProduce(self.wndHeaderContainer, "HeaderItem", strLetter:lower())
+	--local wndHeader = self:FactoryCacheProduce(self.wndHeaderContainer, "HeaderItem", strLetter)
 	self:AddArticleToIndex(artBuilding, wndHeader:FindChild("HeaderItemContainer"))
-	
-	wndHeader:FindChild("HeaderBtn"):SetData(strLetter) -- Used by OnHeaderBtnItemClick
-	wndHeader:FindChild("HeaderBtnText"):SetText(strLetter:upper()) -- Add children in a separate method since we need FindChild detection
-	
-	self:FormatHeaderDisplay(wndHeader)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -382,6 +424,11 @@ end
 function GalacticArchive:AddArticleToIndex(artData, wndParent)
 	local wndArticle = self:FactoryCacheProduce(wndParent, "ArchiveIndexItem", artData:GetTitle())
 	wndArticle:SetData(artData)
+	
+	local wndArticleProgress = wndArticle:FindChild("ArticleProgress")
+	local wndArchiveIndexItemTitle = wndArticle:FindChild("ArchiveIndexItemTitle")
+	local wndArticleIcon = wndArticle:FindChild("ArticleDisplayFrame:ArticleIcon")
+	local wndArticlePortrait = wndArticle:FindChild("ArticleDisplayFrame:ArticlePortrait")
 	
 	local bShow = self:HelperShouldShowArticle(artData)
 	if bShow ~= wndArticle:IsShown() then
@@ -397,26 +444,40 @@ function GalacticArchive:AddArticleToIndex(artData, wndParent)
 			nLockCount = nLockCount + 1
 		end
 	end
+	
 	local nMaxCount = nEntryCount + nLockCount
 	local bHasCostume = artData:GetHeaderCreature() and artData:GetHeaderCreature() ~= 0
-
-	if bHasCostume then
-		wndArticle:FindChild("ArticlePortrait"):SetCostumeToCreatureId(artData:GetHeaderCreature())
-	elseif string.len(artData:GetHeaderIcon()) > 0 then
-		wndArticle:FindChild("ArticleIcon"):SetSprite(artData:GetHeaderIcon())
-	else
-		wndArticle:FindChild("ArticleIcon"):SetSprite("Icon_Mission_Explorer_PowerMap")
-	end
-	wndArticle:FindChild("ArticleIcon"):Show(not bHasCostume)
-	wndArticle:FindChild("ArticlePortrait"):Show(bHasCostume)
-
 	
-	wndArticle:FindChild("ArticleProgress"):SetMax(nMaxCount)
-	wndArticle:FindChild("ArticleProgress"):SetProgress(nEntryCount)
+	if bHasCostume then
+		wndArticlePortrait:SetCostumeToCreatureId(artData:GetHeaderCreature())
+	elseif string.len(artData:GetHeaderIcon()) > 0 then
+		wndArticleIcon:SetSprite(artData:GetHeaderIcon())
+	else
+		wndArticleIcon:SetSprite("Icon_Mission_Explorer_PowerMap")
+	end
+	
+	if not bHasCostume ~= wndArticleIcon:IsShown() then
+		wndArticleIcon:Show(not bHasCostume)
+	end
+	if bHasCostume ~= wndArticlePortrait:IsShown() then
+		wndArticlePortrait:Show(bHasCostume)
+	end
+	
+	wndArticleProgress:SetMax(nMaxCount)
+	wndArticleProgress:SetProgress(nEntryCount)
 	wndArticle:FindChild("ArticleProgressText"):SetText(nEntryCount == nMaxCount and "" or String_GetWeaselString(Apollo.GetString("Archive_UnlockedCount"), nEntryCount, nMaxCount))
-	wndArticle:FindChild("NewIndicator"):Show(self:HelperIsNew(artData))
-	wndArticle:FindChild("ArchiveIndexItemTitle"):SetText(artData:GetTitle())
-	self:HelperDrawTypeIcon(wndArticle:FindChild("ArticleTypeIcon"), artData)
+	wndArticle:FindChild("ArticleDisplayFrame:NewIndicator"):Show(self:HelperIsNew(artData))
+	wndArchiveIndexItemTitle:SetText(artData:GetTitle())
+	
+	local nWidth, nHeight = wndArchiveIndexItemTitle:SetHeightToContentHeight()
+	local nLeftTitle, nTopTitle, nRightTitle, nBottomTitle = wndArchiveIndexItemTitle:GetAnchorOffsets()
+	wndArchiveIndexItemTitle:SetAnchorOffsets(nLeftTitle, nTopTitle, nRightTitle, nBottomTitle + 3)
+	
+	if nHeight > 30 then -- Article Title height of ~2 lines
+		local nLeft, nTop, nRight, nBottom = wndArticle:GetAnchorOffsets()
+		wndArticle:SetAnchorOffsets(nLeft, nTop, nRight, nHeight + 52)
+	end
+	
 end
 
 function GalacticArchive:HelperIsNew(artCurr)
@@ -445,34 +506,17 @@ function GalacticArchive:HelperIsThereAnyNew()
 	return false
 end
 
-function GalacticArchive:HelperDrawTypeIcon(wndArg, artCheck, strCategory)
-	-- TODO This is all hard coded temporary
+function GalacticArchive:HelperDrawTypeIcon(wndArg, artCheck, eCategory)
 	local strSprite = ""
-	local artCheckCategories = artCheck and artCheck:GetCategories() or nil
-	if (strCategory and strCategory == "Lore") or (artCheck and artCheckCategories["Lore"]) then
-		strSprite = "CRB_GuildSprites:sprGuild_Flute"
-	elseif (strCategory and strCategory == "Tech") or (artCheck and artCheckCategories["Tech"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Syringe"
-	elseif (strCategory and strCategory == "Plants") or (artCheck and artCheckCategories["Plants"]) then
-		strSprite = "CRB_GuildSprites:sprGuild_Leaf"
-	elseif (strCategory and strCategory == "Allies") or (artCheck and artCheckCategories["Allies"]) then
-		strSprite = "CRB_GuildSprites:sprGuild_Lopp"
-	elseif (strCategory and strCategory == "Enemies") or (artCheck and artCheckCategories["Enemies"]) then
-		strSprite = "CRB_GuildSprites:sprGuild_Skull"
-	elseif (strCategory and strCategory == "Minerals") or (artCheck and artCheckCategories["Minerals"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Pearl"
-	elseif (strCategory and strCategory == "Factions") or (artCheck and artCheckCategories["Factions"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Candles"
-	elseif (strCategory and strCategory == "Creatures") or (artCheck and artCheckCategories["Creatures"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Hand"
-	elseif (strCategory and strCategory == "Locations") or (artCheck and artCheckCategories["Locations"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Blueprint"
-	elseif (strCategory and strCategory == "Sentient Species") or (artCheck and artCheckCategories["Sentient Species"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Key"
-	elseif (strCategory and strCategory == "The Nexus Project") or (artCheck and artCheckCategories["The Nexus Project"]) then
-		strSprite = "CRB_GuildSprites:sprGuild_Potion"
-	elseif (strCategory and strCategory == "Notable Individuals") or (artCheck and artCheckCategories["Notable Individuals"]) then
-		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Blueprint" -- Doubled with Location
+	eArticleCategory = eCategory or 0
+	
+	if artCheck then
+		local tCategories = artCheck:GetCategories()
+		eArticleCategory = self.eCategoryNameLookup[next(tCategories)]
+	end
+	
+	if karCategoryToIcon[eArticleCategory] then
+		strSprite = karCategoryToIcon[eArticleCategory]
 	else
 		strSprite = "ClientSprites:Icon_Guild_UI_Guild_Blueprint"
 		wndArg:SetTooltip(Apollo.GetString("Archive_ArticleNotClassified"))
@@ -717,22 +761,6 @@ end
 
 function GalacticArchive:ReplaceLineBreaks(strArg)
 	return strArg:gsub("\\n", "<T TextColor=\"0\">.</T></P><P Font=\"CRB_InterfaceMedium\" TextColor=\""..kclrDefault.."\">")
-end
-
-function GalacticArchive:GetTitleMinusThe(artTitled)
-	local strTitle = artTitled:GetTitle()
-	if self.tArticleTitleCache[strTitle] == nil then
-		local strDefine = Apollo.GetString("Archive_DefiniteArticle")
-		local nDefineLength = string.len(strDefine)
-		
-		if string.sub(artTitled:GetTitle(), 0, nDefineLength) == strDefine then
-			self.tArticleTitleCache[strTitle] = string.sub(artTitled:GetTitle(), nDefineLength+1)
-		else
-			self.tArticleTitleCache[strTitle] = strTitle
-		end
-	end
-	
-	return self.tArticleTitleCache[strTitle]
 end
 
 -----------------------------------------------------------------------------------------------

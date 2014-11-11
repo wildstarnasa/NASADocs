@@ -22,15 +22,19 @@ local LuaEnumBlueTeamInfo =
 	Health		= 1711,
 }
 
+local knBlueTeamId = 4
+
 local LuaEnumRedTeamInfo = 
 {
 	Health 		= 1710,
 }
 
+local knRedTeamId = 5
+
 local LuaEnumControlPoints =
 {
 	Center 		= 1415,
-	East 		= 1416,
+	East 			= 1416,
 	West 		= 1417,
 }
 
@@ -87,8 +91,8 @@ function Sabotage:OnDocumentReady()
 	Apollo.RegisterEventHandler("ChangeWorld", 				"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("PublicEventStart",			"CheckForSabotage", self)
 	Apollo.RegisterEventHandler("MatchEntered", 			"CheckForSabotage", self)
-	Apollo.RegisterEventHandler("PvP_Sabotage_BombCarrier", "OnSabotageBombCarrier", self)
-	Apollo.RegisterEventHandler("PvP_Sabotage_BombDropped", "OnSabotageBombDropped", self)
+	Apollo.RegisterEventHandler("PublicEventBombStatus",	"OnSabotageBombCarrier", self)
+	Apollo.RegisterEventHandler("PublicEventBombDropped",	"OnSabotageBombDropped", self)
 	
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "SabotageMain", "FixedHudStratumLow", self)
 	self.wndMain:Show(false)
@@ -148,7 +152,16 @@ function Sabotage:OnWarPlotOneSecMatchTimer()
 	for idx, tData in pairs(self.tBombCarriers) do
 		if not tSlots[idx] then
 			for k, idx2 in pairs(knSlotOrder[tData.eTeam]) do
-				if not self.wndBombs[idx2]:GetData() or self.wndBombs[idx2]:GetData().idCharacter == idx then
+				if not self.wndBombs[idx2]:GetData() or self.wndBombs[idx2]:GetData().idCarrier == idx then
+					if tData.wndBomb and tData.wndBomb ~= self.wndBombs[idx2] then
+						tData.wndBomb:SetData(nil)
+						tData.wndBomb:SetSprite("")
+						tData.wndBomb:FindChild("Carrier"):SetText("")
+						tData.wndBomb:FindChild("TimeRemaining"):SetText("")
+						tData.wndBomb:FindChild("Timer"):SetProgress(0)
+						tData.wndBomb:Show(false)
+					end
+					
 					tData.nTimer = tData.nTimer - 1000
 					tData.wndBomb = self.wndBombs[idx2]
 					
@@ -160,30 +173,46 @@ function Sabotage:OnWarPlotOneSecMatchTimer()
 			end
 		end
 	end
-	
+
 	-- Draw Control Points
 	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.Center], self.wndMain:FindChild("Center"), 3)
 	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.West], self.wndMain:FindChild("West"), 2)
 	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.East], self.wndMain:FindChild("East"), 4)
 end
 
-function Sabotage:OnSabotageBombCarrier(nTimeInMs, idCharacter, eTeam)
-	self.tBombCarriers[idCharacter] = {nTimer = nTimeInMs, idCharacter = idCharacter, eTeam = eTeam}
+function Sabotage:OnSabotageBombCarrier(nTimeInMs, unitCarrier, idTeam)
+	if not unitCarrier then
+		return
+	end
+	
+	local idCarrier = unitCarrier:GetId()
+	
+	local eTeam = (idTeam == knBlueTeamId) and 1 or 2
+	if self.tBombCarriers[idCarrier] == nil then
+		self.tBombCarriers[idCarrier] = {nTimer = nTimeInMs, idCarrier = idCarrier, eTeam = eTeam}
+	else
+		self.tBombCarriers[idCarrier].nTimer = nTimeInMs
+	end
 end
 
-function Sabotage:OnSabotageBombDropped(idCharacter)
-	if self.tBombCarriers[idCharacter] then
-		local wndBomb = self.tBombCarriers[idCharacter].wndBomb
+function Sabotage:OnSabotageBombDropped(idCarrier)
+	if not idCarrier then
+		return
+	end
+	
+	if self.tBombCarriers[idCarrier] then
+		local wndBomb = self.tBombCarriers[idCarrier].wndBomb
 	
 		if wndBomb then
 			wndBomb:SetData(nil)
 			wndBomb:SetSprite("")
 			wndBomb:FindChild("Carrier"):SetText("")
+			wndBomb:FindChild("TimeRemaining"):SetText("")
 			wndBomb:FindChild("Timer"):SetProgress(0)
 			wndBomb:Show(false)
 		end
 		
-		self.tBombCarriers[idCharacter] = nil
+		self.tBombCarriers[idCarrier] = nil
 	end
 end
 
@@ -195,6 +224,7 @@ function Sabotage:DrawHealth(peoHealth, wndBar, wndProgress)
 	wndBar:Show(nCurrentHealth > 0)
 	wndBar:SetMax(nMaxHealth)
 	wndBar:SetProgress(nCurrentHealth)
+	wndBar:SetStyleEx("EdgeGlow", nCurrentHealth > 0 and nCurrentHealth < nMaxHealth)
 	wndBar:SetTooltip(string.format("%s: %s / %s", strTeam, Apollo.FormatNumber(nCurrentHealth, 0, true), Apollo.FormatNumber(nMaxHealth, 0, true)))
 	
 	wndProgress:Show(nCurrentHealth > 0)
@@ -216,7 +246,7 @@ function Sabotage:DrawBomb(wndBomb)
 		local wndTimer = wndBomb:FindChild("Timer")
 		
 		if nCurrentTime <= 0 then
-			self:OnSabotageBombDropped(tData.idCharacter)
+			self:OnSabotageBombDropped(tData.idCarrier)
 			return
 		end
 		
@@ -228,17 +258,16 @@ function Sabotage:DrawBomb(wndBomb)
 			wndTimer:SetFullSprite("spr_WarPlots_Generator_FillRed")
 		end
 		
-		if tData.idCharacter then
-			local unitCarrier = GameLib.GetUnitById(tData.idCharacter)
-			
+		if tData.idCarrier then
+			local unitCarrier = GameLib.GetUnitById(tData.idCarrier)
 			strCarrier = unitCarrier and unitCarrier:GetName() or ""
 		end
 		
 		wndTimer:SetProgress(nTimerPCT)
 		wndTimer:SetTooltip(Apollo.FormatNumber(nCurrentTime/1000))
 		
-		strCarrier = string.format("%s\n%s", Apollo.FormatNumber(nCurrentTime/1000, 0, true), strCarrier)
 		wndBomb:FindChild("Carrier"):SetText(strCarrier)
+		wndBomb:FindChild("TimeRemaining"):SetText(Apollo.FormatNumber(nCurrentTime/1000, 0, true))
 		wndBomb:Invoke()
 	end
 end
@@ -246,7 +275,7 @@ end
 function Sabotage:DrawControlPoint(peoControlPoint, wndPoint, nIndex)
 	wndPoint:SetMax(100)
 	wndPoint:SetProgress(100)
-	wndPoint:SetFullSprite(peoControlPoint:GetOwningTeam() == 0 and "" or peoControlPoint:GetOwningTeam() == 5 and "spr_Warplots_CP" .. nIndex .. "_RedCap" or "spr_Warplots_CP" .. nIndex .. "_BlueCap")
+	wndPoint:SetFullSprite(peoControlPoint:GetOwningTeam() == 0 and "" or peoControlPoint:GetOwningTeam() == knRedTeamId and "spr_Warplots_CP" .. nIndex .. "_RedCap" or "spr_Warplots_CP" .. nIndex .. "_BlueCap")
 end
 
 function Sabotage:CheckForSabotage()

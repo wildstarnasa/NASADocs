@@ -136,6 +136,10 @@ end
 function SocialPanel:Initialize()
 	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "SocialPanelForm", nil, self)
+		
+		local nLeft, nTop, nRight, nBottom = self.tWndRefs.wndMain:GetAnchorOffsets()
+		self.tWndRefs.wndMain:SetSizingMinimum(nRight - nLeft, nBottom - nTop)
+		
 		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.tWndRefs.wndMain, strName = Apollo.GetString("InterfaceMenu_Social")})
 			
 		self.tWndRefs.wndMain:FindChild("SplashFriendsBtnAlert"):Show(false, true)
@@ -165,11 +169,12 @@ function SocialPanel:FullyDrawSplashScreen(bHide)
 	self:Initialize()
 	
 	self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"):DestroyChildren() -- TODO: See if we can remove this
-
 	-- Circles
 	local nNumberOfCircles = 0
 	local arGuilds = GuildLib.GetGuilds()
 	table.sort(arGuilds, function(a,b) return (self:HelperSortCirclesChannelOrder(a,b)) end)
+	local guildSelected = self.tWndRefs.wndCirclesFrame:GetChildren()[1] and self.tWndRefs.wndCirclesFrame:GetChildren()[1]:GetData() or nil
+	
 	for key, guildCurr in pairs(arGuilds) do
 		if guildCurr:GetType() == GuildLib.GuildType_Circle then
 			nNumberOfCircles = nNumberOfCircles + 1
@@ -177,6 +182,9 @@ function SocialPanel:FullyDrawSplashScreen(bHide)
 			local wndCurr = Apollo.LoadForm(self.xmlDoc, "SplashCirclesPickerItem", self.tWndRefs.wndMain:FindChild("SplashCircleItemContainer"), self)
 			wndCurr:FindChild("SplashCirclesPickerBtn"):SetData(guildCurr)
 			wndCurr:FindChild("SplashCirclesPickerBtnText"):SetText(guildCurr:GetName())
+			if guildSelected and guildSelected == guildCurr then
+				wndCurr:FindChild("SplashCirclesPickerBtn"):SetCheck(true)
+			end
 		end
 	end
 

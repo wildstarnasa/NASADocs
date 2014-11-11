@@ -32,7 +32,7 @@
         <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_2.tga" x0="305" x1="305" x2="305" x3="305" x4="609" x5="609" y0="677" y1="677" y2="677" y3="677" y4="981" y5="981" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="sprCoord_RobotBG" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_2.tga" x0="631" x1="631" x2="631" x3="631" x4="631" x5="962" y0="0" y1="0" y2="0" y3="0" y4="0" y5="461" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_Robots.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="322" y0="25" y1="486" y2="486" y3="486" y4="486" y5="486" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="sprCoord_CashBG" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="309" y0="692" y1="692" y2="692" y3="692" y4="692" y5="876" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
@@ -160,11 +160,71 @@
     <Sprite Name="sprCoord_Direction_NW" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="707" x1="707" x2="707" x3="707" x4="707" x5="747" y0="979" y1="979" y2="979" y3="979" y4="979" y5="1019" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="sprCoord_Direction_N_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="924" x1="924" x2="924" x3="924" x4="924" x5="964" y0="186" y1="186" y2="186" y3="186" y4="186" y5="226" Stretchy="1" HotspotX="22" HotspotY="18" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_NE_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="965" x1="965" x2="965" x3="965" x4="965" x5="1005" y0="186" y1="186" y2="186" y3="186" y4="186" y5="226" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_E_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="923" x1="923" x2="923" x3="923" x4="923" x5="963" y0="274" y1="274" y2="274" y3="274" y4="274" y5="314" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_SE_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="964" x1="964" x2="964" x3="964" x4="964" x5="1004" y0="274" y1="274" y2="274" y3="274" y4="274" y5="314" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_S_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="924" x1="924" x2="924" x3="924" x4="924" x5="964" y0="227" y1="227" y2="227" y3="227" y4="227" y5="267" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_SW_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="965" x1="965" x2="965" x3="965" x4="965" x5="1005" y0="227" y1="227" y2="227" y3="227" y4="227" y5="267" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_W_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="923" x1="923" x2="923" x3="923" x4="923" x5="963" y0="315" y1="315" y2="315" y3="315" y4="315" y5="355" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_NW_Red" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="964" x1="964" x2="964" x3="964" x4="964" x5="1004" y0="315" y1="315" y2="315" y3="315" y4="315" y5="355" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_N_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="924" x1="924" x2="924" x3="924" x4="924" x5="964" y0="4" y1="4" y2="4" y3="4" y4="4" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_NE_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="965" x1="965" x2="965" x3="965" x4="965" x5="1005" y0="4" y1="4" y2="4" y3="4" y4="4" y5="44" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_E_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="923" x1="923" x2="923" x3="923" x4="923" x5="963" y0="92" y1="92" y2="92" y3="92" y4="92" y5="132" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_SE_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="964" x1="964" x2="964" x3="964" x4="964" x5="1004" y0="92" y1="92" y2="92" y3="92" y4="92" y5="132" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_S_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="924" x1="924" x2="924" x3="924" x4="924" x5="964" y0="45" y1="45" y2="45" y3="45" y4="45" y5="85" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_SW_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="965" x1="965" x2="965" x3="965" x4="965" x5="1005" y0="45" y1="45" y2="45" y3="45" y4="45" y5="85" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_W_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="923" x1="923" x2="923" x3="923" x4="923" x5="963" y0="133" y1="133" y2="133" y3="133" y4="133" y5="173" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_Direction_NW_Blue" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="964" x1="964" x2="964" x3="964" x4="964" x5="1004" y0="133" y1="133" y2="133" y3="133" y4="133" y5="173" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <Sprite Name="sprCoord_Checkmark" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_Achievement_Icon_CheckComplete.tex" x0="0" x1="0" x2="0" x3="0" x4="36" x5="36" y0="0" y1="0" y2="0" y3="0" y4="36" y5="36" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_AdditiveTargetGreenSmall" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="912" x1="912" x2="912" x3="912" x4="912" x5="968" y0="724" y1="724" y2="724" y3="724" y4="724" y5="780" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_AdditiveTargetRedSmall" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="912" x1="912" x2="912" x3="912" x4="912" x5="968" y0="660" y1="660" y2="660" y3="660" y4="660" y5="716" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_AdditiveTargrtBaseSmall" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="912" x1="912" x2="912" x3="912" x4="912" x5="968" y0="598" y1="598" y2="598" y3="598" y4="598" y5="654" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Composite Name="sprCoord_DiscoverBG_Teal" Cycle="0">
         <Layer Name="sprCoord_DiscoverBG_TealBase"/>
         <Layer Name="sprCoord_DiscoverBG_TealFlash"/>
     </Composite>
+    <Sprite Name="sprCoord_Robot2BG" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_Robots.tex" x0="335" x1="663" x2="663" x3="663" x4="663" x5="663" y0="27" y1="486" y2="486" y3="486" y4="486" y5="486" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
 </Sprites>

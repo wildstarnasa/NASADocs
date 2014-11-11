@@ -69,15 +69,19 @@ function Trading:OnDocumentReady()
     if self.xmlDoc == nil then
         return
     end
-	
-	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 
-	Apollo.RegisterEventHandler("P2PTradeInvite", 		"OnP2PTradeInvite", self)
-	Apollo.RegisterEventHandler("P2PTradeResult", 		"OnP2PTradeResult", self)
-	Apollo.RegisterEventHandler("P2PTradeChange", 		"OnP2PTradeChange", self)
-	Apollo.RegisterEventHandler("P2PTradeWithTarget", 	"OnP2PTradeWithTarget", self)
-	Apollo.RegisterEventHandler("P2PCancelTrade", 		"OnP2PCancelTrade", self)
-	Apollo.RegisterEventHandler("P2PTradeCommit", 		"OnP2PTradeCommit", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 			"OnWindowManagementReady", self)
+
+	Apollo.RegisterEventHandler("P2PTradeInvite", 					"OnP2PTradeInvite", self)
+	Apollo.RegisterEventHandler("P2PTradeResult", 					"OnP2PTradeResult", self)
+	Apollo.RegisterEventHandler("P2PTradeChange", 					"OnP2PTradeChange", self)
+	Apollo.RegisterEventHandler("P2PTradeWithTarget", 				"OnP2PTradeWithTarget", self)
+	Apollo.RegisterEventHandler("P2PCancelTrade", 					"OnP2PCancelTrade", self)
+	Apollo.RegisterEventHandler("P2PTradeCommit", 					"OnP2PTradeCommit", self)
+
+	Apollo.RegisterEventHandler("GenericEvent_StartCircuitCraft",				"OnCraftingCloseWindow", self)
+	Apollo.RegisterEventHandler("GenericEvent_StartCraftingGrid",				"OnCraftingCloseWindow", self)
+	Apollo.RegisterEventHandler("GenericEvent_CraftingResume_OpenEngraving",	"OnCraftingCloseWindow", self)
 
 	self.wndTradeInvite 	= Apollo.LoadForm(self.xmlDoc, "TradeInvite", nil, self)
 	self.wndDeclineNotice 	= Apollo.LoadForm(self.xmlDoc, "DeclineNotice", nil, self)
@@ -117,7 +121,7 @@ function Trading:OnDocumentReady()
 
 	if self.bIsTrading then
 		if self.wndTradeInvite and self.bInviteShown then
-			self.wndTradeInvite:Show(true)
+			self.wndTradeInvite:Invoke()
 			self:OnP2PTradeInvite(self.unitPartner)
 		elseif self.wndTradeForm then
 			self.wndTradeForm:Show(true)
@@ -236,8 +240,7 @@ end
 -------------------------------------------------------------------------------------
 
 function Trading:OnP2PTradeInvite(unitInviter)
-	self.wndTradeInvite:Show(true)
-
+	self.wndTradeInvite:Invoke()
 	self.unitTradePartner = unitInviter
 	self.bInitiator = false
 	self.bTradeIsActive = false
@@ -305,6 +308,12 @@ function Trading:OnP2PTradeWithTarget(unitTarget, strType, itemData)
 			return
 		end
 	end
+
+	if AccountItemLib.CodeEnumEntitlement.EconomyParticipation and AccountItemLib.GetEntitlementCount(AccountItemLib.CodeEnumEntitlement.EconomyParticipation) == 0 then
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", Apollo.GetString("CRB_FeatureDisabledForGuests"))
+		return
+	end
+
 	local eResult = P2PTrading.InitiateTrade(unitTarget)
 	if eResult == P2PTrading.P2PTradeError_Ok then
 		self.wndTradeForm:Show(true)
@@ -355,7 +364,9 @@ function Trading:OnP2PTradeDragDrop(wndHandler, wndControl, nX, nY, wndSource, s
 				return false
 			end
 			if self.bTradeIsActive then
-				P2PTrading.AddItem(nValue)
+				if not P2PTrading.AddItem(nValue) then
+					ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_System, Apollo.GetString("MarketplaceAuction_InvalidItem"), "")
+				end
 			elseif self.bInitiator then
 				local bDupe = false
 				for idx = 1, #self.tPendingItems do
@@ -413,9 +424,25 @@ function Trading:OnCancelBtn()
 	P2PTrading.CancelTrade()
 end
 
+function Trading:OnCraftingCloseWindow()
+	self:HelperResetItems()
+	self.wndTradeInvite:Show(false)
+	P2PTrading.CancelTrade()
+	P2PTrading.DeclineInvite()
+end
+
 -------------------------------------------------------------------------------------
 -- Handlers for Declines
 -------------------------------------------------------------------------------------
+
+function Trading:OnReportTradeInviteSpamBtn(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+	Event_FireGenericEvent("GenericEvent_ReportPlayerTrade") -- Order is important
+	self.wndTradeInvite:Show(false)
+--	P2PTrading.DeclineInvite()
+end
 
 function Trading:OnDeclineTradeBtn(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
@@ -483,7 +510,7 @@ end
 
 function Trading:HelperBuildItemTooltip(wndArg, tItemData)
 	wndArg:SetTooltipDoc(nil)
-	Tooltip.GetItemTooltipForm(self, wndArg, tItemData.itemTrading, {bPrimary = true, bSelling = false, itemModData = tItemData.itemModData}, tItemData.nStackCount)
+	Tooltip.GetItemTooltipForm(self, wndArg, tItemData.itemTrading, {bPrimary = true, bSelling = false, itemModData = tItemData.itemModData, nStackCount = tItemData.nStackCount})
 	local itemEquipped = tItemData.itemTrading:GetEquippedItemForItemType()
 end
 

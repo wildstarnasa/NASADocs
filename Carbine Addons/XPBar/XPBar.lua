@@ -60,6 +60,7 @@ function XPBar:OnDocumentReady()
 	Apollo.RegisterEventHandler("PersonaUpdateCharacterStats", 	"RedrawAll", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 			"RedrawAll", self)
 	Apollo.RegisterEventHandler("UI_XPChanged", 				"OnXpChanged", self)
+	Apollo.RegisterEventHandler("UpdatePathXp", 				"OnXpChanged", self)
 	Apollo.RegisterEventHandler("ElderPointsGained", 			"OnXpChanged", self)
 	Apollo.RegisterEventHandler("OptionsUpdated_HUDPreferences","RedrawAll", self)
 	
@@ -122,11 +123,13 @@ function XPBar:RedrawAllPastCooldown()
 	local strPathTooltip = ""
 	
 	if tStats.nLevel == knMaxLevel then -- TODO: Hardcoded max level
-		strXPorEP = String_GetWeaselString(Apollo.GetString("BaseBar_EPBracket"), self:RedrawEP())
+		self:RedrawEP()
 		strTooltip = self:ConfigureEPTooltip(unitPlayer)
+		self.wndMain:FindChild("ElderGems"):Show(true)
 	else
 		strXPorEP = String_GetWeaselString(Apollo.GetString("BaseBar_XPBracket"), self:RedrawXP())
 		strTooltip = self:ConfigureXPTooltip(unitPlayer)
+		self.wndMain:FindChild("ElderGems"):Show(false)
 	end
 	
 	--Path XP Progress Bar and Tooltip
@@ -226,7 +229,7 @@ function XPBar:RedrawPathXP()
 		return 100
 	end
 	
-	return math.min(99.9, nCurrentXP / nNeededXP * 100)
+	return nCurrentXP / nNeededXP * 100
 end
 
 function XPBar:ConfigurePathXPTooltip(unitPlayer)
@@ -248,98 +251,47 @@ function XPBar:ConfigurePathXPTooltip(unitPlayer)
 	local nCurrentXP =  PlayerPathLib.GetPathXP() - nLastLevelXP
 	local nNeededXP = PlayerPathLib.GetPathXPAtLevel(nNextLevel) - nLastLevelXP
 	
-	local strTooltip = nNeededXP > 0 and string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", String_GetWeaselString(Apollo.GetString("Base_XPValue"), nCurrentXP, nNeededXP, nCurrentXP / nNeededXP * 100)) or ""
-	strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s %s%s</P>%s", Apollo.GetString(strPathType), Apollo.GetString("CRB_Level_"), nCurrentLevel, strTooltip)
+	local strTooltip = nNeededXP > 0 and string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", String_GetWeaselString(Apollo.GetString("Base_XPValue"), Apollo.FormatNumber(nCurrentXP, 0, true), Apollo.FormatNumber(nNeededXP, 0, true), nCurrentXP / nNeededXP * 100)) or ""
 	
-	return strTooltip
+	return string.format("<P Font=\"CRB_InterfaceSmall_O\">%s %s%s</P>%s", Apollo.GetString(strPathType), Apollo.GetString("CRB_Level_"), nCurrentLevel, strTooltip)
 end
 
 -----------------------------------------------------------------------------------------------
 -- Elder Points (When at max level)
 -----------------------------------------------------------------------------------------------
 
-function XPBar:RedrawXP()
-	local nCurrentXP = GetXp() - GetXpToCurrentLevel() 		-- current amount of xp into the current level
-	local nNeededXP = GetXpToNextLevel() 					-- total amount needed to move through current level
-	local nRestedXP = GetRestXp() 							-- amount of rested xp
-	local nRestedXPPool = GetRestXpKillCreaturePool() 		-- amount of rested xp remaining from creature kills
-
-	if not nCurrentXP or not nNeededXP or not nNeededXP or not nRestedXP then
-		return
-	end
-
-	local wndXPBarFill = self.wndMain:FindChild("XPBarContainer:XPBarFill")
-	local wndRestXPBarFill = self.wndMain:FindChild("XPBarContainer:RestXPBarFill")
-	local wndRestXPBarGoal = self.wndMain:FindChild("XPBarContainer:RestXPBarGoal")
-	local wndMaxEPBar = self.wndMain:FindChild("XPBarContainer:DailyMaxEPBar")
-	
-	wndXPBarFill:SetMax(nNeededXP)
-	wndXPBarFill:SetProgress(nCurrentXP)
-
-	-- Rest Bar and Goal (where it ends)
-	wndRestXPBarFill:SetMax(nNeededXP)
-	wndRestXPBarFill:Show(nRestedXP and nRestedXP > 0)
-	if nRestedXP and nRestedXP > 0 then
-		wndRestXPBarFill:SetProgress(math.min(nNeededXP, nCurrentXP + nRestedXP))
-	end
-
-	local bShowRestXPGoal = nRestedXP and nRestedXPPool and nRestedXP > 0 and nRestedXPPool > 0
-	wndRestXPBarGoal:SetMax(nNeededXP)
-	wndRestXPBarGoal:Show(bShowRestXPGoal)
-	if bShowRestXPGoal then
-		wndRestXPBarGoal:SetProgress(math.min(nNeededXP, nCurrentXP + nRestedXPPool))
-	end
-
-	-- This is only for EP at max level
-	wndMaxEPBar:SetProgress(0)
-	wndMaxEPBar:Show(false)
-
-	return math.min(99.9, nCurrentXP / nNeededXP * 100)
-end
-
 function XPBar:RedrawEP()
-	local nCurrentEP = GetElderPoints()
-	local nEPToAGem = GameLib.ElderPointsPerGem
+	local nCurrentEP = GetPeriodicElderPoints()
 	local nEPDailyMax = GameLib.ElderPointsDailyMax
 	local nRestedEP = GetRestXp() 							-- amount of rested xp
 	local nRestedEPPool = GetRestXpKillCreaturePool() 		-- amount of rested xp remaining from creature kills
 
-	if not nCurrentEP or not nEPToAGem or not nEPDailyMax or not nRestedEP then
+	if not nCurrentEP or not nEPDailyMax or not nRestedEP then
 		return
 	end
 	
 	local wndXPBarFill = self.wndMain:FindChild("XPBarContainer:XPBarFill")
 	local wndRestXPBarFill = self.wndMain:FindChild("XPBarContainer:RestXPBarFill")
 	local wndRestXPBarGoal = self.wndMain:FindChild("XPBarContainer:RestXPBarGoal")
-	local wndMaxEPBar = self.wndMain:FindChild("XPBarContainer:DailyMaxEPBar")
 
-	wndXPBarFill:SetMax(nEPToAGem)
+	wndXPBarFill:SetMax(nEPDailyMax)
 	wndXPBarFill:SetProgress(nCurrentEP)
 
 	-- Rest Bar and Goal (where it ends)
-	wndRestXPBarFill:SetMax(nEPToAGem)
+	wndRestXPBarFill:SetMax(nEPDailyMax)
 	wndRestXPBarFill:Show(nRestedEP and nRestedEP > 0)
 	if nRestedEP and nRestedEP > 0 then
-		wndRestXPBarFill:SetProgress(math.min(nEPToAGem, nCurrentEP + nRestedEP))
+		wndRestXPBarFill:SetProgress(math.min(nEPDailyMax, nCurrentEP + nRestedEP))
 	end
 
 	local bShowRestEPGoal = nRestedEP and nRestedEPPool and nRestedEP > 0 and nRestedEPPool > 0
-	wndRestXPBarGoal:SetMax(nEPToAGem)
+	wndRestXPBarGoal:SetMax(nEPDailyMax)
 	wndRestXPBarGoal:Show(bShowRestEPGoal)
 	if bShowRestEPGoal then
-		wndRestXPBarGoal:SetProgress(math.min(nEPToAGem, nCurrentEP + nRestedEPPool))
+		wndRestXPBarGoal:SetProgress(math.min(nEPDailyMax, nCurrentEP + nRestedEPPool))
 	end
 
-	-- This is special to Rested EP, as there is a daily max
-	wndMaxEPBar:SetMax(nEPToAGem)
-	wndMaxEPBar:Show(nEPDailyMax ~= nEPToAGem)
-	if nEPDailyMax < nEPToAGem then
-		wndMaxEPBar:SetProgress(nEPDailyMax)
-	elseif nEPDailyMax > nEPToAGem then
-		wndMaxEPBar:SetProgress(nEPToAGem)
-	end
-
-	return math.min(99.9, nCurrentEP / nEPToAGem * 100)
+	return nCurrentEP / nEPDailyMax * 100
 end
 
 function XPBar:ConfigureEPTooltip(unitPlayer)
@@ -356,30 +308,28 @@ function XPBar:ConfigureEPTooltip(unitPlayer)
 	end
 
 	-- Top String
-	local strTooltip = String_GetWeaselString(Apollo.GetString("BaseBar_ElderPointsPercent"), nCurrentEP, nEPToAGem, math.min(99.9, nCurrentEP / nEPToAGem * 100))
+	local strTooltip = String_GetWeaselString(Apollo.GetString("BaseBar_ElderPointsPercent"), Apollo.FormatNumber(nCurrentEP, 0, true), Apollo.FormatNumber(nEPToAGem, 0, true), nCurrentEP / nEPToAGem * 100)
 	if nCurrentEP == nEPDailyMax then
 		strTooltip = "<P Font=\"CRB_InterfaceSmall_O\">" .. strTooltip .. "</P><P Font=\"CRB_InterfaceSmall_O\">" .. Apollo.GetString("BaseBar_ElderPointsAtMax") .. "</P>"
 	else
-		local strDailyMax = String_GetWeaselString(Apollo.GetString("BaseBar_ElderPointsWeeklyMax"), nCurrentToDailyMax, nEPDailyMax, math.min(99.9, nCurrentToDailyMax / nEPDailyMax * 100))
+		local strDailyMax = String_GetWeaselString(Apollo.GetString("BaseBar_ElderPointsWeeklyMax"), Apollo.FormatNumber(nCurrentToDailyMax, 0, true), Apollo.FormatNumber(nEPDailyMax, 0, true), nCurrentToDailyMax / nEPDailyMax * 100)
 		strTooltip = "<P Font=\"CRB_InterfaceSmall_O\">" .. strTooltip .. "</P><P Font=\"CRB_InterfaceSmall_O\">" .. strDailyMax .. "</P>"
 	end
 
 	-- Rested
 	if nRestedEP > 0 then
-		local strRestLineOne = String_GetWeaselString(Apollo.GetString("Base_EPRested"), nRestedEP, nRestedEP / nEPToAGem * 100)
+		local strRestLineOne = String_GetWeaselString(Apollo.GetString("Base_EPRested"), Apollo.FormatNumber(nRestedEP, 0, true), nRestedEP / nEPDailyMax * 100)
 		strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, strRestLineOne)
 
-		if nCurrentEP + nRestedEPPool > nEPToAGem then
+		if nCurrentEP + nRestedEPPool > nEPDailyMax then
 			strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, Apollo.GetString("Base_EPRestedEndsAfterLevelTooltip"))
 		else
-			local strRestLineTwo = String_GetWeaselString(Apollo.GetString("Base_EPRestedPoolTooltip"), nRestedEPPool, ((nRestedEPPool + nCurrentEP)  / nEPToAGem) * 100)
+			local strRestLineTwo = String_GetWeaselString(Apollo.GetString("Base_EPRestedPoolTooltip"), Apollo.FormatNumber(nRestedEPPool, 0, true), ((nRestedEPPool + nCurrentEP)  / nEPDailyMax) * 100)
 			strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, strRestLineTwo)
 		end
 	end
 	
-	strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s%s</P>%s", Apollo.GetString("CRB_Level_"), unitPlayer:GetLevel(), strTooltip)
-
-	return strTooltip
+	return string.format("<P Font=\"CRB_InterfaceSmall_O\">%s%s</P>%s", Apollo.GetString("CRB_Level_"), unitPlayer:GetLevel(), strTooltip)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -415,7 +365,7 @@ function XPBar:RedrawXP()
 		wndRestXPBarGoal:SetProgress(math.min(nNeededXP, nCurrentXP + nRestedXPPool))
 	end
 
-	return math.min(99.9, nCurrentXP / nNeededXP * 100)
+	return nCurrentXP / nNeededXP * 100
 end
 
 function XPBar:ConfigureXPTooltip(unitPlayer)
@@ -428,22 +378,20 @@ function XPBar:ConfigureXPTooltip(unitPlayer)
 		return
 	end
 
-	local strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", String_GetWeaselString(Apollo.GetString("Base_XPValue"), nCurrentXP, nNeededXP, nCurrentXP / nNeededXP * 100))
+	local strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", String_GetWeaselString(Apollo.GetString("Base_XPValue"), Apollo.FormatNumber(nCurrentXP, 0, true), Apollo.FormatNumber(nNeededXP, 0, true), nCurrentXP / nNeededXP * 100))
 	if nRestedXP > 0 then
-		local strRestLineOne = String_GetWeaselString(Apollo.GetString("Base_XPRested"), nRestedXP, nRestedXP / nNeededXP * 100)
+		local strRestLineOne = String_GetWeaselString(Apollo.GetString("Base_XPRested"), Apollo.FormatNumber(nRestedXP, 0, true), nRestedXP / nNeededXP * 100)
 		strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, strRestLineOne)
 
 		if nCurrentXP + nRestedXPPool > nNeededXP then
 			strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, Apollo.GetString("Base_XPRestedEndsAfterLevelTooltip"))
 		else
-			local strRestLineTwo = String_GetWeaselString(Apollo.GetString("Base_XPRestedPoolTooltip"), nRestedXPPool, ((nRestedXPPool + nCurrentXP)  / nNeededXP) * 100)
+			local strRestLineTwo = String_GetWeaselString(Apollo.GetString("Base_XPRestedPoolTooltip"), Apollo.FormatNumber(nRestedXPPool, 0, false), ((nRestedXPPool + nCurrentXP)  / nNeededXP) * 100)
 			strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, strRestLineTwo)
 		end
 	end
 	
-	strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s%s</P>%s", Apollo.GetString("CRB_Level_"), unitPlayer:GetLevel(), strTooltip)
-	
-	return strTooltip
+	return string.format("<P Font=\"CRB_InterfaceSmall_O\">%s%s</P>%s", Apollo.GetString("CRB_Level_"), unitPlayer:GetLevel(), strTooltip)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -493,6 +441,8 @@ function XPBar:OnUpdateInventory()
 	end
 	
 	self.wndInvokeForm:FindChild("MainCashWindow"):SetAmount(GameLib.GetPlayerCurrency(), false)
+	self.wndMain:FindChild("ElderGems"):SetMoneySystem(Money.CodeEnumCurrencyType.ElderGems)
+	self.wndMain:FindChild("ElderGems"):SetAmount(GameLib.GetPlayerCurrency(Money.CodeEnumCurrencyType.ElderGems):GetAmount(), true)
 
 	local nOccupiedInventory = #unitPlayer:GetInventoryItems() or 0
 	local nTotalInventory = GameLib.GetTotalInventorySlots() or 0

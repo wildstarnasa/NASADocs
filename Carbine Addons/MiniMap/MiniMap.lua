@@ -18,22 +18,15 @@ require "PublicEvent"
 require "PublicEventObjective"
 require "FriendshipLib"
 require "CraftingLib"
+require "LiveEventsLib"
+require "LiveEvent"
 
 -- TODO: Distinguish markers for different nodes from each other
 local kstrMiningNodeIcon = "IconSprites:Icon_MapNode_Map_Node_Mining"
-local kcrMiningNode = CColor.new(0.2, 1.0, 1.0, 1.0)
-
 local kstrRelicNodeIcon = "IconSprites:Icon_MapNode_Map_Node_Relic"
-local kcrRelicNode = CColor.new(0.2, 1.0, 1.0, 1.0)
-
 local kstrFarmingNodeIcon = "IconSprites:Icon_MapNode_Map_Node_Plant"
-local kcrFarmingNode = CColor.new(0.2, 1.0, 1.0, 1.0)
-
 local kstrSurvivalNodeIcon = "IconSprites:Icon_MapNode_Map_Node_Tree"
-local kcrSurvivalNode = CColor.new(0.2, 1.0, 1.0, 1.0)
-
 local kstrFishingNodeIcon = "IconSprites:Icon_MapNode_Map_Node_Fishing"
-local kcrFishingNode = CColor.new(0.2, 1.0, 1.0, 1.0)
 
 local ktPvPZoneTypes =
 {
@@ -52,15 +45,15 @@ local ktInstanceSettingTypeStrings =
 	Rallied = Apollo.GetString("MiniMap_Rallied"),
 }
 
-
 local knSaveVersion = 4
-
 local MiniMap = {}
 
 function MiniMap:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
+
+	o.tQueuedUnits = {}
 
 	return o
 end
@@ -70,7 +63,7 @@ function MiniMap:CreateOverlayObjectTypes()
 	self.eObjectTypePublicEventKill		= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeChallenge			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypePing				= self.wndMiniMap:CreateOverlayType()
-	self.eObjectTypeCityDirection		= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeCityDirections		= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeHazard 				= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeQuestReward 		= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeQuestReceiving 		= self.wndMiniMap:CreateOverlayType()
@@ -92,6 +85,7 @@ function MiniMap:CreateOverlayObjectTypes()
 	self.eObjectTypeFishingNode 		= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeVendorFlight 		= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeFlightPathNew		= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeFlightPath			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeNeutral	 			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeHostile	 			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeFriend	 			= self.wndMiniMap:CreateOverlayType()
@@ -99,20 +93,28 @@ function MiniMap:CreateOverlayObjectTypes()
 	self.eObjectTypeTrainer	 			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectTypeGroupMember			= self.wndMiniMap:CreateOverlayType()
 	self.eObjectPvPMarkers				= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeCREDDExchange		= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeCostume				= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeBank				= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeGuildBank			= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeGuildRegistrar		= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeMail				= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeServices			= self.wndMiniMap:CreateOverlayType()
+	self.eObjectTypeConvert				= self.wndMiniMap:CreateOverlayType()
 end
 
 function MiniMap:BuildCustomMarkerInfo()
 	self.tMinimapMarkerInfo =
 	{
-		PvPExileCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCarry",			bFixedSizeMedium = true	},
-		PvPDominionCarry		= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCarry",			bFixedSizeMedium = true	},
-		PvPNeutralCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCarry",			bFixedSizeMedium = true	},
-		PvPExileCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",			bFixedSizeMedium = true	},
-		PvPDominionCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",			bFixedSizeMedium = true	},
-		PvPNeutralCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCap",			bFixedSizeMedium = true	},
-		PvPExileCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",			bFixedSizeMedium = true	},
-		PvPDominionCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",			bFixedSizeMedium = true	},
-		PvPNeutralCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCap",			bFixedSizeMedium = true	},
+		PvPExileCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCarry",	bFixedSizeMedium = true	},
+		PvPDominionCarry		= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCarry",	bFixedSizeMedium = true	},
+		PvPNeutralCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCarry",	bFixedSizeMedium = true	},
+		PvPExileCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",		bFixedSizeMedium = true	},
+		PvPDominionCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",	bFixedSizeMedium = true	},
+		PvPNeutralCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCap",	bFixedSizeMedium = true	},
+		PvPExileCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",		bFixedSizeMedium = true	},
+		PvPDominionCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",	bFixedSizeMedium = true	},
+		PvPNeutralCap2			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCap",	bFixedSizeMedium = true	},
 		PvPBattleAlert			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_BattleAlert",	bFixedSizeMedium = true	},
 		IronNode				= { nOrder = 100, 	objectType = self.eObjectTypeMiningNode,		strIcon = kstrMiningNodeIcon,	crObject = kcrMiningNode, 	crEdge = kcrMiningNode },
 		TitaniumNode			= { nOrder = 100, 	objectType = self.eObjectTypeMiningNode,		strIcon = kstrMiningNodeIcon,	crObject = kcrMiningNode, 	crEdge = kcrMiningNode },
@@ -180,71 +182,73 @@ function MiniMap:BuildCustomMarkerInfo()
 		QuestTarget				= { nOrder = 6,		objectType = self.eObjectTypeQuestTarget, 		strIcon = "sprMM_TargetObjective", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		PublicEventKill			= { nOrder = 7,		objectType = self.eObjectTypePublicEventKill, 	strIcon = "sprMM_TargetCreature", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		PublicEventTarget		= { nOrder = 8,		objectType = self.eObjectTypePublicEventTarget, strIcon = "sprMM_TargetObjective", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		QuestReward				= { nOrder = 9,		objectType = self.eObjectTypeQuestReward, 		strIcon = "sprMM_QuestCompleteUntracked", 	bNeverShowOnEdge = true },
-		QuestRewardSoldier		= { nOrder = 10,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Soldier_Accepted", 	bNeverShowOnEdge = true },
-		QuestRewardSettler		= { nOrder = 11,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Settler_Accepted", 	bNeverShowOnEdge = true },
-		QuestRewardScientist	= { nOrder = 12,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Scientist_Accepted", 	bNeverShowOnEdge = true },
-		QuestRewardExplorer		= { nOrder = 13,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Explorer_Accepted", 	bNeverShowOnEdge = true },
-		QuestNew				= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true },
-		QuestNewSoldier			= { nOrder = 15,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true },
-		QuestNewSettler			= { nOrder = 16,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true },
-		QuestNewScientist		= { nOrder = 17,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true },
-		QuestNewExplorer		= { nOrder = 18,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true },
-		QuestNewMain			= { nOrder = 19,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true },
-		QuestNewMainSoldier		= { nOrder = 20,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true },
-		QuestNewMainSettler		= { nOrder = 21,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true },
-		QuestNewMainScientist	= { nOrder = 22,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true },
-		QuestNewMainExplorer	= { nOrder = 23,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true },
-		QuestNewRepeatable		= { nOrder = 24,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true },
-		QuestNewRepeatableSoldier = { nOrder = 25,	objectType = self.eObjectTypeQuestNew, 		strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true },
-		QuestNewRepeatableSettler = { nOrder = 26,	objectType = self.eObjectTypeQuestNew, 		strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true },
-		QuestNewRepeatableScientist = { nOrder = 27,objectType = self.eObjectTypeQuestNew, 		strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true },
-		QuestNewRepeatableExplorer = { nOrder = 28,	objectType = self.eObjectTypeQuestNew, 		strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true },
-		QuestReceiving			= { nOrder = 29,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "sprMM_QuestCompleteOngoing", 	bNeverShowOnEdge = true },
-		QuestReceivingSoldier	= { nOrder = 30,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true },
-		QuestReceivingSettler	= { nOrder = 31,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true },
-		QuestReceivingScientist	= { nOrder = 32,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true },
-		QuestReceivingExplorer	= { nOrder = 33,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true },
-		QuestNewSoon			= { nOrder = 34,	objectType = self.eObjectTypeQuestNewSoon, 		strIcon = "IconSprites:Icon_MapNode_Map_Quest_Disabled", 	bNeverShowOnEdge = true },
-		QuestNewMainSoon		= { nOrder = 35,	objectType = self.eObjectTypeQuestNewSoon, 		strIcon = "IconSprites:Icon_MapNode_Map_Quest_Disabled", 	bNeverShowOnEdge = true },
-		ConvertItem				= { nOrder = 36,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_ResourceConversion", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		ConvertRep				= { nOrder = 37,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Reputation", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		Vendor					= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		Mail					= { nOrder = 39,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Mailbox", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		CityDirections			= { nOrder = 40,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_CityDirections", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		Dye						= { nOrder = 41,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_DyeSpecialist", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
+		QuestReward				= { nOrder = 9,		objectType = self.eObjectTypeQuestReward, 		strIcon = "sprMM_QuestCompleteUntracked", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestRewardSoldier		= { nOrder = 10,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Soldier_Accepted", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestRewardSettler		= { nOrder = 11,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Settler_Accepted", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestRewardScientist	= { nOrder = 12,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Scientist_Accepted", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestRewardExplorer		= { nOrder = 13,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Explorer_Accepted", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNew				= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewDaily			= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewSoldier			= { nOrder = 15,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewSettler			= { nOrder = 16,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewScientist		= { nOrder = 17,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewExplorer		= { nOrder = 18,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewMain			= { nOrder = 19,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewMainSoldier		= { nOrder = 20,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewMainSettler		= { nOrder = 21,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewMainScientist	= { nOrder = 22,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewMainExplorer	= { nOrder = 23,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewRepeatable		= { nOrder = 24,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewRepeatableSoldier = { nOrder = 25,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewRepeatableSettler = { nOrder = 26,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewRepeatableScientist = { nOrder = 27,objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewRepeatableExplorer = { nOrder = 28,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestReceiving			= { nOrder = 29,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "sprMM_QuestCompleteOngoing", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestReceivingSoldier	= { nOrder = 30,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestReceivingSettler	= { nOrder = 31,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Settler", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestReceivingScientist	= { nOrder = 32,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestReceivingExplorer	= { nOrder = 33,	objectType = self.eObjectTypeQuestReceiving, 	strIcon = "IconSprites:Icon_MapNode_Map_Explorer", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewSoon			= { nOrder = 34,	objectType = self.eObjectTypeQuestNewSoon, 		strIcon = "IconSprites:Icon_MapNode_Map_Quest_Disabled", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewMainSoon		= { nOrder = 35,	objectType = self.eObjectTypeQuestNewSoon, 		strIcon = "IconSprites:Icon_MapNode_Map_Quest_Disabled", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		ConvertItem				= { nOrder = 36,	objectType = self.eObjectTypeConvert, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_ResourceConversion", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		ConvertRep				= { nOrder = 37,	objectType = self.eObjectTypeConvert, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Reputation", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		Vendor					= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		Mail					= { nOrder = 39,	objectType = self.eObjectTypeMail, 				strIcon = "IconSprites:Icon_MapNode_Map_Mailbox", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		CityDirections			= { nOrder = 40,	objectType = self.eObjectTypeCityDirections, 	strIcon = "IconSprites:Icon_MapNode_Map_CityDirections", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		Dye						= { nOrder = 41,	objectType = self.eObjectTypeCostume, 			strIcon = "IconSprites:Icon_MapNode_Map_DyeSpecialist", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		FlightPathSettler		= { nOrder = 42,	objectType = self.eObjectTypeVendorFlight, 		strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Flight", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		FlightPath				= { nOrder = 43,	objectType = self.eObjectTypeVendorFlightPathNew, strIcon = "IconSprites:Icon_MapNode_Map_Taxi_Undiscovered", bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		FlightPathNew			= { nOrder = 44,	objectType = self.eObjectTypeVendorFlight, 		strIcon = "IconSprites:Icon_MapNode_Map_Taxi", 	bNeverShowOnEdge = true },
+		FlightPath				= { nOrder = 43,	objectType = self.eObjectTypeFlightPath, 		strIcon = "IconSprites:Icon_MapNode_Map_Taxi", bNeverShowOnEdge = true, bFixedSizeMedium = true },
+		FlightPathNew			= { nOrder = 44,	objectType = self.eObjectTypeFlightPathNew, 	strIcon = "IconSprites:Icon_MapNode_Map_Taxi_Undiscovered", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		TalkTo					= { nOrder = 45,	objectType = self.eObjectTypeQuestTarget, 		strIcon = "IconSprites:Icon_MapNode_Map_Chat", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		InstancePortal			= { nOrder = 46,	objectType = self.eObjectTypeInstancePortal, 	strIcon = "IconSprites:Icon_MapNode_Map_Portal", 	bNeverShowOnEdge = true },
 		BindPoint				= { nOrder = 47,	objectType = self.eObjectTypeBindPointInactive, strIcon = "IconSprites:Icon_MapNode_Map_Gate", 	bNeverShowOnEdge = true },
 		BindPointCurrent		= { nOrder = 48,	objectType = self.eObjectTypeBindPointActive, 	strIcon = "IconSprites:Icon_MapNode_Map_Gate", 	bNeverShowOnEdge = true },
-		TradeskillTrainer		= { nOrder = 49,	objectType = self.eObjectTypeTradeskills, 		strIcon = "IconSprites:Icon_MapNode_Map_Tradeskill", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		CraftingStation			= { nOrder = 50,	objectType = self.eObjectTypeTradeskills, 		strIcon = "IconSprites:Icon_MapNode_Map_Tradeskill", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		CommodityMarketplace	= { nOrder = 51,	objectType = self.eObjectTypeCommodities, 		strIcon = "IconSprites:Icon_MapNode_Map_CommoditiesExchange", bNeverShowOnEdge = true },
-		ItemAuctionhouse		= { nOrder = 52,	objectType = self.eObjectTypeAuctioneer, 		strIcon = "IconSprites:Icon_MapNode_Map_AuctionHouse", 	bNeverShowOnEdge = true },
+		TradeskillTrainer		= { nOrder = 49,	objectType = self.eObjectTypeTradeskills, 		strIcon = "IconSprites:Icon_MapNode_Map_Tradeskill", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		CraftingStation			= { nOrder = 50,	objectType = self.eObjectTypeTradeskills, 		strIcon = "IconSprites:Icon_MapNode_Map_Tradeskill", 	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		CommodityMarketplace	= { nOrder = 51,	objectType = self.eObjectTypeCommodity, 		strIcon = "IconSprites:Icon_MapNode_Map_CommoditiesExchange", bNeverShowOnEdge = true, bHideIfHostile = true },
+		ItemAuctionhouse		= { nOrder = 52,	objectType = self.eObjectTypeAuctioneer, 		strIcon = "IconSprites:Icon_MapNode_Map_AuctionHouse", 	bNeverShowOnEdge = true, bHideIfHostile = true },
 		SettlerImprovement		= { nOrder = 53,	objectType = GameLib.CodeEnumMapOverlayType.PathObjective, strIcon = "CRB_MinimapSprites:sprMM_SmallIconSettler", bNeverShowOnEdge = true },
+		CREDDExchange			= { nOrder = 54,	objectType = self.eObjectTypeCREDDExchange,		strIcon = "IconSprites:Icon_MapNode_Map_CREED",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		Neutral					= { nOrder = 151,	objectType = self.eObjectTypeNeutral, 			strIcon = "ClientSprites:MiniMapMarkerTiny", 	bNeverShowOnEdge = true, bShown = false, crObject = ApolloColor.new("xkcdBrightYellow") },
 		Hostile					= { nOrder = 150,	objectType = self.eObjectTypeHostile, 			strIcon = "ClientSprites:MiniMapMarkerTiny", 	bNeverShowOnEdge = true, bShown = false, crObject = ApolloColor.new("xkcdBrightRed") },
 		GroupMember				= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", 	bFixedSizeLarge = true },
-		Bank					= { nOrder = 54,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true },
-		GuildBank				= { nOrder = 56,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow") },
-		GuildRegistrar			= { nOrder = 55,	objectType = self.eObjectTypeVendor, 			strIcon = "CRB_MinimapSprites:sprMM_Group", bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow") },
-		VendorGeneral			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorArmor				= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Armor",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorConsumable		= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Consumable",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorElderGem			= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_ElderGem",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorHousing			= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Housing",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorMount				= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Mount",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorRenown			= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Renown",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorReputation		= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Reputation",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorResourceConversion= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_ResourceConversion",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorTradeskill		= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Tradeskill",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorWeapon			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Weapon",		bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorPvPArena			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Arena",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorPvPBattlegrounds	= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Battlegrounds",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		VendorPvPWarplots		= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Warplot",	bNeverShowOnEdge = true, bFixedSizeMedium = true },
+		Bank					= { nOrder = 54,	objectType = self.eObjectTypeBank, 				strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, bHideIfHostile = true },
+		GuildBank				= { nOrder = 56,	objectType = self.eObjectTypeGuildBank, 		strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow"), bHideIfHostile = true },
+		GuildRegistrar			= { nOrder = 55,	objectType = self.eObjectTypeGuildRegistrar, 	strIcon = "CRB_MinimapSprites:sprMM_Group", bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow"), bHideIfHostile = true },
+		VendorGeneral			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorArmor				= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Armor",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorConsumable		= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Consumable",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorElderGem			= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_ElderGem",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorHousing			= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Housing",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorMount				= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Mount",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorRenown			= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Renown",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorReputation		= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Reputation",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorResourceConversion= { nOrder = 38,	objectType = self.eObjectTypeVendor, 			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_ResourceConversion",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorTradeskill		= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Tradeskill",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorWeapon			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Weapon",		bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorPvPArena			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Arena",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorPvPBattlegrounds	= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Battlegrounds",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		VendorPvPWarplots		= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Warplot",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 	}
 end
 
@@ -253,17 +257,32 @@ function MiniMap:Init()
 end
 
 function MiniMap:OnLoad()
+	Apollo.RegisterEventHandler("UnitCreated", 							"OnUnitCreated", self)
+
+	self.bRotate = false
+	self.tChallengeObjects 			= {}
+	self.ChallengeFlashingIconId 	= nil
+	self.tUnitsShown 				= {}	-- For Quests, PublicEvents, Vendors, Instance Portals, and Bind Points which all use UnitCreated/UnitDestroyed events
+	self.tUnitsHidden 				= {}	-- Units that we're tracking but are out of the current subzone
+	self.tObjectsShown 				= {} -- For Challenges which use their own events
+	self.tObjectsShown.Challenges 	= {}
+	self.tPingObjects 				= {}
+	self.arResourceNodes			= {}
+
+	self.tGroupMembers 			= {}
+	self.tGroupMemberObjects 	= {}
+
 	self.xmlDoc = XmlDoc.CreateFromFile("minimap.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function MiniMap:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("WindowManagementReady", 				"OnWindowManagementReady", self)
-	
+
 	Apollo.RegisterEventHandler("CharacterCreated", 					"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("OptionsUpdated_QuestTracker", 			"OnOptionsUpdated", self)
 	Apollo.RegisterEventHandler("VarChange_ZoneName", 					"OnChangeZoneName", self)
@@ -280,7 +299,6 @@ function MiniMap:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("ReputationChanged",   					"OnReputationChanged", self)
 
-	Apollo.RegisterEventHandler("UnitCreated", 							"OnUnitCreated", self)
 	Apollo.RegisterEventHandler("UnitDestroyed", 						"OnUnitDestroyed", self)
 	Apollo.RegisterEventHandler("UnitActivationTypeChanged", 			"OnUnitChanged", self)
 	Apollo.RegisterEventHandler("UnitMiniMapMarkerChanged", 			"OnUnitChanged", self)
@@ -294,8 +312,8 @@ function MiniMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerPathMissionDeactivate", 			"OnPlayerPathMissionDeactivate", self)
 	Apollo.RegisterEventHandler("PlayerPathExplorerPowerMapStarted", 	"OnPlayerPathMissionActivate", self)
 	Apollo.RegisterEventHandler("PlayerPathExplorerPowerMapFailed", 	"OnPlayerPathMissionActivate", self)
-	Apollo.RegisterEventHandler("PublicEventStart", 					"OnPublicEventUpdate", self)
 	Apollo.RegisterEventHandler("PublicEventObjectiveUpdate", 			"OnPublicEventObjectiveUpdate", self)
+	Apollo.RegisterEventHandler("PublicEventStart", 					"OnPublicEventStart", self)
 	Apollo.RegisterEventHandler("PublicEventEnd", 						"OnPublicEventEnd", self)
 	Apollo.RegisterEventHandler("PublicEventLeave",						"OnPublicEventEnd", self)
 	Apollo.RegisterEventHandler("PublicEventLocationAdded", 			"OnPublicEventUpdate", self)
@@ -316,8 +334,10 @@ function MiniMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerLevelChange",					"UpdateHarvestableNodes", self)
 
 	Apollo.RegisterTimerHandler("ChallengeFlashIconTimer", 				"OnStopChallengeFlashIcon", self)
-	Apollo.RegisterTimerHandler("OneSecTimer",							"OnOneSecTimer", self)
 	
+	self.timerCreateDelay = ApolloTimer.Create(1.0, true, "OnOneSecTimer", self)
+	self.timerCreateDelay:Start()
+
 	Apollo.RegisterTimerHandler("PingTimer",							"OnPingTimer", self)
 	Apollo.CreateTimer("PingTimer", 1, false)
 	Apollo.StopTimer("PingTimer")
@@ -332,49 +352,29 @@ function MiniMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 			"OnTutorial_RequestUIAnchor", self)
 
 	self.wndMain 			= Apollo.LoadForm(self.xmlDoc , "Minimap", "FixedHudStratum", self)
+	self.wndMinimapOptions 	= Apollo.LoadForm(self.xmlDoc , "MinimapOptions", nil, self)
 	self.wndMiniMap 		= self.wndMain:FindChild("MapContent")
 	self.wndZoneName 		= self.wndMain:FindChild("MapZoneName")
 	self.wndPvPFlagName 	= self.wndMain:FindChild("MapZonePvPFlag")
-	self.wndRangeLabel 		= self.wndMain:FindChild("RangeToTargetLabel")
 	self:UpdateZoneName(GetCurrentZoneName())
 	self.wndMinimapButtons 	= self.wndMain:FindChild("ButtonContainer")
+	self.wndMegaMapBtnOverlay 	= self.wndMain:FindChild("MapToggleBtnOverlay")
+
 	if self.fSavedZoomLevel then
 		self.wndMiniMap:SetZoomLevel( self.fSavedZoomLevel)
 	end
-	
-	self.wndMinimapOptions 	= Apollo.LoadForm(self.xmlDoc , "MinimapOptions", nil, self)
-	self.wndMinimapOptions:Show(false)
 
+	self.wndMain:FindChild("EventContainer"):Show(false, true)
 	self.wndMain:FindChild("MapMenuButton"):AttachWindow(self.wndMinimapOptions)
 	self.wndMain:SetSizingMinimum(150, 150)
 	self.wndMain:SetSizingMaximum(400, 400)
-
-	self.wndMegaMapBtnOverlay 	= self.wndMain:FindChild("MapToggleBtnOverlay")
 	self.wndMegaMapBtnOverlay:Show(false)
+	self.wndMinimapOptions:Show(false)
+
+	self.bLiveEventActive = false
 
 	self:CreateOverlayObjectTypes() -- ** IMPORTANT ** This function must run before you do anything involving overlay types!
 	self:BuildCustomMarkerInfo()
-
-	self.tChallengeObjects 			= {}
-	self.ChallengeFlashingIconId 	= nil
-	self.tUnitsShown 				= {}	-- For Quests, PublicEvents, Vendors, Instance Portals, and Bind Points which all use UnitCreated/UnitDestroyed events
-	self.tUnitsHidden 				= {}	-- Units that we're tracking but are out of the current subzone
-	self.tObjectsShown 				= {} -- For Challenges which use their own events
-	self.tObjectsShown.Challenges 	= {}
-	self.tPingObjects 				= {}
-	self.arResourceNodes			= {}
-
-	
-
-	self.tGroupMembers 			= {}
-	self.tGroupMemberObjects 	= {}
-	if not self.tQueuedUnits then
-		self.tQueuedUnits = {}--necessary when characters don't have a saved file for minimap
-	else
-		for idx, unit in pairs(self.tQueuedUnits) do
-			self.HandleUnitCreated(unit)
-		end
-	end
 
 	self.unitPlayerDisposition = GameLib.GetPlayerUnit()
 	if self.unitPlayerDisposition ~= nil then
@@ -392,7 +392,7 @@ function MiniMap:OnDocumentReady()
 			[self.eObjectTypeBindPointActive] 				= true,
 			[self.eObjectTypeInstancePortal] 				= true,
 			[self.eObjectTypePublicEvent] 					= true,
-			[self.eObjectTypeQuestTarget]					= true, 
+			[self.eObjectTypeQuestTarget]					= true,
 			[GameLib.CodeEnumMapOverlayType.QuestObjective] = true,
 			[GameLib.CodeEnumMapOverlayType.PathObjective] 	= true,
 			[self.eObjectTypeChallenge] 					= true,
@@ -403,16 +403,26 @@ function MiniMap:OnDocumentReady()
 			[self.eObjectTypeTradeskills] 					= true,
 			[self.eObjectTypeTrainer] 						= true,
 			[self.eObjectTypeFriend] 						= true,
-			[self.eObjectTypeRival] 						= true
+			[self.eObjectTypeRival] 						= true,
+			[self.eObjectTypeCityDirections] 				= true,
+			[self.eObjectTypeFlightPath] 					= true,
+			[self.eObjectTypeCREDDExchange] 				= true,
+			[self.eObjectTypeCostume] 						= true,
+			[self.eObjectTypeBank] 							= true,
+			[self.eObjectTypeGuildBank] 					= true,
+			[self.eObjectTypeGuildRegistrar] 				= true,
+			[self.eObjectTypeConvert] 							= true,
+			[self.eObjectTypeMail] 							= true
 		}
 	end
-	
+
+	self.wndMinimapOptions:FindChild("OptionsBtnRotate"):SetCheck(self.bRotate)
+	self.wndMiniMap:SetMapOrientation(self.bRotate and 2 or 0)
+
 	self:ReloadPublicEvents()
 	self:ReloadMissions()
 	self:OnQuestStateChanged()
-	
-	
-	
+
 	local tUIElementToType =
 	{
 		["OptionsBtnQuests"] 			= self.eObjectTypeQuestReward,
@@ -432,7 +442,10 @@ function MiniMap:OnDocumentReady()
 		["OptionsBtnCreaturesH"] 		= self.eObjectTypeHostile,
 		["OptionsBtnTrainer"] 			= self.eObjectTypeTrainer,
 		["OptionsBtnFriends"]			= self.eObjectTypeFriend,
-		["OptionsBtnRivals"] 			= self.eObjectTypeRival
+		["OptionsBtnRivals"] 			= self.eObjectTypeRival,
+		["OptionsBtnCityDirections"] 	= self.eObjectTypeCityDirections,
+		["OptionsBtnTaxis"] 			= self.eObjectTypeFlightPath,
+		["OptionsBtnServices"] 			= self.eObjectTypeServices
 	}
 	local wndOptionsWindow = self.wndMinimapOptions:FindChild("MapOptionsWindow")
 	for strWindowName, eType in pairs(tUIElementToType) do
@@ -441,19 +454,21 @@ function MiniMap:OnDocumentReady()
 		wndOptionsBtn:SetCheck(self.tToggledIcons[eType])
 	end
 
+	self:RehideAllToggledIcons()
+
 	if g_wndTheMiniMap == nil then
 		g_wndTheMiniMap = self.wndMiniMap
 	end
-	
+
 	self:OnOptionsUpdated()
 end
 
 function MiniMap:OnCharacterCreated()
-	if(not self.unitPlayerDisposition ) then
+	if not self.unitPlayerDisposition then
 		self.unitPlayerDisposition = GameLib.GetPlayerUnit()
 	end
-	local ePath = self.unitPlayerDisposition:GetPlayerPathType()
 
+	local ePath = self.unitPlayerDisposition:GetPlayerPathType()
 	if ePath == PlayerPathLib.PlayerPathType_Soldier then
 		self.wndMinimapOptions:FindChild("Image_Soldier"):Show(true)
 	elseif ePath == PlayerPathLib.PlayerPathType_Explorer then
@@ -463,6 +478,14 @@ function MiniMap:OnCharacterCreated()
 	elseif ePath == PlayerPathLib.PlayerPathType_Settler then
 		self.wndMinimapOptions:FindChild("Image_Settler"):Show(true)
 	end
+
+	-- PublicEventStart will catch it if this loads too early
+	for idx, peEvent in pairs(PublicEvent.GetActiveEvents() or {}) do
+		if peEvent:GetEventType() == PublicEvent.PublicEventType_LiveEvent then
+			self.bLiveEventActive = true
+			return
+		end
+	end
 end
 
 function MiniMap:OnOptionsUpdated()
@@ -471,7 +494,7 @@ function MiniMap:OnOptionsUpdated()
 	else
 		self.bQuestTrackerByDistance = true
 	end
-	
+
 	self:OnQuestStateChanged()
 end
 
@@ -483,27 +506,29 @@ function MiniMap:OnSave(eType)
 
 	local tShownUnits = {}
 	local tHiddenUnits = {}
-	
+
 	if self.tUnitsShown then
 		for idUnit, unit in pairs(self.tUnitsShown) do
 			tShownUnits[idUnit] = idUnit
 		end
 	end
-	
-	
+
+
 	if self.tUnitsHidden then
 		for idx, unit in pairs(self.tUnitsHidden) do
 			tHiddenUnits[idx] = idx
 		end
 	end
-	
+
 	local tSavedData =
 	{
+		bRotateToggled = self.bRotate,
 		fZoomLevel = self.wndMiniMap:GetZoomLevel(),
 		tToggled = self.tToggledIcons,
 		tSavedShownUnits = tShownUnits,
 		tSavedHiddenUnits = tHiddenUnits
 	}
+
 
 	return tSavedData
 end
@@ -521,26 +546,31 @@ function MiniMap:OnRestore(eType, tSavedData)
 
 	if tSavedData.tToggled then
 		self.tToggledIcons = tSavedData.tToggled
+		self:RehideAllToggledIcons()
 	end
-	
+
 	self.tQueuedUnits = {}
-	
+
 	if tSavedData.tSavedShownUnits then
 		for idx, idUnit in pairs(tSavedData.tSavedShownUnits) do
 			local unitShown = GameLib.GetUnitById(idUnit)
 			if unitShown and  unitShown:IsValid() then
-				self.tQueuedUnits[idUnit] = unitShown
+				self.tQueuedUnits[#self.tQueuedUnits + 1] = unitShown
 			end
 		end
 	end
-	
+
 	if tSavedData.tSavedHiddenUnits then
 		for idx, idUnit in pairs(tSavedData.tSavedHiddenUnits) do
 			local unitHidden = GameLib.GetUnitById(idUnit)
 			if unitHidden and  unitHidden:IsValid()then
-				self.tQueuedUnits[idUnit] = unitHidden
+				self.tQueuedUnits[#self.tQueuedUnits + 1] = unitHidden
 			end
 		end
+	end
+
+	if tSavedData.bRotateToggled then
+		self.bRotate = tSavedData.bRotateToggled
 	end
 end
 
@@ -662,11 +692,11 @@ function MiniMap:OnMenuBtnToggle(wndHandler, wndControl)
 
 	if wndControl:IsChecked() then
 		local bIsMiner, bIsRelicHunter, bIsSurvivalist, bIsFarmer = false, false, false, false
-		
+
 		for idx, tTradeskill in pairs(CraftingLib.GetKnownTradeskills() or {}) do
-	
+
 			local tTradeskillInfo = CraftingLib.GetTradeskillInfo(tTradeskill.eId)
-			
+
 			if (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Mining) and tTradeskillInfo.bIsActive then
 				bIsMiner = true
 			elseif (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Relic_Hunter) and tTradeskillInfo.bIsActive then
@@ -676,9 +706,9 @@ function MiniMap:OnMenuBtnToggle(wndHandler, wndControl)
 			elseif (tTradeskill.eId == CraftingLib.CodeEnumTradeskill.Farmer) and tTradeskillInfo.bIsActive then
 				bIsFarmer = true
 			end
-		
+
 		end
-		
+
 		self.wndMinimapOptions:FindChild("OptionsBtnMiningNodes"):Enable(bIsMiner)
 		self.wndMinimapOptions:FindChild("OptionsBtnRelicNodes"):Enable(bIsRelicHunter)
 		self.wndMinimapOptions:FindChild("OptionsBtnSurvivalistNodes"):Enable(bIsSurvivalist)
@@ -719,27 +749,17 @@ end
 ---------------------------------------------------------------------------------------------------
 function MiniMap:OnRotateMapCheck()
 	--self.wndMinimapOptions:FindChild("OptionsBtnRotate"):FindChild("Image"):SetSprite("CRB_UIKitSprites:btn_radioSMALLPressed")
+	self.bRotate = true
 	self.wndMiniMap:SetMapOrientation(2)
 end
 
 function MiniMap:OnRotateMapUncheck()
 	--self.wndMinimapOptions:FindChild("OptionsBtnRotate"):FindChild("Image"):SetSprite("CRB_UIKitSprites:btn_radioSMALLNormal")
+	self.bRotate = false
 	self.wndMiniMap:SetMapOrientation(0)
 end
 
-function MiniMap:OnRangeFinderCheck()
-	self.wndMinimapOptions:FindChild("OptionsBtnRange"):FindChild("Image"):SetSprite("CRB_UIKitSprites:btn_radioSMALLPressed")
-	self.bFindRange = true
-end
-
-function MiniMap:OnRangeFinderUncheck()
-	self.wndMinimapOptions:FindChild("OptionsBtnRange"):FindChild("Image"):SetSprite("CRB_UIKitSprites:btn_radioSMALLNormal")
-	self.bFindRange = false
-	self.wndRangeLabel:Show(false)
-end
-
 function MiniMap:OnMapPing(idUnit, tPos )
-
 	for idx, tCur in pairs(self.tPingObjects) do
 		if tCur.idUnit == idUnit then
 			self.wndMiniMap:RemoveObject(tCur.objMapPing)
@@ -755,11 +775,11 @@ function MiniMap:OnMapPing(idUnit, tPos )
 		crEdge = CColor.new(1, 1, 1, 1),
 		bAboveOverlay = true,
 	}
-	
+
 	Sound.Play(Sound.PlayUIMiniMapPing)
-	
+
 	table.insert(self.tPingObjects, {["idUnit"] = idUnit, ["objMapPing"] = self.wndMiniMap:AddObject(self.eObjectTypePing, tPos, "", tInfo), ["nTime"] = GameLib.GetGameTime()})
-	
+
 	Apollo.StartTimer("PingTimer")
 
 end
@@ -776,19 +796,12 @@ function MiniMap:OnPingTimer()
 			nNumUnits = nNumUnits + 1
 		end
 	end
-		
+
 	if nNumUnits == 0 then
 		Apollo.StopTimer("PingTimer")
 	else
 		Apollo.StartTimer("PingTimer")
 	end
-
-end
-
-----------------------------------------------------------------------------------------------
--- Chat commands for range finder option
------------------------------------------------------------------------------------------------
-function MiniMap:OnRangeSlashCommand(cmd, arg1)
 
 end
 
@@ -918,8 +931,11 @@ function MiniMap:ReloadPublicEvents()
 end
 
 function MiniMap:OnPublicEventUpdate(peUpdated)
-	self:OnPublicEventEnd(peUpdated)
-
+	self.wndMiniMap:RemoveObjectsByUserData(self.eObjectTypePublicEvent, peUpdated)
+	for idx, peoCurr in ipairs(peUpdated:GetObjectives()) do
+		self:OnPublicEventObjectiveEnd(peoCurr)
+	end	
+	
 	if not peUpdated:IsActive() or self.tToggledIcons == nil then
 		return
 	end
@@ -933,7 +949,8 @@ function MiniMap:OnPublicEventUpdate(peUpdated)
 	}
 
 	for idx, tPos in ipairs(peUpdated:GetLocations()) do
-		self.wndMiniMap:AddObject(self.eObjectTypePublicEvent, tPos, peUpdated:GetName(), tInfo, {bNeverShowOnEdge = peUpdated:ShouldShowOnMiniMapEdge(), bFixedSizeSmall = false}, not self.tToggledIcons[self.eObjectTypePublicEvent], peUpdated)
+		local tOptions = { bNeverShowOnEdge = peUpdated:ShouldShowOnMiniMapEdge(), bFixedSizeSmall = false }
+		self.wndMiniMap:AddObject(self.eObjectTypePublicEvent, tPos, peUpdated:GetName(), tInfo, tOptions, not self.tToggledIcons[self.eObjectTypePublicEvent], peUpdated)
 	end
 
 	for idx, peoCurr in ipairs(peUpdated:GetObjectives()) do
@@ -943,9 +960,19 @@ end
 
 function MiniMap:OnPublicEventEnd(peEnding)
 	self.wndMiniMap:RemoveObjectsByUserData(self.eObjectTypePublicEvent, peEnding)
-
 	for idx, peoCurr in ipairs(peEnding:GetObjectives()) do
 		self:OnPublicEventObjectiveEnd(peoCurr)
+	end
+
+	if peEnding:GetEventType() == PublicEvent.PublicEventType_LiveEvent and not peEnding:IsActive() then -- Assumes only one live event will be active at once
+		self.bLiveEventActive = false
+	end
+end
+
+function MiniMap:OnPublicEventStart(peStarting)
+	self:OnPublicEventUpdate(peStarting) -- Always do this, from previous code
+	if peStarting and peStarting:GetEventType() == PublicEvent.PublicEventType_LiveEvent then
+		self.bLiveEventActive = true
 	end
 end
 
@@ -990,8 +1017,8 @@ function MiniMap:OnCityDirectionMarked(tLocInfo)
 	}
 
 	-- Only one city direction at a time, so stomp and remove and previous
-	self.wndMiniMap:RemoveObjectsByUserData(self.eObjectTypeCityDirection, Apollo.GetString("ZoneMap_CityDirections"))
-	self.wndMiniMap:AddObject(self.eObjectTypeCityDirection, tLocInfo.tLoc, tLocInfo.strName, tInfo, {bFixedSizeSmall = false}, false, Apollo.GetString("ZoneMap_CityDirections"))
+	self.wndMiniMap:RemoveObjectsByUserData(self.eObjectTypeCityDirections, Apollo.GetString("ZoneMap_CityDirections"))
+	self.wndMiniMap:AddObject(self.eObjectTypeCityDirections, tLocInfo.tLoc, tLocInfo.strName, tInfo, {bFixedSizeSmall = false}, false, Apollo.GetString("ZoneMap_CityDirections"))
 	Apollo.StartTimer("ZoneMap_TimeOutCityDirectionMarker")
 end
 
@@ -1000,7 +1027,7 @@ function MiniMap:OnZoneMap_TimeOutCityDirectionEvent()
 		return
 	end
 
-	self.wndMiniMap:RemoveObjectsByUserData(self.eObjectTypeCityDirection, Apollo.GetString("ZoneMap_CityDirections"))
+	self.wndMiniMap:RemoveObjectsByUserData(self.eObjectTypeCityDirections, Apollo.GetString("ZoneMap_CityDirections"))
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1040,6 +1067,8 @@ function MiniMap:OnQuestStateChanged()
 					crObject = CColor.new(1, 1, 1, 1),
 					strIconEdge = "sprMM_SolidPathArrow",
 					crEdge = CColor.new(1, 1, 1, 1),
+					strIconAbove = "IconSprites:Icon_MapNode_Map_QuestMarkerAbove",
+					strIconBelow = "IconSprites:Icon_MapNode_Map_QuestMarkerBelow",
 				}
 				-- This is a C++ call on the MiniMapWindow class
 				self.wndMiniMap:AddQuestIndicator(queCurr, tostring(nCount), tInfo, {bOnlyShowOnEdge = false, bFixedSizeMedium = false, bAboveOverlay = true}, not self.tToggledIcons[GameLib.CodeEnumMapOverlayType.QuestObjective])
@@ -1060,20 +1089,25 @@ function MiniMap:OnOneSecTimer()
 		return
 	end
 
-	for id,unit in pairs(self.tQueuedUnits) do
+	local nCurrentTime = os.time()
+	
+	while #self.tQueuedUnits > 0 do
+		local unit = table.remove(self.tQueuedUnits, #self.tQueuedUnits)
 		if unit:IsValid() then
 			self:HandleUnitCreated(unit)
 		end
+		
+		if os.time() - nCurrentTime > 0 then
+			break
+		end
 	end
-
-	self.tQueuedUnits = {}
 end
 
 function MiniMap:OnUnitCreated(unitNew)
 	if unitNew == nil or not unitNew:IsValid() or unitNew == GameLib.GetPlayerUnit() then
 		return
 	end
-	self.tQueuedUnits[unitNew:GetId()] = unitNew
+	self.tQueuedUnits[#self.tQueuedUnits + 1] = unitNew
 end
 
 function MiniMap:GetDefaultUnitInfo()
@@ -1099,7 +1133,7 @@ end
 
 function MiniMap:GetOrderedMarkerInfos(tMarkerStrings)
 	local tMarkerInfos = {}
-	
+
 	for nMarkerIdx, strMarker in ipairs(tMarkerStrings) do
 		if strMarker then
 			local tMarkerOverride = self.tMinimapMarkerInfo[strMarker]
@@ -1118,7 +1152,7 @@ function MiniMap:HandleUnitCreated(unitNew)
 	if not unitNew or not unitNew:IsValid() then
 		return
 	end
-	
+
 	if self.tUnitsHidden and self.tUnitsHidden[unitNew:GetId()] then
 		self.tUnitsHidden[unitNew:GetId()] = nil
 		self.wndMiniMap:RemoveUnit(unitNew)
@@ -1135,16 +1169,16 @@ function MiniMap:HandleUnitCreated(unitNew)
 		self.tUnitsHidden[unitNew:GetId()] = {unitObject = unitNew} -- valid, but different subzone. Add it to the list
 		return
 	end
-	
+
 	local tMarkers = unitNew:GetMiniMapMarkers()
 	if tMarkers == nil then
 		return
 	end
-	
 	local tMarkerInfoList = self:GetOrderedMarkerInfos(tMarkers)
 	for nIdx, tMarkerInfo in ipairs(tMarkerInfoList) do
 		local tInfo = self:GetDefaultUnitInfo()
-		if tMarkerInfo.strIcon  then
+		local tInteract = unitNew:GetActivationState()
+		if tMarkerInfo.strIcon then
 			tInfo.strIcon = tMarkerInfo.strIcon
 		end
 		if tMarkerInfo.crObject then
@@ -1161,6 +1195,7 @@ function MiniMap:HandleUnitCreated(unitNew)
 		if tMarkerInfo.bShown then
 			tMarkerOptions.bShown = tMarkerInfo.bShown
 		end
+		
 		-- only one of these should be set
 		if tMarkerInfo.bFixedSizeSmall then
 			tMarkerOptions.bFixedSizeSmall = tMarkerInfo.bFixedSizeSmall
@@ -1173,8 +1208,12 @@ function MiniMap:HandleUnitCreated(unitNew)
 			objectType = tMarkerInfo.objectType
 		end
 
-		self.wndMiniMap:AddUnit(unitNew, objectType, tInfo, tMarkerOptions, self.tToggledIcons[objectType] ~= nil and not self.tToggledIcons[objectType])
-		self.tUnitsShown[unitNew:GetId()] = { tInfo = tInfo, unitObject = unitNew }
+		local bIconState = self:GetToggledIconState(objectType)
+		if not tInteract.Busy and (not tMarkerInfo.bHideIfHostile
+			or (tMarkerInfo.bHideIfHostile and unitNew:GetDispositionTo(self.unitPlayerDisposition) ~= Unit.CodeEnumDisposition.Hostile)) then
+			self.wndMiniMap:AddUnit(unitNew, objectType, tInfo, tMarkerOptions, bIconState ~= nil and not bIconState)
+			self.tUnitsShown[unitNew:GetId()] = { tInfo = tInfo, unitObject = unitNew }
+		end
 	end
 
 end
@@ -1347,7 +1386,7 @@ function MiniMap:OnGenerateTooltip(wndHandler, wndControl, eType, nX, nY)
 			end
 		end
 	end
-	
+
 	if nObjectCount > 0 then
 		wndControl:SetTooltipDoc(xml)
 	else
@@ -1399,6 +1438,7 @@ function MiniMap:OnMiniMapMouseEnter(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
 		return
 	end
+	self.wndMain:FindChild("EventContainer"):Show(self.bLiveEventActive)
 	self.wndMain:FindChild("ZoomInButton"):Show(true)
 	self.wndMain:FindChild("ZoomOutButton"):Show(true)
 	self.wndMain:FindChild("MapToggleBtn"):Show(true)
@@ -1410,6 +1450,7 @@ function MiniMap:OnMiniMapMouseExit(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
 		return
 	end
+	self.wndMain:FindChild("EventContainer"):Show(false)
 	self.wndMain:FindChild("ZoomInButton"):Show(false)
 	self.wndMain:FindChild("ZoomOutButton"):Show(false)
 	self.wndMain:FindChild("MapToggleBtn"):Show(false)
@@ -1417,9 +1458,32 @@ function MiniMap:OnMiniMapMouseExit(wndHandler, wndControl)
 	self.wndMain:FindChild("MiniMapResizeArtForPixie"):Show(false)
 end
 
+function MiniMap:OnEventMoreInfoMouseEnter(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+	self.wndMain:FindChild("EventContainer:EventTitle"):Show(true)
+	self.wndMain:FindChild("EventContainer:EventSubtitle"):Show(true)
+end
+
+function MiniMap:OnEventMoreInfoMouseExit(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+	self.wndMain:FindChild("EventContainer:EventTitle"):Show(false, false, 3)
+	self.wndMain:FindChild("EventContainer:EventSubtitle"):Show(false, false, 3)
+end
+
+function MiniMap:OnEventMoreInfoBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("LiveEvent_ToggleWindow")
+	self.wndMain:FindChild("EventContainer:EventTitle"):Show(false, false, 3)
+	self.wndMain:FindChild("EventContainer:EventSubtitle"):Show(false, false, 3)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Tutorial anchor request
 ---------------------------------------------------------------------------------------------------
+
 function MiniMap:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.MiniMap then
 		return
@@ -1453,10 +1517,21 @@ function MiniMap:OnFilterOptionCheck(wndHandler, wndControl, eMouseButton)
 	elseif data == self.eObjectTypeBindPointActive then
 		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeBindPointActive)
 		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeBindPointInactive)
+	elseif data == self.eObjectTypeFlightPath then
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeFlightPath)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeFlightPathNew)
 	elseif data == self.eObjectTypeVendor then
 		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeVendor)
+	elseif data == self.eObjectTypeServices then
 		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeAuctioneer)
 		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeCommodity)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeBank)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeGuildBank)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeGuildRegistrar)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeCostume)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeCREDDExchange)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeMail)
+		self.wndMiniMap:ShowObjectsByType(self.eObjectTypeConvert)
 	else
 		self.wndMiniMap:ShowObjectsByType(data)
 	end
@@ -1477,16 +1552,94 @@ function MiniMap:OnFilterOptionUncheck(wndHandler, wndControl, eMouseButton)
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestNewSoon)
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestTarget)
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestKill)
+	elseif data == self.eObjectTypeFlightPath then
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeFlightPath)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeFlightPathNew)
 	elseif data == self.eObjectTypeBindPointActive then
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeBindPointActive)
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeBindPointInactive)
 	elseif data == self.eObjectTypeVendor then
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeVendor)
+	elseif data == self.eObjectTypeServices then
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeAuctioneer)
 		self.wndMiniMap:HideObjectsByType(self.eObjectTypeCommodity)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeBank)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeGuildBank)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeGuildRegistrar)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeCostume)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeCREDDExchange)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeMail)
+		self.wndMiniMap:HideObjectsByType(self.eObjectTypeConvert)
 	else
 		self.wndMiniMap:HideObjectsByType(data)
 	end
+end
+
+function MiniMap:RehideAllToggledIcons()
+	if self.wndMiniMap ~= nil and self.tToggledIcons ~= nil then
+		for eData, bState in pairs(self.tToggledIcons) do
+			if not bState then
+				if eData == self.eObjectTypeQuestReward then
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestReward)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestReceiving)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestNew)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestNewSoon)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestTarget)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeQuestKill)
+				elseif data == self.eObjectTypeFlightPath then
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeFlightPath)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeFlightPathNew)
+				elseif data == self.eObjectTypeBindPointActive then
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeBindPointActive)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeBindPointInactive)
+				elseif eData == self.eObjectTypeVendor then
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeVendor)
+				elseif eData == self.eObjectTypeServices then
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeAuctioneer)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeCommodity)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeBank)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeGuildBank)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeGuildRegistrar)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeCostume)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeCREDDExchange)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeMail)
+					self.wndMiniMap:HideObjectsByType(self.eObjectTypeConvert)
+				else
+					self.wndMiniMap:HideObjectsByType(eData)
+				end
+			end
+		end
+	end
+end
+
+function MiniMap:GetToggledIconState(eObjectType)
+	if eObjectType == self.eObjectTypeQuestReward
+		or eObjectType == self.eObjectTypeQuestReceiving
+		or eObjectType == self.eObjectTypeQuestNew
+		or eObjectType == self.eObjectTypeQuestNewSoon
+		or eObjectType == self.eObjectTypeQuestTarget
+		or eObjectType == self.eObjectTypeQuestKill then
+		eObjectType = self.eObjectTypeQuestReward
+	elseif eObjectType == self.eObjectTypeFlightPath
+		or eObjectType == self.eObjectTypeFlightPathNew then
+		eObjectType = self.eObjectTypeFlightPath
+	elseif eObjectType == self.eObjectTypeBindPointActive
+		or eObjectType == self.eObjectTypeBindPointInactive then
+		eObjectType = self.eObjectTypeBindPointActive
+	elseif eObjectType == self.eObjectTypeServices
+		or eObjectType == self.eObjectTypeBank
+		or eObjectType == self.eObjectTypeAuctioneer
+		or eObjectType == self.eObjectTypeMail
+		or eObjectType == self.eObjectTypeGuildBank
+		or eObjectType == self.eObjectTypeGuildRegistrar
+		or eObjectType == self.eObjectTypeCREDDExchange
+		or eObjectType == self.eObjectTypeCostume
+		or eObjectType == self.eObjectTypeConvert
+		or eObjectType == self.eObjectTypeCommodity then
+		eObjectType = self.eObjectTypeServices
+	end
+
+	return self.tToggledIcons[eObjectType]
 end
 
 ---------------------------------------------------------------------------------------------------

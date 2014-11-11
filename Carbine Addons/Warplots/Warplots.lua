@@ -30,8 +30,8 @@ local LuaEnumControlPoints =
 	BlueNorth 	= 1605,
 	RedNorth 	= 1606,
 	Center 		= 1607,
-	BlueSouth 	= 1608,
-	RedSouth 	= 1609,
+	RedSouth 	= 1608,
+	BlueSouth 	= 1609,
 }
 
 
@@ -116,8 +116,8 @@ function Warplots:OnWarPlotOneSecMatchTimer()
 	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.BlueNorth], self.wndMain:FindChild("BlueN"), 1)
 	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.RedNorth], self.wndMain:FindChild("RedN"), 2)
 	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.Center], self.wndMain:FindChild("Center"), 3)
-	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.BlueSouth], self.wndMain:FindChild("BlueS"), 4)
-	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.RedSouth], self.wndMain:FindChild("RedS"), 5)
+	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.RedSouth], self.wndMain:FindChild("RedS"), 4)
+	self:DrawControlPoint(self.tControlPointInfo[LuaEnumControlPoints.BlueSouth], self.wndMain:FindChild("BlueS"), 5)
 end
 
 function Warplots:DrawEnergy(peoEnergy, wndBar, wndProgress)
@@ -127,6 +127,7 @@ function Warplots:DrawEnergy(peoEnergy, wndBar, wndProgress)
 		
 	wndBar:SetMax(nMaxEnergy)
 	wndBar:SetProgress(nCurrentEnergy)
+	wndBar:SetStyleEx("EdgeGlow", nCurrentEnergy > 0 and nCurrentEnergy < nMaxEnergy)
 	wndBar:SetTooltip(string.format("%s: %s / %s", strTeam, Apollo.FormatNumber(nCurrentEnergy, 0, true), Apollo.FormatNumber(nMaxEnergy, 0, true)))
 	wndProgress:SetText(Apollo.FormatNumber(nCurrentEnergy / nMaxEnergy * 100, 1, true).."%")
 end

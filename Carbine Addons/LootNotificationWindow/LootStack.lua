@@ -12,7 +12,6 @@ local LootStack = {}
 local knMaxEntryData = 4 -- Previously 3
 local kfMaxItemTime = 7	-- item display time (seconds)
 local kfTimeBetweenItems = 2 -- Previously .3			-- delay between items; also determines clearing time (seconds)
-
 local knType_Invalid = 0
 local knType_Item = 1
 
@@ -67,13 +66,10 @@ function LootStack:OnDocumentReady()
 	
 	Apollo.RegisterEventHandler("LootedItem", 			"OnLootedItem", self)
 	Apollo.RegisterEventHandler("LootedMoney", 			"OnLootedMoney", self)
+	
+	self.timerUpdate = ApolloTimer.Create(0.1, true, "OnLootStackUpdate", self)
 
-	Apollo.RegisterTimerHandler("LootStackUpdate",		"OnLootStackUpdate", self)
-	Apollo.CreateTimer("LootStackUpdate", 0.1, true)
-
-	Apollo.RegisterTimerHandler("LootStack_CashTimer", 	"OnLootStack_CashTimer", self)
-	Apollo.CreateTimer("LootStack_CashTimer", 5.0, false)
-	Apollo.StartTimer("LootStack_CashTimer")
+	self.timerCash = ApolloTimer.Create(5.0, false, "OnLootStack_CashTimer", self)
 
 	self.wndLootStack = Apollo.LoadForm(self.xmlDoc, "LootStackForm", "FixedHudStratumHigh", self)
 	self.xmlDoc = nil
@@ -96,7 +92,7 @@ function LootStack:OnDocumentReady()
 end
 
 function LootStack:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndLootStack, strName = Apollo.GetString("HUDAlert_VacuumLoot")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndLootStack, strName = Apollo.GetString("HUDAlert_VacuumLoot"), nSaveVersion=2})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -112,8 +108,8 @@ function LootStack:OnLootedMoney(monLooted)
 	self.wndCashDisplay:SetAmount(self.wndCashDisplay:GetAmount() + monLooted:GetAmount())
 	self.wndCashComplex:Invoke()
 
-	Apollo.StopTimer("LootStack_CashTimer")
-	Apollo.StartTimer("LootStack_CashTimer")
+	self.timerCash:Stop()
+	self.timerCash:Start()
 end
 
 function LootStack:OnLootStack_CashTimer()
@@ -187,6 +183,10 @@ function LootStack:AddQueuedItem()
 		if not self:RemoveItem(1) then
 			break
 		end
+	end
+
+	if tQueuedData.itemInstance and tQueuedData.itemInstance:CanTakeFromSupplySatchel() then
+		Event_FireGenericEvent("LootStackItemSentToTradeskillBag", tQueuedData)
 	end
 
 	-- push this item on the end of the table

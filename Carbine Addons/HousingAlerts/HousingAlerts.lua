@@ -45,6 +45,8 @@ local ktHousingSimpleResultStrings =
 	[HousingLib.HousingResult_Neighbor_Full] 				= Apollo.GetString("Neighbors_YourNeighborListFull"),
 	[HousingLib.HousingResult_Neighbor_PlayerIsIgnored] 	= Apollo.GetString("Neighbors_PlayerIsIgnored"), 		   
 	[HousingLib.HousingResult_Neighbor_IgnoredByPlayer] 	= Apollo.GetString("Neighbors_IgnoredByPlayer"),
+	[HousingLib.HousingResult_Neighbor_MissingEntitlement] 	= Apollo.GetString("Neighbors_MissingEntitlement"),
+	[HousingLib.HousingResult_Neighbor_PrivilegeRestricted] = Apollo.GetString("Neighbors_PrivilegeRestricted"),
 }
  
 local ktHousingComplexResultStringIds =
@@ -63,7 +65,8 @@ local ktHousingComplexResultStringIds =
 	[HousingLib.HousingResult_Neighbor_PlayerWrongFaction] 	= Apollo.GetString("Neighbors_DifferentFaction"), 
 	[HousingLib.HousingResult_Neighbor_Full] 				= Apollo.GetString("Neighbors_NeighborListFull"), 
 	[HousingLib.HousingResult_Neighbor_PlayerIsIgnored] 	= Apollo.GetString("Neighbors_PlayerIsIgnored"), 	
-	[HousingLib.HousingResult_Neighbor_IgnoredByPlayer] 	= Apollo.GetString("Neighbors_IgnoredByPlayer"), 	
+	[HousingLib.HousingResult_Neighbor_IgnoredByPlayer] 	= Apollo.GetString("Neighbors_IgnoredByPlayer"),
+	[HousingLib.HousingResult_Neighbor_MissingEntitlement] 	= Apollo.GetString("Neighbors_MissingEntitlement"),
 	[HousingLib.HousingResult_Visit_Private] 				= Apollo.GetString("Neighbors_PrivateResidence"), 
 	[HousingLib.HousingResult_Visit_Ignored] 				= Apollo.GetString("Neighbors_IgnoredByHost"), 	
 	[HousingLib.HousingResult_Visit_InvalidWorld] 			= Apollo.GetString("Neighbors_InvalidWorld"), 	

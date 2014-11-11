@@ -11,6 +11,13 @@ function FixXMLString(str)
 	return str
 end
 
+--------------------------------------------------------------------------------------------------
+
+function GetUnicodeStringLength(str)
+	local _, count = string.gsub(str, "[^\128-\193]", "")
+	
+	return count
+end
 
 ---------------------------------------------------------------------------------------------------
 -- TableUtil:Copy

@@ -110,6 +110,7 @@ function PublicEventVote:OnPublicEventInitiateVote() -- The close checking also 
 			self.wndMain:Destroy()
 			self.wndMain = nil
 			self.bWindowShown = false
+			Apollo.StopTimer("VoteUpdateTimer")
 		end
 		return
 	end
@@ -129,12 +130,12 @@ function PublicEventVote:OnPublicEventInitiateVote() -- The close checking also 
 		wndCurr:FindChild("VoteOptionBtn"):SetData(tOptionData.nChoice)
 		wndCurr:FindChild("VoteOptionBtnCheck"):SetData(tOptionData.nTally)
 		wndCurr:FindChild("VoteOptionTitle"):SetText(tOptionData.strLabel)
-		wndCurr:FindChild("VoteOptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\">" .. tOptionData.strChoiceDescription .. "</P>")
+		wndCurr:FindChild("VoteOptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">" .. tOptionData.strChoiceDescription .. "</P>")
 
 		-- Resize
 		local nWidth, nHeight = wndCurr:FindChild("VoteOptionText"):SetHeightToContentHeight()
 		local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-		wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.max(nHeight, nBottom) + 34) -- b is the minimum height for one line descriptions
+		wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.max(nHeight, nBottom) + 38) -- b is the minimum height for one line descriptions
 		wndCurr:FindChild("VoteOptionArrangeVert"):ArrangeChildrenVert(1) -- If at minimum height this will vertical center align
 	end
 	self.wndMain:FindChild("VoteFrameScroll"):ArrangeChildrenVert(0)
@@ -197,7 +198,7 @@ function PublicEventVote:OnPublicEventVoteEnded(nWinner)
 				["name"] = Apollo.GetString("PublicEventVote_Votes"),
 				["count"] = wndCurr:FindChild("VoteOptionBtnCheck"):GetData(),
 			}
-			wndCurr:FindChild("VoteOptionText"):SetAML("<P Font=\"CRB_InterfaceMedium_B\">" .. String_GetWeaselString(Apollo.GetString("PublicEventVote_Winner"), tVoteInfo) .. "</P>")
+			wndCurr:FindChild("VoteOptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">" .. String_GetWeaselString(Apollo.GetString("PublicEventVote_Winner"), tVoteInfo) .. "</P>")
 		else
 			wndCurr:Destroy()
 		end
@@ -213,7 +214,7 @@ function PublicEventVote:OnPublicEventVoteEnded(nWinner)
 	self.wndMain:FindChild("VoteFrameScroll"):RecalculateContentExtents()
 	self.wndMain:FindChild("VoteFrameScroll"):SetVScrollPos(0)
 
-	Apollo.StopTimer("VoteUpdateTimer")
+	
 	Apollo.CreateTimer("HideWinnerTimer", 5.0, false)
 	Apollo.StartTimer("HideWinnerTimer")
 	

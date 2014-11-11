@@ -18,8 +18,8 @@ local RecallFrame = {}
 -- Constants
 -----------------------------------------------------------------------------------------------
 -- e.g. local kiExampleVariableMax = 999
-local knBottomPadding = 48 -- MUST MATCH XML
-local knTopPadding = 48 -- MUST MATCH XML
+local knBottomPadding = 46 -- MUST MATCH XML
+local knTopPadding = 42 -- MUST MATCH XML
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -240,6 +240,7 @@ function RecallFrame:GenerateBindList()
 		--load recall
 		local wndBind = Apollo.LoadForm(self.xmlDoc, "RecallEntry", self.wndMenu:FindChild("Content"), self)
 		wndBind:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.BindPoint)
+		wndBind:FindChild("RecallActionBtn"):SetData(GameLib.CodeEnumRecallCommand.BindPoint)
 		
 		bHasBinds = true
 		local nLeft, nTop, nRight, nBottom = wndBind:GetAnchorOffsets()
@@ -247,13 +248,10 @@ function RecallFrame:GenerateBindList()
 	end
 	
 	if HousingLib.IsResidenceOwner() == true then
-		local wndSpace = Apollo.LoadForm(self.xmlDoc, "EmptySpace", self.wndMenu:FindChild("Content"), self)
-		local nSpaceLeft, nSpaceTop, nSpaceRight, nSpaceBottom = wndSpace:GetAnchorOffsets()
-		nEntryHeight = nEntryHeight + (nSpaceBottom - nSpaceTop)
-		
 		-- load house
 		local wndHouse = Apollo.LoadForm(self.xmlDoc, "RecallEntry", self.wndMenu:FindChild("Content"), self)
 		wndHouse:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.House)
+		wndHouse:FindChild("RecallActionBtn"):SetData(GameLib.CodeEnumRecallCommand.House)
 		
 		bHasBinds = true
 		local nLeft, nTop, nRight, nBottom = wndHouse:GetAnchorOffsets()
@@ -269,13 +267,10 @@ function RecallFrame:GenerateBindList()
 	end
 	
 	if bHasWarplot == true then
-		local wndSpace = Apollo.LoadForm(self.xmlDoc, "EmptySpace", self.wndMenu:FindChild("Content"), self)
-		local nSpaceLeft, nSpaceTop, nSpaceRight, nSpaceBottom = wndSpace:GetAnchorOffsets()
-		nEntryHeight = nEntryHeight + (nSpaceBottom - nSpaceTop)
-		
 		-- load warplot
 		local wndWarplot = Apollo.LoadForm(self.xmlDoc, "RecallEntry", self.wndMenu:FindChild("Content"), self)
 		wndWarplot:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.Warplot)
+		wndWarplot:FindChild("RecallActionBtn"):SetData(GameLib.CodeEnumRecallCommand.Warplot)
 		
 		bHasBinds = true
 		local nLeft, nTop, nRight, nBottom = wndWarplot:GetAnchorOffsets()
@@ -295,13 +290,10 @@ function RecallFrame:GenerateBindList()
 	end
 	
 	if bIllium then
-		local wndSpace = Apollo.LoadForm(self.xmlDoc, "EmptySpace", self.wndMenu:FindChild("Content"), self)
-		local nSpaceLeft, nSpaceTop, nSpaceRight, nSpaceBottom = wndSpace:GetAnchorOffsets()
-		nEntryHeight = nEntryHeight + (nSpaceBottom - nSpaceTop)
-		
 		-- load capital
 		local wndWarplot = Apollo.LoadForm(self.xmlDoc, "RecallEntry", self.wndMenu:FindChild("Content"), self)
 		wndWarplot:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.Illium)
+		wndWarplot:FindChild("RecallActionBtn"):SetData(GameLib.CodeEnumRecallCommand.Illium)
 		
 		bHasBinds = true
 		local nLeft, nTop, nRight, nBottom = wndWarplot:GetAnchorOffsets()
@@ -309,13 +301,10 @@ function RecallFrame:GenerateBindList()
 	end
 	
 	if bThayd then
-		local wndSpace = Apollo.LoadForm(self.xmlDoc, "EmptySpace", self.wndMenu:FindChild("Content"), self)
-		local nSpaceLeft, nSpaceTop, nSpaceRight, nSpaceBottom = wndSpace:GetAnchorOffsets()
-		nEntryHeight = nEntryHeight + (nSpaceBottom - nSpaceTop)
-		
 		-- load capital
 		local wndWarplot = Apollo.LoadForm(self.xmlDoc, "RecallEntry", self.wndMenu:FindChild("Content"), self)
 		wndWarplot:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.Thayd)
+		wndWarplot:FindChild("RecallActionBtn"):SetData(GameLib.CodeEnumRecallCommand.Thayd)		
 		
 		bHasBinds = true
 		local nLeft, nTop, nRight, nBottom = wndWarplot:GetAnchorOffsets()
@@ -333,10 +322,12 @@ function RecallFrame:GenerateBindList()
 	self.wndMenu:ToFront()	
 end
 
-function RecallFrame:OnRecallBtn(wndHandler, wndControl)
-	self.wndMain:FindChild("RecallActionBtn"):SetContentId(wndControl:GetData())
+function RecallFrame:OnRecallBtn(wndControl, wndHandler)
+	local nRecallCommand = wndControl:GetData()
+	
+	GameLib.SetDefaultRecallCommand(nRecallCommand)
+	self.wndMain:FindChild("RecallActionBtn"):SetContentId(nRecallCommand)
 	self.wndMenu:Show(false)
-	GameLib.SetDefaultRecallCommand(wndControl:GetData())
 end
 
 function RecallFrame:OnCloseBtn()

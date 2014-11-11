@@ -18,12 +18,12 @@ local knCategorySupportUtilityId 	= 6
 
 local karCategoryToConstantData =
 {
-	[knCategoryUtilityId] 			= {"LightBulbS",	"spr_AMPS_MiddleGlow_S", 	Apollo.GetString("AMP_Utility"),	"LabelUtility",		},
-	[knCategorySupportId]			= {"LightBulbNE",	"spr_AMPS_MiddleGlow_NE",	Apollo.GetString("AMP_Support"), 	"LabelSupport",		},
-	[knCategoryDamageId] 			= {"LightBulbNW",	"spr_AMPS_MiddleGlow_NW", 	Apollo.GetString("AMP_Assault"),	"LabelAssault",		},
-	[knCategoryDamageSupportId] 	= {"LightBulbN",	"spr_AMPS_MiddleGlow_N", 	Apollo.GetString("AMP_Hybrid"),		"LabelHybrid",		},
-	[knCategoryDamageUtilitytId] 	= {"LightBulbSE",	"spr_AMPS_MiddleGlow_SW", 	Apollo.GetString("AMP_PvPOffense"),	"LabelPvPOffense",	},
-	[knCategorySupportUtilityId] 	= {"LightBulbSW",	"spr_AMPS_MiddleGlow_SE", 	Apollo.GetString("AMP_PvPDefense"),	"LabelPvPDefense",	},
+	[knCategoryUtilityId] 			= {"LightBulbS",	"spr_AMPS_MiddleGlow_S", 	Apollo.GetString("AMP_Utility"),	"LabelUtility",		"UtilityLabel" },
+	[knCategorySupportId]			= {"LightBulbNE",	"spr_AMPS_MiddleGlow_NE",	Apollo.GetString("AMP_Support"), 	"LabelSupport",		"SupportLabel" },
+	[knCategoryDamageId] 			= {"LightBulbNW",	"spr_AMPS_MiddleGlow_NW", 	Apollo.GetString("AMP_Assault"),	"LabelAssault",		"AssaultLabel" },
+	[knCategoryDamageSupportId] 	= {"LightBulbN",	"spr_AMPS_MiddleGlow_N", 	Apollo.GetString("AMP_Hybrid"),		"LabelHybrid",		"AssaultSupportLabel" },
+	[knCategoryDamageUtilitytId] 	= {"LightBulbSE",	"spr_AMPS_MiddleGlow_SW", 	Apollo.GetString("AMP_PvPOffense"),	"LabelPvPOffense",	"AssaultUtilityLabel" },
+	[knCategorySupportUtilityId] 	= {"LightBulbSW",	"spr_AMPS_MiddleGlow_SE", 	Apollo.GetString("AMP_PvPDefense"),	"LabelPvPDefense",	"UtilitySupportLabel" },
 }
 
 local karCategoriesInClockwiseOrder =
@@ -36,8 +36,8 @@ local karCategoriesInClockwiseOrder =
 	knCategorySupportUtilityId,
 }
 
-local knDefaultZoom						= 21.47
-local knLowestZoom						= 21.47
+local knDefaultZoom						= 21.31				-- 21.47 without top banner
+local knLowestZoom						= 21.31				-- 21.47 without top banner
 local knColumnsPerCategory 				= 8 				-- How many columns exist for each category (columns)
 local knNumRows 						= 12 				-- Number of rows in the radial grid
 
@@ -49,10 +49,10 @@ local knAugmentationUnavailableColor 	= "spr_AMPs_LockStretch_Red"
 
 local ktAugmentationValidationResult =
 {
-	[ActionSetLib.CodeEnumLimitedActionSetResult.Ok]										= Apollo.GetString("EldanAugmentation_Ok"),
-	[ActionSetLib.CodeEnumLimitedActionSetResult.EldanAugmentation_LockedInlaid]			= Apollo.GetString("EldanAugmentation_LockedInlaidAugmentation"),
+	[ActionSetLib.CodeEnumLimitedActionSetResult.Ok]									= Apollo.GetString("EldanAugmentation_Ok"),
+	[ActionSetLib.CodeEnumLimitedActionSetResult.EldanAugmentation_LockedInlaid]		= Apollo.GetString("EldanAugmentation_LockedInlaidAugmentation"),
 	[ActionSetLib.CodeEnumLimitedActionSetResult.EldanAugmentation_LockedCategoryTier]	= Apollo.GetString("EldanAugmentation_LockedCategoryTier"), -- TODO rename to rank
-	[ActionSetLib.CodeEnumLimitedActionSetResult.UnknownClassId]							= Apollo.GetString("EldanAugmentation_InvalidClass"),
+	[ActionSetLib.CodeEnumLimitedActionSetResult.UnknownClassId]						= Apollo.GetString("EldanAugmentation_InvalidClass"),
 	[ActionSetLib.CodeEnumLimitedActionSetResult.EldanAugmentation_InvalidSeries] 		= Apollo.GetString("EldanAugmentation_InvalidSeries"),
 	[ActionSetLib.CodeEnumLimitedActionSetResult.EldanAugmentation_InvalidId]			= Apollo.GetString("EldanAugmentation_InvalidEldanAugmentationId"),
 	[ActionSetLib.CodeEnumLimitedActionSetResult.EldanAugmentation_InvalidCategoryId]	= Apollo.GetString("EldanAugmentation_InvalidAugmentationCategoryId"),
@@ -88,14 +88,17 @@ function AbilityAMPs:OnDocumentReady()
 	Apollo.RegisterEventHandler("CharacterUnlockedInlaidEldanAugmentation", "BuildFromEvent", self)
 	Apollo.RegisterEventHandler("CharacterEldanAugmentationsUpdated", 		"BuildFromEvent", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 						"BuildFromEvent", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_AMPPoint",					"BuildFromEvent", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 					"OnPlayerCurrencyChanged", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_AMPPoint",					"OnLevelUpUnlock_AMPPoint", self)
-	Apollo.RegisterTimerHandler("AbilityAMPs_MessageDisplayTimer", 			"OnMessageDisplayTimer", self)
+	Apollo.RegisterEventHandler("PlayerResurrected", 						"OnPlayerResurrected", self)
+	Apollo.RegisterEventHandler("ShowResurrectDialog", 						"OnShowResurrectDialog", self)
+	--unkown duration, setting default. later will be set correctly on HelperCreateMessage
+	self.timerMessageDisplay = ApolloTimer.Create(1.0, false, "OnMessageDisplayTimer", self)
+	self.timerMessageDisplay:Stop()
 
 	self.tWndRefs.wndMain = nil
 	self.nVScrollPos = 170
 	self.nZoomLevel = knDefaultZoom
-
 end
 
 function AbilityAMPs:Initialize(wndParent)
@@ -113,32 +116,42 @@ function AbilityAMPs:OnStartRedrawAll(wndParent)
 	self.tWndRefs.wndMiddle = Apollo.LoadForm(self.xmlDoc, "MiddleBG", self.tWndRefs.wndMain:FindChild("ScrollContainer:LightBulbLayer"), self)
 	self.tWndRefs.wndMiddle:ToFront()
 	self.tWndRefs.wndMessage = self.tWndRefs.wndMain:FindChild("UpdateMessage")
-	
+
 	self.tWndRefs.wndMain:FindChild("UpdateMessage"):Show(false, true)
 	self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("ResetFrame:ResetConfirm"))
 
 	self.nOrigMiddleLeft, self.nOrigMiddleTop, self.nOrigMiddleRight, self.nOrigMiddleBot = self.tWndRefs.wndMiddle:GetAnchorOffsets()
-
+	
 	self:RedrawAll()
 end
 
 function AbilityAMPs:OnPlayerCurrencyChanged()
 	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsVisible() then
+		local bIsAlive = self.bResurrected or GameLib.GetPlayerUnit() and not GameLib.GetPlayerUnit():IsDead() 
 		local nAmount = AbilityBook.GetEldanAugmentationRespecCost()
-		local bCanAfford = nAmount < GameLib.GetPlayerCurrency():GetAmount()
+		local bCanAfford = nAmount <= GameLib.GetPlayerCurrency():GetAmount()
 		local bLockedInPoints = AbilityBook.GetAvailableLockedInPower() < AbilityBook.GetTotalPower()
 
 		local strColor = ApolloColor.new("UI_TextHoloBodyHighlight")
 		if not bCanAfford then
-			strColor = ApolloColor.new("UI_WindowTextRed")
+			strColor = ApolloColor.new("xkcdReddish")
 		elseif not bLockedInPoints then
 			strColor = ApolloColor.new("UI_BtnTextBlueDisabled")
 		end
 		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetLabel"):SetTextColor(strColor)
 		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetCost"):SetTextColor(strColor)
 		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetCost"):SetAmount(nAmount, true)
-		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):Enable(bCanAfford and bLockedInPoints)
+		self.tWndRefs.wndMain:FindChild("ResetFrame:ResetBtn"):Enable(bCanAfford and bLockedInPoints and bIsAlive)
 	end
+end
+
+function AbilityAMPs:OnShowResurrectDialog()
+	self:OnPlayerCurrencyChanged()
+end
+
+function AbilityAMPs:OnPlayerResurrected()
+	self.bResurrected = true
+	self:OnPlayerCurrencyChanged()
 end
 
 function AbilityAMPs:OnClose(wndHandler, wndControl)
@@ -146,7 +159,7 @@ function AbilityAMPs:OnClose(wndHandler, wndControl)
 		return
 	end
 
-	Apollo.StopTimer("AbilityAMPs_MessageDisplayTimer")
+	self.timerMessageDisplay:Stop()
 	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
 		self.tWndRefs.wndMain:Destroy()
 		self.tWndRefs = {}
@@ -292,6 +305,7 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 				nProgBarCurr = nProgBarCurr + nReqCategoryPower
 				nProgBarMax = nProgBarMax + tUnlockData.nTier3Amount
 				strSubLabel = String_GetWeaselString(Apollo.GetString("AMP_NextTierProgress"), nReqCategoryPower, tUnlockData.nTier3Amount or "0")
+				strSubLabel = strSubLabel .. "\n" .. Apollo.GetString("AMP_TierTwoExplanation")
 			end
 		end
 
@@ -301,6 +315,11 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		wndLabel:FindChild("LabelProgBar"):SetMax(nProgBarMax)
 		wndLabel:FindChild("LabelProgBar"):SetProgress(nProgBarCurr)
 		wndLabel:SetTooltip(strSubLabel)
+
+		local wndButtonLabel = self.tWndRefs.wndMain:FindChild("Buttons"):FindChild(karCategoryToConstantData[tCategory.nId][5])
+		wndButtonLabel:FindChild("ButtonProgBar"):SetMax(nProgBarMax)
+		wndButtonLabel:FindChild("ButtonProgBar"):SetProgress(nProgBarCurr)
+		wndButtonLabel:SetTooltip(strSubLabel)
 	end
 
 	-- Amps
@@ -417,11 +436,11 @@ function AbilityAMPs:RedrawSelections(tEldanAugmentationData)
 			wndAmp:FindChild("AmpFormButton"):ChangeArt("")
 		end
 		wndAmp:SetSprite(strSprite)
-		
+
 		-- Hide if 0
-		--if nAvailablePower == 0 then		
+		--if nAvailablePower == 0 then
 		--	wndAmp:SetBGColor(ApolloColor.new("66ffffff"))
-		--end	
+		--end
 	end
 
 	-- Middle Text
@@ -456,6 +475,8 @@ function AbilityAMPs:OnLabelShortcutBtn(wndHandler, wndControl)
 		nVScrollPos = 170
 	elseif strButtonName == "ZoomToEverything" then
 		nVScrollPos = 170
+	elseif strButtonName == "UtilityLabel" or strButtonName == "AssaultUtilityLabel" or strButtonName == "UtilitySupportLabel" then
+		nVScrollPos = 999
 	end
 
 	-- TODO: Refactor/delete the other scroll position code
@@ -479,18 +500,18 @@ function AbilityAMPs:OnResetConfirmWindowClosed(wndHandler, wndControl)
 end
 
 function AbilityAMPs:OnAugmentationTooltip(wndHandler, wndControl, eToolTipType, x, y)
-	local wndParent = wndControl:GetParent()
-	local tAugment = wndParent:GetData()
-
-	if not tAugment or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
+	local tAugment = wndHandler:GetData()
+	if not tAugment then
 		return
 	end
 
-	if not self.wndTooltip or not self.wndTooltip:IsValid() then
-		self.wndTooltip = Apollo.LoadForm(self.xmlDoc, "TooltipForm", self.tWndRefs.wndMain, self)
+	if self.wndTooltip and self.wndTooltip:IsValid() then
+		self.wndTooltip:Destroy()
+		self.wndTooltip = nil
 	end
 
 	local strCategory = karCategoryToConstantData[tAugment.nCategoryId][3] or ""
+	self.wndTooltip = wndHandler:LoadTooltipForm("AbilityAMPs.xml", "TooltipForm", self)
 	self.wndTooltip:FindChild("NameLabelWindow"):SetText(tAugment.strTitle or "")
 	self.wndTooltip:FindChild("PowerCostLabelWindow"):SetText(String_GetWeaselString(Apollo.GetString("AMP_PowerCost"), tAugment.nPowerCost or ""))
 	self.wndTooltip:FindChild("TierLabelWindow"):SetText(String_GetWeaselString(Apollo.GetString("AMP_TierLabel"), strCategory, tAugment.nCategoryTier or ""))
@@ -499,13 +520,6 @@ function AbilityAMPs:OnAugmentationTooltip(wndHandler, wndControl, eToolTipType,
 	local nTextWidth, nTextHeight = self.wndTooltip:FindChild("DescriptionLabelWindow"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = self.wndTooltip:GetAnchorOffsets()
 	self.wndTooltip:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 68)
-end
-
-function AbilityAMPs:OnAugmentationTooltipEnd(wndHandler, wndControl, x, y)
-	if self.wndTooltip then
-		self.wndTooltip:Destroy()
-		self.wndTooltip = nil
-	end
 end
 
 function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl) -- AmpFormButton
@@ -530,7 +544,7 @@ function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl) -- AmpFormButton
 			strMessage = ktAugmentationValidationResult[eResult]
 		end
 
-		self:HelperCreateMessage(strMessage, 2)
+		self:HelperCreateMessage(strMessage, 4.5)
 		self.arUnlockedAugments[tAugment.nId] = nil
 	else
 		local bTryToSave = AbilityBook.UpdateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.arUnlockedAugments)
@@ -551,13 +565,14 @@ function AbilityAMPs:HelperCreateMessage(strMessage, nDuration)
 	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and self.tWndRefs.wndMain:IsShown() and strMessage ~= "" then
 		self.tWndRefs.wndMessage:FindChild("MessageTextBG:MessageText"):SetText(strMessage)
 		self.tWndRefs.wndMessage:Show(true)
-		Apollo.StopTimer("AbilityAMPs_MessageDisplayTimer")
-		Apollo.CreateTimer("AbilityAMPs_MessageDisplayTimer", nDuration, false)
+		self.timerMessageDisplay:Stop()
+		self.timerMessageDisplay:Set(nDuration, false)
+		self.timerMessageDisplay:Start()
 	end
 end
 
 function AbilityAMPs:OnMessageDisplayTimer()
-	Apollo.StopTimer("AbilityAMPs_MessageDisplayTimer")
+	self.timerMessageDisplay:Stop()
 	if self.tWndRefs.wndMessage and self.tWndRefs.wndMessage:IsValid() then
 		self.tWndRefs.wndMessage:Show(false)
 	end
@@ -567,9 +582,14 @@ function AbilityAMPs:OnUpdateMessageMouseClick(wndHandler, wndControl)
 	self:OnMessageDisplayTimer()
 end
 
-function AbilityAMPs:OnLevelUpUnlock_AMPPoint()
-	-- TODO
+function AbilityAMPs:OnConfigureAMPs()
+	Event_FireGenericEvent("CharacterUnlockedInlaidEldanAugmentation")
+	self.tWndRefs.wndDialogReset:Destroy()
 end
+
+function AbilityAMPs:OnResetAMPsClose()
+	self.tWndRefs.wndDialogReset:Destroy()
+end	
 
 local AbilityAMPsInst = AbilityAMPs:new()
 AbilityAMPsInst:Init()

@@ -23,7 +23,7 @@
     <WindowSoundTemplate Name="HoloWindow" WindowInvoke="PlayUIWindowHoloOpen" WindowClose="PlayUIWindowHoloClose"/>
     <WindowSoundTemplate Name="HoloButtonSmall" ButtonCheck="PlayUIButtonHoloSmall" ButtonClick="PlayUIButtonHoloSmall" ButtonUncheck="PlayUIButtonHoloSmall"/>
     <WindowSoundTemplate Name="HoloButtonLarge" ButtonCheck="PlayUIButtonHoloLarge" ButtonClick="PlayUIButtonHoloLarge" ButtonUncheck="PlayUIButtonHoloLarge"/>
-	<WindowSoundTemplate Name="HoloDropdownToggle" ButtonCheck="PlayUIWindowHoloOpen" ButtonUncheck="PlayUIWindowHoloClose"/>
+    <WindowSoundTemplate Name="HoloDropdownToggle" ButtonCheck="PlayUIWindowHoloOpen" ButtonUncheck="PlayUIWindowHoloClose"/>
     <WindowSoundTemplate Name="HoloNotification" WindowInvoke="PlayUINotificationBannerHolo"/>
     <WindowSoundTemplate Name="HoloPulse" WindowInvoke="PlayUIAnimPulseHolo"/>
     <WindowSoundTemplate Name="MetalWindow" WindowInvoke="PlayUIWindowMetalOpen" WindowClose="PlayUIWindowMetalClose"/>
@@ -32,11 +32,11 @@
     <WindowSoundTemplate Name="MetalDropdownToggle" ButtonCheck="PlayUIWindowAccordionClose" ButtonUncheck="PlayUIWindowAccordionOpen"/>
     <WindowSoundTemplate Name="MetalCollapse" ButtonClick="PlayUIWindowAccordionClose"/>
     <WindowSoundTemplate Name="MetalExpand" ButtonClick="PlayUIWindowAccordionOpen"/>
-	<WindowSoundTemplate Name="InviteReceived" WindowInvoke="PlayUISocialPartyInviteAccept"/>
+    <WindowSoundTemplate Name="InviteReceived" WindowInvoke="PlayUISocialPartyInviteAccept"/>
     <WindowTemplate Name="HoloWindowSound" WindowSoundTemplate="HoloWindow"/>
     <WindowTemplate Name="MetalWindowSound" WindowSoundTemplate="MetalWindow"/>
     <WindowTemplate Name="HoloNotificationSound" WindowSoundTemplate="HoloNotification"/>
-	<WindowTemplate Name="Invite" WindowSoundTemplate="InviteReceived"/>
+    <WindowTemplate Name="Invite" WindowSoundTemplate="InviteReceived"/>
     <WindowTemplate Name="Holo_Small" SingleBorderFrame="" UseMargins="1" TopMargin="0" LeftMargin="0" RightMargin="0" BottomMargin="0" ClientFrame="BK3:UI_BK3_Holo_Framing_1" WindowSoundTemplate="HoloWindow"/>
     <WindowTemplate Name="Holo_Medium" SingleBorderFrame="BK3:UI_BK3_Holo_Framing_2" UseMargins="1" TopMargin="50" LeftMargin="50" RightMargin="50" BottomMargin="50" WindowSoundTemplate="HoloWindow"/>
     <WindowTemplate Name="Holo_Large" SingleBorderFrame="BK3:UI_BK3_Holo_Framing_3" UseMargins="1" TopMargin="40" LeftMargin="40" RightMargin="40" BottomMargin="40" WindowSoundTemplate="HoloWindow"/>
@@ -175,5 +175,8 @@
             <DecButton Auto="ChatLogSprites:ChatLogVScrollUp"/>
         </VScroll>
         <BlankButton Auto="ClientSprites:DefaultBlankButton"/>
+    </WindowTemplate>
+    <WindowTemplate Name="LargerResizeHandle" ClientFrame="CRB_Basekit:kitBtn_Expand_BottomRightAnchorNormal">
+        <Adornment LAnchorPoint="1" LAnchorOffset="-52" TAnchorPoint="1" TAnchorOffset="-52" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="" BGColor="white" Rotation="0" ResizeHandle="5"/>
     </WindowTemplate>
 </WindowTemplates>

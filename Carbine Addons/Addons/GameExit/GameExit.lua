@@ -28,9 +28,7 @@ function GameExit:OnDocumentReady()
 	Apollo.RegisterEventHandler("GenericEvent_PlayerCampStart", "OnPlayerCamp", self)
 	Apollo.RegisterEventHandler("GenericEvent_PlayerExitStart", "OnPlayerExit", self)
 	Apollo.RegisterEventHandler("GenericEvent_PlayerExitCancel", "OnCancel", self)
-    Apollo.RegisterTimerHandler("HalfSecTimer", "OnTimer", self)
-
-	Apollo.CreateTimer("HalfSecTimer", 0.50, true)
+	self.timerGameExit = ApolloTimer.Create(0.5, true, "OnTimer", self)
 
     -- load our forms
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "GameExitForm", "TooltipStratum", self)

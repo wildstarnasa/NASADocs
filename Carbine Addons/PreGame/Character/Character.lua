@@ -9,7 +9,6 @@ require "Sound"
 
 local Character = {}
 
-
 LuaEnumState =
 {
 	Select 		= 1,
@@ -114,6 +113,8 @@ local kstrRealmFullOpen = Apollo.GetString("Pregame_RealmFullOpen")
 
 local knCheerAnimation = 1621
 local knDefaultReady = 150
+
+local knSkipTutorialDemoIndex = 3
 
 local c_classSelectAnimation =
 {
@@ -240,6 +241,7 @@ function Character:OnLoad()
 	Apollo.RegisterEventHandler("Select_SetModel", "OnConfigureModel", self)
 	Apollo.RegisterEventHandler("CharacterCreateFailed", "OnCreateCharacterFailed", self)
 	Apollo.RegisterEventHandler("RealmBroadcast", "OnRealmBroadcast", self)
+	Apollo.RegisterEventHandler("CharacterBack", "OnBackBtn", self )
 
 	Apollo.RegisterTimerHandler("InitialLoadTimer", "OnInitialLoadTimer", self)
 	Apollo.RegisterTimerHandler("CreateFailedTimer", "OnCreateFailedTimer", self)
@@ -355,6 +357,7 @@ function Character:OnLoad()
 	self.wndCreateCode = g_controls:FindChild("CodeEntryForm")
 	self.wndCreateCodeEntry = self.wndCreateCode:FindChild("CreateCodeEditBox")
 	self.wndCreateCode:Show(false)
+	self.wndCreateCode:FindChild("FailMessage"):Show(false)
 
 	self.wndCustOptionPanel = Apollo.LoadForm(self.xmlDoc, "CustomizeOptionPane", nil, self)
 	self.wndCustPaginationList = self.wndCustOptionPanel:FindChild("CustomizeControlFrame")
@@ -369,6 +372,9 @@ function Character:OnLoad()
 
 	self.wndRealmFull = Apollo.LoadForm(self.xmlDoc, "CapacityQueueForm", nil, self)
 	self.wndRealmFull:Show(false)
+	
+	self.wndConfirmSkipTutorial = Apollo.LoadForm(self.xmlDoc, "ConfirmSkipTutorial", nil, self)
+	self.wndConfirmSkipTutorial:Show(false)
 
 	self.arServerMessages = PreGameLib.GetLastRealmMessages()
 	self.wndServerMessagesContainer = Apollo.LoadForm(self.xmlDoc, "RealmMessagesContainer", nil, self)
@@ -401,6 +407,8 @@ function Character:OnLoad()
 
 	self.nCreationTable = 0 -- used to identify enabled characters
 	self.iPreviousOption = nil
+	
+	self.bBlockEscape = false
 
 	Apollo.CreateTimer("InitialLoadTimer", 1, false)
 end
@@ -514,8 +522,23 @@ end
 function Character:OnEnterBtn(wndHandler, wndControl)
 	if g_nState == LuaEnumState.Create then
 		self.strName = string.format("%s %s", self.wndFirstNameEntry:GetText(), self.wndLastNameEntry:GetText())
-		if string.len(self.strName) > 0 and self.arCharacterCreateOptions[self.characterCreateIndex] then
-			CharacterScreenLib.CreateCharacter(self.strName, self.arCharacterCreateOptions[self.characterCreateIndex].characterCreateId, g_arActors.primary, self.iSelectedPath)
+
+		local tCreation = self.arCharacterCreateOptions[self.characterCreateIndex]
+		if string.len(self.strName) > 0 and tCreation then
+			local nCharacterCreateId = tCreation.characterCreateId	
+			
+			if self.wndInfoPane:FindChild("SkipTutorialCheckbox"):IsChecked() then
+				local tSkipTutorialCreationIds = CharacterScreenLib.GetCharacterCreationIdsByValues(knSkipTutorialDemoIndex, 
+																									tCreation.factionId, 
+																									tCreation.classId, 
+																									tCreation.raceId, 
+																									tCreation.genderId)
+				if tSkipTutorialCreationIds.arEnabledIds and tSkipTutorialCreationIds.arEnabledIds[1] then
+					nCharacterCreateId = tSkipTutorialCreationIds.arEnabledIds[1]
+				end
+			end
+
+			CharacterScreenLib.CreateCharacter(self.strName, nCharacterCreateId, g_arActors.primary, self.iSelectedPath)
 		end
 	elseif g_nState == LuaEnumState.Select and wndControl:GetData() ~= nil then
 		PreGameLib.Event_FireGenericEvent("SelectCharacter", wndControl:GetData())
@@ -524,7 +547,11 @@ function Character:OnEnterBtn(wndHandler, wndControl)
 	end
 end
 
-function Character:OnBackBtn(wndHandler, wndControl)
+function Character:OnBackBtn()
+	if self.bBlockEscape then
+		return
+	end
+
 	if g_nState == LuaEnumState.Create then
 		self:OpenCharacterSelect()
 		PreGameLib.Event_FireGenericEvent("Pregame_CreationToSelection")
@@ -540,6 +567,31 @@ function Character:OnBackBtn(wndHandler, wndControl)
 	end
 end
 
+function Character:OnSkipTutorial()
+	if g_nState == LuaEnumState.Create then
+		-- do stuff here for warning.
+		
+		self.wndConfirmSkipTutorial:Invoke()
+		g_controls:Show(false)
+		self.bBlockEscape = true
+	end
+end
+
+function Character:OnConfirmSkipTutorialBtn()
+	self.wndConfirmSkipTutorial:Show(false)
+end
+
+function Character:OnCancelSkipTutorialBtn()
+	self.wndConfirmSkipTutorial:Show(false)	
+	
+	self.wndInfoPane:FindChild("SkipTutorialCheckbox"):SetCheck(false)
+end
+
+function Character:OnConfirmSkipTutorialClosed()
+	g_controls:Show(true)
+	
+	self.bBlockEscape = false
+end
 
 ---------------------------------------------------------------------------------------------------
 -- Visiblity Settings
@@ -630,7 +682,6 @@ end
 
 
 function Character:SetCreateForms()
-
 	g_nState = LuaEnumState.Create
 	g_controlCatcher:SetFocus()
 
@@ -713,6 +764,8 @@ function Character:OnSelectDefiance()
 
 	local strFaction = self.wndRealmName:GetText()
 	strFaction = PreGameLib.String_GetWeaselString(Apollo.GetString("Pregame_FactionListing"), strFaction, string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceLarge_B", "ff32fcf6", "(" .. Apollo.GetString("CRB_Exiles") .. ")"))
+	
+	Sound.Play(Sound.PlayUIPlayerSelectButton)
 
 	self:SelectButtons()
 	self:EnableButtons()
@@ -739,6 +792,8 @@ function Character:OnSelectDominion()
 	local strFaction = self.wndRealmName:GetText()
 	strFaction = PreGameLib.String_GetWeaselString(Apollo.GetString("Pregame_FactionListing"), strFaction, string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceLarge_B", "ff32fcf6", "(" .. Apollo.GetString("CRB_Exiles") .. ")"))
 
+	Sound.Play(Sound.PlayUIPlayerSelectButton)
+	
 	self:SelectButtons()
 	self:EnableButtons()
 
@@ -764,12 +819,21 @@ function Character:FillPickerButtons()
 
 		if self.arRaces2[creation.raceId] == nil and c_arAllowedRace[creation.raceId] and raceIdx <= 7 then
 			local wndRace = Apollo.LoadForm(self.xmlDoc, "RaceGenderPickerEntry", self.wndRacePicker:FindChild("Content"), self)
+			self.nRaceLeft, self.nRaceTop, self.nRaceRight, self.nRaceBottom = wndRace:FindChild("TitleFieldBacker"):GetAnchorOffsets()
 
 			self.arRaces2[creation.raceId] = { wnd = wndRace, btnIdx = raceIdx }
 			self.arRaces2[creation.raceId].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[creation.raceId][1]))
 			self.arRaces2[creation.raceId].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):SetData(creation.raceId)
 			self.arRaces2[creation.raceId].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):SetData(creation.raceId)
 			self.arRaces2[creation.raceId].wnd:SetData(creation.raceId)
+			
+			local nTextWidth = Apollo.GetTextWidth("CRB_Button", self.arRaces2[1].wnd:FindChild("TitleEntry"):GetText())
+			local nMinWidth = self.nRaceRight - self.nRaceLeft
+			if nTextWidth > nMinWidth then
+				self.arRaces2[1].wnd:FindChild("TitleFieldBacker"):SetAnchorOffsets(-(nTextWidth/2) - 20, self.nRaceTop,(nTextWidth/2) + 20, self.nRaceBottom) -- 20 for extra padding
+			else
+				self.arRaces2[1].wnd:FindChild("TitleFieldBacker"):SetAnchorOffsets(self.nRaceLeft, self.nRaceTop, self.nRaceRight, self.nRaceBottom)
+			end
 
 			if creation.raceId == 13 then
 				self.arRaces2[creation.raceId].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):Show(false)
@@ -799,15 +863,12 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function Character:EnableButtons()
-
 	local selected = self.arCharacterCreateOptions[self.characterCreateIndex]
-
 
 	if selected == nil then
 		for raceIdx, races in pairs(self.arRaces2) do
 			races.wnd:Enable(true)
 		end
-
 
 		for classIdx, classes in pairs(self.arClasses2) do
 			classes.wnd:Enable(true)
@@ -819,12 +880,10 @@ function Character:EnableButtons()
 	local enabledClasses = {}
 	local enabledGenders = {}
 
-
 	for idx, creation in pairs(self.arCharacterCreateOptions) do
 		if selected.factionId == creation.factionId then   -- only care about faction.  Class will auto change it if needed
 			if creation.enabled == 1 or Apollo.GetConsoleVariable("ui.enableDevCreate") == true then
 				enabledRaces[creation.raceId] = true
-
 			end
 		end
 	end
@@ -838,7 +897,6 @@ function Character:EnableButtons()
 
 		local tFemale = CharacterScreenLib.GetCharacterCreationIdsByValues(0, selected.factionId, -1, raceIdx, PreGameLib.CodeEnumGender.Female)
 		races.wnd:FindChild("RaceOptionFemale"):Enable(#tFemale.arEnabledIds > 0)
-
 	end
 
 	-- Enable all races/classes that are selectable from current race/class pick
@@ -904,6 +962,15 @@ function Character:SelectButtons()
 		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):ChangeArt(c_arRaceButtons[1].male)
 		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):ChangeArt(c_arRaceButtons[1].female)
 	end
+	
+	local nTextWidth = Apollo.GetTextWidth("CRB_Button", self.arRaces2[1].wnd:FindChild("TitleEntry"):GetText())
+	local nMinWidth = self.nRaceRight - self.nRaceLeft
+	if nTextWidth > nMinWidth then
+		self.arRaces2[1].wnd:FindChild("TitleFieldBacker"):SetAnchorOffsets(-(nTextWidth/2) - 20, self.nRaceTop,(nTextWidth/2) + 20, self.nRaceBottom) -- 20 for extra padding
+	else
+		self.arRaces2[1].wnd:FindChild("TitleFieldBacker"):SetAnchorOffsets(self.nRaceLeft, self.nRaceTop, self.nRaceRight, self.nRaceBottom)
+	end
+
 
 	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):SetText(Apollo.GetString(c_arFactionStrings[selected.factionId]))
 	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):SetHeightToContentHeight()
@@ -952,6 +1019,7 @@ function Character:SelectButtons()
 		end
 	end
 
+	
 	if self.iSelectedPath ~= nil then
 		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetText(Apollo.GetString(c_arPathStrings[self.iSelectedPath][2]))
 		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetHeightToContentHeight()
@@ -961,6 +1029,14 @@ function Character:SelectButtons()
 		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetHeightToContentHeight()
 	end
 
+	local lInfoFrame1, tInfoFrame1, rInfoFrame1, bInfoFrame1 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):SetAnchorOffsets(lInfoFrame1, tInfoFrame1, rInfoFrame1, bInfoFrame1 + 4)
+	local lInfoFrame2, tInfoFrame2, rInfoFrame2, bInfoFrame2 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):SetAnchorOffsets(lInfoFrame2, tInfoFrame2, rInfoFrame2, bInfoFrame2 + 4)
+	local lInfoFrame3, tInfoFrame3, rInfoFrame3, bInfoFrame3 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField3"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField3"):SetAnchorOffsets(lInfoFrame3, tInfoFrame3, rInfoFrame3, bInfoFrame3 + 4)
+	local lInfoFrame4, tInfoFrame4, rInfoFrame4, bInfoFrame4 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetAnchorOffsets(lInfoFrame4, tInfoFrame4, rInfoFrame4, bInfoFrame4 + 4)
 	self:FormatInfoPanel()
 
 	s_isInSelectButtons = false
@@ -1126,6 +1202,8 @@ function Character:OnRaceSelectCheckMale(wndHandler, wndControl)
 	self:EnableButtons()
 
 	self:OnRandomizeBtn()
+	
+	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
 function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
@@ -1153,6 +1231,7 @@ function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
 	self:EnableButtons()
 
 	self:OnRandomizeBtn()
+	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1181,6 +1260,7 @@ function Character:OnClassSelect(wndHandler, wndControl)
 			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
 		end
 	end
+	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1209,6 +1289,7 @@ function Character:OnPathSelect(wndHandler, wndControl)
 	if g_arActors.pathIcon and c_pathIconAnimation[self.iSelectedPath] then
 		g_arActors.pathIcon:Animate(0, c_pathIconAnimation[self.iSelectedPath], 0, true, false)
 	end
+	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1267,6 +1348,10 @@ function Character:OnRandomizeBtn()
 		if entry:FindChild("CustomizePaginationBtn") ~= nil then
 			entry:FindChild("CustomizePaginationBtn"):SetCheck(false)
 		end
+		
+		if entry:FindChild("AdvancedOptionsBtn") ~= nil then
+			entry:FindChild("AdvancedOptionsBtn"):SetCheck(false)
+		end
 
 		if entry:FindChild("AnimOverlay") ~= nil then
 			entry:FindChild("AnimOverlay"):Show(false)
@@ -1307,7 +1392,18 @@ function Character:OnNameChanged()
 	
 	local bIsFirstNameValid = CharacterScreenLib.IsCharacterNamePartValid(strFirstName)
 	local bIsLastNameValid = CharacterScreenLib.IsCharacterNamePartValid(strLastName)
-	local bIsNameValid = CharacterScreenLib.IsCharacterNameValid(self.strName)
+
+	if not self.wndFirstNameEntry or not self.wndLastNameEntry then
+		return
+	end
+	
+	local strFirstName = self.wndFirstNameEntry:GetText()
+	local strLastName = self.wndLastNameEntry:GetText()
+	self.strName = string.len(strFirstName) + string.len(strLastName) > 0 and string.format("%s %s", strFirstName, strLastName) or ""
+	
+	local bIsFirstNameValid = CharacterScreenLib.IsCharacterNamePartValid(strFirstName)
+	local bIsLastNameValid = CharacterScreenLib.IsCharacterNamePartValid(strLastName)
+	local bIsNameValid 		= CharacterScreenLib.IsCharacterNameValid(self.strName)
 	
 	local bCharacterSettingsValid = self.arCharacterCreateOptions[self.characterCreateIndex] ~= nil and self.iSelectedPath ~= nil
 
@@ -1414,7 +1510,8 @@ function Character:UpdateCodeDisplay(strCode)
 	local tFaction = {true, "CRB_Question", crPass}
 	local tRace = {true, "CRB_Question", crPass}
 	local tGender = {true, "CRB_Question", crPass}
-
+	
+	
 	if strCode == nil then
 		local strInvalid = string.format("<P Align=\"Center\" Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</P>", crFail, Apollo.GetString("Pregame_InvalidCode"))
 		self.wndCreateCode:FindChild("RaceGenderText"):SetAML(strInvalid)
@@ -1473,7 +1570,7 @@ function Character:UpdateCodeDisplay(strCode)
 				tRace[2] = "CRB_DemoCC_Human"
 			elseif tResults.nRace == 13 then
 				tRace[2] = c_arRaceStrings[tResults.nRace][1]
-				tGender[2] = "CRB_Question"
+				tGender[2] = ""
 			else
 				tRace[2] = c_arRaceStrings[tResults.nRace][1]
 			end
@@ -1488,6 +1585,9 @@ function Character:UpdateCodeDisplay(strCode)
 
 		self.wndCreateCode:FindChild("RaceGenderText"):SetAML(strDisplay)
 		self.wndCreateCode:FindChild("UpdateCharacterCodeBtn"):Enable(tRace[1] == true and tFaction[1] == true and tGender[1] == true)
+		--strFailText =self.wndCreateCode:FindChild("FailMessage"):GetText()
+		--self.wndCreateCode:FindChild("FailMessage"):SetText(strFailText .."race: "..tostring(tRace[1]).." faction: "..tostring(tFaction[1]).." gender: "..tostring(tGender[1]))
+		self.wndCreateCode:FindChild("FailMessage"):Show(tRace[1] == false or tFaction[1] == false or tGender[1] == false)
 	end
 end
 
@@ -1635,6 +1735,7 @@ function Character:FillCustomizeOptions(bNoShow)
 	self.arCustomizeOptionBtns = {}
 
 	local nEntryHeight = 0
+	local nSelPos = 0
 	local wndSel = nil
 	for i = 1, iOption.count do  -- count is the number of choices for an option
 		local wnd = Apollo.LoadForm(self.xmlDoc, "CustomizeOptionEntry", self.wndCustOptionList:FindChild("CustomizeContent"), self)
@@ -1655,6 +1756,7 @@ function Character:FillCustomizeOptions(bNoShow)
 		if i == iOption.valueIdx then --value.Idx is the current setting for an option
 			wndSel = wnd
 			wnd:FindChild("CustomizeEntryBtn"):SetCheck(true)
+			nSelPos = i
 		end
 
 		nEntryHeight = wnd:GetHeight()
@@ -1691,6 +1793,7 @@ function Character:FillCustomizeOptions(bNoShow)
 		self.wndCustOptionList:Show(false)
 	else
 		self.wndCustOptionList:Show(true)
+		self.wndCustOptionList:FindChild("CustomizeContent"):SetVScrollPos(((nSelPos / 2) * nEntryHeight) - nEntryHeight)
 	end
 end
 
@@ -1857,6 +1960,9 @@ function Character:OnCancelCustomizeBtn()
 	self.wndCustPaginationList:FindChild("SideGlow"):Show()
 	self.wndCustOptionList:Show(false)
 	self.wndCustAdvanced:Show(false)
+	
+	-- Also exit out of the screen
+	self:OnAcceptCustomizeBtn()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2223,11 +2329,13 @@ function Character:HelperServerMessages(strExtra)
 	local strAllMessage = ""
 	local strColor = "xkcdBurntYellow"
 	if CharacterScreenLib.WasDisconnectedForLag() then
-		strColor = "AddonError"
+		strColor = "xkcdReddish"
 		strAllMessage = Apollo.GetString("CharacterSelect_LagDisconnectExplain")
 	else
-		for idx, strMessage in ipairs(self.arServerMessages) do
-			strAllMessage = strAllMessage .. strMessage .. "\n"
+		if self.arServerMessages then
+			for idx, strMessage in ipairs(self.arServerMessages) do
+				strAllMessage = strAllMessage .. strMessage .. "\n"
+			end
 		end
 		if strExtra ~= nil then
 			strAllMessage = strAllMessage .. strExtra .. "\n"

@@ -8,6 +8,7 @@ require "Money"
 require "ChallengesLib"
 require "Unit"
 require "GameLib"
+require "GuildLib"
 require "Apollo"
 require "PathMission"
 require "Quest"
@@ -68,19 +69,21 @@ function GuildRegistration:OnDocumentReady()
 		return
 	end
 
-	Apollo.RegisterTimerHandler("GuildRegistration_CheckForcedRename", "OnGuildRegistration_CheckForcedRename", self)
-	Apollo.CreateTimer("GuildRegistration_CheckForcedRename", 1.50, false)
-	Apollo.StartTimer("GuildRegistration_CheckForcedRename")
-
 	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", "OnGuildResultInterceptResponse", self)
-	Apollo.RegisterTimerHandler("SuccessfulMessageTimer", 	"OnSuccessfulMessageTimer", self)
-	Apollo.RegisterTimerHandler("ErrorMessageTimer", 		"OnErrorMessageTimer", self)
+
+	self.timerErrorMessage = ApolloTimer.Create(3.00, false, "OnErrorMessageTimer", self)
+	self.timerErrorMessage:Stop()
+
+	self.timerSuccessMessage = ApolloTimer.Create(3.00, false, "OnSuccessfulMessageTimer", self)
+	self.timerSuccessMessage:Stop()
+
+	self.timerForcedRename = ApolloTimer.Create(1.50, false, "OnGuildRegistration_CheckForcedRename", self)
+	self.timerForcedRename:Start() -- Check for Forced Renames
+
 	Apollo.RegisterEventHandler("GuildRegistrarOpen", 		"OnGuildRegistrationOn", self)
-	Apollo.RegisterEventHandler("PlayerCurrencyChanged",	"OnPlayerCurrencyChanged", self)
-    --Apollo.RegisterEventHandler("ToggleGuildRegistration",	"OnGuildRegistrationOn", self) -- TODO: War Parties NYI
-    --Apollo.RegisterSlashCommand("guildreg", 					"OnGuildRegistrationOn", self)
+	Apollo.RegisterEventHandler("GuildRegistrarClose",		"OnCancel", self)
 
     -- load our forms
     self.wndMain 			= Apollo.LoadForm(self.xmlDoc, "GuildRegistrationForm", nil, self)
@@ -115,8 +118,10 @@ function GuildRegistration:OnDocumentReady()
 
 	self.wndMain:Show(false)
 
+	self.wndSelectedBackground = nil
+	self.wndSelectedForeground = nil
+
 	self.wndMain:FindChild("CreditCost"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
-	self.wndMain:FindChild("CreditCurrent"):SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
 
 	self:InitializeHolomarkParts()
 	self:ResetOptions()
@@ -138,7 +143,6 @@ function GuildRegistration:OnGuildRegistrationOn()
 
 	self.wndMain:FindChild("GuildPermissionsAlert"):SetText("")
 	self.wndMain:FindChild("CreditCost"):SetAmount(GuildLib.GetCreateCost(GuildLib.GuildType_Guild))
-	self.wndMain:FindChild("CreditCurrent"):SetAmount(GameLib.GetPlayerCurrency(Money.CodeEnumCurrencyType.Credits):GetAmount(), true)
 
 	if guildNew ~= nil then -- todo: permissions
 		local tMyRankData = guildNew:GetRanks()[guildNew:GetMyRank()]
@@ -222,13 +226,13 @@ function GuildRegistration:UpdateOptions()
 	end
 
 	self.wndMain:FindChild("CreditCost"):SetAmount(GuildLib.GetCreateCost(GuildLib.GuildType_Guild))
-	self.wndMain:FindChild("CreditCurrent"):SetAmount(GameLib.GetPlayerCurrency(Money.CodeEnumCurrencyType.Credits):GetAmount(), true)
 
 	--see if the Guild can be submitted
 	local bHasName = self:HelperCheckForEmptyString(self.wndGuildName:GetText())
 	local bHasMaster = self:HelperCheckForEmptyString(self.arGuildOptions[1].wndOption:GetText())
 	local bHasCouncil = self:HelperCheckForEmptyString(self.arGuildOptions[2].wndOption:GetText())
 	local bHasMember = self:HelperCheckForEmptyString(self.arGuildOptions[3].wndOption:GetText())
+	local bHasValidLevel = (GameLib.GetPlayerLevel() or 1) >= GuildLib.GetMinimumLevel(self.tCreate.eGuildType)
 
 	local bNameValid = GameLib.IsTextValid(self.wndGuildName:GetText(), GameLib.CodeEnumUserText.GuildName, eProfanityFilter)
 	local bMasterValid = GameLib.IsTextValid(self.arGuildOptions[1].wndOption:GetText(), GameLib.CodeEnumUserText.GuildRankName, eProfanityFilter)
@@ -239,7 +243,11 @@ function GuildRegistration:UpdateOptions()
 	self.wndMain:FindChild("CouncilRankValidAlert"):Show(bHasCouncil and not bCouncilValid)
 	self.wndMain:FindChild("MemberRankValidAlert"):Show(bHasMember and not bMemberValid)
 
-	self.wndRegisterBtn:Enable(bNameValid and bMasterValid and bCouncilValid and bMemberValid and bHasName and bHasMaster and bHasCouncil and bHasMember and bNotInGuild)
+	self.wndRegisterBtn:Enable(bNameValid and bMasterValid and bCouncilValid and bMemberValid and bHasName and bHasMaster and bHasCouncil and bHasMember and bNotInGuild and bHasValidLevel)
+
+	if not bHasValidLevel then
+		self.wndMain:FindChild("GuildPermissionsAlert"):SetText(Apollo.GetString("GuildRegistration_MustBeLvl12"))
+	end
 end
 
 function GuildRegistration:HelperCheckForEmptyString(strText) -- make sure there's a valid string
@@ -292,13 +300,19 @@ function GuildRegistration:SetDefaultHolomark()
 
 	local tHolomarkPartNames = { "tBackgroundIcon", "tForegroundIcon", "tScanLines" }
 
-	for idx, tPartList in ipairs(self.tHolomarkParts) do
-		for key, tPart in ipairs(tPartList) do
-			if tPart.idBannerPart == self.tCreate.tHolomark[tHolomarkPartNames[idx]].idPart then
-				self.wndMain:FindChild("HolomarkOption."..idx):SetText(tPart.strName)
-			end
-		end
-	end
+	local wndHolomarkBackgroundBtn = self.wndMain:FindChild("HolomarkContent:HolomarkBackgroundOption")
+	local wndHolomarkForegroundBtn = self.wndMain:FindChild("HolomarkContent:HolomarkForegroundOption")
+	local wndHolomarkBackgroundList = wndHolomarkBackgroundBtn:FindChild("HolomarkBackgroundPartWindow:HolomarkPartList")
+	local wndHolomarkForegroundList = wndHolomarkForegroundBtn:FindChild("HolomarkForegroundPartWindow:HolomarkPartList")
+
+	wndHolomarkBackgroundBtn:SetText(self.tHolomarkParts.tBackgroundIcons[1].strName)
+	wndHolomarkForegroundBtn:SetText(self.tHolomarkParts.tForegroundIcons[1].strName)
+
+	self:FakeRadio(wndHolomarkBackgroundList:GetChildren()[1]:FindChild("HolomarkPartBtn"), self.wndSelectedBackground)
+	self:FakeRadio(wndHolomarkForegroundList:GetChildren()[1]:FindChild("HolomarkPartBtn"), self.wndSelectedForeground)
+
+	wndHolomarkBackgroundList:SetVScrollPos(0)
+	wndHolomarkForegroundList:SetVScrollPos(0)
 
 	self.wndHolomarkCostume:SetCostumeToGuildStandard(self.tCreate.tHolomark)
 end
@@ -306,6 +320,15 @@ end
 -----------------------------------------------------------------------------------------------
 -- GuildRegistrationForm Functions
 -----------------------------------------------------------------------------------------------
+function GuildRegistration:FakeRadio(wndNewOption, wndSavedOption)
+	if wndSavedOption then
+		wndSavedOption:SetCheck(false)
+	end
+
+	wndSavedOption = wndNewOption
+	wndSavedOption:SetCheck(true)
+end
+
 function GuildRegistration:UseDefaultTitleBtn(wndHandler, wndControl) -- reset an option to its default
 	local nRank = wndControl:GetData()
 	self.arGuildOptions[nRank].wndOption:SetText(kstrDefaultOption[nRank])
@@ -351,10 +374,14 @@ function GuildRegistration:OnGuildResultInterceptResponse( guildCurr, eGuildType
 
 	if eResult == GuildLib.GuildResult_Success or eResult == GuildLib.GuildResult_YouCreated or eResult == GuildLib.GuildResult_YouJoined then
 		self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("GuildRegistration_Success"))
-		Apollo.CreateTimer("SuccessfulMessageTimer", 3.00, false)
+		self.wndAlert:FindChild("MessageAlertText"):SetTextColor(ApolloColor.new("UI_TextHoloTitle"))
+
+		self.timerSuccessMessage:Start()
 	else
 		self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("GuildRegistration_Whoops"))
-		Apollo.CreateTimer("ErrorMessageTimer", 3.00, false)
+		self.wndAlert:FindChild("MessageAlertText"):SetTextColor(ApolloColor.new("xkcdLightOrange"))
+
+		self.timerErrorMessage:Start()
 	end
 	self.wndAlert:FindChild("MessageBodyText"):SetText(strAlertMessage)
 	self.wndAlert:Show(true)
@@ -371,7 +398,6 @@ function GuildRegistration:OnErrorMessageTimer()
 end
 
 function GuildRegistration:OnPlayerCurrencyChanged()
-	self.wndMain:FindChild("CreditCurrent"):SetAmount(GameLib.GetPlayerCurrency(Money.CodeEnumCurrencyType.Credits):GetAmount(), true)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -381,68 +407,70 @@ function GuildRegistration:InitializeHolomarkParts()
 
 	self.tHolomarkPartListItems = {}
 	self.wndHolomarkOption = nil
-	self.wndHolomarkOptionList = nil
+	self.wndHolomarkOptionWindow = nil
 
-	self.tHolomarkParts = {}
-	self.tHolomarkParts[1] = GuildLib.GetBannerBackgroundIcons()
-	self.tHolomarkParts[2] = GuildLib.GetBannerForegroundIcons()
-	self.tHolomarkParts[3] = GuildLib.GetBannerScanLines()
+	self.tHolomarkParts =
+	{
+		tBackgroundIcons = GuildLib.GetBannerBackgroundIcons(),
+		tForegroundIcons = GuildLib.GetBannerForegroundIcons()
+	}
 
-	for idx, tParts in ipairs(self.tHolomarkParts) do
-		local tDefaultPart = tParts[1]
-		if tDefaultPart ~= nil then
-			self.wndMain:FindChild("HolomarkOption."..idx):SetText(tDefaultPart.strName)
-		end
-	end
+	self.wndMain:FindChild("HolomarkBackgroundOption"):SetText(self.tHolomarkParts.tBackgroundIcons[1].strName)
+	self.wndMain:FindChild("HolomarkForegroundOption"):SetText(self.tHolomarkParts.tForegroundIcons[1].strName)
+
+	self:FillHolomarkPartList("Background")
+	self:FillHolomarkPartList("Foreground")
 end
 
 function GuildRegistration:OnHolomarkPartCheck1( wndHandler, wndControl, eMouseButton )
-	self:FillHolomarkPartList(1)
-	self.wndHolomarkOption = self.wndMain:FindChild("HolomarkOption.1")
-	self.wndHolomarkOptionList = self.wndMain:FindChild("HolomarkPartWindow.1")
-	self.wndHolomarkOptionList:SetData(1)
-	self.wndHolomarkOptionList:Show(true)
+	self.wndHolomarkOption = self.wndMain:FindChild("HolomarkBackgroundOption")
+	self.wndHolomarkOptionWindow = self.wndMain:FindChild("HolomarkBackgroundPartWindow")
+	self.wndHolomarkOptionWindow:SetData(1)
+	self.wndHolomarkOptionWindow:Show(true)
 end
 
 function GuildRegistration:OnHolomarkPartUncheck1( wndHandler, wndControl, eMouseButton )
-	self.wndMain:FindChild("HolomarkPartWindow.1"):Show(false)
+	self.wndMain:FindChild("HolomarkBackgroundPartWindow"):Show(false)
 end
 
 function GuildRegistration:OnHolomarkPartCheck2( wndHandler, wndControl, eMouseButton )
-	self:FillHolomarkPartList(2)
-	self.wndHolomarkOption = self.wndMain:FindChild("HolomarkOption.2")
-	self.wndHolomarkOptionList = self.wndMain:FindChild("HolomarkPartWindow.2")
-	self.wndHolomarkOptionList:SetData(2)
-	self.wndHolomarkOptionList:Show(true)
+	self.wndHolomarkOption = self.wndMain:FindChild("HolomarkForegroundOption")
+	self.wndHolomarkOptionWindow = self.wndMain:FindChild("HolomarkForegroundPartWindow")
+	self.wndHolomarkOptionWindow:SetData(2)
+	self.wndHolomarkOptionWindow:Show(true)
 end
 
 function GuildRegistration:OnHolomarkPartUncheck2( wndHandler, wndControl, eMouseButton )
-	self.wndMain:FindChild("HolomarkPartWindow.2"):Show(false)
+	self.wndMain:FindChild("HolomarkForegroundPartWindow"):Show(false)
 end
 
-function GuildRegistration:OnHolomarkPartCheck3( wndHandler, wndControl, eMouseButton )
-	self:FillHolomarkPartList(3)
-	self.wndHolomarkOption = self.wndMain:FindChild("HolomarkOption.3")
-	self.wndHolomarkOptionList = self.wndMain:FindChild("HolomarkPartWindow.3")
-	self.wndHolomarkOptionList:SetData(3)
-	self.wndHolomarkOptionList:Show(true)
-end
+function GuildRegistration:FillHolomarkPartList( strPartType )
+	local wndList = nil
+	local tPartList = nil
 
-function GuildRegistration:OnHolomarkPartUncheck3( wndHandler, wndControl, eMouseButton )
-	self.wndMain:FindChild("HolomarkPartWindow.3"):Show(false)
-end
+	if strPartType == "Background" then
+		wndList = self.wndMain:FindChild("HolomarkContent:HolomarkBackgroundOption:HolomarkBackgroundPartWindow:HolomarkPartList")
+		tPartList = self.tHolomarkParts.tBackgroundIcons
+	elseif strPartType == "Foreground" then
+		wndList = self.wndMain:FindChild("HolomarkContent:HolomarkForegroundOption:HolomarkForegroundPartWindow:HolomarkPartList")
+		tPartList = self.tHolomarkParts.tForegroundIcons
+	end
 
-function GuildRegistration:FillHolomarkPartList( ePartType )
-	local wndList = self.wndMain:FindChild("HolomarkPartList."..(ePartType))
 	wndList:DestroyChildren()
 
-	local tPartList = self.tHolomarkParts[ePartType]
 	if tPartList == nil then
 		return
 	end
 
 	for idx = 1, #tPartList do
 		self:AddHolomarkPartItem(wndList, idx, tPartList[idx])
+	end
+
+	local wndDefault = wndList:GetChildren()[1]:FindChild("HolomarkPartBtn")
+	if strPartType == "Background" and not self.wndSelectedBackground then
+		self:FakeRadio(wndDefault, self.wndSelectedBackground)
+	elseif strPartType == "Foreground" and not self.wndSelectedForeground then
+		self:FakeRadio(wndDefault, self.wndSelectedForeground)
 	end
 end
 
@@ -463,16 +491,14 @@ end
 
 function GuildRegistration:OnHolomarkPartSelectionClosed( wndHandler, wndControl )
 	-- destroy all the wnd inside the list
-	for idx,wnd in ipairs(self.tHolomarkPartListItems) do
-		wnd:Destroy()
-	end
 
-	self.wndHolomarkOptionList:Show(false)
+	self.wndHolomarkOptionWindow:Show(false)
+	self.wndHolomarkOptionWindow:GetParent():SetCheck(false)
 
 	-- clear the list item array
 	self.tHolomarkPartListItems = {}
 	self.wndHolomarkOption = nil
-	self.wndHolomarkOptionList = nil
+	self.wndHolomarkOptionWindow = nil
 end
 
 function GuildRegistration:OnHolomarkPartItemSelected(wndHandler, wndControl)
@@ -484,16 +510,14 @@ function GuildRegistration:OnHolomarkPartItemSelected(wndHandler, wndControl)
     if tPart ~= nil and self.wndHolomarkOption ~= nil then
 		self.wndHolomarkOption:SetText(tPart.strName)
 
-		local eType = self.wndHolomarkOptionList:GetData()
+		local eType = self.wndHolomarkOptionWindow:GetData()
 		if eType == 1 then
 			self.tCreate.tHolomark.tBackgroundIcon.idPart = tPart.idBannerPart
+			self:FakeRadio(wndHandler, self.wndSelectedBackground)
 		elseif eType == 2 then
 			self.tCreate.tHolomark.tForegroundIcon.idPart = tPart.idBannerPart
-		elseif eType == 3 then
-			self.tCreate.tHolomark.tScanLines.idPart = tPart.idBannerPart
+			self:FakeRadio(wndHandler, self.wndSelectedForeground)
 		end
-
-		self.wndMain:FindChild("HolomarkOption." .. eType):SetCheck(false)
 
 		self.wndHolomarkCostume:SetCostumeToGuildStandard(self.tCreate.tHolomark)
 	end
@@ -553,13 +577,8 @@ end
 function GuildRegistration:OnRenameSocialConfirm(wndHandler, wndControl)
 	wndHandler:GetData():Rename(self.wndForcedRename:FindChild("RenameEditBox"):GetText())
 	self:OnRenameSocialCancel()
-	--self.timerForcedRename:Start() -- Do it again if we have a 2nd one to do
-
-	Apollo.StartTimer("GuildRegistration_CheckForcedRename")
+	self.timerForcedRename:Start() -- Do it again if we have a 2nd one to do
 end
 
------------------------------------------------------------------------------------------------
--- GuildRegistration Instance
------------------------------------------------------------------------------------------------
 local GuildRegistrationInst = GuildRegistration:new()
 GuildRegistrationInst:Init()

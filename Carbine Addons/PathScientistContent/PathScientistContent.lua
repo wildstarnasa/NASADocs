@@ -105,6 +105,7 @@ function PathScientistContent:OnLoadFromDatachron()
 	Apollo.RegisterEventHandler("PlayerPath_NotificationSent", 			"MissionNotificationRecieved", self)
 	Apollo.RegisterEventHandler("PlayerPathScientistScanBotCooldown", 	"OnPlayerPathScientistScanBotCooldown", self)
 	Apollo.RegisterEventHandler("SubZoneChanged", 						"ClearMissionList", self)
+	Apollo.RegisterEventHandler("Mount",								"OnMount", self)
 
 	self.tFieldStudySubType =
 	{
@@ -129,13 +130,23 @@ function PathScientistContent:OnLoadFromDatachron()
 	self.wndMain 		= Apollo.LoadForm(self.xmlDoc, "ScientistDatachron", g_wndDatachron:FindChild("PathContainer"), self) -- The parent is the globally defined datachron
 	self.wndTopLevel 	= Apollo.LoadForm(self.xmlDoc, "ScientistDatachronTopLevel", g_wndDatachron:FindChild("PathContainerTopLevel"), self)
 
+	local unitPlayer = GameLib.GetPlayerUnit()
+	if unitPlayer then
+		self:OnMount(unitPlayer:IsMounted())
+	end
+	
 	self:UpdateUITimer()
 end
 
 function PathScientistContent:ClearMissionList()
 	if self.wndMain and self.wndMain:IsValid() then
+		local bCheckListWasShown = self.wndMain:FindChild("ChecklistContainer"):IsShown()
 		self.wndMain:FindChild("MissionList"):DestroyChildren()
-		self:OnCollapseChecklistClick()
+		if bCheckListWasShown then
+			self:OnExpandChecklistClick()
+		else
+			self:OnCollapseChecklistClick()
+		end
 		self:OnScientistPathUpdate()
 	end
 end
@@ -154,6 +165,10 @@ function PathScientistContent:OnTogglePathContent(ePathType)
 	else
 		self.wndMain:Show(false)
 	end
+end
+
+function PathScientistContent:OnMount(bMounted)
+	self.wndTopLevel:Show(not bMounted)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -256,8 +271,8 @@ function PathScientistContent:OnPlayerPathScientistScanBotCooldown(fTime) -- iTi
 	self.wndTopLevel:FindChild("BotCooldownBar"):Show(true)
 	self.wndTopLevel:FindChild("BotCooldownBar"):SetData(0)
 	self.wndTopLevel:FindChild("BotCooldownBar"):SetProgress(0)
-
 	self.wndTopLevel:FindChild("SciProfileSummonBtn"):Enable(false)
+	self.wndTopLevel:FindChild("SciProfileSummonBtn"):SetText(Apollo.GetString("ScientistMission_Summon"))
 end
 
 function PathScientistContent:OnIncrementScanBotCoolDown()
@@ -413,6 +428,12 @@ function PathScientistContent:DrawListItem(wndListItem, pmDrawing)
 			strScientistIcon = "Icon_Mission_Scientist_ScanCreature"
 		elseif eSubType == PathMission.ScientistCreatureType_Mineral then
 			strScientistIcon = "Icon_Mission_Scientist_ScanMineral"
+		elseif eSubType == PathMission.ScientistCreatureType_Magic then
+			strScientistIcon = "Icon_Mission_Scientist_ScanMagic"
+		elseif eSubType == PathMission.ScientistCreatureType_History then
+			strScientistIcon = "Icon_Mission_Scientist_ScanHistory"
+		elseif eSubType == PathMission.ScientistCreatureType_Elemental then
+			strScientistIcon = "Icon_Mission_Scientist_ScanElemental"
 		end
 
 	elseif eType == PathMission.PathMissionType_Scientist_FieldStudy then
@@ -438,7 +459,6 @@ function PathScientistContent:DrawListItem(wndListItem, pmDrawing)
 		wndListItem:FindChild("ListItemPercent"):SetAML(string.format("%s%.0f", kstrListItemPercentStartTag, nNumCompleted) .. "%</P>")
 	end
 	wndListItem:FindChild("ChecklistExpandBtn"):Show(eType == PathMission.PathMissionType_Scientist_FieldStudy or eType == PathMission.PathMissionType_Scientist_SpecimenSurvey)
-
 
 	-- TODO HACKISH to find the first entry to display a flash
 	if not self.tScannedItems then
@@ -556,7 +576,8 @@ function PathScientistContent:OnSummonBotBtn(wndHandler, wndControl)
 		self.wndTopLevel:FindChild("DatachronScientistBottom"):Show(true)
 		self:UpdateUITimer()
 	end
-
+	wndHandler:SetText(Apollo.GetString("ScientistMission_Dismiss"))
+	
 	self.wndTopLevel:FindChild("SciScanBtn"):Enable(not bHasBot)
 	self.wndTopLevel:FindChild("SciLocateBtn"):Enable(not bHasBot)
 	self.wndTopLevel:FindChild("SciConfigureBtn"):Enable(not bHasBot)

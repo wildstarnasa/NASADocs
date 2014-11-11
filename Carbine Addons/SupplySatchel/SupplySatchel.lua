@@ -32,7 +32,7 @@ end
 
 function SupplySatchel:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("SupplySatchel.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function SupplySatchel:OnDocumentReady()
@@ -45,11 +45,22 @@ function SupplySatchel:OnDocumentReady()
 
 	Apollo.RegisterTimerHandler("InitializeSatchelPart2", "OnInitializeSatchelPart2", self)
 	Apollo.RegisterTimerHandler("UnloadSatchel", "OnUnloadSatchel", self)
+	Apollo.RegisterEventHandler("LootStackItemSentToTradeskillBag", "OnLootstackItemSentToTradeskillBag", self)
+	self.tNewlyAddedItems = {}
+	self.tNewlyAddedItemsWindows = {}
 end
 
 -----------------------------------------------------------------------------------------------
 -- SupplySatchelForm Functions
 -----------------------------------------------------------------------------------------------
+function SupplySatchel:OnLootstackItemSentToTradeskillBag(tItem)
+	if tItem then
+		self.tNewlyAddedItems[tItem.itemInstance:GetItemId()] = tItem
+		if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() then
+			self:PopulateSatchel(false)
+		end
+	end
+end
 
 function SupplySatchel:OnToggleVisibility(wndHandler, wndControl, eMouseButton)
 	if not self.wndMain or not self.wndMain:IsValid() then
@@ -61,8 +72,15 @@ function SupplySatchel:OnToggleVisibility(wndHandler, wndControl, eMouseButton)
 		self.wndMain:ToFront()
 		self:PopulateSatchel(false)
 		Apollo.StopTimer( "UnloadSatchel" )
+		Event_FireGenericEvent("SupplySatchelOpen")
 	else
+		for idx, wnd in pairs(self.tNewlyAddedItemsWindows) do
+			wnd:FindChild("NewSatchelItemRunner"):Show(false)
+		end
+		self.tNewlyAddedItems = {}
+		self.tNewlyAddedItemsWindows = {}
 		Apollo.CreateTimer("UnloadSatchel", knUnloadWaitTime, false)
+		Event_FireGenericEvent("SupplySatchelClosed")
 	end
 end
 
@@ -73,9 +91,9 @@ function SupplySatchel:InitializeSatchel()
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "SupplySatchelForm", nil, self)
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("SupplySatchel_Title")})
-	
+
 	self.wndCategoryList = self.wndMain:FindChild("CategoryList")
-	
+
 	-- Variables
 	self.tItemCache = {}
 	self.wndClickedItem = nil
@@ -117,7 +135,7 @@ function SupplySatchel:OnInitializeSatchelPart2()
 			else
 				wndItem:FindChild("Icon"):SetBGColor(kclrGray)
 			end
-			Tooltip.GetItemTooltipForm(self, wndItem, tCurrItem.itemMaterial, {bPrimary = true, bSelling = false}, tCurrItem.nCount)
+			Tooltip.GetItemTooltipForm(self, wndItem, tCurrItem.itemMaterial, {bPrimary = true, bSelling = false, nStackCount = tCurrItem.nCount})
 
 			if bShow then
 				tCacheCategory.nVisibleItems = tCacheCategory.nVisibleItems + 1
@@ -253,6 +271,13 @@ function SupplySatchel:PopulateSatchel(bRescroll)
 			tCacheCategory.nVisibleItems = 0
 			for idx, tCurrItem in ipairs(arItems) do
 				local tCacheItem = tCacheCategory.arItems[idx]
+
+				local strFindName = tCacheItem.itemMaterial:GetName()
+				if self.tNewlyAddedItems[tCacheItem.itemMaterial:GetItemId()] ~= nil then
+					tCacheItem.wndItem:FindChild("NewSatchelItemRunner"):Show(true)
+					table.insert(self.tNewlyAddedItemsWindows , tCacheItem.wndItem)
+				end
+
 				if tCacheItem.nCount ~= tCurrItem.nCount then
 					tCacheItem.nCount = tCurrItem.nCount
 					tCacheItem.wndItem:SetData(tCurrItem)
@@ -274,7 +299,7 @@ function SupplySatchel:PopulateSatchel(bRescroll)
 						tCacheItem.wndItem:FindChild("Count"):SetTextColor(kclrWhite)
 						tCacheItem.wndItem:FindChild("Icon"):SetBGColor(kclrGray)
 					end
-					Tooltip.GetItemTooltipForm(self, tCacheItem.wndItem, tCurrItem.itemMaterial, {bPrimary = true, bSelling = false}, tCurrItem.nCount)
+					Tooltip.GetItemTooltipForm(self, tCacheItem.wndItem, tCurrItem.itemMaterial, {bPrimary = true, bSelling = false, nStackCount = tCurrItem.nCount})
 				end
 				if tCurrItem.nCount >= nMinCount and (not bSearchString or self:HelperSearchNameMatch(tCurrItem.itemMaterial:GetName(), strSearchString)) then
 					tCacheItem.wndItem:Show(true)
@@ -299,7 +324,7 @@ function SupplySatchel:OnItemMouseButtonDown( wndHandler, wndControl, eMouseButt
 	if wndHandler ~= wndControl then return end
 	if (eMouseButton == GameLib.CodeEnumInputMouse.Left and bDoubleClick) or eMouseButton == GameLib.CodeEnumInputMouse.Right then
 		wndControl:GetData().itemMaterial:TakeFromSupplySatchel(wndControl:GetData().nCount)
-	elseif eMouseButton == GameLib.CodeEnumInputMouse.Left then 
+	elseif eMouseButton == GameLib.CodeEnumInputMouse.Left then
 		-- Store the clicked window, waiting for a drag or mouse button up
 		self.wndClickedItem = wndControl
 	end

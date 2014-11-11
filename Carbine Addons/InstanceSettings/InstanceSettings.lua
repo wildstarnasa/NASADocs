@@ -99,6 +99,7 @@ end
 
 function InstanceSettings:OnShowDialog(tData)
 	self:DestroyAll()
+	
 
 	self.bNormalIsAllowed = tData.bDifficultyNormal
 	self.bVeteranIsAllowed = tData.bDifficultyVeteran
@@ -106,15 +107,12 @@ function InstanceSettings:OnShowDialog(tData)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc , "InstanceSettingsForm", nil, self)
 	self.bHidingInterface = false
-		
+	self.wndMain:FindChild("LevelScalingButton"):Enable(true)
+	self.wndMain:FindChild("LevelScalingButton"):Show(true)
+	self.wndMain:FindChild("ScalingIsForced"):Show(false)
 	-- we never want to show this "error" initially
 	self.wndMain:FindChild("ErrorWindow"):Show(false)
 
-	-- we always "show" based on flags
-	self.wndMain:FindChild("LevelScalingButton"):Show(self.bScalingIsAllowed)
-	
-	-- start off w/ scaling/rallying off
-	self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
 	
 	if self.locSavedMainLoc then
 		self.wndMain:MoveToLocation(self.locSavedMainLoc)
@@ -123,10 +121,9 @@ function InstanceSettings:OnShowDialog(tData)
 	if tData.nExistingDifficulty == GroupLib.Difficulty.Count then
 		-- there is no existing instance
 		self:OnNoExistingInstance()
-		
+
 	else
 		-- an existing instance
-
 		-- set the options above to the settings of that instance (and disable the ability to change them)
 		if tData.nExistingDifficulty == GroupLib.Difficulty.Normal then
 			self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Difficulty", LuaCodeEnumDifficultyTypes.Normal)
@@ -140,16 +137,27 @@ function InstanceSettings:OnShowDialog(tData)
 			self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
 		end
 
-		self.wndMain:FindChild("DifficultyButton1"):Enable(false)
-		self.wndMain:FindChild("DifficultyButton2"):Enable(false)
-		self.wndMain:FindChild("LevelScalingButton"):Enable(false)
-
-		self.wndMain:FindChild("ExistingFrame"):Show(true)
+		self.wndMain:FindChild("DifficultyButton1"):Show(false)
+		self.wndMain:FindChild("DifficultyButton2"):Show(false)
+		self.wndMain:FindChild("ContentFrame"):Show(false)
+		self.wndMain:FindChild("TitleBlock"):SetText(Apollo.GetString("InstanceSettings_Exists"))
+		self.wndMain:FindChild("ExistingInstanceSettings"):Show(true)
 		self.wndMain:FindChild("ResetInstanceButton"):Show(true)
-		self.wndMain:FindChild("Divider"):Show(true)
-
+		
 		local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 615)
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 330)
+	
+		if tData.nExistingDifficulty == GroupLib.Difficulty.Normal then
+			self.wndMain:FindChild("DifficultyNormalCallout"):SetText(Apollo.GetString("CRB_Difficulty") .. " " .. Apollo.GetString("Tooltips_Normal"))
+		else 
+			self.wndMain:FindChild("DifficultyNormalCallout"):SetText(Apollo.GetString("CRB_Difficulty") .. " " .. Apollo.GetString("MiniMap_Veteran"))
+		end
+			
+		if tData.bExistingScaling then
+			self.wndMain:FindChild("Rally"):SetText(Apollo.GetString("InstanceSettings_Level149_Title") .. " " .. Apollo.GetString("CRB_Yes"))
+		else
+			self.wndMain:FindChild("Rally"):SetText(Apollo.GetString("InstanceSettings_Level149_Title") .. " " .. Apollo.GetString("CRB_No"))
+		end
 
 	end
 
@@ -196,7 +204,7 @@ function InstanceSettings:OnPendingWorldRemovalCancel()
 end
 
 function InstanceSettings:OnMessageDisplayTimer()
-	if self.wndMain:IsShown() then
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() then
 		-- dialog may have been destroyed ... so we have to check windows here
 		local errorWindow = self.wndMain:FindChild("ErrorWindow")
 		if errorWindow then
@@ -225,29 +233,40 @@ function InstanceSettings:OnNoExistingInstance()
 	
 	if self.bNormalIsAllowed then
 		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Difficulty", LuaCodeEnumDifficultyTypes.Normal)
+	elseif self.bVeteranIsAllowed then
+		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Difficulty", LuaCodeEnumDifficultyTypes.Veteran)
+		self:DisableRally()
 	else
 		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Difficulty", 0)
 	end
 	
 	-- scaling settings
 	if 	self.bScalingIsAllowed then
-		self.wndMain:FindChild("LevelScalingButton"):Enable(true)
-		self.wndMain:FindChild("LevelScalingButton"):SetCheck(true)
+		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
 	else
-		self.wndMain:FindChild("LevelScalingButton"):Enable(false)
-		self.wndMain:FindChild("LevelScalingButton"):SetCheck(false)
+		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
 	end
-
-	-- turn on the enter button
-	self.wndMain:FindChild("EnterButton"):Enable(true)
-
+	
+	self.wndMain:FindChild("EnterButton"):Enable(self.bNormalIsAllowed or self.bVeteranIsAllowed)
+	self.wndMain:FindChild("DifficultyNormalCallout"):Show(false)
+	self.wndMain:FindChild("ContentFrame"):Show(true)
+	self.wndMain:FindChild("DifficultyButton1"):Show(true)
+	self.wndMain:FindChild("DifficultyButton2"):Show(true)
+	self.wndMain:FindChild("TitleBlock"):SetText(Apollo.GetString("InstanceSettings_Title"))
 	self.wndMain:FindChild("ResetInstanceButton"):Show(false)
-	self.wndMain:FindChild("ExistingFrame"):Show(false)
-	self.wndMain:FindChild("Divider"):Show(false)
+	self.wndMain:FindChild("ExistingInstanceSettings"):Show(false)
 	
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 425)
-
+	-- we always "show" based on flags
+	if self.bScalingIsAllowed == true then
+		self.wndMain:FindChild("LevelScalingButton"):Show(true)
+		self.wndMain:FindChild("ContentFrameScaling"):Show(true)
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 343)
+	else
+		self.wndMain:FindChild("LevelScalingButton"):Show(false)
+		self.wndMain:FindChild("ContentFrameScaling"):Show(false)
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 295)
+	end
 end
 
 function InstanceSettings:OnOK()
@@ -258,8 +277,7 @@ function InstanceSettings:OnOK()
 		eDifficulty = GroupLib.Difficulty.Normal
 	end
 	
-	Print(tostring(self.wndMain:FindChild("LevelScalingButton"):IsChecked()))
-	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:FindChild("LevelScalingButton"):IsChecked())
+	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:FindChild("ContentFrame"):GetRadioSel("InstanceSettings_LocalRadioGroup_Rallying"))
 	self:DestroyAll()
 end
 
@@ -299,5 +317,21 @@ function InstanceSettings:DestroyAll()
 	end
 end
 
+---------------------------------------------------------------------------------------------------
+-- InstanceSettingsForm Functions
+---------------------------------------------------------------------------------------------------
+
+function InstanceSettings:EnableRally( wndHandler, wndControl, eMouseButton )
+	self.wndMain:FindChild("LevelScalingButton"):Enable(true)
+	self.wndMain:FindChild("LevelScalingButton"):Show(true)
+	self.wndMain:FindChild("ScalingIsForced"):Show(false)
+end
+
+function InstanceSettings:DisableRally( wndHandler, wndControl, eMouseButton )
+	self.wndMain:FindChild("LevelScalingButton"):Show(false)
+	self.wndMain:FindChild("ScalingIsForced"):Show(true)
+end
+
 local InstanceSettingsInst = InstanceSettings:new()
 InstanceSettingsInst:Init()
+

@@ -21,7 +21,7 @@ local kEntrySize = 50
 local kMinimumCountX = 7
 local kMinimumCountY = 5
 
-local knSaveVersion = 1
+local knSaveVersion = 3
 
 function WarpartyBattle:new(o)
     o = o or {}

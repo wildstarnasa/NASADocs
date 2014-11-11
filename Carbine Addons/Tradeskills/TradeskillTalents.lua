@@ -76,7 +76,7 @@ function TradeskillTalents:BuildColumn(wndParent, tData)
 
 		-- Harvesting XP
 		local tCategoryTree = AchievementsLib.GetTradeskillAchievementCategoryTree(tCurrTradeskill.eId)
-		local strTierName = tCategoryTree and tCategoryTree.tSubGroups[tCurrInfo.eTier] or "Tier "..tCurrInfo.eTier -- TODO STRING
+		local strTierName = tCategoryTree and tCategoryTree.tSubGroups[tCurrInfo.eTier] or Apollo.GetString("CRB_Tier_")..tCurrInfo.eTier -- TODO STRING
 		wndParent:FindChild("HarvestingXP"):SetText(String_GetWeaselString(Apollo.GetString("Tradeskills_HarvestingXP"), strTierName, tCurrInfo.nXp, tCurrInfo.nXpForNextTier))
 		return
 	end
@@ -108,7 +108,7 @@ function TradeskillTalents:BuildColumn(wndParent, tData)
 
 				if tCurrInfo.nTalentPoints < tTierData.nPointsRequired then
 					wndTalent:FindChild("TalentItemBtn"):Enable(false)
-					wndTalent:FindChild("TalentItemBlackFill"):Show(true)
+					wndTalent:FindChild("TalentItemIcon"):SetBGColor("UI_AlphaPercent30")
 				end
 
 				local strIcon = tTalent.strIcon

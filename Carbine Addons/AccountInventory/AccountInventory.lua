@@ -117,6 +117,7 @@ function AccountInventory:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 			"OnInterfaceMenuListHasLoaded", self)
 
+	Apollo.RegisterEventHandler("ChangeWorld", 							"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("GenericEvent_ToggleAccountInventory", 	"OnAccountInventoryToggle", self)
 	Apollo.RegisterEventHandler("AccountEntitlementUpdate", 			"OnAccountEntitlementUpdate", self)
 	Apollo.RegisterEventHandler("AccountOperationResults", 				"OnAccountOperationResults", self) -- TODO
@@ -125,25 +126,19 @@ function AccountInventory:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("AccountPendingItemsUpdate", 			"RefreshInventory", self)
 	Apollo.RegisterEventHandler("AccountInventoryUpdate", 				"RefreshInventory", self)
+	Apollo.RegisterEventHandler("UpdateInventory", 						"RefreshInventory", self)
 	Apollo.RegisterEventHandler("AchievementUpdated", 					"RefreshInventory", self)
 	Apollo.RegisterEventHandler("PlayerLevelChange", 					"RefreshInventory", self)
 	Apollo.RegisterEventHandler("SubZoneChanged", 						"RefreshInventory", self)
 	Apollo.RegisterEventHandler("PathLevelUp", 							"RefreshInventory", self)
 
-	-- self.nLastAccountBoundCount, from OnRestore()
-end
+	Apollo.RegisterTimerHandler("AccountInventory_RefreshInventory",	"OnAccountInventory_RefreshInventory", self)
+	Apollo.CreateTimer("AccountInventory_RefreshInventory", 5, false)
+	Apollo.StopTimer("AccountInventory_RefreshInventory")
 
-function AccountInventory:OnAccountOperationResults(eOperationType, eResult)
-	local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
-	local strMessage = ""
-	if bSuccess then
-		strMessage = Apollo.GetString("MarketplaceCredd_TransactionSuccess") 
-	elseif ktResultErrorCodeStrings[eResult] then
-		strMessage = Apollo.GetString(ktResultErrorCodeStrings[eResult])
-	else
-		strMessage = Apollo.GetString("MarketplaceCredd_Error_GenericFail")
-	end
-	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strMessage)
+	self.bRefreshInventoryThrottle = false
+
+	-- self.nLastAccountBoundCount, from OnRestore()
 end
 
 function AccountInventory:OnInterfaceMenuListHasLoaded()
@@ -180,16 +175,6 @@ function AccountInventory:OnRefreshInterfaceMenuAlert()
 	self.nLastAccountBoundCount = nAlertCount
 end
 
-function AccountInventory:OnAccountInventoryToggle()
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
-		self:SetupMainWindow()
-	else
-		self.locSavedWindowLoc = self.tWndRefs.wndMain:GetLocation()
-		self.tWndRefs.wndMain:Destroy()
-		self.tWndRefs = {}
-	end
-end
-
 function AccountInventory:OnAccountEntitlementUpdate()
 	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
@@ -197,13 +182,54 @@ function AccountInventory:OnAccountEntitlementUpdate()
 	self:RefreshEntitlements()
 end
 
+function AccountInventory:OnAccountInventoryToggle()
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
+		self:SetupMainWindow()
+	else
+		self:OnDestroy()
+	end
+end
+
 function AccountInventory:OnClose(wndHandler, wndControl)
-	if wndHandler == wndControl and self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
+	if wndHandler == wndControl then
+		self:OnDestroy()
+	end
+end
+
+function AccountInventory:OnChangeWorld()
+	self:OnDestroy()
+end
+
+function AccountInventory:OnDestroy()
+	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() then
 		self.locSavedWindowLoc = self.tWndRefs.wndMain:GetLocation()
 		self.tWndRefs.wndMain:Destroy()
 		self.tWndRefs = {}
 	end
 end
+
+function AccountInventory:OnAccountOperationResults(eOperationType, eResult)
+	local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
+	local strMessage = ""
+	if bSuccess then
+		strMessage = Apollo.GetString("MarketplaceCredd_TransactionSuccess")
+	elseif ktResultErrorCodeStrings[eResult] then
+		strMessage = Apollo.GetString(ktResultErrorCodeStrings[eResult])
+	else
+		strMessage = Apollo.GetString("MarketplaceCredd_Error_GenericFail")
+	end
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strMessage)
+
+	-- Immediately close if you redeemed CREDD, so we can see the spell effect
+	if bSuccess and eOperationType == CREDDExchangeLib.CodeEnumAccountOperation.CREDDRedeem then
+		self:OnDestroy()
+		return
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Main
+-----------------------------------------------------------------------------------------------
 
 function AccountInventory:SetupMainWindow()
 	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "AccountInventoryForm", nil, self)
@@ -232,6 +258,8 @@ function AccountInventory:SetupMainWindow()
 	self.tWndRefs.wndInventoryTakeBtn = self.tWndRefs.wndMain:FindChild("ContentContainer:Inventory:TakeBtn")
 	self.tWndRefs.wndInventoryRedeemCreddBtn = self.tWndRefs.wndMain:FindChild("ContentContainer:Inventory:RedeemBtn")
 	self.tWndRefs.wndInventoryReturnBtn = self.tWndRefs.wndMain:FindChild("ContentContainer:Inventory:ReturnBtn")
+	self.tWndRefs.wndInventoryFilterMultiBtn = self.tWndRefs.wndMain:FindChild("ContentContainer:Inventory:InventoryFilterMultiBtn")
+	self.tWndRefs.wndInventoryFilterLockedBtn = self.tWndRefs.wndMain:FindChild("ContentContainer:Inventory:InventoryFilterLockedBtn")
 
 	--Inventory Confirm
 	self.tWndRefs.wndPendingClaimContainer = self.tWndRefs.wndMain:FindChild("ContentContainer:InventoryClaimConfirm:PendingClaimContainer")
@@ -248,7 +276,7 @@ function AccountInventory:SetupMainWindow()
 	self.tWndRefs.wndAccountGridContainer = self.tWndRefs.wndMain:FindChild("ContentContainer:Entitlements:AccountGridContainer")
 	self.tWndRefs.wndCharacterGridContainer = self.tWndRefs.wndMain:FindChild("ContentContainer:Entitlements:CharacterGridContainer")
 
-	self.tWndRefs.wndMain:SetSizingMinimum(640, 480)
+	self.tWndRefs.wndMain:SetSizingMinimum(700, 480)
 	self.tWndRefs.wndMain:SetSizingMaximum(1920, 1080)
 	self.tWndRefs.wndInventoryBtn:SetCheck(true) -- Default check
 	self.tWndRefs.wndInventoryGift:Show(false, true)
@@ -257,6 +285,8 @@ function AccountInventory:SetupMainWindow()
 	self.tWndRefs.wndInventoryClaimConfirm:Show(false, true)
 	self.tWndRefs.wndInventoryGiftReturnConfirm:Show(false, true)
 	self.tWndRefs.wndInventoryRedeemCreddConfirm:Show(false, true)
+	self.tWndRefs.wndInventoryFilterMultiBtn:SetCheck(true)
+	self.tWndRefs.wndInventoryFilterLockedBtn:SetCheck(true)
 
 	if self.locSavedWindowLoc then
 		self.tWndRefs.wndMain:MoveToLocation(self.locSavedWindowLoc)
@@ -329,12 +359,12 @@ function AccountInventory:HelperAddPendingSingleToContainer(wndParent, tPendingA
 	wndObject:FindChild("Icon"):SetSprite(bShowLock and "CRB_AMPs:spr_AMPs_LockStretch_Blue" or strIcon)
 
 	-- Icons for the number of redempetions / cooldowns
-	if tPendingAccountItem.multiClaim or tPendingAccountItem.multiRedeem then -- Should be only multiRedeem
+	if tPendingAccountItem.multiRedeem or tPendingAccountItem.multiRedeem then -- Should be only multiRedeem
 		local bShowCooldown = tPendingAccountItem.cooldown and tPendingAccountItem.cooldown > 0
 		wndGroup:FindChild("ItemIconText"):Show(bShowCooldown)
 		wndGroup:FindChild("ItemIconText"):SetText(bShowCooldown and self:HelperCooldown(tPendingAccountItem.cooldown) or "")
 	end
-	wndGroup:FindChild("ItemIconOnceOnly"):Show(not tPendingAccountItem.multiClaim and not tPendingAccountItem.multiRedeem) -- Should be only multiRedeem
+	wndGroup:FindChild("ItemIconOnceOnly"):Show(not tPendingAccountItem.multiRedeem and not tPendingAccountItem.multiRedeem) -- Should be only multiRedeem
 	wndGroup:FindChild("ItemIconArrangeVert"):ArrangeChildrenVert(1)
 
 	-- Tooltip
@@ -407,8 +437,17 @@ function AccountInventory:HelperAddPendingGroupToContainer(wndParent, tPendingAc
 	wndGroup:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 10)
 end
 
+function AccountInventory:OnAccountInventory_RefreshInventory()
+	Apollo.StopTimer("AccountInventory_RefreshInventory")
+	self.bRefreshInventoryThrottle = false
+end
+
 function AccountInventory:RefreshInventory()
-	self:OnRefreshInterfaceMenuAlert() -- Happens even if wndMain hasn't loaded
+	if not self.bRefreshInventoryThrottle then
+		self.bRefreshInventoryThrottle = true
+		Apollo.StartTimer("AccountInventory_RefreshInventory")
+		self:OnRefreshInterfaceMenuAlert() -- Happens even if wndMain hasn't loaded
+	end
 
 	if self.tWndRefs.wndMain == nil or not self.tWndRefs.wndMain:IsValid() then
 		return
@@ -464,10 +503,20 @@ function AccountInventory:RefreshInventory()
 		Apollo.LoadForm(self.xmlDoc, "InventoryHorizSeparator", self.tWndRefs.wndInventoryGridContainer, self)
 	end
 
-	-- Account Bound
+	-- Account Bound Inventory
+	local bShowMulti = self.tWndRefs.wndInventoryFilterMultiBtn:IsChecked()
+	local bShowLocked = self.tWndRefs.wndInventoryFilterLockedBtn:IsChecked()
 	for idx, tAccountItem in pairs(AccountItemLib.GetAccountItems()) do
 		if not tAccountItem.item or tAccountItem.item:GetItemId() ~= knBoomBoxItemId then
-				self:HelperAddPendingSingleToContainer(self.tWndRefs.wndInventoryGridContainer, tAccountItem)
+			local bFilterFinalResult = bShowMulti or (not tAccountItem.multiRedeem and not tAccountItem.multiRedeem) -- Bracket should be only multiRedeem
+			if bFilterFinalResult and not bShowLocked then
+				local tPrereqInfo = self.unitPlayer and self.unitPlayer:GetPrereqInfo(tAccountItem.prereqId) or nil
+				bFilterFinalResult = tPrereqInfo and tPrereqInfo.bIsMet
+			end
+
+			if bFilterFinalResult then
+			self:HelperAddPendingSingleToContainer(self.tWndRefs.wndInventoryGridContainer, tAccountItem)
+			end
 		end
 	end
 	self.tWndRefs.wndInventoryGridContainer:ArrangeChildrenVert(0)
@@ -548,8 +597,14 @@ function AccountInventory:OnPendingInventoryItemCheck(wndHandler, wndControl, eM
 	self:RefreshInventoryActions()
 end
 
-function AccountInventory:OnPendingInventoryItemcUncheck(wndHandler, wndControl, eMouseButton)
+function AccountInventory:OnPendingInventoryItemUncheck(wndHandler, wndControl, eMouseButton)
 	self:RefreshInventoryActions()
+end
+
+function AccountInventory:OnInventoryFilterToggle(wndHandler, wndControl)
+	self.tWndRefs.wndInventoryGridContainer:SetVScrollPos(0)
+	self.tWndRefs.wndInventoryGridContainer:SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
+	self:RefreshInventory()
 end
 
 function AccountInventory:OnPendingClaimBtn(wndHandler, wndControl, eMouseButton)
@@ -707,11 +762,13 @@ function AccountInventory:RefreshInventoryGift()
 		wndFriend:FindChild("FriendButton"):SetText(String_GetWeaselString(Apollo.GetString("AccountInventory_AccountFriendPrefix"), tFriend.strCharacterName))
 	end
 	for idx, tFriend in pairs(FriendshipLib.GetList()) do
-		local wndFriend = Apollo.LoadForm(self.xmlDoc, "FriendForm", self.tWndRefs.wndInventoryGiftFriendContainer, self)
-		wndFriend:SetData(tFriend)
-		wndFriend:FindChild("FriendNote"):SetTooltip(tFriend.strNote or "")
-		wndFriend:FindChild("FriendNote"):Show(string.len(tFriend.strNote or "") > 0)
-		wndFriend:FindChild("FriendButton"):SetText(tFriend.strCharacterName)
+		if tFriend.bFriend then -- Not Ignore or Rival
+			local wndFriend = Apollo.LoadForm(self.xmlDoc, "FriendForm", self.tWndRefs.wndInventoryGiftFriendContainer, self)
+			wndFriend:SetData(tFriend)
+			wndFriend:FindChild("FriendNote"):SetTooltip(tFriend.strNote or "")
+			wndFriend:FindChild("FriendNote"):Show(string.len(tFriend.strNote or "") > 0)
+			wndFriend:FindChild("FriendButton"):SetText(tFriend.strCharacterName)
+		end
 	end
 	-- TODO: Include the note as well
 

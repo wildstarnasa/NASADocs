@@ -33,9 +33,7 @@ function CrowdControlGameplay:OnDocumentReady()
 	Apollo.RegisterEventHandler("UpdateCCStateStun", "OnUpdateCCStateStun", self) -- Hitting the interact key
 	Apollo.RegisterEventHandler("RemoveCCStateStun", "OnRemoveCCStateStun", self) -- Close the UI
 	Apollo.RegisterEventHandler("StunVGPressed", "OnStunVGPressed", self)
-
-	Apollo.RegisterTimerHandler("CalculateTimeRemaining", "OnCalculateTimeRemaining", self)
-
+	
 	self.wndProgress = nil
 end
 
@@ -53,16 +51,25 @@ function CrowdControlGameplay:OnActivateCCStateStun(eChosenDirection)
 	self.wndProgress:Show(true) -- to get the animation
 	self.wndProgress:FindChild("TimeRemainingContainer"):Show(false)
 
-	local bLeft 	= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Left
-	local bUp 		= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Forward
-	local bRight 	= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Right
-	local bDown 	= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Backward
+	local strNone		= Apollo.GetString("Keybinding_Unbound")
+	local strLeft 		= GameLib.GetKeyBinding("StunBreakoutLeft")
+	local strUp 		= GameLib.GetKeyBinding("StunBreakoutUp")
+	local strRight 		= GameLib.GetKeyBinding("StunBreakoutRight")
+	local strDown 		= GameLib.GetKeyBinding("StunBreakoutDown")
+	local bLeftUnbound 	= strLeft == strNone
+	local bUpUnbound 	= strUp == strNone
+	local bRightUnbound = strRight == strNone
+	local bDownUnbound 	= strDown == strNone
+	local bLeft 		= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Left
+	local bUp 			= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Forward
+	local bRight 		= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Right
+	local bDown 		= eChosenDirection == Unit.CodeEnumCCStateStunVictimGameplay.Backward
 
 	-- TODO: Swap to Stun Breakout Keys when they exist
-	self.wndProgress:FindChild("ProgressButtonArtLeft"):SetText(GameLib.GetKeyBinding("StunBreakoutLeft"))
-	self.wndProgress:FindChild("ProgressButtonArtUp"):SetText(GameLib.GetKeyBinding("StunBreakoutUp"))
-	self.wndProgress:FindChild("ProgressButtonArtRight"):SetText(GameLib.GetKeyBinding("StunBreakoutRight"))
-	self.wndProgress:FindChild("ProgressButtonArtDown"):SetText(GameLib.GetKeyBinding("StunBreakoutDown"))
+	self.wndProgress:FindChild("ProgressButtonArtLeft"):SetText(bLeftUnbound and "" or strLeft)
+	self.wndProgress:FindChild("ProgressButtonArtUp"):SetText(bUpUnbound and "" or strUp)
+	self.wndProgress:FindChild("ProgressButtonArtRight"):SetText(bRightUnbound and "" or strRight)
+	self.wndProgress:FindChild("ProgressButtonArtDown"):SetText(bDownUnbound and "" or strDown)
 
 	-- Disabled is invisible text, which will hide the button text
 	self.wndProgress:FindChild("ProgressButtonArtLeft"):Enable(bLeft)
@@ -70,6 +77,8 @@ function CrowdControlGameplay:OnActivateCCStateStun(eChosenDirection)
 	self.wndProgress:FindChild("ProgressButtonArtRight"):Enable(bRight)
 	self.wndProgress:FindChild("ProgressButtonArtDown"):Enable(bDown)
 
+	self.wndProgress:FindChild("NoBindsWarning"):Show(bLeftUnbound or bUpUnbound or bRightUnbound or bDownUnbound)
+	
 	if not bLeft and not bUp and not bRight and not bDown then -- Error Case
 		self:OnRemoveCCStateStun()
 		return
@@ -104,7 +113,8 @@ function CrowdControlGameplay:OnCalculateTimeRemaining()
 	if not nTimeRemaining or nTimeRemaining <= 0 then
 		if self.wndProgress and self.wndProgress:IsValid() then
 			self.wndProgress:Show(false)
-			Apollo.CreateTimer("CalculateTimeRemaining", 0.1, false) -- Try again, in case it hasn't initialized yet
+			--timers currently can't be started during their callbacks, because of a Code bug.
+			self.timerCalculateRemaining = ApolloTimer.Create(0.1, false, "OnCalculateTimeRemaining", self)
 		end
 		return
 	end
@@ -124,7 +134,8 @@ function CrowdControlGameplay:OnCalculateTimeRemaining()
 	end
 
 	if nTimeRemaining > 0 then
-		Apollo.CreateTimer("CalculateTimeRemaining", 0.1, false)
+		--timers currently can't be started during their callbacks, because of a Code bug.
+		self.timerCalculateRemaining = ApolloTimer.Create(0.1, false, "OnCalculateTimeRemaining", self)
 	end
 end
 

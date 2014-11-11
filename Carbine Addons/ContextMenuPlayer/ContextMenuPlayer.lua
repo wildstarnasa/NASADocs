@@ -25,13 +25,20 @@ local ktSortOrder =
 	["BtnTrade"] 			= 3,
 	["BtnDuel"] 			= 4,
 	["BtnForfeit"] 			= 4,
-	["BtnUnignore"] 		= 5,
-	["BtnIgnore"] 			= 5,
-	["BtnSocialList"] 		= 6,
+	["BtnReportChat"] 		= 5,
+	["BtnReportUnit"] 		= 5,
+	["BtnUnignore"] 		= 6,
+	["BtnIgnore"] 			= 6,
+	["BtnInspect"]			= 7,
+	["BtnGuildList"] 		= 7,
+	-- Social List: BtnPromoteInGuild	 				
+	-- Social List: BtnDemoteInGuild			
+	-- Social List: BtnKickFromGuild	
+	["BtnSocialList"] 		= 8,
 		-- Social List: BtnAddFriend 				BtnUnfriend
 		-- Social List: BtnAddRival					BtnUnrival
-		-- Social List: BtnAddNeighbor				BtnUnneighbor
-	["BtnGroupList"] 		= 7,
+		-- Social List: BtnAddNeighbor				BtnUnneighbor		
+	["BtnGroupList"] 		= 10,
 		-- Group List: BtnMentor,					BtnStopMentor
 		-- Group List: BtnGroupTakeInvite, 			BtnGroupGiveInvite
 		-- Group List: BtnGroupTakeKick, 			BtnGroupGiveKick
@@ -41,14 +48,13 @@ local ktSortOrder =
 		-- Group List: BtnPromote
 		-- Group List: BtnPromote
 		-- Group List: BtnLocate
-	["BtnInspect"]			= 8,
-	["BtnClearFocus"] 		= 9,
-	["BtnSetFocus"] 		= 9,
-	["BtnAssist"] 			= 10,
-	["BtnMarkerList"]		= 11,
+	["BtnClearFocus"] 		= 11,
+	["BtnSetFocus"] 		= 11,
+	["BtnAssist"] 			= 12,
+	["BtnMarkerList"]		= 13,
 		-- 8 Markers
 		-- BtnMarkClear
-	["BtnMarkTarget"] 		= 12,
+	["BtnMarkTarget"] 		= 14,
 }
 
 local kstrRaidMarkerToSprite =
@@ -83,9 +89,10 @@ function ContextMenuPlayer:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	Apollo.RegisterEventHandler("GenericEvent_NewContextMenuPlayer", 			"Initialize", self) -- 2 args + 1 optional
-	Apollo.RegisterEventHandler("GenericEvent_NewContextMenuPlayerDetailed", 	"Initialize", self) -- 3 args
+	Apollo.RegisterEventHandler("GenericEvent_NewContextMenuPlayer", 			"Initialize", self) -- 2 args + 2 optional
+	Apollo.RegisterEventHandler("GenericEvent_NewContextMenuPlayerDetailed", 	"Initialize", self) -- 3 args + 1 optional
 	Apollo.RegisterEventHandler("GenericEvent_NewContextMenuFriend", 			"InitializeFriend", self) -- 2 args
+	-- There is a GenericEvent_NewContextMenuPvPStats that's handled in PublicEventStats
 
 	-- Just to recalculate sizing/arrangement (e.g. group button shows up)
 	Apollo.RegisterEventHandler("Group_Join", 			"OnEventRequestResize", self)
@@ -112,16 +119,19 @@ end
 
 function ContextMenuPlayer:InitializeFriend(wndParent, nFriendId)
 	self:SharedInitialize(wndParent)
-
+	local unitPlayer = GameLib.GetPlayerUnit()
+	local nPlayerFaction = unitPlayer:GetFaction()
 	self.tFriend = FriendshipLib.GetById(nFriendId)
 	if self.tFriend ~= nil then
 		self.strTarget = self.tFriend.strCharacterName
+		self.bCrossFaction = self.tFriend.nFactionId ~= nPlayerFaction
 	end
 
 	self.tAccountFriend = FriendshipLib.GetAccountById(nFriendId)
 	if self.tAccountFriend ~= nil then
 		if self.tAccountFriend.arCharacters and self.tAccountFriend.arCharacters[1] ~= nil then
 			self.strTarget = self.tAccountFriend.arCharacters[1].strCharacterName
+			self.bCrossFaction = self.tAccountFriend.arCharacters[1].nFactionId ~= nPlayerFaction
 		end
 	end
 
@@ -138,6 +148,8 @@ function ContextMenuPlayer:RedrawAllFriend()
 	if unitTarget == nil and self.tFriend ~= nil then
 		unitTarget = FriendshipLib.GetUnitById(self.tFriend.nId)
 	end
+	
+	local bCrossFaction = self.bCrossFaction
 	local tFriend = self.tFriend
 	local tAccountFriend = self.tAccountFriend
 	local wndButtonList = self.wndMain:FindChild("ButtonList")
@@ -147,8 +159,17 @@ function ContextMenuPlayer:RedrawAllFriend()
 	local bInGroup = GroupLib.InGroup()
 	local tCharacterData = GameLib.SearchRelationshipStatusByCharacterName(strTarget)
 
+	local btnSocialList = self:FactoryProduce(wndButtonList, "BtnSocialList", "BtnSocialList")
+	local wndSocialListItems = btnSocialList:FindChild("SocialListPopoutItems")
+	btnSocialList:AttachWindow(btnSocialList:FindChild("SocialListPopoutFrame"))
+
 	local bCanWhisper = tFriend ~= nil and tFriend.fLastOnline == 0 and not tFriend.bIgnore and tFriend.nFactionId == unitPlayer:GetFaction()
 	local bCanAccountWisper = tAccountFriend ~= nil and tAccountFriend.arCharacters and tAccountFriend.arCharacters[1] ~= nil
+	local bIsFriend = (tFriend ~= nil and tFriend.bFriend) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bFriend)
+	local bIsRival = (tFriend ~= nil and tFriend.bRival) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bRival)
+	local bIsNeighbor = (tFriend ~= nil and tFriend.bNeighbor) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tNeighbor)
+	--local bIsNeighbor = tCharacterData ~= nil and tCharacterData.tNeighbor and tCharacterData.tFriend
+	local bIsAccountFriend = tAccountFriend ~= nil or (tCharacterData == nil or tCharacterData.tAccountFriend ~= nil)
 
 	if bCanAccountWisper then
 		bCanWhisper = tAccountFriend.arCharacters[1] ~= nil
@@ -156,27 +177,33 @@ function ContextMenuPlayer:RedrawAllFriend()
 			and tAccountFriend.arCharacters[1].nFactionId == unitPlayer:GetFaction()
 	end
 
-	if bCanWhisper then
+	if bCanWhisper and not bCanAccountWisper then
 		self:HelperBuildRegularButton(wndButtonList, "BtnWhisper", Apollo.GetString("ContextMenu_Whisper"))
 	end
 
 	if bCanAccountWisper then
 		self:HelperBuildRegularButton(wndButtonList, "BtnAccountWhisper", Apollo.GetString("ContextMenu_AccountWhisper"))
 	end
+
+	if tFriend and tFriend.bIgnore then
+		self:HelperBuildRegularButton(wndButtonList, "BtnUnignore", Apollo.GetString("ContextMenu_Unignore"))
+	elseif tAccountFriend == nil then
+		self:HelperBuildRegularButton(wndButtonList, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
+	end
+
+	if bIsRival then
+		self:HelperBuildRegularButton(wndSocialListItems, "BtnUnrival", Apollo.GetString("ContextMenu_RemoveRival"))
+	elseif tFriend ~= nil or bCanAccountWisper then
+		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddRival", Apollo.GetString("ContextMenu_AddRival"))
+	end
 	
-	if not bInGroup or (GroupLib.GetGroupMember(1).bCanInvite and bCanWhisper) then
+	local bAccountFriendOnline = tAccountFriend and tAccountFriend.fLastOnline == 0
+	local bFriendOnline = tFriend and tFriend.fLastOnline == 0
+	
+	if (bAccountFriendOnline or bFriendOnline) and (not bInGroup or (GroupLib.GetGroupMember(1).bCanInvite and bCanWhisper)) and not bCrossFaction then
 		--In SocialPanel, we don't care if they are part of a group, because we can't reliably test it.
 		self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
 	end
-	
-	local btnSocialList = self:FactoryProduce(wndButtonList, "BtnSocialList", "BtnSocialList")
-	local wndSocialListItems = btnSocialList:FindChild("SocialListPopoutItems")
-	btnSocialList:AttachWindow(btnSocialList:FindChild("SocialListPopoutFrame"))
-
-	local bIsFriend = (tFriend ~= nil and tFriend.bFriend) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bFriend)
-	local bIsRival = tFriend ~= nil and tFriend.bRival or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bRival)
-	local bIsNeighbor = tFriend ~= nil and tFriend.bNeighbor or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bNeighbor)
-	local bIsAccountFriend = tAccountFriend ~= nil or (tCharacterData == nil or tCharacterData.tAccountFriend ~= nil)
 
 	if bIsFriend then
 		if tAccountFriend == nil then
@@ -186,22 +213,13 @@ function ContextMenuPlayer:RedrawAllFriend()
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddFriend", Apollo.GetString("ContextMenu_AddFriend"))
 	end
 
-	if bIsRival then
-		if tAccountFriend == nil then
-			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnrival", Apollo.GetString("ContextMenu_RemoveRival"))
-		end
-	elseif tFriend ~= nil or bCanAccountWisper then
-		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddRival", Apollo.GetString("ContextMenu_AddRival"))
-	end
-
 	if bIsNeighbor then
-		if tAccountFriend == nil then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnUnneighbor", Apollo.GetString("ContextMenu_RemoveNeighbor"))
-		end
-	elseif tFriend ~= nil or bCanAccountWisper then
+	elseif (tFriend ~= nil or bCanAccountWisper) and not bCrossFaction and not bIsRival then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddNeighbor", Apollo.GetString("ContextMenu_AddNeighbor"))
-	end
+	end	
 
+			
 	if bIsFriend and not bIsAccountFriend then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAccountFriend", Apollo.GetString("ContextMenu_PromoteFriend"))
 	end
@@ -210,22 +228,19 @@ function ContextMenuPlayer:RedrawAllFriend()
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnUnaccountFriend", Apollo.GetString("ContextMenu_UnaccountFriend"))
 	end
 
-	if tFriend and tFriend.bIgnore then
-		self:HelperBuildRegularButton(wndButtonList, "BtnUnignore", Apollo.GetString("ContextMenu_Unignore"))
-	elseif tAccountFriend == nil or tAccountFriend.fLastOnline == 0 then
-		self:HelperBuildRegularButton(wndButtonList, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
-	end
-
 	self:ResizeAndRedraw()
 end
 
-function ContextMenuPlayer:Initialize(wndParent, strTarget, unitTarget, nReportId) -- unitTarget may be nil
+function ContextMenuPlayer:Initialize(wndParent, strTarget, unitTarget, tOptionalCharacterData) -- unitTarget may be nil
 	self:SharedInitialize(wndParent)
 
 	self.strTarget = strTarget or ""
 	self.unitTarget = unitTarget or nil
-	self.nReportId = nReportId or nil
-    self:RedrawAll()
+	self.nReportId = tOptionalCharacterData and tOptionalCharacterData.nReportId or nil
+	self.bCrossFaction = tOptionalCharacterData and tOptionalCharacterData.bCrossFaction or nil--turning string to a boolean
+	self.guildCurr = tOptionalCharacterData and tOptionalCharacterData.guildCurr or nil
+	self.tPlayerGuildData =  tOptionalCharacterData and tOptionalCharacterData.tPlayerGuildData or nil
+	self:RedrawAll()
 end
 
 function ContextMenuPlayer:RedrawAll()
@@ -233,6 +248,7 @@ function ContextMenuPlayer:RedrawAll()
 		return
 	end
 
+	local bCrossFaction = self.bCrossFaction
 	local strTarget = self.strTarget
 	local unitTarget = self.unitTarget
 	local wndButtonList = self.wndMain:FindChild("ButtonList")
@@ -278,6 +294,12 @@ function ContextMenuPlayer:RedrawAll()
 		--wndClear:SetText("X")
 	end
 
+	if unitTarget and unitTarget:IsACharacter() and unitTarget ~= unitPlayer then
+		self:HelperBuildRegularButton(wndButtonList, "BtnReportUnit", Apollo.GetString("ContextMenu_ReportPlayer"))
+	elseif self.nReportId then -- No unit available
+		self:HelperBuildRegularButton(wndButtonList, "BtnReportChat", Apollo.GetString("ContextMenu_ReportSpam"))
+	end
+	
 	if unitTarget and (self.tPlayerFaction ~= unitTarget:GetFaction() or not unitTarget:IsACharacter()) then
 		if unitTarget:IsACharacter() then
 			if tCharacterData and tCharacterData.tFriend and tCharacterData.tFriend.bRival then
@@ -325,26 +347,24 @@ function ContextMenuPlayer:RedrawAll()
 	end
 
 	if unitTarget == nil or unitTarget ~= unitPlayer then
-
-		local bCanWhisper = true
+		local bCanWhisper = not bCrossFaction
 		local bCanAccountWisper = false
-
 		if tCharacterData and tCharacterData.tAccountFriend then
 			bCanAccountWisper = true
-
 			bCanWhisper = tCharacterData.tAccountFriend.arCharacters[1] ~= nil
 				and tCharacterData.tAccountFriend.arCharacters[1].strRealm == GameLib.GetRealmName()
 				and tCharacterData.tAccountFriend.arCharacters[1].nFactionId == GameLib.GetPlayerUnit():GetFaction()
 		end
 
-		if bCanWhisper then
+		if bCanWhisper and not bCanAccountWisper then
 			self:HelperBuildRegularButton(wndButtonList, "BtnWhisper", Apollo.GetString("ContextMenu_Whisper"))
 		end
+
 		if bCanAccountWisper then
 			self:HelperBuildRegularButton(wndButtonList, "BtnAccountWhisper", Apollo.GetString("ContextMenu_AccountWhisper"))
 		end
 
-		if not bInGroup or (tMyGroupData.bCanInvite and (unitTarget and not unitTarget:IsInYourGroup())) then
+		if (not bInGroup or (tMyGroupData.bCanInvite and (unitTarget and not unitTarget:IsInYourGroup()))) and not bCrossFaction then
 			self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
 		end
 
@@ -366,12 +386,12 @@ function ContextMenuPlayer:RedrawAll()
 
 		local bIsFriend = tCharacterData and tCharacterData.tFriend and tCharacterData.tFriend.bFriend
 		local bIsRival = tCharacterData and tCharacterData.tFriend and tCharacterData.tFriend.bRival
-		local bIsNeighbor = tCharacterData and tCharacterData.tFriend and tCharacterData.tFriend.bNeighbor
+		local bIsNeighbor = tCharacterData and tCharacterData.tNeighbor
 		local bIsAccountFriend = tCharacterData and tCharacterData.tAccountFriend
 
 		if bIsFriend then
 			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnfriend", Apollo.GetString("ContextMenu_RemoveFriend"))
-		else
+		elseif not bCrossFaction then
 			self:HelperBuildRegularButton(wndSocialListItems, "BtnAddFriend", Apollo.GetString("ContextMenu_AddFriend"))
 		end
 
@@ -383,7 +403,7 @@ function ContextMenuPlayer:RedrawAll()
 
 		if bIsNeighbor then
 			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnneighbor", Apollo.GetString("ContextMenu_RemoveNeighbor"))
-		else
+		elseif not bCrossFaction then
 			self:HelperBuildRegularButton(wndSocialListItems, "BtnAddNeighbor", Apollo.GetString("ContextMenu_AddNeighbor"))
 		end
 
@@ -396,7 +416,6 @@ function ContextMenuPlayer:RedrawAll()
 			self.tAccountFriend = tCharacterData.tAccountFriend
 		end
 
-		-- TODO Invite to Guild
 	end
 
 	-----------------------------------------------------------------------------------------------
@@ -410,72 +429,65 @@ function ContextMenuPlayer:RedrawAll()
 
 		-- see if tMygroupData is currently mentoring tTargetGroupData
 		if tTargetGroupData then
-			local bMentoringTarget = false
-			for _, nMentorIdx in ipairs(tTargetGroupData.tMentoredBy) do
-				if tMyGroupData.nMemberIdx == nMentorIdx then
-					bMentoringTarget = true
-					break
+			local bTargetingMentor = tTargetGroupData.nMenteeIdx == tMyGroupData.nMemberIdx
+			local bTargetingMentee = tMyGroupData.nMenteeIdx == tTargetGroupData.nMemberIdx
+
+			if tTargetGroupData.bIsOnline and not bTargetingMentee and tTargetGroupData.nLevel < tMyGroupData.nLevel then
+				self:HelperBuildRegularButton(wndGroupListItems, "BtnMentor", Apollo.GetString("ContextMenu_Mentor"))
+			end
+
+			if (tMyGroupData.bIsMentoring and bTargetingMentee) or (tMyGroupData.bIsMentored and bTargetingMentor) then
+				self:HelperBuildRegularButton(wndGroupListItems, "BtnStopMentor", Apollo.GetString("ContextMenu_StopMentor"))
+			end
+
+			self:HelperBuildRegularButton(wndGroupListItems, "BtnLocate", Apollo.GetString("ContextMenu_Locate"))
+
+			if bAmIGroupLeader then
+				self:HelperBuildRegularButton(wndGroupListItems, "BtnPromote", Apollo.GetString("ContextMenu_Promote"))
+			end
+
+			if tMyGroupData.bCanKick then
+				self:HelperBuildRegularButton(wndGroupListItems, "BtnKick", Apollo.GetString("ContextMenu_Kick"))
+			end
+
+			local bInMatchingGame = MatchingGame.IsInMatchingGame()
+			local bIsMatchingGameFinished = MatchingGame.IsMatchingGameFinished()
+
+			if bInMatchingGame and not bIsMatchingGameFinished then
+				local wndCurr = self:HelperBuildRegularButton(wndGroupListItems, "BtnVoteToKick", Apollo.GetString("ContextMenu_VoteToKick"))
+				self:HelperEnableDisableRegularButton(wndCurr, not MatchingGame.IsVoteKickActive())
+			end
+
+			if bInMatchingGame and not bIsMatchingGameFinished then
+				local tMatchState = MatchingGame:GetPVPMatchState()
+				if tMatchState and tMatchState.eRules ~= MatchingGame.Rules.DeathmatchPool then
+					local wndCurr = self:HelperBuildRegularButton(wndGroupListItems, "BtnVoteToDisband", Apollo.GetString("ContextMenu_VoteToDisband"))
+					self:HelperEnableDisableRegularButton(wndCurr, not MatchingGame.IsVoteSurrenderActive())
 				end
 			end
 
-			if tTargetGroupData.bIsOnline and not bMentoringTarget and tTargetGroupData.nLevel < tMyGroupData.nLevel then
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnMentor", Apollo.GetString("ContextMenu_Mentor"))
+			if bAmIGroupLeader then
+				if tTargetGroupData.bCanKick then
+					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeKick", Apollo.GetString("ContextMenu_DenyKicks"))
+				else
+					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveKick", Apollo.GetString("ContextMenu_AllowKicks"))
+				end
+
+				if tTargetGroupData.bCanInvite then
+					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeInvite", Apollo.GetString("ContextMenu_DenyInvites"))
+				else
+					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveInvite", Apollo.GetString("ContextMenu_AllowInvites"))
+				end
+
+				if tTargetGroupData.bCanMark then
+					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeMark", Apollo.GetString("ContextMenu_DenyMarking"))
+				else
+					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveMark", Apollo.GetString("ContextMenu_AllowMarking"))
+				end
 			end
 		end
 
-		if tMyGroupData.bIsMentoring or tMyGroupData.bIsMentored then
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnStopMentor", Apollo.GetString("ContextMenu_StopMentor"))
-		end
-
-		if tTargetGroupData then
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnLocate", Apollo.GetString("ContextMenu_Locate"))
-		end
-
-		if tTargetGroupData and bAmIGroupLeader then
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnPromote", Apollo.GetString("ContextMenu_Promote"))
-		end
-
-		if tTargetGroupData and tMyGroupData.bCanKick then
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnKick", Apollo.GetString("ContextMenu_Kick"))
-		end
-
-		local bInMatchingGame = MatchingGame.IsInMatchingGame()
-		local bIsMatchingGameFinished = MatchingGame.IsMatchingGameFinished()
-
-		if tTargetGroupData and bInMatchingGame and not bIsMatchingGameFinished then
-			local wndCurr = self:HelperBuildRegularButton(wndGroupListItems, "BtnVoteToKick", Apollo.GetString("ContextMenu_VoteToKick"))
-			self:HelperEnableDisableRegularButton(wndCurr, not MatchingGame.IsVoteKickActive())
-		end
-
-		if tTargetGroupData and bInMatchingGame and not bIsMatchingGameFinished then
-			local tMatchState = MatchingGame:GetPVPMatchState()
-			if tMatchState and tMatchState.eRules ~= MatchingGame.Rules.DeathmatchPool then
-				local wndCurr = self:HelperBuildRegularButton(wndGroupListItems, "BtnVoteToDisband", Apollo.GetString("ContextMenu_VoteToDisband"))
-				self:HelperEnableDisableRegularButton(wndCurr, not MatchingGame.IsVoteSurrenderActive())
-			end
-		end
-
-		if tTargetGroupData and bAmIGroupLeader then
-			if tTargetGroupData.bCanKick then
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeKick", Apollo.GetString("ContextMenu_DenyKicks"))
-			else
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveKick", Apollo.GetString("ContextMenu_AllowKicks"))
-			end
-
-			if tTargetGroupData.bCanInvite then
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeInvite", Apollo.GetString("ContextMenu_DenyInvites"))
-			else
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveInvite", Apollo.GetString("ContextMenu_AllowInvites"))
-			end
-
-			if tTargetGroupData.bCanMark then
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeMark", Apollo.GetString("ContextMenu_DenyMarking"))
-			else
-				self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveMark", Apollo.GetString("ContextMenu_AllowMarking"))
-			end
-		end
-
-		if not tTargetGroupData and tMyGroupData.bCanInvite then
+		if not tTargetGroupData and tMyGroupData.bCanInvite and not bCrossFaction then
 			self:HelperBuildRegularButton(wndGroupListItems, "BtnInvite", Apollo.GetString("ContextMenu_Invite"))
 		end
 
@@ -487,11 +499,33 @@ function ContextMenuPlayer:RedrawAll()
 	if bInGroup and unitTarget == unitPlayer then
 		self:HelperBuildRegularButton(wndButtonList, "BtnLeaveGroup", Apollo.GetString("ContextMenu_LeaveGroup"))
 	end
-
-	if self.nReportId then
-		self:HelperBuildRegularButton(wndButtonList, "BtnReportChat", Apollo.GetString("ContextMenu_ReportSpam"))
-	end
-
+	
+	-----------------------------------------------------------------------------------------------
+	-- Guild Options
+	-----------------------------------------------------------------------------------------------
+	local tMyRankPermissions = self.guildCurr and self.guildCurr:GetRanks()[self.guildCurr:GetMyRank()] or nil
+	local bTargetIsUnderMyRank = self.guildCurr and self.guildCurr:GetMyRank() < self.tPlayerGuildData.nRank
+	if self.tPlayerGuildData and self.guildCurr ~= nil and tMyRankPermissions.bChangeMemberRank and bTargetIsUnderMyRank then
+		local btnGuildList = self:FactoryProduce(wndButtonList, "BtnGuildList", "BtnGuildList")
+		local wndGuildListItems = btnGuildList:FindChild("GuildListPopoutItems")
+		btnGuildList:AttachWindow(btnGuildList:FindChild("GuildListPopoutFrame"))
+	
+		if self.guildCurr then
+			--[[if tMyRankPermissions.bKick then
+			self:HelperBuildRegularButton(wndGuildListItems, "BtnKickFromGuild", Apollo.GetString("ContextMenu_KickFromGuild"))
+			end]]--
+			
+			if bTargetIsUnderMyRank and self.tPlayerGuildData.nRank ~= 2 then
+				self:HelperBuildRegularButton(wndGuildListItems, "BtnPromoteInGuild", Apollo.GetString("ContextMenu_Promote_Rank"))
+			end
+			
+			if bTargetIsUnderMyRank and self.tPlayerGuildData.nRank ~= 10 then
+				self:HelperBuildRegularButton(wndGuildListItems, "BtnDemoteInGuild", Apollo.GetString("ContextMenu_Demote_Rank"))
+			end	
+		end
+	end	
+	
+	
 	self:ResizeAndRedraw()
 end
 
@@ -520,6 +554,11 @@ function ContextMenuPlayer:ResizeAndRedraw()
 			nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("SocialListPopoutFrame"):GetAnchorOffsets()
 			self.wndMain:FindChild("SocialListPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 62)
 		end
+		if self.wndMain:FindChild("GuildListPopoutItems") then
+			nHeight = self.wndMain:FindChild("GuildListPopoutItems"):ArrangeChildrenVert(0)
+			nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("GuildListPopoutFrame"):GetAnchorOffsets()
+			self.wndMain:FindChild("GuildListPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 62)
+		end
 		if self.wndMain:FindChild("MarkerListPopoutItems") then
 			self.wndMain:FindChild("MarkerListPopoutItems"):ArrangeChildrenTiles(0)
 		end
@@ -534,35 +573,36 @@ function ContextMenuPlayer:CheckWindowBounds()
 	local nWidth =  self.wndMain:GetWidth()
 	local nHeight = self.wndMain:GetHeight()
 
-	local nMaxScreenWidth, nMaxScreenHeight = Apollo.GetScreenSize()
+	local tDisplay = Apollo.GetDisplaySize()
 	local nNewX = nWidth + tMouse.x - knXCursorOffset
 	local nNewY = nHeight + tMouse.y - knYCursorOffset
 
 	local bSafeX = true
 	local bSafeY = true
+	if tDisplay and tDisplay.nWidth and tDisplay.nHeight then
+		if nNewX > tDisplay.nWidth then
+			bSafeX = false
+		end
 
-	if nNewX > nMaxScreenWidth then
-		bSafeX = false
-	end
+		if nNewY > tDisplay.nHeight then
+			bSafeY = false
+		end
 
-	if nNewY > nMaxScreenHeight then
-		bSafeY = false
-	end
+		local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+		if bSafeX == false then
+			local nRightOffset = nNewX - tDisplay.nWidth 
+			nLeft = nLeft - nRightOffset
+			nRight = nRight - nRightOffset
+		end
 
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	if bSafeX == false then
-		local nRightOffset = nNewX - nMaxScreenWidth
-		nLeft = nLeft - nRightOffset
-		nRight = nRight - nRightOffset
-	end
+		if bSafeY == false then
+			nBottom = nTop + knYCursorOffset
+			nTop = nBottom - nHeight
+		end
 
-	if bSafeY == false then
-		nBottom = nTop + knYCursorOffset
-		nTop = nBottom - nHeight
-	end
-
-	if bSafeX == false or bSafeY == false then
-		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom)
+		if bSafeX == false or bSafeY == false then
+			self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nBottom)
+		end
 	end
 end
 
@@ -588,12 +628,18 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 	if eButtonType == "BtnWhisper" then
 		Event_FireGenericEvent("GenericEvent_ChatLogWhisper", strTarget)
 	elseif eButtonType == "BtnAccountWhisper" then
-		if tCharacterData.tAccountFriend ~= nil
-			and tCharacterData.tAccountFriend.arCharacters ~= nil
-			and tCharacterData.tAccountFriend.arCharacters[1] ~= nil then
+		if tCharacterData.tAccountFriend ~= nil	and tCharacterData.tAccountFriend.arCharacters ~= nil and tCharacterData.tAccountFriend.arCharacters[1] ~= nil then
 			local strDisplayName = tCharacterData.tAccountFriend.strCharacterName
 			local strRealmName = tCharacterData.tAccountFriend.arCharacters[1].strRealm
 			Event_FireGenericEvent("Event_EngageAccountWhisper", strDisplayName, strTarget, strRealmName)
+		end
+	elseif eButtonType == "BtnInvite" then
+		if tCharacterData.tAccountFriend ~= nil	and tCharacterData.tAccountFriend.arCharacters ~= nil and tCharacterData.tAccountFriend.arCharacters[1] ~= nil then
+			local strDisplayName = tCharacterData.tAccountFriend.arCharacters[1].strCharacterName or ""
+			local strRealmName = tCharacterData.tAccountFriend.arCharacters[1].strRealm or ""
+			GroupLib.Invite(strDisplayName, strRealmName)
+		else
+			GroupLib.Invite(strTarget)
 		end
 	elseif eButtonType == "BtnSetFocus" and unitTarget then
 		unitPlayer:SetAlternateTarget(unitTarget)
@@ -609,8 +655,6 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 		GameLib.ForfeitDuel(unitTarget)
 	elseif eButtonType == "BtnLeaveGroup" then
 		GroupLib.LeaveGroup()
-	elseif eButtonType == "BtnInvite" then
-		GroupLib.Invite(strTarget)
 	elseif eButtonType == "BtnKick" then
 		GroupLib.Kick(nGroupMemberId)
 	elseif eButtonType == "BtnPromote" then
@@ -631,21 +675,32 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 		unitTarget:ShowHintArrow()
 	elseif eButtonType == "BtnAddRival" then
 		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Rival, strTarget)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToRivals"), strTarget))
 	elseif eButtonType == "BtnIgnore" then
 		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, strTarget)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToIgnore"), strTarget))
 	elseif eButtonType == "BtnAddFriend" then
 		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Friend, strTarget)
 	elseif eButtonType == "BtnUnrival" then
 		FriendshipLib.Remove(tCharacterData.tFriend.nId, FriendshipLib.CharacterFriendshipType_Rival)
+	elseif eButtonType == "BtnPromoteInGuild" then
+		self.guildCurr:Promote(self.strTarget) -- TODO: More error checking	
+	elseif eButtonType == "BtnDemoteInGuild" then
+		self.guildCurr:Demote(self.strTarget)
+	elseif eButtonType == "BtnKickFromGuild" then
+		self.guildCurr:Kick(self.strTarget)
 	elseif eButtonType == "BtnUnfriend" then
 		FriendshipLib.Remove(tCharacterData.tFriend.nId, FriendshipLib.CharacterFriendshipType_Friend)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_RemovedFromFriends"), strTarget))
 	elseif eButtonType == "BtnUnignore" then
 		FriendshipLib.Remove(tCharacterData.tFriend.nId, FriendshipLib.CharacterFriendshipType_Ignore)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_RemovedFromIgnore"), strTarget))
 	elseif eButtonType == "BtnAddNeighbor" then
 		HousingLib.NeighborInviteByName(strTarget)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToNeighbors"), strTarget))
 	elseif eButtonType == "BtnUnneighbor" then
-		--HousingLib.NeighborEvict(tCurr.nId)
-		Print(Apollo.GetString("ContextMenu_NeighborRemoveFailed")) -- TODO!
+		HousingLib.NeighborEvict(tCharacterData.tNeighbor.nId)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("ContextMenu_NeighborRemove")))
 	elseif eButtonType == "BtnAccountFriend" then
 		FriendshipLib.AccountAddByUpgrade(tCharacterData.tFriend.nId)
 	elseif eButtonType == "BtnUnaccountFriend" then
@@ -683,9 +738,10 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 		GroupLib.AcceptMentoring(unitTarget)
 	elseif eButtonType == "BtnStopMentor" then
 		GroupLib.CancelMentoring()
+	elseif eButtonType == "BtnReportUnit" and unitTarget then
+		Event_FireGenericEvent("GenericEvent_ReportPlayerUnit", unitTarget)
 	elseif eButtonType == "BtnReportChat" and self.nReportId then
-		local tResult = ChatSystemLib.PrepareInfractionReport(self.nReportId)
-		self:BuildReportConfirmation(tResult.strDescription, tResult.bSuccess)
+		Event_FireGenericEvent("GenericEvent_ReportPlayerChat", self.nReportId)
 	elseif eButtonType and string.find(eButtonType, "BtnMark") ~= 0 and unitTarget then
 		unitTarget:SetTargetMarker(tonumber(string.sub(eButtonType, string.len("BtnMark_"))))
 	end
@@ -767,50 +823,6 @@ function ContextMenuPlayer:FactoryProduce(wndParent, strFormName, tObject)
 		wndNew:SetData(tObject)
 	end
 	return wndNew
-end
------------------------------------------------------------------------------------------------
--- Yes No
------------------------------------------------------------------------------------------------
-
-function ContextMenuPlayer:BuildReportConfirmation(strMessage, bYesNo)
-	if not strMessage then return end
-	self:ClearReportConfirmation()
-
-	local wndCurr = Apollo.LoadForm(self.xmlDoc, "ReportChat_YesNo", nil, self)
-	if bYesNo then
-		wndCurr:FindChild("CancelButton"):Show(false)
-		wndCurr:FindChild("YesButton"):Show(true)
-		wndCurr:FindChild("NoButton"):Show(true)
-	else
-		wndCurr:FindChild("CancelButton"):Show(true)
-		wndCurr:FindChild("YesButton"):Show(false)
-		wndCurr:FindChild("NoButton"):Show(false)
-	end
-
-	wndCurr:FindChild("BodyText"):SetAML( "<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloTitle\" >" .. strMessage .. "</P>")
-	wndCurr:FindChild("BodyText"):SetHeightToContentHeight()
-	wndCurr:FindChild("BodyTextBackground"):RecalculateContentExtents()
-
-	self.wndChatReport = wndCurr
-end
-
-function ContextMenuPlayer:ClearReportConfirmation()
-	if self.wndChatReport then
-		self.wndChatReport:Destroy()
-	end
-end
-
-function ContextMenuPlayer:ReportChat_WindowClosed(wndHandler)
-	self:ClearReportConfirmation()
-end
-
-function ContextMenuPlayer:ReportChat_NoPicked(wndHandler, wndControl)
-	self:ClearReportConfirmation()
-end
-
-function ContextMenuPlayer:ReportChat_YesPicked(wndHandler, wndControl)
-	ChatSystemLib.SendInfractionReport()
-	self:ClearReportConfirmation()
 end
 
 local ContextMenuPlayerInst = ContextMenuPlayer:new()

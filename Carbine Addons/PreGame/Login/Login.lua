@@ -59,7 +59,7 @@ function Login:OnLoad()
 	self.wndServerMessage = self.wndServerMessagesContainer:FindChild("RealmMessage")
 
 	local strAllMessage = ""
-	for _, strMessage in ipairs(self.arServerMessages) do
+	for _, strMessage in ipairs(self.arServerMessages or {}) do
 		strAllMessage = strAllMessage .. strMessage .. "\n"
 	end
 	

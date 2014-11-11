@@ -15,11 +15,11 @@ local LuaEnumTabState =
 	Reward = -3
 }
 
-local karTierIdxToWindowName = 
-{ 
-	"TrackerBronzeContainer:TrackerBronzeTotalText", 
-	"TrackerSilverContainer:TrackerSilverTotalText", 
-	"TrackerGoldContainer:TrackerGoldTotalText" 
+local karTierIdxToWindowName =
+{
+	"TrackerBronzeContainer:TrackerBronzeTotalText",
+	"TrackerSilverContainer:TrackerSilverTotalText",
+	"TrackerGoldContainer:TrackerGoldTotalText"
 }
 
 local LuaEnumTypeToTabNumber =
@@ -56,17 +56,17 @@ end
 function Challenges:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Challenges.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
-	
-	Apollo.RegisterEventHandler("ChallengeUpdated", "OnChallengeUpdated", self)	
+
+	Apollo.RegisterEventHandler("ChallengeUpdated", "OnChallengeUpdated", self)
 end
 
 function Challenges:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
-	
+
 	Apollo.RegisterEventHandler("ChallengeAbandon", 			"OnChallengeAbandon", self)
 	Apollo.RegisterEventHandler("ChallengeLeftArea", 			"OnChallengeLeftArea", self)
 	Apollo.RegisterEventHandler("ChallengeFailTime", 			"OnChallengeFailTime", self)
@@ -87,20 +87,25 @@ function Challenges:OnDocumentReady()
 	-- Challenge Reward Spinner Events
 	Apollo.RegisterEventHandler("ChallengeReward_SpinEnd", 		"OnChallengeReward_SpinEnd", self)
 	Apollo.RegisterEventHandler("ChallengeReward_SpinBegin", 	"OnChallengeReward_SpinBegin", self)
-	Apollo.RegisterTimerHandler("MaxChallengeRewardTime", 		"OnChallengeReward_SpinEnd", self)
-
-	Apollo.CreateTimer("MaxChallengeRewardTime", 20.0, false)
+	
+	self.timerMax = ApolloTimer.Create(20.0, false, "OnChallengeReward_SpinEnd", self)
+	self.timerMax:Stop()
 	self.bRewardWheelSpinning = false
 
 	-- Tracker Timers
-    Apollo.RegisterTimerHandler("RepeatingTimer", 			"OnRepeatingTimer", self)
-	Apollo.RegisterTimerHandler("ChallengeLeftAreaTimer", 	"UpdateLeftAreaTime", self)
-    Apollo.RegisterTimerHandler("ReallyLongAutoHideTimer", 	"OnAutoHideTimer", self)
-    Apollo.RegisterTimerHandler("ReallyShortAutoHideTimer", "OnAutoHideTimer", self)
+	self.timerAutoHideLong = ApolloTimer.Create(kfReallyLongAutoHideTime, false, "OnAutoHideTimer", self)
+	self.timerAutoHideLong:Stop()
+	
+	self.timerAutoHideShort = ApolloTimer.Create(kfReallyShortAutoHideTime, false, "OnAutoHideTimer", self)
+	self.timerAutoHideShort:Stop()
 
-	Apollo.CreateTimer("RepeatingTimer", 0.100, true)
-	Apollo.CreateTimer("ChallengeLeftAreaTimer", 0.500, false)
-	Apollo.StopTimer("ChallengeLeftAreaTimer")
+	self.timerRepeating = ApolloTimer.Create(0.100, true, "OnRepeatingTimer", self)
+	self.bStopRepeatingTimer = false
+	
+	--timers currently can't be started during their callbacks, because of a Code bug.
+	--as a work around, will re-assign the references to the timers in their callbacks.
+	self.timerAreaLeft = ApolloTimer.Create(0.500, false, "UpdateLeftAreaTime", self)
+	self.timerAreaLeft:Stop()
 
 	-- UI Windows
 	self.wndTracker 			= Apollo.LoadForm(self.xmlDoc, "ChallengeTracker", "FixedHudStratum", self)
@@ -111,7 +116,7 @@ function Challenges:OnDocumentReady()
 	self.wndMinimized:Show(false, true)
 	self.wndBigDisplay 			= self.wndTracker:FindChild("BigDisplay")
 	self.wndCompletedDisplay 	= self.wndTracker:FindChild("CompletedDisplay")
-	
+
 	self.xmlDoc = nil
 	if self.locSavedWindowLoc then
 		self.wndTracker:MoveToLocation(self.locSavedWindowLoc)
@@ -142,7 +147,7 @@ function Challenges:OnDocumentReady()
 	self.nPassCountForAutoPromote 			= 0		-- The number of timer passes before we will auto promote
 	self.bReallyLongAutoHideTimerActive 	= false
 	self.bReallyShortAutoHideTimerActive 	= false
-	
+
 	if self.tSavedChallenges then
 		for idx, idChallenge in pairs(self.tSavedChallenges) do
 			self:OnChallengeUpdated(idChallenge)
@@ -163,13 +168,13 @@ end
 function Challenges:OnChallengeLeftArea(idChallenge, strHeader, strDescription, bShow)
 	self.wndLeftArea:Show(bShow)
 	Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", bShow)
-	
+
 	-- Look up type
 	if not self.tUnlockedChallengeList or self:GetTableSize(self.tUnlockedChallengeList) == 0 then
 		return
 	end
 	local tCurrChallenge = self.tUnlockedChallengeList[idChallenge]
-	
+
 	if bShow then
 		if not tCurrChallenge or not tCurrChallenge:IsActivated() then
 			self.wndLeftArea:Show(false)
@@ -177,11 +182,26 @@ function Challenges:OnChallengeLeftArea(idChallenge, strHeader, strDescription, 
 			return
 		end
 
-        self.wndLeftArea:FindChild("LeftAreaHeader"):SetText(strHeader)
-        self.wndLeftArea:FindChild("LeftAreaDescription"):SetText(strDescription)
+        local wndLeftHeader = self.wndLeftArea:FindChild("LeftAreaHeader")
+		wndLeftHeader:SetAML(string.format("<P Font=\"CRB_HeaderSmall\">%s</P>", strHeader))
+		wndLeftHeader:SetHeightToContentHeight()
+		if wndLeftHeader:GetHeight() >= 40 then
+			local nLeft, nTop, nRight, nBottom = wndLeftHeader:GetAnchorOffsets()
+			wndLeftHeader:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 40)
+			wndLeftHeader:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\">%s</P>", strHeader))
+		end
+		
+		local wndLeftAreaDescription = self.wndLeftArea:FindChild("LeftAreaDescription")
+		wndLeftAreaDescription:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\">%s</P>", strDescription))
+		wndLeftAreaDescription:SetHeightToContentHeight()
+		if wndLeftAreaDescription:GetHeight() >= 55 then
+			local nLeft, nTop, nRight, nBottom = wndLeftAreaDescription:GetAnchorOffsets()
+			wndLeftAreaDescription:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 55)
+			wndLeftAreaDescription:SetAML(string.format("<P Font=\"CRB_InterfaceSmall\">%s</P>", strDescription))
+		end
+		
 		self.wndLeftArea:FindChild("LeftAreaTypeIcon"):SetSprite(self:CalculateIconPath(tCurrChallenge:GetType()))
 		self.wndLeftArea:FindChild("LeftAreaTypeIcon"):SetTooltip(self:CalculateIconTooltip(tCurrChallenge:GetType()))
-        self.wndLeftArea:FindChild("RectangleForAnimation"):SetSprite("ClientSprites:WhiteFlash")
         self.idLeftArea = idChallenge
 
         self:UpdateLeftAreaTime()
@@ -194,7 +214,7 @@ end
 function Challenges:UpdateLeftAreaTime()
 	local strTimeRemaining = ChallengesLib.GetTimeRemaining(self.idLeftArea, ChallengesLib.ChallengeTimerFlags_Active)
 	local strCountdown = ChallengesLib.GetTimeRemaining(self.idLeftArea, ChallengesLib.ChallengeTimerFlags_LeftArea)
-    Apollo.StopTimer("ChallengeLeftAreaTimer")
+	self.timerAreaLeft:Stop()
 
 	if strTimeRemaining < strCountdown then
 		strCountdown = strTimeRemaining
@@ -202,7 +222,8 @@ function Challenges:UpdateLeftAreaTime()
 
 	if strCountdown ~= nil and strCountdown ~= ":" and strCountdown ~= "" then
         self.wndLeftArea:FindChild("LeftAreaTimeCountdown"):SetText(strCountdown)
-        Apollo.StartTimer("ChallengeLeftAreaTimer")
+		--timers currently can't be started during their callbacks, because of a Code bug.
+		self.timerAreaLeft = ApolloTimer.Create(0.500, false, "UpdateLeftAreaTime", self)
 	else
 		self.wndLeftArea:Show(false)
 		Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
@@ -257,12 +278,12 @@ function Challenges:OnScreenStartButton(idChallengeArg)
 end
 
 function Challenges:OnChallengeReward_SpinEnd()
-	Apollo.StopTimer("MaxChallengeRewardTime")
+	self.timerMax:Stop()
 	self.bRewardWheelSpinning = false
 end
 
 function Challenges:OnChallengeReward_SpinBegin()
-	Apollo.StartTimer("MaxChallengeRewardTime")
+	self.timerMax:Start()
 	self.bRewardWheelSpinning = true
 end
 
@@ -272,13 +293,13 @@ end
 
 function Challenges:OnChallengeCompleted(idChallenge, strHeader, strDescription, fDuration)
 	self:AddCompletedMessage(idChallenge, strHeader, strDescription, fDuration, LuaEnumTabState.Reward)
-	
+
 end
 
 function Challenges:OnChallengeFailGeneric(challenge, strHeader, strDescription, fDuration)
 	local idChallenge = challenge:GetId()
 	if self.idLeftArea == idChallenge then -- Also hide the warning window
-		Apollo.StopTimer("ChallengeLeftAreaTimer")
+		self.timerAreaLeft:Stop()
 		self.wndLeftArea:Show(false)
 		Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
 	end
@@ -293,7 +314,7 @@ end
 function Challenges:OnChallengeFailTime(challenge, strHeader, strDescription, fDuration)
 	local idChallenge = challenge:GetId()
 	if self.idLeftArea == idChallenge then -- Also hide the warning window
-		Apollo.StopTimer("ChallengeLeftAreaTimer")
+		self.timerAreaLeft:Stop()
 		self.wndLeftArea:Show(false)
 		Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
 	end
@@ -310,14 +331,14 @@ function Challenges:OnChallengeFailArea(chalFailed, strHeader, strDescription, f
 
 	-- Abstaining from fail message here
 	if self.idLeftArea == idChallenge then -- Also hide the warning window
-		Apollo.StopTimer("ChallengeLeftAreaTimer")
+		self.timerAreaLeft:Stop()
 		self.wndLeftArea:Show(false)
 		if not self.wndTracker:IsShown() then
 			Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
 		end
 		self.idLeftArea = 0
 	end
-	
+
 	if self.tUnlockedChallengeList and self.tUnlockedChallengeList[idChallenge] and self.tUnlockedChallengeList[idChallenge]:GetCurrentTier() > 0 then
 		self:AddCompletedMessage(idChallenge, strHeader, strDescription, fDuration, LuaEnumTabState.Reward)
 	else
@@ -327,10 +348,12 @@ function Challenges:OnChallengeFailArea(chalFailed, strHeader, strDescription, f
 end
 
 function Challenges:OnChallengeAreaRestriction(idChallenge, strHeader, strDescription, fDuration)
-	Apollo.StopTimer("ReallyLongAutoHideTimer")
-	Apollo.StartTimer("ReallyLongAutoHideTimer")
+	self.timerAutoHideLong:Stop()
+	self.timerAutoHideLong:Start()
 
-	self.wndCompletedDisplay:FindChild("CompletedDescription"):SetText(strDescription)
+	local wndCompletedDescription = self.wndCompletedDisplay:FindChild("CompletedDescription")
+	wndCompletedDescription:SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", strDescription))
+	wndCompletedDescription:SetHeightToContentHeight()
 	self.wndCompletedDisplay:FindChild("CompletedDescription"):SetData(strDescription) -- Remember this for later
 end
 
@@ -341,14 +364,14 @@ function Challenges:OnChallengeActivate(challenge)
 	self.wndMinimized:Show(false)
 	Sound.Play(Sound.PlayUIChallengeStarted)
 	Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", true)
-	
-	Apollo.StartTimer("RepeatingTimer")
+
+	self.timerRepeating:Start()
 	if self.bReallyLongAutoHideTimerActive then
-		Apollo.StopTimer("ReallyLongAutoHideTimer")
+		self.timerAutoHideLong:Stop()
 		self.bReallyLongAutoHideTimerActive = false
 	end
 	if self.bReallyShortAutoHideTimerActive then
-		Apollo.StopTimer("ReallyShortAutoHideTimer")
+		self.timerAutoHideShort:Stop()
 		self.bReallyShortAutoHideTimerActive = false
 	end
 end
@@ -357,18 +380,18 @@ function Challenges:OnChallengeUpdated(idChallenge)
 	if self.wndTracker:IsShown() or (self.wndLeftArea:IsShown() and idChallenge == self.idLeftArea) then
 		return
 	end
-	
+
 	if self.tUnlockedChallengeList then
 		local bIsActive = false
 		local clgUpdated = self.tUnlockedChallengeList[idChallenge]
-		
+
 		if clgUpdated then
 			for idx, clgActive in pairs(self.tActiveChallenges) do
 				if clgActive == clgUpdated then
 					bIsActive = true
 				end
 			end
-			
+
 			if bIsActive then
 				self:OnChallengeActivate(clgUpdated)
 			end
@@ -384,14 +407,6 @@ end
 ----------------------------------------------------------------------------------------------------------
 -- Simple UI buttons
 ----------------------------------------------------------------------------------------------------------
-
-function Challenges:OnLeaveAreaMouseEnter(wndHandler, wndControl)
-	wndHandler:FindChild("TrackerAbandonButton"):Show(true)
-end
-
-function Challenges:OnLeaveAreaMouseExit(wndHandler, wndControl)
-	wndHandler:FindChild("TrackerAbandonButton"):Show(false)
-end
 
 function Challenges:OnHintArrow(wndHandler, wndControl)
 	if not wndHandler or not wndHandler:GetData() then  -- wndHandler is TrackerHintButton
@@ -465,7 +480,7 @@ end
 
 function Challenges:StartTracker(idChallenge)
     if not self.tUnlockedChallengeList or self:GetTableSize(self.tUnlockedChallengeList) == 0 then
-		Apollo.StopTimer("RepeatingTimer")
+		self.timerRepeating:Stop()
 		return
 	end
 	local clgLocal = self.tUnlockedChallengeList[idChallenge]
@@ -486,8 +501,8 @@ function Challenges:StartTracker(idChallenge)
     self.clgActive = clgLocal
     self.wndCompletedDisplay:Show(false)
 
-	Apollo.StopTimer("ReallyLongAutoHideTimer")
-	Apollo.StopTimer("ReallyShortAutoHideTimer")
+	self.timerAutoHideLong:Stop()
+	self.timerAutoHideShort:Stop()
 	self.bReallyLongAutoHideTimerActive = false
 	self.bReallyShortAutoHideTimerActive = false
 end
@@ -496,6 +511,10 @@ end
 function Challenges:OnRepeatingTimer()
 	local tChallengeData = ChallengesLib.GetActiveChallengeList()
 	self.tUnlockedChallengeList = tChallengeData
+	
+	--if HideTracker was called from RepeatingTimer which is the callback from self.timerRepeating
+	--then we don't want to stop the timer, which is what HideTracker can do.
+	self.bStopRepeatingTimer = false
 	-- Early Exit if invalid
 	if not tChallengeData or self:GetTableSize(tChallengeData) == 0 then
 		if self.wndBigDisplay:IsShown() and not self.wndCompletedDisplay:IsShown() then
@@ -506,7 +525,6 @@ function Challenges:OnRepeatingTimer()
 
 	-- Early Exit if minimized (a challenge start event will hide wndMinimized for us)
 	if self.wndMinimized:IsShown() then
-		--Apollo.StopTimer("RepeatingTimer")
 		return
 	end
 
@@ -554,16 +572,24 @@ function Challenges:OnRepeatingTimer()
 
 			-- If subzone == 0 (no restriction), or in the subzone, then enable the button
 			local idSubZone = clgCurrent:GetZoneRestrictionInfo().idSubZone
+			local wndCompletedDescription = self.wndCompletedDisplay:FindChild("CompletedDescription")
 			if idSubZone == 0 or GameLib.IsInWorldZone(idSubZone) or clgCurrent:ShouldCollectReward() then
 				wndFailRetryBtn:Enable(not clgCurrent:ShouldCollectReward() and not clgCurrent:IsInCooldown())
 				wndRewardRetryBtn:Enable(not clgCurrent:ShouldCollectReward() and not clgCurrent:IsInCooldown())
-				self.wndCompletedDisplay:FindChild("CompletedDescription"):SetText(self.wndCompletedDisplay:FindChild("CompletedDescription"):GetData())
+				wndCompletedDescription:SetText(wndCompletedDescription:GetData())
 			else
 				wndFailRetryBtn:Enable(false)
 				wndRewardRetryBtn:Enable(false)
-				self.wndCompletedDisplay:FindChild("CompletedDescription"):SetText(Apollo.GetString("Challenges_AreaReq"))
+				wndCompletedDescription:SetText(Apollo.GetString("Challenges_AreaReq"))
 			end
-		end
+			
+			wndCompletedDescription:SetHeightToContentHeight()
+			if wndCompletedDescription:GetHeight() >= 55 then
+				local nLeft, nTop, nRight, nBottom = wndCompletedDescription:GetAnchorOffsets()
+				wndCompletedDescription:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 55)
+				wndCompletedDescription:SetText(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">%s</P>", wndCompletedDescription:GetData()))
+			end
+	end
 	end
 
 	self:AutoPromoteAnActiveTab(bThereIsACurrChallenge, bThereIsAnActiveChallenge)
@@ -604,16 +630,15 @@ function Challenges:OnRepeatingTimer()
 	-- Start autohide if needed
 	local bAutoHideNeeded = self.wndTracker:IsShown() and self.wndCompletedDisplay:IsShown() and not bThereIsAnActiveChallenge
 	if bAutoHideNeeded and not self.bReallyLongAutoHideTimerActive then
-		Apollo.CreateTimer("ReallyLongAutoHideTimer", kfReallyLongAutoHideTime, false)
+		self.timerAutoHideLong:Start()
 		self.bReallyLongAutoHideTimerActive = true
 	elseif bAutoHideNeeded and not self.bReallyShortAutoHideTimerActive and self:HelperAllChallengesInCooldown(tChallengeData) then
-		Apollo.CreateTimer("ReallyShortAutoHideTimer", kfReallyShortAutoHideTime, false)
-		Apollo.StartTimer("ReallyShortAutoHideTimer")
+		self.timerAutoHideShort:Start()
 		self.bReallyShortAutoHideTimerActive = true
 	end
 
 	-- TODO Remove this entirely
-	-- The display anchor will appear when docked the tracker is within 25 pixels of the right screen edge	
+	-- The display anchor will appear when docked the tracker is within 25 pixels of the right screen edge
 	--local nLeft, nTop, nRight, nBottom = self.wndTracker:GetAnchorOffsets()
 	--local bRightScreenEdge = nRight < 25 and nRight > -2
 	--self.wndTracker:FindChild("TrackerMinimizeButton"):Show(bRightScreenEdge or self.wndTracker:ContainsMouse())
@@ -633,11 +658,31 @@ function Challenges:OnWndMinimizedMove(wndHandler, wndControl)
 end
 
 function Challenges:DrawActiveChallenge(idChallenge, clgActive)
+
+local wndTrackerDesc = self.wndBigDisplay:FindChild("TrackerDescription")
+local wndTrackerTitle = self.wndBigDisplay:FindChild("TrackerTitle")
 	if self.wndTracker:IsShown() and self.wndBigDisplay:IsShown() then
-		self.wndBigDisplay:FindChild("TrackerTitle"):SetText(clgActive:GetName())
-		self.wndBigDisplay:FindChild("TrackerTitle"):SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff9d9d9d\">%s</P>", clgActive:GetName()))
-		self.wndBigDisplay:FindChild("TrackerDescription"):SetText(clgActive:GetDescription())
-		self.wndBigDisplay:FindChild("TrackerDescription"):SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff9d9d9d\">%s</P>", clgActive:GetDescription()))
+		
+		wndTrackerDesc:SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", clgActive:GetDescription()))
+		wndTrackerDesc:SetHeightToContentHeight()
+		wndTrackerDesc:SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffffffff\">%s</P>", clgActive:GetDescription()))
+		wndTrackerTitle:SetText(string.format("<P Font=\"CRB_HeaderSmall\" TextColor=\"UI_TextHoloTitle\">%s</P>", clgActive:GetName()))
+		wndTrackerTitle:SetHeightToContentHeight()
+		wndTrackerTitle:SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffffffff\">%s</P>", clgActive:GetName()))
+		
+		local nLeft, nTop, nRight, nBottom = wndTrackerDesc:GetAnchorOffsets()
+
+		if wndTrackerTitle:GetHeight() >= 40 then
+			wndTrackerTitle:SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloTitle\">%s</P>", clgActive:GetName()))
+			wndTrackerTitle:SetHeightToContentHeight()
+		end
+		
+		if wndTrackerDesc:GetHeight() >= 55 or nTop >= 60 then -- Will be  60+ if wndTrackerTitle is 3 lines tall
+			wndTrackerDesc:SetText(string.format("<P Font=\"CRB_InterfaceTiny_BB\" TextColor=\"UI_TextHoloBody\">%s</P>", clgActive:GetDescription()))
+		end
+		
+		local nLeft2, nTop2, nRight2, nBottom3 = wndTrackerTitle:GetAnchorOffsets()
+		wndTrackerDesc:SetAnchorOffsets(nLeft, nBottom3 + 5, nRight, nBottom)
 		self.wndBigDisplay:FindChild("TrackerTypeIcon"):SetSprite(self:CalculateIconPath(clgActive:GetType()))
 		self.wndBigDisplay:FindChild("TrackerTypeIcon"):SetTooltip(self:CalculateIconTooltip(clgActive:GetType()))
 		self.wndBigDisplay:FindChild("TrackerOutcroppingArt:TrackerBigCountdown"):SetAML(self:CalculateMLTimeText(clgActive, kstrBigTimerFontPath))
@@ -700,12 +745,12 @@ function Challenges:DrawActiveChallenge(idChallenge, clgActive)
 		-- TODO need string weasel
 		local strProgressText = ""
 		if nCurrent == 0 and nTotal == 1 then
-			strProgressText = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\" Align=\"Center\">--/--</P>", kstrFadedBlue)
+			strProgressText = string.format("<P Font=\"CRB_HeaderTiny\" TextColor=\"%s\" Align=\"Center\">--/--</P>", kstrFadedBlue)
 		elseif nTotal == 100 then
-			strProgressText = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\" Align=\"Center\">%s</P>", kstrBrightBlue, strPercent)
+			strProgressText = string.format("<P Font=\"CRB_HeaderTiny\" TextColor=\"%s\" Align=\"Center\">%s</P>", kstrBrightBlue, strPercent)
 		else
-			local strHighlighted = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrBrightBlue, nCurrent)
-			strProgressText = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\" Align=\"Center\">%s/%s</P>", kstrFadedBlue, strHighlighted, nTotal)
+			local strHighlighted = string.format("<T Font=\"CRB_HeaderTiny\" TextColor=\"%s\">%s</T>", kstrBrightBlue, nCurrent)
+			strProgressText = string.format("<P Font=\"CRB_HeaderTiny\" TextColor=\"%s\" Align=\"Center\">%s/%s</P>", kstrFadedBlue, strHighlighted, nTotal)
 		end
 		self.wndBigDisplay:FindChild("TrackerProgressContainer:TrackerProgressText"):SetAML(strProgressText)
 
@@ -719,7 +764,7 @@ function Challenges:DrawActiveChallenge(idChallenge, clgActive)
 	if nCurrent ~= 0 and self.nLastChallengeIdForFlash == idChallenge then
 		local wndTierCurrentProgressText = wndTierContainer:FindChild("TierCurrentProgressContainer:TierCurrentProgressText")
 		local wndTrackerProgressText = self.wndBigDisplay:FindChild("TrackerProgressContainer:TrackerProgressText")
-		
+
 		if bTieredChallenge and nCurrent ~= wndTierCurrentProgressText:GetData() then
 			wndTierCurrentProgressText:SetData(nCurrent)
 			self.wndBigDisplay:FindChild("TrackerFlashAnimArt"):SetSprite("CRB_ChallengeTrackerSprites:sprChallengeStatusFlash")
@@ -754,8 +799,11 @@ function Challenges:DrawCompletedMessage(nNewSelection, eRewardOrFailState)
 	-- Draw
 	self.wndBigDisplay:FindChild("TrackerAbandonButton"):SetData(clgCurrent)
 	self.wndCompletedDisplay:SetData(clgCurrent)
-	self.wndCompletedDisplay:FindChild("CompletedDescription"):SetText(tCompletedStrings[3])
-	self.wndCompletedDisplay:FindChild("CompletedDescription"):SetData(tCompletedStrings[3]) -- Remember for alter
+	
+	local wndCompletedDescription = self.wndCompletedDisplay:FindChild("CompletedDescription")
+	wndCompletedDescription:SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", tCompletedStrings[3]))
+	wndCompletedDescription:SetHeightToContentHeight()	
+	self.wndCompletedDisplay:FindChild("CompletedDescription"):SetData(tCompletedStrings[3]) -- Remember for later
 	self.wndCompletedDisplay:FindChild("CompletedTypeIcon"):SetSprite(self:CalculateIconPath(clgCurrent:GetType()))
 	self.wndCompletedDisplay:FindChild("CompletedTypeIcon"):SetTooltip(self:CalculateIconTooltip(clgCurrent:GetType()))
 
@@ -787,25 +835,34 @@ function Challenges:DrawCompletedMessage(nNewSelection, eRewardOrFailState)
 	end
 
 	local strCompletedSprite = ""
-	local strHeaderColor = "ffffffff"
+	local strHeaderColor = "UI_TextHoloTitle"
 	local idChallenge = clgCurrent:GetId()
 	if eRewardOrFailState == LuaEnumTabState.Reward then
-		if clgCurrent:ShouldCollectReward() then 
-			wndRewardContainer:FindChild("RewardLootButton"):SetData(idChallenge) 
+		if clgCurrent:ShouldCollectReward() then
+			wndRewardContainer:FindChild("RewardLootButton"):SetData(idChallenge)
 		end
 		wndRewardContainer:FindChild("RewardFlashAnimArt"):SetSprite("CRB_ChallengeTrackerSprites:sprChallengeStatusFlash")
 		wndRewardContainer:FindChild("RewardRetryButton"):SetData(idChallenge)
 		strCompletedSprite = "CRB_ChallengeTrackerSprites:sprChallengeStatusPass"
-		strHeaderColor = "ffffffff"
-		
+		strHeaderColor = "UI_TextHoloTitle"
+
 	elseif eRewardOrFailState == LuaEnumTabState.Fail then
 		if clgCurrent:ShouldCollectReward() then wndFailContainer:FindChild("FailLootButton"):SetData(idChallenge) end
 		wndFailContainer:FindChild("FailRetryButton"):SetData(idChallenge)
 		strCompletedSprite = "CRB_ChallengeTrackerSprites:sprChallengeStatusFail"
-		strHeaderColor = "fffb2f35"
+		strHeaderColor = "xkcdReddish"
 	end
 	self.wndCompletedDisplay:FindChild("CompletedStatus"):SetSprite(strCompletedSprite)
-	self.wndCompletedDisplay:FindChild("CompletedTitle"):SetAML(string.format("<P Font=\"CRB_InterfaceLarge_B\" TextColor=\"%s\">%s</P>", strHeaderColor, tCompletedStrings[2]))
+	
+	local wndCompletedTitle = self.wndCompletedDisplay:FindChild("CompletedTitle")
+	wndCompletedTitle:SetAML(string.format("<P Font=\"CRB_HeaderSmall\" TextColor=\"%s\">%s</P>", strHeaderColor, tCompletedStrings[2]))
+	wndCompletedTitle:SetHeightToContentHeight()
+
+	if wndCompletedTitle:GetHeight() >= 40 then
+		local nLeft, nTop, nRight, nBottom = wndCompletedTitle:GetAnchorOffsets()
+		wndCompletedTitle:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 40)
+		wndCompletedTitle:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</P>", strHeaderColor, tCompletedStrings[2]))
+	end
 end
 
 function Challenges:AddCompletedMessage(idChallenge, strHeader, strDescription, fDuration, eRewardOrFailState)
@@ -923,23 +980,36 @@ function Challenges:HelperDrawTab(clgCurrent, idTab) 	-- Note: tDataForTab can b
 		wndTrackerTab:Show(false)
 
 	elseif eState == LuaEnumTabState.Fail or eState == LuaEnumTabState.Reward then
-
+		local wndTrackerTabTimerText = wndTrackerTab:FindChild("TrackerTabTimeText")
 		local strColor = ""
+		local nTextWidth = ""
 		local strMessage = "" -- Hardcode art paths for translation
 		if eState == LuaEnumTabState.Reward then
 			strColor = kstrBrightGreen
 			strMessage = "<T TextColor=\"00000000\">.</T>" .. kstrPassTabTest
+			nTextWidth = Apollo.GetTextWidth(kstrSmallTimerFontPath, kstrPassTabTest)
 			wndTrackerTab:ChangeArt("CRB_ChallengeTrackerSprites:btnChallengeTabPassed")
 		elseif eState == LuaEnumTabState.Fail then
 			strColor = kstrBrightRed
 			strMessage = "<T TextColor=\"00000000\">..</T>" .. kstrFailTabTest
+			nTextWidth = Apollo.GetTextWidth(kstrSmallTimerFontPath, kstrFailTabTest)
 			wndTrackerTab:ChangeArt("CRB_ChallengeTrackerSprites:btnChallengeTabFailed")
 		end
-		wndTrackerTab:FindChild("TrackerTabTimeText"):SetAML(string.format("<P Font=\"%s\" TextColor=\"%s\">%s</P>", kstrSmallTimerFontPath, strColor, strMessage))
+		
+		wndTrackerTabTimerText:SetAML(string.format("<P Font=\"%s\" TextColor=\"%s\">%s</P>", kstrSmallTimerFontPath, strColor, strMessage))		
+
+		if nTextWidth > wndTrackerTabTimerText:GetWidth() - 20 then -- -20 for icon spacing
+			local nLeft, nTop, nRight, nBottom = wndTrackerTab:GetAnchorOffsets()
+			wndTrackerTab:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + 40, nBottom)
+		end
 
 	elseif eState ~= LuaEnumTabState.Empty and clgCurrent then
 
 		wndTrackerTab:FindChild("TrackerTabTimeText"):SetAML(self:CalculateMLTimeText(clgCurrent, kstrSmallTimerFontPath))
+		local nLeft, nTop, nRight, nBottom = wndTrackerTab:GetAnchorOffsets()
+		wndTrackerTab:SetAnchorOffsets(nLeft, nTop, nLeft + 68, nBottom)
+
+
 
 	end
 
@@ -1043,6 +1113,12 @@ function Challenges:AutoPromoteAnActiveTab()
 	--if not bThereIsAnActiveChallenge and not bThereIsARewardStateToBeRead and not
 end
 
+function Challenges:GenerateSpellTooltip( wndHandler, wndControl, eType, splSource )
+	if eType == Tooltip.TooltipGenerateType_Spell then
+		Tooltip.GetSpellTooltipForm(self, wndControl, splSource)
+	end
+end
+
 ----------------------------------------------------------------------------------------------------------
 -- Helper Methods For the Entire Class
 ----------------------------------------------------------------------------------------------------------
@@ -1121,6 +1197,8 @@ function Challenges:CalculateIconTooltip(eType)
 		tInfo["name"] = Apollo.GetString("Challenges_GeneralChallenge")
 	elseif eType == ChallengesLib.ChallengeType_Item then
 		tInfo["name"] = Apollo.GetString("Challenges_ItemChallenge")
+	elseif eType == ChallengesLib.ChallengeType_ChecklistActivate then
+		tInfo["name"] = Apollo.GetString("Challenges_ActivateChallenge")
 	end
 
 	if tInfo["name"] ~= "" then
@@ -1159,8 +1237,11 @@ function Challenges:HideTracker()
 	self:ShowOrHideTabContainer(false)
 	self.wndCompletedDisplay:Show(false)
 	self.wndMinimized:Show(not self.wndMinimized:IsShown())
-	Apollo.StopTimer("RepeatingTimer")
-	
+
+	if self.bStopRepeatingTimer then
+		self.timerRepeating:Stop()
+	end
+
 	if not self.wndTracker:IsShown() and not self.wndLeftArea:IsShown() then
 		Event_FireGenericEvent("GenericEvent_ChallengeTrackerToggled", false)
 	end
@@ -1198,15 +1279,15 @@ function Challenges:ShowOrHideTabContainer(bArgument)
 end
 
 function Challenges:OnAutoHideTimer()
-    Apollo.StopTimer("ReallyLongAutoHideTimer")
-    Apollo.StopTimer("ReallyShortAutoHideTimer")
+	self.timerAutoHideLong:Stop()
+	self.timerAutoHideShort:Stop()
 	self.bReallyLongAutoHideTimerActive = false
 	self.bReallyShortAutoHideTimerActive = false
 
 	for idx, wndTab in pairs(self.tWndTrackerTabs) do
 		wndTab:SetData(LuaEnumTabState.Empty)
 	end
-
+	self.bStopRepeatingTimer = true
 	self:HideTracker()
 	self:OnBlankMinimizeClick() -- Reset the Minimized Window state
 end
@@ -1302,8 +1383,8 @@ function Challenges:OnBlankBtn()
 end
 
 function Challenges:OnTrackerMinimizeButton()
-	Apollo.StopTimer("ReallyLongAutoHideTimer")
-    Apollo.StopTimer("ReallyShortAutoHideTimer")
+	self.timerAutoHideLong:Stop()
+	self.timerAutoHideShort:Stop()
 	self.bReallyLongAutoHideTimerActive = false
 	self.bReallyShortAutoHideTimerActive = false
 	self.wndTracker:Close() -- Just the tracker, we can't use HideTracker()

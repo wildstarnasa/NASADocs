@@ -52,11 +52,16 @@ function Keybind:OnDocumentReady()
 	Apollo.RegisterEventHandler("KeyBindingUpdated", 			"RefreshKeybindList", self) -- reload keybind list
 	Apollo.RegisterEventHandler("KeyBindingReceived", 			"UpdateCopySet", self) -- received the copy set from db
 	Apollo.RegisterSlashCommand("keybind", 						"OnShow", self)
+	
+	-- if without the delay: while dropdown list is visible (and dropdown button is disabled), click on the dropdown button -> 
+	-- exit modifier dropdown (close on external click) would close the dropdown and enable dropdown button, 
+	-- dropdown button would send a "button up" message, which would trigger the dropdown list to open again
+	-- solution: add a delay to exiting modifier to delay the re-enabling of the dropdown button until after the click is done
+	self.timerModifierSelectionDelay = ApolloTimer.Create( 0.010, false, "OnExitModifierTimer", self )
+	self.timerModifierSelectionDelay:Start()
 
 	-- Setting up the main keybind interface forms
 	self.wndKeybindForm 	= Apollo.LoadForm(self.xmlDoc, "KeybindForm", nil, self)
-	self.wndKeybindBlocker 	= Apollo.LoadForm(self.xmlDoc, "KeybindBlockerForm", nil, self)
-
 	if self.locSavedWindowLoc then
 		self.wndKeybindForm:MoveToLocation(self.locSavedWindowLoc)
 	end
@@ -64,7 +69,6 @@ function Keybind:OnDocumentReady()
 	self.wndKeybindList 	= self.wndKeybindForm:FindChild("KeybindList") --this is the empty list keybinds load into
 	self.wndFeedback 		= self.wndKeybindForm:FindChild("FeedbackText")
 	self.wndDuplicateMsg 	= self.wndKeybindForm:FindChild("DuplicateMsg")
-	self.wndListBlocker 	= self.wndKeybindForm:FindChild("KeybindListBlocker")
 
 	self.wndSetSelectionBtn	= self.wndKeybindForm:FindChild("SetSelection")
 	self.wndSetSave 		= self.wndKeybindForm:FindChild("SaveSetButton")
@@ -72,9 +76,12 @@ function Keybind:OnDocumentReady()
 	self.wndBindUnbind 		= self.wndKeybindForm:FindChild("UnbindButton")
 	self.wndBindCancel 		= self.wndKeybindForm:FindChild("CancelButton")
 	self.wndUndoUnbind 		= self.wndKeybindForm:FindChild("UndoBindButton")
+	self.wndRestoreDefaultsBtn = self.wndKeybindForm:FindChild("RestoreDefaults")
 
 	self.wndVerifyYes 		= self.wndKeybindForm:FindChild("ConfirmBindButton")
 	self.wndVerifyNo 		= self.wndKeybindForm:FindChild("CancelBindButton")
+	
+	self.wndCollapseAllBtn 	= self.wndKeybindForm:FindChild("ToggleCategory")
 
 	self.wndOkForm 			= self.wndKeybindForm:FindChild("OkForm")	--this form is for displaying message
 	self.wndOkForm:Show(false)
@@ -112,7 +119,6 @@ function Keybind:OnDocumentReady()
 	self.wndYesNoForm:Show(false)
 
 	self.wndKeybindForm:Show(false, true)
-	self.wndKeybindBlocker:Show(false, true)
 end
 
 function Keybind:OnWindowManagementReady()
@@ -130,7 +136,6 @@ end
 function Keybind:OnShow()
     GameLib.PauseGameActionInput(true)
 
-	self.wndKeybindBlocker:Invoke()
 	self.wndKeybindForm:Invoke() -- Order matters, needs to be infront of blocker
 
     -- get current key set
@@ -435,6 +440,14 @@ function Keybind:OnEscapeSetSelect()
     self:SetState(LuaEnumKeybindingState.Idle)
 end
 
+function Keybind:OnEscapeSelectModifier( wndHandler, wndControl )
+	self.timerModifierSelectionDelay:Start()
+end
+
+function Keybind:OnExitModifierTimer()
+	self:SetState(LuaEnumKeybindingState.Idle)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Helper functions
 ---------------------------------------------------------------------------------------------------
@@ -442,12 +455,13 @@ end
 -- enable all set select/save/cancel/copy buttons
 function Keybind:EnableSetButtons(bEnable)
 	self.wndSetSelectionBtn:Enable(bEnable)
+	self.wndRestoreDefaultsBtn:Enable(bEnable)
 end
 
 -- enable binding buttons
 function Keybind:EnableBindingButtons(bEnable)
     self.wndKeybindList:Enable(bEnable)
-    self.wndListBlocker:Show(not bEnable)
+	self.wndCollapseAllBtn:Enable(bEnable) 
 end
 
 -- enable save/cancel buttons
@@ -486,7 +500,6 @@ function Keybind:SetState(eState)
     elseif eState == LuaEnumKeybindingState.SelectingSet then
         self:ShowBindingInterface(false)
         self:EnableBindingButtons(false)
-        self:EnableSetButtons(false)
 		self:EnableSaveCancelButtons(true)
 	else
         Print( Apollo.GetString("CRB_ERROR_KeybindSetState__unhandled_sta") )
@@ -543,7 +556,7 @@ function Keybind:ShowBindingInterface(bShow)
 
 	end
 	self.wndModifierSelection:Show(bShowSelectModifier)
-	self.wndKeybindList:Enable(not bShowSelectModifier) -- disable keybind list if picking modifier
+	self:EnableBindingButtons(not bShowSelectModifier) -- disable keybind list if picking modifier
 	self.wndBindUnbind:Show(bShowSelectBinding)
 	self.wndBindCancel:Show(bShowSelectBinding)
 	if bShowSelectBinding then
@@ -992,7 +1005,6 @@ function Keybind:OnClose()
 	self.wndCurrModifierBind = nil
     self.eState = LuaEnumKeybindingState.Idle
     self.wndKeybindForm:Close()
-	self.wndKeybindBlocker:Close()
 
 	self.tItems = {}
 	self.wndKeybindList:DestroyChildren()
@@ -1049,6 +1061,7 @@ function Keybind:OnModifierSelected(wndHandler, wndControl, eMouseButton)
 		end
 	else
 		self:FinalizeModifierSelected(tModifierSelectedState)
+		self:SetState(LuaEnumKeybindingState.Idle)
 	end
 end
 
@@ -1116,8 +1129,8 @@ function Keybind:FinalizeModifierSelected(tModifierSelectedState)
 			end
 		end
 	end
-
-	self:SetState(LuaEnumKeybindingState.Idle)
+	
+	self.wndModifierSelection:Show(false)
 
 	return true
 end
@@ -1139,7 +1152,7 @@ function Keybind:IsModifierInUse(newCode)
 	return false
 end
 
-function Keybind:OnModifierDropdownToggle(wndHandler, wndControl, eMouseButton)
+function Keybind:OnModifierDropdownCheck(wndHandler, wndControl, eMouseButton)
 
 	if wndHandler ~= wndControl or eMouseButton ~= GameLib.CodeEnumInputMouse.Left then
 		return false
@@ -1161,7 +1174,7 @@ end
 
 function Keybind:OnCategoryClick(wndHandler, wndControl)
 	if self.bCollapseAll then
-		self.wndKeybindForm:FindChild("ToggleCategory"):SetText(Apollo.GetString("CRB_Collapse_All"))
+		self.wndCollapseAllBtn:SetText(Apollo.GetString("CRB_Collapse_All"))
 		self.bCollapseAll = false
 	end
 
@@ -1175,7 +1188,7 @@ function Keybind:OnCategoryClick(wndHandler, wndControl)
 	end
 
 	if self.nCollapsedCount == self.nCategoryCount then
-		self.wndKeybindForm:FindChild("ToggleCategory"):SetText(Apollo.GetString("CRB_Expand_All"))
+		self.wndCollapseAllBtn:SetText(Apollo.GetString("CRB_Expand_All"))
 		self.bCollapseAll = true
 	end
 
@@ -1186,11 +1199,11 @@ end
 
 function Keybind:OnToggleCategories(wndHandler, wndControl)
 	if self.bCollapseAll then
-		self.wndKeybindForm:FindChild("ToggleCategory"):SetText(Apollo.GetString("CRB_Collapse_All"))
+		self.wndCollapseAllBtn:SetText(Apollo.GetString("CRB_Collapse_All"))
 		self.tCollapsedCategories = {}
 		self.nCollapsedCount = 0
 	else
-		self.wndKeybindForm:FindChild("ToggleCategory"):SetText(Apollo.GetString("CRB_Expand_All"))
+		self.wndCollapseAllBtn:SetText(Apollo.GetString("CRB_Expand_All"))
 
 		local arActionCategories = GameLib.GetInputActionCategories()
 		for iCategory = 1, self.nCategoryCount do

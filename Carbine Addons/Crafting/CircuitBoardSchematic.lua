@@ -21,7 +21,7 @@ local ktCraftingAttributeIconsText =
 	[Unit.CodeEnumProperties.Rating_CritChanceDecrease] 	= {"Icon_Windows_UI_CRB_Attribute_DeflectCritical", 	Apollo.GetString("CRB_Deflect_Critical_Hit_Rating")},
 	[Unit.CodeEnumProperties.BaseHealth] 					= {"Icon_Windows_UI_CRB_Attribute_Health", 				Apollo.GetString("CRB_Health_Max")},
 
-	[Unit.CodeEnumProperties.ManaPerFiveSeconds] 			= {"IconSprites:Icon_Mission_Scientist_ScanHistory", 	Apollo.GetString("CRB_Attribute_Recovery_Rating")},
+	[Unit.CodeEnumProperties.ManaPerFiveSeconds] 			= {"Icon_Windows_UI_CRB_Attribute_Recovery", 			Apollo.GetString("CRB_Attribute_Recovery_Rating")},
 	[Unit.CodeEnumProperties.Armor] 						= {"Icon_Windows_UI_CRB_Attribute_Armor", 				Apollo.GetString("CRB_Armor") },
 	[Unit.CodeEnumProperties.ShieldCapacityMax] 			= {"Icon_Windows_UI_CRB_Attribute_ShieldCap", 			Apollo.GetString("CBCrafting_Shields")},
 }
@@ -158,16 +158,20 @@ function CircuitBoardSchematic:Init(luaOwner, xmlDoc, wndParent, idSchematic, bP
 	self.wndArrowTutorial = -1 -- This is -1 if not set yet, then 0 after it's been set (and we no longer ever want to show it)
 	self.bPreviewOnly = bPreviewOnly
 
+	self:Initialize(self.tSchematicInfo)
+	self:UpdatePreview()
+
 	local tNetworkTimingIssueHack = nil
 	local tCurrentCraft = CraftingLib.GetCurrentCraft()
+	if bPreviewOnly == nil then
+		self.tSocketButtons[1]:Enable(false)
+	end
+
 	if bPreviewOnly or not bHasMaterials then
-		-- Do nothing
+		self.tSocketButtons[1]:Enable(true)
 	elseif tCurrentCraft and tCurrentCraft.nSchematicId == idSchematic then
 		tNetworkTimingIssueHack = tCurrentCraft
 	end
-
-	self:Initialize(self.tSchematicInfo)
-	self:UpdatePreview()
 
 	-- Reset UI
 	self.wndMain:FindChild("FailPercentText"):Show(false)
@@ -294,7 +298,7 @@ function CircuitBoardSchematic:Initialize(tSchematicInfo)
 
 					local wndCurrItem = Apollo.LoadForm(self.xmlDoc, "PowerCoreItemBtn", wndPowerPicker:FindChild("PowerCorePickerList"), self)
 					wndCurrItem:FindChild("PowerCoreItemSprite"):SetSprite(tCurrentPowerCore:GetIcon())
-					wndCurrItem:FindChild("PowerCoreItemSprite"):SetText(tCurrentPowerCore:GetBackpackCount())
+					wndCurrItem:FindChild("PowerCoreItemSprite"):SetText(tCurrentPowerCore:GetBackpackCount()) -- Makes sense to not include bank count here
 					wndCurrItem:SetData(tCurrentPowerCore)
 					self:HelperBuildItemTooltip(wndCurrItem, tCurrentPowerCore)
 				end
@@ -344,7 +348,6 @@ function CircuitBoardSchematic:UpdatePreview()
 		end
 	end
 
-	local bReagentsMet = true
 	local bDidSelections = true
 	local bFoundASocket = false
 	for idx, tSocket in ipairs(tCraftInfo.tSockets) do
@@ -353,8 +356,7 @@ function CircuitBoardSchematic:UpdatePreview()
 
 		-- Draw Sockets
 		if nLayoutLoc and wndSocketButton and wndSocketButton:FindChild("CircuitPickerIcon") then
-			local bLocalReagentsMet, bLocalSelection = self:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, bParentBlocker)
-			bReagentsMet = bReagentsMet and bLocalReagentsMet
+			local bLocalSelection = self:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, bParentBlocker)
 			bDidSelections = bDidSelections and bLocalSelection
 			bFoundASocket = true
 		end
@@ -368,23 +370,20 @@ function CircuitBoardSchematic:UpdatePreview()
 	elseif not bDidSelections then
 		strPopupText = string.format("<P Font=\"CRB_InterfaceSmall_O\" Align=\"Center\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", Apollo.GetString("CBCrafting_NeedMoreSelections"))
 	elseif not bHaveBagSpace then
-		strPopupText = string.format("<P Font=\"CRB_InterfaceSmall_O\" Align=\"Center\" TextColor=\"AddonError\">%s</P>", Apollo.GetString("CBCrafting_NoBagSpace"))
+		strPopupText = string.format("<P Font=\"CRB_InterfaceSmall_O\" Align=\"Center\" TextColor=\"xkcdReddish\">%s</P>", Apollo.GetString("CBCrafting_NoBagSpace"))
 	elseif not bFoundASocket then
 		strPopupText = string.format("<P Font=\"CRB_InterfaceSmall_O\" Align=\"Center\" TextColor=\"UI_TextMetalBodyHighlight\">%s</P>", Apollo.GetString("CBCrafting_NoSocketsNoInputNeeded"))
-	elseif not bReagentsMet then
-		strPopupText = string.format("<P Font=\"CRB_InterfaceSmall_O\" Align=\"Center\" TextColor=\"AddonError\">%s</P>", Apollo.GetString("CBCCrafting_NoReagentMaterials"))
 	end
 
 	self.wndMain:FindChild("WarningWindowText"):SetAML(strPopupText or "")
 	self.wndMain:FindChild("WarningWindowText"):Show(string.len(strPopupText or "") > 0 and not bParentBlocker)
-	self.wndMain:FindChild("CraftButton"):Enable(bOverchargeCanCraft and bDidSelections and bHaveBagSpace and bReagentsMet and not bParentBlocker)
+	self.wndMain:FindChild("CraftButton"):Enable(bOverchargeCanCraft and bDidSelections and bHaveBagSpace and not bParentBlocker)
 
 	-- Tooltip
 	self:HelperBuildTooltip(self.wndMain, self.wndMain:FindChild("TooltipHolder"), tCraftInfo.itemPreview)
 end
 
 function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, bParentBlocker)
-	local bLocalReagentsMet = true
 	local nSocket = self.tLayoutLocToIdx[nLayoutLoc]
 	local tSocketIdxData = nSocket and self.tSchematicInfo.tSockets[nSocket] or nil
 
@@ -399,16 +398,20 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 
 	-- Icon Text
 	if tSocket.arProperties and tSocket.arProperties[1] then
-		wndSocketButton:FindChild("CircuitPickerIconText"):SetText(tSocket.arProperties[1].nValue and ("+"..tSocket.arProperties[1].nValue) or "")
+		wndSocketButton:FindChild("CircuitPickerIconText"):SetText(String_GetWeaselString(Apollo.GetString("CBCrafting_PlusChipValue"), tSocket.arProperties[1].nValue))
+	else
+		wndSocketButton:FindChild("CircuitPickerIconText"):SetText("")
 	end
 
 	-- Icon Multiply (TODO TEMP HACK!)
 	local tItemChipInfo = itemCurr and itemCurr:GetMicrochipInfo() or nil
 	if tItemChipInfo and tItemChipInfo.eType then
 		if tItemChipInfo.eType == Item.CodeEnumMicrochipType.Capacitor then
-			wndSocketButton:FindChild("CircuitPickerIcon"):SetBGColor("2x:ffff0000")
+			wndSocketButton:FindChild("CircuitPickerIcon"):SetBGColor("UI_WindowTextCraftingRedCapacitor")
 		elseif tItemChipInfo.eType == Item.CodeEnumMicrochipType.Inductor then
-			wndSocketButton:FindChild("CircuitPickerIcon"):SetBGColor("ff00ff00")
+			wndSocketButton:FindChild("CircuitPickerIcon"):SetBGColor("UI_WindowTextCraftingGreenInductor")
+		elseif tItemChipInfo.eType == Item.CodeEnumMicrochipType.Resistor then
+			wndSocketButton:FindChild("CircuitPickerIcon"):SetBGColor("UI_WindowTextCraftingBlueResistor")
 		end
 	end
 
@@ -422,15 +425,14 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 		-- Locked or unlocked
 		local bLocked = not ktValidSocketItemMatch[tSocketIdxData.eSocketType]
 		if bLocked and tSocket.arProperties and tSocket.arProperties[1] then
-			local nBudgetLockValue = tSocket.arProperties[1].nValue -- For now, we are okay only showing one stat. Later, there may be more stats per locked chip.
+			local nBudgetLockValue = tSocket.arProperties[1].nValue
 			wndSocketButton:FindChild("CircuitPickerIconText"):SetText(String_GetWeaselString(Apollo.GetString("CBCrafting_PlusChipValue"), nBudgetLockValue))
 		end
 		--wndSocketButton:FindChild("CircuitPickerAdornLock"):Show(not ktValidSocketItemMatch[tSocketIdxData.eSocketType])
 
 		-- Type and Efficiency
 		local strAdornSprite = ""
-		local strLockedOrUnlocked = bLocked and Apollo.GetString("CBCrafting_LockedCircuit") or Apollo.GetString("CBCrafting_CircuitSlot")
-		local strHugeTooltip = "<P Font=\"CRB_InterfaceSmall_O\">"..strLockedOrUnlocked.."</P>"
+		local strHugeTooltip = "<P Font=\"CRB_InterfaceSmall_O\">" .. (bLocked and Apollo.GetString("CBCrafting_LockedCircuit") or Apollo.GetString("CBCrafting_CircuitSlot")) .. "</P>"
 		if ktValidSocketItemMatch[tSocketIdxData.eSocketType] then
 			local strEfficiency = ""
 			if tSocket.fMultiplier < 0.95 then
@@ -444,9 +446,11 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 				strAdornSprite = ktSocketTypeAverageColor[tSocketIdxData.eSocketType]
 			end
 
-			local strNumbers = String_GetWeaselString(strEfficiency, tSocket.fMultiplier)
-			local strType = String_GetWeaselString(Apollo.GetString("CBCrafting_Type"), ktSocketTypeToString[tSocketIdxData.eSocketType])
-			strHugeTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P>", strHugeTooltip, strType, strNumbers)
+			if math.abs(tSocket.fMultiplier) < 1000 then -- Sanity Check
+				local strNumbers = String_GetWeaselString(strEfficiency, tSocket.fMultiplier)
+				local strType = String_GetWeaselString(Apollo.GetString("CBCrafting_Type"), ktSocketTypeToString[tSocketIdxData.eSocketType])
+				strHugeTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P>", strHugeTooltip, strType, strNumbers)
+			end
 		else
 			if tSocket.fMultiplier < 0.95 then
 				strAdornSprite = "sprCircuit_Circle_Silver_Adorn3"
@@ -458,52 +462,37 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 		end
 		wndSocketButton:FindChild("CircuitPickerAdorn"):SetSprite(strAdornSprite)
 
-		-- Material Reagent Cost
-		local itemReagent = itemCurr and tItemChipInfo.itemReagent or nil
-		wndSocketButton:FindChild("CircuitPickerCostFrame"):Show(itemReagent)
-
-		if itemReagent then
-			local nItemReagentBackpack = itemReagent:GetBackpackCount()
-			bLocalReagentsMet = nItemReagentBackpack >= tItemChipInfo.nReagentCount
-			wndSocketButton:FindChild("CircuitPickerCostNoMat"):Show(not bLocalReagentsMet)
-			wndSocketButton:FindChild("CircuitPickerCostIcon"):SetSprite(itemReagent:GetIcon())
-			wndSocketButton:FindChild("CircuitPickerCostIcon"):SetText(tItemChipInfo.nReagentCount <= 1 and "" or tItemChipInfo.nReagentCount)
-
-			local strReagentCost = String_GetWeaselString(Apollo.GetString("CBCrafting_ReagentCost"), nItemReagentBackpack, tItemChipInfo.nReagentCount, itemReagent:GetName())
-			strHugeTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"%s\">%s</P>", strHugeTooltip, bLocalReagentsMet and "white" or "red", strReagentCost)
-		end
-
 		-- Power Section
+		local strExactCharge = tSocket.nCharge and String_GetWeaselString(Apollo.GetString("CBCrafting_ExactChargeTooltip"), string.format("%.2f", tSocket.nCharge)) or ""
 		local bColorMisMatch = tItemChipInfo and tSocketIdxData and ktValidSocketItemMatch[tSocketIdxData.eSocketType] and tItemChipInfo.eType ~= tSocketIdxData.eSocketType
-		wndSocketButton:FindChild("CircuitSocketChargeText"):SetText(tSocket.nCharge)
+		wndSocketButton:FindChild("CircuitSocketChargeText"):SetText(tSocket.nCharge and string.format("%.f", tSocket.nCharge) or "")
 		wndSocketButton:FindChild("CircuitSocketChargeText"):Show(tSocket.nCharge and tSocket.nCharge ~= 0)
+		strHugeTooltip = tSocket.nCharge and string.format("%s<P Font=\"CRB_InterfaceSmall_O\">%s</P>", strHugeTooltip, strExactCharge) or strHugeTooltip
 
-		if bLocked or (itemReagent and not bLocalReagentsMet) then
+		if bLocked then
 			wndSocketButton:FindChild("CircuitSocketChargeText"):SetTextColor(ApolloColor.new("UI_TextMetalBodyHighlight"))
+			wndSocketButton:FindChild("CircuitPickerSmallRight"):Enable(false)
+			wndSocketButton:FindChild("CircuitPickerSmallLeft"):Enable(false)
 		else
 			wndSocketButton:FindChild("CircuitSocketChargeText"):SetTextColor(bColorMisMatch and "red" or "white")
-		end
 
-		strHugeTooltip = bColorMisMatch and string.format("%s<P Font=\"CRB_InterfaceSmall_O\">%s</P>", strHugeTooltip, Apollo.GetString("CBCrafting_MismatchTooltip")) or strHugeTooltip
-
-		-- Charge Left Right Arrows
-		for idx, strCurr in pairs({ "CircuitPickerSmallRight", "CircuitPickerSmallLeft" }) do
-			local nBestGuess = wndSocketButton:FindChild(strCurr):GetData() and wndSocketButton:FindChild(strCurr):GetData()[1] or 0
-			wndSocketButton:FindChild(strCurr):Enable(tSocketIdxData.bIsChangeable and nBestGuess > 1)
-
-			if tSocketIdxData.bIsChangeable and nBestGuess > 1 and self.wndArrowTutorial == -1 then
-				self.wndArrowTutorial = Apollo.LoadForm(self.xmlDoc, "Tutorial_SmallRightArrow", wndSocketButton:FindChild(strCurr), self)
-				local nTextWidth = Apollo.GetTextWidth("CRB_Interface9_O", Apollo.GetString("CRB_Crafting_AdjustChargeTutorial"))
-				local nLeft, nTop, nRight, nBottom = self.wndArrowTutorial:GetAnchorOffsets()
-				self.wndArrowTutorial:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + 72, nBottom)
+			-- Charge Left Right Arrows Tutorial
+			for idx, strCurr in pairs({ "CircuitPickerSmallRight", "CircuitPickerSmallLeft" }) do
+				if tSocketIdxData.bIsChangeable and self.wndArrowTutorial == -1 then
+					self.wndArrowTutorial = Apollo.LoadForm(self.xmlDoc, "Tutorial_SmallRightArrow", wndSocketButton:FindChild(strCurr), self)
+					local nTextWidth = Apollo.GetTextWidth("CRB_Interface9_O", Apollo.GetString("CRB_Crafting_AdjustChargeTutorial"))
+					local nLeft, nTop, nRight, nBottom = self.wndArrowTutorial:GetAnchorOffsets()
+					self.wndArrowTutorial:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + 72, nBottom)
+				end
 			end
 		end
+		strHugeTooltip = bColorMisMatch and string.format("%s<P Font=\"CRB_InterfaceSmall_O\">%s</P>", strHugeTooltip, Apollo.GetString("CBCrafting_MismatchTooltip")) or strHugeTooltip
 
 		-- Save data for the click
 		local eParentUnitProperty = tItemChipInfo and tItemChipInfo.idUnitProperty or nil
 		wndSocketButton:FindChild("CircuitPickerBtn"):SetData({ nLayoutLoc, eParentUnitProperty })
 		wndSocketButton:FindChild("CircuitPickerBtn"):Show(tSocketIdxData.bIsChangeable and not tSocketIdxData.itemDefaultChip)
-		wndSocketButton:SetTooltip(strHugeTooltip)
+		wndSocketButton:FindChild("CircuitPickerAdorn"):SetTooltip(strHugeTooltip)
 	end
 
 	-- Thresholds
@@ -569,7 +558,7 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 		wndTutorialAddChip:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + 72, nBottom)
 	end
 
-	return bLocalReagentsMet, bFoundItem
+	return bFoundItem
 end
 
 function CircuitBoardSchematic:UpdateOverchargeBars(tMicrochips, tThresholds)
@@ -588,6 +577,7 @@ function CircuitBoardSchematic:UpdateOverchargeBars(tMicrochips, tThresholds)
 	self.wndMain:FindChild("OverchargeBar"):SetMax(fRawThreshold)
 	self.wndMain:FindChild("OverchargeBar"):SetProgress(fRawCurrCharge, fRawThreshold / 2.5) -- 2nd arg is for animation
 	self.wndMain:FindChild("OverchargeBar"):SetStyleEx("EdgeGlow", fRawCurrCharge < fRawThreshold * 0.93)
+	self.wndMain:FindChild("OverchargeBar"):SetTooltip(String_GetWeaselString(Apollo.GetString("Crafting_OverchargeTooltip"), fRawCurrCharge, fRawThreshold))
 	self.wndMain:FindChild("OverchargeCurrentText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), math.floor(fRawCurrCharge), math.floor(fRawThreshold)))
 
 	self.wndMain:FindChild("FailChargeBar"):SetMax(fRawMaxOvercharge - fRawThreshold)
@@ -646,7 +636,7 @@ function CircuitBoardSchematic:OnBuildPropertyPicker(wndHandler, wndControl) -- 
 	local nLayoutLoc = wndHandler:GetData()[1]
 	local eParentChipProperty = wndHandler:GetData()[2]
 	local wndSocket = self.tSocketButtons[nLayoutLoc]
-	self.wndPropertyPickerWindow = Apollo.LoadForm(self.xmlDoc, "PropertyPicker", wndSocket, self)
+	self.wndPropertyPickerWindow = Apollo.LoadForm(self.xmlDoc, "PropertyPicker", self.wndMain, self)
 	self.wndPropertyPickerWindow:SetData(wndHandler)
 
 	-- Build duplicate comparison list
@@ -668,7 +658,8 @@ function CircuitBoardSchematic:OnBuildPropertyPicker(wndHandler, wndControl) -- 
 		end
 	end
 
-	for eChipType, arProperties in pairs(CraftingLib.GetAvailableProperties(self.tSchematicInfo.nSchematicId)) do
+	local nCurrentPowerCore = self.tSocketItems[1] and self.tSocketItems[1]:GetItemId()
+	for eChipType, arProperties in pairs(CraftingLib.GetAvailableProperties(self.tSchematicInfo.nSchematicId, nCurrentPowerCore)) do
 		for idx, eProperty in pairs(arProperties) do
 			local wndButton = nil
 			if eChipType == Item.CodeEnumMicrochipType.Resistor then
@@ -702,11 +693,15 @@ function CircuitBoardSchematic:OnBuildPropertyPicker(wndHandler, wndControl) -- 
 	self.wndPropertyPickerWindow:FindChild("PropertyPickerInductorCheck"):Show(bSocketTypeMatch and tSocketIdxData.eSocketType == Item.CodeEnumMicrochipType.Inductor)
 	self.wndPropertyPickerWindow:FindChild("PropertyPickerCapacitorCheck"):Show(bSocketTypeMatch and tSocketIdxData.eSocketType == Item.CodeEnumMicrochipType.Capacitor)
 
+	-- Resize based on the longest window
 	local nResistWidth = self.wndPropertyPickerWindow:FindChild("PropertyPickerResistorList"):ArrangeChildrenHorz(0)
 	local nInducWidth = self.wndPropertyPickerWindow:FindChild("PropertyPickerInductorList"):ArrangeChildrenHorz(0)
 	local nCapacWidth = self.wndPropertyPickerWindow:FindChild("PropertyPickerCapacitorList"):ArrangeChildrenHorz(0)
+	local nMaxWidth = math.max(nResistWidth, nInducWidth, nCapacWidth) + 145
+
 	local nLeft, nTop, nRight, nBottom = self.wndPropertyPickerWindow:GetAnchorOffsets()
-	self.wndPropertyPickerWindow:SetAnchorOffsets(nLeft, nTop, nLeft + math.max(nResistWidth, nInducWidth, nCapacWidth) + 145, nBottom)
+	local nParentLeft, nParentTop, nParentRight, nParentBottom = wndSocket:GetParent():GetAnchorOffsets()
+	self.wndPropertyPickerWindow:SetAnchorOffsets(nParentLeft + nLeft, nParentTop + nTop, nParentLeft + nLeft + nMaxWidth, nParentTop + nBottom)
 
 	self.wndMain:FindChild("CraftButton"):Enable(false) -- When open, so no one accidentally clicks it. When closed, we'll do UpdatePreview() and re-enable accordingly.
 	self.wndPropertyPickerWindow:Invoke()
@@ -719,12 +714,15 @@ function CircuitBoardSchematic:OnPropertyBtn(wndHandler, wndControl) -- Property
 	local tSocketIdxData = self.tSchematicInfo.tSockets[ self.tLayoutLocToIdx[nLayoutLoc] ]
 
 	if tSocketIdxData and tSocketIdxData.bIsChangeable and not tSocketIdxData.itemDefaultChip then -- Not valid mod conditions
-		local nBestGuess = self:HelperBestGuessMicrochip(eProperty)
-		local tMicrochips = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, nBestGuess)
+		local nBestGuess = 2 -- We'll just start at the lowest chip (e.g. 3 Brutality)
+		local nCurrentPowerCore = self.tSocketItems[1] and self.tSocketItems[1]:GetItemId()
+		local tMicrochips = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, nBestGuess, 1, nCurrentPowerCore)
 		if tMicrochips and tMicrochips[1] then
 			self.tSocketItems[nLayoutLoc] = tMicrochips[1]
-			wndSocket:FindChild("CircuitPickerSmallLeft"):SetData({ nBestGuess - 1, eProperty, nLayoutLoc })
-			wndSocket:FindChild("CircuitPickerSmallRight"):SetData({ nBestGuess + 1, eProperty, nLayoutLoc })
+			wndSocket:FindChild("CircuitPickerSmallLeft"):Enable(false)
+			wndSocket:FindChild("CircuitPickerSmallRight"):Enable(true)
+			wndSocket:FindChild("CircuitPickerSmallLeft"):SetData({ nBestGuess = nBestGuess - 1, wndSocket = wndSocket, eProperty = eProperty, nLayoutLoc = nLayoutLoc })
+			wndSocket:FindChild("CircuitPickerSmallRight"):SetData({ nBestGuess = nBestGuess + 1, wndSocket = wndSocket, eProperty = eProperty, nLayoutLoc = nLayoutLoc })
 		end
 	end
 
@@ -732,16 +730,35 @@ function CircuitBoardSchematic:OnPropertyBtn(wndHandler, wndControl) -- Property
 end
 
 function CircuitBoardSchematic:OnCircuitPickerLeftRight(wndHandler, wndControl) -- CircuitPickerSmallLeft or CircuitPickerSmallRight
-	local wndSocket = wndHandler:GetParent()
-	local nBestGuess = wndHandler:GetData()[1]
-	local eProperty = wndHandler:GetData()[2]
-	local nLayoutLoc = wndHandler:GetData()[3]
-	local tMicrochips = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, nBestGuess)
-	if tMicrochips and tMicrochips[1] then
+	local wndSocket = wndHandler:GetData().wndSocket
+	local nBestGuess = wndHandler:GetData().nBestGuess
+	local eProperty = wndHandler:GetData().eProperty
+	local nLayoutLoc = wndHandler:GetData().nLayoutLoc
+	local nCurrentPowerCore = self.tSocketItems[1] and self.tSocketItems[1]:GetItemId()
+
+	-- nShiftRange is how far ahead to seek in GetAvailableMicrochips
+	local nNewLeft = 0
+	local nNewRight = 0
+	local nShiftRange = 5
+
+	local tMicrochips = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, nBestGuess, nShiftRange, nCurrentPowerCore)
+	if tMicrochips and tMicrochips[nShiftRange] and Apollo.IsShiftKeyDown() and wndHandler:GetName() == "CircuitPickerSmallRight" then
+		nNewLeft = nBestGuess + nShiftRange - 2
+		nNewRight = nBestGuess + nShiftRange
+		self.tSocketItems[nLayoutLoc] = tMicrochips[nShiftRange]
+	elseif tMicrochips and tMicrochips[1] then
+		nNewLeft = nBestGuess - 1
+		nNewRight = nBestGuess + 1
 		self.tSocketItems[nLayoutLoc] = tMicrochips[1]
-		wndSocket:FindChild("CircuitPickerSmallLeft"):SetData({ nBestGuess - 1, eProperty, nLayoutLoc })
-		wndSocket:FindChild("CircuitPickerSmallRight"):SetData({ nBestGuess + 1, eProperty, nLayoutLoc })
 	end
+
+	-- Enable / Disable if valid
+	local tValidLeft = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, nNewLeft, 1, nCurrentPowerCore)
+	local tValidRight = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, nNewRight, 1, nCurrentPowerCore)
+	wndSocket:FindChild("CircuitPickerSmallLeft"):Enable(tValidLeft and tValidLeft[1])
+	wndSocket:FindChild("CircuitPickerSmallRight"):Enable(tValidRight and tValidRight[1])
+	wndSocket:FindChild("CircuitPickerSmallLeft"):SetData({ nBestGuess = nNewLeft, wndSocket = wndSocket, eProperty = eProperty, nLayoutLoc = nLayoutLoc })
+	wndSocket:FindChild("CircuitPickerSmallRight"):SetData({ nBestGuess = nNewRight, wndSocket = wndSocket, eProperty = eProperty, nLayoutLoc = nLayoutLoc })
 
 	if self.wndArrowTutorial and self.wndArrowTutorial ~= -1 and self.wndArrowTutorial ~= 0 then
 		self.wndArrowTutorial:Destroy()
@@ -753,6 +770,7 @@ end
 
 function CircuitBoardSchematic:OnPowerCoreItemBtn(wndHandler, wndControl) -- PowerCoreItemBtn, data is tCurrentPowerCore
 	self.wndMain:FindChild("SocketsLayer"):FindChild("PowerCorePickerBtn"):SetCheck(false)
+	self.tSocketItems = {} -- Wipe all previous chip data, as there may now be invalid choices
 	self.tSocketItems[1] = wndHandler:GetData()
 	self:UpdatePreview()
 end
@@ -760,19 +778,6 @@ end
 -----------------------------------------------------------------------------------------------
 -- Helper Functions
 -----------------------------------------------------------------------------------------------
-
-function CircuitBoardSchematic:HelperBestGuessMicrochip(eProperty)
-	local nTargetBudget = self.tSchematicInfo.eTier * 3 -- Or, use a table here
-	local nBestGuess = 0
-	local tMicrochips = CraftingLib.GetAvailableMicrochips(self.tSchematicInfo.nSchematicId, eProperty, 1, 15) -- Just look through index 1 to 10
-	for idx, tCurrChip in pairs(tMicrochips or {}) do
-		nBestGuess = nBestGuess + 1
-		if tCurrChip:GetMicrochipInfo().nBudget > nTargetBudget then
-			return nBestGuess
-		end
-	end
-	return nBestGuess
-end
 
 function CircuitBoardSchematic:HelperGetUserSelection() -- Also from Crafting.lua
 	local tMicrochips = {}

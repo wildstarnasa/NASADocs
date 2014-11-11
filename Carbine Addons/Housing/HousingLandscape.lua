@@ -47,7 +47,7 @@ local knDefaultEntryHieght 	= 30
 local knExpandedEntryHieght = 160
 
 local kcrEnabledColor 	= ApolloColor.new("UI_TextHoloTitle")
-local kcrDisabledColor 	= CColor.new(184/255, 48/255, 48/255, 1.0)
+local kcrDisabledColor 	= ApolloColor.new("xkcdReddish")
 local kcrPrunedColor 	= CColor.new(0.3,0.3,0.3,1.0)
 
 ---------------------------------------------------------------------------------------------------
@@ -270,6 +270,7 @@ end
 
 -- PlotGrid's load should handle all the button/property "magic"
 function PlotGrid:OnLoad(wndParent)
+	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 		"OnPlotRefreshTimer", self)	
 
 	self.wndCashLandscape 	= wndParent:FindChild("CashWindow")
 	self.wndHousingLandscape  = wndParent:FindChild("LandscapeFrame")
@@ -551,19 +552,9 @@ function HousingLandscape:HelperClearInfo()
 	local nPadding = 8 -- how much vert padding between entries
 
 	wndPlugInfoPanel:FindChild("Title"):SetText(Apollo.GetString("HousingLandscape_NoEnhancementFound"))
-	wndPlugInfoPanel:FindChild("PlugDescription"):SetText(Apollo.GetString("HousingLandscape_NoEnhancementExpanded"))
-	wndPlugInfoPanel:FindChild("PlugDescription"):SetHeightToContentHeight(20) -- will be 0 if no text
-	local nLeft1, nTop1, nRight1, nBottom1 = wndPlugInfoPanel:FindChild("PlugDescription"):GetAnchorOffsets()
-	
-	-- window resize, adjust scroller:
-	local nWndLeft, nWndTop, nWndRight, nWndBottom = wndPlugInfoPanel:GetAnchorOffsets()
-	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop + 20, nWndRight, nWndTop + nBottom1 + nPadding)
-	
-	nWndLeft, nWndTop, nWndRight, nWndBottom = wndPlugInfoPanel:GetAnchorOffsets()
-	local nWndMid = ((nWndBottom - nWndTop) / 2) + nWndTop
-	local nParentMid = self.wndPlugInfoFrame:GetHeight()/2
-	local nMidDiff = nParentMid - nWndMid
-	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop + nMidDiff - 25, nWndRight, nWndBottom + nMidDiff - 25)	-- offset for bottom button
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame:PlugDescription"):SetText(Apollo.GetString("HousingLandscape_NoEnhancementExpanded"))
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame:PlugDescription"):SetHeightToContentHeight() -- will be 0 if no text
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame"):RecalculateContentExtents()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -605,9 +596,9 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 	
 	local nPadding = 8 -- how much vert padding between entries
 	wndPlugInfoPanel:FindChild("Title"):SetText(tItemInfo.strName)
-	wndPlugInfoPanel:FindChild("PlugDescription"):SetText(tItemInfo.strTooltip)
-	wndPlugInfoPanel:FindChild("PlugDescription"):SetHeightToContentHeight(20) -- will be 0 if no text
-	local nDescriptionLeft, nDescriptionTop, nDescriptionRight, nDescriptionBottom = wndPlugInfoPanel:FindChild("PlugDescription"):GetAnchorOffsets()
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame:PlugDescription"):SetText(tItemInfo.strTooltip)
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame:PlugDescription"):SetHeightToContentHeight(20) -- will be 0 if no text
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame"):RecalculateContentExtents()
 
 	local nRepairCount = 0
 	local nRepairEntryHeight = 0
@@ -649,7 +640,7 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 			wndCost:FindChild("ItemLabel"):SetTextColor(kcrEnabledColor)
 			
 			if tCost.nAvailableCount ~= nil and tCost.nAvailableCount < tCost.nRequiredCost then
-				wndCost:FindChild("ItemLabel"):SetTextColor(kcDisabledColor)
+				wndCost:FindChild("ItemLabel"):SetTextColor(kcrDisabledColor)
 				wndCost:FindChild("ItemLabel"):SetText(String_GetWeaselString(Apollo.GetString("HousingLandscape_ItemCostBackpack"), tCost.nAvailableCount, tCost.nRequiredCost, tCost.itemRepairReq:GetName()))
 				bCanRepair = false
 			end
@@ -689,11 +680,9 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 	
 	if nRepairCount > 0 then
 		wndRepair:Show(true)
-		wndRepair:SetAnchorOffsets(nRepairLeft, nDescriptionBottom + nPadding, nRepairRight, nDescriptionBottom + nPadding + nTopDif + (nRepairEntryHeight * nRepairCount) - nBottomDif) -- last one is negative
 		nRepairLeft, nRepairTop, nRepairRight, nRepairBottom = wndRepair:GetAnchorOffsets()
 		self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):Show(true)
 		local nLeftBtn, nTopBtn, nRightBtn, nBottomBtn = self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):GetAnchorOffsets()
-		self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):SetAnchorOffsets(nLeftBtn, nRepairBottom + 2, nRightBtn, nRepairBottom + 2 + (nBottomBtn - nTopBtn))
 		nRepairLeft, nRepairTop, nRepairRight, nRepairBottom = self.wndPlugInfoFrame:FindChild("InfoRepairBtn"):GetAnchorOffsets()
 		
 		local bEnable = (not tPlotInfo.bIsBuilding and not tPlotInfo.bActive and bCanRepair == true) or tPlotInfo.bNeedsRepair
@@ -703,15 +692,6 @@ function HousingLandscape:DrawInfo(iPlot, eSelectionType)
 		wndRepair:Show(false)
 		nRepairBottom = nDescriptionBottom
 	end
-	
-	-- window resize, adjust scroller:
-	local nWndLeft, nWndTop, nWndRight, nWndBottom = wndPlugInfoPanel:GetAnchorOffsets()
-	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop, nWndRight, nWndTop + nRepairBottom + nPadding)		
-	nWndLeft, nWndTop, nWndRight, nWndBottom = wndPlugInfoPanel:GetAnchorOffsets()
-	local nWndMid = ((nWndBottom - nWndTop) / 2) + nWndTop
-	local nParentMid = self.wndPlugInfoFrame:GetHeight() / 2
-	local nMidDiff = nParentMid - nWndMid
-	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop + nMidDiff - 52, nWndRight, nWndBottom + nMidDiff + 15)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -727,23 +707,23 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 	local wndPlugInfoPanel = self.wndPlugInfoFrame:FindChild("UpgradePlugFrame")  
 	local nPadding = 8 -- how much vert padding between entries
 	wndPlugInfoPanel:FindChild("Title"):SetText(String_GetWeaselString(Apollo.GetString("HousingLandscape_UpgradeTitle"), tItemData.strName))
-	wndPlugInfoPanel:FindChild("PlugDescription"):SetText(tItemData.strTooltip)
-	wndPlugInfoPanel:FindChild("PlugDescription"):SetHeightToContentHeight(20) -- will be 0 if no text
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame:PlugDescription"):SetText(tItemData.strTooltip)
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame:PlugDescription"):SetHeightToContentHeight() -- will be 0 if no text
+	wndPlugInfoPanel:FindChild("PlugDescriptionFrame"):RecalculateContentExtents()
 	local nLeft1, nTop1, nRight1, nBottom1 = wndPlugInfoPanel:FindChild("PlugDescription"):GetAnchorOffsets()
-	
 	local bCanUpgrade = true
 	
 	-- Pre-reqs
 	local wndPrereq = wndPlugInfoPanel:FindChild("PlugPrereqs")
-	local strPrereq = string.format("<T Font=\"CRB_InterfaceSmall_I\" TextColor=\"UI_BtnTextGreenNormal\">%s</T>", Apollo.GetString("HousingLandscape_Requirements"))
+	local strPrereq = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_BtnTextGreenNormal\">%s</T>", Apollo.GetString("HousingLandscape_Requirements"))
 	if #tItemData.tPrerequisites > 0 then
 		local nCount = 0
 		local strPrereqList = ""
         for idx, tPrereq in ipairs(tItemData.tPrerequisites) do
             if nCount > 0 then
-				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall_I\" TextColor=\"UI_TextHoloTitle\">%s</T>", String_GetWeaselString(Apollo.GetString("Archive_TextList"), strPrereqList, tPrereq.strTooltip))
+				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloTitle\">%s</T>", String_GetWeaselString(Apollo.GetString("Archive_TextList"), strPrereqList, tPrereq.strTooltip))
 			else
-				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall_I\" TextColor=\"UI_TextHoloTitle\">%s</T>", tPrereq.strTooltip)
+				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloTitle\">%s</T>", tPrereq.strTooltip)
 			end
 			nCount = nCount + 1
 			if tPrereq["bPrerequisiteMet"] ~= true then
@@ -754,17 +734,17 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
         wndPrereq:SetText(strPrereq)
 	end
 	
+	local nLeftOrig, nTopOrig, nRightOrig, nBottomOrig = wndPrereq:GetAnchorOffsets()
 	wndPrereq:SetHeightToContentHeight() -- will be 0 if no text
-	local nLeft2, nTop2, nRight2, nBottom2 = wndPrereq:GetAnchorOffsets()
-	
+	local nLeftNew, nTopNew, nRightNew, nBottomNew = wndPrereq:GetAnchorOffsets()
+	local nLeftDescFrame, nTopDescFrame, nRightDescFrame, nBottomDescFrame = wndPlugInfoPanel:FindChild("PlugDescriptionFrame"):GetAnchorOffsets()
+
 	if wndPrereq:GetHeight() > 0 then
-		wndPrereq:SetAnchorOffsets(nLeft2, nBottom1 + nPadding, nRight2, nBottom1 + (nBottom2 - nTop2) + nPadding)
+		wndPlugInfoPanel:FindChild("PlugDescriptionFrame"):SetAnchorOffsets(nLeftDescFrame, nTopDescFrame, nRightDescFrame, nTopNew - nPadding)	
 	else
-		wndPrereq:SetAnchorOffsets(nLeft2, nBottom1, nRight2, nBottom1)
+		wndPlugInfoPanel:FindChild("PlugDescriptionFrame"):SetAnchorOffsets(nLeftDescFrame, nTopDescFrame, nRightDescFrame, nBottomOrig - nPadding)	
 	end
 
-	nLeft2, nTop2, nRight2, nBottom2 = wndPrereq:GetAnchorOffsets()	
-	
 	local nRepairCount = 0
 	local nRepairEntryHeight = 0
 	local wndRepair = wndPlugInfoPanel:FindChild("RepairComplex")
@@ -840,12 +820,12 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 	
 	if nRepairCount > 0 then
 		wndRepair:Show(true)
-		wndRepair:SetAnchorOffsets(nLeft4, nBottom2 + nPadding, nRight4, nBottom2 + nPadding + nTopDif + (nRepairEntryHeight*nRepairCount) - nRightDif) -- last one is negative
+		--wndRepair:SetAnchorOffsets(nLeft4, nBottom2 + nPadding, nRight4, nBottom2 + nPadding + nTopDif + (nRepairEntryHeight*nRepairCount) - nRightDif) -- last one is negative
 		nLeft4, nTop4, nRight4, nBottom4 = wndRepair:GetAnchorOffsets()
 		local wndUpgradeBtn = self.wndPlugInfoFrame:FindChild("UpgradePlugFrame:InfoUpgradeBtn")
 		wndUpgradeBtn:Show(true)
 		local nLeftBtn, nTopBtn, nRightBtn, nBottomBtn = wndUpgradeBtn:GetAnchorOffsets()
-		wndUpgradeBtn:SetAnchorOffsets(nLeftBtn, nBottom4 + 2, nRightBtn, nBottom4 + 2 + (nBottomBtn - nTopBtn))
+		--wndUpgradeBtn:SetAnchorOffsets(nLeftBtn, nBottom4 + 2, nRightBtn, nBottom4 + 2 + (nBottomBtn - nTopBtn))
 		nLeft4, nTop4, nRight4, nBottom4 = wndUpgradeBtn:GetAnchorOffsets()
 		self.wndPlugInfoFrame:FindChild("UpgradePlugFrame:InfoUpgradeBtn"):Enable(bCanUpgrade)
 	else
@@ -853,14 +833,6 @@ function HousingLandscape:DrawTierUpgradeInfo(tItemData, tOldItemData)
 		nBottom4 = nBottom1
 	end
 	
-	-- window resize, adjust scroller:
-	local nWndLeft, nWndTop, nWndRight, nWndBottom = wndPlugInfoPanel:GetAnchorOffsets()
-	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop, nWndRight, nWndTop + nBottom4 + nPadding)		
-	nWndLeft, nWndTop, nWndRight, nWndBottom = wndPlugInfoPanel:GetAnchorOffsets()
-	local nWndMid = ((nWndBottom - nWndTop) / 2) + nWndTop
-	local nParentMid = self.wndPlugInfoFrame:GetHeight()/2
-	local nMidDiff = nParentMid - nWndMid
-	wndPlugInfoPanel:SetAnchorOffsets(nWndLeft, nWndTop + nMidDiff - 25, nWndRight, nWndBottom + nMidDiff - 25)
 	wndPlugInfoPanel:Show(true)
 	self.luaLandscapeProposedControl:clear()
 end
@@ -948,6 +920,8 @@ end
 -- HousingLandscape OnLoad
 -----------------------------------------------------------------------------------------------
 function HousingLandscape:OnLoad()
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("HousingButtonLandscape", 		"OnHousingButtonLandscape", self)
 	Apollo.RegisterEventHandler("HousingButtonCrate", 			"OnHousingButtonCrate", self)
 	Apollo.RegisterEventHandler("HousingButtonVendor", 			"OnHousingButtonCrate", self)
@@ -959,7 +933,7 @@ function HousingLandscape:OnLoad()
 	Apollo.RegisterEventHandler("HousingPanelControlClose", 	"OnClosePanelControl", self)
 	Apollo.RegisterEventHandler("HousingConfirmReplace", 		"OnConfirmReplaceRequest", self)
 	Apollo.RegisterEventHandler("HousingPlotsRecieved", 		"OnPlotsUpdated", self)
-	Apollo.RegisterEventHandler("ChangeWorld", 					"OnCloseHousingLandscapeWindow", self)
+	Apollo.RegisterEventHandler("ChangeWorld", 					"OnCloseHousingLandscapeWindow", self)	
 
 	Apollo.CreateTimer("PlotDetailRefreshTimer", 1.0, true)
 	Apollo.StopTimer("PlotDetailRefreshTimer")
@@ -1018,9 +992,12 @@ function HousingLandscape:OnLoad()
 	self:HelperTogglePreview(false)
 	
 	-- TODO: Re-Enable once category selection is set up
-	self.wndLandscape:FindChild("SortByBtn"):Enable(false)
-	
-	--Apollo:Print("HousingLandscape::OnLoad() Called!");
+	self.wndLandscape:FindChild("SortByBtn"):Enable(false)	
+end
+
+function HousingLandscape:OnWindowManagementReady()
+	local strName = string.format("%s: %s", Apollo.GetString("CRB_Housing"), Apollo.GetString("CRB_Landscape"))
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndLandscape, strName = strName})
 end
 
 function HousingLandscape:ResetPopups()
@@ -1081,6 +1058,8 @@ function HousingLandscape:OnConfirmReplaceRequest(idPlotInfo, idPlugItem, bFromC
     self.wndDestroyUnderPopup = Apollo.LoadForm(self.xmlDoc, "PopupDestroyUnder", nil, self)
 	self.wndDestroyUnderPopup:Show(true)
 	local wndWarningText = self.wndDestroyUnderPopup:FindChild("Disclaimer")
+	local wndWarningText2 = self.wndDestroyUnderPopup:FindChild("Disclaimer2")
+
 	
 	local iPlot = GetSelectedPlotIndex()
 	local tPlotInfo2 = HousingLib.GetPlot(iPlot)
@@ -1091,7 +1070,19 @@ function HousingLandscape:OnConfirmReplaceRequest(idPlotInfo, idPlugItem, bFromC
     local tItemList2 = HousingLib.GetPlugItem(self.idUniqueItem)
     local tItemInfo2 = self:GetItem(self.idUniqueItem, tItemList2)
     
-	wndWarningText:SetText(String_GetWeaselString(Apollo.GetString("HousingLandscape_DestroyWarning"), tItemInfo.strName, tItemInfo2.strName))
+	wndWarningText:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\" Align=\"Center\" TextColor=\"UI_TextHoloBodyHighlight\">"..String_GetWeaselString(Apollo.GetString("HousingLandscape_DestroyWarning"), tItemInfo.strName, tItemInfo2.strName).."</P>"))
+	wndWarningText2:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\" Align=\"Center\" TextColor=\"UI_TextHoloBody\">"..Apollo.GetString("HousingLandscape_CrateWarning").."</P>"))
+	
+	--Resize this window based on content
+	wndWarningText:SetHeightToContentHeight()
+	wndWarningText2:SetHeightToContentHeight()
+	local nLeft, nTop, nRight, nBottom = wndWarningText:GetAnchorOffsets()
+	local nLeft2, nTop2, nRight2, nBottom2 = wndWarningText2:GetAnchorOffsets()
+	local nLeft3, nTop3, nRight3, nBottom3 = self.wndDestroyUnderPopup:GetAnchorOffsets()
+	wndWarningText2:SetAnchorOffsets(nLeft2, nBottom + 10, nRight2, wndWarningText2:GetHeight() + nBottom + 10)
+	self.wndDestroyUnderPopup:SetAnchorOffsets(nLeft3, nTop3, nRight3, nTop3 + wndWarningText:GetHeight() + wndWarningText2:GetHeight() + 190)
+
+	
 	self.wndDestroyUnderPopup:ToFront()
 	self.wndLandscape:Show(false)
 end
@@ -1708,7 +1699,7 @@ function HousingLandscape:OnLandscapeListItemCheck(wndHandler, wndControl, nX, n
 			wndEntry:SetCheck(true)
 			wndCurrent = wndEntry
 			wndEntry:FindChild("Title"):SetFont("CRB_InterfaceMedium_B")
-			wndEntry:FindChild("Title"):SetTextColor(ApolloColor.new("UI_TextHoloTitle"))
+			wndEntry:FindChild("Title"):SetTextColor(self:HelperChooseTitleColor(self:GetItem(wndEntry:GetData(), self.tVendorItemsLandscape )))			
 		end
 	end
 	
@@ -1719,24 +1710,34 @@ function HousingLandscape:OnLandscapeListItemCheck(wndHandler, wndControl, nX, n
 		return 
 	end
 
-	local nPadding = 8 -- how much vert padding between entries
+	local nPadding = 3 -- how much vert padding between entries
 	local tItemData = self:GetItem(idItem, self.tVendorItemsLandscape )
 	
-	wndCurrent:FindChild("PlugDescription"):SetText(tItemData.strTooltip)
-	wndCurrent:FindChild("PlugDescription"):SetHeightToContentHeight(20) -- will be 0 if no text
+	wndCurrent:FindChild("PlugDescriptionFrame:PlugDescription"):SetText(tItemData.strTooltip)
+	wndCurrent:FindChild("PlugDescriptionFrame:PlugDescription"):SetHeightToContentHeight(20) -- will be 0 if no text
+	--wndCurrent:FindChild("PlugDescriptionFrame"):RecalculateContentExtents()
 	local nLeft1, nTop1, nRight1, nBottom1 = wndCurrent:FindChild("PlugDescription"):GetAnchorOffsets()
+
 
 	-- Pre-reqs
 	local wndPrereq = wndCurrent:FindChild("PlugPrereqs")
-	local strPrereq = string.format("<T Font=\"CRB_InterfaceSmall_I\" TextColor=\"UI_BtnTextGreenNormal\">%s</T>", Apollo.GetString("HousingLandscape_Requirements"))
+	local strPrereq = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_BtnTextGreenNormal\">%s</T>", Apollo.GetString("HousingLandscape_Requirements"))
 	if #tItemData.tPrerequisites > 0 then
 		local strPrereqList = ""
 		local nCount = 0
+		
+		local strColor = "UI_TextHoloTitle"	
+		if tItemData ~= nil then
+			if not tItemData.bAreCostRequirementsMet then
+				strColor = "xkcdReddish"	
+			end	
+		end	
+			
         for idx, tPrereq in ipairs(tItemData.tPrerequisites) do
             if nCount > 0 then
-				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall_I\" TextColor=\"UI_TextHoloTitle\">%s</T>", String_GetWeaselString(Apollo.GetString("Archive_TextList"), strPrereqList, tPrereq.strTooltip))
+				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strColor , String_GetWeaselString(Apollo.GetString("Archive_TextList"), strPrereqList, tPrereq.strTooltip))
 			else
-				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall_I\" TextColor=\"UI_TextHoloTitle\">%s</T>", tPrereq.strTooltip)
+				strPrereqList = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strColor , tPrereq.strTooltip)
 			end
 			nCount = nCount + 1
         end
@@ -1753,12 +1754,12 @@ function HousingLandscape:OnLandscapeListItemCheck(wndHandler, wndControl, nX, n
 		wndPrereq:SetAnchorOffsets(nLeft2, nBottom1, nRight2, nBottom1)
 	end
 
-	nLeft2, nTop2, nRight2, nBottom2 = wndPrereq:GetAnchorOffsets()	
+	nLeft2, nTop2, nRight2, nBottom2 = wndPrereq:GetAnchorOffsets()
 	
 	-- Flags
 	local wndFlags = wndCurrent:FindChild("PlugFlags")
 	if tItemData.tFlags.bIsUnique then
-		wndFlags:SetFont("CRB_InterfaceMedium_B")
+		wndFlags:SetFont("CRB_InterfaceSmall")
 		wndFlags:SetTextColor(kcrEnabledColor)
 		local nPlots = HousingLib.GetPlotCount()
 		for idx = 1, nPlots do
@@ -1769,7 +1770,7 @@ function HousingLandscape:OnLandscapeListItemCheck(wndHandler, wndControl, nX, n
 		end
 		wndFlags:SetText(Apollo.GetString("HousingLandscape_Unique"))
 	elseif tItemData.tFlags.bIsUniqueHarvest then
-		wndFlags:SetFont("CRB_InterfaceMedium_B")
+		wndFlags:SetFont("CRB_InterfaceSmall")
 		wndFlags:SetTextColor(kcrEnabledColor)
 		local nPlots = HousingLib.GetPlotCount()
 		for idx = 1, nPlots do
@@ -1786,7 +1787,7 @@ function HousingLandscape:OnLandscapeListItemCheck(wndHandler, wndControl, nX, n
 		end
 		wndFlags:SetText(Apollo.GetString("HousingLandscape_HarvestFlag"))
 	elseif tItemData.tFlags.bIsUniqueGarden then
-		wndFlags:SetFont("CRB_InterfaceMedium_B")
+		wndFlags:SetFont("CRB_InterfaceSmall")
 		wndFlags:SetTextColor(kcrEnabledColor)
 		local nPlots = HousingLib.GetPlotCount()
 		for idx = 1, nPlots do
@@ -1983,7 +1984,7 @@ function HousingLandscape:ShowItemList(wndList, tItemList)
 	if tItemList == nil or iCurrPlot == 0 then return end
 
 	-- check for, and handle search filters
-    local strSearch = string.lower(self.wndSearch:GetText())
+    local strSearch = Apollo.StringToLower(self.wndSearch:GetText())
     local tFilteredList = {}
     local nFilteredItems = 0 
 	local bFiltersOn = false
@@ -1991,7 +1992,7 @@ function HousingLandscape:ShowItemList(wndList, tItemList)
     if strSearch ~= nil and strSearch ~= "" and not strSearch:match("%W") then
 		bFiltersOn = true
         for idx = 1, #tItemList do
-            local strItemName = string.lower(tItemList[idx].strName)
+            local strItemName = Apollo.StringToLower(tItemList[idx].strName)
             if string.find(strItemName,strSearch) ~= nil then
                 if not wndAffordOnly:IsChecked() or wndAffordOnly:IsChecked() and tItemList[idx].bAreCostRequirementsMet and self.luaLandscapeProposedControl:IsNotUnique(tItemList[idx], iCurrPlot) then
 					nFilteredItems = nFilteredItems + 1

@@ -26,31 +26,44 @@ end
 
 function ChallengeLog:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ChallengeLog.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function ChallengeLog:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 
 	Apollo.RegisterEventHandler("PL_ToggleChallengesWindow", 	"ToggleWindow", self)
 	Apollo.RegisterEventHandler("PL_TabChanged", 				"OnCloseChallengeLogTab", self)
-
+	Apollo.RegisterEventHandler("ChallengeShared", 				"OnChallengeShared", self)
 	Apollo.RegisterEventHandler("ChallengeReward_SpinBegin", 	"OnChallengeReward_SpinBegin", self)
 	Apollo.RegisterEventHandler("ChallengeReward_SpinEnd", 		"OnChallengeReward_SpinEnd", self) -- Track challenge reward wheel even if it hasn't been loaded yet
+	
+	self.tTimerAreaRestriction =
+	{	
+		[ChallengesLib.ChallengeType_Combat] 				= ApolloTimer.Create(1.0, false, "OnAreaRestrictionTimer", self),
+		[ChallengesLib.ChallengeType_Ability] 				= ApolloTimer.Create(1.0, false, "OnAreaRestrictionTimer", self),
+		[ChallengesLib.ChallengeType_General] 				= ApolloTimer.Create(1.0, false, "OnAreaRestrictionTimer", self),
+		[ChallengesLib.ChallengeType_Item] 					= ApolloTimer.Create(1.0, false, "OnAreaRestrictionTimer", self),
+		[ChallengesLib.ChallengeType_ChecklistActivate] 	= ApolloTimer.Create(1.0, false, "OnAreaRestrictionTimer", self)	
+	}
+	
+	for idx, timerCur in pairs(self.tTimerAreaRestriction) do 
+		timerCur:Stop()
+	end
 
-	Apollo.RegisterTimerHandler("MaxChallengeRewardTime", 		"OnChallengeReward_SpinEnd", self)
-	Apollo.RegisterTimerHandler("AreaRestrictionTimer", 		"OnAreaRestrictionTimer", self)
-	Apollo.RegisterTimerHandler("ChallengeLogDestroyWindows", 	"ChallengeLogDestroyWindows", self)
-	Apollo.RegisterTimerHandler("ChallengeLogTimer", 			"Redraw", self)
+	self.timerChallengeLogDestroyWindows = ApolloTimer.Create(120.0, false, "ChallengeLogDestroyWindows", self)
+	self.timerChallengeLogDestroyWindows:Stop()
 
-	Apollo.CreateTimer("MaxChallengeRewardTime", 10.0, false)
+	self.timerChallengeLogRedraw = ApolloTimer.Create(1.0, true, "Redraw", self)
+	self.timerChallengeLogRedraw:Stop()
 
-	self.bRewardWheelSpinning = false
-
+	self.timerMaxChallengeReward = ApolloTimer.Create(10.0, false, "OnChallengeReward_SpinEnd", self)	
+	self.timerMaxChallengeReward:Stop()
+	
 	local wndTEMP1 = Apollo.LoadForm(self.xmlDoc, "ListItem", nil, self)
 	self.knOrigItemLeft, self.knOrigItemTop, self.knOrigItemRight, self.knOrigItemBottom = wndTEMP1:GetAnchorOffsets()
 	wndTEMP1:Destroy()
@@ -62,23 +75,28 @@ function ChallengeLog:OnDocumentReady()
 	self.knHeaderTopHeight = nBottom - nTop - (nBottom2 - nTop2) - 20
 	wndTEMP2:Destroy()
 
-	self.tFailMessagesList 	= {}
-	self.nSelectedBigZone 	= nil
-	self.wndShowAllBigZone 	= nil
-	self.nSelectedListItem 	= -1           -- keep track of which list item is currently selected
+	self.tFailMessagesList 		= {}
+	self.bRewardWheelSpinning 	= false
+	self.nSelectedBigZone 		= nil
+	self.wndShowAllBigZone 		= nil
+	self.nSelectedListItem 		= -1           -- keep track of which list item is currently selected
+
+	self.wndMain = nil
+	self.wndChallengeShare = nil
 end
 
 function ChallengeLog:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ChallengeLog"), {"ToggleChallengesWindow", "Challenges", "Icon_Windows32_UI_CRB_InterfaceMenu_ChallengeLog"})
+	local tData = { "ToggleChallengesWindow", "Challenges", "Icon_Windows32_UI_CRB_InterfaceMenu_ChallengeLog" }
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ChallengeLog"), tData)
 end
 
 function ChallengeLog:ToggleWindow()
-	Apollo.StopTimer("ChallengeLogDestroyWindows")
+	self.timerChallengeLogDestroyWindows:Stop()
 	if self.wndMain == nil then
 		self:Initialize()
 	end
 	self.wndMain:Show(true)
-	Apollo.StartTimer("ChallengeLogTimer")
+	self.timerChallengeLogRedraw:Start()
 
 end
 
@@ -90,8 +108,7 @@ function ChallengeLog:Initialize()
 	Apollo.RegisterEventHandler("ChallengeUpdate",				"Redraw", self)
 	Apollo.RegisterEventHandler("ChallengeAreaRestriction", 	"OnChallengeAreaRestriction", self)
 
-	Apollo.CreateTimer("ChallengeLogTimer", 1.0, true)
-	Apollo.StopTimer("ChallengeLogTimer")
+	self.timerChallengeLogRedraw:Start()
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ChallengeLogForm", g_wndProgressLog:FindChild("ContentWnd_3"), self)
     self.wndTopLevel = self.wndMain:FindChild("RightSide:ItemList")
@@ -114,14 +131,13 @@ function ChallengeLog:Initialize()
 end
 
 function ChallengeLog:OnCloseChallengeLogTab()
-	Apollo.StopTimer("ChallengeLogTimer")
-	Apollo.StopTimer("ChallengeLogDestroyWindows")
-	Apollo.CreateTimer("ChallengeLogDestroyWindows", 120, false)
-	Apollo.StartTimer("ChallengeLogDestroyWindows")
+	self.timerChallengeLogRedraw:Stop()
+	self.timerChallengeLogDestroyWindows:Stop()
+	self.timerChallengeLogDestroyWindows:Start()
 end
 
 function ChallengeLog:ChallengeLogDestroyWindows()
-	Apollo.StopTimer("ChallengeLogDestroyWindows")
+	self.timerChallengeLogDestroyWindows:Stop()
 	self.tFailMessagesList = nil
 	self:DestroyHeaderWindows()
 	if self.wndMain ~= nil then
@@ -129,6 +145,11 @@ function ChallengeLog:ChallengeLogDestroyWindows()
 	end
 end
 
+function ChallengeLog:OnEditBoxChanged()
+	--removes link to the last checked challenge
+	self:DestroyHeaderWindows()
+	self:Redraw()
+end
 -----------------------------------------------------------------------------------------------
 -- ChallengeLog Main Redraw Method
 -----------------------------------------------------------------------------------------------
@@ -144,13 +165,12 @@ function ChallengeLog:Redraw()
 	local tAllChallenges = ChallengesLib.GetActiveChallengeList()
 	local wndTopHeader = self.wndMain:FindChild("TopHeader")
 
+	-- This can be pulled out of redraw, this should happen on editboxchanging.
 	-- Text searching
 	wndTopHeader:FindChild("ClearSearchBtn"):Show(wndTopHeader:FindChild("HeaderSearchBox"):GetText() ~= "")
 
-
 	local strSearchString = wndTopHeader:FindChild("HeaderSearchBox"):GetText():lower()
 	if strSearchString and strSearchString ~= "" then
-		self:DestroyHeaderWindows()
 
 		for idx, clgCurrent in pairs(tAllChallenges) do
 			local strChallengeName = clgCurrent:GetName():lower()
@@ -295,6 +315,14 @@ function ChallengeLog:InsertHeaderChildren(nCurrTypeOrZoneId, wndCurrHeader, tLi
     wndCurrHeader:FindChild("HeaderContainer"):ArrangeChildrenVert()
 
     return nTotalChildHeight
+end
+
+function ChallengeLog:OnClearSearchBtn(wndHandler, wndControl)
+	local wndTopHeader = self.wndMain:FindChild("TopHeader")
+	wndTopHeader:FindChild("ClearSearchBtn"):Show(false)
+	wndTopHeader:FindChild("HeaderSearchBox"):SetText("")
+	wndTopHeader:FindChild("HeaderSearchBox"):ClearFocus()
+	self:Redraw()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -605,18 +633,6 @@ end
 -- ChallengeLog Simple UI Interaction
 -----------------------------------------------------------------------------------------------
 
-function ChallengeLog:OnBigZoneBtnMouseEnter(wndHandler, wndControl)
-	wndHandler:FindChild("BigZoneTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
-end
-
-function ChallengeLog:OnBigZoneBtnMouseExit(wndHandler, wndControl)
-	if wndHandler:IsChecked() then
-		wndHandler:FindChild("BigZoneTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
-	else
-		wndHandler:FindChild("BigZoneTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
-	end
-end
-
 function ChallengeLog:OnBigZoneBtnPress(wndHandler, wndControl)
 	if wndHandler ~= wndControl or not wndHandler then
 		return
@@ -638,7 +654,6 @@ function ChallengeLog:OnListItemClick(wndHandler, wndControl)
     else
         self.nSelectedListItem = wndHandler:GetData():GetId()
     end
-    self:Redraw()
 end
 
 function ChallengeLog:OnAbandonChallengeBtn()
@@ -687,12 +702,12 @@ end
 -----------------------------------------------------------------------------------------------
 
 function ChallengeLog:OnChallengeReward_SpinEnd()
-	Apollo.StopTimer("MaxChallengeRewardTime")
+	self.timerMaxChallengeReward:Stop()
 	self.bRewardWheelSpinning = false
 end
 
 function ChallengeLog:OnChallengeReward_SpinBegin()
-	Apollo.StartTimer("MaxChallengeRewardTime")
+	self.timerMaxChallengeReward:Start()
 	self.bRewardWheelSpinning = true
 end
 
@@ -700,11 +715,12 @@ end
 -- Events From Code
 -----------------------------------------------------------------------------------------------
 
-function ChallengeLog:OnChallengeActivate(tChallenge)
-	local nChallengeId = tChallenge:GetId()
+function ChallengeLog:OnChallengeActivate(clgChallenge)
+	local nChallengeId = clgChallenge:GetId()
     if self.tFailMessagesList ~= nil and self.tFailMessagesList[nChallengeId] ~= nil then
 		self.tFailMessagesList[nChallengeId] = nil -- Remove from red fail text list
     end
+	self.tTimerAreaRestriction[clgChallenge:GetType()]:Stop()
 end
 
 function ChallengeLog:OnChallengeFail(clgFailed, strHeader, strDesc)
@@ -738,8 +754,14 @@ function ChallengeLog:OnChallengeAreaRestriction(idChallenge, strHeader, strDesc
 	local wndWarningText = self.wndMain:FindChild("RightSide:WarningWindow:WarningEventText")
 	wndWarningText:Show(true)
 	wndWarningText:SetText(strDescription)
-	Apollo.CreateTimer("AreaRestrictionTimer", fDuration, false)
-	Apollo.StartTimer("AreaRestrictionTimer")
+	for idx, clgCurrent in pairs(ChallengesLib.GetActiveChallengeList()) do
+		if clgCurrent:GetId() == idChallenge then
+			--can only have one active challenge per type
+			local eType = clgCurrent:GetType()
+			self.tTimerAreaRestriction[eType]:Set(fDuration, false)
+			self.tTimerAreaRestriction[eType]:Start()
+		end
+	end
 end
 
 function ChallengeLog:OnAreaRestrictionTimer()
@@ -753,23 +775,45 @@ function ChallengeLog:DestroyAndRedraw()
 end
 
 -----------------------------------------------------------------------------------------------
--- ChallengeLog List Building Functions
+-- Challenge Sharing
 -----------------------------------------------------------------------------------------------
-local function tprint(tbl, indent)
-	if not indent then indent = 0 end
-		for k, v in pairs(tbl) do
-			formatting = string.rep("  ", indent) .. k .. ": "
-			if type(v) == "table" then
-				Print(formatting)
-				tprint(v, indent+1)
-			else
-				Print(formatting .. tostring(v))
-			end
-		end
+
+function ChallengeLog:OnChallengeShared(nChallengeId)
+	-- This event will not happen if auto accept is on (instead it'll just auto start a challenge)
+	if self.wndChallengeShare and self.wndChallengeShare:IsValid() then
+		return
+	end
+
+	self.wndChallengeShare =  Apollo.LoadForm(self.xmlDoc, "ShareChallengeNotice", nil, self)
+	self.wndChallengeShare:SetData(nChallengeId)
+	self.wndChallengeShare:Invoke()
 end
 
-function ChallengeLog:SetUpZoneList(tChalList)
+function ChallengeLog:OnShareChallengeAccept(wndHandler, wndControl)
+	ChallengesLib.AcceptSharedChallenge(self.wndChallengeShare:GetData())
+	if self.wndChallengeShare:FindChild("AlwaysRejectCheck"):IsChecked() then
+		Event_FireGenericEvent("ChallengeLog_UpdateShareChallengePreference", GameLib.SharedChallengePreference.AutoReject)
+	end
+	self.wndChallengeShare:Destroy()
+	self.wndChallengeShare = nil
+end
 
+function ChallengeLog:OnShareChallengeClose() -- Can come from a variety of places
+	if self.wndChallengeShare and self.wndChallengeShare:IsValid() then
+		ChallengesLib.RejectSharedChallenge(self.wndChallengeShare:GetData())
+		if self.wndChallengeShare:FindChild("AlwaysRejectCheck"):IsChecked() then
+			Event_FireGenericEvent("ChallengeLog_UpdateShareChallengePreference", GameLib.SharedChallengePreference.AutoReject)
+		end
+		self.wndChallengeShare:Destroy()
+		self.wndChallengeShare = nil
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- ChallengeLog List Building Functions
+-----------------------------------------------------------------------------------------------
+
+function ChallengeLog:SetUpZoneList(tChalList)
     local tNewZoneList = {}
     for idx, clgCurrent in pairs(tChalList) do
 		local tZoneRestrictionInfo = clgCurrent:GetZoneRestrictionInfo()
@@ -790,7 +834,6 @@ function ChallengeLog:SetUpZoneList(tChalList)
     end
 
     return tNewZoneList
-
 end
 
 -- Top List [Key: TypeId , Value: A Table]
@@ -842,7 +885,7 @@ function ChallengeLog:AddShowAllToBigZoneList()
 
 		local wndBigZoneBtn = self.wndShowAllBigZone:FindChild("BigZoneBtn")
 		wndBigZoneBtn:SetData(-1)
-		wndBigZoneBtn:FindChild("BigZoneTitle"):SetText(Apollo.GetString("Challenges_AllZones"))
+		wndBigZoneBtn:SetText(Apollo.GetString("Challenges_AllZones"))
 	end
 end
 
@@ -864,7 +907,7 @@ function ChallengeLog:HandleBigZoneList(tTemp, tChallengeZoneInfo)
 
 	local wndBigZoneBtn = wndNew:FindChild("BigZoneBtn")
 	wndBigZoneBtn:SetData(tChallengeZoneInfo.idZone)
-	wndBigZoneBtn:FindChild("BigZoneTitle"):SetText(tChallengeZoneInfo.strZoneName)
+	wndBigZoneBtn:SetText(tChallengeZoneInfo.strZoneName)
 
 	-- Click the big zone for the player if nothing is selected.
 	if self.nSelectedBigZone == nil and GameLib.IsZoneInZone(GameLib.GetCurrentZoneId(), tChallengeZoneInfo.idZone) then
@@ -951,10 +994,8 @@ function ChallengeLog:GetTableSize(tArg)
     return nCounter
 end
 
--- TODO: Icon Path Hardcoding
 function ChallengeLog:CalculateIconPath(eType)
-    local strIconPath = "CRB_GuildSprites:sprGuild_BlueMap_Stretchable"
-
+    local strIconPath = "CRB_GuildSprites:sprChallengeTypeGenericLarge"
 	if eType == 0 then     -- Combat
 		strIconPath = "CRB_ChallengeTrackerSprites:sprChallengeTypeKillLarge"
 	elseif eType == 1 then -- Ability
@@ -964,7 +1005,6 @@ function ChallengeLog:CalculateIconPath(eType)
 	elseif eType == 4 then -- Items
 		strIconPath = "CRB_ChallengeTrackerSprites:sprChallengeTypeLootLarge"
 	end
-
     return strIconPath
 end
 
@@ -989,12 +1029,9 @@ function ChallengeLog:HelperPickBigZone(wndArg) -- wndArg is a "BigZoneBtn"
 	for key, wndCurr in pairs(self.wndMain:FindChild("LeftSide:BigZoneListContainer"):GetChildren()) do
 		local wndBigZoneBtn = wndCurr:FindChild("BigZoneBtn")
 		wndBigZoneBtn:SetCheck(false)
-		wndBigZoneBtn:FindChild("BigZoneTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 	end
 	wndArg:SetCheck(true)
-	wndArg:FindChild("BigZoneTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
-
-	self.wndMain:FindChild("RightSide:ItemListZoneName"):SetText(wndArg:FindChild("BigZoneTitle"):GetText())
+	self.wndMain:FindChild("RightSide:ItemListZoneName"):SetText(wndArg:GetText())
 end
 
 function ChallengeLog:HelperCurrentTypeAlreadyActive(tList, eChallengeType, idChallenge)
@@ -1008,16 +1045,5 @@ function ChallengeLog:HelperCurrentTypeAlreadyActive(tList, eChallengeType, idCh
 	end
 end
 
-function ChallengeLog:OnClearSearchBtn(wndHandler, wndControl)
-	local wndTopHeader = self.wndMain:FindChild("TopHeader")
-	wndTopHeader:FindChild("ClearSearchBtn"):Show(false)
-	wndTopHeader:FindChild("HeaderSearchBox"):SetText("")
-	wndTopHeader:FindChild("HeaderSearchBox"):ClearFocus()
-	self:Redraw()
-end
-
------------------------------------------------------------------------------------------------
--- ChallengeLog Instance
------------------------------------------------------------------------------------------------
 local ChallengeLogInst = ChallengeLog:new()
 ChallengeLogInst:Init()

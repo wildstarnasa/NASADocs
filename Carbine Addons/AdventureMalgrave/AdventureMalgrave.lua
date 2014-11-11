@@ -98,9 +98,8 @@ function MalgraveAdventureResources:Initialize()
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "MalgraveAdventureResourcesForm", nil, self)
 		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Lore_Malgrave")})
 		
-		Apollo.RegisterTimerHandler("MaxProgressFlashIcon", "OnMaxProgressFlashIcon", self)
-		Apollo.CreateTimer("MaxProgressFlashIcon", 8, false)
-
+		self.timerMaxProgressFalshIcon = ApolloTimer.Create(8, false, "OnMaxProgressFlashIcon", self)
+		self.timerMaxProgressFalshIcon:Stop()
 		self.wndMain:FindChild("LeftAssetCostume"):SetCostumeToCreatureId(19195) -- TODO Hardcoded
 		self.wndMain:FindChild("LeftAssetCostume"):SetModelSequence(150)
 	
@@ -133,7 +132,7 @@ function MalgraveAdventureResources:OnUpdate(nFatigue, nFood, nWater, nFodder, n
 		local nNewValue = tArgList[idx]
 		local nPrevValue = wndCurr:FindChild("ProgressFlashIcon"):GetData()
 		if nPrevValue and nNewValue ~= 0 then
-			Apollo.StartTimer("MaxProgressFlashIcon")
+			self.timerMaxProgressFalshIcon:Start()
 
 			wndCurr:FindChild("ProgressFlashIcon"):Show(nNewValue > nPrevValue or wndCurr:FindChild("ProgressFlashIcon"):IsShown())
 			if nNewValue - nPrevValue > 0 then
@@ -182,7 +181,7 @@ end
 
 function MalgraveAdventureResources:OnMaxProgressFlashIcon()
 	if self.wndMain and self.wndMain:IsValid() then
-		Apollo.StopTimer("MaxProgressFlashIcon")
+		self.timerMaxProgressFalshIcon:Stop()
 		for idx, wndCurr in pairs({ self.wndMain:FindChild("SubBars:FoodBarBG:FoodProgressBar"), self.wndMain:FindChild("SubBars:WaterBarBG:WaterProgressBar"), self.wndMain:FindChild("SubBars:FeedBarBG:FeedProgressBar") }) do
 			wndCurr:FindChild("ProgressFlashIcon"):Show(false)
 			self:SetBarValueAndData(wndCurr, wndCurr:GetData()) -- After show false, will get ProgressFlashIcon's data too

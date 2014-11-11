@@ -299,7 +299,15 @@ function NonCombatSpellbook:OnBeginCmdDragDrop(wndHandler, wndControl, x, y, bDr
 	local wndParent = wndControl:GetParent()
 	local tData = wndParent:GetData()
 
-	Apollo.BeginDragDrop(wndParent, karTabDragDropType[self.nSelectedTab], tData.strIcon, tData.nGameCommandId)
+	local tGameCommand = GameLib.GetGameCommand(tData.nGameCommandId)
+	local strIcon = tGameCommand.strIcon
+	if tData.itemAbility then
+		strIcon = tGameCommand.itemAbility:GetIcon()
+	elseif tData.splAbility then
+		strIcon = tGameCommand.splAbility:GetIcon()
+	end
+	
+	Apollo.BeginDragDrop(wndParent, karTabDragDropType[self.nSelectedTab], strIcon, tData.nGameCommandId)
 	return true
 end
 

@@ -29,7 +29,7 @@ local kcrCannotResurrectButtonColor = CColor.new(.6, .6, .6, 1)
 local kcrCanResurrectTextColor = ApolloColor.new("ff9aaea3")
 local kcrCannotResurrectTextColor = CColor.new(.3, .3, .3, 1)
 
-local knSaveVersion = 1
+local knSaveVersion = 2
 
 ---------------------------------------------------------------------------------------------------
 -- Death functions
@@ -67,9 +67,9 @@ end
 function Death:OnDocLoaded()
 
 	if self.xmlDoc ~= nil and self.xmlDoc:IsLoaded() then
-		Apollo.RegisterTimerHandler("TenthSecTimer", "OnTenthSecTimer", self)
 		
 		Apollo.RegisterEventHandler("ShowResurrectDialog", 		"OnShowResurrectDialog", self)
+		Apollo.RegisterEventHandler("UpdateResurrectDialog", 	"OnUpdateResurrectDialog", self)
 		Apollo.RegisterEventHandler("ShowIncapacitationBar", 	"ShowIncapacitationBar", self)
 		Apollo.RegisterEventHandler("HideIncapacitationBar", 	"HideIncapacitationBar", self)
 		Apollo.RegisterEventHandler("CasterResurrectedPlayer", 	"CasterResurrectedPlayer", self)
@@ -94,10 +94,9 @@ function Death:OnDocLoaded()
 		self.nTimerProgress = nil
 		self.bDead = false
 		
-		Apollo.CreateTimer("TenthSecTimer", 0.10, true)
-		Apollo.StopTimer("TenthSecTimer")
+		self.timerTenthSec = ApolloTimer.Create(0.10, true, "OnTenthSecTimer", self)
+		self.timerTenthSec:Stop()
 
-		self.monPlayerCash = self.wndResurrect:FindChild("ResurrectDialog.PlayerCash")
 		if GameLib.GetPlayerUnit() then
 			self:OnCharacterCreated()
 		end
@@ -150,19 +149,24 @@ function Death:OnCharacterCreated()
 end
 
 function Death:OnShowResurrectDialog(bPlayerIsDead, bEnableRezHere, bEnableRezHoloCrypt, bEnableRezExitInstance, bEnableCasterRez, bHasCasterRezRequest, nRezCost, fTimeBeforeRezable, fTimeBeforeWakeHere, fTimeBeforeForceRez)
-	Apollo.StartTimer("TenthSecTimer")
+	self.timerTenthSec:Start()
+	
+	self.bDead = bPlayerIsDead
+	
+	self:OnUpdateResurrectDialog(bEnableRezHere, bEnableRezHoloCrypt, bEnableRezExitInstance, bEnableCasterRez, bHasCasterRezRequest, nRezCost, fTimeBeforeRezable, fTimeBeforeWakeHere, fTimeBeforeForceRez)
+end
 
+function Death:OnUpdateResurrectDialog(bEnableRezHere, bEnableRezHoloCrypt, bEnableRezExitInstance, bEnableCasterRez, bHasCasterRezRequest, nRezCost, fTimeBeforeRezable, fTimeBeforeWakeHere, fTimeBeforeForceRez)
 	self.bEnableRezHere = bEnableRezHere
 	self.bEnableRezHoloCrypt = bEnableRezHoloCrypt
 	self.bEnableRezExitInstance = bEnableRezExitInstance
 	self.bEnableCasterRez = bEnableCasterRez or false
 	self.bHasCasterRezRequest = bHasCasterRezRequest
-	self.bDead = bPlayerIsDead
 	self.nRezCost = nRezCost
 	self.fTimeBeforeRezable = fTimeBeforeRezable
 	self.fTimeBeforeWakeHere = fTimeBeforeWakeHere
 	self.fTimeBeforeForceRez = fTimeBeforeForceRez
-
+	
 	if self.bDead == false then
 		self.wndExitConfirm:Show(false)	
 		self.wndResurrect:Show(false)
@@ -182,7 +186,9 @@ function Death:OnShowResurrectDialog(bPlayerIsDead, bEnableRezHere, bEnableRezHo
 	self.wndResurrect:FindChild("ArtTimeToRezHere"):Show(true)
 	self.wndResurrect:FindChild("ForceRezText"):Show(false)
 	
-	self.wndResurrect:Show(true)
+	if self.bDead and not self.wndResurrect:IsShown() then
+		self.wndResurrect:Invoke()
+	end
 end
 
 
@@ -193,6 +199,8 @@ function Death:OnTenthSecTimer() -- there's no reason we can't run the whole thi
 		return
 	end
 	
+	local nLeft, nTop, nRight, nBottom = self.wndResurrect:GetAnchorOffsets()
+			
 	-- update all of our timers
 	self.fTimeBeforeWakeHere = self.fTimeBeforeWakeHere - 100
 	self.fTimeBeforeForceRez = self.fTimeBeforeForceRez - 100
@@ -202,6 +210,7 @@ function Death:OnTenthSecTimer() -- there's no reason we can't run the whole thi
 		local strTimeBeforeRezableFormatted = self:HelperCalcTimeSecondsMS(self.fTimeBeforeRezable)
 		self.wndResurrect:FindChild("ResurrectDialog.Timer"):SetText(strTimeBeforeRezableFormatted .. Apollo.GetString("CRB__seconds"))
 		self.wndResurrect:FindChild("ResurrectDialog.Timer"):Show(true)
+		self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 211)
 	else
 		local tMatchInfo = MatchingGame.GetPVPMatchState()
 		if tMatchInfo ~= nil then
@@ -209,6 +218,7 @@ function Death:OnTenthSecTimer() -- there's no reason we can't run the whole thi
 				if (tMatchInfo.eMyTeam == MatchingGame.Team.Team1 and tMatchInfo.tLivesRemaining.nTeam1 == 0) or (tMatchInfo.eMyTeam == MatchingGame.Team.Team2 and tMatchInfo.tLivesRemaining.nTeam2 == 0) then
 					self.wndResurrect:FindChild("ResurrectDialog.Timer"):SetText(Apollo.GetString("Death_NoLives"))
 					self.wndResurrect:FindChild("ResurrectDialog.Timer"):Show(true)	
+					self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 211)
 					self.wndResurrect:FindChild("ForceRezText"):Show(false)
 					self.wndResurrect:FindChild("ResurrectDialog.Here"):Show(false)
 					self.wndResurrect:FindChild("ResurrectDialog.Eldan"):Show(false)
@@ -218,15 +228,14 @@ function Death:OnTenthSecTimer() -- there's no reason we can't run the whole thi
 					return
 				end
 			elseif tMatchInfo.eRules == MatchingGame.Rules.WaveRespawn then
-				self.wndResurrect:Show(false)
+				self.wndResurrect:Close()
 				return
 			end
 		end
 	
 		self.wndResurrect:FindChild("ArtTimeToRezHere"):Show(false)
 		self.wndResurrect:FindChild("ResurrectDialog.Timer"):Show(false)
-		
-		self.wndResurrect:FindChild("ForceRezText"):Show(self.bEnableRezHoloCrypt)
+		self.wndResurrect:FindChild("ForceRezText"):Show(self.fTimeBeforeForceRez > 0)
 		self.wndResurrect:FindChild("ResurrectDialog.Here"):Show(self.bEnableRezHere)
 		self.wndResurrect:FindChild("ResurrectDialog.Eldan"):Show(self.bEnableRezHoloCrypt and not self.bEnableRezExitInstance)
 		self.wndResurrect:FindChild("ResurrectDialog.ExitInstance"):Show(not self.bEnableRezHoloCrypt and self.bEnableRezExitInstance)
@@ -234,13 +243,16 @@ function Death:OnTenthSecTimer() -- there's no reason we can't run the whole thi
 		self.wndResurrect:FindChild("ResurrectDialog.ExitInstanceSmall"):Show(self.bEnableRezHoloCrypt and self.bEnableRezExitInstance)		
 		self.wndResurrect:FindChild("ResurrectDialog.Caster"):Show(self.bEnableCasterRez and self.bHasCasterRezRequest)	
 		
-		local nLeft, nTop, nRight, nBottom = self.wndResurrect:GetAnchorOffsets()
+
 		if self.wndResurrect:FindChild("ResurrectDialog.Caster"):IsShown() then
-			self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 348)
+			self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 320)
+		elseif self.wndResurrect:FindChild("ResurrectDialog.Here"):IsShown() or self.wndResurrect:FindChild("ResurrectDialog.EldanSmall"):IsShown() then
+			self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 288)
 		else
-			self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 308)
+			self.wndResurrect:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 220)
 		end
 		
+		self.wndResurrect:FindChild("ResurrectDialogButtons"):ArrangeChildrenVert(0)
 		-- set up rez here
 		if self.wndResurrect:FindChild("ResurrectDialog.Here"):IsShown() then
 			local wndBtn = self.wndResurrect:FindChild("ResurrectDialog.Here")
@@ -279,7 +291,6 @@ function Death:OnTenthSecTimer() -- there's no reason we can't run the whole thi
 		self.wndResurrect:FindChild("ForceRezText"):SetText(String_GetWeaselString(Apollo.GetString("Death_AutoRelease"), strTimeFormatted))
 	end
 
-	self.monPlayerCash:SetAmount(GameLib.GetPlayerCurrency():GetAmount(), false)
 end
 
 ------------------------------------//------------------------------
@@ -293,10 +304,10 @@ function Death:OnResurrectHere()
 		GameLib.GetPlayerUnit():Resurrect(RezType.Here, 0)
 	end
 	
-	self.wndResurrect:Show(false)
+	self.wndResurrect:Close()
 	self.bDead = false
 	
-	Apollo.StopTimer("TenthSecTimer")
+	self.timerTenthSec:Stop()
 	Event_FireGenericEvent("PlayerResurrected")
 end
 ------------------------------------//------------------------------
@@ -305,10 +316,10 @@ function Death:OnResurrectCaster()
 		GameLib.GetPlayerUnit():Resurrect(RezType.SpellCasterLocation, 0) -- WIP, this should send in the UnitId of the caster
 	end
 	
-	self.wndResurrect:Show(false)
+	self.wndResurrect:Close()
 	self.bDead = false
 	
-	Apollo.StopTimer("TenthSecTimer")
+	self.timerTenthSec:Stop()
 	Event_FireGenericEvent("PlayerResurrected")
 end
 ------------------------------------//------------------------------
@@ -320,14 +331,17 @@ function Death:OnResurrectEldan()
 	self.wndResurrect:Show(false)
 	self.bDead = false
 	
-	Apollo.StopTimer("TenthSecTimer")
+	self.timerTenthSec:Stop()
 	Event_FireGenericEvent("PlayerResurrected")
+	
+	if GameLib.GetPvpFlagInfo().nCooldown then
+		ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_System, Apollo.GetString("Death_PvPFlagReset"), "" )
+	end
 end
-
 ------------------------------------//------------------------------
 function Death:OnExitInstance()
 	self.wndExitConfirm:Invoke()
-	self.wndResurrect:Show(false)
+	self.wndResurrect:Close()
 end
 
 function Death:OnConfirmExit()
@@ -336,42 +350,41 @@ function Death:OnConfirmExit()
 	end
 
 	self.wndExitConfirm:Close()	
-	self.wndResurrect:Show(false)
+	self.wndResurrect:Close()
 	self.bDead = false
 	
-	Apollo.StopTimer("TenthSecTimer")
+	self.timerTenthSec:Stop()
 	Event_FireGenericEvent("PlayerResurrected")
 end
 
 function Death:OnCancelExit()
 	self.wndExitConfirm:Close()	
-	self.wndResurrect:Show(true)
+	self.wndResurrect:Invoke()
 end
 
 ------------------------------------//------------------------------
 function Death:OnForcedResurrection()
 	self.wndExitConfirm:Show(false)	
-	self.wndResurrect:Show(false)
+	self.wndResurrect:Close()
 	self.bDead = false
 
-	Apollo.StopTimer("TenthSecTimer")
+	self.timerTenthSec:Stop()
 	Event_FireGenericEvent("PlayerResurrected")
 end
 
 ------------------------------------//------------------------------
 function Death:OnScriptResurrection()
 	self.wndExitConfirm:Show(false)	
-	self.wndResurrect:Show(false)
+	self.wndResurrect:Close()
 	self.bDead = false
 
-	Apollo.StopTimer("TenthSecTimer")
+	self.timerTenthSec:Stop()
 	Event_FireGenericEvent("PlayerResurrected")
 end
 
 ------------------------------------//------------------------------
 
 function Death:HideIncapacitationBar()
-
 	self.wndExitConfirm:Show(false)	
 	self.wndResurrect:Show(false)
 end

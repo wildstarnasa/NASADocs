@@ -12,7 +12,6 @@ local LevelUpUnlocks = {}
 local knMaxLevel = 50
 local knMaxPathLevel = 30
 local knAutoHideReminderTime = 250
-local knSaveVersion = 8
 
 local ktUnlockMapping =
 {
@@ -126,43 +125,15 @@ function LevelUpUnlocks:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.nLastClassLevelDisplayed = nil
+	o.nLastPathLevelDisplayed = nil
+
     return o
 end
 
 function LevelUpUnlocks:Init()
     Apollo.RegisterAddon(self)
-end
-
-function LevelUpUnlocks:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	local locReminderLocation = self.wndLevelUpUnlockReminder and self.wndLevelUpUnlockReminder:GetLocation() or self.locSavedReminderLoc
-	local locMainLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedMainLoc
-
-	local tSaved =
-	{
-		tReminderLocation = locReminderLocation and locReminderLocation:ToTable() or nil,
-		tMainLocation = locMainLocation and locMainLocation:ToTable() or nil,
-		nSavedVersion = knSaveVersion,
-	}
-	return tSaved
-end
-
-function LevelUpUnlocks:OnRestore(eType, tSavedData)
-	self.tSavedData = tSavedData
-	if not tSavedData or tSavedData.nSavedVersion ~= knSaveVersion then
-		return
-	end
-
-	if tSavedData.tReminderLocation then
-		self.locSavedReminderLoc = WindowLocation.new(tSavedData.tReminderLocation)
-	end
-
-	if tSavedData.tMainLocation then
-		self.locSavedMainLoc = WindowLocation.new(tSavedData.tMainLocation)
-	end
 end
 
 function LevelUpUnlocks:OnLoad()
@@ -181,17 +152,13 @@ function LevelUpUnlocks:OnDocumentReady()
 	Apollo.RegisterEventHandler("ToggleLevelUpUnlocks", 		"DisplayLevelUpUnlockPermanentWindow", self)
 	Apollo.RegisterEventHandler("ToggleLevelUpUnlockWindow", 	"OnToggleLevelUpUnlockWindow", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 			"Initialize", self)
-
-	Apollo.RegisterTimerHandler("LevelUp_ReminderAutoHide", 	"OnClose", self)
-	Apollo.CreateTimer("LevelUp_ReminderAutoHide", knAutoHideReminderTime, false)
-	Apollo.StopTimer("LevelUp_ReminderAutoHide")
+	
+	self.timerAutoHide = ApolloTimer.Create(knAutoHideReminderTime, false, "OnClose", self)
+	self.timerAutoHide:Stop()
 
 	self.wndMain = nil
 	self.wndPermanent = nil
 	self.wndLevelUpUnlockReminder = nil
-
-	self.wndPermanentLocX = nil
-	self.wndPermanentLocY = nil
 
 	if GameLib.GetPlayerUnit() then
 		self:Initialize()
@@ -236,9 +203,8 @@ end
 function LevelUpUnlocks:DisplayLevelUpUnlockPermanentWindow(nSpecificLevel)
 	if not self.wndPermanent or not self.wndPermanent:IsValid() then
 		self.wndPermanent = Apollo.LoadForm(self.xmlDoc, "LevelUpUnlockPermanent", nil, self)
-		if self.wndPermanentLocX ~= nil and self.wndPermanentLocY ~= nil then
-			self.wndPermanent:Move(self.wndPermanentLocX, self.wndPermanentLocY, self.wndPermanent:GetWidth(), self.wndPermanent:GetHeight())
-		end
+		
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndPermanent, strName = Apollo.GetString("InterfaceMenu_LevelUpUnlocks")})
 	end
 	self.wndPermanent:Show(true)
 	-- Path or Level
@@ -253,6 +219,12 @@ function LevelUpUnlocks:DisplayLevelUpUnlockPermanentWindow(nSpecificLevel)
 	self.wndPermanent:FindChild("LevelUpPickerBtnText"):SetText(String_GetWeaselString(Apollo.GetString("LevelUpUnlocks_LevelNum"), nSpecificLevel))
 	self.wndPermanent:FindChild("LevelUpPathFilterBtn"):SetCheck(bShowPath)
 	self.wndPermanent:FindChild("LevelUpLevelFilterBtn"):SetCheck(not bShowPath)
+	
+	if bShowPath then
+		self.nLastPathLevelDisplayed = nSpecificLevel
+	else
+		self.nLastClassLevelDisplayed = nSpecificLevel
+	end
 
 	-- List Items
 	self.wndPermanent:FindChild("LevelUpItemContainer"):DestroyChildren()
@@ -272,15 +244,14 @@ function LevelUpUnlocks:DisplayLevelUpUnlockPermanentWindow(nSpecificLevel)
 		wndCurr:SetText(String_GetWeaselString(Apollo.GetString("LevelUpUnlocks_LevelNum"), idx))
 	end
 	self.wndPermanent:FindChild("LevelUpPickerList"):ArrangeChildrenVert(0)
-	self.wndPermanent:FindChild("LevelUpPickerList"):SetVScrollPos((nSpecificLevel - 1) * 30) -- 30 is hardcoded formatting of the list item height
+	self.wndPermanent:FindChild("LevelUpPickerList"):SetVScrollPos((nSpecificLevel - 1) * 30) -- 30 is hardcoded formatting of the list item height	
 end
 
 function LevelUpUnlocks:DisplayLevelUpUnlockDetailsWindow() -- Also from XML, such as the fanfare window
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "LevelUpUnlockDetails", nil, self)
-		if self.locSavedMainLoc then
-			self.wndMain:MoveToLocation(self.locSavedMainLoc)
-		end
+		
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_LevelUpUnlocksLeveldUp")})
 	end
 
 	local nPlayerLevel = GameLib.GetPlayerLevel()
@@ -363,12 +334,22 @@ end
 -----------------------------------------------------------------------------------------------
 
 function LevelUpUnlocks:OnLevelUpPickerBtn(wndHandler, wndControl) -- Dropdown button in Permanent UI, view another level
+	self.wndPermanent:FindChild("LevelUpPickerList"):SetVScrollPos(0)
 	self.wndPermanent:FindChild("LevelUpPickerListFrame"):Show(false)
 	self:DisplayLevelUpUnlockPermanentWindow(wndHandler:GetData())
 end
 
 function LevelUpUnlocks:OnLevelUpFilterBtn(wndHandler, wndControl) -- Filter buttons in Permanent UI
-	self:DisplayLevelUpUnlockPermanentWindow(self.wndPermanent:FindChild("LevelUpPickerBtn"):GetData())
+	self.wndPermanent:FindChild("LevelUpPickerList"):SetVScrollPos(0)
+	self.wndPermanent:FindChild("LevelUpPickerListFrame"):Show(false)
+	local nLevel
+	local bShowPath = self.wndPermanent:FindChild("LevelUpPathFilterBtn"):IsChecked()
+	if bShowPath then
+		nLevel = self.nLastPathLevelDisplayed
+	else
+		nLevel = self.nLastClassLevelDisplayed
+	end
+	self:DisplayLevelUpUnlockPermanentWindow(nLevel)
 end
 
 function LevelUpUnlocks:OnLevelUpItemActionBtn(wndHandler, wndControl, eMouseButton)
@@ -378,7 +359,7 @@ function LevelUpUnlocks:OnLevelUpItemActionBtn(wndHandler, wndControl, eMouseBut
 
 	for idx, tAction in pairs(ktUnlockActions) do
 		if tUnlock[tAction.strField] == tAction.eValue then
-			Event_FireGenericEvent(tAction.strEvent, tUnlock.nExtraData)
+			Event_FireGenericEvent(tAction.strEvent, tUnlock.nExtraData, tAction.eValue)
 		end
 	end
 end
@@ -402,33 +383,28 @@ end
 function LevelUpUnlocks:OnCloseToReminder() -- Also from XML
 	self:OnClose()
 	self.wndLevelUpUnlockReminder = Apollo.LoadForm(self.xmlDoc, "LevelUpUnlockReminder", nil, self)
+	
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndLevelUpUnlockReminder, strName = Apollo.GetString("InterfaceMenu_LevelUpUnlockRewards")})
 
-	if self.locSavedReminderLoc then
-		self.wndLevelUpUnlockReminder:MoveToLocation(self.locSavedReminderLoc)
-	end
-
-	Apollo.StartTimer("LevelUp_ReminderAutoHide")
+	self.timerAutoHide:Start()
 end
 
 function LevelUpUnlocks:OnCloseToPermanentWindow()
 	if self.wndPermanent then
-		self.wndPermanentLocX, self.wndPermanentLocY = self.wndPermanent:GetPos()
 		self.wndPermanent:Destroy()
 		self.wndPermanent = nil
 	end
 end
 
 function LevelUpUnlocks:OnClose() -- Lots of things will call this
-	Apollo.StopTimer("LevelUp_ReminderAutoHide")
+	self.timerAutoHide:Stop()
 
 	if self.wndMain then
-		self.locSavedMainLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndMain = nil
 	end
 
 	if self.wndLevelUpUnlockReminder then
-		self.locSavedReminderLoc = self.wndLevelUpUnlockReminder:GetLocation()
 		self.wndLevelUpUnlockReminder:Destroy()
 		self.wndLevelUpUnlockReminder = nil
 	end

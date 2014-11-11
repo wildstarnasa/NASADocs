@@ -50,7 +50,7 @@ function RuneSets:RedrawSets(wndParent)
 	local tListOfSets = {}
 	local bHeaderBag = true -- TODO
 	local bHeaderEquipped = true -- TODO
-	for idx, itemCurr in pairs(CraftingLib.GetValidGlyphableItems(bHeaderEquipped, bHeaderBag)) do
+	for idx, itemCurr in pairs(CraftingLib.GetItemsWithRuneSlots(bHeaderEquipped, bHeaderBag)) do
 		for idx2, tSetInfo in ipairs(itemCurr:GetSetBonuses()) do
 			if tSetInfo and tSetInfo.strName and not tListOfSets[tSetInfo.strName] then
 				tListOfSets[tSetInfo.strName] = tSetInfo
@@ -58,9 +58,9 @@ function RuneSets:RedrawSets(wndParent)
 		end
 	end
 
-	-- Current Glyphs
-	for idx, itemGlyph in pairs(CraftingLib.GetValidGlyphItems()) do
-		local tMicrochipData = itemGlyph:GetMicrochipInfo()
+	-- Current Runes
+	for idx, itemRune in pairs(CraftingLib.GetValidRuneItems()) do
+		local tMicrochipData = itemRune:GetMicrochipInfo()
 		for idx, tSetInfo in pairs(tMicrochipData.tSet or {}) do
 			if tSetInfo and tSetInfo.strName and not tListOfSets[tSetInfo.strName] then
 				tSetInfo.nPower = 0 -- HACK
@@ -83,7 +83,8 @@ function RuneSets:RedrawSets(wndParent)
 			-- tBonusInfo.active, tBonusInfo.power, tBonusInfo.spell:GetFlavor()
 			local strLocalColor = tBonusInfo.bIsActive and "ItemQuality_Good" or "UI_TextHoloBody"
 			strLocalSetText = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s</P><P TextColor=\"0\">.</P>", strLocalSetText, strLocalColor,
-			String_GetWeaselString(Apollo.GetString("EngravingStation_BonusInfo"), tBonusInfo.nPower, tBonusInfo.splBonus:GetFlavor()))
+			String_GetWeaselString(Apollo.GetString("Tooltips_RuneDetails"), tBonusInfo.nPower, tBonusInfo.splBonus:GetName(), tBonusInfo.splBonus:GetFlavor() or ""))
+
 		end
 
 		strFullText = strFullText .. kstrLineBreak .. strLocalSetText

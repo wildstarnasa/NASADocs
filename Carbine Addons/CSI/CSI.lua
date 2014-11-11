@@ -88,7 +88,6 @@ function CSI:OnDocumentReady()
 	Apollo.RegisterEventHandler("ProgressClickWindowDisplay", "OnProgressClickWindowDisplay", self)	-- Starting a CSI
 	Apollo.RegisterEventHandler("ProgressClickWindowCompletionLevel", "OnProgressClickWindowCompletionLevel", self) -- Updates Progress Bar
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", "OnTutorial_RequestUIAnchor", self)
-	Apollo.RegisterTimerHandler("CalculateTimeRemaining", "OnCalculateTimeRemaining", self)
 
 	self.nLocation1Left = 0
 	self.nLocation1Right = 0
@@ -126,7 +125,7 @@ function CSI:OnDocumentReady()
 	self.tMemoryOptions[3]:SetData({ strTextColor = "ff31fcf6", id = 3, sound = Sound.PlayUIMemoryButton3})
 	self.tMemoryOptions[4]:SetData({ strTextColor = "ffd000ff", id = 4, sound = Sound.PlayUIMemoryButton4})
 
-	Apollo.RegisterTimerHandler("MemoryDisplayTimer", "OnMemoryDisplayTimer", self)
+	self.timerMemoryDisplay = ApolloTimer.Create(0.5, false, "OnMemoryDisplayTimer", self)
 	Apollo.RegisterEventHandler("AcceptProgressInput", "OnAcceptProgressInput", self)
 	Apollo.RegisterEventHandler("HighlightProgressOption", "OnHighlightProgressOption", self)
 
@@ -149,22 +148,29 @@ function CSI:OnProgressClickWindowDisplay(bShow)
 	
 	if self.wndProgress and self.wndProgress:IsValid() then
 		self.wndProgress:Destroy()
+		self.wndProgress = nil
+	end
+	
+	if not bShow then
+		self.wndMemory:Show(false)
+		self.wndKeypad:Show(false)
+		return
 	end
 	
 	local eType = tActiveCSI.eType
 
 	if eType == CSIsLib.ClientSideInteractionType_YesNo then
-		self:BuildYesNo(tActiveCSI, bShow)
+		self:BuildYesNo(tActiveCSI)
 	elseif eType == CSIsLib.ClientSideInteractionType_Memory then
-		self:BuildMemory(tActiveCSI, bShow)
+		self:BuildMemory(tActiveCSI)
 	elseif eType == CSIsLib.ClientSideInteractionType_Keypad then
-		self:BuildKeypad(tActiveCSI, bShow)
+		self:BuildKeypad(tActiveCSI)
 	elseif eType == CSIsLib.ClientSideInteractionType_PressAndHold then
-		self:BuildPressAndHold(tActiveCSI, bShow, Apollo.GetString("ProgressClick_ClickAndHoldUnit"))
+		self:BuildPressAndHold(tActiveCSI, Apollo.GetString("ProgressClick_ClickAndHoldUnit"))
 	elseif eType == CSIsLib.ClientSideInteractionType_RapidTapping or eType == CSIsLib.ClientSideInteractionType_RapidTappingInverse then
-		self:BuildRapidTap(tActiveCSI, bShow, Apollo.GetString("ProgressClick_RapidClickUnit"))
+		self:BuildRapidTap(tActiveCSI, Apollo.GetString("ProgressClick_RapidClickUnit"))
 	elseif eType == CSIsLib.ClientSideInteractionType_PrecisionTapping or eType == CSIsLib.ClientSideInteractionType_Metronome then
-		self:BuildPrecisionTap(tActiveCSI, bShow, Apollo.GetString("ProgressClick_PrecisionClickUnit"))
+		self:BuildPrecisionTap(tActiveCSI, Apollo.GetString("ProgressClick_PrecisionClickUnit"))
 	end
 
 	self:OnCalculateTimeRemaining()
@@ -174,10 +180,7 @@ end
 -- Yes No
 -----------------------------------------------------------------------------------------------
 
-function CSI:BuildYesNo(tActiveCSI, bShow)
-	if not bShow then 
-		return 
-	end
+function CSI:BuildYesNo(tActiveCSI)
 
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_YesNo", nil, self)
 
@@ -229,14 +232,7 @@ end
 -- Press and Hold and Rapid Tap and Precision Tap and Memory and Keypad
 -----------------------------------------------------------------------------------------------
 
-function CSI:BuildPressAndHold(tActiveCSI, bShow, strBodyText)
-	if not bShow then
-		if self.wndProgress and self.wndProgress:IsValid() then
-			self.wndProgress:Destroy()
-		end
-		return
-	end
-
+function CSI:BuildPressAndHold(tActiveCSI, strBodyText)
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_Progress", nil, self)
 	wndCurr:Show(true) -- to get the animation
 	wndCurr:FindChild("BodyText"):SetText(strBodyText)
@@ -249,14 +245,7 @@ function CSI:BuildPressAndHold(tActiveCSI, bShow, strBodyText)
 	self.wndProgress = wndCurr
 end
 
-function CSI:BuildRapidTap(tActiveCSI, bShow)
-	if not bShow then
-		if self.wndProgress and self.wndProgress:IsValid() then
-			self.wndProgress:Destroy()
-		end
-		return
-	end
-
+function CSI:BuildRapidTap(tActiveCSI)
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_Progress", nil, self)
 	wndCurr:Show(true) -- to get the animation
 	wndCurr:FindChild("ProgressButton"):SetText(GameLib.GetKeyBinding("Interact"))
@@ -267,14 +256,7 @@ function CSI:BuildRapidTap(tActiveCSI, bShow)
 	self.wndProgress = wndCurr
 end
 
-function CSI:BuildPrecisionTap(tActiveCSI, bShow, strBodyText)
-	if not bShow then
-		if self.wndProgress and self.wndProgress:IsValid() then
-			self.wndProgress:Destroy()
-		end
-		return
-	end
-
+function CSI:BuildPrecisionTap(tActiveCSI, strBodyText)
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_Precision", nil, self)
 	wndCurr:SetData(tActiveCSI)
 	wndCurr:FindChild("BodyText"):SetText(strBodyText)
@@ -304,7 +286,7 @@ function CSI:BuildPrecisionTap(tActiveCSI, bShow, strBodyText)
 	self.bMetronomeLastDirectionAll = false
 end
 
-function CSI:BuildKeypad(tActiveCSI, bShow)
+function CSI:BuildKeypad(tActiveCSI)
 	if not tActiveCSI then
 		self.wndKeypad:Show(false)
 	    return
@@ -322,18 +304,18 @@ function CSI:BuildKeypad(tActiveCSI, bShow)
 		self.wndKeypad:FindChild("KeypadTopBG:KeypadText"):SetText(Apollo.GetString("CRB_Enter_the_code"))
 	end
 
-	self.wndKeypad:Show(bShow)
+	self.wndKeypad:Show(true)
 	self.wndKeypad:FindChild("TimeRemainingContainer"):Show(false)
 end
 
-function CSI:BuildMemory(tActiveCSI, bShow)
+function CSI:BuildMemory(tActiveCSI)
 	-- TODO: Create a new one here (and later destroy)
-	self.wndMemory:Show(bShow and tActiveCSI)
+	self.wndMemory:Show(tActiveCSI)
 	self.wndMemory:FindChild("OptionBtn1"):Enable(false)
 	self.wndMemory:FindChild("OptionBtn2"):Enable(false)
 	self.wndMemory:FindChild("OptionBtn3"):Enable(false)
 	self.wndMemory:FindChild("OptionBtn4"):Enable(false)
-	self.wndMemory:FindChild("StartBtnBG"):Show(bShow and tActiveCSI)
+	self.wndMemory:FindChild("StartBtnBG"):Show(tActiveCSI)
 	self.wndMemory:FindChild("BGArtCenterCircle:BGArtCenterCircleText"):SetAML("")
 	self.wndMemory:FindChild("BGArtCenterCircle:BGArtCenterCircleReadyText"):Show(false)
 end
@@ -362,8 +344,14 @@ function CSI:OnProgressClickWindowCompletionLevel(nPercentage, bIsReversed) -- U
 		local wndProgressButton = wndClickTimeFrame:FindChild("ClickProgressButton")
 		local wndProgressButton2 = wndClickTimeFrame2:FindChild("ClickProgressButton")
 		
-		wndProgressButton:Show(true)
-		wndProgressButton2:Show(nPercentage > self.nLocation1Right)
+		if not bIsReversed then
+			wndProgressButton:Show(true)
+			wndProgressButton2:Show(self.nLocation2Left > 0 and nPercentage > self.nLocation1Right)
+		else
+			local bHasLeft = self.nLocation2Left > 0
+			wndProgressButton:Show(not bHasLeft or (bHasLeft and nPercentage < self.nLocation2Left))
+			wndProgressButton2:Show(bHasLeft)
+		end
 
 		-- Special glowing (only once) when they enter it
 		local wndButtonGlow = wndProgressButton:FindChild("ProgressButtonGlow")
@@ -390,26 +378,24 @@ function CSI:OnProgressClickWindowCompletionLevel(nPercentage, bIsReversed) -- U
 
 		-- Fail if they missed it
 		local tCSI = CSIsLib.GetActiveCSI()
-		local bFailed1 = nPercentage > self.nLocation1Right and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown()
-		local bFailed2 = nPercentage > self.nLocation2Right and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown()
+		
+		local bFailed1 = nPercentage > self.nLocation1Right and wndProgressButton:IsVisible() and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown()
+		local bFailed2 = nPercentage > self.nLocation2Right and wndProgressButton2:IsVisible() and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown()
 
 		if tCSI.eType == CSIsLib.ClientSideInteractionType_Metronome then -- Special case for reversing Metronome (compare < instead of >)
 			if bIsReversed then
-				bFailed1 = nPercentage < self.nLocation1Left and nPercentage < self.nLocation1Right and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown()
-				bFailed2 = nPercentage < self.nLocation2Left and nPercentage < self.nLocation2Right and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown()
+				bFailed1 = nPercentage < self.nLocation1Left and nPercentage < self.nLocation1Right and wndProgressButton:IsVisible() and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown()
+				bFailed2 = nPercentage < self.nLocation2Left and nPercentage < self.nLocation2Right and wndProgressButton2:IsVisible() and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown() 
 			end
 			self.wndProgress:FindChild("ProgressBarFrame:ProgressBar"):SetData(nPercentage)
-			wndProgressButton:Show(self.nLocation2Left ~= 0)
 
 			-- Miss tracking
-			if bFailed1 and self.tMetronomeLastDirection1 ~= bIsReversed then
-				self.tMetronomeLastDirection1 = bIsReversed
+			if bFailed1 then
 				if not wndProgressButton:FindChild("ProgressButtonFail"):IsShown() then
 					self.nMetronomeMisses = self.nMetronomeMisses + 1
 				end
 			end
-			if bFailed2 and self.tMetronomeLastDirection2 ~= bIsReversed then
-				self.tMetronomeLastDirection2 = bIsReversed
+			if bFailed2 then
 				if not wndProgressButton2:FindChild("ProgressButtonFail"):IsShown() then
 					self.nMetronomeMisses = self.nMetronomeMisses + 1
 				end
@@ -421,19 +407,16 @@ function CSI:OnProgressClickWindowCompletionLevel(nPercentage, bIsReversed) -- U
 			elseif wndMissThresholdText then
 				wndMissThresholdText:SetText("")
 			end
-			if self.tMetronomeLastDirectionAll ~= bIsReversed then
-				self.tMetronomeLastDirectionAll = bIsReversed
-				self.tMetronomeLastDirection1 = not bIsReversed
-				self.tMetronomeLastDirection2 = not bIsReversed
-			end
 		end
 
 		if bFailed1 then
+			Sound.Play(Sound.PlayUIAlertPopUpMessageReceived)
 			wndProgressButton:FindChild("ProgressButtonFail"):Show(true)
 			wndProgressButton:FindChild("ProgressButtonText"):Show(false)
 		end
 
 		if bFailed2 then
+			Sound.Play(Sound.PlayUIAlertPopUpMessageReceived)
 			wndProgressButton2:FindChild("ProgressButtonFail"):Show(true)
 			wndProgressButton2:FindChild("ProgressButtonText"):Show(false)
 		end
@@ -591,24 +574,24 @@ function CSI:HelperComputeProgressFailOrWin()
 		wndProgressButton:FindChild("ProgressButtonFail"):Show(true)
 		wndProgressButton:FindChild("ProgressButtonText"):Show(false)
 		wndProgressButton:FindChild("ProgressButtonCheck"):Show(false)
-		self.nMetronomeMisses = self.nMetronomeMisses + 1
+		self:HelperFail()
 	elseif nPercentage < self.nLocation1Right and wndProgressButton:FindChild("ProgressButtonFail"):IsShown() then
-		self.nMetronomeMisses = self.nMetronomeMisses + 1
+		self:HelperFail()
 	end
 
 	if nPercentage < self.nLocation2Left and nPercentage > self.nLocation1Right then
 		wndProgressButton2:FindChild("ProgressButtonFail"):Show(true)
 		wndProgressButton2:FindChild("ProgressButtonText"):Show(false)
 		wndProgressButton2:FindChild("ProgressButtonCheck"):Show(false)
-		self.nMetronomeMisses = self.nMetronomeMisses + 1
+		self:HelperFail()
 	elseif nPercentage < self.nLocation2Right and wndProgressButton2:FindChild("ProgressButtonFail"):IsShown() then
-		self.nMetronomeMisses = self.nMetronomeMisses + 1
+		self:HelperFail()
 	end
 
 	-- If an extra click happens on the right
 	if nPercentage > self.nLocation1Right and not wndClickTimeFrame2:IsShown() then
 		if not wndProgressButton:FindChild("ProgressButtonFail"):IsShown() then
-			self.nMetronomeMisses = self.nMetronomeMisses + 1
+			self:HelperFail()
 		end
 		wndProgressButton:FindChild("ProgressButtonFail"):Show(true)
 		wndProgressButton:FindChild("ProgressButtonText"):Show(false)
@@ -617,7 +600,7 @@ function CSI:HelperComputeProgressFailOrWin()
 
 	if nPercentage > self.nLocation2Right and wndClickTimeFrame2:IsShown() then
 		if not wndProgressButton2:FindChild("ProgressButtonFail"):IsShown() then
-			self.nMetronomeMisses = self.nMetronomeMisses + 1
+			self:HelperFail()
 		end
 		wndProgressButton2:FindChild("ProgressButtonFail"):Show(true)
 		wndProgressButton2:FindChild("ProgressButtonText"):Show(false)
@@ -625,14 +608,23 @@ function CSI:HelperComputeProgressFailOrWin()
 	end
 
 	if nPercentage >= self.nLocation1Left and nPercentage <= self.nLocation1Right then
-		self.nMetronomeHits = self.nMetronomeHits + 1
-		self.wndProgress:FindChild("MetronomeProgress"):SetText(String_GetWeaselString(Apollo.GetString("CSI_MetronomeCount"), self.nMetronomeHits, self.nProgressSwingCount))
+		self:HelperSuccess()
 	end
 
 	if nPercentage >= self.nLocation2Left and nPercentage <= self.nLocation2Right then
-		self.nMetronomeHits = self.nMetronomeHits + 1
-		self.wndProgress:FindChild("MetronomeProgress"):SetText(String_GetWeaselString(Apollo.GetString("CSI_MetronomeCount"), self.nMetronomeHits, self.nProgressSwingCount))
+		self:HelperSuccess()
 	end
+end
+
+function CSI:HelperSuccess()
+	Sound.Play(Sound.PlayUIExplorerSignalDetection1)
+	self.nMetronomeHits = self.nMetronomeHits + 1
+	self.wndProgress:FindChild("MetronomeProgress"):SetText(String_GetWeaselString(Apollo.GetString("CSI_MetronomeCount"), self.nMetronomeHits, self.nProgressSwingCount))
+end
+
+function CSI:HelperFail()
+	Sound.Play(Sound.PlayUIAlertPopUpMessageReceived)
+	self.nMetronomeMisses = self.nMetronomeMisses + 1
 end
 
 -----------------------------------------------------------------------------------------------
@@ -729,7 +721,8 @@ function CSI:OnCalculateTimeRemaining()
 	end
 
 	if fTimeRemaining > 0 then
-		Apollo.CreateTimer("CalculateTimeRemaining", 0.05, false)
+		--timers currently can't be started during their callbacks, because of a Code bug.
+		self.timerCalculateRemaining = ApolloTimer.Create(0.05, false, "OnCalculateTimeRemaining", self)
 	end
 end
 
@@ -835,7 +828,7 @@ function CSI:OnHighlightProgressOption(nOption)
 		self.wndMemory:SetData(wndCurrFlash)
 		wndCurrFlash:FindChild("OptionBtnFlash"):Show(true)
 		Sound.Play(wndCurrFlash:GetData().sound)
-		Apollo.CreateTimer("MemoryDisplayTimer", 0.5, false)
+		self.timerMemoryDisplay:Start()
 	end
 end
 

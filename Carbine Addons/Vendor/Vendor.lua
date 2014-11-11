@@ -44,10 +44,10 @@ function Vendor:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	
+
 	o.tFactoryCache = {}
 	o.idOpenedGroup = nil
-	
+
 	return o
 end
 
@@ -64,7 +64,7 @@ function Vendor:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 
 	Apollo.RegisterEventHandler("UpdateInventory", 				"OnUpdateInventory", self)
@@ -98,12 +98,14 @@ function Vendor:OnDocumentReady()
 	self.wndBagWindow = self.wndVendor:FindChild("BagWindow")
 
 	self.tAltCurrency = nil
+	self.wndVendor:FindChild("AltCurrency"):Show(false, true)
 	self.tDefaultSelectedItem = nil
 
 	self.tVendorItems = {}
 	self.tItemWndList = {}
 	self.tBuybackItems = {}
 	self.tRepairableItems = {}
+	self.nCount = 0
 end
 
 function Vendor:OnWindowManagementReady()
@@ -121,7 +123,6 @@ function Vendor:OnInvokeVendorWindow(unitArg) -- REFACTOR
 	self.wndVendor:FindChild("VendorName"):SetText(unitArg:GetName())
 	self.wndVendor:FindChild("VendorPortrait"):SetCostume(unitArg)
 	self.wndVendor:FindChild("VendorPortrait"):SetModelSequence(150)
-
 	self.wndVendor:FindChild(kstrTabBuy):SetCheck(true)
 	self.wndVendor:FindChild(kstrTabSell):SetCheck(false)
 	self.wndVendor:FindChild(kstrTabBuyback):SetCheck(false)
@@ -198,51 +199,71 @@ function Vendor:Redraw()
 		return
 	end
 
+	self:HelperTabManagement()
+
 	local tUpdateInfo = nil
 	if self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
 		tUpdateInfo = self:UpdateVendorItems()
 	elseif self.wndVendor:FindChild(kstrTabSell):IsChecked() then
-		tUpdateInfo = self:UpdateSellItems()
+		tUpdateInfo = self.tLastSellItems
 	elseif self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
 		tUpdateInfo = self:UpdateBuybackItems()
 	elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
 		tUpdateInfo = self:UpdateRepairableItems()
 	end
-	
-	--[[local tInvItems = GameLib.GetPlayerUnit():GetInventoryItems()
-	local jCount = 0
-		for _, val in pairs(tInvItems) do
-		if val.itemInBag:GetItemCategory() == 94 then	--Junk ID
-			jCount = jCount + 1
-		end
-	end
-	
-	self.wndVendor:FindChild("SellJunkBtn"):SetText("Sell Junk (" .. jCount ..")")
-		
-	if self.wndVendor:FindChild(kstrTabSell):IsChecked() and jCount > 0 then
-		self.wndVendor:FindChild("SellJunkBtn"):Show(true)
-		self.wndVendor:FindChild("SellJunkBtn"):Enable(true)
-	elseif self.wndVendor:FindChild(kstrTabSell):IsChecked() and jCount <= 0 then
-		self.wndVendor:FindChild("SellJunkBtn"):Show(true)	
-		self.wndVendor:FindChild("SellJunkBtn"):Enable(false)		
-	else
-		self.wndVendor:FindChild("SellJunkBtn"):Show(false)
-	end]]--
-	
+
 	local bFullRedraw = tUpdateInfo and tUpdateInfo.tUpdatedItems and (tUpdateInfo.bChanged or tUpdateInfo.bItemCountChanged or tUpdateInfo.bGroupCountChanged)
-	if bFullRedraw then
+	--if no more items in current tab, reset the tab to buy
+	if not tUpdateInfo then
+		self:HelperResetToBuyTab()
+	elseif bFullRedraw then
 		local nVScrollPos = self.wndItemContainer:GetVScrollPos()
 		self.wndItemContainer:DestroyChildren()
 		self:DisableBuyButton()
-		
+
 		self:DrawHeaderAndItems(tUpdateInfo.tUpdatedItems, tUpdateInfo.bChanged)
-	
+
 		self.wndItemContainer:SetVScrollPos(nVScrollPos)
 	else
 		self:DrawHeaderAndItems(tUpdateInfo.tUpdatedItems, tUpdateInfo.bChanged)
 	end
 
 	self:OnGuildChange() -- Also check Guild Repair
+end
+
+function Vendor:HelperTabManagement(tVendorList, bChanged)
+	local unitVendor = self.wndVendor:GetData()
+	if unitVendor then
+		--check to disable Buy Tab
+		local tBuybackItems = unitVendor:GetBuybackItems()
+		self.wndVendor:FindChild(kstrTabBuyback):Enable(tBuybackItems and #tBuybackItems ~= 0)
+
+		--check to disable Repair Tab
+		if IsRepairVendor(unitVendor) then
+			local tRepairableItems = unitVendor:GetRepairableItems()
+			local bHasRepair = tRepairableItems and #tRepairableItems ~= 0
+			self.wndVendor:FindChild(kstrTabRepair):Enable(bHasRepair)
+			if not bHasRepair then
+				self.wndVendor:FindChild(kstrTabRepair):SetText(Apollo.GetString("CRB_Repair"))
+			end
+		end
+	end
+
+	--check to disable Sell Tab
+	self.tLastSellItems = self:UpdateSellItems()
+	local tOtherItems = self.tLastSellItems.tUpdatedItems.tOther
+	self.wndVendor:FindChild(kstrTabSell):Enable(tOtherItems and (tOtherItems.tItems and #tOtherItems.tItems ~= 0))
+end
+
+function Vendor:HelperResetToBuyTab(tVendorList, bChanged)
+	self.wndItemContainer:DestroyChildren()
+	self:DisableBuyButton()
+	self.wndVendor:FindChild(kstrTabSell):SetCheck(false)
+	self.wndVendor:FindChild(kstrTabBuyback):SetCheck(false)
+	self.wndVendor:FindChild(kstrTabRepair):SetCheck(false)
+	
+	self.wndVendor:FindChild(kstrTabBuy):SetCheck(true)
+	self:Redraw()
 end
 
 function Vendor:DrawHeaderAndItems(tVendorList, bChanged)
@@ -281,14 +302,15 @@ function Vendor:SizeHeader(wndHeader)
 end
 
 function Vendor:DrawListItems(wndParent, tItems)
+	Event_FireGenericEvent("SendVarToRover", "wndParent", wndParent, 0)
+	Event_FireGenericEvent("SendVarToRover", "tItems", tItems, 0)
 	for key, tCurrItem in pairs(tItems) do
 		if not tCurrItem.bFutureStock then
 			local wndCurr = self:FactoryCacheProduce(wndParent, "VendorListItem", "I"..tCurrItem.idUnique)
 			wndCurr:FindChild("VendorListItemBtn"):SetData(tCurrItem)
-			wndCurr:FindChild("VendorListItemTitle"):SetText(tCurrItem.strName)
 			wndCurr:FindChild("VendorListItemCantUse"):Show(self:HelperPrereqFailed(tCurrItem))
-			
-			if tCurrItem.eType == Item.CodeEnumLootItemType.StaticItem then
+
+			if tCurrItem.eType ~= Item.CodeEnumLootItemType.AdventureSpell or tCurrItem.eType ~= Item.CodeEnumLootItemType.Cash then
 				wndCurr:FindChild("VendorListItemIcon"):GetWindowSubclass():SetItem(tCurrItem.itemData)
 			else
 				wndCurr:FindChild("VendorListItemIcon"):SetSprite(tCurrItem.strIcon)
@@ -314,12 +336,15 @@ function Vendor:DrawListItems(wndParent, tItems)
 				end
 			end
 
+			local strItemTitle = tCurrItem.strName
 			if tCurrItem.nStackSize > 1 then
-				wndCurr:FindChild("VendorListItemIcon"):SetText(tCurrItem.nStackSize)
+				wndCurr:FindChild("VendorListItemStackCount"):SetText(tCurrItem.nStackSize)
 			elseif tCurrItem.nStockCount > 0 and self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
-				wndCurr:FindChild("VendorListItemIcon"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCount"), tCurrItem.nStockCount))
+				wndCurr:FindChild("VendorListItemStackCount"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCount"), tCurrItem.nStockCount))
+				strItemTitle = String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCountTitle"), strItemTitle, tCurrItem.nStockCount)
 			end
-			
+			wndCurr:FindChild("VendorListItemTitle"):SetText(strItemTitle)
+
 			-- Costs
 			if monPrice and monPrice:GetMoneyType() ~= Money.CodeEnumCurrencyType.Credits then
 				self.tAltCurrency = {}
@@ -339,10 +364,9 @@ function Vendor:DrawListItems(wndParent, tItems)
 				wndCurr:FindChild("VendorListItemTitle"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_KnownRecipe"), wndCurr:FindChild("VendorListItemTitle"):GetText()))
 			end
 
-			local bTextColorRed = self:HelperIsTooExpensive(tCurrItem) or self:HelperPrereqBuyFailed(tCurrItem)
 			local strQualityColor = tCurrItem.itemData and tCurrItem.itemData:GetItemQuality() and karEvalColors[tCurrItem.itemData:GetItemQuality()] or "UI_TextHoloBody"
-			wndCurr:FindChild("VendorListItemTitle"):SetTextColor(bTextColorRed and "UI_WindowTextRed" or strQualityColor)
-			wndCurr:FindChild("VendorListItemCashWindow"):SetTextColor(bTextColorRed and "UI_WindowTextRed" or "white")
+			wndCurr:FindChild("VendorListItemTitle"):SetTextColor(self:HelperPrereqBuyFailed(tCurrItem) and "xkcdReddish" or strQualityColor)
+			wndCurr:FindChild("VendorListItemCashWindow"):SetTextColor(self:HelperIsTooExpensive(tCurrItem) and "xkcdReddish" or "white")
 		end
 	end
 
@@ -406,26 +430,15 @@ function Vendor:OnVendorListItemUncheck(wndHandler, wndControl) -- TODO REFACTOR
 end
 
 function Vendor:OnVendorListItemMouseDown(wndHandler, wndControl, eMouseButton, nPosX, nPosY, bDoubleClick)
-	if (eMouseButton == GameLib.CodeEnumInputMouse.Left and bDoubleClick) or eMouseButton == GameLib.CodeEnumInputMouse.Right then -- left double click or right click
-	    if not Apollo.IsControlKeyDown() then
-   			self:OnVendorListItemCheck(wndHandler, wndControl)
-			if self.wndVendor:FindChild("Buy"):IsEnabled() then
-				self:OnBuy(self.wndVendor:FindChild("Buy"), self.wndVendor:FindChild("Buy")) -- hackish, simulate a buy button click
-				self.tDefaultSelectedItem = nil
-			end
-		else
-		    -- item preview
-		    -- Check if this item is a decor item
-		    if not wndHandler or not wndHandler:GetData() then return end
-		    local tItemPreview = wndHandler:GetData()
-		    if tItemPreview and tItemPreview.itemData then
-		        local itemCurr = tItemPreview.itemData
-		        if itemCurr:GetHousingDecorInfoId() ~= nil and itemCurr:GetHousingDecorInfoId() ~= 0 then
-					Event_FireGenericEvent("DecorPreviewOpen", itemCurr:GetHousingDecorInfoId())
-				else
-					Event_FireGenericEvent("ShowItemInDressingRoom", itemCurr)
-				end
-			end
+	if Apollo.IsShiftKeyDown() or Apollo.IsControlKeyDown() or Apollo.IsAltKeyDown() then
+		local tItemPreview = wndHandler:GetData()
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", tItemPreview and tItemPreview.itemData)
+		return true
+	elseif (eMouseButton == GameLib.CodeEnumInputMouse.Left and bDoubleClick) or eMouseButton == GameLib.CodeEnumInputMouse.Right then -- left double click or right click
+		self:OnVendorListItemCheck(wndHandler, wndControl)
+		if self.wndVendor:FindChild("Buy"):IsEnabled() then
+			self:OnBuy(self.wndVendor:FindChild("Buy"), self.wndVendor:FindChild("Buy")) -- hackish, simulate a buy button click
+			self.tDefaultSelectedItem = nil
 		end
 		return true
 	end
@@ -477,7 +490,7 @@ function Vendor:FocusOnVendorListItem(tVendorItem)
 	-- TODO: Take second currency into account
 	local nPrice = 0
 	if tVendorItem.tPriceInfo then
-		nPrice = tVendorItem.tPriceInfo.nAmount1 * tVendorItem.nStackSize
+		nPrice = tVendorItem.tPriceInfo.nAmount1
 	end
 
 	if self.wndVendor:FindChild(kstrTabBuy):IsChecked() and nPrice > 0 then
@@ -497,11 +510,7 @@ function Vendor:FocusOnVendorListItem(tVendorItem)
 		self:DisableBuyButton(true)
 	end
 
-	local strStack = ""
-	if self.wndVendor:FindChild(kstrTabBuy):IsChecked() and tVendorItem.nStackSize > 1 then
-		strStack = String_GetWeaselString(Apollo.GetString("Vendor_ItemCount"), tVendorItem.nStackSize)
-	end
-	self:SetBuyButtonText(strStack)
+	self:SetBuyButtonText()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -567,6 +576,10 @@ function Vendor:OnGenericError(eError, strMessage)
 end
 
 function Vendor:OnItemDurabilityUpdate(itemCurr, nOldValue)
+	if self.nCount ~= 0 then
+		return
+	end
+
 	local nNewValue = itemCurr:GetDurability()
 	if self.wndVendor and self.wndVendor:IsShown() and nNewValue > nOldValue then
 		self:DisableBuyButton()
@@ -574,15 +587,17 @@ function Vendor:OnItemDurabilityUpdate(itemCurr, nOldValue)
 		self:Redraw()
 
 		self:ShowAlertMessageContainer(Apollo.GetString("Vendor_RepairsComplete"), false)
+		self.nCount = self.nCount + 1
 	end
 end
 
 function Vendor:ShowAlertMessageContainer(strMessage, bFailed)
+	--local strMoney = " ("..self:HelperStringMoneyConvert(self.wndVendor:FindChild("AlertCost"):GetAmount())..")"
 	self.wndVendor:FindChild("AlertMessageText"):SetText(strMessage)
 	self.wndVendor:FindChild("AlertMessageTitleSucceed"):Show(not bFailed)
 	self.wndVendor:FindChild("AlertMessageTitleFail"):Show(bFailed)
-	self.wndVendor:FindChild("AlertMessageContainer"):Show(false, true)
-	self.wndVendor:FindChild("AlertMessageContainer"):Show(true)
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strMessage)
+	self.wndVendor:FindChild("VendorFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthLargeTemp")
 
 	Apollo.StopTimer("AlertMessageTimer")
 	Apollo.StartTimer("AlertMessageTimer")
@@ -643,7 +658,7 @@ function Vendor:RefreshRepairTab()
 			tItem.idUnique = tItem.idLocation
 		end
 	end
-	
+
 	local nCount = tNewRepairableItems and #tNewRepairableItems or 0
 
 	if nCount == 0 then
@@ -689,11 +704,13 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function Vendor:UpdateSellItems()
-	if not self.wndVendor:GetData() then -- Get Data should be the Vendor Unit
+	local unitPlayer = GameLib.GetPlayerUnit()
+	
+	if not self.wndVendor:GetData() or not unitPlayer then -- Get Data should be the Vendor Unit
 		return
 	end
 
-	local tInvItems = GameLib.GetPlayerUnit():GetInventoryItems()
+	local tInvItems = unitPlayer:GetInventoryItems()
 	local tNewSellItems = {}
 	for key, tItemData in ipairs(tInvItems) do
 		local itemCurr = self:ItemToVendorSellItem(tItemData.itemInBag, 1)
@@ -714,6 +731,10 @@ function Vendor:UpdateSellItems()
 		bGroupCountChanged = #tNewSellItemsByGroup ~= (self.tSellItemsByGroup ~= nil and #self.tSellItemsByGroup or 0)
 		self.tSellItems = tNewSellItems
 		self.tSellItemsByGroup = tNewSellItemsByGroup
+	end
+
+	if self.tSellItemsByGroup.tOther then
+		self.tSellItemsByGroup.tOther.strName = Apollo.GetString("QuestLog_All")
 	end
 
 	local tReturn = {}
@@ -747,6 +768,10 @@ function Vendor:UpdateBuybackItems()
 		self.tBuybackItemsByGroup = tNewBuybackItemsByGroup
 	end
 
+	if self.tBuybackItemsByGroup.tOther then
+		self.tBuybackItemsByGroup.tOther.strName = Apollo.GetString("QuestLog_All")
+	end
+
 	local tReturn = {}
 	tReturn.bChanged = bChanged
 	tReturn.bItemCountChanged = bItemCountChanged
@@ -771,7 +796,7 @@ function Vendor:UpdateRepairableItems()
 	end
 
 	local tNewRepairableItemsByGroup = self:ArrangeGroups(tNewRepairableItems)
-	
+
 	self:RefreshRepairTab()
 
 	local bChanged = false
@@ -783,6 +808,10 @@ function Vendor:UpdateRepairableItems()
 		bGroupCountChanged = #tNewRepairableItemsByGroup ~= (self.tRepairableItemsByGroup ~= nil and #self.tRepairableItemsByGroup or 0)
 		self.tRepairableItems = tNewRepairableItems
 		self.tRepairableItemsByGroup = tNewRepairableItemsByGroup
+	end
+
+	if self.tRepairableItemsByGroup.tOther then
+		self.tRepairableItemsByGroup.tOther.strName = Apollo.GetString("QuestLog_All")
 	end
 
 	local tReturn = {}
@@ -836,7 +865,7 @@ function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
 
 	if tMyGuild then -- If not valid, it won't be shown anyways
 		local tMyRankData = tMyGuild:GetRanks()[tMyGuild:GetMyRank()]
-		
+
 		local nAvailableFunds
 		local nRepairRemainingToday = math.min(knMaxGuildLimit, tMyRankData.monBankRepairLimit:GetAmount()) - tMyGuild:GetBankMoneyRepairToday():GetAmount()
 		if tMyGuild:GetMoney():GetAmount() <= nRepairRemainingToday then
@@ -849,7 +878,7 @@ function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
 
 		local repairableItems = self.wndVendor:GetData():GetRepairableItems()
 		local bHaveItemsToRepair = #repairableItems > 0
-		
+
 		-- Check if you have enough and text color accordingly
 		local nRepairAllCost = 0
 		for key, tCurrItem in pairs(repairableItems) do
@@ -857,14 +886,14 @@ function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
 			nRepairAllCost = nRepairAllCost + tCurrPrice
 		end
 		local bSufficientFunds = nRepairAllCost <= nAvailableFunds
-		
+
 		-- Enable / Disable button
 		local tCurrItem = self.wndVendor:FindChild("Buy"):GetData()
 		if tCurrItem and tCurrItem.tPriceInfo then
 			local tCurrPrice = math.max(tCurrItem.tPriceInfo.nAmount1, tCurrItem.tPriceInfo.nAmount2) * tCurrItem.nStackSize
 			bSufficientFunds = tCurrPrice <= nAvailableFunds
 		end
-		
+
 		self.wndVendor:FindChild("GuildRepairBtn"):Enable(nRepairRemainingToday > 0 and bHaveItemsToRepair and bSufficientFunds)
 		self.wndVendor:FindChild("GuildRepairFundsCashWindow"):SetTextColor(bSufficientFunds and ApolloColor.new("UI_TextMetalBodyHighlight") or ApolloColor.new("red"))
 
@@ -896,6 +925,7 @@ function Vendor:OnBuy(wndHandler, wndControl)
 		return
 	end
 
+	self.nCount = 0
 	local tItemData = wndHandler:GetData()
 	if not self:ProcessingRestockingFee(tItemData) then
 		self:FinalizeBuy(tItemData)
@@ -908,8 +938,7 @@ function Vendor:FinalizeBuy(tItemData)
 		if self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
 			BuyItemFromVendor(idItem, 1) -- TODO: quantity chooser
 			self.tDefaultSelectedItem = tItemData
-			self:ShowAlertMessageContainer(String_GetWeaselString(Apollo.GetString("Vendor_Bought"), tItemData.strName), false) -- TODO: This shouldn't be needed
-			
+
 			if tItemData.itemData then
 				local monBuyPrice = tItemData.itemData:GetBuyPrice()
 				self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyPrice)
@@ -918,7 +947,7 @@ function Vendor:FinalizeBuy(tItemData)
 			SellItemToVendorById(idItem, tItemData.nStackSize)
 			self:SelectNextItemInLine(tItemData)
 			self:Redraw()
-			
+
 			if tItemData.itemData then
 				local monSellPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
 				self.wndVendor:FindChild("AlertCost"):SetAmount(monSellPrice)
@@ -926,7 +955,7 @@ function Vendor:FinalizeBuy(tItemData)
 		elseif self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
 			BuybackItemFromVendor(idItem)
 			self:SelectNextItemInLine(tItemData)
-			
+
 			if tItemData.itemData then
 				local monBuyBackPrice = tItemData.itemData:GetSellPrice():Multiply(tItemData.nStackSize)
 				self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyBackPrice)
@@ -950,8 +979,6 @@ function Vendor:FinalizeBuy(tItemData)
 	else
 		return
 	end
-
-	self.wndVendor:FindChild("VendorFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
 end
 
 function Vendor:RepairAllHelper()
@@ -970,12 +997,8 @@ function Vendor:OnTabBtn(wndHandler, wndControl)
 	self:Redraw()
 end
 
-function Vendor:SetBuyButtonText(strAppend)
-	if not strAppend then
-		strAppend = ""
-	end
-
-	local strCaption = "" -- TODO REFACTOR
+function Vendor:SetBuyButtonText()
+	local strCaption = ""
 	if self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
 		strCaption = Apollo.GetString("Vendor_Purchase")
 	elseif self.wndVendor:FindChild(kstrTabSell):IsChecked() then
@@ -988,7 +1011,7 @@ function Vendor:SetBuyButtonText(strAppend)
 		strCaption = Apollo.GetString("Vendor_Purchase")
 	end
 
-	self.wndVendor:FindChild("Buy"):SetText(String_GetWeaselString(strCaption, strAppend))
+	self.wndVendor:FindChild("Buy"):SetText(String_GetWeaselString(strCaption, ""))
 	self.wndVendor:FindChild("GuildRepairBtn"):SetText(Apollo.GetString(self.wndVendor:FindChild("Buy"):GetData() and "Vendor_GuildRepair" or "Vendor_GuildRepairAll"))
 end
 
@@ -1089,9 +1112,10 @@ function Vendor:OnVendorListItemGenerateTooltip(wndControl, wndHandler) -- wndHa
 		tPrimaryTooltipOpts.arGlyphIds = tListItem.arGlyphIds
 		tPrimaryTooltipOpts.tGlyphData = tListItem.itemGlyphData
 		tPrimaryTooltipOpts.itemCompare = itemData:GetEquippedItemForItemType()
+		tPrimaryTooltipOpts.nStackCount = tListItem.nStackSize
 
 		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
-			Tooltip.GetItemTooltipForm(self, wndControl, itemData, tPrimaryTooltipOpts, itemData.nStackSize)
+			Tooltip.GetItemTooltipForm(self, wndControl, itemData, tPrimaryTooltipOpts)
 		end
 	else
 		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
@@ -1151,14 +1175,14 @@ function Vendor:HelperIsTooExpensive(tCurrItem)
 	if not tCurrItem.tPriceInfo then
 		return false
 	end
-	
+
 	local bTooExpensive = false
 
 	if tCurrItem.tPriceInfo.nAmount1 > 0 then
-		bTooExpensive = (tCurrItem.tPriceInfo.nAmount1 * tCurrItem.nStackSize) > GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType1, tCurrItem.tPriceInfo.eAltType1):GetAmount()
+		bTooExpensive = (tCurrItem.tPriceInfo.nAmount1) > GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType1, tCurrItem.tPriceInfo.eAltType1):GetAmount()
 	end
 	if tCurrItem.tPriceInfo.nAmount2 > 0 then
-		bTooExpensive = (tCurrItem.tPriceInfo.nAmount2 * tCurrItem.nStackSize) > GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType2, tCurrItem.tPriceInfo.eAltType2):GetAmount()
+		bTooExpensive = (tCurrItem.tPriceInfo.nAmount2) > GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType2, tCurrItem.tPriceInfo.eAltType2):GetAmount()
 	end
 
 	return bTooExpensive
@@ -1184,13 +1208,13 @@ function Vendor:FactoryCacheProduce(wndParent, strFormName, strKey)
 		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
 		self.tFactoryCache[strKey] = wnd
 	end
-	
+
 	for idx=1,#self.tFactoryCache do
 		if not self.tFactoryCache[idx]:IsValid() then
 			self.tFactoryCache[idx] = nil
 		end
 	end
-	
+
 	return wnd
 end
 
@@ -1203,7 +1227,7 @@ function Vendor:OnHeaderCheck(wndHandler, wndControl, eMouseButton)
 	local tHeaderValue = wndParent:GetData()
 
 	self.idOpenedGroup = tHeaderValue.idGroup
-	
+
 	if tHeaderValue.tItems then
 		self:DrawListItems(wndParent:FindChild("VendorHeaderContainer"), tHeaderValue.tItems)
 	end
@@ -1211,48 +1235,45 @@ function Vendor:OnHeaderCheck(wndHandler, wndControl, eMouseButton)
 	self:SizeHeader(wndParent)
 
 	self.wndItemContainer:ArrangeChildrenVert(0)
-	
+
 	local nTop = ({wndParent:GetAnchorOffsets()})[2]
 	self.wndItemContainer:SetVScrollPos(nTop)
 end
 
 function Vendor:OnHeaderUncheck(wndHandler, wndControl, eMouseButton)
 	local wndParent = wndControl:GetParent()
-	
+
 	self.tDefaultSelectedItem = nil -- Erase the default selection now
 	self:DisableBuyButton()
 	self:OnGuildChange()
-	
+
 	wndParent:FindChild("VendorHeaderContainer"):DestroyChildren()
-	
+
 	self.idOpenedGroup = nil
-	
+
 	self:SizeHeader(wndParent)
-	
+
 	self.wndItemContainer:ArrangeChildrenVert(0)
-	
+
 	local nTop = ({wndParent:GetAnchorOffsets()})[2]
 	self.wndItemContainer:SetVScrollPos(nTop)
 end
 
-
---[[function Vendor:SellAllJunk( wndHandler, wndControl, eMouseButton )
-
-	local tInvItems = GameLib.GetPlayerUnit():GetInventoryItems()
-
-	local jCount = 0
-		for _, val in pairs(tInvItems) do
-		if val.itemInBag:GetItemCategory() == 94 then	--Junk ID
-			SellItemToVendorById(val.itemInBag:GetInventoryId(), val.itemInBag:GetStackCount())
-			jCount = jCount + 1
-		end
+function Vendor:HelperStringMoneyConvert(nInCopper)
+	local strResult = ""
+	if nInCopper >= 1000000 then -- 12345678 = 12p 34g 56s 78c
+		strResult = String_GetWeaselString(Apollo.GetString("CRB_Platinum"), math.floor(nInCopper/1000000)) .. " "
 	end
-	
-	if jCount > 0 then
-		self:ShowAlertMessageContainer(jCount .. " " .. Apollo.GetString("vendor_junkitemssold"), false)
+	if nInCopper >= 10000 then
+		strResult = strResult .. String_GetWeaselString(Apollo.GetString("CRB_Gold"), math.floor(nInCopper % 1000000 / 10000)) .. " "
 	end
-end]]--
-	
+	if nInCopper >= 100 then
+		strResult = strResult .. String_GetWeaselString(Apollo.GetString("CRB_Silver"), math.floor(nInCopper % 10000 / 100)) .. " "
+	end
+	strResult = strResult .. String_GetWeaselString(Apollo.GetString("CRB_Copper"), math.floor(nInCopper % 100))
+	return strResult
+end
+
 ---------------------------------------------------------------------------
 -- Vendor instance
 ---------------------------------------------------------------------------------------------------

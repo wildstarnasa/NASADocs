@@ -7,9 +7,9 @@ require "Window"
 require "CraftingLib"
 require "AchievementsLib"
 
-
 local TradeskillTree = {}
 local knMaxCols = 9
+local knXpOffset = 29
 local kstrArrow = "arrow"
 local kstrSpriteTalentPoint = "ClientSprites:ComboStarFull"
 
@@ -48,6 +48,9 @@ end
 function TradeskillTree:Initialize(wndParent, achievementData)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "TradeskillTreeForm", wndParent, self)
+		self.nLeftScroll, self.nTopScroll, self.nRightScroll, self.nBottomScroll = self.wndMain:FindChild("TradeskillTreeScroll"):GetAnchorOffsets()
+		self.nLeftContainer, self.nTopContainer, self.nRightContainer, self.nBottomContainer = self.wndMain:FindChild("OriginPieceContainer"):GetAnchorOffsets()
+
 		self.wndGrid = self.wndMain:FindChild("FullGrid") -- Note there is a Hackish mirrored version called "HAMLayer" which was originally this (in order to turn off noclip)
 		self.wndExtraInfoScreen = nil -- "ExtraInfoScreen"
 
@@ -66,11 +69,34 @@ function TradeskillTree:Initialize(wndParent, achievementData)
 end
 
 function TradeskillTree:FullRedraw(achievementData)
-	self:DrawDropdownPicker(achievementData)
+	local tXpProgress = self:DrawDropdownPicker(achievementData)
 
 	local nCurrentSelection = self.wndMain:FindChild("OriginPieceDropdownBtn"):GetData()
 	if not nCurrentSelection then
 		return
+	end
+
+	if tXpProgress[nCurrentSelection] then
+		local nCurr = tXpProgress[nCurrentSelection].nXp or 0
+		local nMax = tXpProgress[nCurrentSelection].nXpForNextTier or 1
+		local strPercent = String_GetWeaselString(Apollo.GetString("CRB_Percent"), nCurr / nMax * 100)
+		local strTradeSkill = tXpProgress[nCurrentSelection].strName .. " " .. strPercent
+		local strXPValue = string.format("%s / %s", Apollo.FormatNumber(nCurr, 0, true), Apollo.FormatNumber(nMax, 0, true))
+
+		self.wndMain:FindChild("TradeSkillValue"):SetText(strTradeSkill)
+		self.wndMain:FindChild("XpValue"):SetText(strXPValue)
+		self.wndMain:FindChild("XPBarFill"):SetMax(nMax)
+		self.wndMain:FindChild("XPBarFill"):SetProgress(nCurr)
+
+		self.wndMain:FindChild("XPBarContainer"):Show(true)
+		self.wndMain:FindChild("Divider"):Show(true)
+		self.wndMain:FindChild("TradeskillTreeScroll"):SetAnchorOffsets(self.nLeftScroll, self.nTopScroll + knXpOffset, self.nRightScroll, self.nBottomScroll)
+		self.wndMain:FindChild("OriginPieceContainer"):SetAnchorOffsets(self.nLeftContainer, self.nTopContainer + knXpOffset, self.nRightContainer, self.nBottomContainer)
+	else
+		self.wndMain:FindChild("Divider"):Show(false)
+		self.wndMain:FindChild("XPBarContainer"):Show(false)
+		self.wndMain:FindChild("TradeskillTreeScroll"):SetAnchorOffsets(self.nLeftScroll, self.nTopScroll, self.nRightScroll, self.nBottomScroll)
+		self.wndMain:FindChild("OriginPieceContainer"):SetAnchorOffsets(self.nLeftContainer, self.nTopContainer, self.nRightContainer, self.nBottomContainer)
 	end
 
 	-- Calculate max rows
@@ -105,6 +131,7 @@ function TradeskillTree:FullRedraw(achievementData)
 end
 
 function TradeskillTree:DrawDropdownPicker(achievementData)
+	local tXpProgress = {}
 	self.wndMain:FindChild("OriginPieceDropdownContainer"):DestroyChildren()
 
 	for idx, tCurrTradeskill in ipairs(CraftingLib.GetKnownTradeskills()) do
@@ -114,13 +141,17 @@ function TradeskillTree:DrawDropdownPicker(achievementData)
 			local strTradeskillName = tCurrInfo.bIsHobby and Apollo.GetString("Tradeskills_Hobby") or tCurrTradeskill.strName
 			local wndHeader = self:FactoryProduce(self.wndMain:FindChild("OriginPieceDropdownContainer"), "OriginPieceDropdownHeader", strTradeskillName)
 			wndHeader:FindChild("OriginPieceDropdownHeaderText"):SetText(tCurrInfo.nXp < tCurrInfo.nXpForNextTier and
-			string.format("%s (%s/%s XP)", strTradeskillName, tCurrInfo.nXp, tCurrInfo.nXpForNextTier) or strTradeskillName)
+			string.format("%s (%s/%s XP)", strTradeskillName, Apollo.FormatNumber(tCurrInfo.nXp, 0, true), Apollo.FormatNumber(tCurrInfo.nXpForNextTier, 0, true)) or strTradeskillName)
 
 			-- Header items
 			if not tCurrInfo.bIsHarvesting then -- harvesting check is later to show the XP
 				local tMiddleCategories = AchievementsLib.GetTradeskillAchievementCategoryTree(tCurrTradeskill.eId)
 				if tMiddleCategories and tMiddleCategories.tSubGroups then
 					for idx2, tCategory in pairs(tMiddleCategories.tSubGroups) do
+						if tCurrInfo.nXpForNextTier > 0 then
+							tXpProgress[tCategory.nSubGroupId] = tCurrInfo
+						end
+
 						local wndCurr = self:FactoryProduce(self.wndMain:FindChild("OriginPieceDropdownContainer"), "OriginPieceDropdownListItem", tCategory.nSubGroupId)
 						if wndCurr and wndCurr:FindChild("OriginPieceDropdownListItemBtn") then
 							wndCurr:FindChild("OriginPieceDropdownListItemBtn"):SetData(tCategory.nSubGroupId)
@@ -146,6 +177,8 @@ function TradeskillTree:DrawDropdownPicker(achievementData)
 	if wndFirstItem and wndFirstItem:IsValid() then
 		self:OnOriginPieceItemBtnClick(wndFirstItem:FindChild("OriginPieceDropdownListItemBtn"), wndFirstItem:FindChild("OriginPieceDropdownListItemBtn"))
 	end
+
+	return tXpProgress
 end
 
 function TradeskillTree:OnOriginPieceItemBtnClick(wndHandler, wndControl) -- wndHandler is "OriginPieceDropdownListItemBtn" and its data is tCategory.id
@@ -273,7 +306,7 @@ function TradeskillTree:OnHAMItemBtnUncheck(wndHandler, wndControl)
 	end
 end
 
-function TradeskillTree:OnExtraInfoScreenWindowClosed(wndHandler, wndControl)
+function TradeskillTree:OnExtraInfoScreenWindowClosed() -- Also from code
 	if self.wndExtraInfoScreen and self.wndExtraInfoScreen:GetData() then
 		self.wndExtraInfoScreen:GetData():SetCheck(false)
 	end
@@ -284,6 +317,10 @@ function TradeskillTree:OnExtraInfoScreenWindowClosed(wndHandler, wndControl)
 end
 
 function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Note code can also manually call this with the correct wndHandler
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
 	local wndParent = wndHandler
 	local achCurr = wndHandler:GetData()[1]
 	local wndGridSquare = wndHandler:GetData()[2]
@@ -315,7 +352,7 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	if wndParent:FindChild("ItemTitle") and wndParent:FindChild("ItemTitle"):GetData() and string.len(wndParent:FindChild("ItemTitle"):GetData()) > 0 then
 		strDescription = strDescription .. wndParent:FindChild("ItemTitle"):GetData()
 	end
-	
+
 	wndCurr:FindChild("ExtraInfoDescription"):SetText(strDescription)
 
 	-- Checklist Special formatting TODO TEMP
@@ -333,24 +370,51 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	end
 
 	-- Schematic Links
+	local bRescanForDuplicates = false
 	for key, idLinkSchematic in pairs(tSchematicIdList) do
 		wndCurr:FindChild("ExtraInfoSchemArt"):Show(true)
-
-		-- We want the link to the be subschematic's parent if possible
-		local nCorrectLinkId = idLinkSchematic
+		
 		local tSchematicLinkInfo = CraftingLib.GetSchematicInfo(idLinkSchematic)
-
 		if tSchematicLinkInfo then
-			if  tSchematicLinkInfo.nParentSchematicId and tSchematicLinkInfo.nParentSchematicId ~= 0 then
-				nCorrectLinkId = tSchematicLinkInfo.nParentSchematicId
-			end
-
 			local wndSchematicBtn = Apollo.LoadForm(self.xmlDoc, "ExtraInfoSchemItemBtn", wndCurr:FindChild("ExtraInfoSchemContainer"), self)
 			wndSchematicBtn:SetData({ tSchematicLinkInfo }) -- For OnExtraInfoSchemItemBtn (GOTCHA: Needs to be a table to interact with FindChildByUserData)
 			wndSchematicBtn:FindChild("ExtraInfoSchemItemText"):SetText(tSchematicLinkInfo.strName)
 			wndSchematicBtn:FindChild("ExtraInfoSchemItemCheckIcon"):Show(tChecklistTable[idLinkSchematic])
+
+			if tSchematicLinkInfo.bIsOneUse then
+				bRescanForDuplicates = true
+			end
 		end
 	end
+
+	-- If there's a OneUse AND something with the same name, pick which one to keep
+	if bRescanForDuplicates then
+		local tKillList = {}
+		local tComparisonList = {}
+		for idx, wndCurr in pairs(wndCurr:FindChild("ExtraInfoSchemContainer"):GetChildren()) do
+			local tSchematicLinkInfo = wndCurr:GetData()[1]
+			if tComparisonList[tSchematicLinkInfo.strName] then -- Have a collision, resolve
+				local tCompetitor = tComparisonList[tSchematicLinkInfo.strName].tSchematicLinkInfo
+				if tSchematicLinkInfo.bIsOneUse and tCompetitor.bIsKnown then
+					table.insert(tKillList, wndCurr)
+				elseif tSchematicLinkInfo.bIsKnown and tCompetitor.bIsOneUse then
+					table.insert(tKillList, tCompetitor.wndCurr)
+				elseif tSchematicLinkInfo.bIsOneUse then
+					table.insert(tKillList, wndCurr)
+				elseif tCompetitor.bIsOneUse then
+					table.insert(tKillList, tCompetitor.wndCurr)
+				end
+			else
+				tComparisonList[tSchematicLinkInfo.strName] = { wndCurr = wndCurr, tSchematicLinkInfo = tSchematicLinkInfo }
+			end
+		end
+
+		for idx, wndCurr in pairs(tKillList) do
+			wndCurr:Destroy()
+			wndCurr = nil
+		end
+	end
+
 	wndCurr:FindChild("ExtraInfoSchemContainer"):ArrangeChildrenVert(0)
 
 	-- Rewards
@@ -407,7 +471,7 @@ function TradeskillTree:OnHAMItemBtnShowExtraInfo(wndHandler, wndControl) -- Not
 	-- Resize
 	local nWidth, nHeight = wndCurr:FindChild("ExtraInfoDescription"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wndCurr:FindChild("ExtraInfoDescription"):GetAnchorOffsets()
-	nHeight = nHeight + 10 -- Extra padding for below the text
+	nHeight = nHeight + 18 -- Extra padding for below the text
 	wndCurr:FindChild("ExtraInfoDescription"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight)
 
 	if wndCurr:FindChild("ExtraInfoSchemArt"):IsShown() then
@@ -439,6 +503,7 @@ function TradeskillTree:OnExtraInfoSchemItemBtn(wndHandler, wndControl) -- wndHa
 	local tSchematicInfo = wndHandler:GetData()[1]
 	if tSchematicInfo and tSchematicInfo.strName then
 		Event_FireGenericEvent("GenericEvent_OpenToSearchSchematic", tSchematicInfo.strName)
+		self:OnExtraInfoScreenWindowClosed()
 	end
 end
 

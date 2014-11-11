@@ -7,6 +7,7 @@ require "Apollo"
 require "Window"
 require "Achievement"
 require "AchievementsLib"
+require "PlayerPathLib"
 
 local Achievements = {}
 
@@ -23,6 +24,14 @@ local ktRomanNumeralMap =
     M = 1000,
 }
 
+local knCategoryPathType = 9
+local ktPathIconText =
+{
+	[PlayerPathLib.PlayerPathType_Soldier] 		= "IconSprites:Icon_Achievement_Achievement_Path_Soldier",
+	[PlayerPathLib.PlayerPathType_Settler] 		= "IconSprites:Icon_Achievement_Achievement_Path_Settler",
+	[PlayerPathLib.PlayerPathType_Scientist] 	= "IconSprites:Icon_Achievement_Achievement_Path_Scientist",
+	[PlayerPathLib.PlayerPathType_Explorer] 	= "IconSprites:Icon_Achievement_Achievement_Path_Explorer",
+}
 
 local ktAchievementIconsText =
 {
@@ -32,7 +41,6 @@ local ktAchievementIconsText =
 	[4	]		= "IconSprites:Icon_Achievement_Achievement_Combat",
 	[7	]		= "IconSprites:Icon_Achievement_Achievement_PvP",
 	[8	]		= "IconSprites:Icon_Achievement_Achievement_MetaAchievement",
-	[9	]		= "IconSprites:Icon_Achievement_Achievement_Path_Explorer",
 	[10	]		= "IconSprites:Icon_Achievement_Achievement_Datacube",
 	[11	]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
 	[12	]		= "IconSprites:Icon_Achievement_Achievement_GenericAchievement",
@@ -217,7 +225,14 @@ local ktAchievementIconsText =
 	[171]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
 	[173]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
 	[174]		= "IconSprites:Icon_Achievement_Achievement_Dungeon",
-
+	[303]		= "IconSprites:Icon_Achievement_Achievement_Challenges",
+	[299]		= "IconSprites:Icon_Achievement_Achievement_Exploration",
+	[295]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[300]		= "IconSprites:Icon_Achievement_Achievement_Combat",
+	[301]		= "IconSprites:Icon_Achievement_Achievement_WorldEvent",
+	[298]		= "IconSprites:Icon_Achievement_Achievement_Quest",
+	[297]		= "IconSprites:Icon_Achievement_Achievement_Raid",
+	[302]		= "IconSprites:Icon_Achievement_Achievement_Reputation",
 }
 
 function Achievements:new(o)
@@ -244,9 +259,9 @@ function Achievements:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
-	
+
 	Apollo.RegisterEventHandler("AchievementUpdated", 			"OnAchievementUpdated", self)
 	Apollo.RegisterEventHandler("PL_ToggleAchievementWindow", 	"ToggleWindow", self)
 	Apollo.RegisterEventHandler("PL_TabChanged", 				"OnCloseProgressLogTab", self)
@@ -256,7 +271,7 @@ function Achievements:OnDocumentReady()
 end
 
 function Achievements:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AchievementLog"), {"ToggleAchievementWindow", "Achievements", "Icon_Windows32_UI_CRB_InterfaceMenu_Achievements"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("CRB_Achievements"), {"ToggleAchievementWindow", "Achievements", "Icon_Windows32_UI_CRB_InterfaceMenu_Achievements"})
 end
 
 function Achievements:OnAchievementUpdated(achUpdated) -- TODO: Pinpoint the redraw instead of a full redraw
@@ -269,11 +284,41 @@ function Achievements:OnAchievementUpdated(achUpdated) -- TODO: Pinpoint the red
 	else
 		local wndRightScroll = self.wndMain:FindChild("RightScroll")
 		local nVScrollPos = wndRightScroll:GetVScrollPos()
-		self:BuildRightPanel()
+		self:UpdateAchievementEntry(achUpdated)
 		wndRightScroll:SetVScrollPos(nVScrollPos)
 	end
 	self.wndMain:FindChild("BGLeft:HeaderPointsNumber"):SetText(AchievementsLib.GetAchievementPoints())
 	self.wndMain:FindChild("BGLeft:HeaderPoints"):SetText(String_GetWeaselString(Apollo.GetString("Achievement_OverallPoints")))
+end
+
+function Achievements:UpdateAchievementEntry(achUpdated)
+	local wndRightScroll = self.wndMain:FindChild("RightScroll")
+	local wndAchievement = wndRightScroll:FindChildByUserData(achUpdated)
+	
+	if wndAchievement then
+		if achUpdated:IsChecklist() then
+			self:UpdateChecklistAchievement(achUpdated, wndAchievement)
+		elseif achUpdated:GetChildTier() then
+			if wndAchievement:GetName() == "TierItem" then
+				wndAchievement = wndAchievement:FindChild("TierItemBtn"):GetData()
+			end
+				
+			self:BuildSimpleAchievement(wndAchievement, achUpdated)
+			local wndSubContainer = wndAchievement:FindChild("AchievementExtraContainer:TierBox")
+			local arTieredWindows = wndSubContainer:GetChildren()
+			
+			for idx, wndTierItem in pairs(arTieredWindows) do
+				self:UpdateTierItem(wndTierItem:GetData(), wndTierItem)
+				if wndTierItem:GetData() == achUpdated then
+					wndTierItem:FindChild("TierItemBtn"):SetCheck(true)
+				else
+					wndTierItem:FindChild("TierItemBtn"):SetCheck(false)
+				end
+			end
+		else
+			self:BuildSimpleAchievement(wndAchievement, achUpdated)
+		end
+	end
 end
 
 function Achievements:ToggleWindow(achPassedAchievement)
@@ -373,7 +418,8 @@ end
 
 function Achievements:ResizeTree()
 	local wndLeftScroll = self.wndMain:FindChild("BGLeft:LeftScroll")
-	
+	local nVScrollPos = wndLeftScroll:GetVScrollPos()
+
 	for key, wndTopGroup in pairs(wndLeftScroll:GetChildren()) do
 		local wndTopContents = wndTopGroup:FindChild("GroupContents")
 		local wndTopButton = wndTopGroup:FindChild("TopGroupBtn")
@@ -387,7 +433,7 @@ function Achievements:ResizeTree()
 					nBottomHeight = wndMiddleGroup:FindChild("GroupContents"):ArrangeChildrenVert(0)
 
 					if nBottomHeight > 0 then
-						nBottomHeight = nBottomHeight + 15
+						nBottomHeight = nBottomHeight + 7
 					end
 				else
 					--wndMiddleGroup:FindChild("GroupContents"):DestroyChildren()
@@ -399,7 +445,7 @@ function Achievements:ResizeTree()
 			end
 
 			if nMiddleHeight > 0 then
-				nMiddleHeight = nMiddleHeight + 25
+				nMiddleHeight = nMiddleHeight + 6
 			end
 		end
 
@@ -409,6 +455,7 @@ function Achievements:ResizeTree()
 	end
 
 	wndLeftScroll:ArrangeChildrenVert(0)
+	wndLeftScroll:SetVScrollPos(nVScrollPos)
 end
 
 function Achievements:UnselectAll() -- TODO: REFACTOR, this mostly simulates a global radio group
@@ -464,7 +511,7 @@ function Achievements:OnMiddleGroupSelect(wndHandler, wndControl)
 			end
 		end
 	end
-	
+
 
 	self:ResizeTree()
 end
@@ -494,7 +541,7 @@ function Achievements:LoadRightScreenFromLeftScreen(wndCurr)
 	if wndTopGroup:FindChild("TopGroupBtn") then
 		wndTopGroup:FindChild("TopGroupBtn"):SetCheck(true)
 	end
-	
+
 	if wndMiddleGroup then
 		wndMiddleGroup:FindChild("MiddleExpandBtn"):SetCheck(true)
 		wndMiddleGroup:FindChild("MiddleGroupBtn"):SetCheck(true)
@@ -543,11 +590,17 @@ function Achievements:LoadSummaryScreen() -- TODO: Figure out why this is being 
 	-- Build last updated
 	local wndRecentUpdateContainer = self.wndMain:FindChild("RightSummaryScreen:RecentUpdateFrame:RecentUpdateContainer")
 	wndRecentUpdateContainer:DestroyChildren()
-	local tRecent = AchievementsLib.GetRecentCompletedAchievements(6, self.bShowGuild)
+	local tRecent = AchievementsLib.GetRecentCompletedAchievements(6, self.bShowGuild)		
 	for idx, achUpdated in pairs(tRecent) do
 		local wndListItem = Apollo.LoadForm(self.xmlDoc, "RecentUpdateItem", wndRecentUpdateContainer, self)
 		wndListItem:FindChild("RecentUpdateBtn"):SetData(achUpdated)
-		wndListItem:FindChild("RecentUpdateName"):SetText(achUpdated:GetName())
+
+		local strAchieveName = achUpdated:GetName()
+		if achUpdated:GetChildTier() or achUpdated:GetParentTier() then
+			strAchieveName = String_GetWeaselString(Apollo.GetString("Achievements_IncompleteTitle"), achUpdated:GetName(), self:HelperNumberToRomanNumerals(idx))
+		end
+		wndListItem:FindChild("RecentUpdateName"):SetText(strAchieveName)
+
 		local nOldHeight = wndListItem:FindChild("RecentUpdateName"):GetHeight()
 		wndListItem:FindChild("RecentUpdateName"):SetHeightToContentHeight()
 		if wndListItem:FindChild("RecentUpdateName"):GetHeight() > nOldHeight then
@@ -777,9 +830,19 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 	else
 		wndContainer:FindChild("TitleText"):SetText(achData:GetName())
 	end
-	
+
 	local nId = achData:GetCategoryId()
-	wndContainer:FindChild("AchievementIcon"):SetSprite(ktAchievementIconsText[achData:GetCategoryId()])
+	local strSprite = ""
+	if ktAchievementIconsText[nId] then
+		strSprite = ktAchievementIconsText[nId]
+	elseif nId == knCategoryPathType then
+		strSprite = ktPathIconText[GameLib.GetPlayerUnit():GetPlayerPathType()]
+	end
+
+	if(strSprite) then
+		wndContainer:FindChild("AchievementIcon"):SetSprite(strSprite)
+	end
+
 	if achData:IsComplete() then
 		nNumCompleted = nNumNeeded
 		wndContainer:FindChild("TitleText"):SetTextColor(ApolloColor.new("UI_BtnTextGreenNormal"))
@@ -794,7 +857,7 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 		wndContainer:FindChild("PointsText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 		wndContainer:SetTooltip("")
 	end
-	
+
 	-- Resize based on description height
 	local nDescHeight = wndContainer:FindChild("DescriptionText"):GetHeight()
 	wndContainer:FindChild("DescriptionText"):SetHeightToContentHeight()
@@ -813,15 +876,11 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 	wndProgressBarContainer:Show(bShowProgressBar)
 	if achData:IsCurrencyShown() then
 		wndProgressBarContainer:FindChild("NeededCompletedText"):Show(false)
-		wndProgressBarContainer:FindChild("NeededCompletedCash"):Show(true)
-		wndProgressBarContainer:FindChild("NeededCompletedCash"):SetMoneySystem(achData:GetCurrencySystem())
-		wndProgressBarContainer:FindChild("NeededCompletedCash"):SetAmount(nNumCompleted)
 	else
 		wndProgressBarContainer:FindChild("NeededCompletedText"):Show(true)
-		wndProgressBarContainer:FindChild("NeededCompletedCash"):Show(false)
 		wndProgressBarContainer:FindChild("NeededCompletedText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), nNumCompleted, nNumNeeded))
 	end
-	
+
 	if not bShowProgressBar then
 		local nLeft, nTop, nRight, nBottom = wndContainer:GetAnchorOffsets()
 		wndContainer:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - wndProgressBarContainer:GetHeight() + 10)
@@ -847,6 +906,11 @@ end
 function Achievements:BuildChecklistAchievement(achData)
 	local wndContainer = Apollo.LoadForm(self.xmlDoc, "AchievementSimple", self.wndMain:FindChild("RightScroll"), self)
 	local wndGrid = Apollo.LoadForm(self.xmlDoc, "ChecklistGrid", wndContainer:FindChild("AchievementExtraContainer"), self)
+	self:UpdateChecklistAchievement(achData, wndContainer)
+end
+
+function Achievements:UpdateChecklistAchievement(achData, wndContainer)
+	local wndChecklist = wndContainer:FindChild("AchievementExtraContainer:ChecklistGrid")
 	self:BuildSimpleAchievement(wndContainer, achData)
 	wndContainer:SetData(achData)
 
@@ -858,14 +922,22 @@ function Achievements:BuildChecklistAchievement(achData)
 		self:OnAchievementExpand(wndContainer)
 	end
 
-	for key, tCurr in pairs(achData:GetChecklistItems()) do
-		local iCurrRow = wndGrid:AddRow("")
-		if tCurr.bIsComplete then
-			wndGrid:SetCellImage(iCurrRow, 1, "IconSprites:Icon_Windows16_BulletPoint_Checked")
-			wndGrid:SetCellDoc(iCurrRow, 2, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_BtnTextGreenNormal\">%s</T>", tCurr.strChecklistEntry))
-		else
-			wndGrid:SetCellImage(iCurrRow, 1, "IconSprites:Icon_Windows16_BulletPoint_Grey")
-			wndGrid:SetCellDoc(iCurrRow, 2, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBodyCyan\">%s</T>", tCurr.strChecklistEntry))
+	for idx, tCurr in pairs(achData:GetChecklistItems()) do
+		local tPreviousEntry = wndChecklist:GetCellLuaData(idx, 1)
+
+		-- Only update this entry if there was no entry there to begin with or there was an actual change
+		if not tPreviousEntry or tPreviousEntry.bIsComplete ~= tCurr.bIsComplete then
+			local nCurrRow = tPreviousEntry and idx or wndChecklist:AddRow("")
+
+			if tCurr.bIsComplete then
+				wndChecklist:SetCellImage(nCurrRow, 1, "IconSprites:Icon_Windows16_BulletPoint_Checked")
+				wndChecklist:SetCellDoc(nCurrRow, 2, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_BtnTextGreenNormal\">%s</T>", tCurr.strChecklistEntry))
+				wndChecklist:SetCellLuaData(nCurrRow, 1, tCurr)
+			else
+				wndChecklist:SetCellImage(nCurrRow, 1, "IconSprites:Icon_Windows16_BulletPoint_Grey")
+				wndChecklist:SetCellDoc(nCurrRow, 2, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBodyCyan\">%s</T>", tCurr.strChecklistEntry))
+				wndChecklist:SetCellLuaData(nCurrRow, 1, tCurr)
+			end
 		end
 	end
 end
@@ -884,11 +956,15 @@ end
 
 function Achievements:BuildTieredItem(achData, wndTierBox)
 	local wndTierItem = Apollo.LoadForm(self.xmlDoc, "TierItem", wndTierBox, self)
-	local wndTierBtn = wndTierItem:FindChild("TierItemBtn")
 	wndTierItem:SetData(achData)
-	wndTierBtn:FindChild("TierItemIconCheck"):Show(achData:IsComplete())
 	wndTierItem:FindChild("TierItemBtn"):SetData(wndTierBox:GetParent():GetParent()) -- TODO refactor
+
+	self:UpdateTierItem(achData, wndTierItem)
 	
+	wndTierBox:ArrangeChildrenHorz(0)
+end
+
+function Achievements:UpdateTierItem(achData, wndTierItem)
 	if achData:IsCurrencyShown() then
 		wndTierItem:FindChild("TierItemCash"):Show(true)
 		wndTierItem:FindChild("TierItemNeeded"):Show(false)
@@ -899,19 +975,22 @@ function Achievements:BuildTieredItem(achData, wndTierBox)
 		wndTierItem:FindChild("TierItemNeeded"):Show(true)
 		wndTierItem:FindChild("TierItemNeeded"):SetText(Apollo.FormatNumber(achData:GetNumNeeded(), 0, true))
 	end
-
-	if achData:IsComplete() then
+	
+	local wndTierBtn = wndTierItem:FindChild("TierItemBtn")
+	local bWasComplete = wndTierBtn:FindChild("TierItemIconCheck"):IsShown()
+	if achData:IsComplete() ~= bWasComplete then
+		wndTierBtn:FindChild("TierItemIconCheck"):Show(true)
+		
 		local strCompleteDate = String_GetWeaselString(Apollo.GetString("Achievements_CompletedDate"), achData:GetDateCompleted())
 		wndTierItem:FindChild("TierItemNeeded"):SetTextColor(ApolloColor.new("ff5f6662"))
 		wndTierItem:FindChild("TierItemCash"):SetTextColor(ApolloColor.new("ff5f6662"))
 		wndTierBtn:FindChild("TierItemIcon"):SetTooltip(string.format("<T Font=\"CRB_InterfaceMedium\">%s</T>", strCompleteDate))
 	else
+		wndTierBtn:FindChild("TierItemIconCheck"):Show(false)
 		wndTierItem:FindChild("TierItemNeeded"):SetTextColor(ApolloColor.new("ff2f94ac"))
 		wndTierItem:FindChild("TierItemCash"):SetTextColor(ApolloColor.new("ff2f94ac"))
 		wndTierBtn:FindChild("TierItemIcon"):SetTooltip(string.format("<T Font=\"CRB_InterfaceMedium\">%s</T>", achData:GetName()))
-
 	end
-	wndTierBox:ArrangeChildrenHorz(0)
 end
 
 function Achievements:OnTierItemCheck(wndHandler, wndControl) -- wndHandler is "TierItemBtn"

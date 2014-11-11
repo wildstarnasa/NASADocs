@@ -107,9 +107,11 @@ function AccountServices:OnDocumentReady()
 	self.wndRenameFlyout = self.wndMain:FindChild("RenameFlyout")
 	self.wndPaidTransferFlyout = self.wndMain:FindChild("PaidTransferFlyout")
 	self.wndFreeTransferFlyout = self.wndMain:FindChild("FreeTransferFlyout")
+	self.wndTrustedIPFlyout = self.wndMain:FindChild("TrustedIPFlyout")
 	self.wndMainPicker:FindChild("AvailablePaidRenameBtn"):AttachWindow(self.wndRenameFlyout)
 	self.wndMainPicker:FindChild("AvailablePaidRealmBtn"):AttachWindow(self.wndPaidTransferFlyout)
 	self.wndMainPicker:FindChild("AvailableFreeRealmBtn"):AttachWindow(self.wndFreeTransferFlyout)
+	self.wndMainPicker:FindChild("TrustedIPBtn"):AttachWindow(self.wndTrustedIPFlyout)
 
 	self.wndErrorMessage = nil
 	self.wndRenameConfirm = nil
@@ -359,6 +361,7 @@ function AccountServices:DrawRenameFlyout(nRenameBound, nRenameEscrow)
 	self.wndRenameFlyout:FindChild("BoundBtnSubtitle"):SetTextColor(bBoundEnable and ApolloColor.new("UI_BtnTextBlueNormal") or ApolloColor.new("UI_TextMetalBodyHighlight"))
 	self.wndRenameFlyout:FindChild("EscrowBtnSubtitle"):SetTextColor(bEscrowEnable and ApolloColor.new("UI_BtnTextBlueNormal") or ApolloColor.new("UI_TextMetalBodyHighlight"))
 	self.wndRenameFlyout:FindChild("CharacterLimit"):SetText(string.format("[%s/%s]", 0, knMaxCharacterName))
+
 end
 
 function AccountServices:OnRenameCloseBtn(wndHandler, wndControl)
@@ -367,8 +370,6 @@ function AccountServices:OnRenameCloseBtn(wndHandler, wndControl)
 		self.wndRenameFlyout:FindChild("StatusLastValidAlert"):Show(false)
 		self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetText("")
 		self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText("")
-		self.wndRenameFlyout:FindChild("CharacterLimit"):SetText(string.format("[%s/%s]", 0, knMaxCharacterName))
-		self.wndRenameFlyout:FindChild("RenameConfirmBtn"):Enable(false)
 		self.wndRenameFlyout:Close()
 		self.strFireRenameOnUpdate = nil
 	end
@@ -673,9 +674,30 @@ function AccountServices:OnPaidTransferFlyoutCloseBtn(wndHandler, wndControl)
 end
 
 -----------------------------------------------------------------------------------------------
--- Confirmations
+-- Trusted IP
 -----------------------------------------------------------------------------------------------
 
+function AccountServices:OnTrustedIPFlyoutCloseBtn(wndHandler, wndControl)
+	if self.wndTrustedIPFlyout and self.wndTrustedIPFlyout:IsValid() then
+		self.wndTrustedIPFlyout:Close()
+	end
+end
+
+function AccountServices:OnTrustedIPForgetBtn( wndHandler, wndControl, eMouseButton )
+
+end
+
+function AccountServices:TrustedIPChecked( wndHandler, wndControl, eMouseButton )
+
+end
+
+function AccountServices:TrustedIPUnchecked( wndHandler, wndControl, eMouseButton )
+
+end
+
+-----------------------------------------------------------------------------------------------
+-- Confirmations
+-----------------------------------------------------------------------------------------------
 function AccountServices:OnCloseAllOpenAccountWindows(wndHandler, wndControl) -- This is triggered from other Pregame
 	self:CloseAllOpenAccountWindows()
 end
@@ -684,6 +706,7 @@ function AccountServices:CloseAllOpenAccountWindows(wndHandler, wndControl)
 	self:OnPaidTransferFlyoutCloseBtn()
 	self:OnFreeTransferFlyoutCloseBtn()
 	self:OnRenameCloseBtn()
+	self:OnTrustedIPFlyoutCloseBtn()
 end
 
 function AccountServices:HelperCheckTriggers()
@@ -884,17 +907,16 @@ function AccountServices:OnRandomLastName()
 	local nRaceId = tSelected.idRace
 	local nFactionId = tSelected.idFaction
 	local nGenderId = tSelected.idGender
-			
-	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
-			
 	
+	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+
+		
 	self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText(tLastName)
 	self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetText(tFirstName)
 	
 	self:OnRenameInputBoxChanged()
 	
 end
-
 
 local AccountServicesInst = AccountServices:new()
 AccountServicesInst:Init()

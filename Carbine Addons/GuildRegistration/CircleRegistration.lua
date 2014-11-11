@@ -43,14 +43,18 @@ end
 
 function CircleRegistration:Initialize(wndParent)
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", "OnGuildResultInterceptResponse", self)
-	Apollo.RegisterTimerHandler("ErrorMessageTimer", 		"OnErrorMessageTimer", self)
-	Apollo.RegisterTimerHandler("SuccessfulMessageTimer", 	"OnSuccessfulMessageTimer", self)
+
+	self.timerErrorMessage = ApolloTimer.Create(3.00, false, "OnErrorMessageTimer", self)
+	self.timerErrorMessage:Stop()
+
+	self.timerSuccessMessage = ApolloTimer.Create(3.00, false, "OnSuccessfulMessageTimer", self)
+	self.timerSuccessMessage:Stop()
 
 	if self.wndMain then
 		self.wndMain:Destroy()
 	end
 
-	self.wndMain 				= Apollo.LoadForm(self.xmlDoc, "CircleRegistrationForm", wndParent, self)
+	self.wndMain 				= Apollo.LoadForm(self.xmlDoc, "CircleRegistrationForm", nil, self)
 	self.wndCircleRegAlert 		= self.wndMain:FindChild("AlertMessage")
 	self.wndCircleRegName 		= self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("GuildNameString")
 	self.wndRegisterCircleBtn 	= self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegisterBtn")
@@ -91,13 +95,12 @@ function CircleRegistration:OnEventGeneric_OpenCircleRegistrationPanel(wndParent
 end
 
 function CircleRegistration:OnClose()
-	Apollo.StopTimer("LeftCircleMessageTimer")
-	Apollo.StopTimer("SuccessfulMessageTimer")
-	Apollo.StopTimer("ErrorMessageTimer")
+	self.timerSuccessMessage:Stop()
+	self.timerErrorMessage:Stop()
 
 	self.wndCircleRegAlert:Show(false)
 
-	self.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
+	self.wndMain:Show(false)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -251,7 +254,6 @@ function CircleRegistration:OnCircleRegBtn(wndHandler, wndControl)
 	self:HelperClearCircleRegFocus()
 	self.wndRegisterCircleBtn:Enable(false)
 	self.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
-	self:OnClose()
 	--need to reset info, because next time a circle is created, if the any field isn't updated, it will remain the same it was last circle
 	self.tCreate =
 	{
@@ -279,16 +281,18 @@ function CircleRegistration:OnGuildResultInterceptResponse( guildCurr, eGuildTyp
 	if eResult == GuildLib.GuildResult_Success or eResult == GuildLib.GuildResult_YouCreated or eResult == GuildLib.GuildResult_YouJoined then
 		self.wndCircleRegAlert:FindChild("MessageAlertText"):SetTextColor(ApolloColor.new("UI_WindowTextTextPureGreen"))
 		self.wndCircleRegAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("GuildResult_Success"))
-		Apollo.CreateTimer("SuccessfulMessageTimer", 3.00, false)
+		self.timerSuccessMessage:Start()
+		
 	else
 		self.wndCircleRegAlert:FindChild("MessageAlertText"):SetTextColor(ApolloColor.new("ConTough"))
 		self.wndCircleRegAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("Error"))
-		Apollo.CreateTimer("ErrorMessageTimer", 3.00, false)
+		self.timerErrorMessage:Start()
 	end
 end
 
 function CircleRegistration:OnSuccessfulMessageTimer()
 	self:OnClose()
+	self.wndMain:Show(false)
 end
 
 function CircleRegistration:OnErrorMessageTimer()

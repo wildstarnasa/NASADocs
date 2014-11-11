@@ -122,7 +122,7 @@ function RewardIcons:HelperDrawRewardTooltip(tRewardInfo, wndRewardIcon, strBrac
 		if bShowCount then
 			strProgress = String_GetWeaselString(Apollo.GetString("TargetFrame_Progress"), nCompleted, nNeeded)
 		else
-			strProgress = string.format(": %s%%", nCompleted)
+			strProgress = String_GetWeaselString(Apollo.GetString("TargetFrame_ProgressPercent"), nCompleted)
 		end
 	end
 
@@ -184,20 +184,21 @@ function RewardIcons:HelperDrawRewardIcon(wndRewardIcon)
 end
 
 function RewardIcons:HelperDrawSpellBind(wndIcon, strType)
+	wndIcon:FindChild("Single"):Show(false)
+	wndIcon:FindChild("Multi"):Show(false)
+	wndIcon:FindChild("TargetMark"):Show(false)
+	wndIcon:FindChild("Bind"):SetText("")
+	
 	if strType ~= "Quest" then -- paths, not quest
 		if self.bPathActionUsesIcon then
 			wndIcon:FindChild("TargetMark"):Show(true)
-			wndIcon:FindChild("Bind"):SetText("")
 		else
-			wndIcon:FindChild("TargetMark"):Show(false)
 			wndIcon:FindChild("Bind"):SetText(self.strPathActionKeybind)
 		end
 	else -- quest
 		if self.bQuestActionUsesIcon then
 			wndIcon:FindChild("TargetMark"):Show(true)
-			wndIcon:FindChild("Bind"):SetText("")
 		else
-			wndIcon:FindChild("TargetMark"):Show(false)
 			wndIcon:FindChild("Bind"):SetText(self.strQuestActionKeybind)
 		end
 	end
@@ -410,6 +411,8 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_NumRemaining"), strTitle, nCompleted)
 				elseif peEvent:ShowPercent() then
 					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_PercentCompleted"), strTitle, nCompleted / nNeeded * 100)
+				elseif peEvent:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_TimedWin then -- Very intentionally placed after the ShowPercent() check
+					strTempTitle = String_GetWeaselString(Apollo.GetString("RewardInfo_PublicEventTimedWin"), strTitle, nCompleted * 1000, nNeeded * 1000)
 				elseif nNeeded > 0 then 
 					strTempTitle = String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), strTitle, nCompleted, nNeeded)
 				end
@@ -452,7 +455,6 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 end
 
 function RewardIcons:CreateCallNames()
-	local context = self
 	RewardIcons.GetUnitRewardIconsForm = function (...)
 		RewardIcons.GenerateUnitRewardIconsForm(self, ...)
 	end

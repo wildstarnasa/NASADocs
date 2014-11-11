@@ -133,7 +133,6 @@ function MarketplaceCREDD:Initialize()
 		["ConfirmationBaseText"]				=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseText"),
 		["ConfirmationBaseCash"]				=	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationBaseCash"),
 		["PostResultNotification"]				=	wndMain:FindChild("CommonAlertMessages:PostResultNotification"),
-		["PostResultNotificationCheck"]			=	wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationCheck"),
 		["PostResultNotificationLabel"]			=	wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationLabel"),
 		["PostResultNotificationSubText"]		=	wndMain:FindChild("CommonAlertMessages:PostResultNotification:PostResultNotificationSubText"),
 		["ConfirmationYesBtn"]					= 	wndMain:FindChild("CommonAlertMessages:ConfirmationBlocker:ConfirmationYesBtn"),
@@ -151,6 +150,15 @@ function MarketplaceCREDD:Initialize()
 	end
 
 	self.arOrders = nil
+end
+
+function MarketplaceCREDD:OnCREDDExchangeWindowClose()
+	local wndMain = self.tWindowMap["Main"]
+	if not wndMain or not wndMain:IsValid() or not wndMain:IsShown() then
+		return
+	end
+
+	wndMain:Close()
 end
 
 function MarketplaceCREDD:OnToggleCREDDExchangeWindow()
@@ -429,8 +437,9 @@ function MarketplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResul
 		self.tWindowMap["WaitingScreen"]:Show(false)
 		self.tWindowMap["PostResultNotification"]:Show(true)
 		self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
-		self.tWindowMap["PostResultNotificationCheck"]:SetSprite(bSuccess and "Icon_Windows_UI_CRB_Checkmark" or "LootCloseBox")
-		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString(ktResultErrorCodeStrings[eResult]))
+		self.tWindowMap["PostResultNotificationLabel"]:SetTextColor(bSuccess and ApolloColor.new("UI_TextHoloTitle") or ApolloColor.new("xkcdLightOrange"))
+
+		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString((ktResultErrorCodeStrings[eResult] or MarketplaceCredd_Error_GenericFail)))
 	end
 
 	Apollo.StartTimer("HidePostResultNotification")

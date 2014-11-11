@@ -30,42 +30,45 @@ end
 
 function PathSoldierMissions:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("PathSoldierMissions.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function PathSoldierMissions:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
-	Apollo.RegisterEventHandler("Datachron_LoadPathSoldierContent", "OnLoadFromDatachron", self)
+	Apollo.RegisterEventHandler("Datachron_LoadPathSoldierContent", 		"OnLoadFromDatachron", self)
 
 	-- For quest hold outs, these are randomly listened to. TODO: investigate proper use of these events
-	Apollo.RegisterEventHandler("Datachron_ToggleHoldoutContent", 		"OnLoadFromDatachron", self)
-	Apollo.RegisterEventHandler("Datachron_LoadQuestHoldoutContent", 	"OnLoadFromDatachron", self)
+	Apollo.RegisterEventHandler("Datachron_ToggleHoldoutContent", 			"OnLoadFromDatachron", self)
+	Apollo.RegisterEventHandler("Datachron_LoadQuestHoldoutContent", 		"OnLoadFromDatachron", self)
 end
 
 function PathSoldierMissions:OnLoadFromDatachron()
 	Apollo.RegisterEventHandler("LoadSoldierMission", "LoadFromList", self)
 
-	Apollo.RegisterEventHandler("SoldierHoldoutStatus", 	"OnSoldierHoldoutStatusStart", self)
-	Apollo.RegisterEventHandler("SoldierHoldoutNextWave", 	"OnSoldierHoldoutNextWave", self)
-	Apollo.RegisterEventHandler("SoldierHoldoutDeath",		"OnSoldierHoldoutDeath", self)
-	Apollo.RegisterEventHandler("SoldierHoldoutEnd", 		"OnExitSoldierMissionMain", self)
-	Apollo.RegisterEventHandler("ChangeWorld", 				"OnExitSoldierMissionMain", self)
+	Apollo.RegisterEventHandler("PlayerPathSoldierNewWhackAMoleBurrows", 	"OnPlayerPathSoldierNewWhackAMoleBurrows", self)
+	Apollo.RegisterEventHandler("SoldierHoldoutStatus", 					"OnSoldierHoldoutStatusStart", self)
+	Apollo.RegisterEventHandler("SoldierHoldoutNextWave", 					"OnSoldierHoldoutNextWave", self)
+	Apollo.RegisterEventHandler("SoldierHoldoutDeath",						"OnSoldierHoldoutDeath", self)
+	Apollo.RegisterEventHandler("SoldierHoldoutEnd", 						"OnExitSoldierMissionMain", self)
+	Apollo.RegisterEventHandler("ChangeWorld", 								"OnExitSoldierMissionMain", self)
 
-	Apollo.RegisterTimerHandler("IncomingWarning", 	"OnIncomingWarning", self)
-	Apollo.RegisterTimerHandler("SoldierTimer", 	"OnSoldierTimer", self)
-	Apollo.RegisterTimerHandler("DoAFlashTimer10", 	"DoAFlash", self)
-	Apollo.RegisterTimerHandler("DoAFlashTimer6", 	"DoAFlash", self)
-	Apollo.RegisterTimerHandler("DoAFlashTimer3", 	"DoAFlash", self)
+	Apollo.RegisterTimerHandler("SoldierHoldout_CleanWhackAMole",	"OnSoldierHoldout_CleanWhackAMole", self)
+	Apollo.RegisterTimerHandler("IncomingWarning", 					"OnIncomingWarning", self)
+	Apollo.RegisterTimerHandler("SoldierTimer", 					"OnSoldierTimer", self)
+	Apollo.RegisterTimerHandler("DoAFlashTimer10", 					"DoAFlash", self)
+	Apollo.RegisterTimerHandler("DoAFlashTimer6", 					"DoAFlash", self)
+	Apollo.RegisterTimerHandler("DoAFlashTimer3", 					"DoAFlash", self)
 
 	Apollo.CreateTimer("SoldierTimer", 0.4, true)
 	Apollo.StartTimer("SoldierTimer")
 
+	self.tWndWhackAMole = {}
 	self.bFirstTowerDefenseLoad = true
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathSoldierMissionMain", g_wndDatachron:FindChild("PathContainer"), self)
-	
+
 	local pepEpisode = PlayerPathLib.GetCurrentEpisode()
 	if pepEpisode then
 		local tFullMissionList = pepEpisode:GetMissions()
@@ -77,7 +80,7 @@ function PathSoldierMissions:OnLoadFromDatachron()
 				end
 			end
 		end
-	end		
+	end
 end
 
 function PathSoldierMissions:OnExitSoldierMissionMain()
@@ -211,7 +214,7 @@ function PathSoldierMissions:DrawMissionDefense(seEvent)
 		wndDefend:FindChild("TimerText"):SetText("")
 	else
 		wndDefend:FindChild("TimerLabel"):SetText(Apollo.GetString("SoldierMission_NextWaveLabel"))
-		wndDefend:FindChild("TimerText"):SetText(self:HelperCalcTime(nElapsedTime))	
+		wndDefend:FindChild("TimerText"):SetText(self:HelperCalcTime(nElapsedTime))
 	end
 
 	if eType == PathMission.PathSoldierEventType_TimedDefend then
@@ -301,8 +304,9 @@ function PathSoldierMissions:DrawMissionStopThieves(seEvent)
 end
 
 function PathSoldierMissions:DrawMissionBuilding(seEvent)
+	local nTime = self:HelperCalcTime(seEvent:GetMaxTime() - seEvent:GetElapsedTime())
 	self.wndMain:FindChild("SolIncoming"):Show(true)
-	self.wndMain:FindChild("SolIncoming"):FindChild("IncomingText"):SetText(String_GetWeaselString(Apollo.GetString("SoldierMission_BuildTime"), self:HelperCalcTime(seEvent:GetMaxTime() - seEvent:GetElapsedTime())))
+	self.wndMain:FindChild("SolIncoming"):FindChild("IncomingText"):SetText(String_GetWeaselString(Apollo.GetString("SoldierMission_BuildTime"), nTime))
 
 	-- This stays on screen until we clear it
 	if self.bFirstTowerDefenseLoad then
@@ -340,6 +344,7 @@ function PathSoldierMissions:OnSoldierHoldoutNextWave(seArgEvent)
 	self.wndMain:FindChild("SolIncoming"):Show(true)
 	self.wndMain:FindChild("SolIncoming"):FindChild("IncomingText"):SetText(Apollo.GetString("CRB_Incoming!"))
 	Apollo.CreateTimer("IncomingWarning", 2.0, false)
+	Event_FireGenericEvent("GenericEvent_RestoreDatachron")
 end
 
 function PathSoldierMissions:OnIncomingWarning()
@@ -354,6 +359,52 @@ function PathSoldierMissions:OnSoldierHoldoutDeath(seArgEvent)
 	local wndAssault = self.wndMain:FindChild("Assault")
 	wndAssault:FindChild("TimerAndCountArrangeVert"):Show(false)
 	wndAssault:FindChild("DeathNoticeContainer"):Show(true)
+end
+
+function PathSoldierMissions:OnPlayerPathSoldierNewWhackAMoleBurrows(nDelayUntilPop, tUnits) -- This can happen more than once
+	local bAddedSomething = false
+	local unitPlayer = GameLib.GetPlayerUnit()
+	for idx, unitCurr in pairs(tUnits or {}) do
+		if unitCurr ~= unitPlayer and not self.tWndWhackAMole[unitCurr:GetId()] then
+			local wndCurr = Apollo.LoadForm(self.xmlDoc, "WhackAMoleForm", "InWorldHudStratum", self)
+			wndCurr:FindChild("WhackAMoleProgress"):SetMax(100)
+			wndCurr:FindChild("WhackAMoleProgress"):SetProgress(100, 100 / nDelayUntilPop)
+			wndCurr:SetUnit(unitCurr, 1) -- TODO 1 is EModelAttachment.ModelAttachment_NAME
+			self.tWndWhackAMole[unitCurr:GetId()] = wndCurr
+			bAddedSomething = true
+		end
+	end
+
+	if bAddedSomething then
+		Apollo.RemoveEventHandler("UnitDestroyed", self)
+		Apollo.RegisterEventHandler("UnitDestroyed", "OnUnitDestroyed", self)
+	end
+
+	Apollo.StopTimer("SoldierHoldout_CleanWhackAMole")
+	Apollo.CreateTimer("SoldierHoldout_CleanWhackAMole", nDelayUntilPop, false)
+	Apollo.StartTimer("SoldierHoldout_CleanWhackAMole")
+end
+
+function PathSoldierMissions:OnSoldierHoldout_CleanWhackAMole()
+	for idx, wndCurr in pairs(self.tWndWhackAMole) do
+		if wndCurr and wndCurr:IsValid() then
+			wndCurr:Destroy()
+			wndCurr = nil
+		end
+	end
+
+	self.tWndWhackAMole = {}
+	Apollo.RemoveEventHandler("UnitDestroyed", self)
+	Apollo.StopTimer("SoldierHoldout_CleanWhackAMole")
+end
+
+function PathSoldierMissions:OnUnitDestroyed(unitArg) -- Just for soldier whack a mole missions
+	for nUnitIdx, wndCurr in pairs(self.tWndWhackAMole or {}) do
+		if wndCurr and wndCurr:IsValid() and nUnitIdx == unitArg:GetId() then
+			wndCurr:Destroy()
+			wndCurr = nil
+		end
+	end
 end
 
 ---------------------------------------------------------------------------------------------------

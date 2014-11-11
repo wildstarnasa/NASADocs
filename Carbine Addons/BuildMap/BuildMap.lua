@@ -78,16 +78,19 @@ function BuildMap:Initialize()
 		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
 	
-	local wndWorldMap = self.wndMain:FindChild("TopSection:WorldMap")
-	wndWorldMap:SetZone(GameLib.GetCurrentZoneMap().id)
-	wndWorldMap:SetPlayerArrowSprite("sprMap_PlayerArrowBase")
-	wndWorldMap:SetDisplayMode(ZoneMapWindow.CodeEnumDisplayMode.Panning)
-	wndWorldMap:CenterOnPlayer()
-	self.wndMain:FindChild("BuilderMapFormBG:Settings:KeepWindowOpenBtn"):SetCheck(self.bKeepWindowOpen or false)
+	if GameLib.GetCurrentZoneMap() then
+		local wndWorldMap = self.wndMain:FindChild("TopSection:WorldMap")
+		wndWorldMap:SetZone(GameLib.GetCurrentZoneMap().id)
+		wndWorldMap:SetPlayerArrowSprite("sprMap_PlayerArrowBase")
+		wndWorldMap:SetDisplayMode(ZoneMapWindow.CodeEnumDisplayMode.Panning)
+		wndWorldMap:CenterOnPlayer()
+		self.wndMain:FindChild("BuilderMapFormBG:Settings:KeepWindowOpenBtn"):SetCheck(self.bKeepWindowOpen or false)
 
-	if not self.eOverlayType then
-		self.eOverlayType = wndWorldMap:CreateOverlayType()
+		if not self.eOverlayType then
+			self.eOverlayType = wndWorldMap:CreateOverlayType()
+		end
 	end
+	
 	self.nNumNodes = 0
 	self.wndLastMouseEnter = nil
 	self.wndExtraInfoScreen = nil
@@ -214,7 +217,7 @@ function BuildMap:RedrawSelectionItems()
 	end
 
 	if not self.wndExtraInfoScreen or not self.wndExtraInfoScreen:IsValid() or not self.wndExtraInfoScreen:IsShown() then
-		self.wndMain:FindChild("BottomSection:SelectionItemContainer"):ArrangeChildrenHorz(0)
+		self.wndMain:FindChild("BottomSection:SelectionItemContainer"):ArrangeChildrenVert(0)
 	end
 end
 

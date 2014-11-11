@@ -19,6 +19,7 @@ local ArenaTeamRegister = {}
 local kcrDefaultText = CColor.new(135/255, 135/255, 135/255, 1.0)
 local kcrHighlightedText = CColor.new(0, 1.0, 1.0, 1.0)
 local kstrAlreadyInGuild = Apollo.GetString("ArenaRegister_AlreadyInGuild")
+local knMinGuildNameLength = 3
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -52,11 +53,12 @@ function ArenaTeamRegister:OnDocumentReady()
 	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
 	
 	Apollo.RegisterEventHandler("GuildResultInterceptResponse", "OnGuildResultInterceptResponse", self)
-	Apollo.RegisterTimerHandler("SuccessfulMessageTimer", "OnSuccessfulMessageTimer", self)
-	Apollo.RegisterTimerHandler("ErrorMessageTimer", "OnErrorMessageTimer", self)	 
  	Apollo.RegisterEventHandler("GenericEvent_RegisterArenaTeam", "OnArenaTeamRegistration", self)
 	Apollo.RegisterEventHandler("Event_ShowArenaInfo", "OnCancel", self)
 	Apollo.RegisterEventHandler("LFGWindowHasBeenClosed", "OnCancel", self)
+	
+	self.timerErrorMessage = ApolloTimer.Create(3.0, false, "OnErrorMessageTimer", self)
+	self.timerErrorMessage:Stop()
     
     -- load our forms
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "ArenaTeamRegistrationForm", nil, self)
@@ -67,6 +69,7 @@ function ArenaTeamRegister:OnDocumentReady()
 	self.wndRegister = self.wndMain:FindChild("RegisterBtn")
 	
 	self.wndAlert = self.wndMain:FindChild("AlertMessage")
+	self.wndArenaTeamName:SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName))
 	
 	self.tPos = nil
 
@@ -123,7 +126,7 @@ function ArenaTeamRegister:OnArenaTeamRegistration(eTeamSize, tPos)
 		end
 	end
 
-	self.wndRegister:Enable(true)
+	self.wndRegister:Enable(false)
 	self.wndMain:Invoke() -- show the window
 	self.wndMain:ToFront()
 end
@@ -136,21 +139,35 @@ function ArenaTeamRegister:ResetOptions()
 	self.wndArenaTeamName:SetText("")
 	self.tCreate.strName = ""
 	self:HelperClearFocus()
+	self.wndMain:FindChild("RegistrationContent:ValidAlert"):Show(false)
+	
+	self:OnNameChanging(self.wndArenaTeamName, self.wndArenaTeamName)
 end
 
 function ArenaTeamRegister:OnNameChanging(wndHandler, wndControl)
-	self.tCreate.strName = self.wndArenaTeamName:GetText()
-end
+	local strInput = self.wndArenaTeamName:GetText() or ""
+	local wndLimit = self.wndMain:FindChild("RegistrationContent:Limit")
+			
+	if wndLimit ~= nil then
+		local eProfanityFilter = GameLib.CodeEnumUserTextFilterClass.Strict
+		local bIsValid = GameLib.IsTextValid(strInput, GameLib.CodeEnumUserText.GuildName, eProfanityFilter)
+	
+		local nNameLength = string.len(strInput)
+		local nMaxLength = GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)
+		
+		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, nMaxLength))
 
-function ArenaTeamRegister:HelperCheckForEmptyString(strText) -- make sure there's a valid string
-	local strFirstChar
-	local bHasText = false
+		if not bIsValid or nNameLength < knMinGuildNameLength or nNameLength > nMaxLength then
+			wndLimit:SetTextColor(ApolloColor.new("xkcdReddish"))
+		else
+			wndLimit:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+		end
+
+		self.wndRegister:Enable(bIsValid)
+		self.wndMain:FindChild("RegistrationContent:ValidAlert"):Show(not bIsValid)
+		self.tCreate.strName = bIsValid and strInput or ""
+	end
 	
-	-- Check for the first character after spaces
-	strFirstChar = string.find(strText, "%S")
-	
-	bHasText = strFirstChar ~= nil and string.len(strFirstChar) > 0
-	return bHasText
 end
 
 function ArenaTeamRegister:HelperClearFocus(wndHandler, wndControl)
@@ -182,6 +199,7 @@ end
 function ArenaTeamRegister:OnCancel(wndHandler, wndControl)
 	Event_FireGenericEvent("GuildRegistrationWindowChange", self.tCreate.eGuildType, nil )
 	self.wndMain:Close() -- hide the window
+	self.wndAlert:Show(false)
 	self:HelperClearFocus()	
 	self:ResetOptions()	
 end
@@ -196,14 +214,10 @@ function ArenaTeamRegister:OnGuildResultInterceptResponse( guildCurr, eGuildType
 		self.wndMain:Close()
 	else
 		self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("ArenaRegister_Woops"))
-		Apollo.CreateTimer("ErrorMessageTimer", 3.00, false)
+		self.timerErrorMessage:Start()
 		self.wndAlert:FindChild("MessageBodyText"):SetText(strAlertMessage)
 		self.wndAlert:Invoke()
 	end
-end
-
-function ArenaTeamRegister:OnSuccessfulMessageTimer()
-	self:OnCancel()
 end
 
 function ArenaTeamRegister:OnErrorMessageTimer()

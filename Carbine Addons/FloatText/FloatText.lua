@@ -78,6 +78,7 @@ function FloatText:OnLoad()
 
 	self.fLastDamageTime = GameLib.GetGameTime()
 	self.fLastOffset = 0
+	self.tTimerFloatText = {}
 
 	self:OnOptionsUpdated()
 end
@@ -345,17 +346,18 @@ end
 function FloatText:OnCombatLogTransference(tEventArgs)
 	local bCritical = tEventArgs.eCombatResult == GameLib.CodeEnumCombatResult.Critical
 	if tEventArgs.unitCaster == GameLib.GetControlledUnit() then -- Target does the transference to the source
-		self:OnDamageOrHealing( tEventArgs.unitCaster, tEventArgs.unitTarget, tEventArgs.eDamageType, math.abs(tEventArgs.nDamageAmount), 0, 0, bCritical )
+		self:OnDamageOrHealing( tEventArgs.unitCaster, tEventArgs.unitTarget, tEventArgs.eDamageType, math.abs(tEventArgs.nDamageAmount), math.abs(tEventArgs.nShield), math.abs(tEventArgs.nAbsorption), bCritical )
 	else -- creature taking damage
-		self:OnPlayerDamageOrHealing( tEventArgs.unitTarget, tEventArgs.eDamageType, math.abs(tEventArgs.nDamageAmount), 0, 0, bCritical )
+		self:OnPlayerDamageOrHealing( tEventArgs.unitTarget, tEventArgs.eDamageType, math.abs(tEventArgs.nDamageAmount), math.abs(tEventArgs.nShield), math.abs(tEventArgs.nAbsorption), bCritical )
 	end
 
 	-- healing data is stored in a table where each subtable contains a different vital that was healed
+	-- units in caster's group can get healed
 	for idx, tHeal in ipairs(tEventArgs.tHealData) do
-		if tEventArgs.unitCaster == GameLib.GetPlayerUnit() then -- source recieves the transference from the taker
+		if tHeal.unitHealed == GameLib.GetPlayerUnit() then -- source recieves the transference from the taker
 			self:OnPlayerDamageOrHealing(tEventArgs.unitCaster, GameLib.CodeEnumDamageType.Heal, math.abs(tHeal.nHealAmount), 0, 0, bCritical )
 		else
-			self:OnDamageOrHealing(tEventArgs.unitTarget, tEventArgs.unitCaster, tEventArgs.eDamageType, math.abs(tHeal.nHealAmount), 0, 0, bCritical )
+			self:OnDamageOrHealing(tEventArgs.unitCaster, tHeal.unitHealed, tEventArgs.eDamageType, math.abs(tHeal.nHealAmount), 0, 0, bCritical )
 		end
 	end
 end
@@ -462,7 +464,7 @@ function FloatText:OnExperienceGained(eReason, unitTarget, strText, fDelay, nAmo
 	self:RequestShowTextFloater(eMessageType, unitToAttachTo, strFormatted, tTextOption, fDelay, tContent)
 end
 
-function FloatText:OnElderPointsGained(nAmount)
+function FloatText:OnElderPointsGained(nAmount, nRested)
 	if not Apollo.GetConsoleVariable("ui.showCombatFloater") or nAmount < 0 then
 		return
 	end
@@ -492,8 +494,11 @@ function FloatText:OnElderPointsGained(nAmount)
 
 	local eMessageType = LuaEnumMessageType.XPAwarded
 	local unitToAttachTo = GameLib.GetControlledUnit()
+	-- Base EP Floater
 	local strFormatted = String_GetWeaselString(Apollo.GetString("FloatText_EPGained"), nAmount)
-
+	self:RequestShowTextFloater(eMessageType, unitToAttachTo, strFormatted, tTextOption, 0, tContent)
+	-- Rested EP Floater
+	strFormatted = String_GetWeaselString(Apollo.GetString("FloatText_RestEPGained"), nRested)
 	self:RequestShowTextFloater(eMessageType, unitToAttachTo, strFormatted, tTextOption, 0, tContent)
 end
 
@@ -576,7 +581,7 @@ function FloatText:OnLootedMoney(monLooted) -- karCurrencyTypeToString filters t
 	if not monLooted then
 		return
 	end
-	
+
 	local arCurrencyTypeToString =
 	{
 		[Money.CodeEnumCurrencyType.Renown] 			= "CRB_Renown",
@@ -710,7 +715,7 @@ function FloatText:OnDamageOrHealing( unitCaster, unitTarget, eDamageType, nDama
 		return
 	end
 
-	
+
 	if GameLib.IsControlledUnit(unitTarget) or unitTarget == GameLib.GetPlayerMountUnit() or GameLib.IsControlledUnit(unitTarget:GetUnitOwner()) then
 		self:OnPlayerDamageOrHealing( unitTarget, eDamageType, nDamage, nShieldDamaged, nAbsorptionAmount, bCritical )
 		return
@@ -1163,9 +1168,7 @@ function FloatText:RequestShowTextFloater( eMessageType, unitTarget, strText, tT
 		if self.iTimerIndex > 9999999 then
 			self.iTimerIndex = 1
 		end
-
-		Apollo.CreateTimer("DelayedFloatTextTimer".. self.iTimerIndex, fDelay, false) -- create the timer to show the text
-		Apollo.RegisterTimerHandler("DelayedFloatTextTimer"..self.iTimerIndex, "OnDelayedFloatTextTimer", self)
+		self.tTimerFloatText[self.iTimerIndex] = ApolloTimer.Create(fDelay, false, "OnDelayedFloatTextTimer", self)-- create the timer to show the text
 	end
 end
 

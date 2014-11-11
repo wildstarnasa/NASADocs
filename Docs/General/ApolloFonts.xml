@@ -95,6 +95,7 @@
 	<Font Name="CRB_AlienSmall" Face="WildStarFontSmall" Size="12" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
     <Font Name="CRB_AlienMedium" Face="WildStarFontSmall" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
     <Font Name="CRB_AlienLarge" Face="WildStarFontSmall" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+    <Font Name="CRB_AlienHuge" Face="WildStarFontSmall" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
 
 	<Font Name="Subtitle" Face="Cube Offc Cond" Size="30" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
 

@@ -75,6 +75,9 @@
 
     <Color Name="ChatParty" Color="fffff533" />
     <Color Name="ChannelParty" Color="fffff533" />
+	
+	<Color Name="ChatInstance" Color="ffeae248" />
+    <Color Name="ChannelInstance" Color="ffeae248" />
 
     <Color Name="ChatZone" Color="ff97a9ff" />
     <Color Name="ChannelZone" Color="ff97a9ff" />
@@ -109,11 +112,11 @@
     <Color Name="ChatCircle5" Color="ff6b9e14" />
     <Color Name="ChannelCircle5" Color="ff6b9e14" />
 
-    <Color Name="ChatWarParty" Color="ff53ff53" />
-    <Color Name="ChannelWarParty" Color="ff53ff53" />
+    <Color Name="ChatWarParty" Color="ff76dc76" />
+    <Color Name="ChannelWarParty" Color="ff76dc76" />
 
-    <Color Name="ChatWarPartyOfficer" Color="ff95ff95" />
-    <Color Name="ChannelWarPartyOfficer" Color="ff95ff95" />
+    <Color Name="ChatWarPartyOfficer" Color="ffaae9aa" />
+    <Color Name="ChannelWarPartyOfficer" Color="ffaae9aa" />
 
     <Color Name="ChatCustom" Color="ffd097ff" />
     <Color Name="ChannelCustom" Color="ffd097ff" />
@@ -237,6 +240,7 @@
 	<Color Name ="UI_WindowTextOrange" Color="ffffac00" />
 	<Color Name ="UI_WindowTextTextPureGreen" Color="ff00ff00" />
 	<Color Name ="UI_WindowTextCraftingRedCapacitor" Color="ffff1100" />
+	<Color Name ="UI_WindowTextCraftingBlueResistor" Color="ff31aaff" />
 	<Color Name ="UI_WindowTextCraftingGreenInductor" Color="ff00ff00" />
 	<Color Name ="UI_WindowTextChallengeGreenFlash" Color="ff00ff00" />
 	<Color Name ="UI_WindowTextThreshold" Color="66aaaaff" />

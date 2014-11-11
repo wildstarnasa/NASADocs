@@ -26,17 +26,17 @@ local ktHoldLineObjectiveCountToName =
 local ktHoldLinePoint1 =
 {
 	[0] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_1", Apollo.GetString("MatchTracker_CrucibleOfBlood"), 	ApolloColor.new("fffff97f")},
-	[1] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 		ApolloColor.new("UI_BtnTextRedNormal")},
-	[2] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 		ApolloColor.new("UI_BtnTextRedNormal")},
-	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 		ApolloColor.new("UI_BtnTextRedNormal")},
+	[1] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 		ApolloColor.new("xkcdReddish")},
+	[2] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 		ApolloColor.new("xkcdReddish")},
+	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 		ApolloColor.new("xkcdReddish")},
 }
 
 local ktHoldLinePoint2 =
 {
 	[0] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_2", Apollo.GetString("MatchTracker_ChamberOfGreatDark"), 	ApolloColor.new("UI_TextHoloTitle")},
 	[1] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_1", Apollo.GetString("MatchTracker_ChamberOfGreatDark"), 	ApolloColor.new("fffff97f")},
-	[2] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 			ApolloColor.new("UI_BtnTextRedNormal")},
-	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 			ApolloColor.new("UI_BtnTextRedNormal")},
+	[2] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 			ApolloColor.new("xkcdReddish")},
+	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 			ApolloColor.new("xkcdReddish")},
 }
 
 local ktHoldLinePoint3 =
@@ -44,7 +44,7 @@ local ktHoldLinePoint3 =
 	[0] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_2", Apollo.GetString("MatchTracker_CourtOfJudges"), ApolloColor.new("UI_TextHoloTitle")},
 	[1] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_2", Apollo.GetString("MatchTracker_CourtOfJudges"), ApolloColor.new("UI_TextHoloTitle")},
 	[2] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_1", Apollo.GetString("MatchTracker_CourtOfJudges"), ApolloColor.new("fffff97f")},
-	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 	 ApolloColor.new("UI_BtnTextRedNormal")},
+	[3] = {"ClientSprites:Icon_ItemMisc_UI_Item_Crafting_Special_3", Apollo.GetString("MatchTracker_Catpured"), 	 ApolloColor.new("xkcdReddish")},
 }
 
 local ktPvPEventTypes =
@@ -314,10 +314,10 @@ function MatchTracker:OnOneSecMatchTimer()
 	self.tWndRefs.wndMatchTracker:FindChild("MessageBlockerFrame"):Show(tMatchState.eState == MatchingGame.PVPGameState.Finished or tMatchState.eState == MatchingGame.PVPGameState.Preparation)
 
 	if tMatchState.eState == MatchingGame.PVPGameState.Preparation then
-		self.tWndRefs.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(false)
+		self.tWndRefs.wndMatchTracker:FindChild("BGArt"):Show(false)
 		return
 	elseif tMatchState.eState == MatchingGame.PVPGameState.Finished then
-		self.tWndRefs.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(true)
+		self.tWndRefs.wndMatchTracker:FindChild("BGArt"):Show(true)
 		return
 	end
 
@@ -376,7 +376,7 @@ function MatchTracker:OnPVPMatchFinished(eWinner, eReason)
 	end
 
 	self.tWndRefs.wndMatchTracker:FindChild("MessageBlockerFrame"):Show(true)
-	self.tWndRefs.wndMatchTracker:FindChild("MatchLeaveBtn"):Show(true)
+	self.tWndRefs.wndMatchTracker:FindChild("BGArt"):Show(true)
 	self.tWndRefs.wndMatchTracker:FindChild("TimerLabel"):SetText("")
 end
 

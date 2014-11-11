@@ -11,6 +11,13 @@ require "GameLib"
 
 local ArenaTeam = {}
 
+local ktTeamTypeToString =
+{
+	[GuildLib.GuildType_ArenaTeam_2v2] = Apollo.GetString("ArenaRoster_2v2"),
+	[GuildLib.GuildType_ArenaTeam_3v3] = Apollo.GetString("ArenaRoster_3v3"),
+	[GuildLib.GuildType_ArenaTeam_5v5] = Apollo.GetString("ArenaRoster_5v5"),
+}
+
 function ArenaTeam:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -27,12 +34,10 @@ end
 function ArenaTeam:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ArenaTeam.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
-	
-	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 end
 
 function ArenaTeam:OnDocumentReady()
-	if self.xmlDoc == nil or not g_InterfaceOptionsLoaded or self.wndMain then
+	if self.xmlDoc == nil then
 		return
 	end
 	
@@ -47,14 +52,12 @@ function ArenaTeam:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildPvp", 						"OnGuildPvp", self) -- notification that the pvp standings of the guild has changed.	
 	Apollo.RegisterEventHandler("GuildMemberChange", 				"OnGuildMemberChange", self)  -- General purpose update method
 	Apollo.RegisterEventHandler("GenericEvent_RegisterArenaTeam", 	"OnClose", self)
-	Apollo.RegisterTimerHandler("ArenaTeamReloadTimer", 			"BuildRosterList", self)
 	
-	Apollo.CreateTimer("ArenaTeamReloadTimer", 30.0, true)
-	Apollo.StopTimer("ArenaTeamReloadTimer")
+	self.timerArenaTeamReload = ApolloTimer.Create(30.0, true, "BuildRosterList", self)
+	self.timerArenaTeamReload:Stop()
 
 	-- loading windows
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "ArenaTeamForm", nil, self)
-	self.wndMain:FindChild("Controls"):ArrangeChildrenHorz(2)
 	self.wndMain:Show(false, true)
 end
 
@@ -64,7 +67,7 @@ end
 
 function ArenaTeam:OnClose()
 	self.eCurrentType = nil
-	Apollo.StopTimer("ArenaTeamReloadTimer")
+	self.timerArenaTeamReload:Stop()
 	self.wndMain:Close()
 end
 
@@ -77,14 +80,9 @@ function ArenaTeam:OnShowArenaInfo(eTeamType, tPos)
 	self.wndMain:FindChild("RosterGrid"):DeleteAll() 
 	
 	
-	local strType = ""
-	if eTeamType == GuildLib.GuildType_ArenaTeam_2v2 then
-		strType = Apollo.GetString("ArenaRoster_2v2")
-	elseif eTeamType == GuildLib.GuildType_ArenaTeam_3v3 then
-		strType = Apollo.GetString("ArenaRoster_3v3")
-	elseif eTeamType == GuildLib.GuildType_ArenaTeam_5v5 then
-		strType = Apollo.GetString("ArenaRoster_5v5")
-	else
+	local strType = ktTeamTypeToString[eTeamType]
+	
+	if not strType then
 		self.wndMain:Show(false)
 		return
 	end
@@ -118,7 +116,7 @@ function ArenaTeam:OnShowArenaInfo(eTeamType, tPos)
 			end				
 			self.wndMain:Show(true)
 			self.wndMain:ToFront()
-			Apollo.StartTimer("ArenaTeamReloadTimer")
+			self.timerArenaTeamReload:Start()
 			return
 		end
 	end
@@ -174,7 +172,6 @@ function ArenaTeam:ResetRosterMemberButtons()
 		wndInvite:Enable(bValidUnit and bCanInvite)	
 	end
 	
-	self.wndMain:FindChild("Controls"):ArrangeChildrenHorz(1)
 end
 
 -- The buttons
@@ -203,16 +200,12 @@ end
 function ArenaTeam:OnRosterAddMemberCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("AddMemberEditBox"):SetText("")
 	self.wndMain:FindChild("AddMemberContainer"):Close()
-	if not self.wndMain:FindChild("RosterOptionBtnAdd"):ContainsMouse() then
-		self.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
-	end
+	self.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
 end
 
 function ArenaTeam:OnRosterRemoveMemberCloseBtn()
 	self.wndMain:FindChild("RemoveMemberContainer"):Close()
-	if not self.wndMain:FindChild("RosterOptionBtnRemove"):ContainsMouse() then
-		self.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
-	end
+	self.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
 end
 
 function ArenaTeam:OnRosterRemoveMemberYesClick(wndHandler, wndControl)
@@ -252,23 +245,20 @@ end
 function ArenaTeam:OnDisbandContainerCloseBtn(wndHandler, wndControl)
 	local wndDisband = self.wndMain:FindChild("RosterDisbandBtn")
 	wndDisband:FindChild("DisbandContainer"):Show(false)
-	if not wndDisband:ContainsMouse() then
-		wndDisband:SetCheck(false)
-	end
+	wndDisband:SetCheck(false)
 end
 
 function ArenaTeam:OnConfirmLeaveBtn(wndHandler, wndControl)
 	if wndHandler and wndHandler:GetData() then
 		wndHandler:GetData():Leave()
 	end
+	self:OnLeaveContainerCloseBtn()
 end
 
 function ArenaTeam:OnLeaveContainerCloseBtn(wndHandler, wndControl)
 	local wndLeave = self.wndMain:FindChild("RosterLeaveBtn")
 	wndLeave:FindChild("LeaveContainer"):Show(false)
-	if not wndLeave:ContainsMouse() then
-		wndLeave:SetCheck(false)
-	end
+	wndLeave:SetCheck(false)
 end
 
 function ArenaTeam:OnRosterLeaveBtn(wndHandler, wndControl)
@@ -427,28 +417,17 @@ end
 -- ArenaTeam Invite Window
 -----------------------------------------------------------------------------------------------
 
-function ArenaTeam:OnGuildInvite( strGuildName, strInvitorName, guildType )
+function ArenaTeam:OnGuildInvite( strGuildName, strInvitorName, eGuildType )
 	-- Defining text on the arena team invite
-	local strType = ""
-	if guildType == GuildLib.GuildType_ArenaTeam_2v2 then
-		strType = Apollo.GetString("ArenaRoster_2v2")
-	elseif guildType == GuildLib.GuildType_ArenaTeam_3v3 then
-		strType = Apollo.GetString("ArenaRoster_3v3")
-	elseif guildType == GuildLib.GuildType_ArenaTeam_5v5 then
-		strType = Apollo.GetString("ArenaRoster_5v5")
-	else
+	if not ktTeamTypeToString[eGuildType] then
 		return
 	end
 	
-	if self:FilterRequest(strInvitorName) then
-		self.wndArenaTeamInvite = Apollo.LoadForm(self.xmlDoc, "ArenaTeamInviteConfirmation", nil, self)
-		
-		self.wndArenaTeamInvite:FindChild("ArenaTeamFilterBtn"):SetCheck(g_InterfaceOptions.Carbine.bFilterGuildInvite)
-		self.wndArenaTeamInvite:FindChild("ArenaTeamInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_InviteHeader"), strType, strGuildName, strInvitorName))
-		self.wndArenaTeamInvite:Invoke()
-	else
-		GuildLib.Decline()
-	end
+	local strType = ktTeamTypeToString[eGuildType]
+	self.wndArenaTeamInvite = Apollo.LoadForm(self.xmlDoc, "ArenaTeamInviteConfirmation", nil, self)
+
+	self.wndArenaTeamInvite:FindChild("ArenaTeamInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_InviteHeader"), strType, strGuildName, strInvitorName))
+	self.wndArenaTeamInvite:Invoke()
 end
 
 function ArenaTeam:OnArenaTeamInviteAccept(wndHandler, wndControl)
@@ -458,34 +437,21 @@ function ArenaTeam:OnArenaTeamInviteAccept(wndHandler, wndControl)
 	end
 end
 
-function ArenaTeam:OnArenaTeamInviteDecline() -- This can come from a variety of sources
+function ArenaTeam:OnReportArenaInviteSpamBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("GenericEvent_ReportPlayerArenaInvite")
+	self.wndArenaTeamInvite:Destroy()
+end
+
+function ArenaTeam:OnDecline()
 	GuildLib.Decline()
 	if self.wndArenaTeamInvite then
 		self.wndArenaTeamInvite:Destroy()
 	end
 end
 
-function ArenaTeam:OnFilterBtn(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
-end
-
 -----------------------------------------------------------------------------------------------
 -- Feedback Messages
 -----------------------------------------------------------------------------------------------
-function ArenaTeam:FilterRequest(strInvitor)
-	if not g_InterfaceOptions.Carbine.bFilterGuildInvite then
-		return true
-	end
-	
-	local bPassedFilter = false
-	
-	local tRelationships = GameLib.SearchRelationshipStatusByCharacterName(strInvitor)
-	if tRelationships and (tRelationships.tFriend or tRelationships.tAccountFriend or tRelationships.tGuilds or tRelationships.nGuildIndex) then
-		bPassedFilter = true
-	end
-	
-	return bPassedFilter
-end
 
 function ArenaTeam:OnGuildMemberChange(guildCurr)
 	if (guildCurr:GetType() == self.eCurrentType) and self.wndMain:IsShown() then

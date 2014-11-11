@@ -57,7 +57,7 @@ function InterfaceMenuList:OnLoad()
 end
 
 function InterfaceMenuList:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	
@@ -68,6 +68,7 @@ function InterfaceMenuList:OnDocumentReady()
 	Apollo.RegisterTimerHandler("TimeUpdateTimer", 						"OnUpdateTimer", self)
 	Apollo.RegisterTimerHandler("QueueRedrawTimer", 					"OnQueuedRedraw", self)
 	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", 		"ButtonListRedraw", self)
+	Apollo.RegisterEventHandler("OptionsUpdated_HUDPreferences", 		"OnUpdateTimer", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc , "InterfaceMenuListForm", "FixedHudStratumHigh", self)
 	self.wndList = Apollo.LoadForm(self.xmlDoc , "FullListFrame", nil, self)
@@ -91,7 +92,7 @@ function InterfaceMenuList:OnDocumentReady()
 	end
 	
 	self.tMenuData = {
-		[Apollo.GetString("InterfaceMenu_SystemMenu")] = { "", "", "Icon_Windows32_UI_CRB_InterfaceMenu_EscMenu" }, --
+		[Apollo.GetString("InterfaceMenu_SystemMenu")] = { "", "Escape", "Icon_Windows32_UI_CRB_InterfaceMenu_EscMenu" }, --
 	}
 	
 	self.tMenuTooltips = {}
@@ -102,6 +103,10 @@ function InterfaceMenuList:OnDocumentReady()
 	if GameLib.GetPlayerUnit() then
 		self:OnCharacterCreated()
 	end
+end
+
+function InterfaceMenuList:OnListShow()
+	self.wndList:ToFront()
 end
 
 function InterfaceMenuList:OnCharacterCreated()	
@@ -116,29 +121,42 @@ function InterfaceMenuList:OnUpdateTimer()
 	end
 
 	--Toggle Visibility based on ui preference
-	local unitPlayer = GameLib.GetPlayerUnit()
-	if not unitPlayer then
-		return
-	end
-	local bIsInCombat = unitPlayer:IsInCombat()
 	local nVisibility = Apollo.GetConsoleVariable("hud.TimeDisplay")
-	local bShowTime = true
 	
-	if nVisibility == 2 then --always off
-		bShowTime = false
-	elseif nVisibility == 3 then --on in combat
-		bShowTime = bIsInCombat
-	elseif nVisibility == 4 then --on out of combat
-		bShowTime = not bIsInCombat
-	else
-		bShowTime = true
+	local tLocalTime = GameLib.GetLocalTime()
+	local tServerTime = GameLib.GetServerTime()
+	local b24Hour = true
+	local nLocalHour = tLocalTime.nHour > 12 and tLocalTime.nHour - 12 or tLocalTime.nHour == 0 and 12 or tLocalTime.nHour
+	local nServerHour = tServerTime.nHour > 12 and tServerTime.nHour - 12 or tServerTime.nHour == 0 and 12 or tServerTime.nHour
+		
+	self.wndMain:FindChild("Time"):SetText(string.format("%02d:%02d", tostring(tLocalTime.nHour), tostring(tLocalTime.nMinute)))
+	
+	if nVisibility == 2 then --Local 12hr am/pm
+		self.wndMain:FindChild("Time"):SetText(string.format("%02d:%02d", tostring(nLocalHour), tostring(tLocalTime.nMinute)))
+		
+		b24Hour = false
+	elseif nVisibility == 3 then --Server 24hr
+		self.wndMain:FindChild("Time"):SetText(string.format("%02d:%02d", tostring(tServerTime.nHour), tostring(tServerTime.nMinute)))
+	elseif nVisibility == 4 then --Server 12hr am/pm
+		self.wndMain:FindChild("Time"):SetText(string.format("%02d:%02d", tostring(nServerHour), tostring(tServerTime.nMinute)))
+		
+		b24Hour = false
 	end
-
-	local tTime = GameLib.GetLocalTime()
-	self.wndMain:FindChild("Time"):SetText(bShowTime and string.format("%02d:%02d", tostring(tTime.nHour), tostring(tTime.nMinute)) or "")
+	
+	nLocalHour = b24Hour and tLocalTime.nHour or nLocalHour
+	nServerHour = b24Hour and tServerTime.nHour or nServerHour
+	
+	self.wndMain:FindChild("Time"):SetTooltip(
+		string.format("%s%02d:%02d\n%s%02d:%02d", 
+			Apollo.GetString("OptionsHUD_Local"), tostring(nLocalHour), tostring(tLocalTime.nMinute),
+			Apollo.GetString("OptionsHUD_Server"), tostring(nServerHour), tostring(tServerTime.nMinute)
+		)
+	)
 end
 
 function InterfaceMenuList:OnNewAddonListed(strKey, tParams)
+	strKey = string.gsub(strKey, ":", "|") -- ":'s don't work for window names, sorry!"
+
 	self.tMenuData[strKey] = tParams
 	
 	self:FullListRedraw()
@@ -159,13 +177,13 @@ function InterfaceMenuList:FullListRedraw()
 	local strUnbound = Apollo.GetString("Keybinding_Unbound")
 	local wndParent = self.wndList:FindChild("FullListScroll")
 	
-	local strQuery = string.lower(tostring(self.wndList:FindChild("SearchEditBox"):GetText()) or "")
+	local strQuery = Apollo.StringToLower(tostring(self.wndList:FindChild("SearchEditBox"):GetText()) or "")
 	if strQuery == nil or strQuery == "" or not strQuery:match("[%w%s]+") then
 		strQuery = ""
 	end
 
 	for strWindowText, tData in pairs(self.tMenuData) do
-		local bSearchResultMatch = string.find(string.lower(strWindowText), strQuery) ~= nil
+		local bSearchResultMatch = string.find(Apollo.StringToLower(strWindowText), strQuery) ~= nil
 		
 		if strQuery == "" or bSearchResultMatch then
 			local wndMenuItem = self:LoadByName("MenuListItem", wndParent, strWindowText)
@@ -419,9 +437,9 @@ function InterfaceMenuList:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPo
 	local arTutorialAnchorMapping =
 	{
 		--[GameLib.CodeEnumTutorialAnchor.Abilities] 			= "LASBtn",
-		--[GameLib.CodeEnumTutorialAnchor.Character] 			= "CharacterBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Character] 		= "CharacterBtn",
 		--[GameLib.CodeEnumTutorialAnchor.Mail] 				= "MailBtn",
-		--[GameLib.CodeEnumTutorialAnchor.GalacticArchive] 	= "LoreBtn",
+		--[GameLib.CodeEnumTutorialAnchor.GalacticArchive] = "LoreBtn",
 		--[GameLib.CodeEnumTutorialAnchor.Social] 			= "SocialBtn",
 		--[GameLib.CodeEnumTutorialAnchor.GroupFinder] 		= "GroupFinderBtn",
 	}

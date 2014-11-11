@@ -57,6 +57,9 @@ function GuildInfo:Initialize(wndParent)
 	self.tGuildLeader = nil
 	
 	self.wndMain:SetData(guildOwner)
+	
+	self.wndMain:FindChild("EditInfoBtn"):AttachWindow(self.wndMain:FindChild("EditInfoContainer"))
+	self.wndMain:FindChild("EditMessageBtn"):AttachWindow(self.wndMain:FindChild("EditMotDContainer"))
 end
 
 function GuildInfo:OnToggleInfo(wndParent)
@@ -117,7 +120,6 @@ function GuildInfo:PopulateInfoPane()
 	self.wndMain:FindChild("GuildTaxOnBtn"):SetCheck(tGuildFlags.bTax)
 	self.wndMain:FindChild("GuildTaxOffBtn"):SetCheck(not tGuildFlags.bTax)
 	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), tGuildFlags.bTax and Apollo.GetString("MatchMaker_FlagOn") or Apollo.GetString("MatchMaker_FlagOff")))
-	self.wndMain:FindChild("GuildMemberGuildTaxText"):SetText(tGuildFlags.bTax and Apollo.GetString("Guild_TaxActive") or Apollo.GetString("Options_AddonOff"))
 	self.wndMain:FindChild("GuildTaxBtnContainer"):Show(tMyRankPermissions.bChangeRankPermissions) -- GOTCHA: This is actually guild tax, it uses an existing
 
 	-- More data
@@ -177,19 +179,32 @@ end
 -- Buttons
 -----------------------------------------------------------------------------------------------
 
-function GuildInfo:OnGuildTaxToggle(wndHandler, wndControl)
+function GuildInfo:OnGuildTaxOn(wndHandler, wndControl)
 	local guildOwner = self.wndMain:GetData()
 	if not guildOwner then
 		return
 	end
 
-	local bOn = wndHandler:GetName() == "GuildTaxOnBtn" -- TODO HACK
 	local tLocalTable =
 	{
-		bTax = bOn
+		bTax = true
 	}
 	guildOwner:SetFlags(tLocalTable)
-	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), bOn and Apollo.GetString("MatchMaker_FlagOn") or Apollo.GetString("MatchMaker_FlagOff")))
+	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), Apollo.GetString("MatchMaker_FlagOn")))
+end
+
+function GuildInfo:OnGuildTaxOff(wndHandler, wndControl)
+	local guildOwner = self.wndMain:GetData()
+	if not guildOwner then
+		return
+	end
+
+	local tLocalTable =
+	{
+		bTax = false
+	}
+	guildOwner:SetFlags(tLocalTable)
+	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), Apollo.GetString("MatchMaker_FlagOff")))
 end
 
 function GuildInfo:OnMotDEditClick(wndHandler, wndControl)
@@ -198,7 +213,6 @@ function GuildInfo:OnMotDEditClick(wndHandler, wndControl)
 		return
 	end
 
-	self.wndMain:FindChild("EditMotDContainer"):Show(wndHandler:IsChecked())
 	if wndHandler:IsChecked() then
 		self.wndMain:FindChild("EditMotDEditBox"):SetText(guildOwner:GetMessageOfTheDay())
 		self.wndMain:FindChild("EditMotDEditBox"):SetFocus()
@@ -210,7 +224,7 @@ end
 function GuildInfo:OnEditMotDCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("EditMotDEditBox"):SetText("")
 	self.wndMain:FindChild("EditMotDContainer"):Show(false)
-	self.wndMain:FindChild("EditMessageBtn"):SetCheck(false)
+
 end
 
 function GuildInfo:OnEditMotDEditBoxReturn(wndHandler, wndControl, strText)
@@ -260,7 +274,6 @@ function GuildInfo:OnInfoEditClick(wndHandler, wndControl)
 		return
 	end
 
-	self.wndMain:FindChild("EditInfoContainer"):Show(wndHandler:IsChecked())
 	if wndHandler:IsChecked() then
 		self.wndMain:FindChild("EditInfoEditBox"):SetText(guildOwner:GetInfoMessage())
 		self.wndMain:FindChild("EditInfoEditBox"):SetFocus()
@@ -272,7 +285,7 @@ end
 function GuildInfo:OnEditInfoCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("EditInfoEditBox"):SetText("")
 	self.wndMain:FindChild("EditInfoContainer"):Show(false)
-	self.wndMain:FindChild("EditInfoBtn"):SetCheck(false)
+
 end
 
 function GuildInfo:OnEditInfoEditBoxReturn(wndHandler, wndControl, strText)

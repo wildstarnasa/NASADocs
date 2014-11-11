@@ -69,9 +69,8 @@ end
 
 function ActionBarShortcut:OnDocumentReady()
 	self.bTimerRunning = false
-	Apollo.RegisterTimerHandler("ActionBarShortcutArtTimer", "OnActionBarShortcutArtTimer", self)
-	Apollo.CreateTimer("ActionBarShortcutArtTimer", 0.5, false)
-
+	self.timerShorcutArt = ApolloTimer.Create(0.5, false, "OnActionBarShortcutArtTimer", self)
+	self.timerShorcutArt:Stop()
 	Apollo.RegisterEventHandler("ShowActionBarShortcut", "ShowWindow", self)
 
 	local tShortcutCount = {}
@@ -81,7 +80,7 @@ function ActionBarShortcut:OnDocumentReady()
 	--Floating Bar - Docked
 	self.tActionBars = {}
 	for idx = knStartingBar, knMaxBars do
-		local wndCurrBar = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcut", nil, self)
+		local wndCurrBar = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcut", "FixedHudStratum", self)
 		wndCurrBar:FindChild("ActionBarContainer"):DestroyChildren() -- TODO can remove
 		wndCurrBar:Show(false)
 
@@ -187,9 +186,11 @@ function ActionBarShortcut:SetBarPosition(wndBar, tArgSize, tArgCenter)
 	tCenter.nX = tArgCenter.nX or tPosition.tCenter.nX
 	tCenter.nY = tArgCenter.nY or tPosition.tCenter.nY
 
-	nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
-	if tCenter.nX + tHalf.nWidth > nScreenWidth / 2 or tCenter.nX - tHalf.nWidth < nScreenWidth / -2 then
-		tCenter.nX = 0
+	local tDisplay = Apollo.GetDisplaySize()
+	if tDisplay and tDisplay.nWidth then
+		if tCenter.nX + tHalf.nWidth > tDisplay.nWidth / 2 or tCenter.nX - tHalf.nWidth < tDisplay.nWidth / -2 then
+			tCenter.nX = 0
+		end
 	end
 
 	tAnchors = {
@@ -229,12 +230,11 @@ function ActionBarShortcut:ShowBarDocked(nBar, bIsVisible, nShortcuts)
 		local kOverlap = 4
 
 		local nLeft = nRowX - nRowWidth / 2
-		local nScreenWidth
-		local nScreenHeight
-		nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
-
-		if nLeft + nRowWidth > nScreenWidth / 2 then
-			nLeft = nRowWidth / -2
+		local tDisplay = Apollo.GetDisplaySize()
+		if tDisplay and tDisplay.nWidth then
+			if nLeft + nRowWidth > tDisplay.nWidth / 2 then
+				nLeft = nRowWidth / -2
+			end
 		end
 		nLeft = nLeft + kOverlap * #arRow
 
@@ -273,12 +273,11 @@ function ActionBarShortcut:ShowBarFloatHorz(nBar, bIsVisible, nShortcuts)
 		local kOverlap = 4
 
 		local nLeft = nRowX - nRowWidth / 2
-		local nScreenWidth
-		local nScreenHeight
-		nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
-
-		if nLeft + nRowWidth > nScreenWidth / 2 then
-			nLeft = nRowWidth / -2
+		local tDisplay = Apollo.GetDisplaySize()
+		if tDisplay and tDisplay.nWidth then
+			if nLeft + nRowWidth > tDisplay.nWidth / 2 then
+				nLeft = nRowWidth / -2
+			end
 		end
 		nLeft = nLeft + kOverlap * #arRow
 
@@ -317,12 +316,11 @@ function ActionBarShortcut:ShowBarFloatVert(nBar, bIsVisible, nShortcuts)
 		local kOverlap = 4
 
 		local nTop = nRowY - nRowHeight / 2
-		local nScreenWidth
-		local nScreenHeight
-		nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
-
-		if nTop + nRowHeight > nScreenWidth / 2 then
-			nTop = nRowHeight / -2
+		local tDisplay = Apollo.GetDisplaySize()
+		if tDisplay and tDisplay.nWidth then
+			if nTop + nRowHeight > tDisplay.nWidth / 2 then
+				nTop = nRowHeight / -2
+			end
 		end
 		nTop = nTop + kOverlap * #arRow
 
@@ -350,7 +348,7 @@ function ActionBarShortcut:ShowWindow(nBar, bIsVisible, nShortcuts)
 	end
 	
 	if not self.bTimerRunning then
-		Apollo.StartTimer("ActionBarShortcutArtTimer")
+		self.timerShorcutArt:Start()
 		self.bTimerRunning = true
 	end
 

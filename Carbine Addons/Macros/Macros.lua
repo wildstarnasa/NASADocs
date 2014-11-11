@@ -1,6 +1,5 @@
 require "Window"
 require "MacrosLib"
-require "GameLib" -- TODO helen: temp for cinematics stuffs
 
 
 ---------------------------------------------------------------------------------------------------
@@ -24,7 +23,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function Macros:Init()
-	--Apollo.DPF("In Macros:Init")
 	Apollo.RegisterAddon(self)
 end
 
@@ -44,13 +42,9 @@ function Macros:OnDocumentReady()
 	
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
-	
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleMacro", "OnInterfaceMenu_ToggleMacro", self)
 	Apollo.RegisterSlashCommand("macros", "OnMacrosOn", self)
 	Apollo.RegisterSlashCommand("reloadui", "OnRequestReloadUI", self)
-	Apollo.RegisterSlashCommand("RequestReloadUI", "OnRequestReloadUI", self)
-	Apollo.RegisterSlashCommand("UIToggleCinematics", "OnUIToggleCinematics", self)
-	self.bShowingCinematics = false;
 	Apollo.RegisterTimerHandler("LoadIconTimer", "OnLoadIcons", self)
 
 	-- load our forms
@@ -96,8 +90,9 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function Macros:OnMacrosOn()
-	--Apollo.DPF("MacrosOn") 
+
 	self.wndMacros:Show(true)
+	self.wndMacros:ToFront()
 	self:EnableEditingButtons(false)
 	
 	for idx, wnd in ipairs(self.tItems) do
@@ -118,15 +113,6 @@ end
 
 function Macros:OnRequestReloadUI()
 	RequestReloadUI()
-end
-
-function Macros:OnUIToggleCinematics()
-	self.bShowingCinematics = not self.bShowingCinematics
-	if self.bShowingCinematics then
-		GameLib.UIStartCinematics()
-	else
-		GameLib.UIExitCinematics()
-	end
 end
 
 function Macros:OnOK()
@@ -270,7 +256,7 @@ function Macros:OnNewMacro()
     -- initialize wndEdit with default data
 	if not self.wndEdit then
 		self.wndEdit = Apollo.LoadForm(self.xmlDoc, "MacroDefine", nil, self)
-		self.wndEdit:FindChild("MacroName"):SetText("New Macro")
+		self.wndEdit:FindChild("MacroName"):SetText(Apollo.GetString("Macro_NewMacro"))
 		self.wndEdit:FindChild("MacroName"):SetSel(0, -1)
 		self.wndEdit:FindChild("MacroName"):SetFocus()
 		self.wndEdit:FindChild("GlobalCheck"):SetCheck(true)

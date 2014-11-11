@@ -24,16 +24,15 @@ function QuestLog:Init()
     Apollo.RegisterAddon(self)
 end
 
---[[ Quest States, For Reference:
-	QuestState_Unknown);
-	QuestState_Accepted);	-- 1
-	QuestState_Achieved);	-- 2
-	QuestState_Completed);	-- 3
-	QuestState_Botched);	-- 4
-	QuestState_Mentioned); 	-- 5
-	QuestState_Abandoned);	-- 6
-	QuestState_Ignored);	-- 7
-]]--
+local knEpisodeInfoBuffer = 10
+
+local ktChatNotificationStrings =
+{
+	[Quest.QuestState_Accepted] 	= Apollo.GetString("QuestLog_QuestAccepted"),
+	[Quest.QuestState_Completed] 	= Apollo.GetString("QuestLog_QuestComplete"),
+	[Quest.QuestState_Botched] 		= Apollo.GetString("QuestLog_QuestFailed"),
+	[Quest.QuestState_Abandoned] 	= Apollo.GetString("QuestLog_QuestAbandoned"),
+}
 
 -- Constants
 local ktConToUI =
@@ -72,6 +71,8 @@ local karEvalColors =
 function QuestLog:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("QuestLog.xml")-- QuestLog will always be kept in memory, so save parsing it over and over
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+
+	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 end
 
 function QuestLog:OnDocumentReady()
@@ -79,11 +80,14 @@ function QuestLog:OnDocumentReady()
 		return
 	end
 
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
-
 	Apollo.RegisterEventHandler("ShowQuestLog", 		"Initialize", self)
 	Apollo.RegisterEventHandler("Dialog_QuestShare", 	"OnDialog_QuestShare", self)
 	Apollo.RegisterTimerHandler("ShareTimeout", 		"OnShareTimeout", self)
+	Apollo.RegisterEventHandler("QuestStateChanged", 	"OnQuestStateChanged", self) -- Routes to OnDestroyQuestObject if completed/botched
+	Apollo.RegisterEventHandler("Group_Join",			"OnGroupUpdate", self)
+	Apollo.RegisterEventHandler("Group_Left",			"OnGroupUpdate", self)
+
+	self:Initialize()
 end
 
 function QuestLog:OnInterfaceMenuListHasLoaded()
@@ -96,7 +100,6 @@ function QuestLog:Initialize()
 	end
 
 	Apollo.RegisterEventHandler("EpisodeStateChanged", 			"DestroyAndRedraw", self) -- Not sure if this can be made stricter
-	Apollo.RegisterEventHandler("QuestStateChanged", 			"OnQuestStateChanged", self) -- Routes to OnDestroyQuestObject if completed/botched
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 		"OnQuestObjectiveUpdated", self)
 	Apollo.RegisterEventHandler("QuestTrackedChanged",			"OnQuestTrackedChanged", self)
 	Apollo.RegisterEventHandler("GenericEvent_ShowQuestLog", 	"OnGenericEvent_ShowQuestLog", self)
@@ -138,12 +141,11 @@ function QuestLog:Initialize()
 	self.knObjectivesItemHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
 
-	self.knRewardRecListHeight = self.wndMain:FindChild("QuestInfoRewardRecFrame"):GetHeight()
-	self.knRewardChoListHeight = self.wndMain:FindChild("QuestInfoRewardChoFrame"):GetHeight()
-	self.knMoreInfoHeight = self.wndMain:FindChild("QuestInfoMoreInfoFrame"):GetHeight()
+	self.nRewardRecListHeight = self.wndMain:FindChild("QuestInfoRewardRecFrame"):GetHeight()
+	self.nRewardChoListHeight = self.wndMain:FindChild("QuestInfoRewardChoFrame"):GetHeight()
+	self.nMoreInfoHeight = self.wndMain:FindChild("QuestInfoMoreInfoFrame"):GetHeight()
 	self.nEpisodeInfoHeight = self.wndMain:FindChild("EpisodeInfo"):GetHeight()
-	self.knEpisodeInfoBuffer = 10
-	
+
 	self:DestroyAndRedraw()
 end
 
@@ -164,13 +166,13 @@ function QuestLog:OnGenericEvent_ShowQuestLog(queTarget)
 
 	if queTarget:GetState() == Quest.QuestState_Unknown then
 		self.wndQuestInfoControls:Show(false)
-		
+
 		self:DrawUnknownRightSide(queTarget)
 		self:ResizeRight()
 		self:ResizeTree()
 		return
 	end
-	
+
 	local strCategoryKey
 	local strEpisodeKey
 	local strQuestKey
@@ -350,10 +352,12 @@ function QuestLog:RedrawLeftTree()
 	local bWorldStoryHasData = false
 	for idx, epiEpisode in pairs(arAllEpisodes) do
 		if epiEpisode:IsWorldStory() then
-			for idx3, queQuest in pairs(epiEpisode:GetVisibleQuests(bShowCompleted, true, true)) do
-				if self:CheckLeftSideFilters(queQuest) then
-					bWorldStoryHasData = true
-					break
+			for idx2, qcCategory in pairs(QuestLib.GetKnownCategories()) do
+				for idx3, queQuest in pairs(epiEpisode:GetAllQuests(qcCategory:GetId())) do
+					if self:CheckLeftSideFilters(queQuest) then
+						bWorldStoryHasData = true
+						break
+					end
 				end
 			end
 		end
@@ -368,16 +372,30 @@ function QuestLog:RedrawLeftTree()
 		if wndTop ~= nil and wndTop:IsValid() and wndTop:FindChild("TopLevelBtn"):IsChecked() then
 			for idx, epiEpisode in pairs(arAllEpisodes) do
 				if epiEpisode:IsWorldStory() then
-					table.insert(arEpisodes, epiEpisode)
 
 					local strEpisodeKey = strCategoryKey.."E"..epiEpisode:GetId()
 					local wndMiddle = self.arLeftTreeMap[strEpisodeKey]
-					if wndMiddle ~= nil and wndMiddle:IsValid() and wndMiddle:FindChild("MiddleLevelBtn"):IsChecked() then
-						for idx3, queQuest in pairs(epiEpisode:GetVisibleQuests(bShowCompleted, true, true)) do
+					local bAddQuests = wndMiddle ~= nil and wndMiddle:IsValid() and wndMiddle:FindChild("MiddleLevelBtn"):IsChecked()
+					local bEpHasQuests = false
+					for idx2, qcCategory in pairs(QuestLib.GetKnownCategories()) do
+						for idx3, queQuest in pairs(epiEpisode:GetAllQuests(qcCategory:GetId())) do
 							if self:CheckLeftSideFilters(queQuest) then
-								table.insert(arQuests, queQuest)
+								bEpHasQuests = true
+								if bAddQuests then
+									table.insert(arQuests, queQuest)
+								else
+									break
+								end
 							end
 						end
+						
+						if bEpHasQuests and not bAddQuests then
+							break
+						end
+					end
+					
+					if bEpHasQuests then
+						table.insert(arEpisodes, epiEpisode)
 					end
 				end
 			end
@@ -536,11 +554,18 @@ function QuestLog:ResizeTree()
 				end
 
 				for idx3, wndBot in pairs(wndMiddleLevelItems:GetChildren()) do -- Resize if too long
+
 					local wndBottomLevelBtnText = wndBot:FindChild("BottomLevelBtn:BottomLevelBtnText")
-					if Apollo.GetTextWidth("CRB_InterfaceMedium_B", wndBottomLevelBtnText:GetText()) > wndBottomLevelBtnText:GetWidth() then
-						local nBottomLeft, nBottomTop, nBottomRight, nBottomBottom = wndBot:GetAnchorOffsets()
-						wndBot:SetAnchorOffsets(nBottomLeft, nBottomTop, nBottomRight, nBottomTop + (self.knBottomLevelHeight * 1.5))
-						-- our resize code that happens later will account for this
+					wndBottomLevelBtnText:SetHeightToContentHeight()
+
+					if wndBottomLevelBtnText:GetHeight() >= 25 then
+						local nLeft, nTop, nRight, nBottom = wndBot:GetAnchorOffsets()
+						wndBot:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 50)
+					end
+
+					if wndBottomLevelBtnText:GetHeight() >= 50 then
+						local nLeft, nTop, nRight, nBottom = wndBot:GetAnchorOffsets()
+						wndBot:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 69)
 					end
 
 					if wndBot:FindChild("BottomLevelBtn"):IsChecked() then
@@ -550,7 +575,7 @@ function QuestLog:ResizeTree()
 
 				local nItemHeights = wndMiddleLevelItems:ArrangeChildrenVert(0)
 				if nItemHeights > 0 then
-					nItemHeights = nItemHeights + 15
+					nItemHeights = nItemHeights + 7
 				end
 
 				local nMiddleLeft, nMiddleTop, nMiddleRight, nMiddleBottom = wndMiddle:GetAnchorOffsets()
@@ -563,7 +588,7 @@ function QuestLog:ResizeTree()
 
 		local nItemHeights = wndTopLevelItems:ArrangeChildrenVert(0, function(a,b) return a:GetData() > b:GetData() end) -- Tasks to bottom
 		if nItemHeights > 0 then
-			nItemHeights = nItemHeights + 20
+			nItemHeights = nItemHeights + 6
 		end
 
 		local nTopLeft, nTopTop, nTopRight, nTopBottom = wndTop:GetAnchorOffsets()
@@ -592,19 +617,19 @@ function QuestLog:ResizeRight()
 	-- Objectives Frame
 	nHeight = self.wndMain:FindChild("QuestInfoObjectivesList"):ArrangeChildrenVert(0)
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoObjectivesFrame"):GetAnchorOffsets()
-	self.wndMain:FindChild("QuestInfoObjectivesFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 30)
+	self.wndMain:FindChild("QuestInfoObjectivesFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 55)
 	self.wndMain:FindChild("QuestInfoObjectivesFrame"):Show(#self.wndMain:FindChild("QuestInfoObjectivesList"):GetChildren() > 0)
 
 	-- Rewards Recevived
 	nHeight = self.wndMain:FindChild("QuestInfoRewardRecList"):ArrangeChildrenVert(0)
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoRewardRecFrame"):GetAnchorOffsets()
-	self.wndMain:FindChild("QuestInfoRewardRecFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.knRewardRecListHeight)
+	self.wndMain:FindChild("QuestInfoRewardRecFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nRewardRecListHeight + 15) -- TODO: Hardcoded footer padding
 	self.wndMain:FindChild("QuestInfoRewardRecFrame"):Show(#self.wndMain:FindChild("QuestInfoRewardRecList"):GetChildren() > 0)
 
 	-- Rewards to Choose
 	nHeight = self.wndMain:FindChild("QuestInfoRewardChoList"):ArrangeChildrenVert(0, function(a,b) return b:FindChild("RewardItemCantUse"):IsShown() end)
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoRewardChoFrame"):GetAnchorOffsets()
-	self.wndMain:FindChild("QuestInfoRewardChoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.knRewardChoListHeight)
+	self.wndMain:FindChild("QuestInfoRewardChoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nRewardChoListHeight + 15) -- TODO: Hardcoded footer padding
 	self.wndMain:FindChild("QuestInfoRewardChoFrame"):Show(#self.wndMain:FindChild("QuestInfoRewardChoList"):GetChildren() > 0)
 
 	-- More Info
@@ -614,26 +639,26 @@ function QuestLog:ResizeRight()
 		nHeight = nHeight + 10
 	end
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoMoreInfoFrame"):GetAnchorOffsets()
-	self.wndMain:FindChild("QuestInfoMoreInfoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.knMoreInfoHeight)
+	self.wndMain:FindChild("QuestInfoMoreInfoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nMoreInfoHeight)
 
 	-- Episode title
 	nHeight = self.wndMain:FindChild("EpisodeSummaryTitle"):GetHeight()
 	self.wndMain:FindChild("EpisodeSummaryTitle"):SetHeightToContentHeight()
 	if self.wndMain:FindChild("EpisodeSummaryTitle"):GetHeight() > nHeight then
-		self.nEpisodeInfoHeight = self.nEpisodeInfoHeight + self.knEpisodeInfoBuffer + self.wndMain:FindChild("EpisodeSummaryTitle"):GetHeight() - nHeight
+		self.nEpisodeInfoHeight = self.nEpisodeInfoHeight + knEpisodeInfoBuffer + self.wndMain:FindChild("EpisodeSummaryTitle"):GetHeight() - nHeight
 	end
-	
+
 	-- Episode summary text
 	nHeight = self.nEpisodeInfoHeight
 	if self.wndMain:FindChild("EpisodeSummaryExpandBtn"):IsChecked() then
-	
+
 		-- Resize summary text
 		self.wndMain:FindChild("EpisodeSummaryPopoutText"):SetHeightToContentHeight()
-		nLeft,nTop,nRight,nBottom = self.wndMain:FindChild("EpisodeSummaryPopoutText"):GetAnchorOffsets() 
-		self.wndMain:FindChild("EpisodeSummaryPopoutText"):SetAnchorOffsets(nLeft, self.nEpisodeInfoHeight - self.knEpisodeInfoBuffer, nRight, self.wndMain:FindChild("EpisodeSummaryPopoutText"):GetHeight() + self.nEpisodeInfoHeight - self.knEpisodeInfoBuffer)
+		nLeft,nTop,nRight,nBottom = self.wndMain:FindChild("EpisodeSummaryPopoutText"):GetAnchorOffsets()
+		self.wndMain:FindChild("EpisodeSummaryPopoutText"):SetAnchorOffsets(nLeft, self.nEpisodeInfoHeight - knEpisodeInfoBuffer, nRight, self.wndMain:FindChild("EpisodeSummaryPopoutText"):GetHeight() + self.nEpisodeInfoHeight - knEpisodeInfoBuffer)
 		nHeight = nHeight + self.wndMain:FindChild("EpisodeSummaryPopoutText"):GetHeight()
 	end
-	
+
 	-- Episode info window
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("EpisodeInfo"):GetAnchorOffsets()
 	if self.wndMain:FindChild("EpisodeInfo"):IsShown() then
@@ -687,17 +712,18 @@ function QuestLog:DrawRightSide(queSelected)
 	local strDifficulty = String_GetWeaselString(Apollo.GetString("QuestLog_Difficulty"), "<T Font=\"CRB_InterfaceMedium\" TextColor=\""..tConData[2].."\"> "..tConData[3].."</T>")
 	wndRight:FindChild("QuestInfoDifficultyPic"):SetSprite(tConData[1])
 	wndRight:FindChild("QuestInfoDifficultyPic"):SetTooltip(String_GetWeaselString(Apollo.GetString("QuestLog_IntendedLevel"), queSelected:GetTitle(), queSelected:GetConLevel()))
-	wndRight:FindChild("QuestInfoDifficultyText"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\">"..strDifficulty.."</P>")
+	wndRight:FindChild("QuestInfoDifficultyText"):SetAML("<P Font=\"CRB_InterfaceMedium_BB\" TextColor=\"UI_TextHoloBodyHighlight\">"..strDifficulty.."</P>")
 
 	local bOptionalQuest = queSelected:IsOptionalForEpisode(epiParent:GetId())
-	wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("white"))
-	wndRight:FindChild("QuestInfoTitle"):SetText(bOptionalQuest and String_GetWeaselString(Apollo.GetString("QuestLog_OptionalAppend"), queSelected:GetTitle()) or queSelected:GetTitle())
+	wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("UI_TextHoloTitle"))
+	local strTitle = bOptionalQuest and String_GetWeaselString(Apollo.GetString("QuestLog_OptionalAppend"), queSelected:GetTitle()) or queSelected:GetTitle()
+	wndRight:FindChild("QuestInfoTitle"):SetText(strTitle)
 
 	if eQuestState == Quest.QuestState_Completed then
 		wndRight:FindChild("QuestInfoTitleIcon"):SetTooltip(Apollo.GetString("QuestLog_HasBeenCompleted"))
 		wndRight:FindChild("QuestInfoTitleIcon"):SetSprite("CRB_Basekit:kitIcon_Green_Checkmark")
-		wndRight:FindChild("QuestInfoTitle"):SetText(String_GetWeaselString(Apollo.GetString("QuestLog_Completed"), queSelected:GetTitle()))
-		wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("ff7fffb9"))
+		wndRight:FindChild("QuestInfoTitle"):SetText(String_GetWeaselString(Apollo.GetString("QuestLog_Completed"), strTitle))
+		wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("UI_WindowTextChallengeGreenFlash"))
 	elseif eQuestState == Quest.QuestState_Achieved then
 		wndRight:FindChild("QuestInfoTitleIcon"):SetTooltip(Apollo.GetString("QuestLog_QuestReadyToTurnIn"))
 		wndRight:FindChild("QuestInfoTitleIcon"):SetSprite("CRB_Basekit:kitIcon_Green_Checkmark")
@@ -706,7 +732,7 @@ function QuestLog:DrawRightSide(queSelected)
 		wndRight:FindChild("QuestInfoTitleIcon"):SetSprite("CRB_Basekit:kitIcon_Gold_Checkbox")
 	end
 
-	wndRight:FindChild("QuestInfoDescriptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff56b381\">"..strQuestSummary.."</P>")
+	wndRight:FindChild("QuestInfoDescriptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBodyCyan\">"..strQuestSummary.."</P>")
 	wndRight:FindChild("QuestInfoDescriptionText"):SetHeightToContentHeight()
 
 	-- More Info
@@ -715,8 +741,8 @@ function QuestLog:DrawRightSide(queSelected)
 	if #tMoreInfoText > 0 and self.wndMain:FindChild("QuestInfoMoreInfoToggleBtn"):IsChecked() then
 		for idx, tValues in pairs(tMoreInfoText) do
 			if string.len(tValues.strSay) > 0 or string.len(tValues.strResponse) > 0 then
-				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium_I\" TextColor=\"ff7fffb9\">"..tValues.strSay.."</P>"
-				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium_I\" TextColor=\"ff56b381\">"..tValues.strResponse.."</P>"
+				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium_I\" TextColor=\"UI_TextHoloBody\">"..tValues.strSay.."</P>"
+				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium_I\" TextColor=\"UI_TextHoloBodyCyan\">"..tValues.strResponse.."</P>"
 				if idx ~= #tMoreInfoText then
 					strMoreInfo = strMoreInfo .. "<P TextColor=\"0\">.</P>"
 				end
@@ -732,7 +758,7 @@ function QuestLog:DrawRightSide(queSelected)
 	wndRight:FindChild("QuestInfoObjectivesList"):DestroyChildren()
 	if eQuestState == Quest.QuestState_Achieved then
 		local wndObj = Apollo.LoadForm(self.xmlDoc, "ObjectivesItem", wndRight:FindChild("QuestInfoObjectivesList"), self)
-		local strAchieved = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</T>", queSelected:GetCompletionObjectiveText())
+		local strAchieved = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</T>", queSelected:GetCompletionObjectiveText())
 		wndObj:FindChild("ObjectivesItemText"):SetAML(strAchieved)
 		wndRight:FindChild("QuestInfoObjectivesTitle"):SetText(Apollo.GetString("QuestLog_ReadyToTurnIn"))
 	elseif eQuestState == Quest.QuestState_Completed then
@@ -740,18 +766,14 @@ function QuestLog:DrawRightSide(queSelected)
 			if tObjData.nCompleted < tObjData.nNeeded then
 				local wndObj = Apollo.LoadForm(self.xmlDoc, "ObjectivesItem", wndRight:FindChild("QuestInfoObjectivesList"), self)
 				wndObj:FindChild("ObjectivesItemText"):SetAML(self:HelperBuildObjectiveTitleString(queSelected, tObjData))
-				self:HelperBuildObjectiveProgBar(queSelected, tObjData, wndObj, true)
-				wndObj:FindChild("ObjectiveBullet"):SetSprite("CRB_Basekit:kitIcon_Holo_Checkmark")
-				wndObj:FindChild("ObjectiveBullet"):SetBGColor("ffffff00")
 			end
 		end
-		wndRight:FindChild("QuestInfoObjectivesTitle"):SetText(Apollo.GetString("QuestLog_CompletedObjectives"))
+		wndRight:FindChild("QuestInfoObjectivesTitle"):SetText(Apollo.GetString("QuestLog_Objectives"))
 	elseif eQuestState ~= Quest.QuestState_Mentioned then
 		for key, tObjData in pairs(queSelected:GetVisibleObjectiveData()) do
 			if tObjData.nCompleted < tObjData.nNeeded then
 				local wndObj = Apollo.LoadForm(self.xmlDoc, "ObjectivesItem", wndRight:FindChild("QuestInfoObjectivesList"), self)
 				wndObj:FindChild("ObjectivesItemText"):SetAML(self:HelperBuildObjectiveTitleString(queSelected, tObjData))
-				self:HelperBuildObjectiveProgBar(queSelected, tObjData, wndObj)
 			end
 		end
 		wndRight:FindChild("QuestInfoObjectivesTitle"):SetText(Apollo.GetString("QuestLog_Objectives"))
@@ -797,12 +819,9 @@ function QuestLog:DrawRightSide(queSelected)
 	self.wndMain:FindChild("QuestRestartBtn"):Show(eQuestState == Quest.QuestState_Ignored)
 	self.wndMain:FindChild("QuestInfoControlButtons"):Show(eQuestState == Quest.QuestState_Accepted or eQuestState == Quest.QuestState_Achieved or eQuestState == Quest.QuestState_Botched)
 	if eQuestState ~= Quest.QuestState_Abandoned then
-		local bCanShare = queSelected:CanShare()
+		self:OnGroupUpdate()
 		local bIsTracked = queSelected:IsTracked()
-		local strCantShareTooltip = String_GetWeaselString(Apollo.GetString("QuestLog_ShareNotPossible"), Apollo.GetString("QuestLog_ShareQuest"))
 		self.wndMain:FindChild("QuestAbandonPopoutBtn"):Enable(queSelected:CanAbandon())
-		self.wndMain:FindChild("QuestInfoControlsBGShare"):Show(bCanShare)
-		self.wndMain:FindChild("QuestInfoControlsBGShare"):SetTooltip(bCanShare and Apollo.GetString("QuestLog_ShareQuest") or strCantShareTooltip)
 		self.wndMain:FindChild("QuestTrackBtn"):Enable(eQuestState ~= Quest.QuestState_Botched)
 		self.wndMain:FindChild("QuestTrackBtn"):SetText(bIsTracked and Apollo.GetString("QuestLog_Untrack") or Apollo.GetString("QuestLog_Track"))
 		self.wndMain:FindChild("QuestTrackBtn"):SetTooltip(bIsTracked and Apollo.GetString("QuestLog_RemoveFromTracker") or Apollo.GetString("QuestLog_AddToTracker"))
@@ -813,33 +832,64 @@ function QuestLog:DrawRightSide(queSelected)
 	self.wndMain:FindChild("QuestAbandonConfirm"):Show(false)
 end
 
+function QuestLog:OnGroupUpdate()
+	if not self.wndRightSide or not self.wndRightSide:IsValid() then
+		return
+	end
+
+	local queSelected = self.wndRightSide:GetData()
+	if queSelected and queSelected:GetState() ~= Quest.QuestState_Abandoned then
+		local bCanShare = queSelected:CanShare()
+		local strCantShareTooltip = String_GetWeaselString(Apollo.GetString("QuestLog_ShareNotPossible"), Apollo.GetString("QuestLog_ShareQuest"))
+		self.wndMain:FindChild("QuestInfoControlsBGShare"):Show(bCanShare)
+		self.wndMain:FindChild("QuestInfoControlsBGShare"):SetTooltip(bCanShare and Apollo.GetString("QuestLog_ShareQuest") or strCantShareTooltip)
+	end
+end
+
 function QuestLog:DrawUnknownRightSide(queSelected)
 	local wndRight = self.wndRightSide
 	local eQuestState = queSelected:GetState()
 
 	-- Episode Summary
-	wndRight:FindChild("EpisodeSummaryTitle"):SetText(Apollo.GetString("QuestLog_UnknownQuest"))
+	local epiParent = queSelected:GetEpisode()
+	local bIsTasks = epiParent:GetId() == 1
+	local strEpisodeDesc = ""
+	if not bIsTasks then
+		strEpisodeDesc = epiParent:GetState() == Episode.EpisodeState_Complete and epiParent:GetSummary() or epiParent:GetDesc()
+	end
+
+	local tEpisodeProgress = epiParent:GetProgress()
+	wndRight:FindChild("EpisodeSummaryTitle"):SetText(epiParent:GetTitle())
 	wndRight:FindChild("EpisodeSummaryProgText"):SetAML(string.format("<P Font=\"CRB_HeaderTiny\" Align=\"Center\">"..
-	"(<T Font=\"CRB_HeaderTiny\" Align=\"Center\">%s</T>/%s)</P>", Apollo.GetString("QuestLog_UnknownQuest"), Apollo.GetString("QuestLog_UnknownQuest")))
-	wndRight:FindChild("EpisodeSummaryPopoutText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff2f94ac\">"..Apollo.GetString("QuestLog_UnknownQuest").."</P>")
+	"(<T Font=\"CRB_HeaderTiny\" Align=\"Center\">%s</T>/%s)</P>", tEpisodeProgress.nCompleted, tEpisodeProgress.nTotal))
+	wndRight:FindChild("EpisodeSummaryPopoutText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff2f94ac\">"..strEpisodeDesc.."</P>")
 	wndRight:FindChild("EpisodeSummaryPopoutText"):SetHeightToContentHeight()
 	wndRight:FindChild("EpisodeSummaryExpandBtn"):Enable(false)
-	wndRight:FindChild("EpisodeSummaryProgBG"):Show(true)
+	wndRight:FindChild("EpisodeSummaryProgBG"):Show(not bIsTasks)
 
 	-- Text Summary
-	local tConData = ktConToUI[queSelected:GetColoredDifficulty() or 1]
-	local strDifficulty = String_GetWeaselString(Apollo.GetString("QuestLog_Difficulty"), "<T Font=\"CRB_InterfaceMedium\" TextColor=\"ff9aaea3\"> "..Apollo.GetString("QuestLog_UnknownQuest").."</T>")
-	wndRight:FindChild("QuestInfoDifficultyPic"):Show(false)
-	wndRight:FindChild("QuestInfoDifficultyText"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ff7fffb9\">"..strDifficulty.."</P>")
+	local strQuestSummary = ""
+	if eQuestState == Quest.QuestState_Completed and string.len(queSelected:GetCompletedSummary()) > 0 then
+		strQuestSummary = queSelected:GetCompletedSummary()
+	elseif string.len(queSelected:GetSummary()) > 0 then
+		strQuestSummary = queSelected:GetSummary()
+	end
 
-	--local bOptionalQuest = queSelected:IsOptionalForEpisode(epiParent:GetId())
+	local tConData = ktConToUI[queSelected:GetColoredDifficulty() or 1]
+	local strDifficulty = String_GetWeaselString(Apollo.GetString("QuestLog_Difficulty"), "<T Font=\"CRB_InterfaceMedium\" TextColor=\""..tConData[2].."\"> "..tConData[3].."</T>")
+	wndRight:FindChild("QuestInfoDifficultyPic"):SetSprite(tConData[1])
+	wndRight:FindChild("QuestInfoDifficultyPic"):SetTooltip(String_GetWeaselString(Apollo.GetString("QuestLog_IntendedLevel"), queSelected:GetTitle(), queSelected:GetConLevel()))
+	wndRight:FindChild("QuestInfoDifficultyText"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloBodyHighlight\">"..strDifficulty.."</P>")
+
+	local bOptionalQuest = queSelected:IsOptionalForEpisode(epiParent:GetId())
 	wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("white"))
-	wndRight:FindChild("QuestInfoTitle"):SetText(queSelected:GetTitle())
+	local strTitle = bOptionalQuest and String_GetWeaselString(Apollo.GetString("QuestLog_OptionalAppend"), queSelected:GetTitle()) or queSelected:GetTitle()
+	wndRight:FindChild("QuestInfoTitle"):SetText(strTitle)
 
 	wndRight:FindChild("QuestInfoTitleIcon"):SetTooltip(Apollo.GetString("QuestLog_ObjectivesNotComplete"))
 	wndRight:FindChild("QuestInfoTitleIcon"):SetSprite("CRB_Basekit:kitIcon_Gold_Checkbox")
 
-	wndRight:FindChild("QuestInfoDescriptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff56b381\">"..Apollo.GetString("QuestLog_UnknownQuest").."</P>")
+	wndRight:FindChild("QuestInfoDescriptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff56b381\">"..strQuestSummary.."</P>")
 	wndRight:FindChild("QuestInfoDescriptionText"):SetHeightToContentHeight()
 
 	-- More Info
@@ -851,10 +901,19 @@ function QuestLog:DrawUnknownRightSide(queSelected)
 	wndRight:FindChild("QuestInfoObjectivesList"):DestroyChildren()
 
 	-- Rewards Received
+	local tRewardInfo = queSelected:GetRewardData()
 	wndRight:FindChild("QuestInfoRewardRecList"):DestroyChildren()
+	for key, tReward in pairs(tRewardInfo.arFixedRewards) do
+		local wndReward = Apollo.LoadForm(self.xmlDoc, "RewardItem", wndRight:FindChild("QuestInfoRewardRecList"), self)
+		self:HelperBuildRewardsRec(wndReward, tReward, true)
+	end
 
 	-- Rewards To Choose
 	wndRight:FindChild("QuestInfoRewardChoList"):DestroyChildren()
+	for key, tReward in pairs(tRewardInfo.arRewardChoices) do
+		local wndReward = Apollo.LoadForm(self.xmlDoc, "RewardItem", wndRight:FindChild("QuestInfoRewardChoList"), self)
+		self:HelperBuildRewardsRec(wndReward, tReward, false)
+	end
 
 	-- Special reward formatting for finished quests
 	wndRight:FindChild("QuestInfoRewardRecTitle"):SetText(Apollo.GetString("QuestLog_WillReceive"))
@@ -975,23 +1034,23 @@ end
 -----------------------------------------------------------------------------------------------
 
 function QuestLog:OnQuestStateChanged(queUpdated, eState)
-	if type(eState) == "boolean" then -- This shouldn't be needed anymore. QuestTrackChanged is now unique.
-		return
+	if self.wndMain and self.wndMain:IsValid() then
+		if eState == Quest.QuestState_Abandoned or eState == Quest.QuestState_Completed or eState == Quest.QuestState_Accepted or eState == Quest.QuestState_Achieved then
+			self:OnDestroyQuestObject(queUpdated)
+			self:DestroyAndRedraw()
+		else -- Botched, Mentioned, Ignored, Unknown
+			self:RedrawEverything()
+
+			local queCurrent = self.wndRightSide:GetData()
+			if queCurrent and queCurrent:GetId() == queUpdated:GetId() then
+				self.wndRightSide:Show(false)
+				self.wndQuestInfoControls:Show(false)
+			end
+		end
 	end
 
-	if eState == Quest.QuestState_Abandoned or eState == Quest.QuestState_Completed then
-		self:OnDestroyQuestObject(queUpdated)
-	elseif eState == Quest.QuestState_Accepted or eState == Quest.QuestState_Achieved then
-		self:OnDestroyQuestObject(queUpdated)
-		self:DestroyAndRedraw()
-	else -- Botched, Mentioned, Ignored, Unknown
-		self:RedrawEverything()
-
-		local queCurrent = self.wndRightSide:GetData()
-		if queCurrent and queCurrent:GetId() == queUpdated:GetId() then
-			self.wndRightSide:Show(false)
-			self.wndQuestInfoControls:Show(false)
-		end
+	if ktChatNotificationStrings[eState] then
+		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_System, String_GetWeaselString(ktChatNotificationStrings[eState], queUpdated:GetTitle()))
 	end
 end
 
@@ -1018,10 +1077,10 @@ function QuestLog:OnDestroyQuestObject(queTarget) -- QuestStateChanged, QuestObj
 end
 
 function QuestLog:OnQuestTrackedChanged(queUpdated, bTracked)
-	if self.wndRightSide:IsShown() 
-		and self.wndRightSide:GetData() 
+	if self.wndRightSide:IsShown()
+		and self.wndRightSide:GetData()
 		and self.wndRightSide:GetData() == queUpdated then
-		
+
 		self:DrawRightSide(self.wndRightSide:GetData())
 		self:ResizeRight()
 	end
@@ -1038,7 +1097,7 @@ function QuestLog:OnDialog_QuestShare(queToShare, unitTarget)
 	self.wndShare:ToFront()
 	self.wndShare:Show(true)
 	self.wndShare:SetData(queToShare)
-	self.wndShare:FindChild("NoticeText"):SetText(unitTarget:GetName() .. Apollo.GetString("CRB__wants_to_share_quest_") .. queToShare:GetTitle() .. Apollo.GetString("CRB__with_you"))
+	self.wndShare:FindChild("NoticeText"):SetText(String_GetWeaselString(Apollo.GetString("QuestLog_ShareAQuest"), unitTarget:GetName(), queToShare:GetTitle()))
 
 	Apollo.CreateTimer("ShareTimeout", Quest.kQuestShareAcceptTimeoutMs / 1000.0, false)
 	Apollo.StartTimer("ShareTimeout")
@@ -1080,7 +1139,7 @@ function QuestLog:HelperBuildRewardsRec(wndReward, tRewardData, bReceived)
 	if not tRewardData then
 		return
 	end
-	
+
 	local strText = ""
 	local strSprite = ""
 
@@ -1095,6 +1154,7 @@ function QuestLog:HelperBuildRewardsRec(wndReward, tRewardData, bReceived)
 		wndReward:FindChild("RewardItemCantUse"):Show(self:HelperPrereqFailed(tRewardData.itemReward))
 		wndReward:FindChild("RewardItemText"):SetTextColor(karEvalColors[tRewardData.itemReward:GetItemQuality()])
 		wndReward:FindChild("RewardIcon"):SetText(tRewardData.nAmount > 1 and tRewardData.nAmount or "")
+		wndReward:FindChild("RewardIcon"):SetData(tRewardData.itemReward)
 	elseif tRewardData.eType == Quest.Quest2RewardType_Reputation then
 		strText = String_GetWeaselString(Apollo.GetString("Dialog_FactionRepReward"), tRewardData.nAmount, tRewardData.strFactionName)
 		strSprite = "Icon_ItemMisc_UI_Item_Parchment"
@@ -1132,27 +1192,33 @@ function QuestLog:HelperBuildRewardsRec(wndReward, tRewardData, bReceived)
 	wndReward:FindChild("RewardItemText"):SetText(strText)
 end
 
+function QuestLog:OnRewardIconMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
+
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
 
 function QuestLog:HelperBuildObjectiveTitleString(queQuest, tObjective, bIsTooltip)
-	local strResult = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</T>", tObjective.strDescription)
+	local strResult = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</T>", tObjective.strDescription)
 
 	-- Prefix Optional or Progress if it hasn't been finished yet
 	if tObjective.nCompleted < tObjective.nNeeded then
 		if tObjective and not tObjective.bIsRequired then
-			strResult = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">%s</T>%s", Apollo.GetString("QuestLog_Optional"), strResult)
+			strResult = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloBody\">%s</T>%s", Apollo.GetString("QuestLog_Optional"), strResult)
 		end
-
-		if tObjective.nNeeded > 1 and queQuest:DisplayObjectiveProgressBar(tObjective.nIndex) then
+		local bQuestIsNotCompleted = queQuest:GetState() ~= Quest.QuestState_Completed -- if quest is complete, hide the % readouts.
+		if tObjective.nNeeded > 1 and queQuest:DisplayObjectiveProgressBar(tObjective.nIndex) and bQuestIsNotCompleted then
 			local nCompleted = queQuest:GetState() == Quest.QuestState_Completed and tObjective.nNeeded or tObjective.nCompleted
 			local nPercentText = String_GetWeaselString(Apollo.GetString("CRB_Percent"), math.floor(nCompleted / tObjective.nNeeded * 100))
-			strResult = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">%s </T>%s", nPercentText, strResult)
-		elseif tObjective.nNeeded > 1 then
+			strResult = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloBody\">%s </T>%s", nPercentText, strResult)
+		elseif tObjective.nNeeded > 1 and bQuestIsNotCompleted then
 			local nCompleted = queQuest:GetState() == Quest.QuestState_Completed and tObjective.nNeeded or tObjective.nCompleted
-			local nPercentText = String_GetWeaselString(Apollo.GetString("QuestTracker_ValueComplete"), nCompleted, tObjective.nNeeded)
-			strResult = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">%s </T>%s", nPercentText, strResult)
+			local nPercentText = String_GetWeaselString(Apollo.GetString("QuestTracker_ValueComplete"), Apollo.FormatNumber(nCompleted, 0, true), Apollo.FormatNumber(tObjective.nNeeded, 0, true))
+			strResult = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloBody\">%s </T>%s", nPercentText, strResult)
 		end
 	end
 

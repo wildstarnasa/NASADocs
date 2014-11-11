@@ -72,7 +72,7 @@ function PathScientistCustomize:InitializeShow()
 end
 
 function PathScientistCustomize:Initialize(bShow)
-	if self.wndMain and self.wndMain:IsValid() then
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() then
 		self.locSavedWindowLoc = self.wndMain:GetLocation()
 		self.wndMain:Destroy()
 		self.wndMain = nil
@@ -384,12 +384,16 @@ function PathScientistCustomize:OnFlairItemCheck(wndHandler, wndControl) -- wndH
 end
 
 function PathScientistCustomize:OnFlairItemUncheck(wndHandler, wndControl) -- wndHandler is FlairItemBtn, data is a { eType , flair object }
+	if wndHandler ~= wndControl or not wndHandler:GetData() then
+		return
+	end
+
 	local nResult = 1
 	local eFlairType = wndHandler:GetData()[1]
 	local objFlair = wndHandler:GetData()[2]
 	for idx, wndCurr in pairs(self.wndMain:FindChild("CurrentList"):GetChildren()) do
 		local tBtnData = wndCurr:FindChild("CurrentFlairBtn"):GetData() -- data is { eType, flair object, nSlotIndex }
-		if tBtnData[1] == eFlairType and tBtnData[2] and tBtnData[2]:GetName() == objFlair:GetName() then
+		if tBtnData[1] == eFlairType then
 			nResult = tBtnData[3]
 		end
 	end

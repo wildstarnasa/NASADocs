@@ -32,7 +32,6 @@ end
 function Circles:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CirclesMain.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
-	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 end
 
 function Circles:OnRestore(eType, tSavedData)
@@ -46,7 +45,7 @@ function Circles:OnRestore(eType, tSavedData)
 end
 
 function Circles:OnDocumentReady()
-	if  self.xmlDoc == nil or not g_InterfaceOptionsLoaded then
+	if self.xmlDoc == nil then
 		return
 	end
 
@@ -59,14 +58,12 @@ function Circles:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildRankChange",					"OnGuildRankChange", self)
 	Apollo.RegisterEventHandler("GuildInvite",						"OnCircleInvite", self)
 
-	Apollo.RegisterTimerHandler("CircleAlertDisplayTimer", "OnCircleAlertDisplayTimer", self)
-	Apollo.RegisterTimerHandler("OfflineTimeUpdate", "OnOfflineTimeUpdate", self)
+	self.timerUpdateOffline = ApolloTimer.Create(30.000, true, "OnOfflineTimeUpdate", self)
+	self.timerUpdateOffline:Stop()
 	
-	Apollo.CreateTimer("OfflineTimeUpdate", 30.000, true)
-	Apollo.StopTimer("OfflineTimeUpdate")
+	self.timerAlert = ApolloTimer.Create(3.0, false, "OnCircleAlertDisplayTimer", self)
+	self.timerAlert:Stop()
 	
-	Apollo.CreateTimer("CircleAlertDisplayTimer", 3.0, false)
-	Apollo.StopTimer("CircleAlertDisplayTimer")
 end
 
 function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
@@ -76,13 +73,21 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 
 	local wndRosterScreen = self.tWndRefs.wndMain:FindChild("RosterScreen")
 	local wndRosterBottom = wndRosterScreen:FindChild("RosterBottom")
+	local wndRosterEditNotesBtn = wndRosterBottom:FindChild("RosterOptionBtnEditNotes")
+	local wndRosterRemoveBtn = wndRosterBottom:FindChild("RosterOptionBtnRemove")
+	local wndRosterAddBtn = wndRosterBottom:FindChild("RosterOptionBtnAdd")
 	wndRosterBottom:ArrangeChildrenHorz(2)
-	wndRosterBottom:FindChild("RosterOptionBtnAdd"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnAdd:AddMemberContainer"))
-	wndRosterBottom:FindChild("RosterOptionBtnLeave"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnLeave:LeaveBtnContainer"))
-	wndRosterBottom:FindChild("RosterOptionBtnRemove"):AttachWindow(wndRosterBottom:FindChild("RosterOptionBtnRemove:RemoveMemberContainer"))
 	
-	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
-	self.tWndRefs.wndMain:FindChild("ShowOffline"):SetCheck(self.bShowOffline)
+	wndRosterAddBtn:AttachWindow(wndRosterAddBtn:FindChild("AddMemberContainer"))
+	self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):AttachWindow(self.tWndRefs.wndMain:FindChild("LeaveFlyoutBtnContainer"))
+	wndRosterRemoveBtn:AttachWindow(wndRosterRemoveBtn:FindChild("RemoveMemberContainer"))
+	wndRosterEditNotesBtn:AttachWindow(wndRosterEditNotesBtn:FindChild("EditNotesContainer"))
+	wndRosterEditNotesBtn:Enable(true)
+	wndRosterEditNotesBtn:FindChild("EditNotesContainer:EditNotesEditBoxBG:EditNotesEditbox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildMemberNote))
+	
+	local wndAdvancedOptions = self.tWndRefs.wndMain:FindChild("RosterScreen:AdvancedOptionsContainer")
+	self.tWndRefs.wndMain:FindChild("RosterScreen:BGOptionsHolder:OptionsBtn"):AttachWindow(wndAdvancedOptions)
+	wndAdvancedOptions:FindChild("ShowOffline"):SetCheck(self.bShowOffline)
 	
 	self.bViewingRemovedGuild = false
 
@@ -91,14 +96,17 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 		local wndPermission = Apollo.LoadForm(self.xmlDoc, "PermissionEntry", wndPermissionContainer, self)
 		local wndPermissionBtn = wndPermission:FindChild("PermissionBtn")
 		wndPermissionBtn:SetText("       " .. tPermission.strName)
-
 		wndPermission:SetData(tPermission)
+		
+		if tPermission.strDescription ~= nil and tPermission.strDescription ~= "" then
+			wndPermission:SetTooltip(tPermission.strDescription)
+		end
 	end
 	wndPermissionContainer:ArrangeChildrenVert()
 
 	self.tWndRefs.wndRankPopout = wndRosterScreen:FindChild("RankPopout")
 
-	Apollo.StartTimer("OfflineTimeUpdate")
+	self.timerUpdateOffline:Start()
 	self.tWndRefs.wndMain:SetData(guildCurr)
 	self.tWndRefs.wndMain:Show(true)
 	self:FullRedrawOfRoster()
@@ -112,8 +120,8 @@ function Circles:OnGenericEvent_DestroyCircles()
 end
 
 function Circles:OnClose()
-	Apollo.StopTimer("CircleAlertDisplayTimer")
-	Apollo.StopTimer("OfflineTimeUpdate")
+	self.timerAlert:Stop()
+	self.timerUpdateOffline:Stop()
 	self.tWndRefs.wndMain:FindChild("AlertMessage"):Show(false)
 end
 
@@ -137,7 +145,6 @@ function Circles:FullRedrawOfRoster()
 	end
 
 	self.tWndRefs.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
-	self.tWndRefs.wndMain:FindChild("BGFrame:HeaderTitleText"):SetText(guildCurr:GetName())
 	
 	guildCurr:RequestMembers() -- This will send back an event "GuildRoster"
 
@@ -168,7 +175,7 @@ function Circles:FullRedrawOfRoster()
 end
 
 function Circles:OnGuildRoster(guildCurr, tRoster) -- Event from CPP
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
+	if guildCurr:GetType() ~= GuildLib.GuildType_Circle or not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
 	
@@ -207,6 +214,15 @@ function Circles:BuildRosterList(guildCurr, tRoster)
 			if tCurr.fLastOnline ~= 0 then -- offline
 				strTextColor = "UI_BtnTextGrayNormal"
 			end
+			
+			if not self.strPlayerName then
+				self.strPlayerName = GameLib.GetPlayerUnit():GetName()
+			end
+
+			local wndEditNoteBtn = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnEditNotes")
+			if not wndEditNoteBtn:IsChecked() and self.strPlayerName == tCurr.strName then
+				wndEditNoteBtn:FindChild("EditNotesContainer:EditNotesEditBoxBG:EditNotesEditbox"):SetText(tCurr.strNote)
+			end
 
 			local iCurrRow = wndGrid:AddRow("")
 			wndGrid:SetCellLuaData(iCurrRow, 1, tCurr)
@@ -217,6 +233,9 @@ function Circles:BuildRosterList(guildCurr, tRoster)
 			wndGrid:SetCellDoc(iCurrRow, 5, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, tCurr.strClass))
 			wndGrid:SetCellDoc(iCurrRow, 6, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertPathToString(tCurr.ePathType)))
 			wndGrid:SetCellDoc(iCurrRow, 7, string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", strTextColor, self:HelperConvertToTime(tCurr.fLastOnline)))
+			
+			wndGrid:SetCellDoc(iCurrRow, 8, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">".. FixXMLString(tCurr.strNote) .."</T>")
+			wndGrid:SetCellLuaData(iCurrRow, 8, String_GetWeaselString(Apollo.GetString("GuildRoster_ActiveNoteTooltip"), tCurr.strName, string.len(tCurr.strNote) > 0 and tCurr.strNote or "N/A")) -- For tooltip
 		end
 	end
 	
@@ -299,12 +318,15 @@ function Circles:OnAddRankBtnSignal(wndControl, wndHandler)
 		wndPermission:FindChild("PermissionBtn"):SetCheck(false)
 	end
 
+	--won't have members when creating
+	wndSettings:FindChild("Delete"):Show(false)
+	wndSettings:FindChild("MemberCount"):Show(false)
+	
 	self:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
 end
 
-function Circles:OnRemoveRankBtnSignal(wndControl, wndHandler)
+function Circles:OnViewRankBtnSignal(wndControl, wndHandler)
 	local wndRankContainer = self.tWndRefs.wndRankPopout:FindChild("RankContainer")
-	local wndSettings = self.tWndRefs.wndRankPopout:FindChild("RankSettingsEntry")
 	local wndSettings = self.tWndRefs.wndRankPopout:FindChild("RankSettingsEntry")
 	local nRankIdx = wndControl:GetParent():GetData().nRankIdx
 	local tRank = wndControl:GetParent():GetData().tRankData
@@ -337,7 +359,7 @@ function Circles:OnRemoveRankBtnSignal(wndControl, wndHandler)
 	local bCanDelete = arRanks[eMyRank].bRankCreate and nRankIdx ~= 1 and nRankIdx ~= 2 and nRankIdx ~= 10 and nRankMemberCount == 0
 
 	wndSettings:FindChild("Delete"):Show(bCanDelete)
-	wndSettings:FindChild("MemberCount"):Show(not bCanDelete)
+	wndSettings:FindChild("MemberCount"):Show(true)
 	wndSettings:FindChild("MemberCount"):SetText(String_GetWeaselString(Apollo.GetString("Guild_MemberCount"), nRankMemberCount, nRankMemberOnlineCount))
 
 	self:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
@@ -479,17 +501,7 @@ function Circles:ResetRosterMemberButtons()
 	local wndRemoveBtn = wndRosterBottom:FindChild("RosterOptionBtnRemove")
 	local wndDemoteBtn = wndRosterBottom:FindChild("RosterOptionBtnDemote")
 	local wndPromoteBtn = wndRosterBottom:FindChild("RosterOptionBtnPromote")
-	local wndLeaveBtn = wndRosterBottom:FindChild("RosterOptionBtnLeave")
-
-	wndAddBtn:Show(false)
-	wndRemoveBtn:Show(false)
-	wndDemoteBtn:Show(false)
-	wndPromoteBtn:Show(false)
-	wndAddBtn:SetCheck(false)
-	wndRemoveBtn:SetCheck(false)
-	wndDemoteBtn:SetCheck(false)
-	wndPromoteBtn:SetCheck(false)
-	wndLeaveBtn:SetCheck(false)
+	local wndLeaveFlyoutBtn = self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):FindChild("RosterOptionBtnLeaveFlyout")
 
 	-- Enable member options based on Permissions (note Code will also guard against this) -- TODO
 	local guildCurr = self.tWndRefs.wndMain:GetData()
@@ -511,18 +523,23 @@ function Circles:ResetRosterMemberButtons()
 		wndPromoteBtn:Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
 
 		if eMyRank == 1 then
-			wndLeaveBtn:SetText(Apollo.GetString("Circles_Disband"))
+			wndLeaveFlyoutBtn:SetText(Apollo.GetString("Circles_Disband"))
 		else
-			wndLeaveBtn:SetText(Apollo.GetString("Circles_Leave"))
+			wndLeaveFlyoutBtn:SetText(Apollo.GetString("Circles_Leave"))
 		end
+	else
+		wndAddBtn:Show(false)
+		wndRemoveBtn:Show(false)
+		wndDemoteBtn:Show(false)
+		wndPromoteBtn:Show(false)
+		wndAddBtn:SetCheck(false)
+		wndRemoveBtn:SetCheck(false)
+		wndDemoteBtn:SetCheck(false)
+		wndPromoteBtn:SetCheck(false)
+		wndLeaveFlyoutBtn:SetCheck(false)
 	end
 
-	-- If it is just one button, arrange to the right instead
-	if wndAddBtn:IsShown() or wndRemoveBtn:IsShown() then
-		wndRosterBottom:ArrangeChildrenHorz(2)
-	else
-		wndRosterBottom:ArrangeChildrenHorz(2)
-	end
+	wndRosterBottom:ArrangeChildrenHorz(0)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -552,6 +569,14 @@ function Circles:OnRosterPromoteMemberClick(wndHandler, wndControl) -- wndHandle
 	end
 end
 
+function Circles:OnRosterEditNoteSave(wndHandler, wndControl)
+	wndHandler:SetFocus()
+	self.tWndRefs.wndMain:FindChild("EditNotesContainer"):Close()
+
+	local guildCurr = self.tWndRefs.wndMain:GetData()
+	guildCurr:SetMemberNoteSelf(self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):GetText())
+end
+
 -- Closing the Pop Up Bubbles
 function Circles:OnRosterAddMemberCloseBtn()
 	local wndAddMemberContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnAdd:AddMemberContainer")
@@ -570,7 +595,32 @@ function Circles:OnRosterRemoveMemberCloseBtn()
 end
 
 function Circles:OnRosterLeaveCloseBtn()
-	self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnLeave:LeaveBtnContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("LeaveFlyoutBtnContainer"):Show(false)
+end
+
+function Circles:OnPlayerNoteChanged(wndHandler, wndControl, strNewNote)
+	if wndControl ~= wndHandler then 
+		return 
+	end
+	local wndNote = self.tWndRefs.wndMain:FindChild("EditNotesContainer")
+	local bValid = GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.GuildMemberNote, GameLib.CodeEnumUserTextFilterClass.Strict)
+	
+	wndNote:FindChild("EditNotesYesBtn"):Enable(bValid)
+	wndNote:FindChild("StatusValidAlert"):Show(not bValid)
+end
+
+function Circles:OnEditNoteBtn(wndHandler, wndControl)
+	if wndControl ~= wndHandler then 
+		return 
+	end
+	local wndNote = self.tWndRefs.wndMain:FindChild("EditNotesContainer")
+	for key, tCurr in pairs(self.tRoster) do
+		if self.strPlayerName == tCurr.strName then
+			wndNote:FindChild("EditNotesEditbox"):SetText(tCurr.strNote)
+		end
+	end
+	wndNote:FindChild("EditNotesYesBtn"):Enable(false)
+	wndNote:FindChild("StatusValidAlert"):Show(false)
 end
 
 -- Saying Yes to the Pop Up Bubbles
@@ -613,7 +663,7 @@ function Circles:OnRosterLeaveYesClick(wndHandler, wndControl) -- wndHandler is 
 	elseif guildCurr then
 		guildCurr:Leave()
 	end
-	wndHandler:GetParent():Close()
+	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):Close()
 	self.tWndRefs.wndMain:Close()
 end
 
@@ -631,19 +681,24 @@ function Circles:OnOfflineTimeUpdate()
 	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
-	local tRoster = self.tWndRefs.wndMain:GetData():RequestMembers()
-	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
 	
-	if tRoster then
-		for key, tCurr in pairs(tRoster) do
-			local strTextColor = "ffffffff"
-			if tCurr.fLastOnline ~= 0 then -- offline
-				strTextColor = "9d9d9d9d"
-			end
+	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
+	local nSelectedRow = wndGrid:GetCurrentRow()
+	
+	local wndRosterBottom = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom")
+	local wndAddBtn = wndRosterBottom:FindChild("RosterOptionBtnAdd")
+	local wndRemoveBtn = wndRosterBottom:FindChild("RosterOptionBtnRemove")
 
-			wndGrid:SetCellDoc(key, 7, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertToTime(tCurr.fLastOnline).."</T>")
-		end
-	end
+	local bAddSelected = wndAddBtn:IsChecked()
+	local wndRemoveSelected = wndRemoveBtn:IsChecked()
+	
+	-- Calling RequestMembers will fire the GuildRoster event, which tends to reset a lot of the things we have selected.
+	self.tWndRefs.wndMain:GetData():RequestMembers()
+	
+	wndGrid:SetCurrentRow(nSelectedRow or 0)
+	
+	wndAddBtn:SetCheck(bAddSelected)
+	wndRemoveBtn:SetCheck(bRemoveSelected)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -668,17 +723,17 @@ function Circles:OnGuildResult(guildCurr, strName, nRank, eResult)
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Ouch"))
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_Kicked"), strName))
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):Invoke()
-			Apollo.StartTimer("CircleAlertDisplayTimer")
+			self.timerAlert:Start()
 		elseif eResult == GuildLib.GuildResult_YouQuit and self.tWndRefs.wndMain:IsShown() then
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_Bye"))
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_LeftCircle"), strName))
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):Invoke()
-			Apollo.StartTimer("CircleAlertDisplayTimer")
+			self.timerAlert:Start()
 		elseif eResult == GuildLib.GuildResult_GuildDisbanded and self.tWndRefs.wndMain:IsShown() then
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageAlertText"):SetText(Apollo.GetString("Circles_CircleDisbanded"))
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):FindChild("MessageBodyText"):SetText(String_GetWeaselString(Apollo.GetString("Circles_YouDisbanded"), strName))
 			self.tWndRefs.wndMain:FindChild("AlertMessage"):Invoke()
-			Apollo.StartTimer("CircleAlertDisplayTimer")
+			self.timerAlert:Start()
 		end
 	end
 end
@@ -701,14 +756,10 @@ function Circles:OnCircleInvite( strGuildName, strInvitorName, guildType )
 		self.wndCircleInvite:Destroy()
 	end
 
-	if self:FilterRequest(strInvitor) then
-		self.wndCircleInvite = Apollo.LoadForm(self.xmlDoc, "CircleInviteConfirmation", nil, self)
-		self.wndCircleInvite:FindChild("CircleInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_IncomingCircleInvite"), strGuildName, strInvitorName))
-		self.wndCircleInvite:FindChild("FilterBtn"):SetCheck(g_InterfaceOptions.Carbine.bFilterGuildInvite)
-		self.wndCircleInvite:ToFront()
-	else
-		GuildLib.Decline()
-	end
+	self.wndCircleInvite = Apollo.LoadForm(self.xmlDoc, "CircleInviteConfirmation", nil, self)
+	self.wndCircleInvite:FindChild("CircleInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_IncomingCircleInvite"), strGuildName, strInvitorName))
+	self.wndCircleInvite:ToFront()
+
 end
 
 function Circles:OnCircleInviteAccept(wndHandler, wndControl)
@@ -725,8 +776,10 @@ function Circles:OnCircleInviteDecline() -- This can come from a variety of sour
 	end
 end
 
-function Circles:OnFilterBtn(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bFilterGuildInvite = wndHandler:IsChecked()
+function Circles:OnReportCircleInviteSpamBtn()
+	Event_FireGenericEvent("GenericEvent_ReportPlayerCircleInvite") -- Order is important
+	--self:OnCircleInviteDecline()
+	self.wndCircleInvite:Destroy()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -739,25 +792,23 @@ end
 
 function Circles:SortRoster(tArg, strLastClicked)
 	-- TODO: Two tiers of sorting. E.g. Clicking Name then Path will give Paths sorted first, then Names sorted second
-	if not tArg then
-		return
-	end
-
+	if not tArg then return end
 	local tResult = tArg
-	local wndHeaderContainer = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterHeaderContainer")
 
-	if wndHeaderContainer:FindChild("RosterSortBtnName"):IsChecked() then
+	if self.tWndRefs.wndMain:FindChild("RosterSortBtnName"):IsChecked() then
 		table.sort(tResult, function(a,b) return (a.strName > b.strName) end)
-	elseif wndHeaderContainer:FindChild("RosterSortBtnRank"):IsChecked() then
+	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnRank"):IsChecked() then
 		table.sort(tResult, function(a,b) return (a.nRank > b.nRank) end)
-	elseif wndHeaderContainer:FindChild("RosterSortBtnLevel"):IsChecked() then
+	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnLevel"):IsChecked() then
 		table.sort(tResult, function(a,b) return (a.nLevel < b.nLevel) end) -- Level we want highest to lowest
-	elseif wndHeaderContainer:FindChild("RosterSortBtnClass"):IsChecked() then
+	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnClass"):IsChecked() then
 		table.sort(tResult, function(a,b) return (a.strClass > b.strClass) end)
-	elseif wndHeaderContainer:FindChild("RosterSortBtnPath"):IsChecked() then
+	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnPath"):IsChecked() then
 		table.sort(tResult, function(a,b) return (self:HelperConvertPathToString(a.ePathType) > self:HelperConvertPathToString(b.ePathType)) end) -- TODO: Potentially expensive?
-	elseif wndHeaderContainer:FindChild("RosterSortBtnOnline"):IsChecked() then
+	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnOnline"):IsChecked() then
 		table.sort(tResult, function(a,b) return (a.fLastOnline < b.fLastOnline) end)
+	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnNote"):IsChecked() then
+		table.sort(tResult, function(a,b) return (a.strNote < b.strNote) end)
 	else
 		-- Determine the last clicked with the second argument
 		if strLastClicked == "RosterSortBtnName" then
@@ -772,6 +823,8 @@ function Circles:SortRoster(tArg, strLastClicked)
 			table.sort(tResult, function(a,b) return (self:HelperConvertPathToString(a.ePathType) < self:HelperConvertPathToString(b.ePathType)) end)
 		elseif strLastClicked == "RosterSortBtnOnline" then
 			table.sort(tResult, function(a,b) return (a.fLastOnline > b.fLastOnline) end)
+		elseif strLastClicked == "RosterSortBtnNote" then
+			table.sort(tResult, function(a,b) return (a.strNote > b.strNote) end)
 		end
 	end
 
@@ -781,19 +834,10 @@ end
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
-function Circles:FilterRequest(strInvitor)
-	if not g_InterfaceOptions.Carbine.bFilterGuildInvite then
-		return true
-	end
-	
-	local bPassedFilter = false
-	
-	local tRelationships = GameLib.SearchRelationshipStatusByCharacterName(strInvitor)
-	if tRelationships and (tRelationships.tFriend or tRelationships.tAccountFriend or tRelationships.tGuilds or tRelationships.nGuildIndex) then
-		bPassedFilter = true
-	end
-	
-	return bPassedFilter
+
+function Circles:OnGenerateGridTooltip(wndHandler, wndControl, eType, iRow, iColumn)
+	-- If the note column 7, draw a special tooltip
+	wndHandler:SetTooltip(self.tWndRefs.wndMain:FindChild("RosterGrid"):GetCellData(iRow + 1, 8) or "") -- TODO: Remove this hardcoded
 end
 
 function Circles:HelperConvertPathToString(ePath)

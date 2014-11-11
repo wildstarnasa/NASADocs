@@ -25,12 +25,12 @@ function ProgressLog:OnLoad()
 end
 
 function ProgressLog:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("WindowManagementReady", "OnWindowManagementReady", self)
-	
+
 	Apollo.RegisterEventHandler("ToggleCodex", "OnProgressLogOn", self)
 	Apollo.RegisterEventHandler("ToggleQuestLog", "ToggleQuestLog", self)
 	Apollo.RegisterEventHandler("ToggleProgressLog", "OnProgressLogOn", self)
@@ -39,13 +39,12 @@ function ProgressLog:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("ShowQuestLog", "ToggleQuestLogFromCall", self)
 	Apollo.RegisterEventHandler("FloatTextPanel_ToggleAchievementWindow", "ToggleAchievementsWithData", self)
-	Apollo.RegisterEventHandler("PlayerPathShow", "TogglePlayerPath", self) 
+	Apollo.RegisterEventHandler("PlayerPathShow", "TogglePlayerPath", self)
 	Apollo.RegisterEventHandler("PlayerPathShow_NoHide", "ShowPlayerPath", self )
-	Apollo.RegisterEventHandler("PlayerPathShowWithData", "TogglePlayerPathWithData", self) -- TODO No longer used
 
     g_wndProgressLog = Apollo.LoadForm(self.xmlDoc, "ProgressLogForm", nil, self)
 	g_wndProgressLog:Show(false, true)
-	
+
 	self.xmlDoc = nil
 	if self.locSavedLocation then
 		g_wndProgressLog:MoveToLocation(self.locSavedLocation)
@@ -63,7 +62,7 @@ function ProgressLog:OnDocumentReady()
 end
 
 function ProgressLog:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = g_wndProgressLog, strName = Apollo.GetString("CRB_Codex")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = g_wndProgressLog, strName = Apollo.GetString("CRB_Codex"), nSaveVersion = 2})
 end
 
 function ProgressLog:OnProgressLogOn() --general toggle
@@ -132,14 +131,6 @@ function ProgressLog:ShowPlayerPath()
 	g_wndProgressLog:ToFront()
 	self.wndOptions:SetRadioSel("PLogOptions", 2)
 	self:PLogOptionCheck(nil, nil, false)
-end
-
--- Right now this is from the HUD Alerts
-function ProgressLog:TogglePlayerPathWithData(tUserData)
-	g_wndProgressLog:Show(true)
-	g_wndProgressLog:ToFront()
-	self.wndOptions:SetRadioSel("PLogOptions", 2)
-	self:PLogOptionCheck(nil, nil, false, tUserData)
 end
 
 function ProgressLog:ToggleChallenges()

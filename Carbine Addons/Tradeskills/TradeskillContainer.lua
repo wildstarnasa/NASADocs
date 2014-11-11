@@ -7,7 +7,7 @@ require "Window"
 
 local TradeskillContainer = {}
 
-local knSaveVersion = 1
+local knSaveVersion = 2
 
 function TradeskillContainer:new(o)
     o = o or {}
@@ -42,7 +42,8 @@ function TradeskillContainer:OnDocumentReady()
 	Apollo.RegisterEventHandler("AlwaysShowTradeskills",				"OnAlwaysShowTradeskills", self)
 	Apollo.RegisterEventHandler("AlwaysHideTradeskills",				"OnAlwaysHideTradeskills", self)
 	Apollo.RegisterEventHandler("ToggleTradeskills", 					"OnToggleTradeskills", self)
-	Apollo.RegisterEventHandler("WorkOrderLocate", 						"OnWorkOrderLocate", self) -- Clicking a work order quest
+	Apollo.RegisterEventHandler("WorkOrderLocate", 						"OnLocateAchievement", self) -- Clicking a work order quest
+	Apollo.RegisterEventHandler("FloatTextPanel_ToggleTechTreeWindow", 	"OnLocateAchievement", self) -- Clicking view btn on achievement notification
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "TradeskillContainerForm", nil, self)
 
@@ -99,33 +100,40 @@ function TradeskillContainer:OnToggleTradeskills()
 	self:RedrawAll()
 end
 
-function TradeskillContainer:OnWorkOrderLocate(nSchematicId)
+function TradeskillContainer:OnLocateAchievement(idSchematic, achData)
 	if GameLib.GetPlayerUnit():IsCasting() then
 		return
 	end
 
-	self.wndMain:ToFront()
-	self.wndMain:Show(true)
-	local tSchematicInfo = CraftingLib.GetSchematicInfo(nSchematicId)
+	local tSchematicInfo = nil
+	if idSchematic then
+		tSchematicInfo = CraftingLib.GetSchematicInfo(idSchematic)
+	end
 
-	if tSchematicInfo.bIsKnown then
+	if tSchematicInfo and tSchematicInfo.nParentSchematicId then -- Replace sub variants with their parent, we will open to their parent's page
+		idSchematic = tSchematicInfo.nParentSchematicId
+	end
+
+	if tSchematicInfo and tSchematicInfo.bIsKnown then
+		--send to schematics
 		self.wndMain:FindChild("SchematicsMainForm"):Show(true)
 		self.wndMain:FindChild("AchievementsMainForm"):Show(false)
 		self.wndMain:FindChild("TalentsMainForm"):Show(false)
 		self.wndMain:FindChild("ToggleSchematicsBtn"):SetCheck(true)
 		self.wndMain:FindChild("ToggleAchievementBtn"):SetCheck(false)
 		self.wndMain:FindChild("ToggleTalentsBtn"):SetCheck(false)
-		Event_FireGenericEvent("GenericEvent_InitializeSchematicsTree", self.wndMain:FindChild("SchematicsMainForm"), nSchematicId)
-	else
+		Event_FireGenericEvent("GenericEvent_InitializeSchematicsTree", self.wndMain:FindChild("SchematicsMainForm"), idSchematic, nil)
+	elseif not tSchematicInfo or (tSchematicInfo and tSchematicInfo.achSource ) or achData then
+		--send to techtree
 		self.wndMain:FindChild("SchematicsMainForm"):Show(false)
 		self.wndMain:FindChild("AchievementsMainForm"):Show(true)
 		self.wndMain:FindChild("TalentsMainForm"):Show(false)
 		self.wndMain:FindChild("ToggleSchematicsBtn"):SetCheck(false)
 		self.wndMain:FindChild("ToggleAchievementBtn"):SetCheck(true)
 		self.wndMain:FindChild("ToggleTalentsBtn"):SetCheck(false)
-		Event_FireGenericEvent("GenericEvent_InitializeAchievementTree", self.wndMain:FindChild("AchievementsMainForm"), tSchematicInfo.achSource)
+		Event_FireGenericEvent("GenericEvent_InitializeAchievementTree", self.wndMain:FindChild("AchievementsMainForm"), (tSchematicInfo and tSchematicInfo.achSource or achData))
 	end
-	--self:RedrawAll()
+	self.wndMain:Invoke()
 end
 
 function TradeskillContainer:OnOpenToSpecificTechTree(achievementData)

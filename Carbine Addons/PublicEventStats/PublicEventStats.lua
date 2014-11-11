@@ -20,9 +20,6 @@ function PublicEventStats:Init()
     Apollo.RegisterAddon(self)
 end
 
-local knMaxWndMainWidth = 800
-
-
 local ktParticipantKeys = -- Can swap to event type id's, but this just saves space
 {
 	["Arena"] =
@@ -125,6 +122,7 @@ local ktEventTypeToWindowName =
 	[PublicEvent.PublicEventType_PVP_Battleground_Sabotage] 	= "PvPSaboContainer",
 	[PublicEvent.PublicEventType_WorldEvent] 					= "PublicEventGrid", -- TODO
 	[PublicEvent.PublicEventType_Dungeon] 						= "PublicEventGrid", -- TODO
+	-- PublicEvent.PublicEventType_LiveEvent
 }
 
 -- necessary until we can either get column names for a compare/swap or a way to set localized strings in XML for columns
@@ -227,11 +225,19 @@ local ktAdventureListStrIndexToIconSprite =  -- Default: ClientSprites:Icon_Skil
 
 local ktRewardTierInfo =
 {
-	[PublicEvent.PublicEventRewardTier_None] 	= {Apollo.GetString("PublicEventStats_NoMedal"), 		""},
-	[PublicEvent.PublicEventRewardTier_Bronze] 	= {Apollo.GetString("PublicEventStats_BronzeMedal"), 	"CRB_CurrencySprites:sprCashCopper"},
-	[PublicEvent.PublicEventRewardTier_Silver] 	= {Apollo.GetString("PublicEventStats_SilverMedal"), 	"CRB_CurrencySprites:sprCashSilver"},
-	[PublicEvent.PublicEventRewardTier_Gold] 	= {Apollo.GetString("PublicEventStats_GoldMedal"), 		"CRB_CurrencySprites:sprCashGold"},
+	[PublicEvent.PublicEventRewardTier_None] 	= {strText = Apollo.GetString("PublicEventStats_NoMedal"), 		strSprite = "CRB_ChallengeTrackerSprites:sprChallengeTierRed"},
+	[PublicEvent.PublicEventRewardTier_Bronze] 	= {strText = Apollo.GetString("PublicEventStats_BronzeMedal"),	strSprite =	"CRB_ChallengeTrackerSprites:sprChallengeTierBronze"},
+	[PublicEvent.PublicEventRewardTier_Silver] 	= {strText = Apollo.GetString("PublicEventStats_SilverMedal"), 	strSprite =	"CRB_ChallengeTrackerSprites:sprChallengeTierSilver"},
+	[PublicEvent.PublicEventRewardTier_Gold] 	= {strText = Apollo.GetString("PublicEventStats_GoldMedal"), 	strSprite =	"CRB_ChallengeTrackerSprites:sprChallengeTierGold"},
 }
+
+local knXCursorOffset = 10
+local knYCursorOffset = 25
+local knNumRandomDungeonNoPassFlavor = 3 -- This requires exact string naming: PublicEventStats_RandomNoPassFlavor_1, PublicEventStats_RandomNoPassFlavor_2, etc.
+local knNumRandomDungeonNoFailFlavor = 3 -- This requires exact string naming: PublicEventStats_RandomNoFailFlavor_1, PublicEventStats_RandomNoFailFlavor_2, etc.
+local kstrDungeonFailIcon = "<T Image=\"sprChallengeTierRed\"></T><T TextColor=\"0\">.</T>"
+local kstrDungeonGoldIcon = "<T Image=\"sprChallengeTierGold\"></T><T TextColor=\"0\">.</T>"
+local kstrDungeonBronzeIcon = "<T Image=\"sprChallengeTierBronze\"></T><T TextColor=\"0\">.</T>"
 
 function PublicEventStats:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("PublicEventStats.xml")
@@ -243,6 +249,8 @@ function PublicEventStats:OnDocumentReady()
 		return
 	end
 
+	math.randomseed(os.time())
+
     Apollo.RegisterEventHandler("GenericEvent_OpenEventStats", 			"OnToggleEventStats", self)
     Apollo.RegisterEventHandler("GenericEvent_OpenEventStatsZombie", 	"InitializeZombie", self)
 	Apollo.RegisterEventHandler("ResolutionChanged", 					"OnResolutionChanged", self)
@@ -251,7 +259,7 @@ function PublicEventStats:OnDocumentReady()
 	Apollo.RegisterEventHandler("PublicEventStart",						"OnPublicEventStart", self)
 	Apollo.RegisterEventHandler("PublicEventEnd", 						"OnPublicEventEnd", self)
 	Apollo.RegisterEventHandler("PublicEventLeave", 					"OnPublicEventLeave", self)
-	Apollo.RegisterEventHandler("ChangeWorld", 							"OnClose", self)
+	Apollo.RegisterEventHandler("ChangeWorld", 							"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("GuildWarCoinsChanged",					"OnGuildWarCoinsChanged", self)
 
 	Apollo.RegisterTimerHandler("UpdateTimer", 							"OnOneSecTimer", self)
@@ -260,7 +268,12 @@ function PublicEventStats:OnDocumentReady()
 
 	self.wndMain = nil
 	self.wndAdventure = nil
-
+	self.wndDungeonMedalsForm = nil
+	self.wndPvPContextMenu = nil
+	self.wndMyTeam = nil
+	self.eMyMatchTeam = nil
+    self.eOtherMatchTeam = nil
+	
 	local tActiveEvents = PublicEvent.GetActiveEvents()
 	for idx, peEvent in pairs(tActiveEvents) do
 		self:OnPublicEventStart(peEvent)
@@ -297,7 +310,6 @@ function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsPart
 	local wndParent = self.wndMain:FindChild(ktEventTypeToWindowName[eEventType])
 
 	local wndGrid = wndParent
-
 	if wndGrid:GetName() ~= "PublicEventGrid" then
 		wndGrid = wndParent:FindChild("PvPTeamGridBot")
 
@@ -314,7 +326,7 @@ function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsPart
 		wndGrid:SetColumnText(idx, Apollo.GetString(ktEventTypeToColumnNameList[eEventType][idx]))
 	end
 
-	self.wndMain:SetSizingMinimum(500, 500)
+	self.wndMain:SetSizingMinimum(640, 500)
 	self.wndMain:SetSizingMaximum(nMaxWndMainWidth, 800)
 
 	local tData =
@@ -324,7 +336,56 @@ function PublicEventStats:Initialize(peEvent, tStatsSelf, tStatsTeam, tStatsPart
 		tStatsTeam = tStatsTeam or {},
 		tStatsParticipants = tStatsParticipants or {}
 	}
+	
+	if ktPvPEvents[eEventType] then
+		local wndGridTop 	= wndParent:FindChild("PvPTeamGridTop")
+		local wndGridBot 	= wndParent:FindChild("PvPTeamGridBot")
+		local wndHeaderTop 	= wndParent:FindChild("PvPTeamHeaderTop")
+		local wndHeaderBot 	= wndParent:FindChild("PvPTeamHeaderBot")
+		
+		local tMatchState = MatchingGame:GetPVPMatchState()
+	
+		self.eMyMatchTeam = tMatchState.eMyTeam
+		self.eOtherMatchTeam = tMatchState.eMyTeam == MatchingGame.Team.Team1 and MatchingGame.Team.Team2 or MatchingGame.Team.Team1
+	
+		for key, tCurr in pairs(tStatsTeam) do
+			local wndHeader = nil
+			if not wndHeaderTop:GetData() or tCurr.strTeamName == wndHeaderTop:GetData() then
+				wndHeaderTop:SetData(tCurr.strTeamName)
+				wndHeader = wndHeaderTop
+			elseif not wndHeaderBot:GetData() or tCurr.strTeamName == wndHeaderBot:GetData() then
+				wndHeaderBot:SetData(tCurr.strTeamName)
+				wndHeader = wndHeaderBot
+			end
+			
+			if tCurr.bIsMyTeam then
+				self.wndMyTeam = wndHeader
+			end
+			
+			local eTeam = tCurr.bIsMyTeam and eMyTeam or eOtherTeam
+			local crTitleColor = ApolloColor.new("ff7fffb9")
+			local strTeamName = tMatchState and tMatchState.arTeams and tMatchState.arTeams[eTeam] and tMatchState.arTeams[eTeam].strName or tStatsTeam[key].strTeamName
+			
+			if strTeamName == Apollo.GetString("CRB_Exiles") then
+				crTitleColor = ApolloColor.new("ff31fcf6")
+			elseif strTeamName == Apollo.GetString("CRB_Dominion") then
+				crTitleColor = ApolloColor.new("ffb80000")
+			end
+			
+			wndHeader:FindChild("PvPHeaderTitle"):SetTextColor(crTitleColor)
+			wndHeader:FindChild("PvPHeaderTitle"):SetText(strTeamName)
+		end
+	end
 
+	self.strMyName = GameLib.GetPlayerUnit():GetName()
+
+	if tZombieStats and tZombieStats.eRewardTier and tZombieStats.eRewardType then
+		self.wndMain:FindChild("BGRewardTierIcon"):SetSprite(ktRewardTierInfo[tZombieStats.eRewardTier].strSprite)
+		self.wndMain:FindChild("BGRewardTierFrame"):SetText(ktRewardTierInfo[tZombieStats.eRewardTier].strText)
+	else
+		self.wndMain:FindChild("BGRewardTierIcon"):SetSprite("")
+		self.wndMain:FindChild("BGRewardTierFrame"):SetText("")
+	end
 	self.wndMain:SetData(tData)
 	self.wndMain:Show(false)
 	self.tZombieStats = tZombieStats -- note: this will be nil be default
@@ -353,20 +414,18 @@ end
 function PublicEventStats:OnPublicEventEnd(peEnding, eReason, tStats)
 	Apollo.StopTimer("UpdateTimer")
 
-	local eEventType = peEnding:GetEventType()
-
 	if not self.nEventCount then
 		self.nEventCount = 1
 	else
 		self.nEventCount = self.nEventCount + 1
 	end
 
-	local tViewableData = {nEventCount = nEventCount, eEventType = eEventType, tStats = tStats}
-
+	local eEventType = peEnding:GetEventType()
+	local tViewableData = { nEventCount = nEventCount, eEventType = eEventType, tStats = tStats }
 	if ktPvPEvents[eEventType] then
 		self:Initialize(peEnding, tStats.arPersonalStats, tStats.arTeamStats, tStats.arParticipantStats, tStats)
 		self.wndMain:Invoke()
-	elseif eEventType == PublicEvent.PublicEventType_SubEvent or eEventType == PublicEvent.PublicEventType_WorldEvent then
+	elseif eEventType == PublicEvent.PublicEventType_SubEvent or eEventType == PublicEvent.PublicEventType_WorldEvent or eEventType == PublicEvent.PublicEventType_LiveEvent then
 		-- TODO; currently handled from Quest Tracker toggle
 	else -- Adventures
 		self:OnClose()
@@ -461,12 +520,16 @@ function PublicEventStats:Redraw() -- self.wndMain guaranteed valid and visible
 	self.wndMain:FindChild("EventTitleText"):SetText(strTitleText)
 
 	-- Rewards (on zombie only)
-	if not peCurrent:IsActive() and self.tZombieStats and self.tZombieStats.eRewardTier and
-	peCurrent:GetEventType() == PublicEvent.PublicEventType_WorldEvent and self.tZombieStats.eRewardType ~= 0  then -- TODO: ENUM!!
-		self.wndMain:FindChild("BGRewardTierFrame"):SetText(ktRewardTierInfo[self.tZombieStats.eRewardTier][1])
-		self.wndMain:FindChild("BGRewardTierIcon"):SetSprite(ktRewardTierInfo[self.tZombieStats.eRewardTier][2])
-	else
-		self.wndMain:FindChild("BGRewardTierFrame"):SetText("")
+	if self.wndMain:FindChild("RewardTierMessage") then
+		local bZombieRewardType = peCurrent:GetEventType() == PublicEvent.PublicEventType_WorldEvent
+		
+		if not peCurrent:IsActive() and self.tZombieStats and self.tZombieStats.eRewardTier and	bZombieRewardType and self.tZombieStats.eRewardType ~= 0 then
+			self.wndMain:FindChild("RewardTierMessage"):SetText(ktRewardTierInfo[self.tZombieStats.eRewardTier].strText)
+			self.wndMain:FindChild("RewardTierIcon"):SetSprite(ktRewardTierInfo[self.tZombieStats.eRewardTier].strSprite)
+		else
+			self.wndMain:FindChild("RewardTierMessage"):SetText("")
+			self.wndMain:FindChild("RewardTierIcon"):SetSprite("")
+		end
 	end
 
 	if wndGrid then
@@ -494,13 +557,12 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 	local nSortedColumnBot 	= wndGridBot:GetSortColumn() or 1
 	local bAscendingTop 	= wndGridTop:IsSortAscending()
 	local bAscendingBot 	= wndGridBot:IsSortAscending()
-	
+
 	wndGridTop:DeleteAll()
 	wndGridBot:DeleteAll()
 
-	local tMatchState 	= MatchingGame:GetPVPMatchState()
-	local strMyTeamName = ""
-
+	local tMatchState = MatchingGame:GetPVPMatchState()
+	
 	for key, tCurr in pairs(tMegaList.tStatsTeam) do
 		local wndHeader = nil
 		if not wndHeaderTop:GetData() or wndHeaderTop:GetData() == tCurr.strTeamName then
@@ -512,65 +574,42 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 			wndGridBot:SetData(tCurr.strTeamName)
 			wndHeaderBot:SetData(tCurr.strTeamName)
 		end
+		
+		local eTeam = tCurr.bIsMyTeam and self.eMyMatchTeam or self.eOtherMatchTeam
+		
+		if wndHeader then
+			local strHeaderText = wndHeader:FindChild("PvPHeaderText"):GetText() or ""
+			local crTitleColor = ApolloColor.new("ff7fffb9")
+			local strDamage	= String_GetWeaselString(Apollo.GetString("PublicEventStats_Damage"), self:HelperFormatNumber(tCurr.nDamage))
+			local strHealed	= String_GetWeaselString(Apollo.GetString("PublicEventStats_Healing"), self:HelperFormatNumber(tCurr.nHealed))
 
-		local strHeaderText = wndHeader:FindChild("PvPHeaderText"):GetData() or ""
-		local crTitleColor = ApolloColor.new("ff7fffb9")
-		local strDamage	= String_GetWeaselString(Apollo.GetString("PublicEventStats_Damage"), self:HelperFormatNumber(tCurr.nDamage))
-		local strHealed	= String_GetWeaselString(Apollo.GetString("PublicEventStats_Healing"), self:HelperFormatNumber(tCurr.nHealed))
-
-		-- Setting up the team names / headers
-		if eEventType == "CTF" or eEventType == "HoldTheLine" or eEventType == "Sabotage" then
-			if tCurr.strTeamName == "Exiles" then
-				crTitleColor = ApolloColor.new("ff31fcf6")
-			elseif tCurr.strTeamName == "Dominion" then
-				crTitleColor = ApolloColor.new("ffb80000")
-			end
-			local strKDA = String_GetWeaselString(Apollo.GetString("PublicEventStats_KDA"), tCurr.nKills, tCurr.nDeaths, tCurr.nAssists)
-
-			strHeaderText = String_GetWeaselString(Apollo.GetString("PublicEventStats_PvPHeader"), strKDA, strDamage, strHealed)
-		elseif eEventType == "Arena" then
-			strHeaderText = String_GetWeaselString(Apollo.GetString("PublicEventStats_ArenaHeader"), strDamage, strHealed) -- TODO, Rating Change when support is added
-			if tCurr.bIsMyTeam then
-				strMyTeamName = tCurr.strTeamName
-			end
-		elseif eEventType == "Warplot" then
-			strHeaderText = wndHeader:FindChild("PvPHeaderText"):GetData() or ""
-		end
-
-		wndHeader:FindChild("PvPHeaderText"):SetText(strHeaderText)
-		wndHeader:FindChild("PvPHeaderTitle"):SetTextColor(crTitleColor)
-		wndHeader:FindChild("PvPHeaderTitle"):SetText(tCurr.strTeamName)
-	end
-
-	for key, tParticipant in pairs(tMegaList.tStatsParticipant) do
-		local wndGrid = wndGridBot
-		if wndGridTop:GetData() == tParticipant.strTeamName then
-			wndGrid = wndGridTop
-		end
-
-		-- Custom Stats
-		if eEventType == "HoldTheLine" then
-			for idx, tCustomTable in pairs(tParticipant.arCustomStats) do
-				if tCustomTable.strName == Apollo.GetString("PublicEventStats_SecondaryPointCaptured") then
-					tParticipant.nCustomNodesCaptured = tCustomTable.nValue or 0
+			-- Setting up the team names / headers
+			if eEventType == "CTF" or eEventType == "HoldTheLine" or eEventType == "Sabotage" then
+				if tCurr.strTeamName == "Exiles" then
+					crTitleColor = ApolloColor.new("ff31fcf6")
+				elseif tCurr.strTeamName == "Dominion" then
+					crTitleColor = ApolloColor.new("ffb80000")
 				end
+				local strKDA = String_GetWeaselString(Apollo.GetString("PublicEventStats_KDA"), tCurr.nKills, tCurr.nDeaths, tCurr.nAssists)
+				strHeaderText = String_GetWeaselString(Apollo.GetString("PublicEventStats_PvPHeader"), strKDA, strDamage, strHealed)
+			elseif eEventType == "Arena" then
+				strHeaderText = String_GetWeaselString(Apollo.GetString("PublicEventStats_ArenaHeader"), strDamage, strHealed) -- TODO, Rating Change when support is added
+			--elseif eEventType == "Warplot" then
+			--	strHeaderText = wndHeader:FindChild("PvPHeaderText"):GetData() or ""
 			end
-		elseif eEventType == "CTF" then
-			for idx, tCustomTable in pairs(tParticipant.arCustomStats) do
-				if idx == 1 then
-					tParticipant.nCustomFlagsPlaced = tCustomTable.nValue or 0
-				else
-					tParticipant.bCustomFlagsStolen = tCustomTable.nValue or 0
-				end
-			end
+			
+			local strMatchName = tMatchState and tMatchState.arTeams and tMatchState.arTeams[eTeam] and tMatchState.arTeams[eTeam].strName
+
+			wndHeader:FindChild("PvPHeaderText"):SetText(strHeaderText)
+			wndHeader:FindChild("PvPHeaderTitle"):SetTextColor(crTitleColor)
+			wndHeader:FindChild("PvPHeaderTitle"):SetText(strMatchName or tCurr.strTeamName)
 		end
 	end
 
+	-- TODO: Duplicated code
+	local strMyTeam = ""
 	for key, tParticipant in pairs(tMegaList.tStatsParticipant) do
-		local wndGrid = wndGridBot
-		if wndGridTop:GetData() == tParticipant.strTeamName then
-			wndGrid = wndGridTop
-		end
+		local wndGrid = wndGridTop:GetData() == tParticipant.strTeamName and wndGridTop or wndGridBot
 
 		-- Custom Stats
 		if eEventType == "HoldTheLine" then
@@ -589,9 +628,44 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 			end
 		end
 
+		-- Find your team via name (TODO Need new logic for name collisions)
+		if tParticipant.strName == self.strMyName then
+			strMyTeam = tParticipant.strTeamName
+		end
+	end
+
+	for key, tParticipant in pairs(tMegaList.tStatsParticipant) do
+		local wndGrid = wndGridTop:GetData() == tParticipant.strTeamName and wndGridTop or wndGridBot
+
+		-- Custom Stats
+		if eEventType == "HoldTheLine" then
+			for idx, tCustomTable in pairs(tParticipant.arCustomStats) do
+				if tCustomTable.strName == Apollo.GetString("PublicEventStats_SecondaryPointCaptured") then
+					tParticipant.nCustomNodesCaptured = tCustomTable.nValue or 0
+				end
+			end
+		elseif eEventType == "CTF" then
+			for idx, tCustomTable in pairs(tParticipant.arCustomStats) do
+				if idx == 1 then
+					tParticipant.nCustomFlagsPlaced = tCustomTable.nValue or 0
+				else
+					tParticipant.bCustomFlagsStolen = tCustomTable.nValue or 0
+				end
+			end
+		end
+
+		-- Report Player
+		local rptInfraction = tParticipant.rptParticipant
+		if not rptInfraction then
+			local tData = self.wndMain:GetData()
+			local peCurrent = tData.peEvent
+			rptInfraction = peCurrent:PrepareInfractionReport(tParticipant.nParticipantIdx)
+		end
 
 		local wndCurrRow = self:HelperGridFactoryProduce(wndGrid, tParticipant.strName) -- GOTCHA: This is an integer
 		wndGrid:SetCellLuaData(wndCurrRow, 1, tParticipant.strName)
+		wndGrid:SetCellLuaData(wndCurrRow, 2, tParticipant.strTeamName == strMyTeam and rptInfraction)
+
 		for idx, strParticipantKey in pairs(ktParticipantKeys[eEventType]) do
 			local value = tParticipant[strParticipantKey]
 			if type(value) == "number" then
@@ -601,7 +675,6 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 			end
 
 			local strClassIcon = idx == 1 and kstrClassToMLIcon[tParticipant.eClass] or ""
-
 			wndGrid:SetCellDoc(wndCurrRow, idx, string.format("<T Font=\"CRB_InterfaceSmall\">%s%s</T>", strClassIcon, self:HelperFormatNumber(value)))
 		end
 	end
@@ -610,9 +683,58 @@ function PublicEventStats:HelperBuildPvPSharedGrids(wndParent, tMegaList, eEvent
 	wndGridBot:SetVScrollPos(nVScrollPosBot)
 	wndGridTop:SetSortColumn(nSortedColumnTop, bAscendingTop)
 	wndGridBot:SetSortColumn(nSortedColumnBot, bAscendingBot)
-	self.wndMain:FindChild("PvPLeaveMatchBtn"):Show(self.tZombieStats)
+	self.wndMain:FindChild("PvPLeaveMatchBtn"):Show(self.tZombieStats or (tMatchState and tMatchState.eState == MatchingGame.PVPGameState.Finished))
 	self.wndMain:FindChild("PvPSurrenderMatchBtn"):Show(not self.tZombieStats and eEventType == "WarPlot")
 end
+
+function PublicEventStats:OnPvPGridClick(wndHandler, wndControl, iRow, iCol, eMouseButton)
+	local strName = wndHandler:GetCellData(iRow, 1)
+	local rptParticipant = wndHandler:GetCellData(iRow, 2)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and strName and strName ~= self.strMyName then
+		-- GenericEvent_NewContextMenuPvPStats
+		self:OnContextMenuPlayerClosed()
+
+		self.wndPvPContextMenu = Apollo.LoadForm(self.xmlDoc, "ContextMenuPlayerForm", "TooltipStratum", self)
+		--[[ This is temporarily disabled until additional code support
+		self.wndPvPContextMenu:FindChild("BtnReportPlayer"):Show(rptParticipant) -- Invalid if other team
+		self.wndPvPContextMenu:FindChild("BtnReportPlayer"):SetData(rptParticipant)
+		]]--
+		self.wndPvPContextMenu:FindChild("BtnReportPlayer"):Show(false)
+		self.wndPvPContextMenu:FindChild("BtnAddRival"):SetData(strName)
+		self.wndPvPContextMenu:Invoke()
+
+		local nHeight = self.wndPvPContextMenu:FindChild("ButtonList"):ArrangeChildrenVert(0)
+		local nLeft, nTop, nRight, nBottom = self.wndPvPContextMenu:GetAnchorOffsets()
+		self.wndPvPContextMenu:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 60)
+
+		local tCursor = Apollo.GetMouse()
+		self.wndPvPContextMenu:Move(tCursor.x - knXCursorOffset, tCursor.y - knYCursorOffset, self.wndPvPContextMenu:GetWidth(), self.wndPvPContextMenu:GetHeight())
+	end
+end
+
+function PublicEventStats:OnContextMenuAddRival(wndHandler, wndControl)
+	local strTarget = wndHandler:GetData()
+	FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Rival, strTarget)
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToRivals"), strTarget))
+	self:OnContextMenuPlayerClosed()
+end
+
+function PublicEventStats:OnContextMenuReportPlayer(wndHandler, wndControl)
+	local rptParticipant = wndHandler:GetData()
+	Event_FireGenericEvent("GenericEvent_ReportPlayerPvP", rptParticipant)
+	self:OnContextMenuPlayerClosed()
+end
+
+function PublicEventStats:OnContextMenuPlayerClosed(wndHandler, wndControl)
+	if self.wndPvPContextMenu and self.wndPvPContextMenu:IsValid() then
+		self.wndPvPContextMenu:Destroy()
+		self.wndPvPContextMenu = nil
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Public Event Grid
+-----------------------------------------------------------------------------------------------
 
 function PublicEventStats:BuildPublicEventGrid(wndGrid, tMegaList)
 	local nVScrollPos = wndGrid:GetVScrollPos()
@@ -626,7 +748,8 @@ function PublicEventStats:BuildPublicEventGrid(wndGrid, tMegaList)
 			local wndCurrRow = self:HelperGridFactoryProduce(wndGrid, tCurr.strName) -- GOTCHA: This is an integer
 			wndGrid:SetCellLuaData(wndCurrRow, 1, tCurr.strName)
 
-			local tAttributes = {tCurr.strName, tCurr.nContributions, tCurr.nDamage, tCurr.nDamageReceived, tCurr.nHealed, tCurr.nHealingReceived}
+			local strName = (tCurr.strName and tCurr.strName ~= "") and tCurr.strName or Apollo.GetString("PublicEventStats_Total")
+			local tAttributes = {strName, tCurr.nContributions, tCurr.nDamage, tCurr.nDamageReceived, tCurr.nHealed, tCurr.nHealingReceived}
 			for idx, oValue in pairs(tAttributes) do
 				if type(oValue) == "number" then
 					wndGrid:SetCellSortText(wndCurrRow, idx, string.format("%8d", oValue))
@@ -677,7 +800,8 @@ function PublicEventStats:OnPVPMatchFinished(eWinner, eReason, nDeltaTeam1, nDel
 		eMyTeam = tMatchState.eMyTeam
 	end
 
-	if eEventType == PublicEvent.PublicEventType_PVP_Arena then
+	-- Hold The Line changes player factions based on whether they're attacking or defending, so we cannot use faction specific strings
+	if eEventType == PublicEvent.PublicEventType_PVP_Arena or eEventType == PublicEvent.PublicEventType_PVP_Battleground_HoldTheLine then
 		if eMyTeam == eWinner then
 			strMessage = Apollo.GetString("PublicEventStats_ArenaVictory")
 		else
@@ -714,7 +838,6 @@ function PublicEventStats:OnPVPMatchFinished(eWinner, eReason, nDeltaTeam1, nDel
 	if tMatchState and eEventType == PublicEvent.PublicEventType_PVP_Arena and tMatchState.arTeams then
 		local strMyArenaTeamName = ""
 		local strOtherArenaTeamName = ""
-		local strMyTeamName = ""
 		local wndHeaderTop 	= self.wndMain:FindChild("MainGridContainer:PvPArenaContainer:PvPTeamHeaderTop")
 		local wndHeaderBot 	= self.wndMain:FindChild("MainGridContainer:PvPArenaContainer:PvPTeamHeaderBot")
 		for idx, tCurr in pairs(tMatchState.arTeams) do
@@ -729,13 +852,12 @@ function PublicEventStats:OnPVPMatchFinished(eWinner, eReason, nDeltaTeam1, nDel
 
 			if eMyTeam == tCurr.nTeam then
 				strMyArenaTeamName = String_GetWeaselString(Apollo.GetString("PublicEventStats_RatingChange"), tCurr.strName, tCurr.nRating + self.arRatingDelta[idx], strDelta)
-				strMySimpleTeamName = tCurr.strName
 			else
 				strOtherArenaTeamName = String_GetWeaselString(Apollo.GetString("PublicEventStats_RatingChange"), tCurr.strName, tCurr.nRating + self.arRatingDelta[idx], strDelta)
 			end
 		end
 
-		if wndHeaderTop:GetData() == strMySimpleTeamName then
+		if wndHeaderTop == self.wndMyTeam then
 			wndHeaderTop:FindChild("PvPHeaderTitle"):SetText(strMyArenaTeamName)
 			wndHeaderBot:FindChild("PvPHeaderTitle"):SetText(strOtherArenaTeamName)
 		else
@@ -759,8 +881,16 @@ end
 -----------------------------------------------------------------------------------------------
 -- Match Ending and Closing methods
 -----------------------------------------------------------------------------------------------
+function PublicEventStats:OnChangeWorld()
+	if self.wndMain then
+		self.wndMain:FindChild("BGPvPWinnerTopBarArtText"):SetText("")
+	end
+	
+	self.wndMyTeam = nil
+	self:OnClose()
+end
 
-function PublicEventStats:OnClose(wndHandler, wndControl) -- Also LeaveAdventureBtn, AdventureCloseBtn
+function PublicEventStats:OnClose(wndHandler, wndControl) -- Also AdventureCloseBtn
 	self.tZombieStats = nil
 	if self.wndMain then
 		local peCurrent = self.wndMain:GetData() and self.wndMain:GetData().peEvent
@@ -774,6 +904,10 @@ function PublicEventStats:OnClose(wndHandler, wndControl) -- Also LeaveAdventure
 	if self.wndAdventure then
 		self.wndAdventure:Destroy()
 		self.wndAdventure = nil
+	end
+	if self.wndDungeonMedalsForm and self.wndDungeonMedalsForm:IsValid() then
+		self.wndDungeonMedalsForm:Destroy()
+		self.wndDungeonMedalsForm = nil
 	end
 end
 
@@ -797,7 +931,7 @@ end
 -- Adventures Summary
 -----------------------------------------------------------------------------------------------
 
-function PublicEventStats:BuildAdventuresSummary(tMegaList, peAdventure)
+function PublicEventStats:BuildAdventuresSummary(tMegaList, peAdventure) -- Also Dungeons
 	self.wndAdventure = Apollo.LoadForm(self.xmlDoc , "AdventureEventStatsForm", nil, self)
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MatchMaker_Adventures")})
 
@@ -854,19 +988,24 @@ function PublicEventStats:BuildAdventuresSummary(tMegaList, peAdventure)
 
 	-- Reward Tier
 	if self.tZombieStats and self.tZombieStats.eRewardTier and self.tZombieStats.eRewardType ~= 0 then -- TODO: ENUM!!
-		wndCurr:FindChild("BGRewardTierFrame"):SetText(ktRewardTierInfo[self.tZombieStats.eRewardTier][1])
-		wndCurr:FindChild("BGRewardTierIcon"):SetSprite(ktRewardTierInfo[self.tZombieStats.eRewardTier][2])
+		wndCurr:FindChild("RewardTierMessage"):SetText(ktRewardTierInfo[self.tZombieStats.eRewardTier].strText)
+		wndCurr:FindChild("RewardTierIcon"):SetSprite(ktRewardTierInfo[self.tZombieStats.eRewardTier].strSprite)
 	else
-		wndCurr:FindChild("BGRewardTierFrame"):SetText("")
+		wndCurr:FindChild("RewardTierMessage"):SetText("")
+		wndCurr:FindChild("RewardTierIcon"):SetSprite("")
 	end
 
+	-- Time in title
 	if self.tZombieStats then
 		local strTime = self:HelperConvertTimeToString(self.tZombieStats.nElapsedTime)
 		local strTitle = String_GetWeaselString(Apollo.GetString("PublicEventStats_PlayerStats"), peAdventure:GetName())
-		wndCurr:FindChild("BGTop"):SetText(String_GetWeaselString(Apollo.GetString("PublicEventStats_TimerHeader"), strTitle, strTime))
+		wndCurr:FindChild("AdventureTitle"):SetText(String_GetWeaselString(Apollo.GetString("PublicEventStats_TimerHeader"), strTitle, strTime))
 	else
-		wndCurr:FindChild("BGTop"):SetText(String_GetWeaselString(Apollo.GetString("PublicEventStats_PlayerStats"), peAdventure:GetName()))
+		wndCurr:FindChild("AdventureTitle"):SetText(String_GetWeaselString(Apollo.GetString("PublicEventStats_PlayerStats"), peAdventure:GetName()))
 	end
+
+	wndCurr:FindChild("OpenDungeonMedalsBtn"):SetData(peAdventure)
+	wndCurr:FindChild("OpenDungeonMedalsBtn"):Show(peAdventure:GetEventType() == PublicEvent.PublicEventType_Dungeon)
 end
 
 function PublicEventStats:HelperCompareAdventureScores(tSelf, tCurr, tScore)
@@ -902,6 +1041,83 @@ function PublicEventStats:HelperCompareAdventureScores(tSelf, tCurr, tScore)
 end
 
 -----------------------------------------------------------------------------------------------
+-- Dungeon Medals
+-----------------------------------------------------------------------------------------------
+
+function PublicEventStats:OnOpenDungeonMedalsBtn(wndHandler, wndControl)
+	if self.wndDungeonMedalsForm and self.wndDungeonMedalsForm:IsValid() then
+		self.wndDungeonMedalsForm:Destroy()
+		self.wndDungeonMedalsForm = nil
+	else
+		self:BuildDungeonMedalScreen(wndHandler:GetData())
+	end
+end
+
+function PublicEventStats:OnDungeonMedalsClose(wndHandler, wndControl)
+	if self.wndDungeonMedalsForm and self.wndDungeonMedalsForm:IsValid() then
+		self.wndDungeonMedalsForm:Destroy()
+		self.wndDungeonMedalsForm = nil
+	end
+end
+
+function PublicEventStats:BuildDungeonMedalScreen(peDungeon)
+	if not self.tZombieStats or not self.tZombieStats.arObjectives then
+		return
+	end
+
+	-- Currently:
+	-- Bronze: All Optionals
+	-- Silver: All Optionals + Beat rawThreshold Time
+	-- Gold: All Challenges + Don't Die
+	local strPass = ""
+	local strFail = ""
+	local nPass = 0
+	local nTotal = 0
+	for idx, tData in pairs(self.tZombieStats.arObjectives) do -- GOTCHA: Zombie Stats is needed as the event won't have :GetObjectives() when finished
+		local peoObjective = tData.peoObjective
+		local bPass = tData.eStatus == PublicEventObjective.PublicEventStatus_Succeeded -- Other states include Succeeded, Active, Inactive and Failed
+		if not peoObjective:IsHidden() then
+			-- Objective description, with fail safes
+			local strObjective = string.len(peoObjective:GetShortDescription()) > 0 and peoObjective:GetShortDescription() or peoObjective:GetDescription()
+			strObjective = string.len(strObjective) > 0 and strObjective or peoObjective:GetObjectiveId() -- Fail safe
+
+			-- Different formatting based on pass/fail and challenge/objective
+			local eCategory = peoObjective:GetCategory()
+			if bPass and eCategory == PublicEventObjective.PublicEventObjectiveCategory_Challenge then
+				strPass = strPass .. "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">" .. kstrDungeonGoldIcon .. " " .. strObjective .. "</P>"
+			elseif eCategory == PublicEventObjective.PublicEventObjectiveCategory_Challenge then
+				strFail = strFail .. "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">" .. kstrDungeonGoldIcon .. " " .. strObjective .. "</P>"
+			elseif bPass and eCategory == PublicEventObjective.PublicEventObjectiveCategory_Optional then
+				strPass = strPass .. "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">" .. kstrDungeonBronzeIcon .. " " .. strObjective .. "</P>"
+			elseif eCategory == PublicEventObjective.PublicEventObjectiveCategory_Optional then
+				strFail = strFail .. "<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">" .. kstrDungeonBronzeIcon .. " " .. strObjective .. "</P>"
+			end
+
+			if eCategory == PublicEventObjective.PublicEventObjectiveCategory_Challenge or eCategory == PublicEventObjective.PublicEventObjectiveCategory_Optional then
+				nTotal = nTotal + 1
+				nPass = nPass + (bPass and 1 or 0)
+			end
+		end
+	end
+
+	-- Build and Resize Forms
+	self.wndDungeonMedalsForm = Apollo.LoadForm(self.xmlDoc	, "DungeonMedalsForm", nil, self)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsPassTitle"):SetText(String_GetWeaselString(Apollo.GetString("PublicEventStats_DungeonPassTitle"), tostring(nPass), tostring(nTotal)))
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsPassText"):SetAML(strPass)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsPassText"):SetHeightToContentHeight()
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsPassScroll"):ArrangeChildrenVert(0)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsNoPassMessage"):Show(nPass == 0)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsNoPassMessage"):SetText(Apollo.GetString("PublicEventStats_RandomNoPassFlavor_"..math.random(1, knNumRandomDungeonNoPassFlavor)) or "")
+
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsFailTitle"):SetText(String_GetWeaselString(Apollo.GetString("PublicEventStats_DungeonFailTitle"), tostring(nTotal - nPass), tostring(nTotal)))
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsFailText"):SetAML(strFail)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsFailText"):SetHeightToContentHeight()
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsFailScroll"):ArrangeChildrenVert(0)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsNoFailMessage"):Show(nPass == nTotal)
+	self.wndDungeonMedalsForm:FindChild("DungeonMedalsNoFailMessage"):SetText(Apollo.GetString("PublicEventStats_RandomNoFailFlavor_"..math.random(1, knNumRandomDungeonNoFailFlavor)) or "")
+end
+
+-----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
 
@@ -919,10 +1135,11 @@ function PublicEventStats:HelperBuildCombinedList(tStatsSelf, tStatsTeam, tStats
 	end
 
 	if tStatsParticipants then
-		for key, tCurr in pairs(tStatsParticipants) do
+		for nParticipantIdx, tCurr in pairs(tStatsParticipants) do
 			if not tMegaList.tStatsParticipant then
 				tMegaList.tStatsParticipant = {}
 			end
+			tCurr.nParticipantIdx = nParticipantIdx -- We need this later for Report Player
 			table.insert(tMegaList.tStatsParticipant, tCurr)
 		end
 	end

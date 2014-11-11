@@ -1,0 +1,4 @@
+<Addon Name="PathFrame" Version="1">
+    <Script Name="PathFrame.lua" />
+    <Form Name="PathFrame.xml" />
+</Addon>

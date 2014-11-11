@@ -80,11 +80,10 @@ function Datachron:OnRestore(eType, tSavedData)
 end
 
 function Datachron:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 
-	Apollo.RegisterEventHandler("Datachron_FlashIndicators", 		"FlashIndicators", self)
 	Apollo.RegisterEventHandler("Datachron_HideCallPulse", 			"OnDatachron_HideCallPulse", self)
 
 	Apollo.RegisterEventHandler("ChangeWorld", 						"OnChangeWorld", self) -- From code
@@ -105,8 +104,11 @@ function Datachron:OnDocumentReady()
 	Apollo.RegisterEventHandler("Communicator_SpamVOEnded", 		"OnCommunicator_SpamVOEnded", self)
 	Apollo.RegisterEventHandler("Communicator_ShowQuestMsg", 		"OnCommunicator_ShowQuestMsg", self)
 
-	Apollo.RegisterTimerHandler("Datachron_MaxMissedCallTimer",		"Datachron_MaxMissedCallTimer", self)
-	Apollo.RegisterTimerHandler("NpcBubbleFade", 					"OnNpcBubbleFade", self) -- Comm Display fade after time
+	self.timerMissedCall = ApolloTimer.Create(60.0, false, "Datachron_MaxMissedCallTimer", self)
+	self.timerMissedCall:Stop()
+	
+	self.timerNPCBubbleFade = ApolloTimer.Create(9.500, false, "OnNpcBubbleFade", self)
+	self.timerNPCBubbleFade:Stop()
 
 	g_wndDatachron 			= Apollo.LoadForm(self.xmlDoc, "Datachron", "FixedHudStratum", self) -- Do not rename. This is global and used by other forms as a parent.
 	g_wndDatachron:Show(false, true)
@@ -255,18 +257,6 @@ function Datachron:OnCommPotraitClicked()
 	self:OnCommPlayBtn() -- From Comm Display
 end
 
-function Datachron:FlashIndicators(fArgDuration, bUseFastSprites)
-	local fDuration = fArgDuration or 4.000
-
-	Apollo.StopTimer("StopFlashIndicatorsTimer")
-
-	if fDuration ~= -1 then
-		Apollo.RegisterTimerHandler("StopFlashIndicatorsTimer", "StopFlashIndicators", self)
-		Apollo.CreateTimer("StopFlashIndicatorsTimer", fDuration, false)
-		Apollo.StartTimer("StopFlashIndicatorsTimer")
-	end
-end
-
 function Datachron:HideCommDisplay()
 	Event_FireGenericEvent("HideCommDisplay")
 	self.idCreature = nil
@@ -299,20 +289,18 @@ function Datachron:OnPlayerResurrected()
 end
 
 function Datachron:OnDialog_Close() -- User clicks done in the dialog speech bubbles
-	Apollo.StopTimer("NpcBubbleFade")
+	self.timerNPCBubbleFade:Stop()
 
 	if next(self.tQueuedSpamMsgs) ~= nil then
 		self:HideCommDisplay()
 		self:ProcessDatachronState()
 	else
-		Apollo.CreateTimer("NpcBubbleFade", 9.500, false)
-		Apollo.StartTimer("NpcBubbleFade")
+		self.timerNPCBubbleFade = ApolloTimer.Create(9.500, false, "OnNpcBubbleFade", self)
 	end
 end
 
 function Datachron:OnNpcBubbleFade()
 	-- NPC bubble fades out
-	Apollo.StopTimer("NpcBubbleFade")
 	self:HideCommDisplay()
 	if self.idSpamMsg ~= 0 then
 		CommunicatorLib.QueueNextCall(self.idSpamMsg)
@@ -322,7 +310,7 @@ end
 
 function Datachron:OnCommDisplay_Closed()
 	-- User clicks x button on the comm display
-	Apollo.StopTimer("NpcBubbleFade")
+	self.timerNPCBubbleFade:Stop()
 	self:HideCommDisplay()
 	if self.idSpamMsg ~= 0 then
 		CommunicatorLib.QueueNextCall(self.idSpamMsg)
@@ -375,7 +363,7 @@ function Datachron:OnDialog_ShowState(eState, queCurr) -- Talking to an NPC
 
 		self.strCurrentState = "DialogOngoing"
 
-		Apollo.StopTimer("NpcBubbleFade")
+		self.timerNPCBubbleFade:Stop()
 
 		local tLayout = nil
 		if queCurr then
@@ -497,6 +485,7 @@ function Datachron:OnDenyCallbackBtn(wndHandler, wndControl) -- CommCallDeny
 
 	if self.strCurrentState == "SpamOngoing" then
 		Event_FireGenericEvent("CloseCommDisplay")
+		self.timerNPCBubbleFade:Stop()
 		self:OnNpcBubbleFade() -- Warning, instead of going to NoCalls simulate a BubbleFade. Potentially hazardous.
 		return
 	end
@@ -580,7 +569,7 @@ function Datachron:DrawCallSystem(strNewState)
 
 	self.bIncomingOngoing = false
 	Event_FireGenericEvent("DatachronCallCleared")
-	Apollo.StopTimer("Datachron_MaxMissedCallTimer")
+	self.timerMissedCall:Stop()
 
 	-- Super Huge State Machine
 	local ktValidDenyEnable =
@@ -630,12 +619,10 @@ function Datachron:DrawCallSystem(strNewState)
 		self.wndMinimized:FindChild("IncomingCreatureNameMin"):SetText("")
 	elseif strLocalState == "IncomingOngoing" then
 		self.bIncomingOngoing = true
-		self:FlashIndicators(13.500, true)
 		Event_FireGenericEvent("DatachronCallIncoming")
 	elseif strLocalState == "MissedCall" then
-		self:FlashIndicators(-1) -- The -1 means infinite
 		Event_FireGenericEvent("DatachronCallMissed")
-		Apollo.CreateTimer("Datachron_MaxMissedCallTimer", 60, false)
+		self.timerMissedCall:Start()
 		self.wndMinimized:FindChild("IncomingCreatureNameMin"):SetText(Apollo.GetString("Datachron_MissedCallTitle"))
 	elseif strLocalState == "SpamOngoing" or strLocalState == "DialogOngoing" or strLocalState == "TurnOffButtons" then
 		-- Do nothing (rely on default states)
@@ -680,10 +667,8 @@ function Datachron:ProcessSpamQueue()
 		fDuration = tLayout.fDuration
 	end
 
-	Apollo.StopTimer("NpcBubbleFade")
-	Apollo.CreateTimer("NpcBubbleFade", fDuration, false)
-	Apollo.StartTimer("NpcBubbleFade")
-
+	self.timerNPCBubbleFade:Stop()
+	self.timerNPCBubbleFade = ApolloTimer.Create(fDuration, false, "OnNpcBubbleFade", self)
 	self:SetCommunicatorCreature(idCreature)
 	Event_FireGenericEvent("ShowCommDisplay")
 	self:DrawCallSystem()
@@ -693,7 +678,6 @@ function Datachron:ProcessSpamQueue()
 end
 
 function Datachron:Datachron_MaxMissedCallTimer()
-	Apollo.StopTimer("Datachron_MaxMissedCallTimer")
 	if self.strCurrentState == "MissedCall" then
 		self:DrawCallSystem(self:BuildCallbackList() and "CommQueueAvail" or "NoCalls")
 	end

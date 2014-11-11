@@ -10,7 +10,7 @@ require "DialogResponse"
 local Dialog = {}
 
 -- TODO Hardcoded Colors for Items
-local karEvalColors = 
+local karEvalColors =
 {
 	[Item.CodeEnumItemQuality.Inferior] 		= ApolloColor.new("ItemQuality_Inferior"),
 	[Item.CodeEnumItemQuality.Average] 			= ApolloColor.new("ItemQuality_Average"),
@@ -21,9 +21,15 @@ local karEvalColors =
 	[Item.CodeEnumItemQuality.Artifact]		 	= ApolloColor.new("ItemQuality_Artifact"),
 }
 
-local kcrDefaultOptionColor = ApolloColor.new("white")
+local kcrDefaultOptionColor = ApolloColor.new("UI_TextHoloBody")
 local kcrHighlightOptionColor = ApolloColor.new(110/255, 255/255, 72/255, 1.0)
+local kstrRewardColor = "BubbleTextRegular"
+local kstrVendorColor = "BubbleTextRegular"
+local kstrGoodbyeColor = "UI_TextMetalBodyHighlight"
+local kcrMoreInfoColor = ApolloColor.new("UI_TextMetalBodyHighlight")
+local kcrDefaultColor = ApolloColor.new("UI_TextHoloBody")
 
+local knMaxRewardItemsShown = 4
 function Dialog:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -41,7 +47,7 @@ end
 ---------------------------------------------------------------------------------------------------
 function Dialog:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("Dialog.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function Dialog:OnDocumentReady()
@@ -51,7 +57,6 @@ function Dialog:OnDocumentReady()
 	Apollo.LoadSprites("UI\\Dialog\\DialogSprites.xml") -- Old
 	Apollo.RegisterEventHandler("Dialog_ShowState", "OnDialog_ShowState", self)
 	Apollo.RegisterEventHandler("Dialog_Close", "OnDialog_Close", self)
-	Apollo.RegisterTimerHandler("DialogUpdateTimer", "OnUpdateTimer", self)
 
 	self.wndPlayer = Apollo.LoadForm(self.xmlDoc, "PlayerWindow", nil, self)
 	self.wndPlayer:ToFront()
@@ -67,9 +72,9 @@ function Dialog:OnDocumentReady()
 	self.wndItem:Show(false, true)
 
 	self.bRewardPicked = false
-	
-	Apollo.CreateTimer("DialogUpdateTimer", 0.050, true)
-	Apollo.StopTimer("DialogUpdateTimer")
+
+	self.timerUpdate = ApolloTimer.Create(0.050, true, "OnUpdateTimer", self)
+	self.timerUpdate:Stop()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -79,7 +84,7 @@ function Dialog:OnDialog_Close()
 	self.wndPlayer:Show(false)
 	self.wndItem:Show(false)
 	self.wndNpc:Show(false)
-	Apollo.StopTimer("DialogUpdateTimer")
+	self.timerUpdate:Stop()
 end
 
 function Dialog:OnDialog_ShowState(eState, queCurrent)
@@ -115,7 +120,7 @@ function Dialog:OnDialog_ShowState(eState, queCurrent)
 	elseif DialogSys.GetCommCreatureId() == nil then
 		self:DrawItemBubble(self.wndItem, eState, idQuest)
 	end
-	Apollo.StartTimer("DialogUpdateTimer")
+	self.timerUpdate:Start()
 end
 
 function Dialog:DrawResponses(eState, idQuest, tResponseList)
@@ -130,7 +135,7 @@ function Dialog:DrawResponses(eState, idQuest, tResponseList)
 	local queCurr = DialogSys.GetViewableQuest(idQuest)
 	local strTopResponseText = DialogSys.GetResponseText()
 	if queCurr and queCurr:GetRewardData() and #queCurr:GetRewardData() > 0 and strTopResponseText and string.len(strTopResponseText) > 0 then
-		self.wndPlayer:FindChild("TopSummaryText"):SetAML("<P Font=\"CRB_Dialog\" TextColor=\"ff7fffb9\">"..strTopResponseText.."</P>")
+		self.wndPlayer:FindChild("TopSummaryText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\""..kstrRewardColor.."\">"..strTopResponseText.."</P>")
 		self.wndPlayer:FindChild("TopSummaryText"):SetHeightToContentHeight()
 		self.wndPlayer:FindChild("TopSummaryText"):Show(true)
 		local nLeft, nTop, nRight, nBottom = self.wndPlayer:FindChild("TopSummaryText"):GetAnchorOffsets()
@@ -147,7 +152,7 @@ function Dialog:DrawResponses(eState, idQuest, tResponseList)
 		if eResponseType == DialogResponse.DialogResponseType_ViewVending then
 
 			wndCurr = self.wndPlayer:FindChild("VendorContainer")
-			wndCurr:FindChild("VendorText"):SetAML("<P Font=\"CRB_Dialog\" TextColor=\"ff7fffb9\">"..drResponse:GetText().."</P>")
+			wndCurr:FindChild("VendorText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\""..kstrVendorColor.."\">"..drResponse:GetText().."</P>")
 			wndCurr:FindChild("VendorIcon"):SetSprite(self:HelperComputeIconPath(eResponseType))
 			wndCurr:FindChild("VendorBtn"):SetData(drResponse)
 			wndCurr:Show(true)
@@ -156,7 +161,7 @@ function Dialog:DrawResponses(eState, idQuest, tResponseList)
 		elseif eResponseType == DialogResponse.DialogResponseType_Goodbye then
 
 			wndCurr = self.wndPlayer:FindChild("GoodbyeContainer")
-			wndCurr:FindChild("GoodbyeText"):SetAML("<P Font=\"CRB_Dialog\" TextColor=\"ff8096a8\">"..drResponse:GetText().."</P>")
+			wndCurr:FindChild("GoodbyeText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\""..kstrGoodbyeColor.."\">"..drResponse:GetText().."</P>")
 			wndCurr:FindChild("GoodbyeIcon"):SetSprite(self:HelperComputeIconPath(eResponseType))
 			wndCurr:FindChild("GoodbyeBtn"):SetData(drResponse)
 			wndCurr:Show(true)
@@ -168,16 +173,16 @@ function Dialog:DrawResponses(eState, idQuest, tResponseList)
 			self:HelperComputeRewardIcon(wndCurr, drResponse:GetRewardId(), queCurr:GetRewardData().arRewardChoices)
 			wndCurr:FindChild("ResponseItemText"):SetData(drResponse:GetText())
 			wndCurr:FindChild("ResponseItemText"):SetText(drResponse:GetText())
-			wndCurr:FindChild("ResponseItemText"):SetFont("CRB_Dialog")
+			wndCurr:FindChild("ResponseItemText"):SetFont("CRB_InterfaceMedium")
 			wndCurr:FindChild("ResponseItemText"):SetTextColor(self:HelperComputeRewardTextColor(drResponse:GetRewardId(), DialogSys.GetViewableQuest(idQuest):GetRewardData()))
 			wndCurr:FindChild("ResponseItemBtn"):SetData(drResponse)
 			nResponseHeight = nResponseHeight + wndCurr:GetHeight()
 		else
-			local crTextColor = eResponseType == DialogResponse.DialogResponseType_QuestMoreInfo and CColor.new(128/255, 150/255, 168/255, 1) or CColor.new(1, 1, 1, 1)
+			local crTextColor = eResponseType == DialogResponse.DialogResponseType_QuestMoreInfo and kcrMoreInfoColor or kcrDefaultColor
 			wndCurr = Apollo.LoadForm(self.xmlDoc, "ResponseItem", self.wndPlayer:FindChild("ResponseItemContainer"), self)
 			wndCurr:FindChild("ResponseItemIcon"):SetSprite(self:HelperComputeIconPath(eResponseType))
 			wndCurr:FindChild("ResponseItemText"):SetText(drResponse:GetText())
-			wndCurr:FindChild("ResponseItemText"):SetFont("CRB_Dialog")
+			wndCurr:FindChild("ResponseItemText"):SetFont("CRB_InterfaceMedium")
 			wndCurr:FindChild("ResponseItemText"):SetTextColor(crTextColor)
 			wndCurr:FindChild("ResponseItemBtn"):SetData(drResponse)
 			nResponseHeight = nResponseHeight + wndCurr:GetHeight()
@@ -191,18 +196,25 @@ function Dialog:DrawResponses(eState, idQuest, tResponseList)
 	self.wndPlayer:FindChild("PlayerWindowContainer"):ArrangeChildrenVert()
 
 	Event_FireGenericEvent("Test_MouseReturnSignal") -- TODO: possibly remove
-	
+
 	self.wndPlayer:SetAnchorOffsets(self.nWndPlayerLeft, self.nWndPlayerTop, self.nWndPlayerRight, self.nWndPlayerBottom + nOnGoingHeight + nResponseHeight)
 	self.wndPlayer:Show(true)
 	self.wndPlayer:ToFront()
 end
 
-function Dialog:OnResponseBtnClick(wndHandler, wndControl) -- ResponseItemBtn
+function Dialog:OnResponseBtnClick(wndHandler, wndControl, eMouseButton) -- ResponseItemBtn
 	if not wndHandler or not wndHandler:GetData() then
 		return
 	end
 
 	local drResponse = wndHandler:GetData()
+
+	-- Early exit if context menu
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right then
+		-- OnLootItemMouseUp should be fired instead
+		return
+	end
+
 	if drResponse:GetRewardId() and drResponse:GetRewardId() ~= 0 and drResponse:GetRewardId() ~= self.bRewardPicked then
 		-- Reset text first
 		for idx, wndCurr in pairs(self.wndPlayer:FindChild("ResponseItemContainer"):GetChildren()) do
@@ -219,6 +231,12 @@ function Dialog:OnResponseBtnClick(wndHandler, wndControl) -- ResponseItemBtn
 	end
 end
 
+function Dialog:OnLootItemMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Helpers
 ---------------------------------------------------------------------------------------------------
@@ -226,13 +244,13 @@ end
 function Dialog:HelperComputeIconPath(eResponseType)
 	local strSprite = "CRB_DialogSprites:sprDialog_Icon_Decline"
 	if eResponseType == DialogResponse.DialogResponseType_ViewVending then
-		strSprite = "sprMM_VendorGeneral"
+		strSprite = "CRB_DialogSprites:sprDialog_Icon_Vendor"
 	elseif eResponseType == DialogResponse.DialogResponseType_ViewTraining then
-		strSprite = "sprMM_VendorGeneral"
+		strSprite = "CRB_DialogSprites:sprDialog_Icon_Trainer"
 	elseif eResponseType == DialogResponse.DialogResponseType_ViewCraftingStation then
-		strSprite = "sprMM_VendorGeneral"
+		strSprite = "CRB_DialogSprites:sprDialog_Icon_Vendor"
 	elseif eResponseType == DialogResponse.DialogResponseType_ViewTradeskillTraining then
-		strSprite = "sprMM_VendorGeneral"
+		strSprite = "CRB_DialogSprites:sprDialog_Icon_Tradeskill"
 	elseif eResponseType == DialogResponse.DialogResponseType_ViewQuestAccept then
 		strSprite = "CRB_DialogSprites:sprDialog_Icon_Exclamation"
 	elseif eResponseType == DialogResponse.DialogResponseType_ViewQuestComplete then
@@ -264,7 +282,7 @@ function Dialog:HelperComputeRewardTextColor(idReward, tChoiceRewardData)
 			break
 		end
 	end
-	
+
 	return kcrDefaultOptionColor
 end
 
@@ -285,7 +303,7 @@ function Dialog:HelperComputeRewardIcon(wndCurr, idReward, tChoiceRewardData)
 		local strIconSprite = ""
 		if tFoundRewardData.eType == Quest.Quest2RewardType_Item then
 			strIconSprite = tFoundRewardData.itemReward:GetIcon()
-			self:HelperBuildItemTooltip(wndCurr, tFoundRewardData.itemReward)
+			wndCurr:SetData(tFoundRewardData.itemReward) -- For OnGenerateTooltip and Right Click
 		elseif tFoundRewardData.eType == Quest.Quest2RewardType_Reputation then
 			strIconSprite = "Icon_ItemMisc_UI_Item_Parchment"
 			wndCurr:SetTooltip(String_GetWeaselString(Apollo.GetString("Dialog_FactionRepReward"), tFoundRewardData.nAmount, tFoundRewardData.strFactionName))
@@ -315,8 +333,8 @@ function Dialog:HelperComputeRewardIcon(wndCurr, idReward, tChoiceRewardData)
 				if tDenomInfo ~= nil then
 					strText = tFoundRewardData.nAmount .. " " .. tDenomInfo[1].strName
 					strIconSprite = "ClientSprites:Icon_ItemMisc_bag_0001"
-					wndCurr:SetTooltip(strText)				
-				end	
+					wndCurr:SetTooltip(strText)
+				end
 			end
 		end
 
@@ -327,8 +345,7 @@ function Dialog:HelperComputeRewardIcon(wndCurr, idReward, tChoiceRewardData)
 	end
 end
 
-
-function Dialog:HelperDrawLootItem(wndCurrReward, tCurrReward)
+function Dialog:HelperDrawLootItem(wndCurrReward, tCurrReward, bSimple)
 	local strIconSprite = ""
 	if tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_Item then
 
@@ -336,14 +353,20 @@ function Dialog:HelperDrawLootItem(wndCurrReward, tCurrReward)
 		wndCurrReward:FindChild("LootDescription"):SetText(tCurrReward.itemReward:GetName())
 		wndCurrReward:FindChild("LootDescription"):SetTextColor(karEvalColors[tCurrReward.itemReward:GetItemQuality()])
 		wndCurrReward:FindChild("LootItemCantUse"):Show(self:HelperPrereqFailed(tCurrReward.itemReward))
-		self:HelperBuildItemTooltip(wndCurrReward, tCurrReward.itemReward)
+		wndCurrReward:SetData(tCurrReward.itemReward) -- For OnGenerateTooltip and Right Click
 
 	elseif tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_Reputation then
 
 		-- Reputation has overloaded fields: objectId is factionId. objectAmount is rep amount.
 		strIconSprite = "Icon_ItemMisc_UI_Item_Parchment"
 		wndCurrReward:FindChild("LootDescription"):SetText(String_GetWeaselString(Apollo.GetString("Dialog_FactionRepReward"), tCurrReward.nAmount, tCurrReward.strFactionName))
+		wndCurrReward:FindChild("LootDescription"):SetHeightToContentHeight()
+		local nLeft, nTop, nRight, nBottom = wndCurrReward:FindChild("LootDescription"):GetAnchorOffsets()
+		local nLeft2, nTop2, nRight2, nBottom2 = wndCurrReward:GetAnchorOffsets()
+		wndCurrReward:FindChild("LootDescription"):SetAnchorOffsets(nLeft, nTop, nRight, nBottom)
+		wndCurrReward:SetAnchorOffsets(nLeft2, nTop2, nRight2, nBottom)
 		wndCurrReward:SetTooltip(String_GetWeaselString(Apollo.GetString("Dialog_FactionRepReward"), tCurrReward.nAmount, tCurrReward.strFactionName))
+
 
 	elseif tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_TradeSkillXp then
 
@@ -385,16 +408,26 @@ function Dialog:HelperDrawLootItem(wndCurrReward, tCurrReward)
 				strIconSprite = "ClientSprites:Icon_ItemMisc_bag_0001"
 				wndCurrReward:FindChild("LootDescription"):Show(false)
 				wndCurrReward:FindChild("LootCashWindow"):Show(true)
-				wndCurrReward:FindChild("LootCashWindow"):SetMoneySystem(tCurrReward.eCurrencyType or 0)				
-				wndCurrReward:FindChild("LootCashWindow"):SetAmount(tCurrReward.nAmount, 0)				
-				wndCurrReward:SetTooltip(strText)				
+				wndCurrReward:FindChild("LootCashWindow"):SetMoneySystem(tCurrReward.eCurrencyType or 0)
+				wndCurrReward:FindChild("LootCashWindow"):SetAmount(tCurrReward.nAmount, 0)
+				wndCurrReward:SetTooltip(strText)
 			end
 		end
 	end
 
-	wndCurrReward:FindChild("LootItemIcon"):SetSprite(strIconSprite)
+	if bSimple then
+		wndCurrReward:FindChild("LootDescription"):SetTextColor(kcrDefaultOptionColor)
+		wndCurrReward:SetTooltip("")
+	else
+		wndCurrReward:FindChild("LootItemIcon"):SetSprite(strIconSprite)
+	end
 end
 
+function Dialog:OnResponseItemMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
 
 ---------------------------------------------------------------------------------------------------
 -- New Item and NPC Bubble Methods
@@ -408,12 +441,10 @@ function Dialog:DrawItemBubble(wndArg, eState, idQuest)
 end
 
 function Dialog:DrawNpcBubble(wndArg, eState, idQuest)
-	-- Hardcoded formatting
-
 	-- Text
 	local strText = DialogSys.GetNPCText(idQuest)
 	if not strText or string.len(strText) == 0 then return end
-	wndArg:FindChild("BubbleText"):SetAML("<P Font=\"CRB_Dialog\" TextColor=\"ff7fffb9\">"..strText.."</P>")
+	wndArg:FindChild("BubbleText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff7fffb9\">"..strText.."</P>")
 	wndArg:FindChild("BubbleText"):SetHeightToContentHeight()
 
 	-- Rewards
@@ -422,29 +453,46 @@ function Dialog:DrawNpcBubble(wndArg, eState, idQuest)
 	local queCurr = DialogSys.GetViewableQuest(idQuest)
 	local nGivenContainerHeight = 0
 	local nChoiceContainerHeight = 0
+	local nPadding = 5
 	if queCurr then
 		local tRewardInfo = queCurr:GetRewardData()
 		if tRewardInfo.arFixedRewards and #tRewardInfo.arFixedRewards > 0 then
 			wndArg:FindChild("GivenRewardsItems"):DestroyChildren()
+
+			--add the xp given
+			local nGivenXP = queCurr:CalcRewardXP()
+			if nGivenXP > 0 then
+				local wndCurrXPReward = Apollo.LoadForm(self.xmlDoc, "XPReward", wndArg:FindChild("GivenRewardsItems"), self)
+				wndCurrXPReward:SetText(String_GetWeaselString(Apollo.GetString("CombatFloaterMessage_Experience_Default"), tostring(nGivenXP)))
+				nGivenContainerHeight = nGivenContainerHeight + wndCurrXPReward:GetHeight()
+			end
+
 			local tDoThisLast = nil
 			for idx, tCurrReward in ipairs(tRewardInfo.arFixedRewards) do
 				if tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_Money and tCurrReward.nAmount > 0 then
 					tDoThisLast = tCurrReward
 				elseif tCurrReward then
-					local wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndArg:FindChild("GivenRewardsItems"), self)
-					self:HelperDrawLootItem(wndCurrReward, tCurrReward)
+					local wndCurrReward = nil
+					if tCurrReward.eType ~= Quest.Quest2RewardType_Reputation then
+						wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndArg:FindChild("GivenRewardsItems"), self)
+						self:HelperDrawLootItem(wndCurrReward, tCurrReward, false)
+					else
+						wndCurrReward = Apollo.LoadForm(self.xmlDoc, "GivenLootItemSimple", wndArg:FindChild("GivenRewardsItems"), self)
+						self:HelperDrawLootItem(wndCurrReward, tCurrReward, true)
+					end
+
 					nGivenContainerHeight = nGivenContainerHeight + wndCurrReward:GetHeight()
 				end
 			end
 
 			 -- Given Rewards Only: Draw money at the bottom
 			if tDoThisLast then
-				local wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndArg:FindChild("GivenRewardsItems"), self)
-				self:HelperDrawLootItem(wndCurrReward, tDoThisLast)
+				local wndCurrReward = Apollo.LoadForm(self.xmlDoc, "GivenLootItemSimple", wndArg:FindChild("GivenRewardsItems"), self)
+				self:HelperDrawLootItem(wndCurrReward, tDoThisLast, true)
 				nGivenContainerHeight = nGivenContainerHeight + wndCurrReward:GetHeight()
 			end
 			-- End draw money and xp
-
+			nGivenContainerHeight = nGivenContainerHeight + (nPadding * 2)
 			wndArg:FindChild("GivenRewardsItems"):ArrangeChildrenVert()
 			wndArg:FindChild("GivenRewardsItems"):SetAnchorOffsets(0, 0, 0, nGivenContainerHeight)
 
@@ -453,21 +501,26 @@ function Dialog:DrawNpcBubble(wndArg, eState, idQuest)
 		end
 
 		if tRewardInfo.arRewardChoices and #tRewardInfo.arRewardChoices > 0 and eState ~= DialogSys.DialogState_QuestComplete then -- GOTCHA: Choices are shown in Player, not NPC for QuestComplete
+			local tSortedRewards = self:SortRewardItems(tRewardInfo.arRewardChoices)
+
 			wndArg:FindChild("ChoiceRewardsItems"):DestroyChildren()
-			for idx, tCurrReward in ipairs(tRewardInfo.arRewardChoices) do
+			for idx, tCurrReward in ipairs(tSortedRewards) do
 				if tCurrReward then
 					local wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndArg:FindChild("ChoiceRewardsItems"), self)
-					self:HelperDrawLootItem(wndCurrReward, tCurrReward)
-					nChoiceContainerHeight = nChoiceContainerHeight + wndCurrReward:GetHeight()
+					self:HelperDrawLootItem(wndCurrReward, tCurrReward, false)
+					if nChoiceContainerHeight < (knMaxRewardItemsShown * wndCurrReward:GetHeight()) then
+						nChoiceContainerHeight = nChoiceContainerHeight + wndCurrReward:GetHeight()
+					end
 				end
 			end
 
+			nChoiceContainerHeight = nChoiceContainerHeight + (2 * nPadding )
 			wndArg:FindChild("ChoiceRewardsItems"):ArrangeChildrenVert()
 			wndArg:FindChild("ChoiceRewardsItems"):SetAnchorOffsets(0, 0, 0, nChoiceContainerHeight)
 
 			wndArg:FindChild("ChoiceRewardsText"):Show(#tRewardInfo.arRewardChoices > 1)
-			if #tRewardInfo.arRewardChoices > 1 then 
-				nChoiceContainerHeight = nChoiceContainerHeight + 30 
+			if #tRewardInfo.arRewardChoices > 1 then
+				nChoiceContainerHeight = nChoiceContainerHeight + 30
 			end
 		end
 	end
@@ -480,9 +533,37 @@ function Dialog:DrawNpcBubble(wndArg, eState, idQuest)
 	wndArg:ToFront()
 end
 
+function Dialog:SortRewardItems(tRewards)
+	local tCanNotEquipItems = {}
+	local tCanEquipItems = {}
+
+	for idx, tCurrReward in ipairs(tRewards) do
+		if tCurrReward.itemReward:CanEquip() then
+			table.insert(tCanEquipItems, tCurrReward)
+		else
+			table.insert(tCanNotEquipItems, tCurrReward)
+		end
+	end
+
+	table.sort(tCanEquipItems, function(a,b) return a.itemReward:GetItemCategoryName() < b.itemReward:GetItemCategoryName() end)
+	table.sort(tCanNotEquipItems, function(a,b) return a.itemReward:GetItemCategoryName() < b.itemReward:GetItemCategoryName() end)
+
+	local tSortedRewards = {}
+	for idx, tCurrReward in pairs(tCanEquipItems 	or {}) do
+		table.insert(tSortedRewards, tCurrReward)
+	end
+
+	for idx, tCurrReward in pairs(tCanNotEquipItems or {}) do
+		table.insert(tSortedRewards, tCurrReward)
+	end
+
+	return tSortedRewards
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Old NPC Bubble Methods
 ---------------------------------------------------------------------------------------------------
+
 function Dialog:PositionNpcBubble(wndArg)
 	local unitNpc = DialogSys.GetNPC()
 	if not unitNpc then
@@ -532,24 +613,38 @@ function Dialog:HelperExpandForText(nNewTop, wndArg)
 	return nNewTop
 end
 
+function Dialog:OnDestroyTooltip(wndHandler, wndControl)
+	if wndHandler == wndControl then
+		wndHandler:SetTooltipDoc(nil)
+	end
+end
+
 function Dialog:OnGenerateTooltip(wndHandler, wndControl, eType, arg1, arg2)
-	local xml = nil
+	if wndHandler ~= wndControl	then
+		return
+	end
+
 	if eType == Tooltip.TooltipGenerateType_ItemData then
 		local itemCurr = arg1
 		local itemEquipped = itemCurr:GetEquippedItemForItemType()
-
-		Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = self.bVendorOpen, itemCompare = itemEquipped})
+		Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
 
 	elseif eType == Tooltip.TooltipGenerateType_Reputation or eType == Tooltip.TooltipGenerateType_TradeSkill then
+		local xml = nil
 		xml = XmlDoc.new()
 		xml:StartTooltip(Tooltip.TooltipWidth)
 		xml:AddLine(arg1)
 		wndControl:SetTooltipDoc(xml)
 	elseif eType == Tooltip.TooltipGenerateType_Money then
+		local xml = nil
 		xml = XmlDoc.new()
 		xml:StartTooltip(Tooltip.TooltipWidth)
-		xml:AddLine(arg1:GetMoneyString(), CColor.new(1, 1, 1, 1), "CRB_Dialog")
+		xml:AddLine(arg1:GetMoneyString(), kcrDefaultColor, "CRB_InterfaceMedium")
 		wndControl:SetTooltipDoc(xml)
+	elseif wndHandler:GetData() then
+		local itemCurr = wndHandler:GetData()
+		local itemEquipped = itemCurr:GetEquippedItemForItemType()
+		Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
 	else
 		wndControl:SetTooltipDoc(nil)
 	end
@@ -564,16 +659,6 @@ function Dialog:OnUpdateTimer(strVarName, nCount)
 	if self.wndNpc and self.wndNpc:IsShown() then
 		self:PositionNpcBubble(self.wndNpc)
 	end
-end
-
-function Dialog:HelperBuildItemTooltip(wndArg, item)
-	wndArg:SetTooltipDoc(nil)
-	wndArg:SetTooltipDocSecondary(nil)
-	local itemEquipped = item:GetEquippedItemForItemType()
-	Tooltip.GetItemTooltipForm(self, wndArg, item, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
-	--if itemEquipped then -- OLD
-	--	Tooltip.GetItemTooltipForm(self, wndArg, itemEquipped, {bPrimary = false, bSelling = false, itemCompare = item})
-	--end
 end
 
 function Dialog:HelperPrereqFailed(itemCurr)

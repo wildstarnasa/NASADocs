@@ -325,10 +325,12 @@ function ErrorDialog:OnReportBug( wndHandler, wndControl, eMouseButton )
 end
 
 function ErrorDialog:OnCategoryChanged()
+	Sound.Play(Sound.PlayUIButtonHoloSmall)
 	self:FillSubcategories()
 end
 
 function ErrorDialog:OnSubcategoryChanged()
+	Sound.Play(Sound.PlayUIButtonHoloSmall)
 	local wndCatList = self.wndReportBug:FindChild("Category")
 	local wndSubcatList = self.wndReportBug:FindChild("SubCategory")
 
@@ -360,6 +362,7 @@ function ErrorDialog:OnInsertPropId(wndHandler, wndControl, eMouseButton)
 end
 
 function ErrorDialog:OnQuestChanged(wndHandler, wndControl)
+	Sound.Play(Sound.PlayUIButtonHoloSmall)
 	local wndList = self.wndReportBug:FindChild("QuestList")
 	local wndListFrame = self.wndReportBug:FindChild("Flyout")
 

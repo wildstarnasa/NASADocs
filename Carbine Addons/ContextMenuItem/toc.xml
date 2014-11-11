@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Addon Author="Carbine" Name="ContextMenuItem" Description="">
+    <Script Name="ContextMenuItem.lua"/>
+    <Form Name="ContextMenuItem.xml"/>
+</Addon>

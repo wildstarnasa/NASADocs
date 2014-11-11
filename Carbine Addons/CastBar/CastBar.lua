@@ -41,8 +41,6 @@ function CastBar:OnDocumentReady()
 	Apollo.RegisterEventHandler("ClearSpellThreshold", 	"OnClearSpellThreshold", self)
 	Apollo.RegisterEventHandler("UpdateSpellThreshold", "OnUpdateSpellThreshold", self)
 	
-	Apollo.RegisterTimerHandler("UpdateCastBarTimer", 	"OnUpdate", self)
-	
 	self.wndCastFrame 		= Apollo.LoadForm(self.xmlDoc, "CastBarFrame", "InWorldHudStratum", self)
 	self.wndOppFrame 		= Apollo.LoadForm(self.xmlDoc, "WindowOfOppFrame", "InWorldHudStratum", self)
 	self.wndOppBar 			= self.wndOppFrame:FindChild("SingleBar")
@@ -76,8 +74,7 @@ function CastBar:OnDocumentReady()
 	self.wndCastFrame:Show(false, true)
 	self.wndOppFrame:Show(false, true)
 	
-	Apollo.CreateTimer("UpdateCastBarTimer", 0.033, true)
-	Apollo.StartTimer("UpdateCastBarTimer")
+	self.timerUpdateCastBar = ApolloTimer.Create(0.033, true, "OnUpdate", self)
 end
 
 function CastBar:OnUpdate()

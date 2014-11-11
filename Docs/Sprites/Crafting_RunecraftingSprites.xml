@@ -73,7 +73,7 @@
         <Frame Texture="UI\Assets\Textures\UI_Runecrafting.tga" x0="279" x1="279" x2="279" x3="279" x4="279" x5="303" y0="74" y1="74" y2="74" y3="74" y4="74" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="sprRunecrafting_BulletPoint_Lock" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_Runecrafting.tga" x0="304" x1="304" x2="304" x3="304" x4="304" x5="328" y0="74" y1="74" y2="74" y3="74" y4="74" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\spr_lock.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="sprRunecrafting_FrameBG_Larger" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_2.tga" x0="-1" x1="-1" x2="-1" x3="-1" x4="865" x5="865" y0="0" y1="0" y2="0" y3="0" y4="0" y5="801" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
@@ -93,9 +93,71 @@
     <Sprite Name="sprRunecrafting_FrameBG_Equipment" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_3.tga" x0="0" x1="0" x2="0" x3="149" x4="150" x5="300" y0="0" y1="0" y2="0" y3="0" y4="0" y5="672" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="sprRunecrafting_BlockerFrame" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_4.tex" x0="0" x1="147" x2="149" x3="149" x4="149" x5="329" y0="0" y1="0" y2="0" y3="0" y4="0" y5="768" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_BlockerOverlay" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_4.tex" x0="328" x1="449" x2="450" x3="450" x4="450" x5="571" y0="0" y1="0" y2="0" y3="0" y4="0" y5="718" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Water_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="0" y1="0" y2="128" y3="128" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Air_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="128" x1="128" x2="256" x3="256" x4="256" x5="256" y0="1" y1="1" y2="129" y3="129" y4="129" y5="129" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Earth_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="128" y1="128" y2="256" y3="256" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Fire_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="128" x1="128" x2="256" x3="256" x4="256" x5="256" y0="128" y1="128" y2="256" y3="256" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Fusion_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="256" y1="256" y2="384" y3="384" y4="384" y5="384" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Life_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="128" x1="128" x2="256" x3="256" x4="256" x5="256" y0="256" y1="256" y2="384" y3="384" y4="384" y5="384" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Omni_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="0" x1="0" x2="128" x3="128" x4="128" x5="128" y0="384" y1="384" y2="512" y3="512" y4="512" y5="512" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Logic_Colored" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_ColoredRunes.tex" x0="128" x1="128" x2="256" x3="256" x4="256" x5="256" y0="384" y1="384" y2="512" y3="512" y4="512" y5="512" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_RerollHighlight" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_2.tga" x0="589" x1="589" x2="589" x3="589" x4="589" x5="653" y0="802" y1="802" y2="802" y3="802" y4="802" y5="866" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_MetalBracket" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneCrafting_2.tga" x0="654" x1="654" x2="654" x3="701" x4="702" x5="749" y0="802" y1="802" y2="802" y3="802" y4="929" y5="929" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Water" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Water.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <AutoButton Name="btnRunecrafting_MetalLarge" Texture="UI\Assets\Textures\UI_Runecrafting.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="204" y0="0" y1="0" y2="0" y3="0" y4="0" y5="91" Stretchy="1" StateBits="31" Direction="Down"/>
     <AutoButton Name="btnRunecrafting_TabRight" Texture="UI\Assets\Textures\UI_Runecrafting.tga" x0="229" x1="229" x2="229" x3="229" x4="229" x5="573" y0="116" y1="116" y2="116" y3="116" y4="116" y5="165" Stretchy="1" StateBits="15" Direction="Down"/>
     <AutoButton Name="btnRunecrafting_TabLeft" Texture="UI\Assets\Textures\UI_Runecrafting.tga" x0="574" x1="574" x2="574" x3="574" x4="574" x5="918" y0="116" y1="116" y2="116" y3="116" y4="116" y5="165" Stretchy="1" StateBits="15" Direction="Down"/>
-    <AutoButton Name="btnRunecrafting_SlotBtn" Texture="UI\Assets\Textures\UI_RuneCrafting_2.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="88" y0="923" y1="923" y2="923" y3="923" y4="923" y5="1024" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnRunecrafting_SlotBtn" Texture="UI\Assets\Textures\UI_RuneCrafting_2.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="923" y1="923" y2="923" y3="923" y4="923" y5="994" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnRunecrafting_HoloList_Padding" Texture="UI\Assets\Textures\UI_Runecrafting.tga" x0="229" x1="229" x2="229" x3="419" x4="420" x5="612" y0="362" y1="362" y2="362" y3="362" y4="362" y5="428" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnRunecrafting_SlotAddBtn" Texture="UI\Assets\Textures\UI_RuneCrafting_2.tex" x0="311" x1="311" x2="311" x3="311" x4="311" x5="373" y0="923" y1="923" y2="923" y3="923" y4="923" y5="994" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnRunecrafting_HoloDice" Texture="UI\Assets\Textures\UI_BK3_Holo_Btn_Dice.tex" x0="0" x1="0" x2="0" x3="0" x4="48" x5="48" y0="0" y1="0" y2="0" y3="0" y4="48" y5="48" Stretchy="1" StateBits="31" Direction="Across"/>
+    <Sprite Name="sprRunecrafting_Btn_Life" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Life.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Omni" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Omni.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Earth" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Earth.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Air" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Air.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Fusion" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Fusion.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Logic" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Logic.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprRunecrafting_Btn_Fire" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_RuneSlot_Btn_Fire.tga" x0="0" x1="0" x2="0" x3="0" x4="100" x5="100" y0="0" y1="0" y2="0" y3="0" y4="100" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
 </Sprites>

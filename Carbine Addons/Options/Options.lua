@@ -5,6 +5,7 @@
 
 require "Apollo"
 require "Window"
+require "GenericDialog"
 
 local OptionsAddon = {}
 
@@ -32,11 +33,11 @@ local karStatusText =
 
 local karStatusColors =
 {
-	ApolloColor.new("AddonError"),
+	ApolloColor.new("xkcdReddish"),
 	ApolloColor.new("AddonNotLoaded"),
-	ApolloColor.new("AddonError"),
+	ApolloColor.new("xkcdReddish"),
 	ApolloColor.new("AddonLoaded"),
-	ApolloColor.new("AddonError"),
+	ApolloColor.new("xkcdReddish"),
 	ApolloColor.new("AddonWarning"),
 	ApolloColor.new("AddonOk"),
 }
@@ -66,7 +67,6 @@ local ktVideoSettingLevels =
 		["lod.viewDistance"] = 920,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
-		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 0,
 		["lod.textureFilter"] = 2,
 		["lod.landLod"] = 1,
@@ -78,6 +78,9 @@ local ktVideoSettingLevels =
 		["fxaa.preset"] = 5,
 		["fxaa.enable"] = true,
 		["world.propScreenHeightPercentMin"] = 5,
+		["particle.envParticleScale"] = 1,
+		["spell.visualSuppression"] = 0,
+		["spell.visualSuppressedAlpha"] = 0,
 	},
 	["High"] =
 	{
@@ -85,7 +88,6 @@ local ktVideoSettingLevels =
 		["lod.viewDistance"] = 768,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
-		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 0,
 		["lod.textureFilter"] = 2,
 		["lod.landLod"] = 1,
@@ -97,6 +99,9 @@ local ktVideoSettingLevels =
 		["fxaa.preset"] = 4,
 		["fxaa.enable"] = true,
 		["world.propScreenHeightPercentMin"] = 5,
+		["particle.envParticleScale"] = 1,
+		["spell.visualSuppression"] = 0,
+		["spell.visualSuppressedAlpha"] = 0,
 	},
 	["Medium"] =
 	{
@@ -104,7 +109,6 @@ local ktVideoSettingLevels =
 		["lod.viewDistance"] = 640,
 		["lod.farFogDistance"] = 2048,
 		["camera.distanceMax"] = 32,
-		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 1,
 		["lod.textureFilter"] = 2,
 		["lod.landLod"] = 1,
@@ -116,6 +120,9 @@ local ktVideoSettingLevels =
 		["fxaa.preset"] = 3,
 		["fxaa.enable"] = true,
 		["world.propScreenHeightPercentMin"] = 8,
+		["particle.envParticleScale"] = 0.5,
+		["spell.visualSuppression"] = 0.5,
+		["spell.visualSuppressedAlpha"] = 0,
 	},
 	["Low"] =
 	{
@@ -123,7 +130,6 @@ local ktVideoSettingLevels =
 		["lod.viewDistance"] = 512,
 		["lod.farFogDistance"] = 1536,
 		["camera.distanceMax"] = 32,
-		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 2,
 		["lod.textureFilter"] = 1,
 		["lod.landLod"] = 0,
@@ -135,6 +141,9 @@ local ktVideoSettingLevels =
 		["fxaa.preset"] = 1,
 		["fxaa.enable"] = true,
 		["world.propScreenHeightPercentMin"] = 12,
+		["particle.envParticleScale"] = 0.25,
+		["spell.visualSuppression"] = 0.9,
+		["spell.visualSuppressedAlpha"] = 0,
 	},
 	["UltraLow"] =
 	{
@@ -142,7 +151,6 @@ local ktVideoSettingLevels =
 		["lod.viewDistance"] = 256,
 		["lod.farFogDistance"] = 1024,
 		["camera.distanceMax"] = 32,
-		["camera.fovY"] = 60,
 		["lod.textureLodMin"] = 2,
 		["lod.textureFilter"] = 0,
 		["lod.landLod"] = 0,
@@ -154,7 +162,432 @@ local ktVideoSettingLevels =
 		["fxaa.preset"] = 0,
 		["fxaa.enable"] = false,
 		["world.propScreenHeightPercentMin"] = 12,
+		["particle.envParticleScale"] = 0.0,
+		["spell.visualSuppression"] = 1.0,
+		["spell.visualSuppressedAlpha"] = 0,
 	}
+}
+
+local ktTelegraphColorOptions =
+{
+	-- self
+	{
+		strLabel = "Options_TelegraphColorSelf",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_12",
+				crColor = ApolloColor.new(22.0/255.0, 209.0/255.0, 255.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_12",
+				crColor = ApolloColor.new(59.0/255.0, 20.0/255.0, 175.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_12",
+				crColor = ApolloColor.new(44.0/255.0, 23.0/255.0, 177.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_12",
+				crColor = ApolloColor.new(76.0/255.0, 16.0/255.0, 174.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_12",
+				consoleVarColorR = "spell.custom1SelfTelegraphColorR",
+				consoleVarColorG = "spell.custom1SelfTelegraphColorG",
+				consoleVarColorB = "spell.custom1SelfTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_12",
+				consoleVarColorR = "spell.custom2SelfTelegraphColorR",
+				consoleVarColorG = "spell.custom2SelfTelegraphColorG",
+				consoleVarColorB = "spell.custom2SelfTelegraphColorB",
+			}
+		}
+	},
+	-- enemy
+	{
+		strLabel = "Options_TelegraphColorHarmless",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_12",
+				consoleVarColorR = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_12",
+				consoleVarColorR = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorB",
+			}
+		}
+	},
+	{
+		strLabel = "Options_TelegraphColorEnemyPlayerBeneficial",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_56",
+				crColor = ApolloColor.new(230.0/255.0, 56.0/255.0, 255.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_56",
+				crColor = ApolloColor.new(220.0/255.0, 0.0/255.0, 85.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_56",
+				crColor = ApolloColor.new(0.0/255.0, 158.0/255.0, 142.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_56",
+				crColor = ApolloColor.new(255.0/255.0, 144.0/255.0, 0.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_56",
+				consoleVarColorR = "spell.custom1EnemyPlayerBeneficialTelegraphColorR",
+				consoleVarColorG = "spell.custom1EnemyPlayerBeneficialTelegraphColorG",
+				consoleVarColorB = "spell.custom1EnemyPlayerBeneficialTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_56",
+				consoleVarColorR = "spell.custom2EnemyPlayerBeneficialTelegraphColorR",
+				consoleVarColorG = "spell.custom2EnemyPlayerBeneficialTelegraphColorG",
+				consoleVarColorB = "spell.custom2EnemyPlayerBeneficialTelegraphColorB",
+			}
+		}
+	},
+	{
+		strLabel = "Options_TelegraphColorEnemyPlayerDetrimental",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_34",
+				crColor = ApolloColor.new(255.0/255.0, 44.0/255.0, 25.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_34",
+				crColor = ApolloColor.new(255.0/255.0, 129.0/255.0, 0.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_34",
+				crColor = ApolloColor.new(255.0/255.0, 211.0/255.0, 0.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_34",
+				crColor = ApolloColor.new(255.0/255.0, 0.0/255.0, 0.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_34",
+				consoleVarColorR = "spell.custom1EnemyPlayerDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom1EnemyPlayerDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom1EnemyPlayerDetrimentalTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_34",
+				consoleVarColorR = "spell.custom2EnemyPlayerDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom2EnemyPlayerDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom2EnemyPlayerDetrimentalTelegraphColorB",
+			}
+		}
+	},
+	{
+		strLabel = "Options_TelegraphColorEnemyNPCBeneficial",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_78",
+				crColor = ApolloColor.new(230.0/255.0, 56.0/255.0, 255.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_78",
+				crColor = ApolloColor.new(220.0/255.0, 0.0/255.0, 85.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_78",
+				crColor = ApolloColor.new(0.0/255.0, 158.0/255.0, 142.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_78",
+				crColor = ApolloColor.new(255.0/255.0, 144.0/255.0, 0.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_78",
+				consoleVarColorR = "spell.custom1EnemyNPCBeneficialTelegraphColorR",
+				consoleVarColorG = "spell.custom1EnemyNPCBeneficialTelegraphColorG",
+				consoleVarColorB = "spell.custom1EnemyNPCBeneficialTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_78",
+				consoleVarColorR = "spell.custom2EnemyNPCBeneficialTelegraphColorR",
+				consoleVarColorG = "spell.custom2EnemyNPCBeneficialTelegraphColorG",
+				consoleVarColorB = "spell.custom2EnemyNPCBeneficialTelegraphColorB",
+			}
+		}
+	},
+	{
+		strLabel = "Options_TelegraphColorEnemyNPCDetrimental",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_34",
+				crColor = ApolloColor.new(255.0/255.0, 44.0/255.0, 25.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_34",
+				crColor = ApolloColor.new(255.0/255.0, 129.0/255.0, 0.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_34",
+				crColor = ApolloColor.new(255.0/255.0, 211.0/255.0, 0.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_34",
+				crColor = ApolloColor.new(255.0/255.0, 0.0/255.0, 0.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_34",
+				consoleVarColorR = "spell.custom1EnemyNPCDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom1EnemyNPCDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom1EnemyNPCDetrimentalTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_34",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_34",
+				consoleVarColorR = "spell.custom2EnemyNPCDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom2EnemyNPCDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom2EnemyNPCDetrimentalTelegraphColorB",
+			}
+		}
+	},
+	{
+		strLabel = "Options_TelegraphColorAllyBeneficial",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_56",
+				crColor = ApolloColor.new(52.0/255.0, 216.0/255.0, 0.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_56",
+				crColor = ApolloColor.new(128.0/255.0, 232.0/255.0, 0.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_56",
+				crColor = ApolloColor.new(255.0/255.0, 0.0/255.0, 0.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_56",
+				crColor = ApolloColor.new(0.0/255.0, 160.0/255.0, 138.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_56",
+				consoleVarColorR = "spell.custom1AllyBeneficialTelegraphColorR",
+				consoleVarColorG = "spell.custom1AllyBeneficialTelegraphColorG",
+				consoleVarColorB = "spell.custom1AllyBeneficialTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_56",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_56",
+				consoleVarColorR = "spell.custom2AllyBeneficialTelegraphColorR",
+				consoleVarColorG = "spell.custom2AllyBeneficialTelegraphColorG",
+				consoleVarColorB = "spell.custom2AllyBeneficialTelegraphColorB",
+			}
+		}
+	},
+	{
+		strLabel = "Options_TelegraphColorAllyDetrimental",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_78",
+				crColor = ApolloColor.new(255.0/255.0, 152.0/255.0, 43.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_78",
+				crColor = ApolloColor.new(0.0/255.0, 170.0/255.0, 114.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_78",
+				crColor = ApolloColor.new(0.0/255.0, 179.0/255.0, 88.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_78",
+				crColor = ApolloColor.new(255.0/255.0, 225.0/255.0, 0.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_78",
+				consoleVarColorR = "spell.custom1AllyDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom1AllyDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom1AllyDetrimentalTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_78",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_78",
+				consoleVarColorR = "spell.custom2AllyDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom2AllyDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom2AllyDetrimentalTelegraphColorB",
+			}
+		}
+	},
 }
 
 function OptionsAddon:new(o)
@@ -174,7 +607,7 @@ function OptionsAddon:OnLoad()
 end
 
 function OptionsAddon:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	Apollo.RegisterTimerHandler("ResChangedTimer", 		"OnResChangedTimer", self)
@@ -223,7 +656,7 @@ function OptionsAddon:OnDocumentReady()
 	self.wndAddons = Apollo.LoadForm(self.xmlDoc, "AddonsDialog", nil, self)
 
 	self.wndTargeting = Apollo.LoadForm(self.xmlDoc, "TargettingDialog", nil, self)
-	Apollo.LoadForm(self.xmlDoc, "TargettingOptionsControls", self.wndTargeting:FindChild("TargettingDialogControls"), self)
+	Apollo.LoadForm(self.xmlDoc, "TargettingOptionsControls", self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls"), self)
 
 	self.bAddonsTimerCreated = false
 	self.OptionsDlg:SetRadioSel("OptionsGroup", 0)
@@ -232,7 +665,7 @@ function OptionsAddon:OnDocumentReady()
 	self.nDemoAutoTimeout = 0 -- TODO: more demo
 
 	self.wndVideo:FindChild("VerticalSync"):AttachWindow(self.wndVideo:FindChild("VerticalSyncBLocker"))
-	
+
 	self.mapCB2CVs =  -- these are auto-mapped options than don't need custom handlers
 	{
 		{wnd = self.wndVideo:FindChild("VerticalSync"), 		consoleVar = "video.verticalSync"},
@@ -243,7 +676,10 @@ function OptionsAddon:OnDocumentReady()
 		{wnd = self.wndTargeting:FindChild("UseButtonDownBtn"), 				consoleVar = "spell.useButtonDownForAbilities"},
 		{wnd = self.wndTargeting:FindChild("HoldToContinueCastingBtn"), 		consoleVar = "spell.holdToContinueCasting"},
 		{wnd = self.wndTargeting:FindChild("AutoSelfCastBtn"), 					consoleVar = "spell.autoSelectCharacter"},
-		{wnd = self.wndTargeting:FindChild("MoveToBtn"), 						consoleVar = "Player.moveToTargetOnSelfAOE"},
+		{wnd = self.wndTargeting:FindChild("MoveToBtn"), 						consoleVar = "player.moveToTargetOnSelfAOE"},
+		{wnd = self.wndTargeting:FindChild("MoveActivateBtn"), 					consoleVar = "player.moveToActivate"},
+		{wnd = self.wndTargeting:FindChild("StickyTargetingBtn"),				consoleVar = "player.stickyTargeting"},
+		{wnd = self.wndTargeting:FindChild("ClickToMoveBtn"),					consoleVar = "player.clickToMove"},
 		{wnd = self.wndTargeting:FindChild("AutoPushTarget"), 					consoleVar = "spell.disableAutoTargeting"},
 		{wnd = self.wndTargeting:FindChild("DashDirectionalBtn"), 				consoleVar = "player.directionalDashBackward"},
 		{wnd = self.wndTargeting:FindChild("SelfDisplayBtn"), 					consoleVar = "spell.selfTelegraphDisplay"},
@@ -267,13 +703,14 @@ function OptionsAddon:OnDocumentReady()
 	self.mapSB2CVs =  -- these are auto-mapped sliders that don't need custom handlers
 	{
 		-- video options
-		{wnd = self.wndVideo:FindChild("MaxFPSSlider"), 			consoleVar = "video.framerateMax",		buddy = self.wndVideo:FindChild("MaxFPSEditBox")},
-		{wnd = self.wndVideo:FindChild("ViewDistanceSlider"), 		consoleVar = "lod.viewDistance",		buddy = self.wndVideo:FindChild("ViewDistanceEditBox")},
-		{wnd = self.wndVideo:FindChild("VDFogSlider"), 				consoleVar = "lod.farFogDistance",		buddy = self.wndVideo:FindChild("VDFogEditBox")},
-		{wnd = self.wndVideo:FindChild("ClutterDistanceSlider"), 	consoleVar = "lod.clutterDistance",		buddy = self.wndVideo:FindChild("ClutterDistanceEditBox")},
-		{wnd = self.wndVideo:FindChild("CameraDistanceSlider"),		consoleVar = "camera.distanceMax",		buddy = self.wndVideo:FindChild("CameraDistanceEditBox")},
-		{wnd = self.wndVideo:FindChild("FieldOfVisionSlider"),		consoleVar = "camera.fovY",				buddy = self.wndVideo:FindChild("FieldOfVisionEditBox")},
-		{wnd = self.wndVideo:FindChild("GammaScaleSlider"),			consoleVar = "ppp.gamma",				buddy = self.wndVideo:FindChild("GammaScaleEditBox"), 			 format = "%.02f"},
+		{wnd = self.wndVideo:FindChild("MaxFPSSlider"), 			consoleVar = "video.framerateMax",			buddy = self.wndVideo:FindChild("MaxFPSEditBox")},
+		{wnd = self.wndVideo:FindChild("ViewDistanceSlider"), 		consoleVar = "lod.viewDistance",			buddy = self.wndVideo:FindChild("ViewDistanceEditBox")},
+		{wnd = self.wndVideo:FindChild("VDFogSlider"), 				consoleVar = "lod.farFogDistance",			buddy = self.wndVideo:FindChild("VDFogEditBox")},
+		{wnd = self.wndVideo:FindChild("ClutterDistanceSlider"), 	consoleVar = "lod.clutterDistance",			buddy = self.wndVideo:FindChild("ClutterDistanceEditBox")},
+		{wnd = self.wndVideo:FindChild("CameraDistanceSlider"),		consoleVar = "camera.distanceMax",			buddy = self.wndVideo:FindChild("CameraDistanceEditBox")},
+		{wnd = self.wndVideo:FindChild("FieldOfVisionSlider"),		consoleVar = "camera.fovY",					buddy = self.wndVideo:FindChild("FieldOfVisionEditBox")},
+		{wnd = self.wndVideo:FindChild("GammaScaleSlider"),			consoleVar = "ppp.gamma",					buddy = self.wndVideo:FindChild("GammaScaleEditBox"), 			format = "%.02f"},
+		{wnd = self.wndVideo:FindChild("VisualSupressionSlider"),	consoleVar = "spell.visualSuppression",		buddy = self.wndVideo:FindChild("VisualSupressionEditBox"), 	format = "%.02f"},
 
 		-- audio options
 		{wnd = self.wndSounds:FindChild("MasterVolumeSliderBar"), 	consoleVar = "sound.volumeMaster",		buddy = self.wndSounds:FindChild("MasterVolumeEditBox"), 		 format = "%.02f"},
@@ -282,28 +719,56 @@ function OptionsAddon:OnDocumentReady()
 		{wnd = self.wndSounds:FindChild("SoundFXVolumeSliderBar"), 	consoleVar = "sound.volumeSfx",			buddy = self.wndSounds:FindChild("SoundFXVolumeEditBox"), 		 format = "%.02f"},
 		{wnd = self.wndSounds:FindChild("AmbientVolumeSliderBar"), 	consoleVar = "sound.volumeAmbient",		buddy = self.wndSounds:FindChild("AmbientVolumeEditBox"), 		 format = "%.02f"},
 		{wnd = self.wndSounds:FindChild("VoiceVolumeSliderBar"), 	consoleVar = "sound.volumeVoice",		buddy = self.wndSounds:FindChild("VoiceVolumeEditBox"), 		 format = "%.02f"},
-
-		-- combat options
-		{wnd = self.wndTargeting:FindChild("SelfOpacitySliderBar"), 				consoleVar = "spell.selfTelegraphOpacity",						buddy = self.wndTargeting:FindChild("SelfOpacityEditBox")},
-		{wnd = self.wndTargeting:FindChild("EnemyDetrimentalOpacitySliderBar"), 	consoleVar = "spell.enemyDetrimentalTelegraphOpacity",			buddy = self.wndTargeting:FindChild("EnemyDetrimentalOpacityEditBox")},
-		{wnd = self.wndTargeting:FindChild("AllyBeneficialOpacitySliderBar"), 		consoleVar = "spell.allyBeneficialTelegraphOpacity",				buddy = self.wndTargeting:FindChild("AllyBeneficialOpacityEditBox")},
-		{wnd = self.wndTargeting:FindChild("OtherActionOpacitySliderBar"), 			consoleVar = "spell.enemyBeneficalAllyDetrimentalTelegraphOpacity",	buddy = self.wndTargeting:FindChild("OtherActionOpacityEditBox")},
-		{wnd = self.wndTargeting:FindChild("OutlineOpacitySliderBar"), 				consoleVar = {"spell.selfTelegraphOutline", "spell.enemyDetrimentalTelegraphOutline", "spell.allyBeneficialTelegraphOutline", "spell.enemyBeneficalAllyDetrimentalTelegraphOutline"},			buddy = self.wndTargeting:FindChild("OutlineOpacityEditBox")},
-
 	}
 
 	self.mapDDParents =
 	{
-		{wnd = self.wndVideo:FindChild("DropToggleRenderTarget"),	consoleVar = "lod.renderTargetScale",				radio = "RenderTargetScale"},
-		{wnd = self.wndVideo:FindChild("DropToggleResolution"),		consoleVar = "video.fullscreen", 					radio = "ResolutionMode"},
-		{wnd = self.wndVideo:FindChild("DropToggleTexLOD"),			consoleVar = "lod.textureLodMin",					radio = "TextureResolution"},
-		{wnd = self.wndVideo:FindChild("DropToggleTexFilter"),		consoleVar = "lod.textureFilter", 					radio = "TextureFiltering"},
-		{wnd = self.wndVideo:FindChild("DropToggleFXAA"),			consoleVar = "fxaa.preset", 						radio = "FXAA"},
-		{wnd = self.wndVideo:FindChild("DropToggleClutterDensity"),	consoleVar = "lod.clutterDensity", 					radio = "ClutterDensity"},
-		{wnd = self.wndVideo:FindChild("DropToggleSceneDetail"),	consoleVar = "world.propScreenHeightPercentMin", 	radio = "SceneDetail"},
-		{wnd = self.wndVideo:FindChild("DropToggleLandLOD"),		consoleVar = "lod.landlod", 						radio = "LandLOD"},
-		{wnd = self.wndVideo:FindChild("DropToggleShadow"),			consoleVar = "draw.shadows", 						radio = "ShadowSetting"},
+		-- video options
+		{wnd = self.wndVideo:FindChild("DropToggleRenderTarget"),		consoleVar = "lod.renderTargetScale",				radio = "RenderTargetScale"},
+		{wnd = self.wndVideo:FindChild("DropToggleResolution"),			consoleVar = "video.fullscreen", 					radio = "ResolutionMode"},
+		{wnd = self.wndVideo:FindChild("DropToggleTexLOD"),				consoleVar = "lod.textureLodMin",					radio = "TextureResolution"},
+		{wnd = self.wndVideo:FindChild("DropToggleTexFilter"),			consoleVar = "lod.textureFilter", 					radio = "TextureFiltering"},
+		{wnd = self.wndVideo:FindChild("DropToggleFXAA"),				consoleVar = "fxaa.preset", 						radio = "FXAA"},
+		{wnd = self.wndVideo:FindChild("DropToggleClutterDensity"),		consoleVar = "lod.clutterDensity", 					radio = "ClutterDensity"},
+		{wnd = self.wndVideo:FindChild("DropToggleSceneDetail"),		consoleVar = "world.propScreenHeightPercentMin", 	radio = "SceneDetail"},
+		{wnd = self.wndVideo:FindChild("DropToggleLandLOD"),			consoleVar = "lod.landlod", 						radio = "LandLOD"},
+		{wnd = self.wndVideo:FindChild("DropToggleShadow"),				consoleVar = "draw.shadows", 						radio = "ShadowSetting"},
+		{wnd = self.wndVideo:FindChild("DropToggleParticleScale"),		consoleVar = "particle.envParticleScale", 			radio = "ParticleScale"},
+		{wnd = self.wndVideo:FindChild("DropToggleVisualSupression"),	consoleVar = "spell.visualSuppression", 			radio = "VisualSupression"},
 	}
+
+	local wndDropToggleTelegraphPresetSettings = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColorsHeader:DropToggleTelegraphPresetSettings")
+	wndDropToggleTelegraphPresetSettings:FindChild("ChoiceContainer:TelegraphPreset_Default"):SetData(0)
+	wndDropToggleTelegraphPresetSettings:FindChild("TelegraphPreset_Deuteranopia"):SetData(1)
+	wndDropToggleTelegraphPresetSettings:FindChild("TelegraphPreset_Protanopia"):SetData(2)
+	wndDropToggleTelegraphPresetSettings:FindChild("TelegraphPreset_Tritanopia"):SetData(3)
+	wndDropToggleTelegraphPresetSettings:FindChild("TelegraphPreset_Custom1"):SetData(4)
+	wndDropToggleTelegraphPresetSettings:FindChild("TelegraphPreset_Custom2"):SetData(5)
+
+	local wndDropToggleTelegraphPresetSettings = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColorsHeader:DropToggleTelegraphPresetSettings")
+	wndDropToggleTelegraphPresetSettings:AttachWindow(wndDropToggleTelegraphPresetSettings:FindChild("ChoiceContainer"))
+
+	local wndTelelgraphColors = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColors")
+	for idx, tTelegraphColor in pairs(ktTelegraphColorOptions) do
+		local wndTelegraphColor = Apollo.LoadForm(self.xmlDoc, "TelegraphColorLine", wndTelelgraphColors, self)
+		local wndLabel = wndTelegraphColor:FindChild("Label")
+		wndLabel:SetText(Apollo.GetString(tTelegraphColor.strLabel))
+
+		local wndColorBtn = wndTelegraphColor:FindChild("ColorBtn")
+		local wndTelegraphChoiceContainer = Apollo.LoadForm(self.xmlDoc, "TelegraphChoiceContainer", wndColorBtn, self)
+		wndTelegraphChoiceContainer:SetData(tTelegraphColor)
+		wndColorBtn:AttachWindow(wndTelegraphChoiceContainer)
+
+		local wndR_EditBox = wndTelegraphChoiceContainer:FindChild("R_EditBox")
+		wndR_EditBox:SetData("consoleVarColorR")
+
+		local wndG_EditBox = wndTelegraphChoiceContainer:FindChild("G_EditBox")
+		wndG_EditBox:SetData("consoleVarColorG")
+
+		local wndB_EditBox = wndTelegraphChoiceContainer:FindChild("B_EditBox")
+		wndB_EditBox:SetData("consoleVarColorB")
+	end
+	wndTelelgraphColors:ArrangeChildrenVert(0)
 
 	for idx, wndDD in pairs(self.mapDDParents) do
 		wndDD.wnd:AttachWindow(wndDD.wnd:FindChild("ChoiceContainer"))
@@ -392,6 +857,7 @@ function OptionsAddon:OnOptionsCheck()
 		self:InitTargetingControls()
 		self:OnMappedOptionsCheckboxHider()
 		self.wndTargeting:SetAnchorOffsets(self.wndTargeting:GetAnchorOffsets())
+		self:EnableTelegraphColorControls()
 	end
 end
 
@@ -408,11 +874,9 @@ function OptionsAddon:InitTargetingControls()
 	self.wndTargeting:FindChild("KeyboardTurnSpeedEditBox"):SetText(string.format("%.2f", Apollo.GetConsoleVariable("player.turningSpeedKeyboard")))
 
 	self.wndTargeting:FindChild("AlwaysFaceBtn"):SetCheck(not Apollo.GetConsoleVariable("Player.ignoreAlwaysFaceTarget"))
-	self.wndTargeting:FindChild("FacingLockBtn"):SetCheck(not Apollo.GetConsoleVariable("Player.disableFacingLock"))
-	self.wndTargeting:FindChild("ColorBlindNoneBtn"):SetCheck(Apollo.GetConsoleVariable("world.telegraphColorblindDisplay") == 0)
-	self.wndTargeting:FindChild("ColorBlindDeuteranopialBtn"):SetCheck(Apollo.GetConsoleVariable("world.telegraphColorblindDisplay") == 1)
-	self.wndTargeting:FindChild("ColorBlindProtanopiaBtn"):SetCheck(Apollo.GetConsoleVariable("world.telegraphColorblindDisplay") == 2)
-	self.wndTargeting:FindChild("ColorBlindTratanopiaBtn"):SetCheck(Apollo.GetConsoleVariable("world.telegraphColorblindDisplay") == 3)
+	self.wndTargeting:FindChild("FacingLockBtn"):Enable(self.wndTargeting:FindChild("AlwaysFaceBtn"):IsChecked())
+
+
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -448,16 +912,16 @@ function OptionsAddon:FillConfigureList()
 
 	for i, tAddon in ipairs(self.tAddons) do
 		if tAddon.bHasConfigure then
-			if self.tConfigureButtons[tAddon.strFolder] == nil then
+			if self.tConfigureButtons[tAddon.strName] == nil then
 				local wndConf = Apollo.LoadForm(self.xmlDoc, "ConfigureAddonItem", wndList, self)
 				wndConf:FindChild("ConfigureAddonBtn"):SetText(tAddon.strConfigureButtonText)
-				wndConf:FindChild("ConfigureAddonBtn"):SetData(tAddon.strFolder)
-				self.tConfigureButtons[tAddon.strFolder] = wndConf
+				wndConf:FindChild("ConfigureAddonBtn"):SetData(tAddon.strName)
+				self.tConfigureButtons[tAddon.strName] = wndConf
 			else
-				self.tConfigureButtons[tAddon.strFolder]:FindChild("ConfigureAddonBtn"):SetText(tAddon.strConfigureButtonText)
+				self.tConfigureButtons[tAddon.strName]:FindChild("ConfigureAddonBtn"):SetText(tAddon.strConfigureButtonText)
 			end
 			-- remove the addon from the kill list
-			tKill[tAddon.strFolder] = nil
+			tKill[tAddon.strName] = nil
 		end
 	end
 
@@ -489,9 +953,9 @@ function OptionsAddon:GetAddonsList()
 end
 
 function OptionsAddon:UpdateAddonGridRow(wndGrid, nRow, tAddon)
-	wndGrid:SetCellLuaData(nRow, EnumAddonColumns.Name, tAddon.strFolder)
+	wndGrid:SetCellLuaData(nRow, EnumAddonColumns.Name, tAddon.strName)
 	wndGrid:SetCellText(nRow, EnumAddonColumns.Name, tAddon.strName)
-	wndGrid:SetCellText(nRow, EnumAddonColumns.Folder, tAddon.strFolder)
+	wndGrid:SetCellText(nRow, EnumAddonColumns.Folder, tAddon.strName)
 	wndGrid:SetCellText(nRow, EnumAddonColumns.Author, tAddon.strAuthor)
 	wndGrid:SetCellText(nRow, EnumAddonColumns.APIVersion, tostring(tAddon.nAPIVersion))
 
@@ -525,7 +989,7 @@ function OptionsAddon:UpdateAddonGridRow(wndGrid, nRow, tAddon)
 	wndGrid:SetCellImageColor(nRow, EnumAddonColumns.Status, karStatusColors[tAddon.eStatus])
 
 	local strLoad = Apollo.GetString("CRB_No")
-	if WillAddonLoad(tAddon.strFolder) then
+	if WillAddonLoad(tAddon.strName) then
 		strLoad = Apollo.GetString("CRB_Yes")
 	end
 	wndGrid:SetCellText(nRow, EnumAddonColumns.LoadSetting, strLoad)
@@ -558,7 +1022,7 @@ function OptionsAddon:OnAddonsCheck(bReload)
 	wndGrid:DeleteAll()
 	for idx, tAddon in ipairs(self.tAddons) do
 		local nRow = wndGrid:AddRow(tAddon.strName)
-		wndGrid:SetCellLuaData(nRow, EnumAddonColumns.Name, tAddon.strFolder)
+		wndGrid:SetCellLuaData(nRow, EnumAddonColumns.Name, tAddon.strName)
 		self:UpdateAddonGridRow(wndGrid, nRow, tAddon)
 	end
 	wndGrid:SetSortColumn(nSortCol, bAscending)
@@ -573,6 +1037,8 @@ function OptionsAddon:OnAddonsUpdateTimer()
 	self:FillConfigureList()
 	self.OptionsDlg:FindChild("Camp"):Enable(IsInGame())
 	self.OptionsDlg:FindChild("Stuck"):Enable(IsInGame())
+
+	self.wndAddons:FindChild("GlobalIgnoreVersionMismatch"):SetCheck(GetGlobalAddonIgnoreVersion())
 
 	if IsInCombat() then
 		self.OptionsDlg:FindChild("OptionsLabel"):SetTextColor(CColor.new(1, 0, 0, 1))
@@ -592,8 +1058,8 @@ function OptionsAddon:OnAddonsUpdateTimer()
 			else
 				self:UpdateAddonGridRow(wndGrid, iRow, tNewInfo)
 
-				if (WillAddonLoad(tNewInfo.strFolder) and tNewInfo.eStatus <= OptionsScreen.CodeEnumAddonStatus.ParsingError)
-					or (not WillAddonLoad(tNewInfo.strFolder) and tNewInfo.eStatus >= OptionsScreen.CodeEnumAddonStatus.Loaded) then
+				if (WillAddonLoad(tNewInfo.strName) and tNewInfo.eStatus <= OptionsScreen.CodeEnumAddonStatus.ParsingError)
+					or (not WillAddonLoad(tNewInfo.strName) and tNewInfo.eStatus >= OptionsScreen.CodeEnumAddonStatus.Loaded) then
 					bHighlightReloadButton = true
 				end
 			end
@@ -649,7 +1115,7 @@ end
 
 function OptionsAddon:InvokeAddonLoadOnStartDlg(tAddon)
 	-- TEMPORARY SOLUTION FOR FX-68822
-	if tAddon.strFolder == "EscapeMenu" then
+	if not tAddon or tAddon.strName == "EscapeMenu" then
 		return
 	end
 
@@ -661,7 +1127,7 @@ function OptionsAddon:InvokeAddonLoadOnStartDlg(tAddon)
 	local wnd = Apollo.LoadForm("OptionsForms.xml", "AddonLoadOptions", "OptionsDialogs", self)
 
 	self.wndLoadConditions = wnd
-	wnd:SetData(tAddon.strFolder)
+	wnd:SetData(tAddon.strName)
 	self:UpdateAddonLoadSetting(wnd)
 
 	local mapLoadSettingToRadio = {
@@ -681,7 +1147,7 @@ function OptionsAddon:InvokeAddonLoadOnStartDlg(tAddon)
 	wnd:FindChild("AdvancedAddonOptions"):SetRadioSel("CharacterLoad", mapLoadSettingToRadio[tAddon.arLoadConditions[OptionsScreen.CodeEnumLoadLevel.Character]])
 	wnd:FindChild("OptionsFrame"):FindChild("IgnoreVersionMismatch"):SetCheck(tAddon.bIgnoreVersion)
 
-	--SetAddonLoadOnStart(tAddon.strFolder, wndHandler:IsChecked())
+	--SetAddonLoadOnStart(tAddon.strName, wndHandler:IsChecked())
 end
 
 function OptionsAddon:OnSetToDefault()
@@ -711,7 +1177,7 @@ local g_mapRadioToLoadSetting = {
 function OptionsAddon:UpdateAddonLoadSetting(wnd)
 	local tAddon = GetAddonInfo(wnd:GetData())
 	local str = tAddon.strName
-	if WillAddonLoad(tAddon.strFolder) then
+	if WillAddonLoad(tAddon.strName) then
 		str = String_GetWeaselString(Apollo.GetString("Options_WillLoad"), str)
 	else
 		str = String_GetWeaselString(Apollo.GetString("Options_WillNotLoad"), str)
@@ -736,7 +1202,7 @@ function OptionsAddon:OnChangeMachineLoad(wndHandler, wndControl, eMouseButton)
 	local tAddon = GetAddonInfo(wndAddon:GetData())
 
 	local nRadio = wndHandler:GetParent():GetRadioSel("MachineLoad")
-	SetAddonLoadCondition(tAddon.strFolder, OptionsScreen.CodeEnumLoadLevel.Machine, g_mapRadioToLoadSetting[nRadio])
+	SetAddonLoadCondition(tAddon.strName, OptionsScreen.CodeEnumLoadLevel.Machine, g_mapRadioToLoadSetting[nRadio])
 	self:UpdateAddonLoadSetting(wndAddon)
 end
 
@@ -745,7 +1211,7 @@ function OptionsAddon:OnChangeAccountLoad(wndHandler, wndControl, eMouseButton)
 	local tAddon = GetAddonInfo(wndAddon:GetData())
 
 	local nRadio = wndHandler:GetParent():GetRadioSel("AccountLoad")
-	SetAddonLoadCondition(tAddon.strFolder, OptionsScreen.CodeEnumLoadLevel.Account, g_mapRadioToLoadSetting[nRadio])
+	SetAddonLoadCondition(tAddon.strName, OptionsScreen.CodeEnumLoadLevel.Account, g_mapRadioToLoadSetting[nRadio])
 	self:UpdateAddonLoadSetting(wndAddon)
 end
 
@@ -754,7 +1220,7 @@ function OptionsAddon:OnChangeRealmLoad(wndHandler, wndControl, eMouseButton)
 	local tAddon = GetAddonInfo(wndAddon:GetData())
 
 	local nRadio = wndHandler:GetParent():GetRadioSel("RealmLoad")
-	SetAddonLoadCondition(tAddon.strFolder, OptionsScreen.CodeEnumLoadLevel.Realm, g_mapRadioToLoadSetting[nRadio])
+	SetAddonLoadCondition(tAddon.strName, OptionsScreen.CodeEnumLoadLevel.Realm, g_mapRadioToLoadSetting[nRadio])
 	self:UpdateAddonLoadSetting(wndAddon)
 end
 
@@ -763,7 +1229,7 @@ function OptionsAddon:OnChangeCharacterLoad(wndHandler, wndControl, eMouseButton
 	local tAddon = GetAddonInfo(wndAddon:GetData())
 
 	local nRadio = wndHandler:GetParent():GetRadioSel("CharacterLoad")
-	SetAddonLoadCondition(tAddon.strFolder, OptionsScreen.CodeEnumLoadLevel.Character, g_mapRadioToLoadSetting[nRadio])
+	SetAddonLoadCondition(tAddon.strName, OptionsScreen.CodeEnumLoadLevel.Character, g_mapRadioToLoadSetting[nRadio])
 	self:UpdateAddonLoadSetting(wndAddon)
 end
 
@@ -791,7 +1257,7 @@ function OptionsAddon:OnIgnoreVersionMismatchCheck(wndHandler, wndControl, eMous
 	local bChecked = wndHandler:IsChecked()
 	local wndAddon = wndHandler:GetParent():GetParent()
 	local tAddon = GetAddonInfo(wndAddon:GetData())
-	SetAddonIgnoreVersion(tAddon.strFolder, bChecked)
+	SetAddonIgnoreVersion(tAddon.strName, bChecked)
 	self:UpdateAddonLoadSetting(wndAddon)
 end
 
@@ -806,7 +1272,10 @@ function OptionsAddon:OnChangeLoadSettings(wndHandler, wndControl, eMouseButton)
 	end
 
 	local tAddon = GetAddonInfo(self.strSelectedAddon)
-	self:InvokeAddonLoadOnStartDlg(tAddon)
+
+	if tAddon then
+		self:InvokeAddonLoadOnStartDlg(tAddon)
+	end
 end
 
 function OptionsAddon:OnAddonSelChanged(wndHandler, wndControl, nRow, nCol)
@@ -851,6 +1320,10 @@ function OptionsAddon:OnConfigureAddon(wndHandler, wndControl, eMouseButton)
 	CallConfigure(wndControl:GetData())
 end
 
+function OptionsAddon:OnIgnoreVersionMismatch( wndHandler, wndControl, eMouseButton )
+	SetGlobalAddonIgnoreVersion(wndControl:IsChecked())
+end
+
 ---------------------------------------------------------------------------------------------------
 -- End Addons Management functions
 ---------------------------------------------------------------------------------------------------
@@ -872,7 +1345,7 @@ function OptionsAddon:OnOptionsClose()
 	end
 
 	self.wndTargeting:Show(false) -- TODO Hack for F&F: We hide the window to force a button click to bring it back up (as there's some state initialization there)
-	self.OptionsDlg:FindChild("InnerFrame"):FindChild("TargetingBtn"):SetCheck(false)
+	--self.OptionsDlg:FindChild("InnerFrame"):FindChild("TargetingBtn"):SetCheck(false)
 	CloseOptions()
 end
 
@@ -984,6 +1457,34 @@ function OptionsAddon:InitOptionsControls()
 				else
 					self.wndVideo:SetRadioSel(parent.radio, 3)
 					arBtns[3]:SetCheck(true)
+				end
+			elseif parent.consoleVar == "particle.envParticleScale" then
+				if Apollo.GetConsoleVariable("particle.envParticleScale") == 1 then
+					self.wndVideo:SetRadioSel(parent.radio, 1)
+					arBtns[1]:SetCheck(true)
+				elseif Apollo.GetConsoleVariable("particle.envParticleScale") == 0.5 then
+					self.wndVideo:SetRadioSel(parent.radio, 2)
+					arBtns[2]:SetCheck(true)
+				elseif Apollo.GetConsoleVariable("particle.envParticleScale") == 0.25 then
+					self.wndVideo:SetRadioSel(parent.radio, 3)
+					arBtns[3]:SetCheck(true)
+				else
+					self.wndVideo:SetRadioSel(parent.radio, 4)
+					arBtns[4]:SetCheck(true)
+				end
+			elseif parent.consoleVar == "spell.visualSuppression" then
+				if Apollo.GetConsoleVariable("spell.visualSuppression") == 0 then
+					self.wndVideo:SetRadioSel(parent.radio, 1)
+					arBtns[1]:SetCheck(true)
+				elseif Apollo.GetConsoleVariable("spell.visualSuppression") == 0.5 then
+					self.wndVideo:SetRadioSel(parent.radio, 2)
+					arBtns[2]:SetCheck(true)
+				elseif Apollo.GetConsoleVariable("spell.visualSuppression") < 1.0 then
+					self.wndVideo:SetRadioSel(parent.radio, 3)
+					arBtns[3]:SetCheck(true)
+				else
+					self.wndVideo:SetRadioSel(parent.radio, 4)
+					arBtns[4]:SetCheck(true)
 				end
 			elseif parent.consoleVar == "lod.landlod" then
 				if Apollo.GetConsoleVariable("lod.landlod") == 1 then
@@ -1153,24 +1654,25 @@ function OptionsAddon:OnMappedOptionsCheckboxHider(wndHandler, wndControl)
 end
 
 function OptionsAddon:OnOptionsSliderChanged(wndHandler, wndControl, fValue, fOldValue)
-	local mapping = wndControl:GetData()
-	if type(mapping.consoleVar) == "table" then
-		for idx, strConsoleVar in pairs(mapping.consoleVar) do
+	local tMapping = wndControl:GetData()
+	if type(tMapping.consoleVar) == "table" then
+		for idx, strConsoleVar in pairs(tMapping.consoleVar) do
 			Apollo.SetConsoleVariable(strConsoleVar, fValue)
 		end
 	else
-		Apollo.SetConsoleVariable(mapping.consoleVar, fValue)
+		Apollo.SetConsoleVariable(tMapping.consoleVar, fValue)
 	end
-	if mapping.buddy ~= nil then
+
+	if tMapping.buddy ~= nil then
 		local strFormat = "%s"
-		if mapping.format ~= nil then
-			strFormat = mapping.format
+		if tMapping.format ~= nil then
+			strFormat = tMapping.format
 		end
 
-		if type(mapping.consoleVar) == "table" then
-			mapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(mapping.consoleVar[1])))
+		if type(tMapping.consoleVar) == "table" then
+			tMapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(tMapping.consoleVar[1])))
 		else
-			mapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(mapping.consoleVar)))
+			tMapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(tMapping.consoleVar)))
 		end
 	end
 
@@ -1232,6 +1734,38 @@ function OptionsAddon:OnSceneDetailRadio(wndHandler, wndControl)
 		Apollo.SetConsoleVariable("world.propScreenHeightPercentMin", 8)
 	elseif ndx == 3 then
 		Apollo.SetConsoleVariable("world.propScreenHeightPercentMin", 12)
+	end
+
+	wndControl:GetParent():GetParent():SetText(wndControl:GetText())
+	wndControl:GetParent():Close()
+end
+
+function OptionsAddon:OnParticleScaleRadio(wndHandler, wndControl)
+	local ndx = wndControl:GetParent():GetRadioSel("ParticleScale")
+	if ndx == 1 then
+		Apollo.SetConsoleVariable("particle.envParticleScale", 1)
+	elseif ndx == 2 then
+		Apollo.SetConsoleVariable("particle.envParticleScale", 0.5)
+	elseif ndx == 3 then
+		Apollo.SetConsoleVariable("particle.envParticleScale", 0.25)
+	elseif ndx == 4 then
+		Apollo.SetConsoleVariable("particle.envParticleScale", 0)
+	end
+
+	wndControl:GetParent():GetParent():SetText(wndControl:GetText())
+	wndControl:GetParent():Close()
+end
+
+function OptionsAddon:OnVisualSupressionRadio(wndHandler, wndControl)
+	local ndx = wndControl:GetParent():GetRadioSel("VisualSupression")
+	if ndx == 1 then
+		Apollo.SetConsoleVariable("spell.visualSuppression", 0)
+	elseif ndx == 2 then
+		Apollo.SetConsoleVariable("spell.visualSuppression", 0.5)
+	elseif ndx == 3 then
+		Apollo.SetConsoleVariable("spell.visualSuppression", 0.9)
+	elseif ndx == 4 then
+		Apollo.SetConsoleVariable("spell.visualSuppression", 1.0) -- GOTCHA: These are reversed. Higher is better performance.
 	end
 
 	wndControl:GetParent():GetParent():SetText(wndControl:GetText())
@@ -1450,13 +1984,13 @@ end
 function OptionsAddon:OnAlwaysFaceCheck(wndHandler, wndControl, eMouseButton)
 	Apollo.SetConsoleVariable("Player.ignoreAlwaysFaceTarget", false)
 	self.wndTargeting:FindChild("FacingLockBtn"):Enable(true)
-	self.wndTargeting:FindChild("FacingLockBtn"):SetTextColor(CColor.new(1, 128/255, 0, 1))
+	self.wndTargeting:FindChild("FacingLockBtn"):SetBGColor("white")
 end
 
 function OptionsAddon:OnAlwaysFaceUncheck(wndHandler, wndControl, eMouseButton)
 	Apollo.SetConsoleVariable("Player.ignoreAlwaysFaceTarget", true)
 	self.wndTargeting:FindChild("FacingLockBtn"):Enable(false)
-	self.wndTargeting:FindChild("FacingLockBtn"):SetTextColor(CColor.new(85/255, 43/255, 0, 1))
+	self.wndTargeting:FindChild("FacingLockBtn"):SetBGColor("UI_AlphaPercent50")
 end
 
 function OptionsAddon:OnFacingLockCheck(wndHandler, wndControl, eMouseButton)
@@ -1499,23 +2033,6 @@ function OptionsAddon:OnKeyboardTurnSpeedChanged(wndHandler, wndControl, fValue,
 	local strRound = string.format("%.2f", fValue)
 	Apollo.SetConsoleVariable("player.turningSpeedKeyboard", tonumber(strRound))
 	self.wndTargeting:FindChild("KeyboardTurnSpeedEditBox"):SetText(strRound)
-end
-
--- Telegraphs
-function OptionsAddon:OnColorBlindNoneBtn(wndHandler, wndControl, eMouseButton)
-	Apollo.SetConsoleVariable("world.telegraphColorblindDisplay", 0)
-end
-
-function OptionsAddon:OnColorBlindDeuteranopialBtn(wndHandler, wndControl, eMouseButton)
-	Apollo.SetConsoleVariable("world.telegraphColorblindDisplay", 1)
-end
-
-function OptionsAddon:OnColorBlindProtanopiaBtn(wndHandler, wndControl, eMouseButton)
-	Apollo.SetConsoleVariable("world.telegraphColorblindDisplay", 2)
-end
-
-function OptionsAddon:OnColorBlindTratanopiaBtn(wndHandler, wndControl, eMouseButton)
-	Apollo.SetConsoleVariable("world.telegraphColorblindDisplay", 3)
 end
 
 function OptionsAddon:OnEnteredCombat()
@@ -1573,7 +2090,281 @@ function OptionsAddon:OnStuck(wndHandler, wndControl, eMouseButton)
 	CloseOptions()
 end
 
----------------------------------------------------------------------------------------------------
+function OptionsAddon:OnTelegraphColorResetBtn(wndHandler, wndControl, eMouseButton)
+	local wndTelegraphChoiceContainer = wndControl:GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	Apollo.ResetConsoleVariable(tSet.consoleVarFillOpacity)
+	Apollo.ResetConsoleVariable(tSet.consoleVarOutlineOpacity)
+
+	if not tSet.bReadOnlyColors then
+		Apollo.ResetConsoleVariable(tSet.consoleVarColorR)
+		Apollo.ResetConsoleVariable(tSet.consoleVarColorG)
+		Apollo.ResetConsoleVariable(tSet.consoleVarColorB)
+	end
+
+	self:UpdateTelegraphColorWindow(wndTelegraphChoiceContainer:GetParent():GetParent())
+end
+
+function OptionsAddon:OnColorChanged(wndHandler, wndControl, crNewColor)
+	local wndTelegraphChoiceContainer = wndControl:GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	local nRed = math.floor(crNewColor.r * 255.0)
+	local nGreen = math.floor(crNewColor.g * 255.0)
+	local nBlue = math.floor(crNewColor.b * 255.0)
+
+	Apollo.SetConsoleVariable(tSet.consoleVarColorR, nRed)
+	Apollo.SetConsoleVariable(tSet.consoleVarColorB, nBlue)
+	Apollo.SetConsoleVariable(tSet.consoleVarColorG, nGreen)
+
+	wndTelegraphChoiceContainer:FindChild("R_EditBox"):SetText(nRed)
+	wndTelegraphChoiceContainer:FindChild("G_EditBox"):SetText(nGreen)
+	wndTelegraphChoiceContainer:FindChild("B_EditBox"):SetText(nBlue)
+
+	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
+	wndColorBtn:FindChild("Color:Inner"):SetBGColor({crNewColor.r, crNewColor.g, crNewColor.b, 1.0})
+	wndColorBtn:FindChild("Color:Outline"):SetBGColor({crNewColor.r, crNewColor.g, crNewColor.b, 1.0})
+
+	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+end
+
+function OptionsAddon:OnFillOpacityChanged(wndHandler, wndControl, fNewValue, fOldValue)
+	local wndTelegraphChoiceContainer = wndControl:GetParent():GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	Apollo.SetConsoleVariable(tSet.consoleVarFillOpacity, math.floor(fNewValue))
+
+	wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacityEditBox"):SetText(math.floor(fNewValue))
+
+	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
+	wndColorBtn:FindChild("Color:Inner"):SetBGOpacity(fNewValue/100.0, 0.0)
+
+	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+end
+
+function OptionsAddon:OnTelegraphFillOpacityTextChanged(wndHandler, wndControl, strText)
+	local wndTelegraphChoiceContainer = wndControl:GetParent():GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	local strValue = strText:gsub('%D','')
+	if strValue == '' then
+		strValue = '0'
+	end
+	local nValue = math.min(100, math.max(tonumber(strValue), 0))
+
+	Apollo.SetConsoleVariable(tSet.consoleVarFillOpacity, nValue)
+
+	wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacitySliderBar"):SetValue(nValue)
+	local tSelection = wndControl:GetSel()
+	wndControl:SetText(nValue)
+	wndControl:SetSel(tSelection.cpCaret, tSelection.cpCaret)
+
+	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
+	wndColorBtn:FindChild("Color:Inner"):SetBGOpacity(nValue/100.0, 0.0)
+
+	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+end
+
+function OptionsAddon:OnOutlineOpacityChanged(wndHandler, wndControl, fNewValue, fOldValue)
+	local wndTelegraphChoiceContainer = wndControl:GetParent():GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	Apollo.SetConsoleVariable(tSet.consoleVarOutlineOpacity, math.floor(fNewValue))
+
+	wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacityEditBox"):SetText(math.floor(fNewValue))
+
+	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
+	wndColorBtn:FindChild("Color:Outline"):SetBGOpacity(fNewValue/100.0, 0.0)
+
+	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+end
+
+function OptionsAddon:OnTelegraphOutlineOpacityTextChanged(wndHandler, wndControl, strText)
+	local wndTelegraphChoiceContainer = wndControl:GetParent():GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	local strValue = strText:gsub('%D','')
+	if strValue == '' then
+		strValue = '0'
+	end
+	local nValue = math.min(100, math.max(tonumber(strValue), 0))
+
+	Apollo.SetConsoleVariable(tSet.consoleVarOutlineOpacity, nValue)
+
+	wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacitySliderBar"):SetValue(nValue)
+	local tSelection = wndControl:GetSel()
+	wndControl:SetText(nValue)
+	wndControl:SetSel(tSelection.cpCaret, tSelection.cpCaret)
+
+	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
+	wndColorBtn:FindChild("Color:Outline"):SetBGOpacity(nValue/100.0, 0.0)
+
+	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+end
+
+function OptionsAddon:OnTelegraphColorTextChanged(wndHandler, wndControl, strText)
+	local wndTelegraphChoiceContainer = wndControl:GetParent()
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	local strValue = strText:gsub('%D','')
+	if strValue == '' then
+		strValue = '0'
+	end
+	local nValue = math.min(255, math.max(tonumber(strValue), 0))
+
+	Apollo.SetConsoleVariable(tSet[wndControl:GetData()], nValue)
+
+	local crNewColor = ApolloColor.new(Apollo.GetConsoleVariable(tSet.consoleVarColorR), Apollo.GetConsoleVariable(tSet.consoleVarColorG), Apollo.GetConsoleVariable(tSet.consoleVarColorB))
+	wndTelegraphChoiceContainer:FindChild("ColorPicker"):SetColor(crNewColor)
+	local tSelection = wndControl:GetSel()
+	wndControl:SetText(tostring(nValue))
+	wndControl:SetSel(tSelection.cpCaret, tSelection.cpCaret)
+
+	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
+	wndColorBtn:FindChild("Color:Inner"):SetBGColor(crNewColor)
+	wndColorBtn:FindChild("Color:Outline"):SetBGColor(crNewColor)
+
+	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+end
+
+function OptionsAddon:OnTelegraphWindowClosed(wndHandler, wndControl)
+	--RefreshCustomTelegraphColors()
+end
+
+function OptionsAddon:EnableTelegraphColorControls()
+	local nCurrentTelegraphColorChoice = Apollo.GetConsoleVariable("spell.telegraphColorSet")
+	local wndTelegraphPresetSettings = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColorsHeader:DropToggleTelegraphPresetSettings")
+	for idx, wndTelegraphPresetChoice in pairs(wndTelegraphPresetSettings:FindChild("ChoiceContainer"):GetChildren()) do
+		local data = wndTelegraphPresetChoice:GetData()
+		wndTelegraphPresetChoice:SetCheck(nCurrentTelegraphColorChoice == data)
+		if nCurrentTelegraphColorChoice == data then
+			wndTelegraphPresetSettings:SetText(wndTelegraphPresetChoice:GetText())
+		end
+	end
+
+	local wndTelelgraphColors = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColors")
+	for idx, wndTelegraphColor in pairs(wndTelelgraphColors:GetChildren()) do
+		self:UpdateTelegraphColorWindow(wndTelegraphColor)
+	end
+end
+
+function OptionsAddon:UpdateTelegraphColorWindow(wndTelegraphColor)
+	local wndColorBtn = wndTelegraphColor:FindChild("ColorBtn")
+	local wndTelegraphChoiceContainer = wndColorBtn:FindChild("TelegraphChoiceContainer")
+	local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+	local tSet = tTelegraphColor.tSets[Apollo.GetConsoleVariable("spell.telegraphColorSet")]
+
+	local crColor
+	local nR
+	local nG
+	local nB
+	local nFillOpacity = Apollo.GetConsoleVariable(tSet.consoleVarFillOpacity)
+	local nOutlineOpacity = Apollo.GetConsoleVariable(tSet.consoleVarOutlineOpacity)
+
+	if tSet.bReadOnlyColors then
+		crColor = tSet.crColor
+		local tColor = crColor:ToTable()
+		nR = math.floor(tColor.r*255.0)
+		nG = math.floor(tColor.g*255.0)
+		nB = math.floor(tColor.b*255.0)
+		wndTelegraphChoiceContainer:FindChild("TelegraphColorBlocker"):Show(true)
+	else
+		nR = Apollo.GetConsoleVariable(tSet.consoleVarColorR)
+		nG = Apollo.GetConsoleVariable(tSet.consoleVarColorG)
+		nB = Apollo.GetConsoleVariable(tSet.consoleVarColorB)
+		crColor = ApolloColor.new(nR/255, nG/255, nB/255)
+		wndTelegraphChoiceContainer:FindChild("TelegraphColorBlocker"):Show(false)
+	end
+
+	local wndInner = wndColorBtn:FindChild("Color:Inner")
+	wndInner:SetBGColor(crColor)
+	wndInner:SetBGOpacity(nFillOpacity/100.0, 0.0)
+
+	local wndOutline = wndColorBtn:FindChild("Color:Outline")
+	wndOutline:SetBGColor(crColor)
+	wndOutline:SetBGOpacity(nOutlineOpacity/100.0, 0.0)
+
+	local wndR_EditBox = wndTelegraphChoiceContainer:FindChild("R_EditBox")
+	wndR_EditBox:SetText(nR)
+	wndR_EditBox:Enable(not tSet.bReadOnlyColors)
+	local wndG_EditBox = wndTelegraphChoiceContainer:FindChild("G_EditBox")
+	wndG_EditBox:SetText(nG)
+	wndG_EditBox:Enable(not tSet.bReadOnlyColors)
+	local wndB_EditBox = wndTelegraphChoiceContainer:FindChild("B_EditBox")
+	wndB_EditBox:SetText(nB)
+	wndB_EditBox:Enable(not tSet.bReadOnlyColors)
+
+	wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacityEditBox"):SetText(nFillOpacity)
+	wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacitySliderBar"):SetValue(nFillOpacity)
+
+	wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacityEditBox"):SetText(nOutlineOpacity)
+	wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacitySliderBar"):SetValue(nOutlineOpacity)
+
+	local wndColorPicker = wndTelegraphChoiceContainer:FindChild("ColorPicker")
+	wndColorPicker:SetColor(crColor)
+	wndColorPicker:Enable(not tSet.bReadOnlyColors)
+	
+	RefreshCustomTelegraphColors()
+end
+
+function OptionsAddon:OnTelegraphColorBtnCheck(wndHandler, wndControl, eMouseButton)
+	self:UpdateTelegraphColorWindow(wndControl:GetParent())
+
+	local wndTelegraphChoiceContainer = wndControl:FindChild("TelegraphChoiceContainer")
+
+	local tDisplay = Apollo.GetDisplaySize()
+	if tDisplay and tDisplay.nWidth and tDisplay.nHeight then
+		local tRect = {}
+		tRect.l, tRect.t, tRect.r, tRect.b = wndTelegraphChoiceContainer:GetRect()
+		local nWidth = tRect.r - tRect.l
+		local nHeight = tRect.b - tRect.t
+		local nDeltaX = 0
+		local nDeltaY = 0
+
+		local nCurrentX, nCurrentY = wndTelegraphChoiceContainer:GetPos()
+
+		local wndParent = wndTelegraphChoiceContainer:GetParent()
+		while wndParent ~= nil and wndParent:IsValid() do
+			local nX, nY = wndParent:GetPos()
+			nCurrentX = nCurrentX + nX
+			nCurrentY = nCurrentY + nY
+			wndParent = wndParent:GetParent()
+		end
+
+		nDeltaX = nCurrentX >= 0 and 0 or nCurrentX * -1
+		nDeltaY = nCurrentY >= 0 and 0 or nCurrentY * -1
+		strConstrainLabelOutput = strConstrainLabel
+		nDeltaX = nCurrentX + nWidth > tDisplay.nWidth and tDisplay.nWidth - nCurrentX - nWidth or nDeltaX
+		nDeltaY = nCurrentY + nHeight > tDisplay.nHeight and tDisplay.nHeight - nCurrentY - nHeight or nDeltaY
+
+		local tLocation = wndTelegraphChoiceContainer:GetLocation():ToTable()
+		tLocation.nOffsets = {
+			tLocation.nOffsets[1] + nDeltaX,
+			tLocation.nOffsets[2] + nDeltaY,
+			tLocation.nOffsets[3] + nDeltaX,
+			tLocation.nOffsets[4] + nDeltaY,
+		}
+
+		wndTelegraphChoiceContainer:MoveToLocation(WindowLocation.new(tLocation))
+	end
+end
+
+function OptionsAddon:OnTelegraphColorModeOptionCheck(wndHandler, wndControl, eMouseButton)
+	Apollo.SetConsoleVariable("spell.telegraphColorSet", wndControl:GetData())
+	self:EnableTelegraphColorControls()
+	wndControl:GetParent():Show(false)
+	RefreshCustomTelegraphColors()
+end
+
+----------------------------------------------------------------------------------------
 -- Options instance
 ---------------------------------------------------------------------------------------------------
 local OptionsInst = OptionsAddon:new()

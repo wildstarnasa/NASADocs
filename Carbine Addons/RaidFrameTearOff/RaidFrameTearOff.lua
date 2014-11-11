@@ -53,7 +53,7 @@ local ktIdToLeaderTooltip =
 	[LuaEnumLeaderType.Leader] 		= "RaidFrame_RaidLeader",
 	[LuaEnumLeaderType.MainTank] 	= "RaidFrame_MainTank",
 	[LuaEnumLeaderType.MainAssist] 	= "RaidFrame_MainAssist",
-	[LuaEnumLeaderType.RaidAssist] 	= "RaidFrame_CombatAssist",
+	[LuaEnumLeaderType.RaidAssist] 	= "RaidFrame_RaidAssist",
 }
 
 local ktHealthStatusToSpriteSmall =

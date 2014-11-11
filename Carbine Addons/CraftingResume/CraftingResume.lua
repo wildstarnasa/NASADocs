@@ -54,9 +54,10 @@ function CraftingResume:OnDocumentReady()
 		return
 	end
 
-	Apollo.RegisterEventHandler("GenericEvent_CraftFromPL", 		"OnGenericEvent_CraftFromPL", self)
-	Apollo.RegisterEventHandler("TradeskillEngravingStationOpen", 	"OnInvokeEngravingWindow", self) -- Opening from in game station
-	Apollo.RegisterEventHandler("InvokeCraftingWindow", 			"OnInvokeCraftingWindow", self) -- Opening from in game station
+	Apollo.RegisterEventHandler("GenericEvent_CraftFromPL", 					"OnGenericEvent_CraftFromPL", self)
+	Apollo.RegisterEventHandler("GenericEvent_InterfaceMenu_OpenEngraving", 	"OnInvokeEngravingWindow", self)
+	Apollo.RegisterEventHandler("TradeskillEngravingStationOpen", 				"OnInvokeEngravingWindow", self) -- Opening from in game station
+	Apollo.RegisterEventHandler("InvokeCraftingWindow", 						"OnInvokeCraftingWindow", self) -- Opening from in game station
 	self.bCraftingStation = true
 end
 
@@ -105,9 +106,13 @@ function CraftingResume:OnGenericEvent_CraftFromPL(idQueuedSchematic)
 	end
 
 	local tCurrentCraft = CraftingLib.GetCurrentCraft()
-	if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
+	if tCurrentCraft and tCurrentCraft.arSlotTypes then
+		-- This is for Runecrafting Reroll Slots. It shouldn't happen outside of a game crash, but exists as a protection.
+		Event_FireGenericEvent("GenericEvent_CraftingResume_OpenEngraving")
+
+	elseif tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
 		local tSchematicInfo = CraftingLib.GetSchematicInfo(tCurrentCraft.nSchematicId)
-		self.wndMain = Apollo.LoadForm(self.xmlDoc , "CraftingResumeForm", nil, self)
+		self.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingResumeForm", nil, self)
 		self.wndMain:FindChild("CoordPrevAbandonBtn"):SetData(idQueuedSchematic)
 		self.wndMain:FindChild("CoordPrevAbandonBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.CraftingAbandon)
 		self.wndMain:FindChild("CoordPrevFinishOldBtn"):SetData(tCurrentCraft.nSchematicId)
@@ -171,8 +176,10 @@ function CraftingResume:HelperStartCraft(idSchematic)
 	local tTradeskillInfo = CraftingLib.GetTradeskillInfo(tSchematicInfo.eTradeskillId)
 	if tTradeskillInfo.bIsCoordinateCrafting then
 		Event_FireGenericEvent("GenericEvent_StartCraftingGrid", idSchematic)
+		Event_FireGenericEvent("GenericEvent_StopCircuitCraft")
 	elseif tTradeskillInfo.bIsCircuitBoardCrafting then
 		Event_FireGenericEvent("GenericEvent_StartCircuitCraft", idSchematic)
+		Event_FireGenericEvent("GenericEvent_StopCraftingGrid")
 	end
 	Event_FireGenericEvent("GenericEvent_CraftingResume_CloseEngraving")
 end

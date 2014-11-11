@@ -22,7 +22,6 @@ local ktClassIcon =
 	[GameLib.CodeEnumClass.Stalker] 		= "Icon_Windows_UI_CRB_Stalker",
 	[GameLib.CodeEnumClass.Engineer] 		= "Icon_Windows_UI_CRB_Engineer",
 	[GameLib.CodeEnumClass.Spellslinger] 	= "Icon_Windows_UI_CRB_Spellslinger",
-	[5] = "Icon_Windows_UI_CRB_Spellslinger",
 }
 
 local ktClassName =
@@ -69,6 +68,8 @@ local karHousingResults =
 	HousingLib.HousingResult_Neighbor_Full,
 	HousingLib.HousingResult_Neighbor_PlayerIsIgnored,
 	HousingLib.HousingResult_Neighbor_IgnoredByPlayer,
+	HousingLib.HousingResult_Neighbor_MissingEntitlement,
+	HousingLib.HousingResult_Neighbor_PrivilegeRestricted,
 	HousingLib.HousingResult_Visit_Private,
 	HousingLib.HousingResult_Visit_Ignored,
 	HousingLib.HousingResult_Visit_InvalidWorld,
@@ -92,17 +93,17 @@ function NeighborsList:OnSave(eType)
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
 		return
 	end
-	
-	local locInviteLocation = self.wndInvite and self.wndInvite:GetLocation() or self.locSavedInviteLoc	
-	
-	local tSave = 
+
+	local locInviteLocation = self.wndInvite and self.wndInvite:GetLocation() or self.locSavedInviteLoc
+
+	local tSave =
 	{
 		tInviteLocation = locInviteLocation and locInviteLocation:ToTable() or nil,
 		bInviteShown = self.wndInvite and self.wndInvite:IsValid() and self.wndInvite:IsShown(),
 		strInviterName = self.strInviterName,
 		nSaveVersion = knSaveVersion,
 	}
-	
+
 	return tSave
 end
 
@@ -110,15 +111,15 @@ function NeighborsList:OnRestore(eType, tSavedData)
 	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 		return
 	end
-	
+
 	if tSavedData.tInviteLocation then
 		self.locSavedInviteLoc = WindowLocation.new(tSavedData.tInviteLocation)
 	end
-	
+
 	if tSavedData.bInviteShown and tSavedData.strInviterName then
 		self.strInviterName = tSavedData.strInviterName
 	end
-	
+
 	self.tSavedData = tSavedData
 end
 
@@ -138,10 +139,10 @@ function NeighborsList:OnDocumentReady()
 	Apollo.RegisterEventHandler("GenericEvent_InitializeNeighbors", "OnGenericEvent_InitializeNeighbors", self)
 	Apollo.RegisterEventHandler("GenericEvent_DestroyNeighbors", 	"OnGenericEvent_DestroyNeighbors", self)
 	Apollo.RegisterEventHandler("HousingNeighborInviteRecieved", 	"OnNeighborInviteRecieved", self)
-	
+
 	Apollo.CreateTimer("Neighbors_MessageDisplayTimer", 4.000, false)
 	Apollo.StopTimer("Neighbors_MessageDisplayTimer")
-	
+
 	if self.strInviterName then
 		self:OnNeighborInviteRecieved(self.strInviterName)
 	end
@@ -158,10 +159,7 @@ function NeighborsList:OnGenericEvent_InitializeNeighbors(wndParent)
 	Apollo.RegisterEventHandler("HousingNeighborInviteAccepted", 		"OnNeighborInviteAccepted", self)
 	Apollo.RegisterEventHandler("HousingNeighborInviteDeclined", 		"OnNeighborInviteDeclined", self)
 	Apollo.RegisterEventHandler("HousingPrivacyUpdated", 				"OnPrivacyUpdated", self)
-	Apollo.RegisterEventHandler("HousingRandomResidenceListRecieved", 	"OnRandomResidenceList", self)
-
 	Apollo.RegisterEventHandler("ChangeWorld", 							"OnChangeWorld", self)
-	Apollo.RegisterTimerHandler("Neighbors_MessageDisplayTimer", 		"OnMessageDisplayTimer", self)
 
     -- load our forms
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "FriendsListForm", wndParent, self)
@@ -171,23 +169,10 @@ function NeighborsList:OnGenericEvent_InitializeNeighbors(wndParent)
 	end
 
 	self.wndListContainer = self.wndMain:FindChild("ListContainer")
-	self.wndMessage = self.wndMain:FindChild("UpdateMessage")
-	self.wndMessage:Show(false)
-	--self.wndMain:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.House)
-
 	self.wndMain:FindChild("AddMemberCloseBtn"):SetData(self.wndMain:FindChild("AddWindow"))
-	self.wndMain:FindChild("VisitCloseBtn"):SetData(self.wndMain:FindChild("VisitWindow"))
-	self.wndMain:FindChild("VisitNoBtn"):SetData(self.wndMain:FindChild("VisitWindow"))
-	self.wndMain:FindChild("ModifyCloseBtn"):SetData(self.wndMain:FindChild("ModifyWindow"))
-
-	self.wndMain:FindChild("VisitBtn"):AttachWindow(self.wndMain:FindChild("VisitBtn"):FindChild("VisitWindow"))
-	self.wndMain:FindChild("ModifyBtn"):AttachWindow(self.wndMain:FindChild("ModifyBtn"):FindChild("ModifyWindow"))
 	self.wndMain:FindChild("AddBtn"):AttachWindow(self.wndMain:FindChild("AddBtn"):FindChild("AddWindow"))
 
-	self.wndRandomList = Apollo.LoadForm(self.xmlDoc, "RandomFriendsForm", nil, self)
-	self.wndRandomList:Show(false)
-	self.wndRandomList:FindChild("VisitRandomBtn"):AttachWindow(self.wndRandomList:FindChild("VisitRandomBtn"):FindChild("VisitWindow"))
-
+	self.wndLastSelected = nil
 	self:OnShow()
 end
 
@@ -195,6 +180,7 @@ function NeighborsList:OnGenericEvent_DestroyNeighbors()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
 		self.wndMain = nil
+		self.wndLastSelected = nil
 	end
 end
 
@@ -215,8 +201,6 @@ function NeighborsList:OnShow()
 end
 
 function NeighborsList:OnChangeWorld()
-	self.wndRandomList:Show(false)
-	
 	if self.wndMain then
 		self.wndMain:Show(true)
 	end
@@ -226,7 +210,7 @@ function NeighborsList:OnNeighborSortToggle(wndHandler, wndControl)
 	local bChecked = wndHandler:IsChecked()
 	local strLastChecked = wndHandler:GetName()
 	self.fnSort = nil
-	
+
 	if strLastChecked == "Label_Friend" then
 		if bChecked then
 			self.fnSort = function(a,b) return (a.strCharacterName > b.strCharacterName) end
@@ -264,7 +248,7 @@ function NeighborsList:OnNeighborSortToggle(wndHandler, wndControl)
 			self.fnSort = function(a,b) return (a.fLastOnline > b.fLastOnline) end
 		end
 	end
-	
+
 	self:RefreshList()
 end
 
@@ -278,9 +262,9 @@ function NeighborsList:RefreshList()
 	end
 
 	self.wndListContainer:DestroyChildren()
-	
+
 	local tNeighbors = HousingLib.GetNeighborList() or {}
-	
+
 	if self.fnSort then
 		table.sort(tNeighbors, self.fnSort)
 	end
@@ -290,7 +274,9 @@ function NeighborsList:RefreshList()
 		wndListItem:SetData(tCurrNeighbor) -- set the full table since we have no direct lookup for neighbors
 		wndListItem:FindChild("Name"):SetText(tCurrNeighbor.strCharacterName)
 		wndListItem:FindChild("Class"):SetSprite(ktClassIcon[tCurrNeighbor.nClassId])
+		wndListItem:FindChild("Class"):SetTooltip(ktClassName[tCurrNeighbor.nClassId] or "")
 		wndListItem:FindChild("Path"):SetSprite(kstrPathIcon[tCurrNeighbor.nPathId])
+		wndListItem:FindChild("Path"):SetTooltip(ktPathName[tCurrNeighbor.nPathId] or "")
 		wndListItem:FindChild("Level"):SetText(tCurrNeighbor.nLevel)
 
 		if nPrevId ~= nil then
@@ -304,7 +290,7 @@ function NeighborsList:RefreshList()
 
 		wndListItem:FindChild("AccountIcon"):Show(tCurrNeighbor.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Account)
 		if tCurrNeighbor.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Account then
-			wndListItem:FindChild("AccountIcon"):SetTooltip(Apollo.GetString("Neighbors_RoommateTooltip"))
+			wndListItem:FindChild("AccountIcon"):SetTooltip(Apollo.GetString("Neighbors_RoommateAccountTooltip"))
 		end
 
 		local strColorToUse = kcrOffline
@@ -336,33 +322,28 @@ function NeighborsList:UpdateControls()
 	for key, wndListItem in pairs(self.wndListContainer:GetChildren()) do
 		if wndListItem:FindChild("FriendBtn"):IsChecked() then
 			tCurr = wndListItem:GetData()
+			if tCurr.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
+				wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToNormal"))
+			else
+				wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
+			end
 		end
 	end
 
+
+	
 	-- must be on my skymap to visit; must be on someone else's to return (add button)
-	wndControls:FindChild("TeleportHomeBtn"):Enable(HousingLib.IsHousingWorld())
-	wndControls:FindChild("RandomBtn"):Enable(HousingLib.IsHousingWorld())
-	wndControls:FindChild("HomeDisabledBlocker"):Show(not HousingLib.IsHousingWorld())
+	wndControls:FindChild("VisitBtn"):Enable(HousingLib.IsHousingWorld())
 	wndControls:FindChild("VisitDisabledBlocker"):Show(not HousingLib.IsHousingWorld())
-	wndControls:FindChild("RandomDisabledBlocker"):Show(not HousingLib.IsHousingWorld())
-	if HousingLib.IsHousingWorld() == false then
-		wndControls:FindChild("RandomBtn"):FindChild("RandomIcon"):SetBGColor(ApolloColor.new(1, 0, 0, .5))
-		wndControls:FindChild("TeleportHomeBtn"):FindChild("TeleportHomeIcon"):SetBGColor(ApolloColor.new(1, 0, 0, .5))
-	else
-		wndControls:FindChild("RandomBtn"):FindChild("RandomIcon"):SetBGColor(ApolloColor.new(1, 1, 1, 1))
-		wndControls:FindChild("TeleportHomeBtn"):FindChild("TeleportHomeIcon"):SetBGColor(ApolloColor.new(1, 1, 1, 1))
-	end
 	if not tCurr or not tCurr.nId then
-		wndControls:FindChild("ModifyBtn"):Enable(false)
+		wndControls:FindChild("ModifyPermissionsBtn"):Enable(false)
 		wndControls:FindChild("VisitBtn"):Enable(false)
 		return
 	end
 
-	wndControls:FindChild("ModifyBtn"):Enable(tCurr.ePermissionNeighbor ~= HousingLib.NeighborPermissionLevel.Account)
+	wndControls:FindChild("ModifyPermissionsBtn"):Enable(tCurr.ePermissionNeighbor ~= HousingLib.NeighborPermissionLevel.Account)
 	wndControls:FindChild("VisitBtn"):Enable(HousingLib.IsHousingWorld())
-
-
-	wndControls:FindChild("ModifyBtn"):SetData(tCurr)
+	wndControls:FindChild("ModifyPermissionsBtn"):SetData(tCurr)
 	wndControls:FindChild("VisitBtn"):SetData(tCurr)
 end
 
@@ -376,9 +357,14 @@ function NeighborsList:OnFriendBtn(wndHandler, wndControl, eMouseButton)
 	if tCurrNeighbor == nil then
 		return false
 	end
+	if self.wndLastSelected then
+		self.wndLastSelected:SetCheck(false)
+	end
 
-	for key, wndPlayerEntry in pairs(self.wndListContainer:GetChildren()) do
-		wndPlayerEntry:FindChild("FriendBtn"):SetCheck(wndPlayerEntry:GetData() == tCurrNeighbor)
+	self.wndLastSelected = wndHandler
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right then
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.wndMain, tCurrNeighbor.strCharacterName)
+		return
 	end
 
 	self:UpdateControls()
@@ -387,16 +373,17 @@ end
 function NeighborsList:OnFriendBtnUncheck(wndHandler, wndControl, eMouseButton)
 	local tCurrNeighbor = wndControl:GetParent():GetData()
 
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right then
+		wndControl:SetCheck(true)
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.wndMain, tCurrNeighbor.strCharacterName)
+		return
+	end
+
 	if tCurrNeighbor == nil then
 		return false
 	end
-
+	self.wndLastSelected = nil
 	self:UpdateControls()
-end
-
-function NeighborsList:OnContextMenuOnlyBtn(wndHandler, wndControl)
-	local tCurrNeighbor = wndControl:GetParent():GetData()
-	Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.wndMain, tCurrNeighbor.strCharacterName)
 end
 
 -- Add Sub-Window Functions
@@ -413,6 +400,7 @@ function NeighborsList:OnAddMemberYesClick( wndHandler, wndControl )
 
 	if strName ~= nil and strName ~= "" then
 		HousingLib.NeighborInviteByName(strName)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToNeighbors"), strName))
 	end
 	wndControl:GetParent():Show(false)
 end
@@ -424,51 +412,37 @@ function NeighborsList:OnModifyBtn(wndHandler, wndControl)
 	if tCurrNeighbor == nil then
 		return
 	end
-
+	local wndControls = self.wndMain:FindChild("Controls")
 	local wndModify = wndControl:FindChild("ModifyWindow")
 	wndModify:SetData(tCurrNeighbor)
 	-- set the permissions button
 	if tCurrNeighbor.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
-		wndModify:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToNormal"))
+		wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToNormal"))
 	else
-		wndModify:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
+		wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
 	end
 
 	wndModify:Show(true)
 end
 
-function NeighborsList:OnModifyRemoveBtn(wndHandler, wndControl)
-	local wndParent = wndControl:GetParent()
-	local tCurr = wndParent:GetData()
-
-	if tCurr ~= nil then
-		HousingLib.NeighborEvict(tCurr.nId)
-	end
-
-	wndParent:Show(false)
-end
-
 function NeighborsList:OnModifyPermissionsBtn(wndHandler, wndControl)
-	local wndParent = self.wndMain:FindChild("ModifyWindow")
-	local tCurr = wndParent:GetData()
+	local tCurr = wndControl:GetData()
+	
+	if tCurr == nil then
+		return
+	end
 
 	if tCurr ~= nil and tCurr.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
 		HousingLib.NeighborSetPermission(tCurr.nId, HousingLib.NeighborPermissionLevel.Normal)
+		self.wndMain:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
 	else
 		HousingLib.NeighborSetPermission(tCurr.nId, HousingLib.NeighborPermissionLevel.Roommate)
+		self.wndMain:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToNormal"))
 	end
-	wndParent:Show(false)
-end
-
-function NeighborsList:OnModifyIgnoreBtn(wndHandler, wndControl)
-	local wndParent = wndControl:GetParent()
-	local tCurr = wndParent:GetData()
-
-	if tCurr ~= nil then
-		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, tCurr.strCharacterName)
+	
+	for key, wndListItem in pairs(self.wndListContainer:GetChildren()) do
+		wndListItem:FindChild("FriendBtn"):SetCheck(false)
 	end
-
-	wndParent:Show(false)
 end
 
 -- Visit Sub-Window Functions
@@ -483,27 +457,14 @@ function NeighborsList:OnVisitBtn(wndHandler, wndControl)
 end
 
 function NeighborsList:OnVisitConfirmBtn(wndHandler, wndControl)
-	local wndParent = wndControl:GetParent()
-	local tCurrNeighbor = wndParent:GetData()
+	--local wndParent = wndControl:GetParent()
+	local tCurrNeighbor = wndControl:GetData()
 
 	if tCurrNeighbor ~= nil then
 		HousingLib.VisitNeighborResidence(tCurrNeighbor.nId)
 	end
 
-	wndParent:Show(false)
-end
-
-function NeighborsList:OnRandomBtn(wndHandler, wndControl)
-	if self.wndRandomList:IsShown() then
-		self.wndRandomList:Close()
-	else
-		self:ShowRandomList()
-	end
-end
-
-function NeighborsList:OnTeleportHomeBtn(wndHandler, wndControl)
-	HousingLib.RequestTakeMeHome()
-	Event_FireGenericEvent("ToggleSocialWindow") -- Here to prevent change instance not reloading panel
+	--wndParent:Show(false)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -568,8 +529,7 @@ function NeighborsList:OnHousingResultInterceptResponse( eResult, wndIntercept, 
 
 	if self.wndMain:IsShown() then
 		-- (Re)start the timer and show the window. We're not queuing these since they come as results of direct action
-		self.wndMessage:FindChild("MessageText"):SetText(strAlertMsg)
-		self.wndMessage:Show(true)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strAlertMsg)
 		Apollo.StopTimer("Neighbors_MessageDisplayTimer")
 		Apollo.StartTimer("Neighbors_MessageDisplayTimer")
 	else
@@ -577,9 +537,6 @@ function NeighborsList:OnHousingResultInterceptResponse( eResult, wndIntercept, 
 	end
 end
 
-function NeighborsList:OnMessageDisplayTimer()
-	self.wndMessage:Show(false)
-end
 
 -----------------------------------------------------------------------------------------------
 -- Neighbor Invite Window
@@ -588,13 +545,13 @@ function NeighborsList:OnNeighborInviteRecieved(strName)
 	if self.wndInvite and self.wndInvite:IsValid() then
 		self.wndInvite:Destroy()
 	end
-	
+
 	self.strInviterName = strName
 
 	self.wndInvite = Apollo.LoadForm(self.xmlDoc, "NeighborInviteConfirmation", nil, self)
 	self.wndInvite:FindChild("NeighborInviteLabel"):SetText(String_GetWeaselString(Apollo.GetString("Neighbors_InviteReceived"), strName))
 	self.wndInvite:Invoke()
-	
+
 	if self.locSavedInviteLoc then
 		self.wndInvite:MoveToLocation(self.locSavedInviteLoc)
 	end
@@ -606,6 +563,11 @@ function NeighborsList:OnNeighborInviteAccept(wndHandler, wndControl)
 		self.locSavedInviteLoc = self.wndInvite:GetLocation()
 		self.wndInvite:Destroy()
 	end
+end
+
+function NeighborsList:OnReportInviteSpamBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("GenericEvent_ReportPlayerNeighborInvite")
+	self:OnNeighborInviteDecline()
 end
 
 function NeighborsList:OnNeighborInviteDecline() -- This can come from a variety of sources
@@ -620,7 +582,7 @@ function NeighborsList:OnNeighborInviteAccepted(strName)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
-	
+
 	self.strInviterName = nil
 
 	if self.wndInvite then
@@ -643,7 +605,7 @@ function NeighborsList:OnNeighborInviteDeclined(strName)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
-	
+
 	self.strInviterName = nil
 
 	if self.wndInvite then
@@ -660,78 +622,6 @@ function NeighborsList:OnNeighborInviteDeclined(strName)
 	else
 		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_System, strMessage, "")
 	end
-end
-
-
-
----------------------------------------------------------------------------------------------------
--- Random List Functions
----------------------------------------------------------------------------------------------------
-function NeighborsList:ShowRandomList()
-	if not self.wndMain or not self.wndMain:IsValid() then
-		return
-	end
-
-	local nWidth = self.wndRandomList:GetWidth()
-	local nHeight = self.wndRandomList:GetHeight()
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-
-	--self.wndRandomList:SetAnchorOffsets(nRight - 15, nTop + 60, nRight + nWidth - 15, nTop + 60 + nHeight)
-
-	--populate
-	HousingLib.RequestRandomResidenceList()
-	self.wndRandomList:FindChild("VisitRandomBtn"):Enable(false)
-	self.wndRandomList:FindChild("ListContainer"):DestroyChildren()
-	self.wndRandomList:Invoke()
-end
-
-function NeighborsList:OnRandomResidenceList()
-	self.wndRandomList:FindChild("ListContainer"):DestroyChildren()
-	
-	local arResidences = HousingLib.GetRandomResidenceList()
-	for key, tHouse in pairs(arResidences) do
-		local wnd = Apollo.LoadForm(self.xmlDoc, "RandomFriendForm", self.wndRandomList:FindChild("ListContainer"), self)
-		wnd:SetData(tHouse.nId) -- set the full table since we have no direct lookup for neighbors
-		wnd:FindChild("PlayerName"):SetText(String_GetWeaselString(Apollo.GetString("Neighbors_OwnerListing"), tHouse.strCharacterName))
-		wnd:FindChild("PropertyName"):SetText(tHouse.strResidenceName)
-	end
-
-	self.wndRandomList:FindChild("ListContainer"):ArrangeChildrenVert()
-	self.wndRandomList:FindChild("VisitRandomBtn"):Enable(false)
-end
-
-function NeighborsList:OnRandomFriendClose()
-	self.wndRandomList:Close()
-end
-
-function NeighborsList:OnSubCloseBtn(wndHandler, wndControl)
-	local wndParent = wndHandler:GetData()
-	wndParent:Show(false)
-end
-
-function NeighborsList:OnVisitRandomBtn(wndHandler, wndControl)
-	wndControl:FindChild("VisitWindow"):Show(true)
-end
-
-function NeighborsList:OnVisitRandomConfirmBtn(wndHandler, wndControl)
-	local nId = wndControl:GetParent():GetData()
-	HousingLib.RequestRandomVisit(nId)
-	wndControl:GetParent():Show(false)
-end
-
-function NeighborsList:OnRandomFriendBtn(wndHandler, wndControl)
-	local nId = wndControl:GetParent():GetData()
-
-	for key, wndRandomNeighbor in pairs(self.wndRandomList:FindChild("ListContainer"):GetChildren()) do
-		wndRandomNeighbor:FindChild("FriendBtn"):SetCheck(nId == wndRandomNeighbor:GetData())
-	end
-
-	self.wndRandomList:FindChild("VisitRandomBtn"):FindChild("VisitWindow"):SetData(nId)
-	self.wndRandomList:FindChild("VisitRandomBtn"):Enable(true)
-end
-
-function NeighborsList:OnRandomFriendBtnUncheck(wndHandler, wndControl)
-	self.wndRandomList:FindChild("VisitRandomBtn"):Enable(false)
 end
 
 local NeighborsListInst = NeighborsList:new()

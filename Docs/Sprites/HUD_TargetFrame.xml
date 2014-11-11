@@ -57,13 +57,13 @@
     <Sprite Name="spr_TargetFrame_ClusterCover" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterCover.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
-	<Sprite Name="spr_TargetFrame_ClusterCoverShield" Cycle="1">
+    <Sprite Name="spr_TargetFrame_ClusterCoverShield" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterCoverShield.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_TargetFrame_ClusterFrame" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterFrame.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="60" y0="0" y1="0" y2="0" y3="0" y4="0" y5="59" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
-	<Sprite Name="spr_TargetFrame_ClusterHealthShield" Cycle="1">
+    <Sprite Name="spr_TargetFrame_ClusterHealthShield" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_TargetFrame_ClusterHealthShield.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_TargetFrame_ClusterHealthGreen" Cycle="1">
@@ -146,5 +146,29 @@
     </Sprite>
     <Sprite Name="spr_TargetFrame_IconShadow" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_TargetFrame_IconShadow.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="56" y0="0" y1="0" y2="0" y3="0" y4="0" y5="56" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_Buff" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_Buff.tga" x0="0" x1="14" x2="15" x3="15" x4="15" x5="28" y0="0" y1="14" y2="15" y3="15" y4="15" y5="28" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_Debuff" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_TargetFrame_Debuff.tga" x0="0" x1="14" x2="15" x3="15" x4="15" x5="28" y0="0" y1="14" y2="15" y3="15" y4="15" y5="28" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_DebuffTimerEmpty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BuffBars.tga" x0="0" x1="8" x2="128" x3="128" x4="128" x5="136" y0="0" y1="0" y2="0" y3="0" y4="0" y5="26" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_BuffTimerEmpty" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BuffBars.tga" x0="0" x1="8" x2="124" x3="124" x4="124" x5="136" y0="27" y1="27" y2="27" y3="27" y4="27" y5="53" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_DebuffTimerFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BuffBars.tga" x0="0" x1="8" x2="118" x3="118" x4="118" x5="126" y0="54" y1="54" y2="54" y3="54" y4="54" y5="74" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_BuffTimerFill" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BuffBars.tga" x0="0" x1="8" x2="118" x3="118" x4="118" x5="126" y0="75" y1="75" y2="75" y3="75" y4="75" y5="95" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_DebuffTimerEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BuffBars.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="4" y0="96" y1="96" y2="96" y3="96" y4="96" y5="116" HotspotX="0" HotspotY="10" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_TargetFrame_BuffTimerEdgeGlow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_BuffBars.tga" x0="5" x1="5" x2="5" x3="5" x4="5" x5="9" y0="96" y1="96" y2="96" y3="96" y4="96" y5="116" HotspotX="0" HotspotY="10" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
 </Sprites>

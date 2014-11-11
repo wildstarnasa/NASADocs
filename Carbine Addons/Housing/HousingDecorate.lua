@@ -23,6 +23,7 @@ local gbOnProperty 	= 0
  local knItemTypeHousingInteriorFurniture 	= 155
  local knItemTypeHousingExteriorAccent 		= 163
  local knInteriorListTopOffset = -40
+ local knHousingExteriorPlacementMinHeight = -60
  
  local kstrFrameVisible 	= "CRB_DatachronSprites:sprDC_GreenPulse"
  local kstrFrameNotVisible 	= "CRB_DatachronSprites:sprDC_RedPulse"
@@ -73,6 +74,8 @@ end
 -- HousingDecorate OnLoad
 -----------------------------------------------------------------------------------------------
 function HousingDecorate:OnLoad()
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("HousingPanelControlOpen", 			"OnOpenPanelControl", self)
 	Apollo.RegisterEventHandler("HousingPanelControlClose", 		"OnClosePanelControl", self)
 	Apollo.RegisterEventHandler("WarPartyBattleOpen", 				"OnOpenBattle", self)
@@ -183,6 +186,9 @@ function HousingDecorate:OnLoad()
 	
 	-- free place
 	self.wndFreePlaceFrame = Apollo.LoadForm(self.xmlDoc, "FreePlaceWindow", nil, self)
+	self.wndFreePlaceFrame:FindChild("CopyTranslationBtn"):SetCheck(true)
+	self.wndFreePlaceFrame:FindChild("CopyRotationBtn"):SetCheck(true)
+	self.wndFreePlaceFrame:FindChild("CopyScaleBtn"):SetCheck(true)
 	
 	self.wndFreePlaceOKBtn = self.wndFreePlaceFrame:FindChild("FreePlaceBtn")
 	self.wndFreePlaceOKBtn:Enable(false)
@@ -225,6 +231,14 @@ function HousingDecorate:OnLoad()
 	
 	--self:ShowDecorateWindow(true)
 	--HousingLib.RefreshUI()
+end
+
+function HousingDecorate:OnWindowManagementReady()
+	local strCrateName = string.format("%s: %s", Apollo.GetString("CRB_Housing"), Apollo.GetString("CRB_Crate"))
+	local strPlaceName = string.format("%s: %s", Apollo.GetString("CRB_Housing"), Apollo.GetString("Housing_AdvancedMode"))
+	
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndDecorate, strName = strCrateName})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndFreePlaceFrame, strName = strPlaceName})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -466,7 +480,7 @@ function HousingDecorate:OnDecoratePreview(wndControl, wndHandler) -- attaching 
             self.nPreviewDecorHandle = nItemHandle
             
             local bValidPlacement = HousingLib.ValidateDecorPlacement(nItemHandle)
-            local bThereIsRoom = not self.bPlayerIsInside and HousingLib.GetNumPlacedDecorExterior() <= HousingLib.GetMaxPlacedDecorExterior() or true
+            local bThereIsRoom = not self.bPlayerIsInside and HousingLib.GetNumPlacedDecorExterior() <= HousingLib.GetMaxPlacedDecorExterior() or HousingLib.GetNumPlacedDecorInterior() <= HousingLib.GetMaxPlacedDecorInterior()
             local bCanAfford = true
             if self.bIsVendor then
                 bCanAfford = GameLib.GetPlayerCurrency():GetAmount(self.eDisplayedCurrencyType, self.eDisplayedGroupCurrencyType) >= tItemData.nCost
@@ -702,7 +716,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingDecorate:ShowDecorateWindow(bClear)
-
     self.wndExtHeaderWindow:Show(not self.bPlayerIsInside and not self.bIsWarplot)
     self.wndIntHeaderWindow:Show(self.bPlayerIsInside or self.bIsWarplot)
     
@@ -789,7 +802,7 @@ function HousingDecorate:ShowDecorateWindow(bClear)
         strCountDecor = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedDecor"), nPlacedDecor, nMaxDecor)
     else
         local nPlacedDecor = HousingLib.GetNumPlacedDecorInterior()
-        local nMaxDecor = HousingLib.GetMaxOwnedDecor()
+        local nMaxDecor = HousingLib.GetMaxPlacedDecorInterior()
         strCountDecor = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedDecor"), nPlacedDecor, nMaxDecor)
 	end
 	
@@ -801,11 +814,11 @@ function HousingDecorate:ShowDecorateWindow(bClear)
 		local strWarplot = (strCountDecor.." - "..strCount2)
 		self.wndDecorate:FindChild("EverythingLimitLabel"):SetText(strWarplot)
 	else
-		nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin)
+		nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin, self.bPlayerIsInside)
 		nMaxDecor = HousingLib.GetMaxPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Mannequin)
 		local strCount3 = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedMannequins"), nPlacedDecor, nMaxDecor)
 		
-		nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light)
+		nPlacedDecor = HousingLib.GetNumPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light, self.bPlayerIsInside)
 		nMaxDecor = HousingLib.GetMaxPlacedDecorFromCategory(HousingLib.DecorCategoryLimit.Light)
 		local strCount4 = String_GetWeaselString(Apollo.GetString("HousingDecorate_PlacedLights"), nPlacedDecor, nMaxDecor)
 		
@@ -878,7 +891,7 @@ function HousingDecorate:OnFreePlaceDecorPlaced(nItemHandle)
     end
     
     local bValidPlacement = HousingLib.ValidateDecorPlacement(nItemHandle)
-    local bThereIsRoom = not self.bPlayerIsInside and HousingLib.GetNumPlacedDecorExterior() <= HousingLib.GetMaxPlacedDecorExterior() or true
+    local bThereIsRoom = not self.bPlayerIsInside and HousingLib.GetNumPlacedDecorExterior() <= HousingLib.GetMaxPlacedDecorExterior() or HousingLib.GetNumPlacedDecorInterior() <= HousingLib.GetMaxPlacedDecorInterior()
     local bCanAfford = true
     if self.bIsVendor then
        local nRow = self.wndListView:GetCurrentRow()
@@ -1066,6 +1079,15 @@ function HousingDecorate:OnFreePlacePasteBtn(wndHandler, wndControl)
 end
 
 ---------------------------------------------------------------------------------------------------
+function HousingDecorate:OnFreePlaceCheckBtn(wndHandler, wndControl)
+	local bEnabled = self.wndFreePlaceFrame:FindChild("CopyTranslationBtn"):IsChecked()
+		or self.wndFreePlaceFrame:FindChild("CopyRotationBtn"):IsChecked()
+		or self.wndFreePlaceFrame:FindChild("CopyScaleBtn"):IsChecked()
+
+	self.wndFreePlaceCopyBtn:Enable(bEnabled)
+end
+
+---------------------------------------------------------------------------------------------------
 function HousingDecorate:UpdateFreePlaceControlVisibility()
     local bMove = self.wndFreePlaceToggleMoveControlBtn:IsChecked()
     local bRotate = self.wndFreePlaceToggleRotateControlBtn:IsChecked()
@@ -1083,40 +1105,48 @@ function HousingDecorate:OnFreePlace_Move(wndHandler, wndControl)
 	local kfBigMove = 0.5
 		
 	if wndControl == self.wndFreePlaceFrame:FindChild("MoveForwardBtn") then
-		HousingLib.TranslateDecor(0, 0, kfSmallMove)
+		HousingLib.TranslateDecor(kfSmallMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveBackBtn") then
-		HousingLib.TranslateDecor(0, 0, -kfSmallMove)
+		HousingLib.TranslateDecor(-kfSmallMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveUpBtn") then
 		HousingLib.TranslateDecor(0, kfSmallMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveDownBtn") then
 		HousingLib.TranslateDecor(0, -kfSmallMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveLeftBtn") then
-		HousingLib.TranslateDecor(kfSmallMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, kfSmallMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveRightBtn") then
-		HousingLib.TranslateDecor(-kfSmallMove, 0, -0)
+		HousingLib.TranslateDecor(0, 0, -kfSmallMove)
 	
 	
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveForwardLongBtn") then
-		HousingLib.TranslateDecor(0, 0, kfBigMove)
+		HousingLib.TranslateDecor(kfBigMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveBackLongBtn") then
-		HousingLib.TranslateDecor(0, 0, -kfBigMove)
+		HousingLib.TranslateDecor(-kfBigMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveUpLongBtn") then
 		HousingLib.TranslateDecor(0, kfBigMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveDownLongBtn") then
 		HousingLib.TranslateDecor(0, -kfBigMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveLeftLongBtn") then
-		HousingLib.TranslateDecor(kfBigMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, kfBigMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveRightLongBtn") then
-		HousingLib.TranslateDecor(-kfBigMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, -kfBigMove)
 	end
 end
 
+---------------------------------------------------------------------------------------------------
 function HousingDecorate:OnDecorScaleChanged(wndHandler, wndControl)
     self.wndFreePlaceFrame:FindChild("FreePlaceBtn"):Enable(true)
 	self.wndFreePlaceFrame:FindChild("CancelFreePlaceBtn"):Enable(true)
 	
     local fScaleValue = wndHandler:GetValue()
     HousingLib.ScaleDecor(fScaleValue/100.0)
+end
+
+---------------------------------------------------------------------------------------------------
+function HousingDecorate:OnScaleEdited(wndHandler, wndControl)
+    local fScaleValue = tonumber(wndHandler:GetText())
+    
+	HousingLib.ScaleDecor(fScaleValue)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1268,11 +1298,19 @@ function HousingDecorate:OnHousingAdvancedChecked()
 
         HousingLib.ShowMoveControls(bMove)
         HousingLib.ShowRotateControls(bRotate)
+		
+		self.wndFreePlaceToggleMoveControlBtn:Enable(true)
+		self.wndFreePlaceToggleRotateControlBtn:Enable(true)
+		
+		self:UpdateFreePlaceControlVisibility()
 	end
 end
 
 ---------------------------------------------------------------------------------------------------
 function HousingDecorate:OnHousingAdvancedUnchecked()
+	self.wndFreePlaceToggleMoveControlBtn:Enable(false)
+	self.wndFreePlaceToggleRotateControlBtn:Enable(false)
+		
 	if not self.bIsWarplot then
 		HousingLib.SetCustomizationMode(HousingLib.ResidenceCustomizationMode.Simple)
 	end
@@ -1394,16 +1432,16 @@ function HousingDecorate:ShowItems(wndControl, tItemList, idPrune)
 		-- check for, and handle search filters
         local strSearchText = ""
         if self.bPlayerIsInside or self.bIsWarplot then
-            strSearchText = string.lower(self.wndIntSearchWindow:GetText())
+            strSearchText = Apollo.StringToLower(self.wndIntSearchWindow:GetText())
         else
-            strSearchText = string.lower(self.wndExtSearchWindow:GetText())
+            strSearchText = Apollo.StringToLower(self.wndExtSearchWindow:GetText())
         end
 		
         if strSearchText ~= nil and strSearchText ~= "" and strSearchText:match("[%w%s]+") then
             local tFilteredList = {}
             local nFilteredItems = 0
             for idx = 1, #tItemList do
-                local strItemName = string.lower(tItemList[idx].strName)
+                local strItemName = Apollo.StringToLower(tItemList[idx].strName)
                 if string.find(strItemName,strSearchText) ~= nil then
                     nFilteredItems = nFilteredItems + 1
                     tFilteredList[nFilteredItems] = tItemList[idx]
@@ -1482,6 +1520,7 @@ function HousingDecorate:ShowItems(wndControl, tItemList, idPrune)
                     
                     if tItemData.splBuff ~= nil and tItemData.splBuff ~= {} then
                         wndControl:SetCellImage(i, 3, tItemData.splBuff:GetIcon())
+						wndControl:SetCellSortText(i, 3, tItemData.splBuff:GetName())
                     end
                     
 				else
@@ -1489,6 +1528,7 @@ function HousingDecorate:ShowItems(wndControl, tItemList, idPrune)
 				    
 				    if tItemData.splBuff ~= nil and tItemData.splBuff ~= {} then
                         wndControl:SetCellImage(i, 3, tItemData.splBuff:GetIcon())
+						wndControl:SetCellSortText(i, 3, tItemData.splBuff:GetName())
                     end
 				end
 	
@@ -1590,13 +1630,14 @@ end
 
 function HousingDecorate:HelperOnSortByUpdateDropdown(strDropdownText)
     if self.bPlayerIsInside or self.bIsWarplot then
-        self.wndDecorate:FindChild("IntSortByBtn"):SetCheck(false)
+        self.wndDecorate:FindChild("IntSortByBtn"):SetText(strDropdownText)
+		self.wndDecorate:FindChild("IntSortByBtn"):SetCheck(false)
         self.wndDecorate:FindChild("IntSortByWindow"):Show(false)
-        self.wndDecorate:FindChild("IntSortByBtnLabel"):SetText(strDropdownText)
     else
-         self.wndDecorate:FindChild("ExtSortByBtn"):SetCheck(false)
+        self.wndDecorate:FindChild("ExtSortByBtn"):SetText(strDropdownText)
+		self.wndDecorate:FindChild("ExtSortByBtn"):SetCheck(false)
         self.wndDecorate:FindChild("ExtSortByWindow"):Show(false)
-        self.wndDecorate:FindChild("ExtSortByBtnLabel"):SetText(strDropdownText)   
+        
     end
     -- update the list
     self:ShowItems(self.wndListView, self.tDecorList, 0)
@@ -1605,10 +1646,11 @@ end
 
 -- populate item list
 function HousingDecorate:PopulateCategoryList()
+	local nScrollPosition = self.wndSortByList:GetVScrollPos()
+	
 	-- make sure the tItemData list is empty to start with
 	self:DestroyCategoryList()
 	self.wndSortByList:DestroyChildren()
-	
 	
 	if self.tDecorList == nil or self.bPlayerIsInside == nil or self.bIsWarplot == nil then
 	    return
@@ -1636,8 +1678,6 @@ function HousingDecorate:PopulateCategoryList()
 	    end
 	end
 	
-	
-	
 	-- populate the list
     if tCategoryList ~= nil then
         local tFirstItemData = {}
@@ -1657,6 +1697,7 @@ function HousingDecorate:PopulateCategoryList()
 	
 	-- now all the iteam are added, call ArrangeChildrenVert to list out the list items vertically
 	self.wndSortByList:ArrangeChildrenVert()
+	self.wndSortByList:SetVScrollPos(nScrollPosition)
 end
 
 -- clear the item list
@@ -1888,10 +1929,15 @@ function HousingDecorate:OnActivateDecorIcon(nDecorHandle) --this is second and 
             wndFreePlacePitch:SetText(string.format("%.2f", tScreenInfo.fPitch))
             wndFreePlaceRoll:SetText(string.format("%.2f", tScreenInfo.fRoll))
             wndFreePlaceYaw:SetText(string.format("%.2f", tScreenInfo.fYaw))
+			
+			self.wndFreePlaceFrame:FindChild("ScaleTextBox"):SetText(string.format("%.2f", tScreenInfo.fScaleCurrent))
             
-            local customizeMode = HousingLib.GetCustomizationMode()
+            local eCustomizeMode = HousingLib.GetCustomizationMode()
+			local bAdvancedChecked = eCustomizeMode == HousingLib.ResidenceCustomizationMode.Advanced
             self.wndFreePlaceFrame:FindChild("BtnHousingAdvancedMode"):Show(not self.bIsWarplot)
-            self.wndFreePlaceFrame:FindChild("BtnHousingAdvancedMode"):SetCheck(customizeMode == HousingLib.ResidenceCustomizationMode.Advanced)
+            self.wndFreePlaceFrame:FindChild("BtnHousingAdvancedMode"):SetCheck(bAdvancedChecked)
+			self.wndFreePlaceToggleMoveControlBtn:Enable(bAdvancedChecked)
+			self.wndFreePlaceToggleRotateControlBtn:Enable(bAdvancedChecked)
         end
       
         -- start our update timer
@@ -1942,11 +1988,12 @@ function HousingDecorate:OnFreePlaceDecorMoving(nDecorHandle)
         wndFreePlaceRoll:SetText(string.format("%.2f", tScreenInfo.fRoll))
         wndFreePlaceYaw:SetText(string.format("%.2f", tScreenInfo.fYaw))
         
-        local wndIconSliderBar = self.wndDecorIconOptionsWindow:FindChild("SliderBar")
+		local wndIconSliderBar = self.wndDecorIconOptionsWindow:FindChild("SliderBar")
 		wndIconSliderBar:SetValue(tScreenInfo.fScaleCurrent * 100)
 		
 		local wndFreePlaceSliderBar = self.wndFreePlaceFrame:FindChild("SliderBar")
 		wndFreePlaceSliderBar:SetValue(tScreenInfo.fScaleCurrent * 100)
+		self.wndFreePlaceFrame:FindChild("ScaleTextBox"):SetText(string.format("%.2f", tScreenInfo.fScaleCurrent))
     end
 end
 
@@ -1968,7 +2015,7 @@ function HousingDecorate:UpdateDecorIconPosition(nDecorHandle) -- this is third 
 			return
 		end
 		
-		if (self.bPlayerIsInside and tScreenInfo.fWorldPosY >= -80) or (not self.bPlayerIsInside and tScreenInfo.fWorldPosY < -80) then
+		if (self.bPlayerIsInside and tScreenInfo.fWorldPosY >= knHousingExteriorPlacementMinHeight) or (not self.bPlayerIsInside and tScreenInfo.fWorldPosY < knHousingExteriorPlacementMinHeight) then
             self.wndDecorIconFrame:Show(false)
 			return    
 		end

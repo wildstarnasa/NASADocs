@@ -100,12 +100,12 @@ function ClueTracker:OnPopulate(nWhich, strText)
 	self.tClues[nWhich] = strText
 
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "ClueFrame", self.wndMain:FindChild("ClueFrameScroll"), self)
-	wndCurr:FindChild("ClueNumber"):SetText("#"..nWhich)
-	wndCurr:FindChild("ClueText"):SetAML("<P Font=\"CRB_InterfaceMedium\">"..Apollo.GetString(strText).."</P>")
+	wndCurr:FindChild("ClueNumber"):SetText(Apollo.GetString("NumberCharacter") .. nWhich)
+	wndCurr:FindChild("ClueText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">"..Apollo.GetString(strText).."</P>")
 	local nTextWidth, nTextHeight = wndCurr:FindChild("ClueText"):SetHeightToContentHeight()
 	local l,t,r,b = wndCurr:GetAnchorOffsets()
 	nTextHeight = math.max(27, nTextHeight) -- Minimum height for the text
-	wndCurr:SetAnchorOffsets(l,t,r,t + nTextHeight + 16) -- +2 is for lower g height and padding
+	wndCurr:SetAnchorOffsets(l,t,r,t + nTextHeight + 29) -- +2 is for lower g height and padding
 
 	self.wndMain:FindChild("ClueFrameScroll"):ArrangeChildrenVert(0)
 end

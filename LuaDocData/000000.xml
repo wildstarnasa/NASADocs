@@ -1,4 +1,4 @@
-<Documentation Id="1" NextId="13443">
+<Documentation Id="1" NextId="16567">
     <Types Id="2">
         <Type Name="Boolean" Prefix="b" Id="3"/>
         <Type Name="Integer" Prefix="n" Id="4"/>
@@ -3630,14 +3630,14 @@ self.wndChild:Show(false)" NeedProofread="true">
         <Function Name="FromQuaternion" Incomplete="true" Id="3018"/>
         <Function Name="Identity" Incomplete="true" Id="3019"/>
     </Object>
-    <WindowControl Name="Menu" Incomplete="true" Id="3020">
+    <Object Name="Menu" Incomplete="true" Id="3020">
         <Method Name="DoPopupMenu" Incomplete="true" Id="3021"/>
         <Method Name="EnableMenuItem" Incomplete="true" Id="3022"/>
         <Method Name="SetItemImage" Incomplete="true" Id="3023"/>
         <Method Name="SetWindowTemplate" Incomplete="true" Id="3024"/>
         <Function Name="new" Incomplete="true" Id="3057"/>
         <Function Name="is" Incomplete="true" Id="3058"/>
-    </WindowControl>
+    </Object>
     <WindowControl Name="ModelWindow" Incomplete="true" Id="3025">
         <Method Name="SetCamera" Incomplete="true" Id="3026"/>
         <Method Name="SetOverlay" Incomplete="true" Id="3027"/>
@@ -3648,10 +3648,10 @@ self.wndChild:Show(false)" NeedProofread="true">
         <Method Name="SetFrame" Incomplete="true" Id="3032"/>
         <Method Name="SetSpeed" Incomplete="true" Id="3033"/>
     </WindowControl>
-    <WindowControl Name="Sprite" Incomplete="true" Id="3034">
+    <Object Name="Sprite" Incomplete="true" Id="3034">
         <Method Name="Draw" Incomplete="true" Id="3035"/>
         <Function Name="is" Incomplete="true" Id="3036"/>
-    </WindowControl>
+    </Object>
     <WindowControl Name="WindowLocation" Incomplete="true" Id="3037">
         <Method Name="SetPoint" Incomplete="true" Id="3038"/>
         <Method Name="GetPoint" Incomplete="true" Id="3039"/>

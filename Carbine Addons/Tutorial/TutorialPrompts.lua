@@ -79,7 +79,9 @@ function TutorialPrompts:OnDocumentReady()
 	
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchorResponse", "DrawHintWindow", self)
 	Apollo.RegisterEventHandler("ShowTutorial", 					"OnShowTutorial", self)
+	Apollo.RegisterEventHandler("ForceTutorial", 					"OnForceTutorial", self)
 	Apollo.RegisterEventHandler("TutorialPlaybackEnded", 			"OnTutorialPlaybackEnded", self)
+	Apollo.RegisterEventHandler("OptionsUpdated_ShowTutorials", 			"OnShowTutorialsUpdated", self)
 
 	-- Stun Events
 	Apollo.RegisterEventHandler("ActivateCCStateStun", "OnActivateCCStateStun", self)
@@ -99,7 +101,7 @@ function TutorialPrompts:OnDocumentReady()
 		table.insert(self.tComponentList, wnd)
 	end
 
-	self.bAllViewSetting = false
+	self.bAllViewSetting = g_InterfaceOptions and not g_InterfaceOptions.Carbine.bShowTutorials or false
 	self.bTypeViewSetting = false
 
 	--set up a default/min size
@@ -179,6 +181,14 @@ end
 -----------------------------------------------------------------------------------------------
 
 function TutorialPrompts:OnShowTutorial(nTutorialId, bInstantPopUp, strPopupText, eAnchor)
+	if g_InterfaceOptions and not g_InterfaceOptions.Carbine.bShowTutorials then
+		return
+	end
+	
+	self:OnForceTutorial(nTutorialId, bInstantPopUp, strPopupText, eAnchor)
+end
+
+function TutorialPrompts:OnForceTutorial(nTutorialId, bInstantPopUp, strPopupText, eAnchor)
 	if nTutorialId == nil then
 		return 
 	end
@@ -273,33 +283,34 @@ function TutorialPrompts:AddAutoCloseTutorial(wndTutorial)
 end
 
 function TutorialPrompts:UpdateAlerts()
-
 	self.wndAlertContainer:DestroyChildren()
 
-	if #self.tPendingTutorials > 5 then
-		local wndMore = Apollo.LoadForm(self.xmlDoc, "TutorialAlertMore", self.wndAlertContainer, self)
-		wndMore:Show(true)
-		--wndMore:FindChild("TransitionSprite"):SetSprite("sprWinAnim_BirthSmallTemp")
-	end
-
-	for i = 1, 5 do
-		if self.tPendingTutorials[i] ~= nil then
-			local tTutorial = GameLib.GetTutorial(self.tPendingTutorials[i])
-			local wnd = Apollo.LoadForm(self.xmlDoc, "TutorialAlert", self.wndAlertContainer, self)
-			wnd:SetData(self.tPendingTutorials[i])
-			wnd:FindChild("TutorialAlertBtn"):SetData(self.tPendingTutorials[i])
-			wnd:SetTooltip(String_GetWeaselString(Apollo.GetString("Tutorials_ClickToLearn"), tTutorial[1].strTitle))
-			wnd:Show(true)
-			wnd:FindChild("IconHoverGlow"):Show(false, true)
-			if #self.tPendingTutorials <= 5 then
-				--wnd:FindChild("TransitionSprite"):SetSprite("sprWinAnim_BirthSmallTemp")
-			end
-			
-			self:AddAutoCloseTutorial(wnd)
+	if not g_InterfaceOptions or g_InterfaceOptions.Carbine.bShowTutorials then
+		if #self.tPendingTutorials > 5 then
+			local wndMore = Apollo.LoadForm(self.xmlDoc, "TutorialAlertMore", self.wndAlertContainer, self)
+			wndMore:Show(true)
+			--wndMore:FindChild("TransitionSprite"):SetSprite("sprWinAnim_BirthSmallTemp")
 		end
-	end
 
-	self.wndAlertContainer:ArrangeChildrenHorz(2)
+		for i = 1, 5 do
+			if self.tPendingTutorials[i] ~= nil then
+				local tTutorial = GameLib.GetTutorial(self.tPendingTutorials[i])
+				local wnd = Apollo.LoadForm(self.xmlDoc, "TutorialAlert", self.wndAlertContainer, self)
+				wnd:SetData(self.tPendingTutorials[i])
+				wnd:FindChild("TutorialAlertBtn"):SetData(self.tPendingTutorials[i])
+				wnd:SetTooltip(String_GetWeaselString(Apollo.GetString("Tutorials_ClickToLearn"), tTutorial[1].strTitle))
+				wnd:Show(true)
+				wnd:FindChild("IconHoverGlow"):Show(false, true)
+				if #self.tPendingTutorials <= 5 then
+					--wnd:FindChild("TransitionSprite"):SetSprite("sprWinAnim_BirthSmallTemp")
+				end
+				
+				self:AddAutoCloseTutorial(wnd)
+			end
+		end
+
+		self.wndAlertContainer:ArrangeChildrenHorz(2)
+	end
 end
 
 function TutorialPrompts:DrawHintWindow(eAnchor, nTutorialId, strPopupText, tRect)
@@ -535,13 +546,18 @@ function TutorialPrompts:DrawTutorialPage(nTutorialId, nPassedPage) --(wndArg, n
 	if wnd:FindChild("HideCategoryBtn") ~= nil then
 		local nType = tTutorial.eTutorialCategory
 		if nCurrPage == 1 then -- get the setting from page 1
-			self.bTypeViewSetting = not GameLib.IsTutorialCategoryVisible(nType)
+			self.bTypeViewSetting = not GameLib.IsTutorialCategoryVisible(nType) and not self.bAllViewSetting
 		end
 
 		wnd:FindChild("HideCategoryBtn"):SetData(nType)
-		wnd:FindChild("HideCategoryBtn"):SetCheck(self.bTypeViewSetting)
+		wnd:FindChild("HideCategoryBtn"):SetCheck(self.bTypeViewSetting and not self.bAllViewSetting)
+		wnd:FindChild("HideCategoryBtn"):Show(not self.bAllViewSetting)
 	end
-
+	
+	if wnd:FindChild("HideAllBtn") ~= nil then
+		wnd:FindChild("HideAllBtn"):SetCheck(self.bAllViewSetting)
+		wnd:FindChild("HideAllBtn"):Show(not self.bAllViewSetting)
+	end
 
 	-- Figure out to show just the body/sprite or if we need to show bodyleft and bodyright
 	local nOnGoingHeight = 0
@@ -562,9 +578,16 @@ function TutorialPrompts:DrawTutorialPage(nTutorialId, nPassedPage) --(wndArg, n
 		elseif idx == 2 and wnd:FindChild("BodyLeft") and bStrCurrTextExists then
 			wnd:FindChild("BodyLeft"):Show(true)
 			wnd:FindChild("BodyLeft"):SetAML(strAsAML)
+			local nLeft2, nTop2, nRight2, nBottom2 = wnd:FindChild("BodyLeft"):GetAnchorOffsets()
+			local nWidth2, nHeight2 = wnd:FindChild("BodyLeft"):SetHeightToContentHeight()
+			wnd:FindChild("BodyLeft"):SetAnchorOffsets(nLeft2, nTop2, nRight2, nTop2 + math.max(96, nHeight2))
+			
 		elseif idx == 3 and wnd:FindChild("BodyRight") and bStrCurrTextExists then
 			wnd:FindChild("BodyRight"):Show(true)
 			wnd:FindChild("BodyRight"):SetAML(strAsAML)
+			local nLeft, nTop, nRight, nBottom = wnd:FindChild("BodyRight"):GetAnchorOffsets()
+			local nWidth, nHeight = wnd:FindChild("BodyRight"):SetHeightToContentHeight()
+			wnd:FindChild("BodyRight"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.max(96, nHeight))
 		end
 	end
 
@@ -690,10 +713,6 @@ end
 function TutorialPrompts:OnClose(wndHandler, wndControl)
 	if wndHandler ~= wndControl then return end -- wndHandler is 'btnClose'
 	
-	if self.bAllViewSetting then
-		Event_FireGenericEvent("HideAllTutorials")
-	end
-	
 	wndControl:GetParent():Close()
 	GameLib.StopTutorialSound()
 end
@@ -721,7 +740,6 @@ function TutorialPrompts:ShowNext(wndHandler, wndControl)
 	if not wndHandler or not wndHandler:GetData() then return end -- wndHandler is 'btnNext' and its data is { nCurrPage, tTutorial, nTutorialId }
 	
 	if self.bAllViewSetting then
-		Event_FireGenericEvent("HideAllTutorials")
 		self:OnClose(wndHandler, wndControl)
 	end
 
@@ -740,7 +758,6 @@ function TutorialPrompts:ShowPrevious(wndHandler, wndControl)
 	if not wndHandler or not wndHandler:GetData() then return end -- wndHandler is 'btnNext' and its data is { nCurrPage, tTutorial, nTutorialId }
 	
 	if self.bAllViewSetting then
-		Event_FireGenericEvent("HideAllTutorials")
 		wndHandler:GetParent():Close()
 	end
 	
@@ -760,7 +777,13 @@ end
 
 function TutorialPrompts:OnAllViewToggle(wndHandler, wndControl)
 	self.bTypeViewSetting = not wndControl:IsChecked()
-	self.bAllViewSetting = wndControl:IsChecked()
+	
+	g_InterfaceOptions.Carbine.bShowTutorials = not wndControl:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_ShowTutorials")
+end
+
+function TutorialPrompts:OnShowTutorialsUpdated()
+	self.bAllViewSetting = not g_InterfaceOptions.Carbine.bShowTutorials
 end
 
 ---------------------------------------------------------------------------------------------------

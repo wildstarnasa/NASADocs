@@ -4,6 +4,10 @@
 -----------------------------------------------------------------------------------------------
 
 require "Window"
+require "XmlDoc"
+require "Apollo"
+require "CraftingLib"
+
 
 local TradeskillTrainer = {}
 
@@ -117,7 +121,7 @@ function TradeskillTrainer:OnProfListItemClick(wndHandler, wndControl) -- wndHan
 	-- Main's right panel formatting
 	local idTradeskill = wndHandler:GetData()
 	local bAtMax = self.nActiveTradeskills == knMaxTradeskills
-	local nCooldown = CraftingLib.GetRelearnCooldown()
+	local tTradeskillInfo = CraftingLib.GetTradeskillInfo(idTradeskill)	
 	local bAlreadyKnown = wndHandler:FindChild("ListItemCheck"):IsShown()
 
 	self.wndMain:FindChild("RightContainer:BottomBG:AlreadyKnown"):Show(false)
@@ -126,8 +130,9 @@ function TradeskillTrainer:OnProfListItemClick(wndHandler, wndControl) -- wndHan
 	self.wndMain:FindChild("RightContainer:BottomBG:SwapContainer"):Show(false)
 	self.wndMain:FindChild("RightContainer:BottomBG:LearnTradeskillBtn"):Show(false)
 	self.wndMain:FindChild("RightContainer:BottomBG:LearnTradeskillBtn"):SetData(wndHandler:GetData()) -- Also used in Swap
-	self.wndMain:FindChild("RightContainer:BottomBG:FullDescription"):SetText(CraftingLib.GetTradeskillInfo(idTradeskill).strDescription)
+	self.wndMain:FindChild("RightContainer:BottomBG:FullDescription"):SetText(tTradeskillInfo.strDescription)
 
+	local nCooldown = tTradeskillInfo and tTradeskillInfo.nRelearnCooldownDays or 0
 	if nCooldown > 0 then
 		local strCooldownText = ""
 		if nCooldown < 1 then
@@ -188,8 +193,14 @@ function TradeskillTrainer:OnLearnTradeskillBtn(wndHandler, wndControl)
 	if not wndHandler or not wndHandler:GetData() then
 		return
 	end
-	Event_FireGenericEvent("TradeskillLearnedFromTHOR")
-	CraftingLib.LearnTradeskill(self.wndMain:FindChild("LearnTradeskillBtn"):GetData())
+
+	local nCurrentTradeskill = self.wndMain:FindChild("LearnTradeskillBtn"):GetData()
+	local tCurrTradeskillInfo = CraftingLib.GetTradeskillInfo(nCurrentTradeskill)
+		if not tCurrTradeskillInfo.bIsHarvesting then
+			Event_FireGenericEvent("TradeskillLearnedFromTHOR")
+		else
+	end
+	CraftingLib.LearnTradeskill(nCurrentTradeskill)
 	self:OnClose()
 end
 
@@ -198,8 +209,14 @@ function TradeskillTrainer:OnSwapTradeskillBtn(wndHandler, wndControl) --SwapTra
 		return
 	end
 
-	Event_FireGenericEvent("TradeskillLearnedFromTHOR")
-	CraftingLib.LearnTradeskill(self.wndMain:FindChild("LearnTradeskillBtn"):GetData(), wndHandler:GetData())
+	local nCurrentTradeskill = self.wndMain:FindChild("LearnTradeskillBtn"):GetData()
+	local tCurrTradeskillInfo = CraftingLib.GetTradeskillInfo(nCurrentTradeskill)
+		if not tCurrTradeskillInfo.bIsHarvesting then
+			Event_FireGenericEvent("TradeskillLearnedFromTHOR")
+		else
+	end
+
+	CraftingLib.LearnTradeskill(nCurrentTradeskill, wndHandler:GetData())
 	self:OnClose()
 end
 

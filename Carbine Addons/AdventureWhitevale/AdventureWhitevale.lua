@@ -100,9 +100,9 @@ function AdventureWhitevale:OnDocumentReady()
 	self.wndSonsLoyalty = self.wndMain:FindChild("SonsLoyalty")
 	self.wndRollersLoyalty = self.wndMain:FindChild("RollersLoyalty")
 	self.wndGrindersLoyalty = self.wndMain:FindChild("GrindersLoyalty")
-	self.wndSonsLoyalty:SetText(Apollo.GetString("WhitevaleAdv_SonsOfRavok"))
-	self.wndRollersLoyalty:SetText(Apollo.GetString("WhitevaleAdv_RocktownRollers"))
-	self.wndGrindersLoyalty:SetText(Apollo.GetString("WhitevaleAdv_Geargrinders"))
+	self.wndSonsLoyalty:FindChild("TitleSons"):SetText(Apollo.GetString("WhitevaleAdv_SonsOfRavok"))
+	self.wndRollersLoyalty:FindChild("TitleRollers"):SetText(Apollo.GetString("WhitevaleAdv_RocktownRollers"))
+	self.wndGrindersLoyalty:FindChild("TitleGrinders"):SetText(Apollo.GetString("WhitevaleAdv_Geargrinders"))
 	self.wndSonsLoyalty:Show(false)
 	self.wndRollersLoyalty:Show(false)
 	self.wndGrindersLoyalty:Show(false)
@@ -128,7 +128,7 @@ function AdventureWhitevale:OnDocumentReady()
 end
 
 function AdventureWhitevale:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wnd, strName = Apollo.GetString("CRB_AdventureWhitevale")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wnd, strName = Apollo.GetString("CRB_AdventureWhitevale"), nSaveVersion=2})
 end
 
 -----------------------------------------------------------------------------------------------

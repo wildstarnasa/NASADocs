@@ -28,10 +28,10 @@ function InventoryBag:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	
+
 	o.bShouldSortItems = false
 	o.nSortItemType = 1
-	
+
 	return o
 end
 
@@ -45,16 +45,17 @@ function InventoryBag:OnSave(eType)
 			nSaveVersion = knSaveVersion,
 			bShouldSortItems = self.bShouldSortItems,
 			nSortItemType = self.nSortItemType,
+			nAltCurrencySelected = self.nAltCurrencySelected
 		}
 	end
-	
+
 	return nil
 end
 
 function InventoryBag:OnRestore(eType, tSavedData)
 	if eType == GameLib.CodeEnumAddonSaveLevel.Account then
 		self.tSavedData = tSavedData
-		
+
 		if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 			return
 		end
@@ -62,11 +63,13 @@ function InventoryBag:OnRestore(eType, tSavedData)
 		if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 			return
 		end
-	
+
 		self.bShouldSortItems = tSavedData.bShouldSortItems or false
 		self.nSortItemType = tSavedData.nSortItemType or 1
-		
+		self.nAltCurrencySelected = tSavedData.nAltCurrencySelected or 1
+
 		if self.wndMain then
+			self:UpdateAltCashDisplay()
 			self.wndMainBagWindow:SetSort(self.bShouldSortItems)
 			self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
 			self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:ItemSortPrompt:IconBtnSortOff"):SetCheck(not self.bShouldSortItems)
@@ -80,7 +83,9 @@ end
 
 function InventoryBag:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("InventoryBag.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+
+	self.nAltCurrencySelected = 1
 end
 
 local fnSortItemsByName = function(itemLeft, itemRight)
@@ -93,7 +98,7 @@ local fnSortItemsByName = function(itemLeft, itemRight)
 	if itemLeft == nil and itemRight then
 		return 1
 	end
-	
+
 	local strLeftName = itemLeft:GetName()
 	local strRightName = itemRight:GetName()
 	if strLeftName < strRightName then
@@ -102,7 +107,7 @@ local fnSortItemsByName = function(itemLeft, itemRight)
 	if strLeftName > strRightName then
 		return 1
 	end
-	
+
 	return 0
 end
 
@@ -116,7 +121,7 @@ local fnSortItemsByCategory = function(itemLeft, itemRight)
 	if itemLeft == nil and itemRight then
 		return 1
 	end
-	
+
 	local strLeftName = itemLeft:GetItemCategoryName()
 	local strRightName = itemRight:GetItemCategoryName()
 	if strLeftName < strRightName then
@@ -125,7 +130,7 @@ local fnSortItemsByCategory = function(itemLeft, itemRight)
 	if strLeftName > strRightName then
 		return 1
 	end
-	
+
 	local strLeftName = itemLeft:GetName()
 	local strRightName = itemRight:GetName()
 	if strLeftName < strRightName then
@@ -134,7 +139,7 @@ local fnSortItemsByCategory = function(itemLeft, itemRight)
 	if strLeftName > strRightName then
 		return 1
 	end
-	
+
 	return 0
 end
 
@@ -148,7 +153,7 @@ local fnSortItemsByQuality = function(itemLeft, itemRight)
 	if itemLeft == nil and itemRight then
 		return 1
 	end
-	
+
 	local eLeftQuality = itemLeft:GetItemQuality()
 	local eRightQuality = itemRight:GetItemQuality()
 	if eLeftQuality > eRightQuality then
@@ -157,7 +162,7 @@ local fnSortItemsByQuality = function(itemLeft, itemRight)
 	if eLeftQuality < eRightQuality then
 		return 1
 	end
-	
+
 	local strLeftName = itemLeft:GetName()
 	local strRightName = itemRight:GetName()
 	if strLeftName < strRightName then
@@ -166,7 +171,7 @@ local fnSortItemsByQuality = function(itemLeft, itemRight)
 	if strLeftName > strRightName then
 		return 1
 	end
-	
+
 	return 0
 end
 
@@ -177,7 +182,7 @@ function InventoryBag:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
-	
+	Apollo.RegisterEventHandler("UpdateInventory", 							"OnUpdateInventory", self)
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 				"OnInterfaceMenuListHasLoaded", self)
 	Apollo.RegisterEventHandler("WindowManagementReady", 					"OnWindowManagementReady", self)
 
@@ -191,15 +196,21 @@ function InventoryBag:OnDocumentReady()
 	Apollo.RegisterEventHandler("QuestStateChanged", 						"OnQuestObjectiveUpdated", self)
 	Apollo.RegisterEventHandler("ToggleInventory", 							"OnToggleVisibility", self) -- todo: figure out if show inventory is needed
 	Apollo.RegisterEventHandler("ShowInventory", 							"OnToggleVisibility", self)
-	Apollo.RegisterEventHandler("SplitItemStack", 							"OnSplitItemStack", self)
 	Apollo.RegisterEventHandler("ChallengeUpdated", 						"OnChallengeUpdated", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 						"OnCharacterCreated", self)
+	Apollo.RegisterEventHandler("PlayerEquippedItemChanged",				"OnEquippedItem", self)
+
+	Apollo.RegisterEventHandler("GenericEvent_SplitItemStack", 				"OnGenericEvent_SplitItemStack", self)
 
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged",					"OnPlayerCurrencyChanged", self)
-	Apollo.RegisterEventHandler("PlayerTitleChange", 						"UpdateTitle", self)
-	
+
 	Apollo.RegisterEventHandler("LevelUpUnlock_Inventory_Salvage", "OnLevelUpUnlock_Inventory_Salvage", self)
 	Apollo.RegisterEventHandler("LevelUpUnlock_Path_Item", "OnLevelUpUnlock_Path_Item", self)
+	Apollo.RegisterEventHandler("LootStackItemSentToTradeskillBag", "OnLootstackItemSentToTradeskillBag", self)
+	Apollo.RegisterEventHandler("SupplySatchelOpen", "OnSupplySatchelOpen", self)
+	Apollo.RegisterEventHandler("SupplySatchelClosed", "OnSupplySatchelClosed", self)
+
+
 
 	--Apollo.RegisterTimerHandler("InventoryUpdateTimer", 					"OnUpdateTimer", self)
 	--Apollo.CreateTimer("InventoryUpdateTimer", 1.0, true)
@@ -217,16 +228,20 @@ function InventoryBag:OnDocumentReady()
 	self.wndMain:Show(false, true)
 	self.wndSalvageConfirm:Show(false, true)
 	self.wndDeleteConfirm:Show(false, true)
+	self.wndNewSatchelItemRunner = self.wndMain:FindChild("BGBottom:SatchelBG:SatchelBtn:NewSatchelItemRunner")
+	self.wndSalvageAllBtn = self.wndMain:FindChild("SalvageAllBtn")
 
 	-- Variables
 	self.nBoxSize = knLargeIconOption
 	self.bFirstLoad = true
 	self.nLastBagMaxSize = 0
 	self.nLastWndMainWidth = self.wndMain:GetWidth()
+	self.bSupplySatchelOpen = false
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
 	self.nFirstEverWidth = nRight - nLeft
 	self.wndMain:SetSizingMinimum(238, 270)
+	self.wndMain:SetSizingMaximum(1200, 700)
 
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("MainGridContainer"):GetAnchorOffsets()
 	self.nFirstEverMainGridHeight = nBottom - nTop
@@ -248,7 +263,7 @@ function InventoryBag:OnDocumentReady()
 		local wnd = Apollo.LoadForm(self.xmlDoc, "PickerEntry", self.wndMain:FindChild("OptionsConfigureCurrencyList"), self)
 		wnd:FindChild("EntryCash"):SetMoneySystem(tData.eType) -- We'll fill in the amount during the timer
 		wnd:FindChild("PickerEntryBtn"):SetData(idx)
-		wnd:FindChild("PickerEntryBtn"):SetCheck(idx == 1)
+		wnd:FindChild("PickerEntryBtn"):SetCheck(idx == self.nAltCurrencySelected)
 		wnd:FindChild("PickerEntryBtnText"):SetText(tData.strTitle)
 		wnd:FindChild("PickerEntryBtn"):SetTooltip(tData.strDescription)
 		tData.wnd = wnd
@@ -258,11 +273,11 @@ function InventoryBag:OnDocumentReady()
 	if GameLib.GetPlayerUnit() then
 		self:OnCharacterCreated()
 	end
-	
+
 	if self.locSavedWindowLoc then
 		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
-	
+
 	self.wndMainBagWindow = self.wndMain:FindChild("MainBagWindow")
 	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
 	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
@@ -270,9 +285,21 @@ function InventoryBag:OnDocumentReady()
 	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortAlpha"):SetCheck(self.bShouldSortItems and self.nSortItemType == 1)
 	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortCategory"):SetCheck(self.bShouldSortItems and self.nSortItemType == 2)
 	self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown:ItemSortPrompt:IconBtnSortQuality"):SetCheck(self.bShouldSortItems and self.nSortItemType == 3)
-	
+
 	self.wndIconBtnSortDropDown = self.wndMain:FindChild("OptionsContainer:OptionsContainerFrame:OptionsConfigureSort:IconBtnSortDropDown")
 	self.wndIconBtnSortDropDown:AttachWindow(self.wndIconBtnSortDropDown:FindChild("ItemSortPrompt"))
+end
+
+function InventoryBag:OnSupplySatchelOpen()
+	self.bSupplySatchelOpen = true
+end
+
+function InventoryBag:OnSupplySatchelClosed()
+	self.bSupplySatchelOpen = false
+end
+
+function InventoryBag:OnLootstackItemSentToTradeskillBag(item)
+	self.wndNewSatchelItemRunner:Show(not self.bSupplySatchelOpen)
 end
 
 function InventoryBag:OnInterfaceMenuListHasLoaded()
@@ -282,10 +309,9 @@ end
 function InventoryBag:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Inventory")})
 end
-	
+
 function InventoryBag:OnCharacterCreated()
 	self:OnPlayerCurrencyChanged()
-	self:UpdateTitle()
 end
 
 function InventoryBag:OnToggleVisibility()
@@ -309,6 +335,7 @@ function InventoryBag:OnToggleVisibility()
 		self:UpdateSquareSize()
 		self:UpdateBagSlotItems()
 		self:OnQuestObjectiveUpdated() -- Populate Virtual Inventory Btn from reloadui/load
+		self:HelperSetSalvageEnable()
 	end
 end
 
@@ -326,6 +353,7 @@ function InventoryBag:OnToggleVisibilityAlways()
 		self:UpdateSquareSize()
 		self:UpdateBagSlotItems()
 		self:OnQuestObjectiveUpdated() -- Populate Virtual Inventory Btn from reloadui/load
+		self:HelperSetSalvageEnable()
 	end
 end
 
@@ -350,10 +378,6 @@ function InventoryBag:OnPlayerCurrencyChanged()
 	for key, wndCurr in pairs(self.wndMain:FindChild("OptionsConfigureCurrencyList"):GetChildren()) do
 		self:UpdateAltCash(wndCurr)
 	end
-end
-
-function InventoryBag:UpdateTitle()
-	self.wndMain:FindChild("InventoryTitleText"):SetText(String_GetWeaselString(Apollo.GetString("Inventory_TitleText"), GameLib.GetPlayerUnit()))
 end
 
 function InventoryBag:UpdateBagSlotItems() -- update our bag display
@@ -383,7 +407,7 @@ function InventoryBag:UpdateBagSlotItems() -- update our bag display
 	end
 end
 
-function InventoryBag:OnBagBtnMouseEnter(wndHandler, wndControl)	
+function InventoryBag:OnBagBtnMouseEnter(wndHandler, wndControl)
 end
 
 function InventoryBag:OnBagBtnMouseExit(wndHandler, wndControl)
@@ -427,7 +451,7 @@ function InventoryBag:OnOptionsMenuToggle(wndHandler, wndControl) -- OptionsBtn
 
 	self.wndMain:FindChild("IconBtnLarge"):SetCheck(self.nBoxSize == kLargeIconOption)
 	self.wndMain:FindChild("IconBtnSmall"):SetCheck(self.nBoxSize == kSmallIconOption)
-	
+
 	for key, wndCurr in pairs(self.wndMain:FindChild("OptionsConfigureCurrencyList"):GetChildren()) do
 		self:UpdateAltCash(wndCurr)
 	end
@@ -460,18 +484,26 @@ end
 -----------------------------------------------------------------------------------------------
 
 function InventoryBag:UpdateAltCash(wndHandler, wndControl) -- Also from PickerEntryBtn
-	local tData = karCurrency[wndHandler:FindChild("PickerEntryBtn"):GetData()]
+	local nSelected = wndHandler:FindChild("PickerEntryBtn"):GetData()
+	local tData = karCurrency[nSelected]
 
 	if wndHandler:FindChild("PickerEntryBtn"):IsChecked() then
-		self.wndMain:FindChild("AltCashWindow"):SetMoneySystem(tData.eType)
-		self.wndMain:FindChild("AltCashWindow"):SetAmount(GameLib.GetPlayerCurrency(tData.eType):GetAmount(), true)
-		self.wndMain:FindChild("AltCashWindow"):SetTooltip(String_GetWeaselString(Apollo.GetString("Inventory_MoneyTooltip"), tData.strDescription))
-		self.wndMain:FindChild("MainCashWindow"):SetTooltip(String_GetWeaselString(Apollo.GetString("Inventory_MoneyTooltip"), tData.strDescription))
+		self.nAltCurrencySelected = nSelected
+		self:UpdateAltCashDisplay()
 	end
 
 	if self.wndMain:FindChild("OptionsBtn"):IsChecked() then
 		tData.wnd:FindChild("EntryCash"):SetAmount(GameLib.GetPlayerCurrency(tData.eType):GetAmount(), true)
 	end
+end
+
+function InventoryBag:UpdateAltCashDisplay()
+	local tData = karCurrency[self.nAltCurrencySelected]
+
+	self.wndMain:FindChild("AltCashWindow"):SetMoneySystem(tData.eType)
+	self.wndMain:FindChild("AltCashWindow"):SetAmount(GameLib.GetPlayerCurrency(tData.eType):GetAmount(), true)
+	self.wndMain:FindChild("AltCashWindow"):SetTooltip(String_GetWeaselString(Apollo.GetString("Inventory_MoneyTooltip"), tData.strDescription))
+	self.wndMain:FindChild("MainCashWindow"):SetTooltip(String_GetWeaselString(Apollo.GetString("Inventory_MoneyTooltip"), tData.strDescription))
 end
 
 -----------------------------------------------------------------------------------------------
@@ -483,6 +515,7 @@ function InventoryBag:OnToggleSupplySatchel(wndHandler, wndControl)
 	local tAnchors = {}
 	tAnchors.nLeft, tAnchors.nTop, tAnchors.nRight, tAnchors.nBottom = self.wndMain:GetAnchorOffsets()
 	Event_FireGenericEvent("ToggleTradeskillInventoryFromBag", tAnchors)
+	self.wndNewSatchelItemRunner:Show(false)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -572,7 +605,7 @@ function InventoryBag:UpdateVirtualItemInventory()
 	end
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("BGVirtual"):GetAnchorOffsets()
-	nTop = nBottom 
+	nTop = nBottom
 	if bThereAreItems then
 		nTop = nBottom - self.nVirtualButtonHeight
 		if bShowQuestItems then
@@ -643,14 +676,32 @@ end
 
 function InventoryBag:OnDragDropNotifySalvage(wndHandler, wndControl, bMe) -- TODO: We can probably replace this with a button mouse over state
 	if bMe and self.wndMain:FindChild("SalvageIcon"):GetData() then
-		self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageToggleFlyby")
 		self.wndMain:FindChild("TextActionPrompt_Salvage"):Show(true)
 	elseif self.wndMain:FindChild("SalvageIcon"):GetData() then
-		self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageTogglePressed")
 		self.wndMain:FindChild("TextActionPrompt_Salvage"):Show(false)
 	end
 end
 -- End Salvage Icon
+
+function InventoryBag:HelperSetSalvageEnable()
+	local tInvItems = GameLib.GetPlayerUnit():GetInventoryItems()
+	for idx, tItem in ipairs(tInvItems) do
+		if tItem and tItem.itemInBag and tItem.itemInBag:CanSalvage() and not tItem.itemInBag:CanAutoSalvage() then
+			self.wndSalvageAllBtn:Enable(true)
+			return
+		end
+	end
+	self.wndSalvageAllBtn:Enable(false)
+end
+
+
+function InventoryBag:OnUpdateInventory()
+	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then
+		return
+	end
+
+	self:HelperSetSalvageEnable()
+end
 
 function InventoryBag:OnSystemBeginDragDrop(wndSource, strType, iData)
 	if strType ~= "DDBagItem" then return end
@@ -661,10 +712,10 @@ function InventoryBag:OnSystemBeginDragDrop(wndSource, strType, iData)
 
 	local item = self.wndMain:FindChild("MainBagWindow"):GetItem(iData)
 	if item and item:CanSalvage() then
-		self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageTogglePressed")
 		self.wndMain:FindChild("SalvageIcon"):SetData(true)
+		self.wndSalvageAllBtn:Enable(true)
 	else
-		self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageToggleDisabled")
+		self.wndSalvageAllBtn:Enable(false)
 	end
 
 	Sound.Play(Sound.PlayUI45LiftVirtual)
@@ -676,12 +727,20 @@ function InventoryBag:OnSystemEndDragDrop(strType, iData)
 	end
 
 	self.wndMain:FindChild("TrashIcon"):SetSprite("CRB_Inventory:InvBtn_TrashToggleNormal")
-	self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageToggleNormal")
 	self.wndMain:FindChild("SalvageIcon"):SetData(false)
 	self.wndMain:FindChild("TextActionPrompt_Trash"):Show(false)
 	self.wndMain:FindChild("TextActionPrompt_Salvage"):Show(false)
+	self:HelperSetSalvageEnable()
 	self:UpdateSquareSize()
 	Sound.Play(Sound.PlayUI46PlaceVirtual)
+end
+
+function InventoryBag:OnEquippedItem(eSlot, itemNew, itemOld)
+	if itemNew then
+		itemNew:PlayEquipSound()
+	else
+		itemOld:PlayEquipSound()
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -722,7 +781,7 @@ end
 -- Delete/Salvage Screen
 -----------------------------------------------------------------------------------------------
 
-function InventoryBag:InvokeDeleteConfirmWindow(iData) 
+function InventoryBag:InvokeDeleteConfirmWindow(iData)
 	local itemData = Item.GetItemFromInventoryLoc(iData)
 	if itemData and not itemData:CanDelete() then
 		return
@@ -769,8 +828,11 @@ end
 -- Stack Splitting
 -----------------------------------------------------------------------------------------------
 
-function InventoryBag:OnSplitItemStack(item)
-	if not item then return end
+function InventoryBag:OnGenericEvent_SplitItemStack(item)
+	if not item then 
+		return 
+	end
+	
 	local nStackCount = item:GetStackCount()
 	if nStackCount < 2 then
 		self.wndSplit:Show(false)
@@ -779,8 +841,8 @@ function InventoryBag:OnSplitItemStack(item)
 	self.wndSplit:Invoke()
 	local tMouse = Apollo.GetMouse()
 	self.wndSplit:Move(tMouse.x - math.floor(self.wndSplit:GetWidth() / 2) , tMouse.y - knPaddingTop - self.wndSplit:GetHeight(), self.wndSplit:GetWidth(), self.wndSplit:GetHeight())
-	
-	
+
+
 	self.wndSplit:SetData(item)
 	self.wndSplit:FindChild("SplitValue"):SetValue(1)
 	self.wndSplit:FindChild("SplitValue"):SetMinMax(1, nStackCount - 1)
@@ -791,10 +853,22 @@ function InventoryBag:OnSplitStackCloseClick()
 	self.wndSplit:Show(false)
 end
 
+function InventoryBag:OnSpinnerChanged()
+	local wndValue = self.wndSplit:FindChild("SplitValue")
+	local nValue = wndValue:GetValue()
+	local itemStack = self.wndSplit:GetData()
+	local nMaxStackSplit = itemStack:GetStackCount() - 1
+
+	if nValue < 1 then
+		wndValue:SetValue(1)
+	elseif nValue > nMaxStackSplit then
+		wndValue:SetValue(nMaxStackSplit)
+	end
+end
+
 function InventoryBag:OnSplitStackConfirm(wndHandler, wndCtrl)
-	local tItem = self.wndSplit:GetData()
-	self.wndSplit:Show(false)
-	self.wndMain:FindChild("MainBagWindow"):StartSplitStack(tItem, self.wndSplit:FindChild("SplitValue"):GetValue())
+	self.wndSplit:Close()
+	self.wndMain:FindChild("MainBagWindow"):StartSplitStack(self.wndSplit:GetData(), self.wndSplit:FindChild("SplitValue"):GetValue())
 end
 
 function InventoryBag:OnGenerateTooltip(wndControl, wndHandler, tType, item)

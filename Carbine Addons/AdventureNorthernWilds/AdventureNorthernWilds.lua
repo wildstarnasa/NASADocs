@@ -2,6 +2,7 @@
 -- Client Lua Script for NorthernWildsAdv
 -- Copyright (c) NCsoft. All rights reserved
 -----------------------------------------------------------------------------------------------
+-- War of the Wilds UI
 
 require "Window"
 require "PublicEvent"
@@ -61,6 +62,7 @@ function NorthernWildsAdv:OnDocumentReady()
 	Apollo.RegisterEventHandler("NWADV_MeleeShrine", "UIMeleeShrine", self)
 	Apollo.RegisterEventHandler("NWADV_MagicShrine", "UIMagicShrine", self)
 	Apollo.RegisterEventHandler("NWADV_HunterShrine", "UIHunterShrine", self)
+	Apollo.RegisterEventHandler("NWADV_KillDeathRatio", "UIKDR", self)
 	Apollo.RegisterEventHandler("OnInstanceResetResult", "ResetInstance", self)
 
 	Apollo.RegisterEventHandler("ChangeWorld", "UIHide", self)
@@ -301,6 +303,14 @@ function NorthernWildsAdv:UIHunterShrine(nPlayerUp, nEnemyUp)	-- Show Shrine upg
 	
 	self.tAdventureInfo.nPlayerHunterUpgrade = nPlayerUp
 	self.tAdventureInfo.nEnemyHunterUpgrade = nHunterUp
+end
+
+function NorthernWildsAdv:UIKDR(iKills, iDeaths)	-- Updates the kill death ratio
+	if not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
+
+		self.wndMain:FindChild("KDRNumber"):SetText(iKills..":"..iDeaths)
 end
 -----------------------------------------------------------------------------------------------
 -- NorthernWildsAdv Instance

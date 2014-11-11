@@ -25,7 +25,7 @@ local ktPathMissionTypeSprites =
 {
 	[PlayerPathLib.PlayerPathType_Scientist] =
 	{
-		[PathMission.PathMissionType_Scientist_FieldStudy] 			= "Icon_Mission_Scientist_FieldStudy",
+		[PathMission.PathMissionType_Scientist_FieldStudy]   		= "Icon_Mission_Scientist_FieldStudy",
 		[PathMission.PathMissionType_Scientist_DatacubeDiscovery] 	= "Icon_Mission_Scientist_DatachronDiscovery",
 		[PathMission.PathMissionType_Scientist_SpecimenSurvey] 		= "Icon_Mission_Scientist_SpecimenSurvey",
 		[PathMission.PathMissionType_Scientist_Experimentation] 	= "Icon_Mission_Scientist_ReverseEngineering",
@@ -72,6 +72,9 @@ local ktPathMissionSubtypeSprites =
 		[PathMission.ScientistCreatureType_Flora] 					= "Icon_Mission_Scientist_ScanPlant",
 		[PathMission.ScientistCreatureType_Fauna] 					= "Icon_Mission_Scientist_ScanCreature",
 		[PathMission.ScientistCreatureType_Mineral] 				= "Icon_Mission_Scientist_ScanMineral",
+		[PathMission.ScientistCreatureType_Magic] 					= "Icon_Mission_Scientist_ScanMagic",
+		[PathMission.ScientistCreatureType_History] 				= "Icon_Mission_Scientist_ScanHistory",
+		[PathMission.ScientistCreatureType_Elemental] 				= "Icon_Mission_Scientist_ScanElemental",
 	},
 
 	[PlayerPathLib.PlayerPathType_Soldier] =
@@ -93,6 +96,7 @@ local knMaxLevel 					= 30 -- TODO: Replace this with a non hardcoded value
 local kcrNormalTextColor 			= CColor.new(192/255, 192/255, 192/255, 1.0)
 local kcrHighlightTextColor 		= CColor.new(1.0, 128/255, 0, 1.0)
 local kstrMissionDescriptionText 	= "ffffeca0"
+local knAutoScrollPadding			= 30
 
 function PlayerPath:new(o)
 	o = o or {}
@@ -137,9 +141,9 @@ function PlayerPath:OnPathShowFromPL(pepEpisode)
 	end
 
 	if not PathEpisode.is(pepEpisode) then
-		self:PathRefresh(nil)
+		self:PathRefresh(nil, true)
 	else
-		self:PathRefresh(pepEpisode)
+		self:PathRefresh(pepEpisode, false)
 	end
 
 	self:OnRedrawLevels(nil)
@@ -155,8 +159,9 @@ function PlayerPath:OnShowFromDatachron(pmMission) -- used to open to a specific
 		Apollo.StopTimer("MissionHighlightTimer")
 		Apollo.CreateTimer("MissionHighlightTimer", 8.5, false)
 	end
-
-	self:PathRefresh(false)
+	self:HelperCheckTheFirstCategory()
+	--full redraw because the path log may be showing paths from a different zone
+	self:PathRefresh(nil, true)
 
 	Event_FireGenericEvent("PlayerPathShow_NoHide") -- if PLog is visible, jump to that tab. If not, open it, then jump to that tab. This will have to go into Codex code
 end
@@ -170,7 +175,7 @@ function PlayerPath:Initialize()
 	self.ePlayerPath = PlayerPathLib.GetPlayerPathType() -- NOTE: This will require a player to reloadui when swapping paths
 	self.pmHighlightedMission = nil
 
-	self:PathRefresh(nil)
+	self:PathRefresh(nil, true)
 	self:OnRedrawLevels(nil)
 end
 
@@ -179,24 +184,68 @@ end
 ----------------------------------------------------------------------------------------------------------
 
 function PlayerPath:UpdateUIFromEvent() -- Arguments for this can vary
-	self:PathRefresh(nil)
+	self:PathRefresh(nil, true)
 end
 
 function PlayerPath:OnBigZoneBtnPress(wndHandler, wndControl)
-	if not wndHandler or not wndHandler:GetData() then return end
-	self:PathRefresh(wndHandler:GetData())
-	self.tLastZoneBtnPress = wndHandler:GetData()
+	if not wndControl or not wndControl:GetData() then
+		return 
+	end
+	self:HelperCheckTheFirstCategory(wndControl)
+	self:PathRefresh(self.tLastZoneBtnPress, true)
 	self.pmHighlightedMission = nil
 	self.wndMissionLog:FindChild("ZoneDropdownBtn"):SetCheck(false)
 	self.wndMissionLog:FindChild("ZoneDropdownContainer"):Show(false)
-	self.wndMissionLog:FindChild("MissionLog"):SetVScrollPos(0)
+	self.wndMissionLog:FindChild("MissionList"):SetVScrollPos(0)
+	self.wndMissionLog:FindChild("MissionList"):ArrangeChildrenVert(0)
+	
 end
 
-function PlayerPath:OnExpandCollapseCategories(wndHandler, wndControl)
-	-- TODO: Rewrite this quick hack: This needs to simulate a BigZoneBtnPress so we stay at the right context
-	self:PathRefresh(self.tLastZoneBtnPress)
-	self.wndMissionLog:FindChild("ZoneDropdownBtn"):SetCheck(false)
-	self.wndMissionLog:FindChild("ZoneDropdownContainer"):Show(false)
+function PlayerPath:HelperCheckTheFirstCategory(wndControl)--optional parameter
+	if not wndControl then
+		--came from the datachron, which has the missions from the current zone, which is
+		--what is displayed when setting self.tLastZoneBtnPress to nil
+		local tMissionListChildren = self.wndMissionLog:FindChild("MissionList"):GetChildren()
+		if tMissionListChildren and tMissionListChildren[1] then
+			local wndHeaderBtn = tMissionListChildren[1]:FindChild("HeaderBtn")
+			if not wndHeaderBtn:IsChecked() then
+				tMissionListChildren[1]:FindChild("HeaderBtn"):SetCheck(true)
+			end
+			self.tLastZoneBtnPress = nil
+		end
+	else
+		--came from big zone button press
+		self.tLastZoneBtnPress = wndControl:GetData()
+	end
+end
+
+function PlayerPath:OnExpandCategories(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+	--handles resizing
+	self.strLastExpanded = wndControl:FindChild("HeaderBtnText"):GetText()
+
+	self:PathRefresh(self.tLastZoneBtnPress, false)
+end
+
+function PlayerPath:OnCollapseCategories(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+
+	local wndParent = wndControl:GetParent()
+	local wndContainer = wndParent:FindChild("HeaderContainer")
+
+	local nHeight = 0
+	for idx, wndMission in pairs(wndContainer:GetChildren()) do
+		nHeight = nHeight + wndMission:GetHeight()
+	end
+	
+	local nLeft, nTop, nRight, nBottom = wndParent:GetAnchorOffsets()
+	wndParent:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - nHeight)
+	wndContainer:DestroyChildren()
+	self.wndMissionLog:FindChild("MissionList"):ArrangeChildrenVert(0)
 end
 
 function PlayerPath:OnLootEpisodeRewards(wndHandler, wndControl)
@@ -230,7 +279,7 @@ end
 -- Main Draw and Update Methods
 ----------------------------------------------------------------------------------------------------------
 
-function PlayerPath:PathRefresh(pepEpisode) -- A lot of events route here, with the first argument not necessarily valid
+function PlayerPath:PathRefresh(pepEpisode, bFullRedraw) -- A lot of events route here, with the first argument not necessarily valid
 	-- TODO Hardcoded formatting
 	if not self.wndMissionLog then
 		return
@@ -262,7 +311,7 @@ function PlayerPath:PathRefresh(pepEpisode) -- A lot of events route here, with 
 
 		-- Selected Episode specific formatting
 		if pepSelectedEpisode and pepSelectedEpisode:GetWorldZone() == pepCurrEpisode:GetWorldZone() then
-			self.wndMissionLog:FindChild("ZoneDropdownBtn"):SetText(strWorldZone .. " - " .. nPercent .. "%")
+			self.wndMissionLog:FindChild("ZoneUpdateText"):SetText(strWorldZone .. " - " .. nPercent .. "%")
 			wndBigZone:FindChild("BigZoneBtn"):SetCheck(true)
 		end
 	end
@@ -295,7 +344,7 @@ function PlayerPath:PathRefresh(pepEpisode) -- A lot of events route here, with 
 	self.wndMissionLog:FindChild("EpisodeRewardRedeem"):SetData(pepSelectedEpisode)
 	self.wndMissionLog:FindChild("EpisodeRewardRedeem"):Enable(bEpisodeRewardPending)
 
-	self:DrawMissions(pepSelectedEpisode)
+	self:DrawMissions(pepSelectedEpisode, bFullRedraw)
 end
 
 ----------------------------------------------------------------------------------------------------------
@@ -399,18 +448,48 @@ end
 -- Missions
 ----------------------------------------------------------------------------------------------------------
 
-function PlayerPath:DrawMissions(tSelectedEpisode)
+function PlayerPath:DrawMissions(tSelectedEpisode, bFullRedraw)
+
+	if bFullRedraw then
+		local wndAvailable = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", Apollo.GetString("CRB_CallbackAvailable"))
+		wndAvailable:FindChild("HeaderBtn"):SetCheck(true)
+		local wndCompleted = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", Apollo.GetString("QuestCompleted"))
+		self:HelperDrawCategoryMissions(wndAvailable, tSelectedEpisode)
+		self:HelperDrawCategoryMissions(wndCompleted, tSelectedEpisode)
+	else
+		--REDRAW Some category
+		local tMissionListChildren = self.wndMissionLog:FindChild("MissionList"):GetChildren()
+		local wndRedraw = nil
+		if self.strLastExpanded then
+			local bAvailableContainer = self.strLastExpanded == Apollo.GetString("CRB_CallbackAvailable") 
+			wndRedraw = bAvailableContainer and tMissionListChildren[1]  or tMissionListChildren[2]
+		end
+		
+		if wndRedraw then
+			self:HelperDrawCategoryMissions(wndRedraw, tSelectedEpisode)
+			self.strLastExpanded = nil
+		end
+	end
+
+	self:ResizeItems()
+end
+
+function PlayerPath:HelperDrawCategoryMissions(wndRedraw, tSelectedEpisode)
+	if not wndRedraw then
+		return
+	end
+
+	local strCategory = wndRedraw:FindChild("HeaderBtnText"):GetText()
+	local bIsAvailableContainer = strCategory == Apollo.GetString("CRB_CallbackAvailable")
 	local nComplete = 0
 	local nToUnlock = 0
 	local nAlreadyFound = 0
-	local nOnGoingCompletedHeight = 0
-	local nOnGoingAvailableHeight = 0
-	local wndAvailable = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", "Available")
-	local wndCompleted = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", "Completed")
 
-	wndAvailable:FindChild("HeaderContainer"):DestroyChildren()
-	wndCompleted:FindChild("HeaderContainer"):DestroyChildren()
+	local wndNewContainer = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", strCategory)
+	wndRedraw:FindChild("HeaderContainer"):DestroyChildren()
 
+	local bSelectedFound = false
+	local nAutoScrollHeight = -1 * (wndNewContainer:FindChild("HeaderBtn"):GetHeight() + knAutoScrollPadding)--initial padding
 	for key, pmMission in ipairs(tSelectedEpisode:GetMissions()) do
 		if pmMission:GetMissionState() == PathMission.PathMissionState_NoMission then
 			nToUnlock = nToUnlock + 1
@@ -421,51 +500,73 @@ function PlayerPath:DrawMissions(tSelectedEpisode)
 				nComplete = nComplete + 1
 			end
 
-			if bIsComplete and wndCompleted:FindChild("HeaderBtn"):IsChecked() then -- completed missions
-				local wndCurr = Apollo.LoadForm(self.xmlDoc, "MissionListItem", wndCompleted:FindChild("HeaderContainer"), self)
+			if (bIsComplete and not bIsAvailableContainer) or (not bIsComplete and bIsAvailableContainer) then
+				local wndCurr = Apollo.LoadForm(self.xmlDoc, "MissionListItem", wndNewContainer:FindChild("HeaderContainer"), self)
 				self:DrawMissionItem(wndCurr, pmMission)
-			elseif not bIsComplete and wndAvailable:FindChild("HeaderBtn"):IsChecked() then -- active missions
-				local wndCurr = Apollo.LoadForm(self.xmlDoc, "MissionListItem", wndAvailable:FindChild("HeaderContainer"), self)
-				self:DrawMissionItem(wndCurr, pmMission)
+				if not bSelectedFound then
+					nAutoScrollHeight = nAutoScrollHeight + wndCurr:GetHeight()
+				end
+				if wndCurr:FindChild("MissionItemHighlightRunner"):IsShown() then
+					bSelectedFound = true
+				end	
 			end
 		end
 	end
+	
+	--The scroll position should be set after the container has finished creating and resizing the categories.
+	if bSelectedFound then
+		self.nSetScrollPos = nAutoScrollHeight
+	end
 
-	wndCompleted:Show(nComplete > 0)
-	wndAvailable:Show((nAlreadyFound - nComplete) > 0)
-	wndCompleted:FindChild("HeaderBtnText"):SetText(Apollo.GetString("QuestCompleted"))
-	wndAvailable:FindChild("HeaderBtnText"):SetText(Apollo.GetString("CRB_CallbackAvailable"))
+	wndNewContainer:Show((bIsAvailableContainer and nAlreadyFound - nComplete > 0) or (nComplete > 0))
+	
+	if bIsAvailableContainer then
+		wndNewContainer:FindChild("HeaderBtn"):SetCheck(true)
+	end
 
 	self.wndMissionLog:FindChild("EmptyLabel"):Show(nAlreadyFound == 0)
 	self.wndMissionLog:FindChild("EpisodeCompletedValue"):SetText(nComplete.."/"..nAlreadyFound)
 	self.wndMissionLog:FindChild("EpisodeUndiscoveredValue"):SetText(nToUnlock)
-
-	self:ResizeItems()
 end
 
 function PlayerPath:ResizeItems()
 	local wndAvailable = self.wndMissionLog:FindChild("MissionList"):FindChildByUserData("Available")
 	local wndCompleted = self.wndMissionLog:FindChild("MissionList"):FindChildByUserData("Completed")
 
-	local nHeight = 0
-	for idx, wndCurr in pairs(wndAvailable:FindChild("HeaderContainer"):GetChildren()) do
-		local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-		nHeight = nHeight + (nBottom - nTop)
+	if wndAvailable:FindChild("HeaderBtn"):IsChecked() then
+		local nHeight = 0
+		for idx, wndCurr in pairs(wndAvailable:FindChild("HeaderContainer"):GetChildren()) do
+			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
+			nHeight = nHeight + (nBottom - nTop)
+		end
+		local nLeft, nTop, nRight, nBottom = wndAvailable:GetAnchorOffsets()
+		wndAvailable:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
+		wndAvailable:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
+		wndAvailable:FindChild("HeaderContainer"):Show(true)
+	else
+		wndAvailable:FindChild("HeaderContainer"):Show(false)
 	end
-	local nLeft, nTop, nRight, nBottom = wndAvailable:GetAnchorOffsets()
-	wndAvailable:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
-	wndAvailable:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
 
-	nHeight = 0
-	for idx, wndCurr in pairs(wndCompleted:FindChild("HeaderContainer"):GetChildren()) do
-		local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-		nHeight = nHeight + (nBottom - nTop)
+	if wndCompleted:FindChild("HeaderBtn"):IsChecked() then
+		nHeight = 0
+		for idx, wndCurr in pairs(wndCompleted:FindChild("HeaderContainer"):GetChildren()) do
+			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
+			nHeight = nHeight + (nBottom - nTop)
+		end
+		nLeft, nTop, nRight, nBottom = wndCompleted:GetAnchorOffsets()
+		wndCompleted:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
+		wndCompleted:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
+		wndCompleted:FindChild("HeaderContainer"):Show(true)
+	else
+		wndCompleted:FindChild("HeaderContainer"):Show(false)
 	end
-	nLeft, nTop, nRight, nBottom = wndCompleted:GetAnchorOffsets()
-	wndCompleted:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
-	wndCompleted:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
 
 	self.wndMissionLog:FindChild("MissionList"):ArrangeChildrenVert(0)
+	
+	if self.nSetScrollPos then
+		self.wndMissionLog:FindChild("MissionList"):SetVScrollPos(self.nSetScrollPos)
+		self.nSetScrollPos = nil
+	end
 end
 
 function PlayerPath:DrawMissionItem(wnd, pmMission)
@@ -479,23 +580,35 @@ function PlayerPath:DrawMissionItem(wnd, pmMission)
 		strSummary = pmMission:GetSummary()
 		strExtraText = pmMission:GetUnlockString()
 	end
-
+	
+	local tSettlerReward = pmMission:GetSettlerMayorInfo()
+	local tSettlerRewardSheriff = pmMission:GetSettlerSheriffInfo()	
+	
+	if tSettlerReward ~= nil and tSettlerReward.titleReward ~= nil  then
+		wnd:FindChild("PathRewardIcon"):Show(true)
+		wnd:FindChild("PathRewardIcon"):SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffffffff\">%s</P>", String_GetWeaselString(Apollo.GetString("Achievements_RewardTitle"), tSettlerReward.titleReward:GetTitle())))
+	end
+	
+	if tSettlerRewardSheriff ~= nil and tSettlerRewardSheriff .arTitles ~= nil  then
+		wnd:FindChild("PathRewardIcon"):Show(true)
+		wnd:FindChild("PathRewardIcon"):SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffffffff\">%s</P>", String_GetWeaselString(Apollo.GetString("Achievements_RewardTitle"), tSettlerRewardSheriff .arTitles:GetTitle())))
+	end
+	
 	if pmMission:IsComplete() then
 		wnd:FindChild("MissionItemIcon"):SetSprite("MissionLog_TEMP:spr_TEMP_MLog_CheckMark") -- todo hardcoded formatting
 	else
 		wnd:FindChild("MissionItemIcon"):SetSprite(self:HelperComputeIconPath(pmMission))
 	end
-
-	-- Set layout
+	
 	wnd:SetData(pmMission)
 	wnd:FindChild("MissionItemName"):SetText(pmMission:GetName())
-	--wnd:FindChild("MissionItemName"):SetTextColor(kcrNormalTextColor)
+				
 	wnd:FindChild("MissionItemProgress"):Show(not bComplete)
 	wnd:FindChild("MissionItemProgress"):SetTextColor(kcrNormalTextColor)
 	wnd:FindChild("MissionItemProgress"):SetText(self:HelperComputeMissionProgress(pmMission))
 	wnd:FindChild("MissionItemHighlightRunner"):Show(pmMission == self.pmHighlightedMission)
-	wnd:FindChild("MissionItemSummary"):SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBodyCyan\">%s</P>", strSummary))
-	wnd:FindChild("MissionItemExtraText"):SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", strExtraText))
+	wnd:FindChild("MissionItemSummary"):SetText(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", strSummary))
+	wnd:FindChild("MissionItemExtraText"):SetText(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBodyCyan\">%s</P>", strExtraText))
 
 	-- Resize
 	local nTextWidth1, nTextHeight1 = wnd:FindChild("MissionItemSummary"):SetHeightToContentHeight()
@@ -504,7 +617,7 @@ function PlayerPath:DrawMissionItem(wnd, pmMission)
 	wnd:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight1 + nTextHeight2 + 50)
 
 	-- Shift Mission Extra Text below ItemSummary
-	local nBottomOfItemSummary = nTextHeight1 + 30
+	local nBottomOfItemSummary = nTextHeight1 + 40
 	nLeft, nTop, nRight, nBottom = wnd:FindChild("MissionItemExtraText"):GetAnchorOffsets()
 	wnd:FindChild("MissionItemExtraText"):SetAnchorOffsets(nLeft, nBottomOfItemSummary, nRight, nBottomOfItemSummary + nTextHeight2)
 
@@ -660,14 +773,12 @@ function PlayerPath:HelperCalcTime(fSeconds)
 	return string.format("%d:%02d", nMins, nSecs)
 end
 
-function PlayerPath:FactoryProduce(wndParent, strFormName, tObject)
-	local wndNew = wndParent:FindChildByUserData(tObject)
+function PlayerPath:FactoryProduce(wndParent, strFormName, strCategoryName)
+	local wndNew = wndParent:FindChildByUserData(strCategoryName)
 	if not wndNew then
 		wndNew = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
-		wndNew:SetData(tObject)
-		if wndNew:FindChild("HeaderBtn") then
-			wndNew:FindChild("HeaderBtn"):SetCheck(true)
-		end -- Specific to MissionContainerForm windows
+		wndNew:SetData(strCategoryName)
+		wndNew:FindChild("HeaderBtnText"):SetText(strCategoryName)
 	end
 	return wndNew
 end

@@ -46,6 +46,7 @@ local ktZoneNameToContinent =  -- TODO TEMP
 	[Apollo.GetString("Lore_NGrimvault")] 					= Apollo.GetString("CRB_Central"),
 	[Apollo.GetString("Lore_SGrimvault")] 					= Apollo.GetString("CRB_Central"),
 	[Apollo.GetString("Lore_WGrimvault")] 					= Apollo.GetString("CRB_Central"),
+	[Apollo.GetString("Lore_TheDefile")] 					= Apollo.GetString("CRB_Central"),
 
 	[Apollo.GetString("Lore_Auroria")] 						= Apollo.GetString("CRB_Western"),
 	[Apollo.GetString("Lore_CrimsonIsle")] 					= Apollo.GetString("CRB_Western"),
@@ -82,7 +83,7 @@ end
 
 function LoreWindow:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("LoreWindow.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function LoreWindow:OnDocumentReady()
@@ -100,11 +101,10 @@ function LoreWindow:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("DatacubePlaybackEnded",			"OnDatacubeStopped", self)
 	Apollo.RegisterEventHandler("GenericEvent_StopPlayingDatacube", "OnDatacubeStopped", self)
-	Apollo.RegisterTimerHandler("LoreWindow_DatacubeStoppingTimer", "OnDatacubeTimer", self)
 
 	-- used to make sure that the datachron can't be replayed while its still fading out
-	Apollo.CreateTimer("LoreWindow_DatacubeStoppingTimer", 4.000, false)
-	Apollo.StopTimer("LoreWindow_DatacubeStoppingTimer")
+	self.timerDatacubeStopping = ApolloTimer.Create(4.000, false, "OnDatacubeTimer", self)
+	self.timerDatacubeStopping:Stop()
 
 	self.tNewEntries = {} -- Start tracking right away
 end
@@ -116,11 +116,20 @@ end
 function LoreWindow:Initialize()
 	self.wndColDisplay = nil
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "LoreWindowForm", nil, self)
+	self.wndColMainScroll = self.wndMain:FindChild("ColMainScroll")
+	self.wndMainNavGA = self.wndMain:FindChild("MainNavGA")
+	self.wndMainNavCol = self.wndMain:FindChild("MainNavCol")
+	self.wndColTopDropdownScroll = self.wndMain:FindChild("ColTopDropdownScroll")
+	self.wndColTopZoneProgressContainer = self.wndMain:FindChild("ColTopZoneProgressContainer")
+	self.wndColTopDropdownBtn = self.wndMain:FindChild("ColTopDropdownBtn")
+
+	local wndMainGAContainer = self.wndMain:FindChild("MainGAContainer")
+
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Lore")})
-	
-	self.wndMain:FindChild("MainNavGA"):AttachWindow(self.wndMain:FindChild("MainGAContainer"))
-	self.wndMain:FindChild("MainNavCol"):AttachWindow(self.wndMain:FindChild("MainColContainer"))	
-	
+
+	self.wndMainNavGA:AttachWindow(wndMainGAContainer)
+	self.wndMainNavCol:AttachWindow(self.wndMain:FindChild("MainColContainer"))
+
 	local wndMeasure = Apollo.LoadForm(self.xmlDoc, "ColHeader", nil, self)
 	self.knWndHeaderDefaultHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
@@ -129,35 +138,13 @@ function LoreWindow:Initialize()
 	self.knWndJournalItemDefaultHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
 
-	Event_FireGenericEvent("ToggleGalacticArchiveWindow", self.wndMain:FindChild("MainGAContainer"), self.wndMain)
+	Event_FireGenericEvent("ToggleGalacticArchiveWindow", wndMainGAContainer, self.wndMain)
 
-	self.wndMain:FindChild("ColTopDropdownBtn"):AttachWindow(self.wndMain:FindChild("ColTopDropdownBG"))
+	self.wndColTopDropdownBtn:AttachWindow(self.wndMain:FindChild("ColTopDropdownBG"))
 	self:InitializeCollections() -- Replace with a Generic Event if we pull this out of this file
 end
 
 function LoreWindow:OnDatacubeUpdated(idArg, bIsVolume)
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() then
-		self.wndMain:FindChild("ColMainScroll"):DestroyChildren()
-		self:MainRedrawCollections()
-
-		-- Update dropdown
-		for key, wndCurr in pairs(self.wndMain:FindChild("ColTopDropdownScroll"):GetChildren()) do
-			if wndCurr:FindChild("DropdownZoneBtn") then
-				local tCurrZone = wndCurr:FindChild("DropdownZoneBtn"):GetData()
-				self:HelperDrawDropdownZoneProgress(wndCurr, tCurrZone.nZoneId, tCurrZone.strName)
-			end
-		end
-		
-		-- Update the selected zone total progress
-		local wndColTopDropdownBtn = self.wndMain:FindChild("MainColContainer:ColTopBG:ColTopDropdownBtn")
-		if wndColTopDropdownBtn ~= nil then
-			local tSelectedZoneData = wndColTopDropdownBtn:GetData()
-			if tSelectedZoneData ~= nil then
-				self:HelperDrawDropdownZoneProgress(self.wndMain:FindChild("MainColContainer:ColTopBG:ColTopZoneProgressContainer"), tSelectedZoneData.nZoneId, tSelectedZoneData.strName)
-			end
-		end
-	end
-
 	if idArg then
 		local tDatacube = DatacubeLib.GetLastUpdatedDatacube(idArg, bIsVolume) -- Nothing until it's unlocked anyways
 		if not tDatacube then
@@ -167,7 +154,28 @@ function LoreWindow:OnDatacubeUpdated(idArg, bIsVolume)
 		local bPartialTales = tDatacube.eDatacubeType == DatacubeLib.DatacubeType_Chronicle and not tDatacube.bIsComplete
 		if not bPartialTales then
 			self.tNewEntries[tDatacube.nDatacubeId] = true -- GOTCHA: tDatacube.id can be different than nArgId (when nArgId is a volume)
-			--self:OpenToSpecificArticle(idArg, bIsVolume)
+		end
+	end
+
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsShown() then
+		self.wndColMainScroll:DestroyChildren()
+		self:MainRedrawCollections()
+
+		-- Update dropdown
+		for key, wndCurr in pairs(self.wndColTopDropdownScroll:GetChildren()) do
+			if wndCurr:FindChild("DropdownZoneBtn") then
+				local tCurrZone = wndCurr:FindChild("DropdownZoneBtn"):GetData()
+				self:HelperDrawDropdownZoneProgress(wndCurr, tCurrZone.nZoneId, tCurrZone.strName)
+			end
+		end
+
+		-- Update the selected zone total progress
+		local wndColTopDropdownBtn = self.wndMain:FindChild("MainColContainer:ColTopBG:ColTopDropdownBtn")
+		if wndColTopDropdownBtn ~= nil then
+			local tSelectedZoneData = wndColTopDropdownBtn:GetData()
+			if tSelectedZoneData ~= nil then
+				self:HelperDrawDropdownZoneProgress(self.wndMain:FindChild("MainColContainer:ColTopBG:ColTopZoneProgressContainer"), tSelectedZoneData.nZoneId, tSelectedZoneData.strName)
+			end
 		end
 	end
 end
@@ -176,11 +184,12 @@ function LoreWindow:OnShowLoreWindow(tArticleData)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self:Initialize()
 	end
-	
-	self.wndMain:Show(true)
-	self.wndMain:ToFront()
+
+	self.wndMain:Invoke()
 	Event_FireGenericEvent("LoreWindowHasBeenToggled")
 	Event_ShowTutorial(GameLib.CodeEnumTutorial.General_Lore)
+	
+	self.wndMain:FindChild("MainColContainer:PvPBlocker"):Show(MatchingGame.IsInPVPGame())
 
 	if tArticleData then
 		self:OpenToSpecificArticle(tArticleData.nDatacubeId)
@@ -195,9 +204,12 @@ function LoreWindow:OnToggleLoreWindow(tArticleData)
 	if self.wndMain:IsShown() then
 		self.wndMain:Show(false)
 		Event_FireGenericEvent("LoreWindowHasBeenClosed")
+		
 	else
-		self.wndMain:Show(true)
+		self.wndMain:Invoke()
 		self.wndMain:ToFront()
+		self.wndMain:FindChild("MainColContainer:PvPBlocker"):Show(MatchingGame.IsInPVPGame())
+		
 		Event_FireGenericEvent("LoreWindowHasBeenToggled")
 		Event_ShowTutorial(GameLib.CodeEnumTutorial.General_Lore)
 	end
@@ -211,30 +223,30 @@ function LoreWindow:OpenToSpecificArticle(idArg, bIsVolume)
 	if not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
-	
+
 	-- Assume we'll be on the right zone page (or just don't care)
 	local tArticleData = DatacubeLib.GetLastUpdatedDatacube(idArg, bIsVolume)
-	self.wndMain:FindChild("MainNavGA"):SetCheck(false)
-	self.wndMain:FindChild("MainNavCol"):SetCheck(true)
+	self.wndMainNavGA:SetCheck(false)
+	self.wndMainNavCol:SetCheck(true)
 	self:SpawnAndDrawColReader(tArticleData, nil)
 	self.wndColDisplay:FindChild("PlayPauseButton"):SetCheck(true)
 
 	-- Try to find the correct wndOrigin (TODO HACKY)
 	local wndOrigin = nil
 	if tArticleData.eDatacubeType == DatacubeLib.DatacubeType_Chronicle then
-		local wndParent = self.wndMain:FindChild("ColMainScroll"):FindChildByUserData("Tales"..idArg)
+		local wndParent = self.wndColMainScroll:FindChildByUserData("Tales"..idArg)
 		if wndParent then
 			wndParent:FindChild("ColTalesBtn"):SetCheck(true)
 			self.wndColDisplay:SetData(wndParent:FindChild("ColTalesBtn"))
 		end
 	elseif tArticleData.eDatacubeType == DatacubeLib.DatacubeType_Journal then
-		local wndParent = self.wndMain:FindChild("ColMainScroll"):FindChildByUserData("JournalArticle"..idArg)
+		local wndParent = self.wndColMainScroll:FindChildByUserData("JournalArticle"..idArg)
 		if wndParent then
 			wndParent:FindChild("ColJournalChildBtn"):SetCheck(true)
 			self.wndColDisplay:SetData(wndParent:FindChild("ColJournalChildBtn"))
 		end
 	elseif tArticleData.eDatacubeType == DatacubeLib.DatacubeType_Datacube then
-		local wndParent = self.wndMain:FindChild("ColMainScroll"):FindChildByUserData("Datacube"..idArg)
+		local wndParent = self.wndColMainScroll:FindChildByUserData("Datacube"..idArg)
 		if wndParent then
 			wndParent:FindChild("ColDatacubeBtn"):SetCheck(true)
 			self.wndColDisplay:SetData(wndParent:FindChild("ColDatacubeBtn"))
@@ -258,69 +270,76 @@ end
 function LoreWindow:InitializeCollections()
 	-- Build zone dropdown
 	local tZonesAtLoad = {}
-	for key, tCurrZone in pairs(DatacubeLib.GetZonesWithDatacubes()) do
-		tZonesAtLoad[tCurrZone.nZoneId] = tCurrZone
+	for key, tCurrZone in pairs(DatacubeLib.GetZonesWithDatacubes() or {}) do
+		table.insert(tZonesAtLoad, tCurrZone)
 	end
 
-	for key, tCurrZone in pairs(DatacubeLib.GetZonesWithJournals()) do
-		tZonesAtLoad[tCurrZone.nZoneId] = tCurrZone
+	for key, tCurrZone in pairs(DatacubeLib.GetZonesWithJournals() or {}) do
+		table.insert(tZonesAtLoad, tCurrZone)
 	end
 
-	for key, tCurrZone in pairs(DatacubeLib.GetZonesWithTales()) do
-		tZonesAtLoad[tCurrZone.nZoneId] = tCurrZone
+	for key, tCurrZone in pairs(DatacubeLib.GetZonesWithTales() or {}) do
+		table.insert(tZonesAtLoad, tCurrZone)
 	end
 
 	for key, strContinent in pairs(karContinents) do
-		local wndHeader = Apollo.LoadForm(self.xmlDoc, "DropdownZoneHeader", self.wndMain:FindChild("ColTopDropdownScroll"), self)
+		local wndHeader = Apollo.LoadForm(self.xmlDoc, "DropdownZoneHeader", self.wndColTopDropdownScroll, self)
 		wndHeader:FindChild("DropdownZoneHeaderText"):SetText(strContinent)
 		wndHeader:SetData(strContinent)
 	end
 
+	local tDuplicateList = {}
 	local bPickedAZone = false
 	for key, tCurrZone in pairs(tZonesAtLoad) do
-		local wndCurr = Apollo.LoadForm(self.xmlDoc, "DropdownZoneItem", self.wndMain:FindChild("ColTopDropdownScroll"), self)
-		wndCurr:SetData(String_GetWeaselString(Apollo.GetString("Lore_ContinentZone"), (ktZoneNameToContinent[tCurrZone.strName] or Apollo.GetString("Lore_Other")), tCurrZone.strName))
-		wndCurr:FindChild("DropdownZoneBtn"):SetData(tCurrZone)
-		wndCurr:FindChild("DropdownZoneBtn"):SetText(tCurrZone.strName)
-		self:HelperDrawDropdownZoneProgress(wndCurr, tCurrZone.nZoneId, tCurrZone.strName)
+		if not tDuplicateList[tCurrZone.nZoneId] then
+			local wndCurr = Apollo.LoadForm(self.xmlDoc, "DropdownZoneItem", self.wndColTopDropdownScroll, self)
+			wndCurr:SetData(String_GetWeaselString(Apollo.GetString("Lore_ContinentZone"), (ktZoneNameToContinent[tCurrZone.strName] or Apollo.GetString("Lore_Other")), tCurrZone.strName))
+			wndCurr:FindChild("DropdownZoneBtn"):SetData(tCurrZone)
+			wndCurr:FindChild("DropdownZoneBtn"):SetText(tCurrZone.strName)
+			self:HelperDrawDropdownZoneProgress(wndCurr, tCurrZone.nZoneId, tCurrZone.strName)
 
-		-- Default the top dropdown to the current zone
-		if not self.wndMain:FindChild("ColTopDropdownBtn"):GetData() and GameLib.IsInWorldZone(tCurrZone.nZoneId) then
-			bPickedAZone = true
-			self.wndMain:FindChild("ColTopDropdownBtn"):SetData(tCurrZone)
-			self.wndMain:FindChild("ColTopDropdownBtn"):SetText(tCurrZone.strName)
-			self:HelperDrawDropdownZoneProgress(self.wndMain:FindChild("ColTopZoneProgressContainer"), tCurrZone.nZoneId, tCurrZone.strName)
+			-- Default the top dropdown to the current zone
+			if not self.wndColTopDropdownBtn:GetData() and GameLib.IsInWorldZone(tCurrZone.nZoneId) then
+				bPickedAZone = true
+				self.wndColTopDropdownBtn:SetData(tCurrZone)
+				self.wndColTopDropdownBtn:SetText(tCurrZone.strName)
+				self:HelperDrawDropdownZoneProgress(self.wndColTopZoneProgressContainer, tCurrZone.nZoneId, tCurrZone.strName)
+			end
+			
+			tDuplicateList[tCurrZone.nZoneId] = true
 		end
 	end
+
+	self.wndColTopDropdownScroll:ArrangeChildrenVert(0, function(a,b) return a:GetData() < b:GetData() end)
 
 	-- Just pick the first one if we didn't match a default zone
 	if not bPickedAZone then
-		for key, wndCurr in pairs(self.wndMain:FindChild("ColTopDropdownScroll"):GetChildren()) do
-			if wndCurr:FindChild("DropdownZoneBtn") then
+		for key, wndCurr in pairs(self.wndColTopDropdownScroll:GetChildren()) do
+			if wndCurr:GetName() == "DropdownZoneItem" then
 				local tCurrZone = wndCurr:FindChild("DropdownZoneBtn"):GetData()
-				self.wndMain:FindChild("ColTopDropdownBtn"):SetData(tCurrZone)
-				self.wndMain:FindChild("ColTopDropdownBtn"):SetText(tCurrZone.strName)
-				self:HelperDrawDropdownZoneProgress(self.wndMain:FindChild("ColTopZoneProgressContainer"), tCurrZone.nZoneId, tCurrZone.strName)
+				self.wndColTopDropdownBtn:SetData(tCurrZone)
+				self.wndColTopDropdownBtn:SetText(tCurrZone.strName)
+				self:HelperDrawDropdownZoneProgress(self.wndColTopZoneProgressContainer, tCurrZone.nZoneId, tCurrZone.strName)
+
+				break
 			end
 		end
 	end
-	self.wndMain:FindChild("ColTopDropdownScroll"):ArrangeChildrenVert(0, function(a,b) return a:GetData() < b:GetData() end)
 
 	self:MainRedrawCollections()
 end
 
 function LoreWindow:MainRedrawCollections()
-	local tCurrZone = self.wndMain:FindChild("ColTopDropdownBtn"):GetData()
+	local tCurrZone = self.wndColTopDropdownBtn:GetData()
 	if not tCurrZone or not tCurrZone.nZoneId then
 		return
 	end
 
 	for idx, strHeader in pairs({Apollo.GetString("Lore_Datacubes"), Apollo.GetString("Lore_Journals"), Apollo.GetString("Lore_Tales")}) do
-		local wndHeader = self:FactoryProduce(self.wndMain:FindChild("ColMainScroll"), "ColHeader", strHeader)
+		local wndHeader = self:FactoryProduce(self.wndColMainScroll, "ColHeader", strHeader)
 		wndHeader:FindChild("ColHeaderBtn"):SetData(strHeader)
 		if wndHeader:FindChild("ColHeaderBtn"):IsChecked() then
 			wndHeader:FindChild("ColHeaderItems"):DestroyChildren()
-			--wndHeader:FindChild("ColHeaderBtnText"):SetText(String_GetWeaselString(Apollo.GetString("Lore_ClickToViewHeader"), strHeader))
 		else
 			local nNumFullyCompleted = self:DrawColHeaderItems(tCurrZone, wndHeader, strHeader)
 			local nNumTotal = 0
@@ -343,8 +362,8 @@ function LoreWindow:MainRedrawCollections()
 		end
 	end
 
-	self.wndMain:FindChild("ColMainScroll"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("ColMainScroll"):Enable(true) -- for OnColTopDropdownToggle
+	self.wndColMainScroll:ArrangeChildrenVert(0)
+	self.wndColMainScroll:Enable(true)
 end
 
 function LoreWindow:RedrawFromUI()
@@ -389,6 +408,7 @@ function LoreWindow:DrawColHeaderItems(tCurrZone, wndHeader, strHeader)
 			local nComplete = tListData.bIsComplete and 1 or tListData.nNumCompleted
 			local wndCurr = self:FactoryProduce(wndHeader:FindChild("ColHeaderItems"), "ColJournalItem", "Journal"..tListData.nDatacubeId)
 			wndCurr:FindChild("ColListItemText"):SetText(tListData.strTitle)
+			wndCurr:FindChild("ColListItemText"):SetHeightToContentHeight()
 			wndCurr:FindChild("ColJournalPortrait"):SetCostumeToCreatureId((idx % 2 == 0) and 30728 or 30737) -- TODO Hardcoded
 			wndCurr:FindChild("ColJournalPortrait"):SetModelSequence(150)
 			wndCurr:FindChild("ColJournalProgBar"):SetMax(nMax)
@@ -404,11 +424,14 @@ function LoreWindow:DrawColHeaderItems(tCurrZone, wndHeader, strHeader)
 					local wndJournalChild = self:FactoryProduce(wndCurr:FindChild("ColJournalChildItems"), "ColJournalChildItem", "JournalArticle"..tCurrArticleData.nDatacubeId)
 					wndJournalChild:FindChild("ColJournalChildBtn"):SetData(tCurrArticleData)
 					wndJournalChild:FindChild("ColJournalChildBtnText"):SetText(tCurrArticleData.strTitle)
-					bShowNewIndicator = self.tNewEntries[tCurrArticleData.nDatachronId] and true or bShowNewIndicator
+					wndJournalChild:FindChild("ColJournalChildBtnText"):SetHeightToContentHeight()
+					local nLeft, nTop, nRight, nBottom = wndJournalChild:GetAnchorOffsets()
+					wndJournalChild:SetAnchorOffsets(nLeft, nTop, nRight, wndJournalChild:FindChild("ColJournalChildBtnText"):GetHeight() + 15)
+					bShowNewIndicator = self.tNewEntries[tCurrArticleData.nDatacubeId] or bShowNewIndicator
 				end
 			end
 			wndCurr:FindChild("NewIndicator"):Show(bShowNewIndicator)
-			wndCurr:SetAnchorOffsets(0,0,0, wndCurr:FindChild("ColJournalChildItems"):ArrangeChildrenVert(0) + self.knWndJournalItemDefaultHeight)
+			wndCurr:SetAnchorOffsets(0,0,0, wndCurr:FindChild("ColJournalChildItems"):ArrangeChildrenVert(0) + self.knWndJournalItemDefaultHeight + wndCurr:FindChild("ColListItemText"):GetHeight())
 		end
 	end
 
@@ -428,9 +451,9 @@ function LoreWindow:SpawnAndDrawColReader(tArticleData, wndOrigin) -- wndOrigin 
 		return
 	end
 
-	if self.tNewEntries[tArticleData.id] then
-		self.tNewEntries[tArticleData.id] = nil -- Clear their new indicator right away
-		self.wndMain:FindChild("ColMainScroll"):DestroyChildren()
+	if self.tNewEntries[tArticleData.nDatacubeId] then
+		self.tNewEntries[tArticleData.nDatacubeId] = nil -- Clear their new indicator right away
+		self.wndColMainScroll:DestroyChildren()
 		self:MainRedrawCollections()
 	end
 
@@ -454,7 +477,7 @@ function LoreWindow:SpawnAndDrawColReader(tArticleData, wndOrigin) -- wndOrigin 
 	self.wndColDisplay:FindChild("PlayPauseButton"):AttachWindow(self.wndColDisplay:FindChild("NowPlayingIcon"))
 	self.wndColDisplay:FindChild("PlayPauseButton"):SetData(tArticleData)
 	self.wndColDisplay:FindChild("ArticleText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\""..kclrDefault.."\">"..
-	tArticleData.strText:gsub("\\n", "<T TextColor=\"0\">.</T></P><P Font=\"CRB_InterfaceMedium\" TextColor=\""..kclrDefault.."\">").."</P>")
+	tArticleData.strText:gsub("\n", "<T TextColor=\"0\">.</T></P><P Font=\"CRB_InterfaceMedium\" TextColor=\""..kclrDefault.."\">").."</P>")
 	self.wndColDisplay:FindChild("ArticleText"):SetHeightToContentHeight()
 
 	local bValidTBFAsset = tArticleData.eDatacubeType == DatacubeLib.DatacubeType_Chronicle and tArticleData.strAsset and string.len(tArticleData.strAsset) > 0
@@ -485,7 +508,6 @@ end
 function LoreWindow:OnPlayPauseCheck(wndHandler, wndControl)
 	local tArticleData = wndHandler:GetData()
 	DatacubeLib.PlayDatacubeSound(tArticleData.nDatacubeId)
-	Event_FireGenericEvent("GenericEvent_Collections_DatacubePlayFromPL", tArticleData) -- For the HUD Alert
 end
 
 function LoreWindow:OnPlayPauseUncheck(wndHandler, wndControl)
@@ -496,7 +518,7 @@ function LoreWindow:OnPlayPauseUncheck(wndHandler, wndControl)
 	Event_FireGenericEvent("GenericEvent_Collections_StopDatacube") -- To turn off the HUD Alert
 
 	self.wndColDisplay:FindChild("PlayPauseButton"):Enable(false)
-	Apollo.StartTimer("LoreWindow_DatacubeStoppingTimer")
+	self.timerDatacubeStopping:Start()
 end
 
 function LoreWindow:OnDatacubeStopped()
@@ -517,22 +539,22 @@ end
 
 function LoreWindow:OnDropdownZoneBtn(wndHandler, wndControl) -- wndHandler is "DropdownZoneBtn" and its data is tCurrZone
 	local tCurrZone = wndHandler:GetData()
-	self.wndMain:FindChild("ColTopDropdownBtn"):SetCheck(false)
-	self.wndMain:FindChild("ColTopDropdownBtn"):SetData(tCurrZone)
-	self.wndMain:FindChild("ColTopDropdownBtn"):SetText(tCurrZone.strName)
-	self:HelperDrawDropdownZoneProgress(self.wndMain:FindChild("ColTopZoneProgressContainer"), tCurrZone.nZoneId, tCurrZone.strName)
-
-	self.wndMain:FindChild("ColMainScroll"):DestroyChildren()
+	self.wndColTopDropdownBtn:SetCheck(false)
+	self.wndColTopDropdownBtn:SetData(tCurrZone)
+	self.wndColTopDropdownBtn:SetText(tCurrZone.strName)
+	self:HelperDrawDropdownZoneProgress(self.wndColTopZoneProgressContainer, tCurrZone.nZoneId, tCurrZone.strName)
+	self.wndColMainScroll:SetVScrollPos(0)
+	self.wndColMainScroll:DestroyChildren()
 	self:MainRedrawCollections()
 	self:OnDestroyColDisplay()
 end
 
 function LoreWindow:OnColTopDropdownToggle(wndHandler, wndControl) -- ColTopDropdownBtn Zone Picker
-	self.wndMain:FindChild("ColMainScroll"):Enable(not wndHandler:IsChecked())
+	self.wndColMainScroll:Enable(not wndHandler:IsChecked())
 end
 
 function LoreWindow:OnColTopDropdownClosed(wndHandler, wndControl) -- ColTopDropdownBtn Zone Picker Window
-	self.wndMain:FindChild("ColMainScroll"):Enable(true)
+	self.wndColMainScroll:Enable(true)
 end
 
 function LoreWindow:OnColHeaderToggle(wndHandler, wndControl) -- E.G. "Datacubes (1/6)"
@@ -544,6 +566,10 @@ function LoreWindow:OnColHeaderToggle(wndHandler, wndControl) -- E.G. "Datacubes
 end
 
 function LoreWindow:OnColBtnToSpawnReader(wndHandler, wndControl) -- ColDatacubeBtn, ColTalesBtn, ColJournalChildBtn
+	local wndNewIndicator = wndHandler:GetParent():FindChild("NewIndicator")
+	if wndNewIndicator then
+		wndNewIndicator:Show(false)
+	end
 	self:SpawnAndDrawColReader(wndHandler:GetData(), wndHandler)
 end
 
@@ -568,10 +594,10 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function LoreWindow:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
-	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.GalacticArchive or not self.wndMain or not self.wndMain:IsValid() then 
+	if eAnchor ~= GameLib.CodeEnumTutorialAnchor.GalacticArchive or not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
-	
+
 	local tRect = {}
 	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
 	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
@@ -599,7 +625,7 @@ function LoreWindow:HelperDrawDropdownZoneProgress(wndCurr, idCurrZone, strCurrZ
 	if wndCurr:FindChild("ZoneProgressProgText") then
 		wndCurr:FindChild("ZoneProgressProgText"):SetText(String_GetWeaselString(Apollo.GetString("Lore_TotalProgress"), nCurrent, nTotalSum))
 	end
-	
+
 	wndCurr:FindChild("ZoneProgressProgBar"):SetMax(nTotalSum)
 	wndCurr:FindChild("ZoneProgressProgBar"):SetProgress(nCurrent)
 	wndCurr:FindChild("ZoneProgressProgBar"):EnableGlow(nCurrent == nTotalSum)

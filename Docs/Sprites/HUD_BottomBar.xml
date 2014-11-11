@@ -10,7 +10,7 @@
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="632" x1="632" x2="632" x3="677" x4="798" x5="856" y0="26" y1="26" y2="26" y3="26" y4="26" y5="78" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_BottomBar_SkillsBase" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="1024" y0="78" y1="78" y2="78" y3="78" y4="78" y5="189" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="48" x1="156" x2="868" x3="868" x4="868" x5="976" y0="78" y1="78" y2="78" y3="78" y4="78" y5="189" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_BottomBar_SkillsBaseLeft" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="0" x1="45" x2="45" x3="45" x4="182" x5="224" y0="189" y1="189" y2="189" y3="189" y4="189" y5="245" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
@@ -23,6 +23,9 @@
     </Sprite>
     <Sprite Name="spr_HUD_BottomBar_XPRest" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="386" x1="386" x2="386" x3="386" x4="386" x5="772" y0="246" y1="246" y2="246" y3="246" y4="246" y5="267" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_HUD_BottomBar_XPFull" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="386" x1="386" x2="386" x3="386" x4="386" x5="772" y0="288" y1="288" y2="288" y3="288" y4="288" y5="309" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_BottomBar_XPFillTarget" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="386" y0="267" y1="267" y2="267" y3="267" y4="267" y5="288" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
@@ -61,19 +64,19 @@
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="124" y0="513" y1="513" y2="513" y3="513" y4="513" y5="613" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_DodgeFlash" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="362" x1="362" x2="362" x3="362" x4="362" x5="404" y0="309" y1="309" y2="309" y3="309" y4="309" y5="361" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="362" x1="362" x2="362" x3="362" x4="362" x5="404" y0="311" y1="311" y2="311" y3="311" y4="311" y5="363" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_Dodge3" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="404" x1="404" x2="404" x3="404" x4="404" x5="446" y0="309" y1="309" y2="309" y3="309" y4="309" y5="361" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="404" x1="404" x2="404" x3="404" x4="404" x5="446" y0="311" y1="311" y2="311" y3="311" y4="311" y5="363" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_Dodge2" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="446" x1="446" x2="446" x3="446" x4="446" x5="488" y0="309" y1="309" y2="309" y3="309" y4="309" y5="361" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="446" x1="446" x2="446" x3="446" x4="446" x5="488" y0="311" y1="311" y2="311" y3="311" y4="311" y5="363" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_Dodge1" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="488" x1="488" x2="488" x3="488" x4="488" x5="530" y0="309" y1="309" y2="309" y3="309" y4="309" y5="361" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="488" x1="488" x2="488" x3="488" x4="488" x5="530" y0="311" y1="311" y2="311" y3="311" y4="311" y5="363" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_Dodge0" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="530" x1="530" x2="530" x3="530" x4="530" x5="572" y0="309" y1="309" y2="309" y3="309" y4="309" y5="361" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="530" x1="530" x2="530" x3="530" x4="530" x5="572" y0="311" y1="311" y2="311" y3="311" y4="311" y5="363" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="spr_HUD_DodgeFill" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="576" x1="576" x2="576" x3="576" x4="576" x5="587" y0="313" y1="313" y2="313" y3="313" y4="313" y5="357" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
@@ -121,6 +124,12 @@
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="578" x1="578" x2="578" x3="578" x4="578" x5="585" y0="316" y1="321" y2="349" y3="349" y4="349" y5="354" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="AddonLoaded" EndColor="black"/>
         <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="578" x1="578" x2="578" x3="578" x4="578" x5="585" y0="316" y1="321" y2="349" y3="349" y4="349" y5="354" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
     </Sprite>
+    <Sprite Name="spr_HUD_ChargeProgressBacker" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="532" x1="532" x2="532" x3="532" x4="532" x5="539" y0="317" y1="324" y2="349" y3="349" y4="349" y5="355" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
+    </Sprite>
+    <Sprite Name="sp_HUD_Mount_Shadow" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_HUD_Mount_ShadowOverlay.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="44" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <Composite Name="spr_HUD_VerticalGoo_Pulse" Cycle="1">
         <Layer Name="spr_HUD_VerticalGoo"/>
         <Layer Name="spr_HUD_VerticalGooBright"/>
@@ -135,10 +144,8 @@
     <AutoButton Name="btn_HUD_Inventory" Texture="UI\Assets\Textures\UI_HUD_Btn_Inventory.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="52" y0="0" y1="0" y2="0" y3="0" y4="0" y5="54" StateBits="31" Direction="Across"/>
     <AutoButton Name="btn_HUD_InventoryFull" Texture="UI\Assets\Textures\UI_HUD_Btn_InventoryFull.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="52" y0="0" y1="0" y2="0" y3="0" y4="0" y5="54" StateBits="31" Direction="Across"/>
     <AutoButton Name="btn_HUD_Menu" Texture="UI\Assets\Textures\UI_HUD_Btn_Menu.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="68" y0="0" y1="0" y2="0" y3="0" y4="0" y5="71" StateBits="31" Direction="Across"/>
-    <AutoButton Name="btn_HUD_Mount" Texture="UI\Assets\Textures\UI_HUD_Btn_Mount.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="102" y0="0" y1="0" y2="0" y3="0" y4="0" y5="81" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btn_HUD_Mount" Texture="UI\Assets\Textures\UI_HUD_Btn_Mount.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="92" y0="0" y1="0" y2="0" y3="0" y4="0" y5="81" StateBits="31" Direction="Down"/>
     <AutoButton Name="btn_HUD_Recall" Texture="UI\Assets\Textures\UI_HUD_Btn_Recall.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="101" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" StateBits="31" Direction="Down"/>
-    <AutoButton Name="btn_HUD_MenuIconBtn" Texture="UI\Assets\Textures\UI_HUD_MenuIcons.TGA" x0="0" x1="0" x2="0" x3="0" x4="0" x5="38" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" StateBits="15" Direction="Across"/>
-    <Sprite Name="spr_HUD_ChargeProgressBacker" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_HUD_BottomBar.tex" x0="532" x1="532" x2="532" x3="532" x4="532" x5="539" y0="317" y1="324" y2="349" y3="349" y4="349" y5="355" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="AddonLoaded" EndColor="AddonLoaded"/>
-    </Sprite>
+    <AutoButton Name="btn_HUD_MenuIconBtn" Texture="UI\Assets\Textures\UI_HUD_MenuIcons.TGA" x0="0" x1="0" x2="0" x3="11" x4="27" x5="38" y0="0" y1="0" y2="0" y3="11" y4="28" y5="38" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btn_HUD_Path" Texture="UI\Assets\Textures\UI_HUD_Btn_Path.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="101" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" StateBits="31" Direction="Down"/>
 </Sprites>

@@ -48,53 +48,27 @@ function CommDisplay:Init()
     Apollo.RegisterAddon(self)
 end
 
-function CommDisplay:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
-		return
-	end
-	
-	local locWindowLocation = self.wndMain and self.wndMain:GetLocation() or self.locSavedWindowLoc
-	
-	local tSavedData = 
-	{
-		tWindowLocation = locWindowLocation and locWindowLocation:ToTable() or nil,
-		nSaveVersion = knSaveVersion,
-	}
-	return tSavedData
-end
-
-function CommDisplay:OnRestore(eType, tSavedData)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
-		return
-	end
-	if tSavedData.tWindowLocation then
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
-	end
-end
-
 function CommDisplay:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CommDisplay.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function CommDisplay:OnDocumentReady()
 	if  self.xmlDoc == nil then
 		return
 	end
-	
+
 	if self.wndMain == nil then
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "CommDisplayForm", nil, self) -- Do not rename. Datachron.lua references this.
 		self.wndMain:Show(false, true)
-		if self.locSavedWindowLoc then
-			self.wndMain:MoveToLocation(self.locSavedWindowLoc)
-		end
-		
+
 		local tOffsets = {self.wndMain:GetAnchorOffsets()}
 		self.tDefaultOffsets = {tOffsets[1], tOffsets[2], tOffsets[1] + knDefaultWidth, tOffsets[2] + knDefaultHeight}
 		self.nRewardLeft, self.nRewardTop, self.nRewardRight, self.nRewardBottom = self.wndMain:FindChild("RewardsContainer"):GetAnchorOffsets()
 		self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom = self.wndMain:FindChild("DialogFraming"):GetAnchorOffsets()
 	end
 
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 	Apollo.RegisterEventHandler("ShowCommDisplay", 			"OnShowCommDisplay", self)
 	Apollo.RegisterEventHandler("HideCommDisplay", 			"OnHideCommDisplay", self)
 	Apollo.RegisterEventHandler("CloseCommDisplay", 		"OnHideCommDisplay", self)
@@ -112,18 +86,12 @@ function CommDisplay:OnDocumentReady()
 	self.wndCommPortraitRight = self.wndMain:FindChild("CommPortraitRight")
 end
 
-function CommDisplay:OnMouseButtonUp()
-	-- Update starting position if clicked/moved
-	local tOffsets = {self.wndMain:GetAnchorOffsets()}
-	self.tDefaultOffsets = {tOffsets[1], tOffsets[2], tOffsets[1] + knDefaultWidth, tOffsets[2] + knDefaultHeight}
-	return false
+function CommDisplay:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InputAction_Communicator")})
 end
 
 function CommDisplay:OnCloseBtn()
-	local tOffsets = {self.wndMain:GetAnchorOffsets()}
-	self.tDefaultOffsets = {tOffsets[1], tOffsets[2], tOffsets[1] + knDefaultWidth, tOffsets[2] + knDefaultHeight}
 	Event_FireGenericEvent("CommDisplay_Closed") -- Let the datachron know we exited early
-	--self:OnHideCommDisplay() -- Trust the datachron will send this hide UI event to us, so we don't accidentally double hide queued msgs
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -181,7 +149,7 @@ function CommDisplay:OnCommDisplayRegularText(idMsg, idCreature, strMessageText,
 
 	self.wndCommPortraitLeft:PlayTalkSequence()
 	self.wndCommPortraitRight:PlayTalkSequence()
-	
+
 	local tOffsets = {self.wndMain:GetAnchorOffsets()}
 	self.tDefaultOffsets = {tOffsets[1], tOffsets[2], tOffsets[1] + knDefaultWidth, tOffsets[2] + knDefaultHeight}
 
@@ -206,7 +174,7 @@ function CommDisplay:OnCommDisplayQuestText(idState, idQuest, bIsCommCall, tLayo
 
 	local strMessageText = DialogSys.GetNPCText(idQuest)
 	if strMessageText == nil or string.len(strMessageText) == 0 then strMessageText = "" end
-	
+
 	local tOffsets = {self.wndMain:GetAnchorOffsets()}
 	self.tDefaultOffsets = {tOffsets[1], tOffsets[2], tOffsets[1] + knDefaultWidth, tOffsets[2] + knDefaultHeight}
 
@@ -247,16 +215,8 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 		end
 	end
 
-	if not tLayout or tLayout.eOverlay == CommunicatorLib.CommunicatorOverlay_Default then
-		self.wndMain:FindChild("StaticContainerL"):SetSprite("")
-		self.wndMain:FindChild("StaticContainerR"):SetSprite("")
-	elseif tLayout.eOverlay == CommunicatorLib.CommunicatorOverlay_LightStatic then
-		self.wndMain:FindChild("StaticContainerL"):SetSprite("sprComm_StaticComposite")
-		self.wndMain:FindChild("StaticContainerR"):SetSprite("sprComm_StaticComposite")
-	elseif tLayout.eOverlay == CommunicatorLib.CommunicatorOverlay_HeavyStatic then
-		self.wndMain:FindChild("StaticContainerL"):SetSprite("sprComm_StaticComposite")
-		self.wndMain:FindChild("StaticContainerR"):SetSprite("sprComm_StaticComposite")
-	end
+	self.wndMain:FindChild("StaticContainerL"):SetSprite("sprComm_StaticComposite")
+	self.wndMain:FindChild("StaticContainerR"):SetSprite("sprComm_StaticComposite")
 
 	-- format the given text to display
 	local strLeftOrRight = "Left"
@@ -287,6 +247,7 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 	end
 
 	self.wndMain:FindChild("DialogName"):SetAML(string.format("<P Font=\"CRB_HeaderMedium\" TextColor=\"%s\" Align=\"%s\">%s</P>", "UI_TextHoloTitle", strLeftOrRight, strCreatureName))
+	self.wndMain:FindChild("DialogName"):SetHeightToContentHeight()
 	self.wndMain:FindChild("DialogText"):SetAML(string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"%s\" Align=\"%s\">%s</P>", strSubtitleAppend, strTextColor, strLeftOrRight, strMessageText))
 
 	-- Draw Rewards
@@ -300,16 +261,19 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 
 	-- Resize for text over four lines (four lines is equal to 68 pixels at the moment) -- TODO Hardcoded formatting
 	self.wndMain:FindChild("DialogText"):SetHeightToContentHeight()
-	local nContentX, nContentY = self.wndMain:FindChild("DialogText"):GetContentSize()
+	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("DialogText"):GetAnchorOffsets()
+	local nContentX, nContentY = self.wndMain:FindChild("DialogName"):GetContentSize()
 	local nOffsetY = 0
 	self.wndMain:FindChild("DialogFraming"):SetAnchorOffsets(self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom)
 
-
-	if nContentY > 68 then
-		nOffsetY = nContentY - 68 + 5 -- The +5 is for lower g-height
-		self.wndMain:FindChild("DialogFraming"):SetAnchorOffsets(self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom + nContentY - 64)
-
+	if (nTop + nBottom) > 68 and nContentY < 30 then -- 30 = 2 lines of text. Let's make everything 20px taller when the Title wraps
+		nOffsetY = (nTop + nBottom) - 73
+		self.wndMain:FindChild("DialogFraming"):SetAnchorOffsets(self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom + (nTop + nBottom) - 70)
+	elseif (nTop + nBottom) > 68 and nContentY > 30 then
+		nOffsetY = (nTop + nBottom) - 53
+		self.wndMain:FindChild("DialogFraming"):SetAnchorOffsets(self.nDialogLeft, self.nDialogTop, self.nDialogRight, self.nDialogBottom + (nTop + nBottom) - 50)
 	end
+
 	-- Excess text expands down, & Rewards expand down
 	self.wndMain:SetAnchorOffsets(self.tDefaultOffsets[1], self.tDefaultOffsets[2], self.tDefaultOffsets[3], self.tDefaultOffsets[4] + nRewardHeight + nOffsetY)
 	self.wndMain:FindChild("RewardsContainer"):SetAnchorOffsets(self.nRewardLeft, self.nRewardTop + nOffsetY, self.nRewardRight, self.nRewardBottom)
@@ -384,7 +348,7 @@ function CommDisplay:DrawLootItem(tCurrReward, wndParentArg)
 		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):Show(true)
 		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetMoneySystem(tCurrReward.eCurrencyType or 0)
 		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetAmount(tCurrReward.nAmount, 0)
-		
+
 		local strText = ""
 		if tCurrReward.nAmount >= 1000000 then
 			strText = String_GetWeaselString(Apollo.GetString("CRB_Platinum"), math.floor(tCurrReward.nAmount / 1000000))
@@ -407,6 +371,7 @@ function CommDisplay:DrawLootItem(tCurrReward, wndParentArg)
 		wndCurrReward:FindChild("LootIconCantUse"):Show(self:HelperPrereqFailed(itemReward))
 		wndCurrReward:FindChild("LootDescription"):SetText(itemReward:GetName())
 		wndCurrReward:FindChild("LootDescription"):SetTextColor(arEvalColors[itemReward:GetItemQuality()])
+		wndCurrReward:SetData(tCurrReward.itemReward)
 		Tooltip.GetItemTooltipForm(self, wndCurrReward, tCurrReward.itemReward, {bPrimary = true, bSelling = false, itemCompare = itemReward:GetEquippedItemForItemType()})
 		strIconSprite = itemReward:GetIcon()
 
@@ -435,6 +400,12 @@ function CommDisplay:DrawLootItem(tCurrReward, wndParentArg)
 
 	if wndCurrReward then
 		wndCurrReward:FindChild("LootIcon"):SetSprite(strIconSprite)
+	end
+end
+
+function CommDisplay:OnLootItemMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
 	end
 end
 

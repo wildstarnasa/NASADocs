@@ -72,7 +72,11 @@ function TradeskillSchematics:OnDocumentReady()
 		return
 	end
 
-    Apollo.RegisterEventHandler("GenericEvent_InitializeSchematicsTree", "Initialize", self)
+	Apollo.RegisterEventHandler("GenericEvent_InitializeSchematicsTree", 	"Initialize", self)
+	Apollo.RegisterEventHandler("UpdateInventory", 							"OnUpdateInventory", self)
+	Apollo.RegisterEventHandler("CraftingSchematicLearned", 				"OnCraftingSchematicLearned", self)
+	Apollo.RegisterEventHandler("TradeSkills_Learned", 						"OnTradeSkills_Learned", self)
+	Apollo.RegisterEventHandler("TradeskillLearnedFromTHOR", 				"OnTradeSkills_Learned", self)
 
 	Apollo.RegisterTimerHandler("Tradeskills_TimerCraftingStationCheck", "OnTimerCraftingStationCheck", self)
 	Apollo.CreateTimer("Tradeskills_TimerCraftingStationCheck", 1, true)
@@ -80,11 +84,6 @@ end
 
 function TradeskillSchematics:Initialize(wndParent, nSchematicId, strSearchQuery)
 	if not self.wndMain or not self.wndMain:IsValid() then
-		Apollo.RegisterEventHandler("UpdateInventory", 				"OnUpdateInventory", self) -- TODO: Analyze performance
-		Apollo.RegisterEventHandler("CraftingSchematicLearned", 	"OnCraftingSchematicLearned", self)
-		Apollo.RegisterEventHandler("TradeSkills_Learned", 			"OnTradeSkills_Learned", self)
-		Apollo.RegisterEventHandler("TradeskillLearnedFromTHOR", 	"OnTradeSkills_Learned", self)
-
 		if self.tSavedData == nil then
 			self.tSavedData = {}
 		end
@@ -136,7 +135,9 @@ function TradeskillSchematics:OnUpdateInventory()
 		return
 	end
 
+	self:OnSearchTopLeftInputBoxChanged()
 	self:FullRedraw(nSchematicId)
+
 	local tSchematic = self.wndMain:FindChild("RightSide"):GetData() -- Won't be set at initialize
 	if tSchematic then
 		self:DrawSchematic(tSchematic)
@@ -155,6 +156,7 @@ end
 function TradeskillSchematics:OnCraftingSchematicLearned()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:FindChild("RightSide"):Show(false)
+		self:OnSearchTopLeftInputBoxChanged()
 		self:FullRedraw()
 	end
 end
@@ -168,7 +170,7 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 	local tTradeskills = {}
 	for idx, tCurrTradeskill in ipairs(CraftingLib.GetKnownTradeskills()) do
 		local tCurrTradeskillInfo = CraftingLib.GetTradeskillInfo(tCurrTradeskill.eId)
-		if not tCurrTradeskillInfo.bIsHarvesting and idx ~= CraftingLib.CodeEnumTradeskill.Runecrafting then
+		if not tCurrTradeskillInfo.bIsHarvesting and tCurrTradeskill.eId ~= CraftingLib.CodeEnumTradeskill.Runecrafting then
 			table.insert(tTradeskills, { tCurrTradeskill, tCurrTradeskillInfo })
 		end
 	end
@@ -218,20 +220,18 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 		local tSchematicList = CraftingLib.GetSchematicList(tTopLevelBtnData[1], nil, tTopLevelBtnData[2], bFilterLocked)
 
 		table.sort(tSchematicList, HelperSortSchematicList)
-		tWndAndSchematicList[idx] = { wndTop, tSchematicList }
+		tWndAndSchematicList[idx] = { wndTop = wndTop, tSchematicList = tSchematicList }
 	end
 
 	-- Iterate again, with a sorted and filtered list
 	for idx, tData in pairs(tWndAndSchematicList) do
-		local wndTop = tData[1]
-		local tSchematicList = tData[2]
+		local wndTop = tData.wndTop
+		local tSchematicList = tData.tSchematicList
 		for idx2, tSchematic in pairs(tSchematicList) do
 			-- If told to open to a specific schematic
-			if nSchematicIdToOpen then
-				if nSchematicIdToOpen == tSchematic.nSchematicId then
-					self.wndMain:FindChild("RightSide"):SetData(tSchematic)
-					-- Redraw will occur right after and pick this up
-				end
+			if nSchematicIdToOpen and nSchematicIdToOpen == tSchematic.nSchematicId then
+				self.wndMain:FindChild("RightSide"):SetData(tSchematic) -- Redraw will occur right after and pick this up
+			elseif nSchematicIdToOpen then
 				wndTop:FindChild("TopLevelBtn"):SetCheck(false)
 			end
 
@@ -269,7 +269,7 @@ end
 
 function TradeskillSchematics:ResizeTree()
 	for key, wndTop in pairs(self.wndMain:FindChild("LeftSideScroll"):GetChildren()) do
-		local nTopHeight = 25
+		local nTopHeight = 6
 		if wndTop:FindChild("TopLevelBtn"):IsChecked() then
 			for key2, wndMiddle in pairs(wndTop:FindChild("TopLevelItems"):GetChildren()) do
 				if wndMiddle:FindChild("MiddleLevelBtn"):IsChecked() then
@@ -286,7 +286,7 @@ function TradeskillSchematics:ResizeTree()
 
 				local nMiddleHeight = wndMiddle:FindChild("MiddleLevelItems"):ArrangeChildrenVert(0)
 				if nMiddleHeight > 0 then
-					nMiddleHeight = nMiddleHeight + 15
+					nMiddleHeight = nMiddleHeight + 6
 				end
 
 				local nLeft, nTop, nRight, nBottom = wndMiddle:GetAnchorOffsets()
@@ -375,7 +375,7 @@ function TradeskillSchematics:OnFiltersChanged(wndHandler, wndControl)
 
 	self.tSavedData.bFilterLocked = self.wndMain:FindChild("LeftSideFilterLocked"):IsChecked()
 	self.tSavedData.bFilterMats = self.wndMain:FindChild("LeftSideFilterMaterials"):IsChecked()
-	if self.wndMain:FindChild("SearchTopLeftInputBox"):GetText() ~= "" then 
+	if self.wndMain:FindChild("SearchTopLeftInputBox"):GetText() ~= "" then
 		self:OnSearchTopLeftInputBoxChanged()--reset the search results to use filters
 	end
 	self:FullRedraw()
@@ -428,15 +428,15 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 	for key, tMaterial in pairs(tSchematicInfo.tMaterials) do
 		if tMaterial.nAmount > 0 then
 			local wndMaterial = Apollo.LoadForm(self.xmlDoc, "MaterialsItem", wndSchem:FindChild("MaterialsScroll"), self)
-			local nBackpackCount = tMaterial.itemMaterial:GetBackpackCount()
+			local nOwnedCount = tMaterial.itemMaterial:GetBackpackCount() + tMaterial.itemMaterial:GetBankCount()
 			wndMaterial:FindChild("MaterialsIcon"):SetSprite(tMaterial.itemMaterial:GetIcon())
 			wndMaterial:FindChild("MaterialsName"):SetText(tMaterial.itemMaterial:GetName())
-			wndMaterial:FindChild("MaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), nBackpackCount, tMaterial.nAmount))
-			wndMaterial:FindChild("MaterialsIconNotEnough"):Show(nBackpackCount < tMaterial.nAmount)
+			wndMaterial:FindChild("MaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), nOwnedCount, tMaterial.nAmount))
+			wndMaterial:FindChild("MaterialsIconNotEnough"):Show(nOwnedCount < tMaterial.nAmount)
 			self:HelperBuildItemTooltip(wndMaterial, tMaterial.itemMaterial)
 
-			nNumCraftable = math.min(nNumCraftable, math.floor(nBackpackCount / tMaterial.nAmount))
-			bHaveEnoughMats = bHaveEnoughMats and nBackpackCount >= tMaterial.nAmount
+			nNumCraftable = math.min(nNumCraftable, math.floor(nOwnedCount / tMaterial.nAmount))
+			bHaveEnoughMats = bHaveEnoughMats and nOwnedCount >= tMaterial.nAmount
 		end
 	end
 
@@ -447,7 +447,7 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 			local wndMaterial = Apollo.LoadForm(self.xmlDoc, "MaterialsItem", wndSchem:FindChild("MaterialsScroll"), self)
 			local nBackpackCount = 0
 			for idx, itemMaterial in pairs(tAvailableCores) do
-				nBackpackCount = nBackpackCount + itemMaterial:GetStackCount()
+				nBackpackCount = nBackpackCount + itemMaterial:GetStackCount() -- Makes sense to not include Power Cores in bank
 			end
 
 			local strPowerCore = Apollo.GetString("CBCrafting_PowerCore")
@@ -455,8 +455,8 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 				strPowerCore = String_GetWeaselString(Apollo.GetString("Tradeskills_AnyPowerCore"), karPowerCoreTierToString[tSchematicInfo.eTier])
 			end
 
-			wndMaterial:FindChild("MaterialsIcon"):SetSprite("ClientSprites:Icon_ItemMisc_UI_Item_Crafting_PowerCore_Green")
-			wndMaterial:FindChild("MaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), nBackpackCount, "1"))
+			wndMaterial:FindChild("MaterialsIcon"):SetSprite("Icon_CraftingUI_Item_Crafting_PowerCore_Green")
+			wndMaterial:FindChild("MaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), nBackpackCount, "1"))
 			wndMaterial:FindChild("MaterialsName"):SetText(strPowerCore)
 			wndMaterial:FindChild("MaterialsIconNotEnough"):Show(nBackpackCount < 1)
 			wndMaterial:SetTooltip(Apollo.GetString("CBCrafting_PowerCoreHelperTooltip"))
@@ -467,12 +467,14 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 	local bIsCooking = tSchematicInfo.eTradeskillId == CraftingLib.CodeEnumTradeskill.Cooking
 	wndSchem:Show(true)
 	wndSchem:SetData(tSchematic)
-	wndSchem:FindChild("RightBottomCraftBtn"):SetData(tSchematic.nSchematicId) -- This is pdated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
+	wndSchem:FindChild("SchematicIcon"):SetData(tSchematicInfo.itemOutput)
+	wndSchem:FindChild("RightBottomCraftBtn"):SetData(tSchematic.nSchematicId) -- This is updated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
 	wndSchem:FindChild("RightBottomSimpleCraftBtn"):SetData(tSchematic.nSchematicId) -- This is updated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
 	wndSchem:FindChild("RightBottomSimpleCraftBtn"):Enable(bHaveEnoughMats) -- GOTCHA: RightBottomCraftBtn can be enabled with no mats, it just goes to a preview screen
 
 	wndSchem:FindChild("SchematicName"):SetText(tSchematicInfo.strName)
 	wndSchem:FindChild("SchematicIcon"):SetSprite(tSchematicInfo.itemOutput:GetIcon())
+	wndSchem:FindChild("SchematicIcon"):SetText(tSchematicInfo.nCreateCount <= 1 and "" or tSchematicInfo.nCreateCount)
 	wndSchem:FindChild("RightCookingMessage"):Show(not tSchematic.bIsKnown and bIsCooking)
 	wndSchem:FindChild("SchematicIconLockBG"):Show(not tSchematic.bIsKnown and not tSchematic.bIsOneUse)
 	wndSchem:FindChild("RightNoLinkMessage"):Show(not tSchematic.bIsKnown and not tSchematic.bIsAutoLearn and not bIsCooking and not achSource)
@@ -492,10 +494,12 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 	wndSchem:FindChild("RightSubrecipes"):Show(#tSchematicInfo.tSubRecipes > 0)
 	wndSchem:FindChild("SubrecipesListScroll"):DestroyChildren()
 	for key, tSubrecipe in pairs(tSchematicInfo.tSubRecipes) do
+		local tSubrecipeInfo = CraftingLib.GetSchematicInfo(tSubrecipe.nSchematicId)
 		local wndSubrecipe = Apollo.LoadForm(self.xmlDoc, "SubrecipesItem", wndSchem:FindChild("SubrecipesListScroll"), self)
 		wndSubrecipe:FindChild("SubrecipesLeftDiscoverableBG"):Show(not tSubrecipe.bIsKnown and tSubrecipe.bIsUndiscovered)
 		wndSubrecipe:FindChild("SubrecipesLeftLockedBG"):Show(not tSubrecipe.bIsKnown and not tSubrecipe.bIsUndiscovered)
 		wndSubrecipe:FindChild("SubrecipesLeftIcon"):SetSprite(tSubrecipe.itemOutput:GetIcon())
+		wndSubrecipe:FindChild("SubrecipesLeftIcon"):SetText(tSubrecipeInfo.nCreateCount <= 1 and "" or tSubrecipeInfo.nCreateCount)
 		wndSubrecipe:FindChild("SubrecipesLeftName"):SetText(tSubrecipe.itemOutput:GetName())
 		self:HelperBuildItemTooltip(wndSubrecipe, tSubrecipe.itemOutput)
 		-- TODO SubrecipesRight for Critical Successes
@@ -515,11 +519,29 @@ function TradeskillSchematics:OnRightBottomCraftBtn(wndHandler, wndControl) -- R
 end
 
 function TradeskillSchematics:OnRightBottomSimpleCraftBtn(wndHandler, wndControl) -- RightBottomSimpleCraftBtn, data is tSchematicId
+	local nSimpleCraftId = wndHandler:GetData()
 	local tCurrentCraft = CraftingLib.GetCurrentCraft()
 	if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
-		Event_FireGenericEvent("GenericEvent_CraftFromPL", wndHandler:GetData())
+		Event_FireGenericEvent("GenericEvent_CraftFromPL", nSimpleCraftId)
 	else
-		CraftingLib.CraftItem(wndHandler:GetData())
+		-- Order is important, must clear first
+		Event_FireGenericEvent("GenericEvent_ClearCraftSummary")
+
+		-- Count materials
+		local tSchematicInfo = CraftingLib.GetSchematicInfo(nSimpleCraftId)
+		local strSummaryMsg = Apollo.GetString("CoordCrafting_LastCraftTooltip")
+		for idx, tData in pairs(tSchematicInfo.tMaterials) do
+			local itemCurr = tData.itemMaterial
+			local tPluralName =
+			{
+				["name"] = itemCurr:GetName(),
+				["count"] = tonumber(tData.nAmount)
+			}
+			strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CoordCrafting_SummaryCount"), tPluralName)
+		end
+		Event_FireGenericEvent("GenericEvent_CraftSummaryMsg", strSummaryMsg)
+
+		CraftingLib.CraftItem(nSimpleCraftId)
 	end
 	Event_FireGenericEvent("AlwaysHideTradeskills")
 end
@@ -540,7 +562,7 @@ end
 
 function TradeskillSchematics:OnSearchTopLeftInputBoxChanged() -- Also called in Lua
 	local strInput = self.wndMain:FindChild("SearchTopLeftInputBox"):GetText():lower()
-	local bInputExists = string.len(strInput) > 0
+	local bInputExists = string.len(strInput) > 1
 
 	self.wndMain:FindChild("LeftSideSearch"):Show(bInputExists)
 	self.wndMain:FindChild("SearchTopLeftClearBtn"):Show(bInputExists)
@@ -553,11 +575,11 @@ function TradeskillSchematics:OnSearchTopLeftInputBoxChanged() -- Also called in
 	-- Search
 	-- All Tradeskills -> All Schematics -> If Valid Schematics (hobby or right tier) then Draw Result
 	for idx, tCurrTradeskill in ipairs(CraftingLib.GetKnownTradeskills()) do
-		if idx ~= CraftingLib.CodeEnumTradeskill.Runecrafting then
+		if tCurrTradeskill.eId ~= CraftingLib.CodeEnumTradeskill.Runecrafting then
 			local tCurrTradeskillInfo = CraftingLib.GetTradeskillInfo(tCurrTradeskill.eId)
 			for idx2, tSchematic in pairs(CraftingLib.GetSchematicList(tCurrTradeskill.eId, nil, nil, true)) do
-				if tCurrTradeskillInfo.bIsHobby or tCurrTradeskillInfo.eTier >= tSchematic.eTier then
-					self:HelperSearchBuildResult(self:HelperSearchNameMatch(tSchematic, strInput))
+				if tCurrTradeskillInfo.bIsActive and (tCurrTradeskillInfo.bIsHobby or tCurrTradeskillInfo.eTier >= tSchematic.eTier) then
+					self:HelperSearchBuildResult(self:HelperSearchNameMatch(tSchematic, strInput), nil)
 					for idx3, tSubSchem in pairs(self:HelperSearchSubschemNameMatch(tSchematic, strInput)) do
 						self:HelperSearchBuildResult(tSchematic, tSubSchem)
 					end
@@ -567,13 +589,25 @@ function TradeskillSchematics:OnSearchTopLeftInputBoxChanged() -- Also called in
 	end
 
 	local bNoResults = #self.wndMain:FindChild("LeftSideSearchResultsList"):GetChildren() == 0
+	local strEmptyMessage = ""
+	if bNoResults and (self.wndMain:FindChild("LeftSideFilterMaterials"):IsChecked() or not self.wndMain:FindChild("LeftSideFilterLocked"):IsChecked()) then
+		strEmptyMessage = Apollo.GetString("Tradeskills_NoResultsFilter")
+	elseif bNoResults then
+		strEmptyMessage = Apollo.GetString("Tradeskills_NoResults")
+	end
+	self.wndMain:FindChild("LeftSideSearchResultsList"):SetText(strEmptyMessage)
 	self.wndMain:FindChild("LeftSideSearchResultsList"):ArrangeChildrenVert(0)
-	--self.wndMain:FindChild("LeftSideSearchFrame"):SetText(bNoResults and Apollo.GetString("Tradeskills_NoResults") or "")
 end
 
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
+
+function TradeskillSchematics:OnSchematicIconMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
 
 function TradeskillSchematics:HelperHaveEnoughMaterials(tSchematic)
 	local bValidOneUse = true
@@ -582,8 +616,8 @@ function TradeskillSchematics:HelperHaveEnoughMaterials(tSchematic)
 	-- Materials
 	local tSchematicInfo = CraftingLib.GetSchematicInfo(tSchematic.nSchematicId)
 	for key, tMaterial in pairs(tSchematicInfo.tMaterials) do
-		local nBackpackCount = tMaterial.itemMaterial:GetBackpackCount()
-		if nBackpackCount < tMaterial.nAmount then
+		local nOwnedCount = tMaterial.itemMaterial:GetBackpackCount() + tMaterial.itemMaterial:GetBankCount()
+		if nOwnedCount < tMaterial.nAmount then
 			bHasEnoughMaterials = false
 		end
 	end
@@ -594,7 +628,7 @@ function TradeskillSchematics:HelperHaveEnoughMaterials(tSchematic)
 		if tAvailableCores then -- Some crafts won't have power cores
 			local nBackpackCount = 0
 			for idx, tMaterial in pairs(tAvailableCores) do
-				nBackpackCount = nBackpackCount + tMaterial:GetBackpackCount()
+				nBackpackCount = nBackpackCount + tMaterial:GetBackpackCount() -- Makes sense to not include Power Cores in bank
 			end
 			if nBackpackCount < 1 then
 				bHasEnoughMaterials = false
@@ -605,13 +639,13 @@ function TradeskillSchematics:HelperHaveEnoughMaterials(tSchematic)
 	-- One Use
 	if tSchematic.bIsOneUse then
 		local tFirstMat = tSchematicInfo.tMaterials[1] -- GOTCHA: Design has assured the recipe is always the first
-		bValidOneUse = tFirstMat.itemMaterial:GetBackpackCount() >= tFirstMat.nAmount
+		bValidOneUse = (tFirstMat.itemMaterial:GetBackpackCount() + tFirstMat.itemMaterial:GetBankCount()) >= tFirstMat.nAmount
 	end
 
 	return bHasEnoughMaterials, bValidOneUse
 end
 
-function TradeskillSchematics:HelperSearchBuildResult(tSchematic, tSubSchem)
+function TradeskillSchematics:HelperSearchBuildResult(tSchematic, tSubSchem) -- 2nd arg optional
 	if not tSchematic then
 		return
 	end
@@ -620,31 +654,36 @@ function TradeskillSchematics:HelperSearchBuildResult(tSchematic, tSubSchem)
 	local bShowLock = not tSchematicToUse.bIsKnown
 	local bShowMatsWarning = not bShowLock and not self:HelperHaveEnoughMaterials(tSchematicToUse)
 	local bOneTime = not bShowLock and not bShowMatsWarning and tSchematicToUse.bIsOneUse
-	
-	-- Helper will determine if the schematic should be included in the results 
+
+	-- Helper will determine if the schematic should be included in the results
 	local bAddSchematic = self:HelperTestSchematic(tSchematicToUse)
-	if bAddSchematic then 
+	if bAddSchematic then
 		local wndBottomItem = self:LoadByName("BottomItem", self.wndMain:FindChild("LeftSideSearchResultsList"), tSchematicToUse.strName..tSchematicToUse.nSchematicId)
 		wndBottomItem:FindChild("BottomItemBtn"):SetData(tSchematic) -- GOTCHA: The Button will intentionally always open the parent schematic
 		wndBottomItem:FindChild("BottomItemLockIcon"):Show(bShowLock)
 		wndBottomItem:FindChild("BottomItemOneTimeIcon"):Show(bOneTime)
 		wndBottomItem:FindChild("BottomItemMatsWarningIcon"):Show(bShowMatsWarning)
 		wndBottomItem:FindChild("BottomItemBtnText"):SetText(tSubSchem and String_GetWeaselString(Apollo.GetString("Tradeskills_SubAbrev"), tSubSchem.strName) or tSchematic.strName)
-	end	
+		if Apollo.GetTextWidth("CRB_InterfaceMedium_B", wndBottomItem:FindChild("BottomItemBtnText"):GetText()) > wndBottomItem:FindChild("BottomItemBtnText"):GetWidth() then -- TODO QUICK HACK
+			local nBottomLeft, nBottomTop, nBottomRight, nBottomBottom = wndBottomItem:GetAnchorOffsets()
+			wndBottomItem:SetAnchorOffsets(nBottomLeft, nBottomTop, nBottomRight, nBottomTop + (self.knBottomLevelHeight * 1.5))
+		end
+
+	end
 end
 
 function TradeskillSchematics:HelperTestSchematic(tSchematicToUse)
 	local bFilterLocked = self.wndMain:FindChild("LeftSideFilterLocked"):IsChecked()
-	local bFilterMaterials = self.wndMain:FindChild("LeftSideFilterMaterials"):IsChecked()	
+	local bFilterMaterials = self.wndMain:FindChild("LeftSideFilterMaterials"):IsChecked()
 	if not bFilterLocked and not bFilterMaterials then --neither filter buttons are pressed
 		return tSchematicToUse.bIsKnown
-		
+
 	elseif not bFilterLocked and bFilterMaterials then --only have materials is pressed
 		return tSchematicToUse.bIsKnown and self:HelperHaveEnoughMaterials(tSchematicToUse)
-		
+
 	elseif bFilterLocked and not bFilterMaterials then --only show locked is pressed
 		return true --show everything
-	
+
 	elseif bFilterLocked and bFilterMaterials then --both filter buttons are pressed
 		return self:HelperHaveEnoughMaterials(tSchematicToUse)
 	end

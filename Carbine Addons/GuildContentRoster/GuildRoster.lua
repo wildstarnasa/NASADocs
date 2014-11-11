@@ -33,8 +33,17 @@ end
 function GuildRoster:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("GuildRoster.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+
+	self.tRoster = nil
+	self.strPlayerName = nil
+	self.bViewingRemovedGuild = false
+	
+	self.strSelectedName = nil
+	self.nSelectedIndex = 0
 	
 	self.bShowOffline = true
+	self.bRosterSortAsc = true
+	self.strRosterSort = "RosterSortBtnName"
 end
 
 function GuildRoster:OnSave(eType)
@@ -45,6 +54,8 @@ function GuildRoster:OnSave(eType)
 	local tSavedData =
 	{
 		bShowOffline = self.bShowOffline,
+		bRosterSortAsc = self.bRosterSortAsc,
+		strRosterSort = self.strRosterSort
 	}
 
 	return tSavedData
@@ -57,6 +68,14 @@ function GuildRoster:OnRestore(eType, tSavedData)
 
 	if tSavedData.bShowOffline ~= nil then
 		self.bShowOffline = tSavedData.bShowOffline
+	end
+	
+	if tSavedData.bRosterSortAsc then
+		self.bRosterSortAsc = tSavedData.bRosterSortAsc
+	end
+	
+	if tSavedData.strRosterSort then
+		self.strRosterSort = tSavedData.strRosterSort
 	end
 end
 
@@ -71,10 +90,6 @@ function GuildRoster:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildRoster",                      "OnGuildRoster", self)
 	Apollo.RegisterEventHandler("GuildMemberChange",                "OnGuildMemberChange", self)  -- General purpose update method
 	Apollo.RegisterEventHandler("GuildRankChange",					"OnGuildRankChange", self)
-
-	self.tRoster = nil
-	self.strPlayerName = nil
-	self.bViewingRemovedGuild = false
 end
 
 function GuildRoster:Initialize(wndParent)
@@ -86,13 +101,13 @@ function GuildRoster:Initialize(wndParent)
 	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildRosterForm", wndParent, self)
     self.tWndRefs.wndEditRankPopout = self.tWndRefs.wndMain:FindChild("EditRankPopout")
 	self.tWndRefs.wndMain:Show(true)
-
+	
+	self.tWndRefs.wndMain:FindChild(self.strRosterSort):SetCheck(true)
 	self.tWndRefs.wndMain:FindChild("RosterBottom"):ArrangeChildrenHorz(0)
 	self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):AttachWindow(self.tWndRefs.wndMain:FindChild("AddMemberContainer"))
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeave"):AttachWindow(self.tWndRefs.wndMain:FindChild("LeaveBtnContainer"))
+	self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):AttachWindow(self.tWndRefs.wndMain:FindChild("LeaveFlyoutBtnContainer"))
 	self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):AttachWindow(self.tWndRefs.wndMain:FindChild("RemoveMemberContainer"))
 	self.tWndRefs.wndMain:FindChild("RosterOptionBtnEditNotes"):AttachWindow(self.tWndRefs.wndMain:FindChild("EditNotesContainer"))
-	self.tWndRefs.wndMain:FindChild("EditRanksButton"):AttachWindow(self.tWndRefs.wndEditRankPopout)
 
 	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
 	self.tWndRefs.wndMain:FindChild("ShowOffline"):SetCheck(self.bShowOffline)	
@@ -103,10 +118,15 @@ function GuildRoster:Initialize(wndParent)
 		local wndPermissionBtn = wndPermission:FindChild("PermissionBtn")
 		wndPermissionBtn:SetText("       " .. tPermission.strName) -- TODO REMOVE HARDCODE
 		wndPermission:SetData(tPermission)
+		
+		if tPermission.strDescription ~= nil and tPermission.strDescription ~= "" then
+			wndPermission:SetTooltip(tPermission.strDescription)
+		end
 	end
 	wndPermissionContainer:ArrangeChildrenVert()
 	
 	self.tWndRefs.wndMain:SetData(guildOwner)
+	self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildMemberNote))
 end
 
 function GuildRoster:OnToggleRoster(wndParent)
@@ -152,7 +172,7 @@ function GuildRoster:FullRedrawOfRoster()
 		self:OnRosterPromoteMemberCloseBtn()
 	end
 
-	self:BuildRosterList(guildCurr, self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):GetData(), "RosterSortBtnName"))
+	self:BuildRosterList(guildCurr, self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):GetData()))
 	
 	self.tWndRefs.wndEditRankPopout:FindChild("RankContainer"):DestroyChildren()
 	
@@ -181,7 +201,7 @@ end
 function GuildRoster:OnGuildRoster(guildCurr, tRoster) -- Event from CPP
 	if self.tWndRefs.wndMain and self.tWndRefs.wndMain:IsValid() and guildCurr == self.tWndRefs.wndMain:GetData() then
 		self.tWndRefs.wndMain:FindChild("RosterGrid"):DeleteAll()
-		self:BuildRosterList(guildCurr, self:SortRoster(tRoster, "RosterSortBtnName")) -- "RosterSortBtnName" is the default sort method to use	
+		self:BuildRosterList(guildCurr, self:SortRoster(tRoster)) -- "RosterSortBtnName" is the default sort method to use	
 		self.tRoster = tRoster
 	end
 end
@@ -201,9 +221,15 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 	end
 	
 	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterGrid")
+	local tSelectedRow = nil
+	
 	wndGrid:DeleteAll() -- TODO remove this for better performance eventually
+	
+	local tRosterDiff = self:CompareRoster(tRoster)
 
-	for key, tCurr in pairs(tRoster) do
+	for key, tCurr in pairs(tRosterDiff) do
+		tCurr.nRowIndex = key
+		
 		if self.bShowOffline or tCurr.fLastOnline == 0 then
 			local strIcon = "CRB_DEMO_WrapperSprites:btnDemo_CharInvisibleNormal"
 			if tCurr.nRank == 1 then -- Special icons for guild leader and council (TEMP Placeholder)
@@ -227,8 +253,13 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 				self.strPlayerName = GameLib.GetPlayerUnit():GetName()
 			end
 
-			if self.strPlayerName == tCurr.strName then
-				self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):SetText(tCurr.strNote)
+			local wndNoteEditBox = self.tWndRefs.wndMain:FindChild("EditNotesEditbox")
+			if self.strPlayerName == tCurr.strName and not wndNoteEditBox:IsShown() then
+				wndNoteEditBox:SetText(tCurr.strNote)
+			end
+			
+			if self.strSelectedName == tCurr.strName then
+				tSelectedRow = tCurr
 			end
 			
 			local iCurrRow = wndGrid:AddRow("")
@@ -239,8 +270,9 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 			wndGrid:SetCellDoc(iCurrRow, 4, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.nLevel.."</T>")
 			wndGrid:SetCellDoc(iCurrRow, 5, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..tCurr.strClass.."</T>")
 			wndGrid:SetCellDoc(iCurrRow, 6, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertPathToString(tCurr.ePathType).."</T>")
-			wndGrid:SetCellDoc(iCurrRow, 7, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertToTime(tCurr.fLastOnline).."</T>")
-			wndGrid:SetCellDoc(iCurrRow, 8, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..FixXMLString(tCurr.strNote).."</T>")
+			wndGrid:SetCellDoc(iCurrRow, 7, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">"..self:HelperConvertToTime(tCurr.fLastOnline).."</T>")			
+			
+			wndGrid:SetCellDoc(iCurrRow, 8, "<T Font=\"CRB_InterfaceSmall\" TextColor=\""..strTextColor.."\">".. FixXMLString(tCurr.strNote) .."</T>")
 			wndGrid:SetCellLuaData(iCurrRow, 8, String_GetWeaselString(Apollo.GetString("GuildRoster_ActiveNoteTooltip"), tCurr.strName, string.len(tCurr.strNote) > 0 and tCurr.strNote or "N/A")) -- For tooltip
 		end
 	end
@@ -249,22 +281,73 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 	self.tWndRefs.wndMain:FindChild("AddMemberEditBox"):SetData(self.tWndRefs.wndMain:FindChild("AddMemberEditBox")) -- Since they have the same event handler
 	self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):SetData(tRoster)
 
-	self:ResetRosterMemberButtons()
+	self:HelperSelectRow(tSelectedRow)
+end
+
+function GuildRoster:CompareRoster(tRoster)
+	if not self.tCurrentRoster then
+		return tRoster
+	end
+	
+	local tChangedMembers = {}
+	
+	for idx, tMemberData in pairs(tRoster) do
+		if not self.tMemberMap[tMemberData.strName] then
+			tChangedMembers[strName] = tMemberData
+		end
+		
+		local tChangedInfo = {}
+		local bChanged = false
+		local nSortedIdx = self.tMemberMap[tMemberData.strName]
+		local tCurrentMemberData = self.tCurrentRoster[tSortedIdx]
+		
+		if tMemberData.fLastOnline ~= tCurrentMemberData.fLastOnline then
+			tChangedInfo.fLastOnline = tMemberData.fLastOnline
+			bChanged = true
+		end
+		if tMemberData.nLevel ~= tCurrentMemberData.nLevel then
+			tChangedInfo.nLevel = tMemberData.nLevel
+			bChanged = true
+		end
+		if tMemberData.nRank ~= tCurrentMemberData.nRank then
+			tChangedInfo.nRank = tMemberData.nRank
+			bChanged = true
+		end
+		
+		if bChanged then
+			tChangedMembers[tMemberData.strName] = tChangedInfo
+		end
+	end
+
+	return tChangedMembers
 end
 
 function GuildRoster:OnRosterGridItemClick(wndControl, wndHandler, iRow, iCol, eMouseButton)
-	local wndData = self.tWndRefs.wndMain:FindChild("RosterGrid"):GetCellData(iRow, 1)
+	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterGrid")
+	local wndData = wndGrid:GetCellData(iRow, 1)
+	
 	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndData and wndData.strName and wndData.strName ~= GameLib.GetPlayerUnit():GetName() then
-		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.tWndRefs.wndMain, wndData.strName)
+		local unitTarget = nil
+		local tOptionalCharacterData = { guildCurr = self.tWndRefs.wndMain:GetData(), tPlayerGuildData = wndData }
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", self.tWndRefs.wndMain, wndData.strName, unitTarget, tOptionalCharacterData)
 		return
 	end
-
-	if self.tWndRefs.wndMain:FindChild("RosterGrid"):GetData() == wndData then
-		self.tWndRefs.wndMain:FindChild("RosterGrid"):SetData(nil)
-		self.tWndRefs.wndMain:FindChild("RosterGrid"):SetCurrentRow(0) -- Deselect grid
-	else
-		self.tWndRefs.wndMain:FindChild("RosterGrid"):SetData(wndData)
+	
+	if wndGrid:GetData() == wndData then
+		wndData = nil
 	end
+	
+	self:HelperSelectRow(wndData)
+end
+
+function GuildRoster:HelperSelectRow(tRowData)
+	self.strSelectedName = tRowData and tRowData.strName or nil
+	self.nSelectedIndex = tRowData and tRowData.nRowIndex or 0
+	
+	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterGrid")
+	wndGrid:SetData(tRowData)
+	wndGrid:SetCurrentRow(self.nSelectedIndex)
+	wndGrid:EnsureCellVisible(self.nSelectedIndex, 0)
 	
 	self:ResetRosterMemberButtons()
 end
@@ -402,7 +485,7 @@ function GuildRoster:HelperValidateAndRefreshRankSettingsWindow()
 	local strName = wndSettings:FindChild("OptionString"):GetText()
 	
 	if wndLimit ~= nil then
-		local nNameLength = string.len(strName or "")
+		local nNameLength = GetUnicodeStringLength(strName or "")
 		
 		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
 		
@@ -427,6 +510,40 @@ function GuildRoster:HelperValidateAndRefreshRankSettingsWindow()
 	
 	--New ranks only require a valid name otherwise require the name to change (while still valid) or the permissions change
 	wndSettings:FindChild("RankPopoutOkBtn"):Enable((bNew and bNameValid) or (not bNew and bNameValid and (bNameChanged or bPermissionChanged)))
+end
+
+function GuildRoster:OnPlayerNoteChanged(wndControl, wndHandler, strNewNote)
+	if wndControl ~= wndHandler then 
+		return
+	end
+	local wndNote = self.tWndRefs.wndMain:FindChild("EditNotesContainer")
+	local bValid = GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.GuildMemberNote, GameLib.CodeEnumUserTextFilterClass.Strict)
+	
+	wndNote:FindChild("EditNotesYesBtn"):Enable(bValid)
+	wndNote:FindChild("StatusValidAlert"):Show(not bValid)
+end
+
+function GuildRoster:OnEditNoteBtn(wndControl, wndHandler)
+	if wndControl ~= wndHandler then 
+		return
+	end
+	local wndNote = self.tWndRefs.wndMain:FindChild("EditNotesContainer")
+	for key, tCurr in pairs(self.tRoster) do
+		if self.strPlayerName == tCurr.strName then
+			wndNote:FindChild("EditNotesEditbox"):SetText(tCurr.strNote)
+		end
+	end
+	wndNote:FindChild("EditNotesYesBtn"):Enable(false)
+	wndNote:FindChild("StatusValidAlert"):Show(false)
+end
+
+function GuildRoster:OnRanksButtonSignal(wndControl, wndHandler)
+	
+	local wndRankPopout = self.tWndRefs.wndEditRankPopout
+	local bShow = not wndRankPopout:IsShown()
+	wndRankPopout:Show(bShow)
+	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):Show(false)
+
 end
 
 function GuildRoster:OnRankSettingsCloseBtn(wndControl, wndHandler)
@@ -457,17 +574,6 @@ end
 -----------------------------------------------------------------------------------------------
 
 function GuildRoster:ResetRosterMemberButtons()
-	-- Defaults
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):Show(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):Show(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):Show(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):Show(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):SetCheck(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeave"):SetCheck(false)
-
 	-- Enable member options based on Permissions (note Code will also guard against this) -- TODO
 	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local eMyRank = guildCurr:GetMyRank()
@@ -486,10 +592,20 @@ function GuildRoster:ResetRosterMemberButtons()
 		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
 
 		if tMyRankPermissions.bDisband then
-			self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeave"):SetText(Apollo.GetString("Circles_Disband"))
+			self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):SetText(Apollo.GetString("GuildRoster_DisbandGuild"))
 		else
-			self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeave"):SetText(Apollo.GetString("Circles_Leave"))
+			self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):SetText(Apollo.GetString("GuildRoster_LeaveGuild"))
 		end
+	else
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):Show(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):Show(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):Show(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):Show(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):SetCheck(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
+		self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):SetCheck(false)
 	end
 
 	-- If it is just one button, arrange to the right instead
@@ -505,7 +621,7 @@ function GuildRoster:OnRosterAddMemberClick(wndHandler, wndControl)
 end
 
 function GuildRoster:OnRosterRemoveMemberClick(wndHandler, wndControl)
-	self.tWndRefs.wndMain:FindChild("RemoveMemberLabel"):SetText(String_GetWeaselString(Apollo.GetString("Circles_KickConfirmation"), self.tWndRefs.wndMain:FindChild("RosterGrid"):GetData().strName))
+	self.tWndRefs.wndMain:FindChild("RemoveMemberName"):SetText(self.tWndRefs.wndMain:FindChild("RosterGrid"):GetData().strName)
 end
 
 function GuildRoster:OnRosterPromoteMemberClick(wndHandler, wndControl) -- wndHandler is "RosterOptionBtnPromote"
@@ -524,7 +640,7 @@ end
 
 function GuildRoster:OnRosterEditNoteSave(wndHandler, wndControl)
 	wndHandler:SetFocus()
-	self:OnRosterEditNotesCloseBtn()
+	self.tWndRefs.wndMain:FindChild("EditNotesContainer"):Close()
 
 	local guildCurr = self.tWndRefs.wndMain:GetData()
 	guildCurr:SetMemberNoteSelf(self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):GetText())
@@ -546,11 +662,7 @@ function GuildRoster:OnRosterRemoveMemberCloseBtn()
 end
 
 function GuildRoster:OnRosterLeaveCloseBtn()
-	self.tWndRefs.wndMain:FindChild("LeaveBtnContainer"):Show(false)
-end
-
-function GuildRoster:OnRosterEditNotesCloseBtn()
-	self.tWndRefs.wndMain:FindChild("EditNotesContainer"):Show(false)
+	self.tWndRefs.wndMain:FindChild("LeaveFlyoutBtnContainer"):Show(false)
 end
 
 -- Saying Yes to the Pop Up Bubbles
@@ -609,45 +721,32 @@ end
 -----------------------------------------------------------------------------------------------
 
 function GuildRoster:OnRosterSortToggle(wndHandler, wndControl)
-	self:BuildRosterList(self.tWndRefs.wndMain:GetData(), self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):GetData(), wndHandler:GetName()))
+	local strLastClicked = self.strRosterSort
+	--inverse the sort order if they column was clicked on again.
+	wndHandler:SetCheck(true)
+	self.strRosterSort = wndHandler:GetName()
+	self.bRosterSortAsc = self.strRosterSort and self.strRosterSort ~= strLastClicked and true or not self.bRosterSortAsc
+	
+	self:BuildRosterList(self.tWndRefs.wndMain:GetData(), self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):GetData()))
 end
 
-function GuildRoster:SortRoster(tArg, strLastClicked)
-	-- TODO: Two tiers of sorting. E.g. Clicking Name then Path will give Paths sorted first, then Names sorted second
-	if not tArg then return end
-	local tResult = tArg
-
-	if self.tWndRefs.wndMain:FindChild("RosterSortBtnName"):IsChecked() then
-		table.sort(tResult, function(a,b) return (a.strName > b.strName) end)
-	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnRank"):IsChecked() then
-		table.sort(tResult, function(a,b) return (a.nRank > b.nRank) end)
+function GuildRoster:SortRoster(tResult)
+	if not tResult then return end
+	
+	if self.tWndRefs.wndMain:FindChild("RosterSortBtnRank"):IsChecked() then
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (a.nRank > b.nRank or a.nRank == b.nRank and a.strName < b.strName) end or function(a,b) return (a.nRank < b.nRank or a.nRank == b.nRank and a.strName < b.strName) end)
 	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnLevel"):IsChecked() then
-		table.sort(tResult, function(a,b) return (a.nLevel < b.nLevel) end) -- Level we want highest to lowest
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (a.nLevel > b.nLevel or a.nLevel == b.nLevel and a.strName < b.strName) end or function(a,b) return (a.nLevel < b.nLevel or a.nLevel == b.nLevel and a.strName < b.strName) end) -- Level we want highest to lowest
 	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnClass"):IsChecked() then
-		table.sort(tResult, function(a,b) return (a.strClass > b.strClass) end)
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (a.strClass < b.strClass or a.strClass == b.strClass and a.strName < b.strName) end or function(a,b) return (a.strClass > b.strClass or a.strClass == b.strClass and a.strName < b.strName) end)
 	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnPath"):IsChecked() then
-		table.sort(tResult, function(a,b) return (self:HelperConvertPathToString(a.ePathType) > self:HelperConvertPathToString(b.ePathType)) end) -- TODO: Potentially expensive?
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (self:HelperConvertPathToString(a.ePathType) > self:HelperConvertPathToString(b.ePathType) or a.ePathType == b.ePathType and a.strName < b.strName) end or function(a,b) return (self:HelperConvertPathToString(a.ePathType) < self:HelperConvertPathToString(b.ePathType) or a.ePathType == b.ePathType and a.strName < b.strName) end) -- TODO: Potentially expensive?
 	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnOnline"):IsChecked() then
-		table.sort(tResult, function(a,b) return (a.fLastOnline < b.fLastOnline) end)
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (a.fLastOnline < b.fLastOnline or a.fLastOnline == b.fLastOnline and a.strName < b.strName) end or function(a,b) return (a.fLastOnline > b.fLastOnline or a.fLastOnline == b.fLastOnline and a.strName < b.strName) end)
 	elseif self.tWndRefs.wndMain:FindChild("RosterSortBtnNote"):IsChecked() then
-		table.sort(tResult, function(a,b) return (a.strNote < b.strNote) end)
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (a.strNote < b.strNote or a.strNote == b.strNote and a.strName < b.strName) end or function(a,b) return (a.strNote > b.strNote or a.strNote == b.strNote and a.strName < b.strName) end)
 	else
-		-- Determine the last clicked with the second argument
-		if strLastClicked == "RosterSortBtnName" then
-			table.sort(tResult, function(a,b) return (a.strName < b.strName) end)
-		elseif strLastClicked == "RosterSortBtnRank" then
-			table.sort(tResult, function(a,b) return (a.nRank < b.nRank) end)
-		elseif strLastClicked == "RosterSortBtnLevel" then
-			table.sort(tResult, function(a,b) return (a.nLevel > b.nLevel) end)
-		elseif strLastClicked == "RosterSortBtnClass" then
-			table.sort(tResult, function(a,b) return (a.strClass < b.strClass) end)
-		elseif strLastClicked == "RosterSortBtnPath" then
-			table.sort(tResult, function(a,b) return (self:HelperConvertPathToString(a.ePathType) < self:HelperConvertPathToString(b.ePathType)) end)
-		elseif strLastClicked == "RosterSortBtnOnline" then
-			table.sort(tResult, function(a,b) return (a.fLastOnline > b.fLastOnline) end)
-		elseif strLastClicked == "RosterSortBtnNote" then
-			table.sort(tResult, function(a,b) return (a.strNote > b.strNote) end)
-		end
+		table.sort(tResult, self.bRosterSortAsc and function(a,b) return (a.strName < b.strName) end or function(a,b) return (a.strName > b.strName) end)
 	end
 
 	return tResult

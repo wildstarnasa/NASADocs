@@ -14,7 +14,6 @@ local knMaxBankSlots 			= 128
 local knMaxBankTabNameLength 	= 20
 local knVeryLargeNumber 		= 2147483640
 local knMaxTransactionLimit 	= 2000000000 -- 2000 plat
-local ktWithdrawLimit 			= {} -- Dynamic. But currently: 0, 1, 2, 5, 10, 25, 50, -1
 local ktWhichPerksAreGuildTabs 	= -- TODO super hardcoded
 {
     [GuildLib.Perk.BankTab1] 	= 1,
@@ -63,8 +62,6 @@ function WarpartyBank:OnDocumentReady()
     Apollo.RegisterEventHandler("GuildBankerClose", 		"CloseBank", self)
     Apollo.RegisterEventHandler("GuildBankLog", 			"OnGuildBankLog", self) -- When a bank log comes in
 
-    -- todo
-    --Apollo.RegisterEventHandler("GuildBankWithdraw", "OnBankTabBtnCash", self) -- notification your bank withdrawn counts have changed
 
     Apollo.RegisterEventHandler("PlayerCurrencyChanged", 		"OnPlayerCurrencyChanged", self)
 
@@ -110,9 +107,6 @@ function WarpartyBank:Initialize(guildOwner)
     self:HelperLoadTabPerks(guildOwner)
 
     local nBankTabCount = guildOwner:GetBankTabCount()
-    for idx, nLimit in pairs(GuildLib.GetBankWithdrawLimits()) do
-        ktWithdrawLimit[idx] = nLimit
-    end
 
     self.strTransferType = nil
     self.tCurrentDragData = nil
@@ -194,18 +188,7 @@ function WarpartyBank:OnGuildBankTab(guildOwner, nTab)
 		self.wndMain:FindChild("MainBankNoVisibility"):Show(true)
 		return
 	end
-
-	-- Withdraw Limit
-	local nWithdrawalAmount = ktWithdrawLimit[tMyRankDataPermissions.idWithdrawLimit]
-
-	local strHeaderText = String_GetWeaselString(Apollo.GetString("WarpartyBank_TitleWithTabName"), guildOwner:GetBankTabName(nTab))
-	if tostring(nWithdrawlAmount) ~= "-1" then
-		local nAmountWithdrawnToday = guildOwner:GetBankTabItemWithdrawnToday(nTab)
-		local tWithdrawalInfo = {["name"] = Apollo.GetString("GuildBank_Withdrawal"), ["count"] = math.max(0, nWithdrawalAmount - nAmountWithdrawnToday)}
-
-		strHeaderText = String_GetWeaselString(Apollo.GetString("GuildBank_LimitedWithdrawalsCounter"), strHeaderText, tWithdrawalInfo)
-	end
-	self:HelperUpdateHeaderText(strHeaderText)
+	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("WarpartyBank_Title")))
 
     -- All Slots
     self:HelperEmptyMainBankScrollbar(true)
@@ -394,7 +377,6 @@ function WarpartyBank:DrawTabPermissions()
     wndParent:FindChild("PermissionsCurrentRightBtn"):Show(nGuildRank < 10)
     wndParent:FindChild("PermissionsGridNamesVisible2"):Show(nTabCount > 1)
     wndParent:FindChild("PermissionsGridNamesDeposit2"):Show(nTabCount > 1)
-    wndParent:FindChild("PermissionsGridNamesWithdraw2"):Show(nTabCount > 1)
     wndParent:FindChild("PermissionsCurrentRankText"):SetText(String_GetWeaselString(Apollo.GetString("GuildBank_PermissionsAppend"), tCurrRankData.strName))
 
     -- Tabs
@@ -407,7 +389,6 @@ end
 
 function WarpartyBank:BuildPermissionIndividualTab(wndParent, guildOwner, bCanEditRanks, tCurrRankData, nBankTab)
     local wndTab = Apollo.LoadForm(self.xmlDoc, "PermissionsGridRow", wndParent:FindChild("PermissionsGridRowItems"), self)
-    local idWithdrawLimit = tCurrRankData.arBankTab[nBankTab].idWithdrawLimit
     local strBankTabName = guildOwner:GetBankTabName(nBankTab)
     local strSpriteVisible = "ClientSprites:LootCloseBox"
     local strSpriteDeposit = "ClientSprites:LootCloseBox"
@@ -422,9 +403,6 @@ function WarpartyBank:BuildPermissionIndividualTab(wndParent, guildOwner, bCanEd
     if not strBankTabName or string.len(strBankTabName) == 0 then
         strBankTabName = Apollo.GetString("GuildBank_BankTab")
     end
-    if idWithdrawLimit == knUsePermissionAll then
-		strSpriteUse = "ClientSprites:Icon_Windows_UI_CRB_Checkmark"
-    end
 	
     wndTab:FindChild("PermissionGridBtnVisible"):SetData(wndTab)
     wndTab:FindChild("PermissionGridBtnDeposit"):SetData(wndTab)
@@ -432,7 +410,6 @@ function WarpartyBank:BuildPermissionIndividualTab(wndParent, guildOwner, bCanEd
     
     wndTab:FindChild("PermissionGridIconVisible"):SetData(tCurrRankData.arBankTab[nBankTab].bVisible)
     wndTab:FindChild("PermissionGridIconDeposit"):SetData(tCurrRankData.arBankTab[nBankTab].bDeposit)
-	wndTab:FindChild("PermissionGridIconUse"):SetData(idWithdrawLimit)
 	
     wndTab:FindChild("PermissionsGridRowText"):SetText(strBankTabName)
     wndTab:FindChild("PermissionGridIconUse"):SetSprite(strSpriteUse)
@@ -520,7 +497,6 @@ function WarpartyBank:OnPermissionsSaveBtn(wndHandler, wndControl)
         tPermissions[iTab].bAuthenticator = false -- TODO
         tPermissions[iTab].bVisible = wndTab:FindChild("PermissionGridIconVisible"):GetData()
         tPermissions[iTab].bDeposit = wndTab:FindChild("PermissionGridIconDeposit"):GetData()
-        tPermissions[iTab].idWithdrawLimit = wndTab:FindChild("PermissionGridIconUse"):GetData()
     end
 
     -- isnt iTab out of scope?

@@ -17,7 +17,6 @@ local knDeleteModelAttachmentId = 98
 local kiCharacterScrollBarWidth = 16
 local knMaxCharacterName = 29 --TODO replace with the max length of a character name from PreGameLib once the enum has been created in PreGameLib
 
-
 function CharacterSelection:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -64,6 +63,7 @@ end
 
 function CharacterSelection:OnLoadFromCharacter()
 	local wndItem2 = Apollo.LoadForm(self.xmlDoc, "CharacterOption", self.wndSelectList:FindChild("CharacterList"), self) --TODO This shouldn't be here
+
 	local btnSel = nil
 	self.nAttemptedDelete = nil
 	g_nState = LuaEnumState.Select
@@ -93,7 +93,7 @@ function CharacterSelection:OnLoadFromCharacter()
 	g_controls:FindChild("EnterBtn"):Enable(false)
 	g_controls:FindChild("ExitForm"):Show(true)
 	g_controls:FindChild("ExitForm"):Enable(true)
-	g_controls:FindChild("ExitForm"):FindChild("BackBtnLabel"):SetText(Apollo.GetString("CRB_Exit"))
+	g_controls:FindChild("ExitForm"):FindChild("BackBtnLabel"):SetText(Apollo.GetString("Command_Logout"))
 	g_controls:FindChild("OptionsContainer"):Show(true)
 
 	if not self.frameL then
@@ -162,6 +162,7 @@ function CharacterSelection:OnLoadFromCharacter()
 		if iAdjustedPath <= kiMaxPathCount then -- prevents breaking from a really bizarre path number
 			wndPathIconComplex:FindChild("PathIcon_" .. iAdjustedPath):Show(true)
 		end
+		
 
 		--Resize name and location and align center vertical
 		
@@ -180,8 +181,7 @@ function CharacterSelection:OnLoadFromCharacter()
 		local nLeftName, nTopName, nRightName, nBottomName = wndItem:FindChild("CharacterName"):GetAnchorOffsets()
 		wndItem:FindChild("CharacterName"):SetAnchorOffsets(nLeftName, nBottomLoc, nRightName, nBottomLoc + wndItem:FindChild("CharacterName"):GetHeight())
 		wndItem:FindChild("CharacterNameLocationFrame"):ArrangeChildrenVert(1)
-
-
+		
 		if tChar.bDisabled then
 			wndItem:FindChild("CharacterOptionFrameBtn"):Show(false)
 			wndItem:FindChild("BGFactionFrame_Ex"):SetBGColor(CColor.new(0.4, 0.4, 0.4, 1.0))
@@ -243,7 +243,7 @@ function CharacterSelection:OnLoadFromCharacter()
 		nCharCount = 1
 		nEntryHeight = wndPrompt:GetHeight()
 		wndPrompt:FindChild("DisabledBlocker"):Show(g_arCharacterInWorld ~= nil)
-		self.wndCharacterDeleteBtn:Enable(not (g_arCharacterInWorld ~= nil))
+		self.wndCharacterDeleteBtn:Enable(false) -- no Character's means nothing to delete
 
 		wndPrompt:SetStyle("NoClip", not bNeedScroll)
 
@@ -274,7 +274,7 @@ function CharacterSelection:OnLoadFromCharacter()
 		local wndCreate = Apollo.LoadForm(self.xmlDoc, "CreateNewOption", self.wndSelectList:FindChild("CharacterList"), self)
 		nNewHeight = wndCreate:GetHeight()
 		wndCreate:FindChild("DisabledBlocker"):Show(g_arCharacterInWorld ~= nil)
-		self.wndCharacterDeleteBtn:Enable(not (g_arCharacterInWorld ~= nil))
+		self.wndCharacterDeleteBtn:Enable(not (g_arCharacterInWorld ~= nil) and not nCharCount == 0)
 		wndCreate:SetStyle("NoClip", not bNeedScroll)
 	end
 	self.wndSelectList:FindChild("BGInset"):SetSprite(bNeedScroll and "sprCharC_ListSharp" or "sprCharC_List")
@@ -451,13 +451,15 @@ function CharacterSelection:SetCharacterCreateModel(nId)
 	local tSelected = g_arCharacters[nId]
 	g_arActors.primary = g_scene:AddActorByRaceGender(1, tSelected.idRace, tSelected.idGender)
 
-	PreGameLib.Event_FireGenericEvent("Select_SetModel",
-									   tSelected.idRace,
-									   tSelected.idGender,
-									   tSelected.idFaction,
-									   tSelected.idClass,
-									   tSelected.idPath,
-									   nId)
+	PreGameLib.Event_FireGenericEvent(
+		"Select_SetModel",
+		tSelected.idRace,
+		tSelected.idGender,
+		tSelected.idFaction,
+		tSelected.idClass,
+		tSelected.idPath,
+		nId
+	)
 end
 
 function CharacterSelection:OnSelectCharacter(tId)
@@ -574,7 +576,8 @@ function CharacterSelection:OnCharacterDeleteResult(nDeleteResult, nData)
 		if nDeleteResult == PreGameLib.CodeEnumCharacterModifyResults.DeleteFailed then -- failed for some reason
 			strResult = Apollo.GetString("CharacterSelect_DefaultDeleteError")
 		elseif nDeleteResult == PreGameLib.CodeEnumCharacterModifyResults.DeleteFailed_GuildMaster then -- failed for being a guild master
-			strResult = Apollo.GetString("CharacterSelect_DeleteGuildMaster") .. " " .. tostring(nData) .. " " .. Apollo.GetString("CharacterSelect_DeleteGuildMaster2")
+
+			strResult = PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelect_DeleteGuildMaster"), {["count"] = nData, ["name"] = Apollo.GetString("CharacterSelect_DeleteGuildMaster2")})
 		elseif nDeleteResult == PreGameLib.CodeEnumCharacterModifyResults.DeleteFailed_CharacterOnline then -- failed for character still online
 			strResult = Apollo.GetString("CharacterSelect_DeleteErrorFailedCharacterOnline")
 		end
@@ -684,6 +687,8 @@ function CharacterSelection:OnDeleteBtn()
 	g_controls:FindChild("EnterForm"):Show(false)
 	self.wndDelete:FindChild("Delete_CharacterNameEntry"):SetText("")
 	self.wndDelete:FindChild("Delete_CharacterNameEntry"):SetPrompt(g_arCharacters[g_controls:FindChild("EnterBtn"):GetData()].strName)
+	self.wndDelete:FindChild("DeleteBody"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelect_DeleteDesc"), g_arCharacters[g_controls:FindChild("EnterBtn"):GetData()].strName))
+
 	self.wndDelete:FindChild("Delete_CharacterNameEntry"):SetFocus()
 	self.wndDelete:FindChild("DeleteBody"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelect_DeleteDesc"), g_arCharacters[g_controls:FindChild("EnterBtn"):GetData()].strName))
 	
@@ -743,7 +748,7 @@ function CharacterSelection:OnDeleteNameChanged(wndHandler, wndControl, strNew)
 	local tSelected = g_arCharacters[nId]
 	local strDelete = tSelected.strName
 
-	self.wndDelete:FindChild("Delete_ConfirmDeleteBtn"):Enable(string.lower(strName) == string.lower(strDelete))
+	self.wndDelete:FindChild("Delete_ConfirmDeleteBtn"):Enable(Apollo.StringToLower(strName) == Apollo.StringToLower(strDelete))
 end
 
 function CharacterSelection:OnDeleteConfirm(wndHandler, wndControl)

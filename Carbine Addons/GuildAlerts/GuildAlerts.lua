@@ -218,9 +218,7 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	elseif eResult == GuildLib.GuildResult_VoteStarted then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_VoteStarted"), strGuildType, tName)
 	elseif eResult == GuildLib.GuildResult_InviteAccepted then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_PlayerJoined"), tName, strGuildType)
 	elseif eResult == GuildLib.GuildResult_InviteDeclined then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InviteDeclined"), tName, strGuildType)
-
 	elseif eResult == GuildLib.GuildResult_GuildNameUnavailable then  				strResult = String_GetWeaselString(Apollo.GetString("GuildRegistration_NameUnavailable"), strGuildType)
-
 	elseif eResult == GuildLib.GuildResult_GuildDisbanded then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Disbanded"), tName)
 	elseif eResult == GuildLib.GuildResult_RankModified then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_RankModified"), tRank, tName)
 	elseif eResult == GuildLib.GuildResult_RankCreated then							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_RankCreated"), tName)
@@ -257,6 +255,7 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	elseif eResult == GuildLib.GuildResult_CannotWithdrawBankItem then 				strResult = Apollo.GetString("GuildResult_CanNotWithdrawBankItem")
 	elseif eResult == GuildLib.GuildResult_BankTabNotLoaded then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BankTabNotLoaded"), tRank)
 	elseif eResult == GuildLib.GuildResult_CannotDepositBankItem then 				strResult = Apollo.GetString("GuildResult_CannotDepositItem")
+	elseif eResult == GuildLib.GuildResult_AlreadyAMember and (eGuildType == GuildLib.GuildType_ArenaTeam_2v2 or eGuildType == GuildLib.GuildType_ArenaTeam_3v3 or eGuildType == GuildLib.GuildType_ArenaTeam_5v5) then strResult = String_GetWeaselString(Apollo.GetString("TeamResult_AlreadyAMember"), tName)
 	elseif eResult == GuildLib.GuildResult_AlreadyAMember then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_AlreadyAMember"), tName)
 	elseif eResult == GuildLib.GuildResult_BankTabWithdrawsExceeded then 			strResult = Apollo.GetString("GuildResult_BankWithdrawsExceeded")
 	elseif eResult == GuildLib.GuildResult_BankTabNotVisible then 					strResult = Apollo.GetString("GuildResult_BankTabNotVisible")
@@ -279,10 +278,18 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	elseif eResult == GuildLib.GuildResult_PerkIsAlreadyActive then 				strResult = Apollo.GetString("GuildResult_PerkIsAlreadyActive")
 	elseif eResult == GuildLib.GuildResult_RequiresPerkPurchase then 				strResult = Apollo.GetString("GuildResult_PerkPrereqNotMet")
 	elseif eResult == GuildLib.GuildResult_PerkNotActivateable then 				strResult = Apollo.GetString("GuildResult_PerkCanNotActivate")
+	elseif eResult == GuildLib.GuildResult_PrivilegeRestricted then 				strResult = String_GetWeaselString(Apollo.GetString("GuildResult_PrivilegeRestricted"), strGuildType)
 	
 	--The only way we can get this result and have eGuildType to be nil is if we're invited to a warparty
-	elseif eResult == GuildLib.GuildResult_NotHighEnoughLevel then					strResult = (eGuildType or eGuildType ~= GuildLib.GuildType_Warparty) and String_GetWeaselString(Apollo.GetString("GuildRegistration_NotHighEnoughLevel"), strGuildType, GuildLib.GetMinimumLevel(eGuildType))
-																					or String_GetWeaselString(Apollo.GetString("Warparty_NotHighEnoughLevel"), Apollo.GetString("Guild_GuildTypeWarparty"), GuildLib.GetMinimumLevel(GuildLib.GuildType_WarParty))
+	elseif eResult == GuildLib.GuildResult_NotHighEnoughLevel then					if eGuildType and (eGuildType == GuildLib.GuildType_ArenaTeam_2v2 or eGuildType == GuildLib.GuildType_ArenaTeam_3v3 or eGuildType == GuildLib.GuildType_ArenaTeam_5v5) then
+																						strResult = Apollo.GetString("ArenaTeamRegistration_NotHighEnoughLevel")
+																					elseif eGuildType and (eGuildType == GuildLib.GuildType_Guild) then
+																						strResult = String_GetWeaselString(Apollo.GetString("GuildRegistration_NotHighEnoughLevel"), strGuildType, GuildLib.GetMinimumLevel(eGuildType))
+																					elseif eGuildType and (eGuildType == GuildLib.GuildType_WarParty) then
+																						strResult = String_GetWeaselString(Apollo.GetString("Warparty_NotHighEnoughLevel"), Apollo.GetString("Guild_GuildTypeWarparty"), GuildLib.GetMinimumLevel(GuildLib.GuildType_WarParty))
+																					else 
+																						strResult = Apollo.GetString("CRB_LevelRequirementsNotMet")
+																					end																					
 																					
 	elseif eResult == GuildLib.GuildResult_InvalidMessageOfTheDay then 				strResult = Apollo.GetString("GuildResult_InvalidMotD")
 	elseif eResult == GuildLib.GuildResult_InvalidMemberNote then 					strResult = Apollo.GetString("GuildResult_InvalidNote")

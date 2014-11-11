@@ -51,10 +51,6 @@ function CraftingSummaryScreen:OnDocumentReady()
 	Apollo.RegisterEventHandler("GenericEvent_StartCraftCastBar", 	"OnGenericEvent_StartCraftCastBar", self)
 	Apollo.RegisterEventHandler("CraftingSchematicComplete", 		"OnCraftingSchematicComplete", self)
 
-	Apollo.RegisterTimerHandler("CraftingSummary_StationTimer", 	"OnCraftingSummary_StationTimer", self)
-	Apollo.CreateTimer("CraftingSummary_StationTimer", 1, false)
-	Apollo.StopTimer("CraftingSummary_StationTimer")
-
 	-- These pump async into the text field
 	Apollo.RegisterEventHandler("TradeSkillFloater", 				"OnTradeSkillFloater", self)
 	Apollo.RegisterEventHandler("CraftingDiscoveryHotCold", 		"OnCraftingDiscoveryHotCold", self)
@@ -76,7 +72,8 @@ function CraftingSummaryScreen:OnCraftingSummary_StationTimer() -- Hackish: Thes
 		return
 	end
 
-	Apollo.StartTimer("CraftingSummary_StationTimer")
+	----timers currently can't be started during their callbacks, because of a Code bug.
+	self.timerStation = ApolloTimer.Create(1.0, false, "OnCraftingSummary_StationTimer", self)
 
 	local bResult = true
 	local tSchematicInfo = CraftingLib.GetSchematicInfo(self.tWndRefs.wndMain:GetData()) -- Data can be either a main or subschematic ID
@@ -84,7 +81,7 @@ function CraftingSummaryScreen:OnCraftingSummary_StationTimer() -- Hackish: Thes
 		bResult = false
 	elseif tSchematicInfo then
 		for idx, tMaterialData in pairs(tSchematicInfo.tMaterials) do
-			if tMaterialData.nAmount > tMaterialData.itemMaterial:GetBackpackCount() then
+			if tMaterialData.nAmount > (tMaterialData.itemMaterial:GetBackpackCount() + tMaterialData.itemMaterial:GetBankCount()) then
 				bResult = false
 				break
 			end
@@ -134,6 +131,8 @@ function CraftingSummaryScreen:OnCraftingInterrupted()
 		self.tWndRefs.wndCraftingCastBar = nil
 	end
 
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", Apollo.GetString("CoordCrafting_MovementInterrupt"))
+
 	self.bBotchCraft = true
 	self:OnClose()
 end
@@ -148,17 +147,12 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 		self.tWndRefs.wndCraftingCastBar = nil
 	end
 
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
-		return
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then -- GOTCHA: This is possible if the parent UI was deleted
+		self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingSummaryScreenForm", nil, self)
 	end
 
 	if self.bBotchCraft then -- Skip entire UI if botch craft (e.g. Abandon Button)
 		self.bBotchCraft = false
-		return
-	end
-
-	local tSchemInfo = CraftingLib.GetSchematicInfo(idSchematicCrafted) -- GOTCHA: idSchematicCrafted vs idSchematic
-	if tSchemInfo and tSchemInfo.eTradeskillId == CraftingLib.CodeEnumTradeskill.Runecrafting then
 		return
 	end
 
@@ -167,19 +161,20 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 	self.tWndRefs.wndMain:FindChild("CraftingSummaryRecraftBtn"):SetData(idSchematic)
 
 	-- Draw Pass / Fail
+	local tSchemInfo = CraftingLib.GetSchematicInfo(idSchematicCrafted) -- GOTCHA: idSchematicCrafted vs idSchematic
 	if tSchemInfo then
-		-- self.itemTooltipOverride will cover any modded items so they display correctly, while tSchemInfo.itemOutput covers simple crafts (which won't have an override).
-		local itemSchem = self.itemTooltipOverride or tSchemInfo.itemOutput
 		if bPass then
-			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite(itemSchem:GetIcon())
+			-- self.itemTooltipOverride will cover any modded items so they display correctly, while tSchemInfo.itemOutput covers simple crafts (which won't have an override).
+			local itemTooltip = self.itemTooltipOverride or tSchemInfo.itemOutput
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite(tSchemInfo.itemOutput:GetIcon())
 			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("UI_TextHoloTitle")
-			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftSummary_CraftingSuccess"), itemSchem:GetName()))
-			Tooltip.GetItemTooltipForm(self, self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"), itemSchem, {itemCompare = itemSchem:GetEquippedItemForItemType()})
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftSummary_CraftingSuccess"), tSchemInfo.itemOutput:GetName()))
+			Tooltip.GetItemTooltipForm(self, self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"), itemTooltip, {itemCompare = itemTooltip:GetEquippedItemForItemType()})
 			Sound.Play(Sound.PlayUICraftingSuccess)
 		else
 			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetSprite("ClientSprites:LootCloseBox")
-			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("AddonError")
-			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftingSummary_CraftFailedText"), itemSchem:GetName()))
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetTextColor("xkcdReddish")
+			self.tWndRefs.wndMain:FindChild("CraftingSummaryResultsTitle"):SetText(String_GetWeaselString(Apollo.GetString("CraftingSummary_CraftFailedText"), tSchemInfo.itemOutput:GetName()))
 			self.tWndRefs.wndMain:FindChild("CraftingSummaryItemIcon"):SetTooltip(Apollo.GetString("CraftingSummary_CraftFailedTooltip"))
 			Sound.Play(Sound.PlayUICraftingFailure)
 		end
@@ -214,8 +209,6 @@ function CraftingSummaryScreen:OnCraftingSchematicComplete(idSchematic, bPass, n
 	end
 	self:HelperWriteToCraftingSummaryDetails("")
 
-	-- Start station timer and check immediately, so it doesn't flash enabled/disabled for a second
-	Apollo.CreateTimer("CraftingSummary_StationTimer", 1, false)
 	self:OnCraftingSummary_StationTimer()
 end
 
@@ -253,6 +246,7 @@ function CraftingSummaryScreen:OnCraftingSummaryCloseBtn(wndHandler, wndControl)
 end
 
 function CraftingSummaryScreen:OnClose()
+	Event_FireGenericEvent("GenericEvent_CraftingSummary_Closed")
 	self.tWndRefs.wndMain:Close()
 end
 

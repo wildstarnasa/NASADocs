@@ -9,7 +9,6 @@ require "GameLib"
 require "Spell"
 require "Unit"
 require "Item"
-require "PlayerPathLib"
 require "AbilityBook"
 require "ActionSetLib"
 require "AttributeMilestonesLib"
@@ -29,8 +28,6 @@ function ActionBarFrame:Init()
 end
 
 function ActionBarFrame:OnLoad()
-	g_ActionBarLoaded = false
-	
 	self.nSelectedMount = nil
 	self.nSelectedPotion = nil
 	
@@ -85,14 +82,7 @@ function ActionBarFrame:OnDocumentReady()
 	self.wndMain:Show(false)
 	self.wndMountFlyout:Show(false)
 	self.wndPotionFlyout:Show(false)
-
-	-- TODO: Figure out why Stances, Mounts and Potions break w/o this hack.
-	Apollo.RegisterTimerHandler("ActionBarFrameTimer_DelayedInit", "OnCharacterCreated", self)
-	Apollo.CreateTimer("ActionBarFrameTimer_DelayedInit", 0.5, false)
-	Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
 	
-	g_ActionBarLoaded = true
-
 	if GameLib.GetPlayerUnit() ~= nil then
 		self:OnCharacterCreated()
 	end
@@ -206,18 +196,22 @@ function ActionBarFrame:InitializeBars()
 				wndCurr:FindChild("Cover"):Show(true)
 				wndCurr:FindChild("Shadow"):Show(true)
 			end
-		elseif idx < 11 then -- 9 to 10
+		elseif idx < 10 then -- Gadget
 			wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemMed", self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"), self)
 			wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
 			wndActionBarBtn:SetContentId(idx - 1)
 
 			wndCurr:FindChild("LockSprite"):Show(false)
-			wndCurr:FindChild("Cover"):Show(true)
-			wndCurr:FindChild("Shadow"):Show(true)
+			wndCurr:FindChild("Cover"):Show(false)
+			wndCurr:FindChild("Shadow"):Show(false)
 
 			if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
-				wndCurr:SetTooltip(idx == 9 and Apollo.GetString("ActionBarFrame_LockedGadgetSlot") or Apollo.GetString("ActionBarFrame_LockedPathSlot"))
+				wndCurr:SetTooltip(Apollo.GetString("ActionBarFrame_LockedGadgetSlot"))
+			else
+				wndCurr:SetTooltip("")
 			end
+		elseif idx < 11 then -- Path
+			--Deprecated
 		elseif idx < 23 then -- 11 to 22
 			wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
 			wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
@@ -252,13 +246,12 @@ end
 
 function ActionBarFrame:RedrawBarVisibility()
 	local unitPlayer = GameLib.GetPlayerUnit()
-	local bActionBarShown = self.wndMain:IsShown()
-
+	
 	--Toggle Visibility based on ui preference
 	local nSkillsVisibility = Apollo.GetConsoleVariable("hud.skillsBarDisplay")
+	local nResourceVisibility = Apollo.GetConsoleVariable("hud.resourceBarDisplay")
 	local nLeftVisibility = Apollo.GetConsoleVariable("hud.secondaryLeftBarDisplay")
 	local nRightVisibility = Apollo.GetConsoleVariable("hud.secondaryRightBarDisplay")
-	local nResourceVisibility = Apollo.GetConsoleVariable("hud.resourceBarDisplay")
 	local nMountVisibility = Apollo.GetConsoleVariable("hud.mountButtonDisplay")
 
 	if nSkillsVisibility == 1 then --always on
@@ -272,11 +265,17 @@ function ActionBarFrame:RedrawBarVisibility()
 	else
 		self.wndMain:Show(false)
 	end
-
-	if nResourceVisibility == nil or nResourceVisibility < 1 then
-		g_wndActionBarResources:Show(bActionBarShown)
-	else
+	
+	if nResourceVisibility == 1 then --always on
 		g_wndActionBarResources:Show(true)
+	elseif nResourceVisibility == 2 then --always off
+		g_wndActionBarResources:Show(false)
+	elseif nResourceVisibility == 3 then --on in combat
+		g_wndActionBarResources:Show(unitPlayer and unitPlayer:IsInCombat())
+	elseif nResourceVisibility == 4 then --on out of combat
+		g_wndActionBarResources:Show(unitPlayer and not unitPlayer:IsInCombat())
+	else
+		g_wndActionBarResources:Show(self.wndMain:IsShown())
 	end
 
 	if nLeftVisibility == 1 then --always on
@@ -361,7 +360,6 @@ function ActionBarFrame:RedrawStances()
 			nCountSkippingTwo = nCountSkippingTwo + 1
 			local strKeyBinding = GameLib.GetKeyBinding("SetStance"..nCountSkippingTwo) -- hardcoded formatting
 			local wndCurr = Apollo.LoadForm(self.xmlDoc, "StanceBtn", wndStancePopout, self)
-			wndCurr:FindChild("StanceBtnKeyBind"):SetText(strKeyBinding == "<Unbound>" and "" or strKeyBinding)
 			wndCurr:FindChild("StanceBtnIcon"):SetSprite(spellObject:GetIcon())
 			wndCurr:SetData(nCountSkippingTwo)
 
@@ -560,7 +558,7 @@ function ActionBarFrame:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts)
 		end
 
 		if nNumShortcuts then
-			for idx = 1, math.max(2, nNumShortcuts) do -- Art width does not support just 1
+			for idx = 1, nNumShortcuts do
 				wndVehicleBar:FindChild("ActionBarShortcutContainer" .. idx):Show(true)
 				wndVehicleBar:FindChild("ActionBarShortcutContainer" .. idx):FindChild("ActionBarShortcut." .. idx):Enable(true)
 			end
@@ -580,7 +578,7 @@ function ActionBarFrame:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts)
 end
 
 function ActionBarFrame:OnUpdateActionBarTooltipLocation()
-	for idx = 0, 10 do
+	for idx = 0, 9 do
 		self:HelperSetTooltipType(self.arBarButtons[idx])
 	end
 end
@@ -665,11 +663,19 @@ function ActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
 end
 
 function ActionBarFrame:OnCharacterCreated()
-	local unitPlayer = GameLib.GetPlayerUnit()
+	if not GameLib.IsCharacterLoaded() then
+			self.timerCharacterCreated = ApolloTimer.Create(0.5, false, "OnCharacterCreated", self)
+			return
+	end
+
+	if self.timerCharacterCreated then
+		self.timerCharacterCreated:Stop()
+	end
 	
+	local unitPlayer = GameLib.GetPlayerUnit()	
+
 	if GameLib.IsCharacterLoaded() and not self.bCharacterLoaded and unitPlayer and unitPlayer:IsValid() then
 		self.bCharacterLoaded = true
-		Apollo.StopTimer("ActionBarFrameTimer_DelayedInit")
 		Event_FireGenericEvent("ActionBarReady", self.wndMain)
 		self:InitializeBars()
 		
@@ -678,8 +684,6 @@ function ActionBarFrame:OnCharacterCreated()
 		else
 			self.tCurrentVehicleInfo = nil
 		end
-	else
-		Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
 	end
 end
 

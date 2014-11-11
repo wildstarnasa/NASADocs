@@ -83,6 +83,14 @@ function PathExplorerMissions:LoadFromList(pmMission)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathExplorerMissionMain", g_wndDatachron:FindChild("PathContainer"):FindChild("ExpMissionsMainContainer"), self)
 	self.wndMain:SetData(pmMission)
+	
+	local strKeybind = GameLib.GetKeyBinding("PathAction")
+	 
+	if strKeybind ~= Apollo.GetString("InputKey_Unbound") then
+		self.wndMain:FindChild("VistaPlaceButton"):SetText(Apollo.GetString("CRB_Place") .. "(" .. strKeybind .. ")") 
+	else 
+		self.wndMain:FindChild("VistaPlaceButton"):SetText(Apollo.GetString("CRB_Place"))
+	end
 
 	self.nLastNodeSoundValue = nil
 end

@@ -19,20 +19,22 @@ local ChatLog = {}
 local kcrInvalidColor = ApolloColor.new("InvalidChat")
 local kcrValidColor = ApolloColor.new("white")
 
-local kstrColorChatRegular 	= "ff7fffb9"
-local kstrColorChatShout	= "ffd9eef7"
-local kstrColorChatRoleplay = "ff58e3b0"
-local kstrBubbleFont 		= "CRB_Dialog"
-local kstrDialogFont 		= "CRB_Dialog"
-local kstrDialogFontRP 		= "CRB_Dialog_I"
+local kstrColorChatRegular 		= "ff7fffb9"
+local kstrColorChatShout		= "ffd9eef7"
+local kstrColorChatRoleplay 	= "ff58e3b0"
+local kstrColorNonSelectedEntry = "UI_BtnTextHoloNormal"
+local kstrBubbleFont 			= "CRB_Dialog"
+local kstrDialogFont 			= "CRB_Dialog"
+local kstrDialogFontRP 			= "CRB_Dialog_I"
 
-local kstrGMIcon 		= "Icon_Windows_UI_GMIcon"
+local kstrGMIcon 				= "Icon_Windows_UI_GMIcon"
 local knChannelListHeight = 275
 
 local knWindowStayOnScreenOffset = 50
 
-local knSaveVersion = 4
-
+local knSaveVersion = 8
+local knMaxRecentEntries = 10
+local kMaxShownEntries = 4
 local karEvalColors =
 {
 	[Item.CodeEnumItemQuality.Inferior] 		= "ItemQuality_Inferior",
@@ -72,49 +74,13 @@ local karChannelTypeToColor = -- TODO Merge into one table like this
 	[ChatSystemLib.ChatChannel_Realm] 			= { Channel = "ChannelSupport", 		},
 	[ChatSystemLib.ChatChannel_Loot] 			= { Channel = "ChannelLoot", 			},
 	[ChatSystemLib.ChatChannel_PlayerPath] 		= { Channel = "ChannelGeneral", 		},
-	[ChatSystemLib.ChatChannel_Instance] 		= { Channel = "ChannelParty", 			},
+	[ChatSystemLib.ChatChannel_Instance] 		= { Channel = "ChannelInstance", 		},
 	[ChatSystemLib.ChatChannel_WarParty] 		= { Channel = "ChannelWarParty",		},
 	[ChatSystemLib.ChatChannel_WarPartyOfficer] = { Channel = "ChannelWarPartyOfficer", },
 	[ChatSystemLib.ChatChannel_Advice] 			= { Channel = "ChannelAdvice", 			},
 	[ChatSystemLib.ChatChannel_AdviceGerman]	= { Channel = "ChannelAdvice", 			},
 	[ChatSystemLib.ChatChannel_AdviceFrench]	= { Channel = "ChannelAdvice", 			},
 	[ChatSystemLib.ChatChannel_AccountWhisper] 	= { Channel = "ChannelAccountWisper", 	},
-}
-
-local ktDefaultChannels =
-{
-	[ChatSystemLib.ChatChannel_Command] 		= true,
-	[ChatSystemLib.ChatChannel_Debug] 			= true,
-	[ChatSystemLib.ChatChannel_Say] 			= true,
-	[ChatSystemLib.ChatChannel_Yell] 			= true,
-	[ChatSystemLib.ChatChannel_Whisper] 		= true,
-	[ChatSystemLib.ChatChannel_Party] 			= true,
-	[ChatSystemLib.ChatChannel_Emote] 			= true,
-	[ChatSystemLib.ChatChannel_AnimatedEmote] 	= true,
-	[ChatSystemLib.ChatChannel_Zone]			= true,
-	[ChatSystemLib.ChatChannel_ZoneGerman]	 	= true,
-	[ChatSystemLib.ChatChannel_ZoneFrench]	 	= true,
-	[ChatSystemLib.ChatChannel_ZonePvP] 		= true,
-	[ChatSystemLib.ChatChannel_Trade] 			= true,
-	[ChatSystemLib.ChatChannel_Guild] 			= true,
-	[ChatSystemLib.ChatChannel_GuildOfficer] 	= true,
-	[ChatSystemLib.ChatChannel_WarParty] 		= true,
-	[ChatSystemLib.ChatChannel_WarPartyOfficer] = true,
-	[ChatSystemLib.ChatChannel_Society] 		= true,
-	[ChatSystemLib.ChatChannel_Custom] 			= true,
-	[ChatSystemLib.ChatChannel_NPCSay] 			= true,
-	[ChatSystemLib.ChatChannel_NPCYell] 		= true,
-	[ChatSystemLib.ChatChannel_NPCWhisper] 		= true,
-	[ChatSystemLib.ChatChannel_Datachron] 		= true,
-	[ChatSystemLib.ChatChannel_Realm] 			= true,
-	[ChatSystemLib.ChatChannel_Loot] 			= true,
-	[ChatSystemLib.ChatChannel_System] 			= true,
-	[ChatSystemLib.ChatChannel_PlayerPath] 		= true,
-	[ChatSystemLib.ChatChannel_Instance] 		= true,
-	[ChatSystemLib.ChatChannel_Advice] 			= true,
-	[ChatSystemLib.ChatChannel_AdviceGerman] 	= true,
-	[ChatSystemLib.ChatChannel_AdviceFrench] 	= true,
-	[ChatSystemLib.ChatChannel_AccountWhisper]	= true,
 }
 
 local ktChatResultOutputStrings =
@@ -199,6 +165,8 @@ function ChatLog:OnSave(eType)
 			nFoundFontSize = 2
 		elseif wndChatOptionsContent:FindChild("FontSizeLarge"):IsChecked() then
 			nFoundFontSize = 3
+		elseif wndChatOptionsContent:FindChild("FontSizeHuge"):IsChecked() then
+			nFoundFontSize = 4
 		end
 	end
 
@@ -280,27 +248,36 @@ function ChatLog:OnRestore(eType, tSavedData)
 	end
 
 	self.nFontSize = tSavedData.nFontSize
-	self.tWindow = tSavedData.tWindow
+	if tSavedData.tWindow and #tSavedData.tWindow > 0 then
+		self.tWindow = tSavedData.tWindow
+	end
 end
 
 function ChatLog:OnConfigure() -- From ESC -> Options
 	if self.wndChatOptions and self.wndChatOptions:IsValid() then
 		self.wndChatOptions:Show(not self.wndChatOptions:IsVisible())
+		self.wndChatOptions:ToFront()
 	end
 end
 
 function ChatLog:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("ChatLog.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	self.tRecent = {}
+	self.tGroupList = {}
+	self.tFriendList = {}
+	self.tNeighborList = {}
+	self.tAccountFriendList = {}
 end
 
 function ChatLog:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
-	
+	Apollo.RegisterEventHandler("WindowManagementUpdate", 		"OnWindowManagementUpdate", self)
+
 	Apollo.RegisterEventHandler("ChatMessage", 					"OnChatMessage", self)
 	Apollo.RegisterEventHandler("ChatFlag", 					"OnChatFlag", self)
 	Apollo.RegisterEventHandler("ChatZone", 					"OnChatZone", self)
@@ -320,22 +297,34 @@ function ChatLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("ItemSentToCrate", 				"OnItemSentToCrate", self)
 	Apollo.RegisterEventHandler("HarvestItemsSentToOwner", 		"OnHarvestItemsSentToOwner", self)
 	Apollo.RegisterEventHandler("LuaChatLogMessage", 			"OnLuaChatLogMessage", self)
-	Apollo.RegisterEventHandler("ItemLink", 					"OnItemLink", self)
 	Apollo.RegisterEventHandler("PlayedTime",					"OnPlayedtime", self)
 	Apollo.RegisterEventHandler("ChatReply",					"OnGenericEvent_ChatLogWhisper", self)
 	Apollo.RegisterEventHandler("CombatLogLoot", 				"OnCombatLogLoot", self)
+	Apollo.RegisterEventHandler("GenericEvent_LinkItemToChat", 	"OnGenericEvent_LinkItemToChat", self)
 
+	Apollo.RegisterEventHandler("TradeSkillSigilResult", 				"OnTradeSkillSigilResult", self)
 	Apollo.RegisterEventHandler("GenericEvent_LootChannelMessage", 		"OnGenericEvent_LootChannelMessage", self)
+	Apollo.RegisterEventHandler("GenericEvent_LootChannelMessageNeedVsGreed", 		"OnGenericEvent_LootChannelMessageNeedVsGreed", self)
 	Apollo.RegisterEventHandler("GenericEvent_SystemChannelMessage", 	"OnGenericEvent_SystemChannelMessage", self)
 	Apollo.RegisterEventHandler("Event_EngageWhisper", 					"OnEvent_EngageWhisper", self)
 	Apollo.RegisterEventHandler("GenericEvent_QuestLink", 				"OnGenericEvent_QuestLink", self)
 	Apollo.RegisterEventHandler("GenericEvent_ArchiveArticleLink", 		"OnGenericEvent_ArchiveArticleLink", self)
 	Apollo.RegisterEventHandler("GenericEvent_ChatLogWhisper", 			"OnGenericEvent_ChatLogWhisper", self)
 	Apollo.RegisterEventHandler("Event_EngageAccountWhisper",			"OnEvent_EngageAccountWhisper", self)
+	Apollo.RegisterEventHandler("FriendshipLoaded", 					"OnFriendshipLoaded", self)
+	Apollo.RegisterEventHandler("FriendshipUpdate", 					"OnFriendshipUpdate", self)
+	Apollo.RegisterEventHandler("FriendshipRemove", 					"OnFriendshipRemove", self)
+	Apollo.RegisterEventHandler("HousingNeighborUpdate", 				"OnHousingNeighborUpdate", self)
+	Apollo.RegisterEventHandler("HousingNeighborsLoaded", 				"OnHousingNeighborUpdate", self)
+	Apollo.RegisterEventHandler("FriendshipAccountFriendRemoved",   	"OnFriendshipAccountFriendRemoved", self)
+	Apollo.RegisterEventHandler("FriendshipAccountFriendsRecieved",  	"OnFriendshipAccountFriendsRecieved", self)
+	Apollo.RegisterEventHandler("Group_Join",							"OnGroupJoin", self)
+	Apollo.RegisterEventHandler("Group_Add",							"OnGroupAdd", self)
+	Apollo.RegisterEventHandler("Group_Remove",							"OnGroupRemove", self)
 
-	-- Other add-ons
-	Apollo.RegisterEventHandler("TradeSkillSigilResult", 				"OnTradeSkillSigilResult", self)
 	Apollo.RegisterEventHandler("VarChange_FrameCount",					"OnChatLineTimer", self)
+
+	self.timerFade = ApolloTimer.Create(5.0, true, "OnChatLineFadeTimer", self)
 
 	self.nCurrentTimeMS = GameLib.GetGameTime()
 	self.nChatIndex = 0
@@ -368,7 +357,7 @@ function ChatLog:OnDocumentReady()
 		[ChatSystemLib.ChatChannel_Loot] 			= ApolloColor.new("ChatLoot"),
 		[ChatSystemLib.ChatChannel_Emote] 			= ApolloColor.new("ChatEmote"),
 		[ChatSystemLib.ChatChannel_PlayerPath] 		= ApolloColor.new("ChatGeneral"),
-		[ChatSystemLib.ChatChannel_Instance] 		= ApolloColor.new("ChatParty"),
+		[ChatSystemLib.ChatChannel_Instance] 		= ApolloColor.new("ChatInstance"),
 		[ChatSystemLib.ChatChannel_WarParty] 		= ApolloColor.new("ChatWarParty"),
 		[ChatSystemLib.ChatChannel_WarPartyOfficer] = ApolloColor.new("ChatWarPartyOfficer"),
 		[ChatSystemLib.ChatChannel_Advice] 			= ApolloColor.new("ChatAdvice"),
@@ -382,8 +371,18 @@ function ChatLog:OnDocumentReady()
 	self.tLinks 			= {}
 	self.nNextLinkIndex 	= 1
 	self.nMaxChatLines 		= 256
+	self.nChatLineFadeTime	= 900
+	self.nChatLineFadeStartThreshold = 845
+	self.nChatLineFadeOpacityMin = 0.20
+	self.nChatLineFadeOpacityRate = 1/self.nChatLineFadeTime
 
 	self.twndItemLinkTooltips = {}
+
+	self.tEmotes = {}
+	local tEmotes = ChatSystemLib.GetEmotes()
+	for idx, strEmote in pairs(tEmotes) do
+		self.tEmotes[strEmote] = strEmote
+	end
 
 	---------------OPTIONS---------------
 	self.wndChatOptions = Apollo.LoadForm(self.xmlDoc, "ChatOptionsForm", nil, self)
@@ -402,7 +401,7 @@ function ChatLog:OnDocumentReady()
 	if self.bProfanityFilter == nil then
 		self.bProfanityFilter = true
 	end
-	
+
 	wndOptionsContainer:FindChild("ProfanityOn"):SetData(true)
 	wndOptionsContainer:FindChild("ProfanityOff"):SetData(false)
 	wndOptionsContainer:FindChild("ProfanityOn"):SetCheck(self.bProfanityFilter) -- Default
@@ -414,10 +413,10 @@ function ChatLog:OnDocumentReady()
 			self.channelWhisper = channelCurrent
 		elseif eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
 			self.channelAccountWhisper = channelCurrent
-		end
-
-		if eChannelType == ChatSystemLib.ChatChannel_Say then
-			self.sayChannel = channelCurrent
+		elseif eChannelType == ChatSystemLib.ChatChannel_Say then
+			self.channelSay = channelCurrent
+		elseif eChannelType == ChatSystemLib.ChatChannel_Loot then
+			self.channelLoot = channelCurrent
 		end
 
 		channelCurrent:SetProfanity(self.bProfanityFilter)
@@ -432,6 +431,7 @@ function ChatLog:OnDocumentReady()
 	wndChatOptionsContent:FindChild("FontSizeSmall"):SetData({ strNormal = "CRB_InterfaceSmall", strAlien = "CRB_AlienSmall", strRP = "CRB_InterfaceSmall_I" })
 	wndChatOptionsContent:FindChild("FontSizeMedium"):SetData({ strNormal = "CRB_InterfaceMedium", strAlien = "CRB_AlienMedium", strRP = "CRB_InterfaceMedium_I" })
 	wndChatOptionsContent:FindChild("FontSizeLarge"):SetData({ strNormal = "CRB_InterfaceLarge", strAlien = "CRB_AlienLarge", strRP = "CRB_InterfaceLarge_I" })
+	wndChatOptionsContent:FindChild("FontSizeHuge"):SetData({ strNormal = "CRB_Interface16", strAlien = "CRB_AlienHuge", strRP = "CRB_Interface16_I" })
 	wndChatOptionsContent:FindChild("FontSizeMedium"):SetCheck(true) -- Default
 
 	-- Channel Options
@@ -452,7 +452,7 @@ function ChatLog:OnDocumentReady()
 	wndOptionsContainer:FindChild("TimestampShowOff"):SetData(false)
 	wndOptionsContainer:FindChild("TimestampShow"):SetCheck(self.bShowTimestamp) -- Default
 	wndOptionsContainer:FindChild("TimestampShowOff"):SetData(not self.bShowTimestamp)
-	
+
 	-- Background
 	if self.bEnableBGFade == nil then
 		self.bEnableBGFade = true
@@ -468,17 +468,24 @@ function ChatLog:OnDocumentReady()
 		self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):SetValue(self.nBGOpacity)
 	end
 
-	self.tCombatChannels =
-	{
-		[ChatSystemLib.ChatChannel_System] 	= true,
-		[ChatSystemLib.ChatChannel_Combat] 	= true,
-		[ChatSystemLib.ChatChannel_Loot] 	= false,
-	}
+	-- Default Channels
+	self.tCombatChannels = {}
+	self.tDefaultChannels = {}
+
+	for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels() or {}) do
+		local eType = channelCurrent:GetType()
+		if eType ~= ChatSystemLib.ChatChannel_Combat then
+			self.tDefaultChannels[channelCurrent:GetUniqueId()] = true
+		end
+
+		if eType == ChatSystemLib.ChatChannel_System or eType == ChatSystemLib.ChatChannel_Combat then
+			self.tCombatChannels[channelCurrent:GetUniqueId()] = true
+		end
+	end
 
 	if not self.tWindow then
-		local wndChat = self:NewChatWindow(Apollo.GetString("CRB_Chat"), ktDefaultChannels, ktDefaultHolds, false)
-		local wndCombat = self:NewChatWindow(Apollo.GetString("ChatType_Combat"), ktDefaultChannels, {}, true)
-
+		local wndChat = self:NewChatWindow(Apollo.GetString("CRB_Chat"), self.tDefaultChannels, false)
+		local wndCombat = self:NewChatWindow(Apollo.GetString("ChatType_Combat"), self.tCombatChannels, true)
 		wndChat:AttachTab(wndCombat, false)
 	end
 
@@ -499,6 +506,7 @@ function ChatLog:OnDocumentReady()
 		wndChatOptionsContent:FindChild("FontSizeSmall"):SetCheck(self.nFontSize == 1)
 		wndChatOptionsContent:FindChild("FontSizeMedium"):SetCheck(self.nFontSize == 2)
 		wndChatOptionsContent:FindChild("FontSizeLarge"):SetCheck(self.nFontSize == 3)
+		wndChatOptionsContent:FindChild("FontSizeHuge"):SetCheck(self.nFontSize == 4)
 
 		if self.nFontSize == 1 then
 			strFontControlName = "FontSizeSmall"
@@ -506,6 +514,8 @@ function ChatLog:OnDocumentReady()
 			strFontControlName = "FontSizeMedium"
 		elseif self.nFontSize == 3 then
 			strFontControlName = "FontSizeLarge"
+		elseif self.nFontSize == 4 then
+			strFontControlName = "FontSizeHuge"
 		end
 
 		local wndFontControl = self.wndChatOptions:FindChild("ChatOptionsContent:" .. strFontControlName)
@@ -521,7 +531,7 @@ function ChatLog:OnDocumentReady()
 				bCombatLog = tWindowInfo.tChatData.bCombatLog
 			end
 
-			self:NewChatWindow(tWindowInfo.strTitle, tWindowInfo.tChatData.tViewedChannels or ktDefaultChannels, tWindowInfo.tChatData.tHeldChannels or ktDefaultHolds, tWindowInfo.tChatData.bCombatLog)
+			self:NewChatWindow(tWindowInfo.strTitle, tWindowInfo.tChatData.tViewedChannels or self.tDefaultChannels, tWindowInfo.tChatData.bCombatLog)
 		end
 
 		local wndChat = self.tChatWindows[key]
@@ -591,6 +601,33 @@ function ChatLog:OnDocumentReady()
 			channelCurrent:SetProfanity(self.bProfanityFilter)
 		end
 	end
+
+	if FriendshipLib.IsLoaded() then
+		self:OnFriendshipLoaded()
+		self:OnHousingNeighborUpdate()
+	end
+
+	if GroupLib.InGroup() then
+		self:OnGroupJoin()
+	end
+end
+
+function ChatLog:OnWindowManagementUpdate(tSettings)
+	--OnWindowManagementUpdate will fire WHENEVER the window moves and when reset button is pressed.
+	--The time we care about is when the window is NOT moving, which is when the reset button is pressed.
+	if not tSettings or tSettings.bHasMoved then
+		return
+	end
+
+	for key, wndChat in pairs(self.tChatWindows) do
+		--the "name" of the chat/combat tabs are the text on the window, tSettings.strName is the tab to reset.
+		if wndChat:GetText() == tSettings.strName and #self.tChatWindows > 1 then
+			--make sure not to attach window to itself, and make sure that index is atleast 1
+			local nIndexToAttach = (key  % #self.tChatWindows) + 1
+			self.tChatWindows[nIndexToAttach]:AttachTab(wndChat, false)
+			break
+		end
+	end
 end
 
 function ChatLog:OnWindowManagementReady()
@@ -599,9 +636,9 @@ function ChatLog:OnWindowManagementReady()
 	end
 end
 
-function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombatLog, channelCurrent)
+function ChatLog:NewChatWindow(strTitle, tViewedChannels, bCombatLog, channelCurrent)
 	local wndChatWindow = Apollo.LoadForm(self.xmlDoc, "ChatWindow", "FixedHudStratumHigh", self)
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = wndChatWindow, strName = strTitle})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = wndChatWindow, strName = strTitle, bIsTabWindow = true})
 
 	wndChatWindow:SetSizingMinimum(240, 240)
 	wndChatWindow:SetStyle("AutoFadeNC", self.bEnableBGFade)
@@ -610,15 +647,17 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 	wndChatWindow:FindChild("BGArt_SidePanel"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
 	wndChatWindow:SetText(strTitle)
 	wndChatWindow:Show(true)
-	wndChatWindow:FindChild("MouseCatcher"):SetData({ wndChatWindow:FindChild("InputType"), wndChatWindow:FindChild("InputTypeBtnText") })
-
+	wndChatWindow:FindChild("InputTypeBtn"):AttachWindow(wndChatWindow:FindChild("InputWindow"))
+	wndChatWindow:FindChild("EmoteBtn"):AttachWindow(wndChatWindow:FindChild("EmoteMenu"))
+	wndChatWindow:FindChild("Options"):AttachWindow(wndChatWindow:FindChild("OptionsSubForm"))
+    wndChatWindow:FindChild("OptionsSubForm"):SetData(wndChatWindow)
+	wndChatWindow:FindChild("SuggestedMenu"):Show(false)
 	--Store the initial input window size
 	self.nInputMenuLeft, self.nInputMenuTop, self.nInputMenuRight, self.nInputMenuBottom = wndChatWindow:FindChild("InputWindow"):GetAnchorOffsets()
 
 	local tChatData = {}
 	tChatData.wndForm = wndChatWindow
 	tChatData.tViewedChannels = {}
-	tChatData.tHeldChannels = {}
 
 	tChatData.tMessageQueue = Queue:new()
 	tChatData.tChildren = Queue:new()
@@ -626,7 +665,7 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 	local wndChatChild = wndChatWindow:FindChild("Chat")
 	for idx = 1, self.nMaxChatLines do
 		local wndChatLine = Apollo.LoadForm(self.xmlDoc, "ChatLine", wndChatChild, self)
-		wndChatLine:SetData(idx)
+		wndChatLine:SetData({ ["nLine"]=idx, ["nAddedTime"]=GameLib.GetGameTime() })
 		wndChatLine:Show(false)
 		tChatData.tChildren:Push(wndChatLine)
 	end
@@ -637,10 +676,6 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 
 	for key, value in pairs(tChannels) do
 		tChatData.tViewedChannels[key] = value
-	end
-
-	for key, value in pairs(tHeldChannels) do
-		tChatData.tHeldChannels[key] = value
 	end
 
 	tChatData.bCombatLog = bCombatLog
@@ -656,14 +691,14 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, tHeldChannels, bCombat
 
 	tChatData.channelCurrent = channelCurrent or self:HelperFindAViewedChannel()
 
-	local wndInputType = wndChatWindow:FindChild("InputType")
+	local wndInput = wndChatWindow:FindChild("Input")
 	if tChatData.channelCurrent then
 		tChatData.crText = self.arChatColor[tChatData.channelCurrent:GetType()]
-		wndInputType:SetText(tChatData.channelCurrent:GetCommand())
-		wndInputType:SetTextColor(tChatData.crText)
+		wndInput:SetPrompt(tChatData.channelCurrent:GetCommand())
+		wndInput:SetPromptColor(tChatData.crText)
 	else
-		wndInputType:SetText("X")
-		wndInputType:SetTextColor(kcrInvalidColor)
+		wndInput:SetPrompt("X")
+		wndInput:SetPromptColor(kcrInvalidColor)
 	end
 
 	tChatData.wndOptions = tChatData.wndForm:FindChild("OptionsSubForm")
@@ -744,6 +779,7 @@ function ChatLog:OnChatMessage(channelCurrent, tMessage)
 	tQueuedMessage.eChannelType = channelCurrent:GetType()
 	tQueuedMessage.strChannelName = channelCurrent:GetName()
 	tQueuedMessage.strChannelCommand = channelCurrent:GetCommand()
+	tQueuedMessage.idChannel = channelCurrent:GetUniqueId()
 
 	-- handle unit bubble if needed.
 	if tQueuedMessage.tMessage.unitSource and tQueuedMessage.tMessage.bShowChatBubble then
@@ -753,9 +789,13 @@ function ChatLog:OnChatMessage(channelCurrent, tMessage)
 		end
 	end
 
+	self:HelperQueueMessage(tQueuedMessage)
+end
+
+function ChatLog:HelperQueueMessage(tQueuedMessage)
 	-- queue message on windows.
 	for key, wndChat in pairs(self.tChatWindows) do
-		if wndChat:GetData().tViewedChannels[tQueuedMessage.eChannelType] then -- check flags for filtering
+		if wndChat:GetData().tViewedChannels[tQueuedMessage.idChannel] then -- check flags for filtering
 			self.bQueuedMessages = true
 			wndChat:GetData().tMessageQueue:Push(tQueuedMessage)
 		end
@@ -811,11 +851,13 @@ end
 function ChatLog:OnChatTellFailed( channel, strCharacterTo )
 	strMessage = String_GetWeaselString(Apollo.GetString("CRB_Whisper_Error"), Apollo.GetString("CombatFloaterType_Error"), strCharacterTo, Apollo.GetString("CRB_Whisper_Error_Reason"))
 	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Command, strMessage, "" )
+	self:RemoveFromRecent(strCharacterTo)
 end
 
 function ChatLog:OnChatAccountTellFailed( channel, strCharacterTo )
 	strMessage = String_GetWeaselString(Apollo.GetString("CRB_Whisper_Error"), Apollo.GetString("CombatFloaterType_Error"), strCharacterTo, Apollo.GetString("CRB_Account_Whisper_Error_Reason"))
 	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Command, strMessage, "" )
+	self:RemoveFromRecent(strCharacterTo)
 end
 
 function ChatLog:OnAccountSupportTicketResult( channelSource, bSuccess )
@@ -828,18 +870,18 @@ end
 
 function ChatLog:OnChatJoin( channelJoined )
 	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Command, String_GetWeaselString(Apollo.GetString("ChatLog_JoinChannel"),  channelJoined:GetName()), "" );
-		
-	-- ChatJoin event is called both on startup and on join. 
+
+	-- ChatJoin event is called both on startup and on join.
 
 	for idx, wndChatWindow in pairs(self.tChatWindows) do
 		wndChatWindow:FindChild("InputWindow"):Close()
-				
+
 		-- explicit check for nil, it means we have have no saved setting for this channel displaying in this window.
 
 		local tChatData = wndChatWindow:GetData()
-		if not tChatData.bCombatLog and tChatData.tViewedChannels[channelType] == nil then   
-			self:HelperAddChannelToAll(channelJoined:GetType())
-			tChatData.tViewedChannels[channelJoined:GetType()] = true
+		if not tChatData.bCombatLog and tChatData.tViewedChannels[channelJoined:GetUniqueId()] == nil then
+			self:HelperAddChannelToAll(channelJoined:GetUniqueId())
+			tChatData.tViewedChannels[channelJoined:GetUniqueId()] = true
 		end
 	end
 end
@@ -857,12 +899,12 @@ function ChatLog:OnChatLeave( channelLeft, bKicked, bBanned )
 		local tChatData = wndChatWindow:GetData()
 
 		if tChatData.channelCurrent == channelLeft then
-			tChatData.channelCurrent = self.sayChannel
+			tChatData.channelCurrent = self.channelSay
 			tChatData.crText = self.arChatColor[ ChatSystemLib.ChatChannel_Say ]
 
-			local wndInputType = wndChatWindow:FindChild("InputType")
-			wndInputType:SetText(tChatData.channelCurrent:GetCommand())
-			wndInputType:SetTextColor(tChatData.crText)
+			local wndInput = wndChatWindow:FindChild("Input")
+			wndInput:SetPrompt(tChatData.channelCurrent:GetCommand())
+			wndInput:SetPromptColor(tChatData.crText)
 		end
 	end
 end
@@ -943,16 +985,6 @@ function ChatLog:OnChatLineTimer()
 			end
 		end
 	end
-
-	-- Code to do 2000 lines/second as a test case.
-	--if not gnValue then
-	--	gnValue = 1
-	--end
-	--
-	--for i=1, nDeltaTimeMS * 2000 do
-	--	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Command, tostring(gnValue) .. " number of lines have been pushed through this chat system.  I once knew a granok from Nantuckit, who came to nexus and said just bleeep it" , "" )
-	--	gnValue = gnValue + 1
-	--end
 end
 
 function ChatLog:ShowQueuedMessages(wndForm, nDeltaTimeMS)
@@ -970,6 +1002,8 @@ function ChatLog:ShowQueuedMessages(wndForm, nDeltaTimeMS)
 		nMessages = 1
 	end
 
+	local nCurrentGameTime = GameLib.GetGameTime()
+
 	-- grab queued message and put it into oldest chat line window. Move window to bottom. Only do 20 at a time.
 	local bPrettyItUp = false
 	for iCount = 1, nMessages do
@@ -981,7 +1015,7 @@ function ChatLog:ShowQueuedMessages(wndForm, nDeltaTimeMS)
 		self:HelperGenerateChatMessage(tQueuedMessage)
 
 		local wndChatLine = tChatData.tChildren:Pop()
-		wndChatLine:SetData(tChatData.nNextIndex)
+		wndChatLine:SetData({ ["nLine"]=tChatData.nNextIndex, ["nAddedTime"]=nCurrentGameTime, ["nOpacity"]=1, ["bFading"]=false })
 		wndChatLine:Show(true)
 		if tQueuedMessage.strMessage then
 			wndChatLine:SetText( tQueuedMessage.strMessage )
@@ -1018,10 +1052,53 @@ function ChatLog:PrettyItUp(wndForm)
 	end
 end
 
+function ChatLog:OnChatLineFadeTimer()
+	local nCurrentGameTime = GameLib.GetGameTime()
+
+	for idx, wndChat in pairs(self.tChatWindows) do
+		local tChatData = wndChat:GetData()
+		local wndChatList = wndChat:FindChild("Chat")
+		local wndInput = wndChat:FindChild("Input")
+		local strInput = wndInput:GetText()
+		local bForceOpaque = (wndChatList:GetVScrollPos() ~= wndChatList:GetVScrollRange())
+			or (strInput ~= nil and strInput ~= "")
+			or wndChat:ContainsMouse()
+
+		for idx, wndChatLine in pairs(tChatData.tChildren:GetItems()) do
+			if wndChatLine:IsShown() then
+				local tChatLineData = wndChatLine:GetData()
+
+				local nFadeTimePassed = nCurrentGameTime - tChatLineData.nAddedTime
+
+				if bForceOpaque then
+					if tChatLineData.bFading then
+						tChatLineData.nOpacity = wndChatLine:GetOpacity()
+						wndChatLine:SetOpacity(1, 0)
+					end
+					tChatLineData.nAddedTime = tChatLineData.nAddedTime + 5
+					tChatLineData.bFading = false
+					wndChatLine:SetData(tChatLineData)
+				elseif nFadeTimePassed > self.nChatLineFadeStartThreshold and not tChatLineData.bFading then
+					tChatLineData.bFading = true
+					wndChatLine:SetData(tChatLineData)
+					wndChatLine:SetOpacity(tChatLineData.nOpacity, 0)
+					wndChatLine:SetOpacity(self.nChatLineFadeOpacityMin, self.nChatLineFadeOpacityRate)
+				end
+			end
+		end
+	end
+end
+
 function ChatLog:OnNodeClick(wndHandler, wndControl, strNode, tAttributes, eMouseButton)
 	-- can only report players who are not yourself, which matches who we want this menu for.
-	if strNode == "Source" and eMouseButton == GameLib.CodeEnumInputMouse.Right and tAttributes.CharacterName and tAttributes.nReportId then
-		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", wndHandler, tAttributes.CharacterName, nil, tAttributes.nReportId)
+	if strNode == "Source" and eMouseButton == GameLib.CodeEnumInputMouse.Right and tAttributes.strCharacterName and tAttributes.strCrossFaction then
+		local bCross = tAttributes.strCrossFaction == "true"--sending boolean
+		local nReportId = nil
+		if tAttributes ~= nil and tAttributes.nReportId ~= nil then
+			nReportId = tAttributes.nReportId
+		end
+		local tOptionalData = {nReportId = tAttributes.nReportId, bCrossFaction = bCross}
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", wndHandler, tAttributes.strCharacterName, nil, tOptionalData)
 		return true
 	end
 
@@ -1129,7 +1206,7 @@ end
 function ChatLog:OnGenericEvent_ChatLogWhisper(strTarget)
 	local wndParent = nil
 	for idx, wndCurr in pairs(self.tChatWindows) do
-		if wndCurr and wndCurr:IsValid() then
+		if wndCurr and wndCurr:IsValid() and wndCurr:GetData() and not wndCurr:GetData().bCombatLog then
 			wndParent = wndCurr
 			break
 		end
@@ -1151,12 +1228,79 @@ function ChatLog:OnGenericEvent_ChatLogWhisper(strTarget)
 	self:OnInputChanged(nil, wndEdit, strOutput)
 end
 
+function ChatLog:OnShowSuggestedMenu(wndSuggestedMenu, bAutoComplete)
+	if not self.nEntrySize then --only calculate size 1st time, if we have it loaded, no point in recalculating
+		local wndSuggestedMenuEntryForm = Apollo.LoadForm(self.xmlDoc, "SuggestedMenuEntryForm", nil, self)
+		wndSuggestedMenuEntryForm:Show(false)
+		local nEntryLeft, nEntryTop, nEntryRight, nEntryBottom = wndSuggestedMenuEntryForm:GetAnchorOffsets();
+		self.nEntrySize = nEntryTop + nEntryBottom
+	end
+
+	if not self.nDefaultMenuTop then --always have a reference to the original height
+		local nLeft, nTop, nRight, nBottom = wndSuggestedMenu:GetAnchorOffsets();
+		self.nDefaultMenuTop = nTop
+	end
+
+	local wndContainer = wndSuggestedMenu:FindChild("SuggestedMenuContent")
+	wndContainer:DestroyChildren()
+	self.tResultBtns = {}
+	self.tUniqueSuggestedNames = {}
+	if bAutoComplete then
+		tAlphabatized = {}
+		for idx, tSuggestedInfo in pairs(self.tAccountFriendList 	or {})	do table.insert(tAlphabatized, tSuggestedInfo) end
+		for idx, tSuggestedInfo in pairs(self.tFriendList 			or {})	do table.insert(tAlphabatized, tSuggestedInfo) end
+		for idx, tSuggestedInfo in pairs(self.tGroupList 			or {})	do table.insert(tAlphabatized, tSuggestedInfo) end
+		for idx, tSuggestedInfo in pairs(self.tNeighborList 		or {})	do table.insert(tAlphabatized, tSuggestedInfo) end
+		for idx, tSuggestedInfo in pairs(self.tRecent				or {})	do table.insert(tAlphabatized, tSuggestedInfo) end
+
+		table.sort(tAlphabatized, function(a,b) return (a.strCharacterName < b.strCharacterName) end)
+
+		for idx, tSuggestedInfo in pairs(tAlphabatized) do
+			local strSuggestedSubString = string.sub(tSuggestedInfo.strCharacterName, 1 ,  string.len(self.strLastText) )
+			if Apollo.StringToLower(strSuggestedSubString) == Apollo.StringToLower(self.strLastText) then --potential result found to be shown, lower so not case sensitive
+				self:CreateSuggestedMenuEntry(wndContainer, tSuggestedInfo)
+			end
+		end
+		wndSuggestedMenu:FindChild("Title"):SetText(Apollo.GetString("Friends_SuggestedBtn"))
+	else --show the results for the recent queue
+		for idx , tInfo in pairs(self.tRecent or {}) do
+			self:CreateSuggestedMenuEntry(wndContainer, tInfo)
+		end
+		wndSuggestedMenu:FindChild("Title"):SetText(Apollo.GetString("ChatLog_Recent"))--make localized string
+	end
+
+	local nLeft, nTop, nRight, nBottom = wndSuggestedMenu:GetAnchorOffsets();
+	if #self.tResultBtns > 0 then
+		self.nSuggestedResultPos = 1
+		self.tResultBtns[1]:FindChild("EntryName"):SetTextColor(ApolloColor.new("white"))
+		wndSuggestedMenu:SetAnchorOffsets(nLeft, self.nDefaultMenuTop - (math.min(#self.tResultBtns, 4) * self.nEntrySize), nRight, nBottom)
+	else
+		wndSuggestedMenu:SetAnchorOffsets(nLeft, self.nDefaultMenuTop, nRight, nBottom)
+		wndSuggestedMenu:FindChild("Title"):SetText(bAutoComplete and Apollo.GetString("CRB_No_results_found__oops") or Apollo.GetString("ChatLog_NoRecent"))--make localized string
+	end
+	wndContainer:ArrangeChildrenVert()
+	wndSuggestedMenu:Show(true)
+end
+
+function ChatLog:CreateSuggestedMenuEntry(wndContainer, tInfo)
+	if not self.tResultBtns then return end
+	if self.tUniqueSuggestedNames and not self.tUniqueSuggestedNames[tInfo.strCharacterName] then
+		local wndEntryForm = Apollo.LoadForm(self.xmlDoc, "SuggestedMenuEntryForm", wndContainer, self)
+		local wndMenuEntry = wndEntryForm:FindChild("SuggestedMenuEntry")
+		wndMenuEntry:FindChild("EntryName"):SetText(tInfo.strCharacterName)
+		wndMenuEntry:SetData(tInfo)
+		table.insert(self.tResultBtns, wndMenuEntry)
+		self.tUniqueSuggestedNames[tInfo.strCharacterName] = tInfo.strCharacterName
+	end
+end
+
 function ChatLog:OnEmoteCheck(wndHandler, wndControl)
 	local wndEmotes = wndControl:GetParent():FindChild("EmoteMenu")
 	local wndContainer = wndEmotes:FindChild("EmoteMenuContent")
 	local tEmotes = ChatSystemLib.GetEmotes()
 
 	if wndHandler:IsChecked() then
+		local nScrollPosition = wndContainer:GetVScrollPos() or 0
 		wndContainer:DestroyChildren()
 
 		for idx, strEmote in pairs(tEmotes) do
@@ -1167,21 +1311,22 @@ function ChatLog:OnEmoteCheck(wndHandler, wndControl)
 			end
 		end
 
-		wndContainer:ArrangeChildrenVert()
+		wndContainer:ArrangeChildrenVert(0, function(a,b) return a:GetData() < b:GetData() end)
+		wndContainer:SetVScrollPos(nScrollPosition)
 	end
-
-
 	wndEmotes:GetParent():FindChild("CloseBtn"):Enable(not wndHandler:IsChecked())
-	if wndHandler:IsChecked() then
-		wndEmotes:Invoke()
-	else
-		wndEmotes:Close()
+end
+
+function ChatLog:OnSuggestedMenuClose(wndHandler, wndControl)
+	local wndSuggestedMenu = wndHandler:GetParent()
+	if wndSuggestedMenu then
+		wndSuggestedMenu:Close()
 	end
+	self.tResultBtns = {}
 end
 
 function ChatLog:OnEmoteMenuClosed(wndHandler, wndControl)
 	local wndParent = wndHandler:GetParent()
-	wndParent:FindChild("EmoteBtn"):SetCheck(false)
 	wndParent:FindChild("CloseBtn"):Enable(true)
 	wndHandler:Close()
 end
@@ -1206,6 +1351,49 @@ function ChatLog:OnEmoteMenuEntry(wndHandler, wndControl)
 	wndToggle:SetCheck(false)
 
 	self:OnInputChanged(nil, wndEdit, strEntry)
+end
+
+function ChatLog:OnSuggestedMenuEntry(wndHandler, wndControl)
+	if wndHandler ~= wndControl then return end
+	local tInfo = wndControl:FindChild("SuggestedMenuEntry"):GetData()
+	if not tInfo then return end
+	local wndEdit = self:HelperGetCurrentEditbox()
+	local tInput = ChatSystemLib.SplitInput(wndEdit:GetText())
+
+	-- this will enable the user to "SWAP" the name of the player they are trying to message
+	-- it will grab the actuall message they are typing excluding the current name if one is there.
+	-- (tInput.strMessage contains both the name of player and message)
+	if tInput then
+		local nIndexOfSpace = string.find(tInput.strMessage, "%s")
+		local strMessage = ""
+		if nIndexOfSpace then
+			strMessage = string.sub(tInput.strMessage, nIndexOfSpace + 1, string.len(tInput.strMessage))
+		end
+
+		--this section will autocorrect the channel if it was entered incorrectly (always replace even if its correct).
+		local strExtraSpace = " "
+		local eChannelType = nil
+		if tInput and tInput.channelCommand ~= self.channelAccountWhisper and tInput.channelCommand  ~= self.channelWhisper then
+			strCommand 	  = tInput.strCommand
+			eChannelType  = tInput.channelCommand:GetType()
+			bExtraSpace   = false
+			strExtraSpace = ""
+		elseif tInfo.bAccountFriend then
+			strCommand    = self.channelAccountWhisper:GetAbbreviation()
+			eChannelType  = ChatSystemLib.ChatChannel_AccountWhisper
+		else
+			strCommand    = self.channelWhisper:GetAbbreviation()
+			eChannelType  = ChatSystemLib.ChatChannel_Whisper
+		end
+
+		local strOutput = "/"..strCommand.." "..tInfo.strCharacterName..strExtraSpace..strMessage
+		wndEdit:SetText(strOutput)
+		wndEdit:SetTextColor(self.arChatColor[eChannelType or tInput.channelCommand:GetType()])
+		wndEdit:SetFocus()
+		wndEdit:SetSel(strOutput:len(), -1)
+		wndEdit:GetParent():FindChild("SuggestedMenu"):Show(false)
+		self.tResultBtns = {}
+	end
 end
 
 function ChatLog:OnCloseChatWindow(wndHandler, wndControl)
@@ -1241,6 +1429,10 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 
 		local wndInput = wndForm:FindChild("Input")
 
+		if wndInput:GetParent():FindChild("SuggestedMenu"):IsShown() and self.tResultBtns and self.tResultBtns[self.nSuggestedResultPos] then --select the suggested name
+			self:OnSuggestedMenuEntry(self.tResultBtns[self.nSuggestedResultPos], self.tResultBtns[self.nSuggestedResultPos])
+			return
+		end
 		wndControl:SetText("")
 		if self.eRoleplayOption == 2 then
 			wndControl:SetText(Apollo.GetString("ChatLog_RPMarker"))
@@ -1251,7 +1443,7 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 		local tInput = ChatSystemLib.SplitInput(strText)
 		if strText ~= "" and strText ~= Apollo.GetString("ChatLog_RPMarker") and strText ~= Apollo.GetString("ChatLog_Marker") then
 			local channelCurrent = tInput.channelCommand or tChatData.channelCurrent
-			
+			self.channelLastChannel = channelCurrent
 			if channelCurrent:GetType() == ChatSystemLib.ChatChannel_Command then
 				if tInput.bValidCommand then -- good command
 					ChatSystemLib.Command( strText )
@@ -1266,21 +1458,26 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 				end
 			else
 				tChatData.channelCurrent = channelCurrent
-
 				bViewedChannel = self:VerifyChannelVisibility(channelCurrent, tInput, wndForm)
 			end
 		end
 
+		--updating the string for the prompt to tell you the whisper target.
+		local strPromptText = tChatData.channelCurrent:GetCommand()
+		local eChannelType = tChatData.channelCurrent:GetType()
+		if self.strLastTarget and (eChannelType == ChatSystemLib.ChatChannel_Whisper or eChannelType == ChatSystemLib.ChatChannel_AccountWhisper) then
+			strPromptText = strPromptText.. " " .. self.strLastTarget
+		end
+
 		local crText = self.arChatColor[tChatData.channelCurrent:GetType()] or ApolloColor.new("white")
-		local wndInputType = wndForm:FindChild("InputType")
 		wndForm:GetData().crText = crText
-		wndForm:FindChild("InputType"):SetTextColor(crText)
+		wndInput:SetPrompt(strPromptText)--here add name if whisper
+		wndInput:SetPromptColor(crText)
 		wndInput:SetTextColor(crText)
-		wndInputType:SetText(tChatData.channelCurrent:GetCommand())
 
 		if bViewedChannel ~= true then
-			wndInputType:SetText("X " .. tInput.strCommand)
-			wndInputType:SetTextColor(kcrInvalidColor)
+			wndInput:SetTextColor(kcrInvalidColor)
+			wndInput:SetPrompt("X " .. tInput.strCommand)
 		end
 	end
 end
@@ -1289,7 +1486,7 @@ end
 function ChatLog:VerifyChannelVisibility(channelChecking, tInput, wndChat)
 	local tChatData = wndChat:GetData()
 
-	if self.tAllViewedChannels[ channelChecking:GetType() ] ~= nil then -- see if this channelChecking is viewed
+	if self.tAllViewedChannels[channelChecking:GetUniqueId()] ~= nil then -- see if this channelChecking is viewed
 		local strMessage = tInput.strMessage
 		if channelChecking:GetType() == ChatSystemLib.ChatChannel_AccountWhisper then
 			if self.tAccountWhisperContex then
@@ -1297,7 +1494,34 @@ function ChatLog:VerifyChannelVisibility(channelChecking, tInput, wndChat)
 				strMessage = string.gsub(strMessage, self.tAccountWhisperContex.strDisplayName, strCharacterAndRealm, 1)
 			end
 		end
-		channelChecking:Send(strMessage)
+
+		-- if there is a str command, they are changing the channel, or whisper target
+		--the target can be the same as the last target
+		if tInput.strCommand ~= "" then
+			self.strLastTarget = ""
+		end
+
+		local strSend = ""
+		if self.strLastTarget and self.strLastTarget ~= "" then --use last whispered as the target
+			strSend = self.strLastTarget.." "..strMessage
+		else --updating last whispered for next messages
+			strSend = strMessage
+
+			local strPattern = "" --using regex pattern
+			if channelChecking:GetType() == ChatSystemLib.ChatChannel_Whisper then
+				--find a space, any number of alphabet characters, and then another space
+				strPattern = "%s%a*%s*"
+			elseif channelChecking:GetType() == ChatSystemLib.ChatChannel_AccountWhisper then
+				--since account names only are one word, find a space
+				strPattern = "%s"
+			end
+			local nPlaceHolder, nIndexOfPatternSpace = string.find(strSend, strPattern)
+			if strPattern ~= "" and nIndexOfPatternSpace then
+				self.strLastTarget = string.sub(strSend, 0, nIndexOfPatternSpace -1)--gets the name of the target
+			end
+		end
+
+		channelChecking:Send(strSend)
 		return true
 	else
 		local wndInput = wndChat:FindChild("Input")
@@ -1309,6 +1533,179 @@ function ChatLog:VerifyChannelVisibility(channelChecking, tInput, wndChat)
 		local strSubmitted = wndInput:GetText()
 		wndInput:SetSel(strSubmitted:len(), -1)
 		return false
+	end
+end
+
+function ChatLog:InsertIntoRecent(strInsertName, bAccountFriend)
+	--check and see if name was already in tRecent
+	local nRemoveIndex = -1
+	for idx, tInfo in pairs(self.tRecent) do
+		if tInfo.strCharacterName == strInsertName then
+			nRemoveIndex = idx
+			break
+		end
+	end
+	if nRemoveIndex ~= -1 then --already had this person
+		table.remove(self.tRecent, nRemoveIndex)
+	end
+
+	if #self.tRecent > knMaxRecentEntries then
+		table.remove(self.tRecent, knMaxRecentEntries)--remove the last
+	end
+	table.insert(self.tRecent, 1, {strCharacterName = strInsertName, bAccountFriend = bAccountFriend})
+end
+
+function ChatLog:RemoveFromRecent(strCharacterName)
+	if self.tRecent[strCharacterName] then
+		self.tRecent[strCharacterName] = nil
+	end
+end
+
+function ChatLog:OnFriendshipAccountFriendsRecieved(tFriendAccountList)
+	local strPlayerRealm = GameLib.GetRealmName()
+	for idx, tAccountFriend in ipairs(tFriendAccountList) do
+		self.tAccountFriendList[tAccountFriend.strCharacterName] = {strCharacterName = tAccountFriend.strCharacterName, bAccountFriend = true}
+		if tAccountFriend.arCharacters then
+			for idx, tMemberInfo in pairs(tAccountFriend.arCharacters) do
+				local strPlayerNameWithRealm = tMemberInfo.strCharacterName
+				if strPlayerRealm and strPlayerRealm ~= tMemberInfo.strRealm then
+					strPlayerNameWithRealm = strPlayerNameWithRealm.."@"..tMemberInfo.strRealm
+				end
+				self.tFriendList[strPlayerNameWithRealm] = {strCharacterName = strPlayerNameWithRealm, bAccountFriend = false}
+			end
+		end
+	end
+end
+
+function ChatLog:OnFriendshipUpdate(nFriendId) -- this is for log in when needing to add non account friends, account friends are added OnFriendshipLoaded
+	local tFriend = FriendshipLib.GetById( nFriendId ) --or FriendshipLib.GetAccountById( nFriendId )
+	if not tFriend or not tFriend.strCharacterName then
+		return
+	end
+	self.tFriendList[tFriend.strCharacterName] = {strCharacterName = tFriend.strCharacterName, bAccountFriend = false}
+end
+
+function ChatLog:OnFriendshipRemove(nFriendId)
+	local tFriend = FriendshipLib.GetById( nFriendId )
+	if tFriend and tFriend.strCharacterName and self.tFriendList[tFriend.strCharacterName] then
+		self.tFriendList[tFriend.strCharacterName] = nil
+	end
+end
+
+function ChatLog:OnFriendshipAccountFriendRemoved(nFriendId)
+	local tAccountFriend = FriendshipLib.GetAccountById( nFriendId )
+	if not tAccountFriend or not tAccountFriend.strCharacterName then
+		return
+	end
+	if self.tAccountFriendList[tAccountFriend.strCharacterName] then
+		self.tAccountFriendList[tAccountFriend.strCharacterName] = nil
+	end
+	local strPlayerRealm = GameLib.GetRealmName()
+	for key, tCharacter in pairs(tAccountFriend.arCharacters or {}) do --get info on account friend's character that is logged in
+		if tCharacter.strCharacterName then
+			if strPlayerRealm and strPlayerRealm ~= tCharacter.strRealm then
+				local strPlayerNameWithRealm = tAccountFriend.strCharacterName.."@"..tCharacter.strRealm
+				self.tAccountFriendList[strPlayerNameWithRealm] = nil
+			else
+				self.tAccountFriendList[tCharacter.strCharacterName] = nil
+			end
+		end
+	end
+end
+
+function ChatLog:OnGroupJoin(strName)
+	local unitPlayer = GameLib.GetPlayerUnit()
+	if not unitPlayer then return end
+	local strPlayerName = unitPlayer:GetName()
+	local nGroupMemberCount = GroupLib.GetMemberCount()
+	if nGroupMemberCount > 0 then
+		for idx = 1, nGroupMemberCount do
+			local tGroupMemberInfo = GroupLib.GetGroupMember(idx)
+			if tGroupMemberInfo ~= nil and strPlayerName ~= tGroupMemberInfo.strCharacterName then
+				self.tGroupList[tGroupMemberInfo.strCharacterName] = {strCharacterName = tGroupMemberInfo.strCharacterName, bAccountFriend =  false}
+			end
+		end
+	end
+end
+
+
+
+function ChatLog:OnGroupAdd(strName)
+	if not strName then return end
+	self.tGroupList[strName] = {strCharacterName = strName, bAccountFriend = false}
+end
+
+function ChatLog:OnGroupRemove(strName, eReason)
+	if not strName then return end
+	self.tGroupList[strName] = nil
+end
+
+function ChatLog:OnFriendshipLoaded()
+	local strPlayerRealm = GameLib.GetRealmName()
+	for key, tAccountFriend in pairs(FriendshipLib.GetAccountList()) do
+		for key, tCharacter in pairs(tAccountFriend.arCharacters or {}) do --get info on account friend's character that is logged in
+			strName = tCharacter.strCharacterName..""
+			if strPlayerRealm and strPlayerRealm ~= tCharacter.strRealm then
+				strName = strName .."@"..tCharacter.strRealm
+			end
+			self.tFriendList[strName] = {strCharacterName = strName, bAccountFriend = false}
+		end
+		self.tAccountFriendList[tAccountFriend.strCharacterName] = {strCharacterName = tAccountFriend.strCharacterName, bAccountFriend = true}
+	end
+	--may or may not have loaded yet, if loads latter, then OnFriendshipUpdate will handle adding friends
+	for key, tFriend in pairs(FriendshipLib.GetList()) do
+		if tFriend.strCharacterName and not tFriend.bIgnore then --only add people who arent ignored
+			self.tFriendList[tFriend.strCharacterName] = {strCharacterName = tFriend.strCharacterName, bAccountFriend = false}
+		end
+	end
+end
+
+function ChatLog:OnHousingNeighborUpdate()--called on load and updating neighbor information
+	--no events to determine add or remove neighbor, clearing to remove neighbor entrys that are removed
+	self.tNeighborList = {}
+	for key, tCurrNeighbor in pairs(HousingLib.GetNeighborList()) do
+		if tCurrNeighbor.strCharacterName ~= nil then --first update is neighborlist loaded however tCurrNeighbor.strCharacterName hasnt been set yet
+			self.tNeighborList[tCurrNeighbor.strCharacterName] = {strCharacterName = tCurrNeighbor.strCharacterName, bAccountFriend = false}
+		end
+	end
+end
+
+function ChatLog:OnWindowKeyTab(wndHandler, wndControl)
+	if wndHandler ~= wndControl then return end
+	local wndInput = self:HelperGetCurrentEditbox()
+	local strText = wndInput:GetText()
+	local tInput = ChatSystemLib.SplitInput(strText)
+
+	local nIndexOfSpace = string.find(tInput.strMessage, "%s")
+	if nIndexOfSpace and not self.strLastText then --tInput.strMessage may not have a space
+		self.strLastText = string.sub(tInput.strMessage, 0, nIndexOfSpace)
+	elseif not nIndexOfSpace then
+		self.strLastText = tInput.strMessage
+	end
+
+	local wndSuggestedMenu = wndInput:GetParent():FindChild("SuggestedMenu")
+	if not wndSuggestedMenu:IsShown() and tInput.channelCommand then --open wndSuggestedMenu
+		self:OnShowSuggestedMenu(wndSuggestedMenu, self.strLastText ~= "")
+	else --tab through names
+		self:HelperTabThroughSuggestedEntries(wndSuggestedMenu)
+	end
+end
+
+function ChatLog:HelperTabThroughSuggestedEntries(wndSuggestedMenu)
+	if self.tResultBtns and self.tResultBtns[self.nSuggestedResultPos] and self.nEntrySize then
+		self.tResultBtns[self.nSuggestedResultPos]:FindChild("EntryName"):SetTextColor(ApolloColor.new(kstrColorNonSelectedEntry))
+		self.nSuggestedResultPos = self.nSuggestedResultPos + 1
+		local wndSuggestedMenuContent = wndSuggestedMenu:FindChild("SuggestedMenuContent")
+		if self.nSuggestedResultPos > kMaxShownEntries then
+			local nScrollPosition = wndSuggestedMenuContent:GetVScrollPos()
+			wndSuggestedMenuContent:SetVScrollPos(nScrollPosition + self.nEntrySize)
+		end
+		if self.nSuggestedResultPos > #self.tResultBtns then
+			self.nSuggestedResultPos = 1
+			wndSuggestedMenuContent:SetVScrollPos(0)
+		end
+		self.tResultBtns[self.nSuggestedResultPos]:FindChild("EntryName"):SetTextColor(ApolloColor.new("white"))
+
 	end
 end
 
@@ -1325,11 +1722,9 @@ function ChatLog:OnInputChanged(wndHandler, wndControl, strText)
 	wndControl:SetData(true)
 
 	local wndForm = wndControl:GetParent()
-	local wndInputType = wndForm:FindChild("InputType")
 	local wndInput = wndForm:FindChild("Input")
-	wndInputType:Show(string.len(strText) == 0) -- Hide background say once a message has been typed
 
-	if strText == Apollo.GetString("ChatLog_Reply") and self.tLastWhisperer and self.tLastWhisperer.strCharacterName ~= "" then
+	if Apollo.StringToLower(strText) == Apollo.GetString("ChatLog_Reply") and self.tLastWhisperer and self.tLastWhisperer.strCharacterName ~= "" then
 		local strName = self.tLastWhisperer.strCharacterName
 		local channel = self.channelWhisper
 		if self.tLastWhisperer.eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
@@ -1345,9 +1740,8 @@ function ChatLog:OnInputChanged(wndHandler, wndControl, strText)
 		end
 
 		local strWhisper = String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), channel:GetAbbreviation(), strName)
-
-		wndInputType:SetText(channel:GetCommand())
-		wndInputType:SetTextColor(self.arChatColor[self.tLastWhisperer.eChannelType])
+		wndInput:SetPrompt(channel:GetCommand())
+		wndInput:SetPromptColor(self.arChatColor[self.tLastWhisperer.eChannelType])
 		wndInput:SetTextColor(self.arChatColor[self.tLastWhisperer.eChannelType])
 		wndInput:SetText(strWhisper)
 		wndInput:SetFocus()
@@ -1359,25 +1753,41 @@ function ChatLog:OnInputChanged(wndHandler, wndControl, strText)
 	local tInput = ChatSystemLib.SplitInput(strText)
 	local channelInput = tInput.channelCommand or tChatData.channelCurrent
 	local crText = self.arChatColor[channelInput:GetType()] or ApolloColor.new("white")
-	wndInputType:SetTextColor(crText)
+	wndInput:SetStyleEx("PromptColor", crText)
 	wndInput:SetTextColor(crText)
 
 	if channelInput:GetType() == ChatSystemLib.ChatChannel_Command then -- command or emote
 		if tInput.bValidCommand then
-			wndInputType:SetText(String_GetWeaselString(Apollo.GetString("CRB_CurlyBrackets"), "", tInput.strCommand))
-			wndInput:SetTextColor(kcrValidColor)
-			wndInputType:SetTextColor(kcrValidColor)
+			if not self.tEmotes[tInput.strCommand] then
+				wndInput:SetPrompt(String_GetWeaselString(Apollo.GetString("CRB_CurlyBrackets"), "", tInput.strCommand))
+				wndInput:SetPromptColor(kcrValidColor)
+				wndInput:SetTextColor(kcrValidColor)
+			end
 		else
-			wndInputType:SetText("X")
-			wndInputType:SetTextColor(kcrInvalidColor)
+			--if there was a last channel, use that. otherwise default to say.
+			wndInput:SetPrompt(self.channelLastChannel and self.channelLastChannel:GetCommand() or self.channelSay:GetCommand())
 		end
 	else -- chatting in a channel; check for visibility
-		--if tChatData.tViewedChannels[ channel:GetType() ] ~= nil then -- channel is viewed
 		if self.tAllViewedChannels[ channelInput:GetType() ] ~= nil then -- channel is viewed
-			wndInputType:SetText(channelInput:GetCommand())
+			wndInput:SetPrompt(channelInput:GetCommand())
 		else -- channel is hidden
-			wndInputType:SetText(String_GetWeaselString(Apollo.GetString("ChatLog_Invalid"), channelInput:GetCommand()))
-			wndInputType:SetTextColor(kcrInvalidColor)
+			wndInput:SetPrompt(String_GetWeaselString(Apollo.GetString("ChatLog_Invalid"), channelInput:GetCommand()))
+			wndInput:SetPromptColor(kcrInvalidColor)
+		end
+	end
+	local wndSuggestedMenu = wndForm:FindChild("SuggestedMenu")
+	if wndSuggestedMenu:IsShown() then
+		local tInput = ChatSystemLib.SplitInput(strText)
+		local nIndexOfSpace = string.find(tInput.strMessage, "%s")
+		if nIndexOfSpace and not self.strLastText then --tInput.strMessage may not have a space
+			self.strLastText = string.sub(tInput.strMessage, 0, nIndexOfSpace - 1)
+		elseif not nIndexOfSpace then
+			self.strLastText = tInput.strMessage
+		end
+		if self.strLastText ~= "" then
+			self:OnShowSuggestedMenu(wndInput:GetParent():FindChild("SuggestedMenu") , true)
+		else
+			wndSuggestedMenu:Show(false)
 		end
 	end
 end
@@ -1420,12 +1830,7 @@ function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; 
 	local tData = wndForm:GetData()
 	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("CRB_Chat"), self.nChatIndex)
 
-	local tChannelsToView = {}
-	if tData.bCombatLog then
-		tChannelsToView = ktDefaultChannels
-	else
-		tChannelsToView = tData.tViewedChannels
-	end
+	local tChannelsToView = tData.bCombatLog and self.tCombatChannels or tData.tViewedChannels
 
 	-- needs to take it from the main form of toggled from a combat window (idx == 1)
 	if wndForm:FindChild("BGArt_ChatBackerIcon"):IsShown() then
@@ -1438,7 +1843,7 @@ function ChatLog:OnAddNewTabChat(wndHandler, wndControl) -- this is when a tab; 
 		end
 	end
 
-	local wndNewForm = self:NewChatWindow(strName, tChannelsToView, tData.tHeldChannels, false, tData.channelCurrent)
+	local wndNewForm = self:NewChatWindow(strName, tChannelsToView, false, tData.channelCurrent)
 
 	wndForm:AttachTab(wndNewForm, true)
 	wndNewForm:FindChild("Options"):SetCheck(true)
@@ -1453,7 +1858,7 @@ function ChatLog:OnAddNewTabCombat(wndHandler, wndControl) -- this is when a tab
 	local wndForm = wndControl:GetParent():GetParent()
 	local tData = wndForm:GetData()
 	local strName = String_GetWeaselString(Apollo.GetString("ChatLog_SecondChannel"), Apollo.GetString("ChatType_Combat"), self.nChatIndex)
-	local wndNewForm = self:NewChatWindow(strName, tData.tViewedChannels, {}, true, tData.channelCurrent)
+	local wndNewForm = self:NewChatWindow(strName, tData.tViewedChannels, true, tData.channelCurrent)
 
 	wndForm:AttachTab(wndNewForm, true)
 	wndNewForm:FindChild("Options"):SetCheck(true)
@@ -1472,46 +1877,39 @@ end
 function ChatLog:AddChannelTypeToList(tData, wndList, channel)
 	local wndChannelItem = Apollo.LoadForm(self.xmlDoc, "ChatType", wndList, self)
 	wndChannelItem:FindChild("TypeName"):SetText(channel:GetName())
-	wndChannelItem:SetData(channel:GetType())
-	wndChannelItem:FindChild("ViewCheck"):SetCheck(tData.tViewedChannels[channel:GetType()] or false)
-	wndChannelItem:FindChild("HoldCheck"):SetCheck(tData.tHeldChannels[channel:GetType()] or false)
+	wndChannelItem:SetData(channel:GetUniqueId())
+	wndChannelItem:FindChild("ViewCheck"):SetCheck(tData.tViewedChannels[channel:GetUniqueId()] or false)
 end
 
 function ChatLog:OnViewCheck(wndHandler, wndControl)
 	local wndChannel = wndControl:GetParent()
 	local wndOptions = wndChannel:GetParent():GetParent():GetParent()
-	local channelType = wndChannel:GetData()
+	local eChannelId = wndChannel:GetData()
 	local tData = wndOptions:GetData()
 
 	if tData == nil then
 		return
 	end
 
-	if tData.tViewedChannels[channelType] then
-		tData.tViewedChannels[channelType] = false
-		self:HelperRemoveChannelFromAll(channelType)
+	if tData.tViewedChannels[eChannelId] then
+		tData.tViewedChannels[eChannelId] = false
+		self:HelperRemoveChannelFromAll(eChannelId)
 	else
-		tData.tViewedChannels[channelType] = true
-		self:HelperAddChannelToAll(channelType)
-	end
-end
-
-function ChatLog:OnHoldCheck(wndHandler, wndControl)
-	local wndChannel = wndControl:GetParent()
-	local wndOptions = wndChannel:GetParent():GetParent():GetParent()
-	local strChannel = wndChannel:GetData()
-	local tData = wndOptions:GetData()
-
-	if tData.tHeldChannels[strChannel] then
-		tData.tHeldChannels[strChannel] = nil
-	else
-		tData.tHeldChannels[strChannel] = true
+		tData.tViewedChannels[eChannelId] = true
+		self:HelperAddChannelToAll(eChannelId)
 	end
 end
 
 function ChatLog:OnChatTitleChanged(wndHandler, wndControl, strNewTitle)
 	local tData = wndControl:GetParent():GetParent():GetParent():GetParent():GetData()
 	tData.wndForm:SetText(strNewTitle)
+end
+
+function ChatLog:OnOptionsSubFormClosed( wndHandler, wndControl )
+	if wndHandler ~= wndControl then return end
+
+	local wndForm = wndControl:GetData()
+	wndForm:FindChild("Input"):Show(true)
 end
 
 function ChatLog:OnSettings(wndHandler, wndControl)
@@ -1662,6 +2060,44 @@ function ChatLog:OnHarvestItemsSentToOwner(arSentToOwner)
 	end
 end
 
+function ChatLog:OnGenericEvent_LootChannelMessageNeedVsGreed(strMessage, itemLooted)
+	if not strMessage or not itemLooted then
+		return
+	end
+
+	local xml = XmlDoc.new()
+	local strItemName = itemLooted:GetName()
+	local eChannelType = self.channelLoot:GetType()
+	local crChatText = self.arChatColor[eChannelType];
+
+	--Time and channel.
+	local strTime = self:HelperGetTimeStr()
+	local strChannel = String_GetWeaselString(Apollo.GetString("CRB_Brackets_Space"), self.channelLoot:GetName())
+	xml:AddLine(strTime .. strChannel, crChatText, self.strFontOption, "Left")
+
+	--Who won the item.
+	--if item names have special character (,.- etc ) the pattern matching in sting.find will return nil.
+	--extra optional parameters indicate the starting point to start searching and turn on plain text search.
+	local nIndexOfItemName = string.find(strMessage, strItemName, 1, true)
+	local strWon = string.sub(strMessage, 1, nIndexOfItemName - 1)
+	xml:AppendText(strWon, crChatText, self.strFontOption)
+
+	--The actual item and link.
+	local tLink = {strText = String_GetWeaselString(Apollo.GetString("CRB_Brackets"), strItemName), uItem = itemLooted}
+	local strLinkIndex = tostring(self:HelperSaveLink(tLink))
+	local crItemText = karEvalColors[itemLooted:GetItemQuality()]
+	xml:AppendText(String_GetWeaselString(Apollo.GetString("CRB_Brackets"), strItemName), crItemText, self.strFontOption, {strIndex=strLinkIndex} , "Link")
+
+	--How they won.
+	local nIndexOfEndMessage = string.len(strWon) + string.len(strItemName)
+	local strMethod = string.sub(strMessage, nIndexOfEndMessage + 1, string.len(strMessage))
+	xml:AppendText(strMethod, crChatText, self.strFontOption)
+
+	--Queue message on windows.
+	local tQueuedMessage = {xml = xml, eChannelType = eChannelType}
+	self:HelperQueueMessage(tQueuedMessage)
+end
+
 function ChatLog:OnGenericEvent_LootChannelMessage(strMessage)
 	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_Loot, strMessage, "" )
 end
@@ -1670,7 +2106,7 @@ function ChatLog:OnGenericEvent_SystemChannelMessage(strMessage)
 	ChatSystemLib.PostOnChannel( ChatSystemLib.ChatChannel_System, strMessage, "" )
 end
 
-function ChatLog:OnItemLink(itemLinked)
+function ChatLog:OnGenericEvent_LinkItemToChat(itemLinked)
 	if itemLinked == nil then
 		return
 	end
@@ -1719,11 +2155,11 @@ function ChatLog:OnPlayedtime(strCreationDate, strPlayedTime, strPlayedLevelTime
 end
 
 function ChatLog:OnGenericEvent_QuestLink(queLinked)
-	if queLinked == nil then
+	if queLinked == nil or not Quest.is(queLinked) then
 		return
 	end
 
-	tLink = {}
+	local tLink = {}
 	tLink.uQuest = queLinked
 	tLink.strText = String_GetWeaselString(Apollo.GetString("CRB_Brackets"), queLinked:GetTitle())
 
@@ -1740,7 +2176,7 @@ function ChatLog:OnGenericEvent_ArchiveArticleLink(artLinked)
 		return
 	end
 
-	tLink = {}
+	local tLink = {}
 	tLink.uArchiveArticle = artLinked
 	tLink.strText = String_GetWeaselString(Apollo.GetString("CRB_Brackets"), artLinked:GetTitle())
 
@@ -1789,7 +2225,7 @@ function ChatLog:BuildInputTypeMenu(wndChat) -- setting this up externally so we
 	local nCount = 0 --number of joined channels
 
 	for idx, channelCurrent in pairs(tChannels) do -- gives us our viewed channels
-		if self.tAllViewedChannels[ channelCurrent:GetType() ] ~= nil then
+		if self.tAllViewedChannels[channelCurrent:GetUniqueId()] ~= nil then
 			if channelCurrent:GetCommand() ~= nil and channelCurrent:GetCommand() ~= "" then -- make sure it's a channelCurrent that can be spoken into
 				local strCommand = channelCurrent:GetAbbreviation()
 
@@ -1843,20 +2279,17 @@ function ChatLog:OnInputMenuEntry(wndHandler, wndControl)
 	end
 
 	if strText == "" then
-		strText = String_GetWeaselString(Apollo.GetString("ChatLog_SlashPrefix"), strCommand)
+		strText = String_GetWeaselString(Apollo.GetString("ChatLog_SlashPrefix"), strCommand.." ")
 	else
 		local tInput = ChatSystemLib.SplitInput(strText) -- get the existing message, ignore the old command
-		strText = String_GetWeaselString(Apollo.GetString("ChatLog_SlashPrefix"), strCommand, tInput.strMessage)
+		strText = String_GetWeaselString(Apollo.GetString("ChatLog_SlashPrefix"), strCommand).." "..tInput.strMessage
 	end
 
 	wndInput:SetText(strText)
 	local crText = self.arChatColor[channelCurrent:GetType()] or ApolloColor.new("white")
-	local wndInputType = wndChat:FindChild("InputType")
 	wndInput:SetTextColor(crText)
-	wndInputType:SetText(channelCurrent:GetCommand())
-	wndInputType:SetTextColor(crText)
-	wndInputType:Show(string.len(strText) == 0)
-
+	wndInput:SetPrompt(channelCurrent:GetCommand())
+	wndInput:SetPromptColor(crText)
 	wndInput:SetFocus()
 	wndInput:SetSel(strText:len(), -1)
 
@@ -1987,10 +2420,14 @@ function ChatLog:OnBGFade(wndHandler, wndControl)
 
 	for idx, wndChatWindow in pairs(self.tChatWindows) do
 		wndChatWindow:SetStyle("AutoFadeNC", self.bEnableNCFade)
-		if self.bEnableNCFade then wndChatWindow:SetNCOpacity(1) end
+		if self.bEnableNCFade then
+			wndChatWindow:SetNCOpacity(1)
+		end
 
 		wndChatWindow:SetStyle("AutoFadeBG", self.bEnableBGFade)
-		if self.bEnableBGFade then wndChatWindow:SetBGOpacity(1) end
+		if self.bEnableBGFade then
+			wndChatWindow:SetBGOpacity(1)
+		end
 	end
 end
 
@@ -2036,17 +2473,22 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 	end
 
 	local xml = XmlDoc.new()
-	local tm = GameLib.GetLocalTime()
+
 	local crText = self.arChatColor[eChannelType] or ApolloColor.new("white")
 	local crChannel = ApolloColor.new(karChannelTypeToColor[eChannelType].Channel or "white")
 	local crPlayerName = ApolloColor.new("ChatPlayerName")
 
-	local strTime = "" if self.bShowTimestamp then strTime = string.format("%d:%02d ", tm.nHour, tm.nMinute) end
+	local strTime = ""
+	if self.bShowTimestamp then
+		strTime = self:HelperGetTimeStr()
+	end
+
 	local strWhisperName = tMessage.strSender
-	if tMessage.strRealmName:len() > 0 then
+	if tMessage.strRealmName:len() > 0 and eChannelType ~= ChatSystemLib.ChatChannel_AccountWhisper then
 		-- Name/Realm formatting needs to be very specific for cross realm chat to work
 		strWhisperName = strWhisperName .. "@" .. tMessage.strRealmName
 	end
+	local strDisplayName = strWhisperName
 
 	--strWhisperName must only be sender@realm, or friends equivelent name.
 
@@ -2066,6 +2508,7 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 			self.tLastWhisperer = { strCharacterName = strWhisperName, eChannelType = ChatSystemLib.ChatChannel_Whisper }--record the last incoming whisperer for quick response
 		end
 		Sound.Play(Sound.PlayUISocialWhisper)
+		self:InsertIntoRecent(strWhisperName, false)
 	elseif eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
 
 		local tPreviousWhisperer = self.tLastWhisperer
@@ -2087,16 +2530,13 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 							self.tLastWhisperer.strDisplayName = tAccountFriend.strCharacterName
 							self.tLastWhisperer.strRealmName = tCharacter.strRealm
 						end
-						strWhisperName = tAccountFriend.strCharacterName
-						if tMessage.strRealmName:len() > 0 then
-							-- Name/Realm formatting needs to be very specific for cross realm chat to work
-							strWhisperName = strWhisperName .. "@" .. tMessage.strRealmName
-						end
+						strDisplayName = tAccountFriend.strCharacterName
 					end
 				end
 			end
 		end
 		Sound.Play(Sound.PlayUISocialWhisper)
+		self:InsertIntoRecent(strWhisperName, true)
 	end
 
 	-- We build strings backwards, right to left
@@ -2105,11 +2545,12 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 
 	elseif eChannelType == ChatSystemLib.ChatChannel_Emote then -- emote channel gets special formatting
 		xml:AddLine(strTime, crChannel, self.strFontOption, "Left")
-		if strWhisperName:len() > 0 then
+		if strDisplayName:len() > 0 then
 			if tMessage.bGM then
 				xml:AppendImage(kstrGMIcon, 16, 16)
 			end
-			xml:AppendText(strWhisperName, crPlayerName, self.strFontOption, {CharacterName=strWhisperName, nReportId=tMessage.nReportId}, "Source")
+			local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
+			xml:AppendText(strDisplayName, crPlayerName, self.strFontOption, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId, strCrossFaction = strCross}, "Source")
 		end
 		xml:AppendText(" ")
 	else
@@ -2125,7 +2566,7 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 		end
 
 		xml:AddLine(strTime .. strChannel, crChannel, self.strFontOption, "Left")
-		if strWhisperName:len() > 0 then
+		if strDisplayName:len() > 0 then
 
 			local strWhisperNamePrefix = ""
 			if eChannelType == ChatSystemLib.ChatChannel_Whisper or eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
@@ -2142,7 +2583,8 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 				xml:AppendImage(kstrGMIcon, 16, 16)
 			end
 
-			xml:AppendText( strWhisperName, crPlayerName, self.strFontOption, {CharacterName=strWhisperName, nReportId=tMessage.nReportId}, "Source")
+			local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
+			xml:AppendText( strDisplayName, crPlayerName, self.strFontOption, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId , strCrossFaction = strCross}, "Source")
 		end
 		xml:AppendText( strPresenceState .. ": ", crChannel, self.strFontOption, "Left")
 	end
@@ -2216,7 +2658,12 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 			end
 
 			if next(tLink) == nil then
-				xml:AppendText(strText, crChatText, strChatFont)
+				if eChannelType == ChatSystemLib.ChatChannel_AnimatedEmote then
+					local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
+					xml:AppendText(strText, crChatText, strChatFont, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId, strCrossFaction = strCross}, "Source")
+				else
+					xml:AppendText(strText, crChatText, strChatFont)
+				end
 			else
 				local strLinkIndex = tostring( self:HelperSaveLink(tLink) )
 				-- append text can only save strings as attributes.
@@ -2236,6 +2683,31 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 	tQueuedMessage.xmlBubble = xmlBubble
 end
 
+function ChatLog:HelperGetTimeStr()
+	--Toggle Visibility based on ui preference
+	local nVisibility = Apollo.GetConsoleVariable("hud.TimeDisplay")
+
+	local tTime = GameLib.GetLocalTime()
+	strTime = (string.format("%02d:%02d", tostring(tTime.nHour), tostring(tTime.nMinute)))
+
+	if nVisibility == 2 then --Local 12hr am/pm
+		local nHour = tTime.nHour > 12 and tTime.nHour - 12 or tTime.nHour == 0 and 12 or tTime.nHour
+
+		strTime = (string.format("%02d:%02d", tostring(nHour), tostring(tTime.nMinute)))
+	elseif nVisibility == 3 then --Server 24hr
+		tTime = GameLib.GetServerTime()
+
+		strTime = (string.format("%02d:%02d", tostring(tTime.nHour), tostring(tTime.nMinute)))
+	elseif nVisibility == 4 then --Server 12hr am/pm
+		tTime = GameLib.GetServerTime()
+		local nHour = tTime.nHour > 12 and tTime.nHour - 12 or tTime.nHour == 0 and 12 or tTime.nHour
+
+		strTime = (string.format("%02d:%02d", tostring(nHour), tostring(tTime.nMinute)))
+	end
+
+	strTime = strTime.." "
+	return strTime
+end
 function ChatLog:HelperSaveLink(tLink)
 	self.tLinks[self.nNextLinkIndex] = tLink
 	self.nNextLinkIndex = self.nNextLinkIndex + 1
@@ -2297,7 +2769,6 @@ function ChatLog:HelperGetNameElseUnknown(nArg)
 	return Apollo.GetString("CombatLog_SpellUnknown")
 end
 
-
 function ChatLog:HelperAddChannelToAll(channelAdded)
 	if self.tAllViewedChannels[channelAdded] ~= nil then
 		self.tAllViewedChannels[channelAdded] = self.tAllViewedChannels[channelAdded] + 1
@@ -2321,19 +2792,18 @@ function ChatLog:HelperRemoveChannelFromInputWindow(channelRemoved) -- used when
 	for idx, wnd in pairs(self.tChatWindows) do
 		local tChatData = wnd:GetData()
 
-		if tChatData.channelCurrent:GetType() == channelRemoved then
+		if tChatData.channelCurrent:GetUniqueId() == channelRemoved then
 
 			local channelNew = self:HelperFindAViewedChannel()
-			local wndInputType = wnd:FindChild("InputType")
+			local wndInput = wnd:FindChild("Input")
 
 			if channelNew ~= nil then
 				tChatData.channelCurrent = channelNew
-				wndInputType:SetText(tChatData.channelCurrent:GetCommand())
+				wndInput:SetPrompt(tChatData.channelCurrent:GetCommand())
 				tChatData.crText = self.arChatColor[tChatData.channelCurrent:GetType()]
-				wndInputType:SetTextColor(tChatData.crText)
+				wndInput:SetPromptColor(tChatData.crText)
 
 				--TODO: Helper this since we do it other places
-				local wndInput = wnd:FindChild("Input")
 				local strText = wndInput:GetText()
 				local strCommand = tChatData.channelCurrent:GetAbbreviation()
 
@@ -2342,10 +2812,10 @@ function ChatLog:HelperRemoveChannelFromInputWindow(channelRemoved) -- used when
 				end
 
 				if strText == "" then
-					strText =String_GetWeaselString(Apollo.GetString("ChatLog_SlashPrefix"),  strCommand)
+					strText =String_GetWeaselString(Apollo.GetString("ChatLog_SlashPrefix"), strCommand.." ")
 				else
 					local tInput = ChatSystemLib.SplitInput(strText) -- get the existing message, ignore the old command
-					strText = String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), strCommand, tInput.strMessage)
+					strText = String_GetWeaselString(Apollo.GetString("ChatLog_MessageToPlayer"), strCommand).." "..tInput.strMessage
 				end
 
 				wndInput:SetText(strText)
@@ -2355,8 +2825,8 @@ function ChatLog:HelperRemoveChannelFromInputWindow(channelRemoved) -- used when
 				wndInput:SetSel(strText:len(), -1)
 
 			else
-				wndInputType:SetText("X")
-				wndInputType:SetTextColor(kcrInvalidColor)
+				wndInput:SetPrompt("X")
+				wndInput:SetPromptColor(kcrInvalidColor)
 			end
 		end
 	end
@@ -2399,7 +2869,8 @@ function ChatLog:HelperGetCurrentEditbox()
 	local wndEdit
 	-- find the last used chat window
 	for idx, wndCurrent in pairs(self.tChatWindows) do
-		if wndCurrent:FindChild("Input"):GetData() then
+		local tData = wndCurrent:GetData()
+		if tData and not tData.bCombatLog and wndCurrent:FindChild("Input"):GetData() then
 			wndEdit = wndCurrent:FindChild("Input")
 			break
 		end
@@ -2408,46 +2879,15 @@ function ChatLog:HelperGetCurrentEditbox()
 	-- if none found, use the first on our list
 	if wndEdit == nil then
 		for idx, wndCurrent in pairs(self.tChatWindows) do
-			wndEdit = wndCurrent:FindChild("Input")
-			break
+			local tData = wndCurrent:GetData()
+			if tData and not tData.bCombatLog then
+				wndEdit = wndCurrent:FindChild("Input")
+				break
+			end
 		end
 	end
 
 	return wndEdit
-end
-
-function ChatLog:OnWndMainMouseEnter(wndHandler, wndControl) -- wndHandler is MouseCatcher, Data is a list of windows
-	if wndHandler:GetData() then -- Because UseParentOpacity is BGColor not TextColor
-		for idx, wndCurr in pairs(wndHandler:GetData()) do
-			wndCurr:Show(true)
-		end
-		wndHandler:GetParent():FindChild("InputType"):Show(string.len(wndHandler:GetParent():FindChild("Input"):GetText()) == 0)
-	end
-end
-
-function ChatLog:OnWndMainMouseExit(wndHandler, wndControl)
-	local bContainsMouse = wndHandler:GetParent():ContainsMouse()
-	if wndHandler:GetData() and not bContainsMouse then -- Because UseParentOpacity is BGColor not TextColor
-		for idx, wndCurr in pairs(wndHandler:GetData()) do
-			wndCurr:Show(false)
-		end
-	end
-end
-
-function ChatLog:OnFocusTab(wndHandler, wndControl)
-
-end
-
-function ChatLog:OnInputGainedFocus(wndHandler, wndControl)
-	if wndHandler == wndControl and wndHandler:GetParent() and wndHandler:GetParent():FindChild("InputType") then
-		wndHandler:GetParent():FindChild("InputType"):Show(string.len(wndHandler:GetParent():FindChild("Input"):GetText()) == 0)
-	end
-end
-
-function ChatLog:OnInputLostFocus(wndHandler, wndControl)
-	if wndHandler == wndControl and wndHandler:GetParent() and wndHandler:GetParent():FindChild("InputType") then
-		wndHandler:GetParent():FindChild("InputType"):Show(false)
-	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -2465,11 +2905,11 @@ function ChatLog:OnTradeSkillSigilResult(eResult)
 		[tEnumTable.MissingEngravingStation] 	= Apollo.GetString("EngravingStation_StationTooFar"),
 		[tEnumTable.Unlocked] 					= Apollo.GetString("EngravingStation_UnlockSuccessfull"),
 		[tEnumTable.UnknownError] 				= Apollo.GetString("EngravingStation_Failure"),
-		[tEnumTable.GlyphExists] 				= Apollo.GetString("EngravingStation_ExistingRune"),
-		[tEnumTable.MissingGlyph] 				= Apollo.GetString("EngravingStation_RuneMissing"),
-		[tEnumTable.DuplicateGlyph]				= Apollo.GetString("EngravingStation_DuplicateRune"),
+		[tEnumTable.RuneExists] 				= Apollo.GetString("EngravingStation_ExistingRune"),
+		[tEnumTable.MissingRune] 				= Apollo.GetString("EngravingStation_RuneMissing"),
+		[tEnumTable.DuplicateRune]				= Apollo.GetString("EngravingStation_DuplicateRune"),
 		[tEnumTable.AttemptFailed] 				= Apollo.GetString("EngravingStation_Failure"),
-		[tEnumTable.GlyphSlotLimit] 			= Apollo.GetString("EngravingStation_SlotLimitReached"),
+		[tEnumTable.RuneSlotLimit] 				= Apollo.GetString("EngravingStation_SlotLimitReached"),
 	}
 
 	Event_FireGenericEvent("GenericEvent_LootChannelMessage", kstrTradeskillResultTable[eResult])

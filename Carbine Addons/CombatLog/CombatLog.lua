@@ -25,6 +25,7 @@ local kstrColorCombatLogXP 				= "fffff533"
 local kstrColorCombatLogUNKNOWN 		= "ffffffff"
 local kstrCurrencyColor 				= "fffff533"
 local kstrStateColor 					= "ff9a8460"
+local kstEquipColor 					= "ffc0c0c0"
 
 local knSaveVersion						= 1
 
@@ -87,7 +88,7 @@ function CombatLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("ChangeWorld", 						"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("PetSpawned", 						"OnPetStatusUpdated", self)
 	Apollo.RegisterEventHandler("PetDespawned", 					"OnPetStatusUpdated", self)
-	Apollo.RegisterTimerHandler("TEMP_PetStatusUpdate_HACK", 		"TEMP_PetStatusUpdate_HACK", self)
+	Apollo.RegisterEventHandler("PlayerEquippedItemChanged", 			"OnPlayerEquippedItemChanged", self)
 
 	self.tTypeMapping =
 	{
@@ -109,7 +110,7 @@ function CombatLog:OnDocumentReady()
 	self.crVitalModifier = "ffffffff"
 	self.unitPlayer = nil
 	self.tPetUnits = {}
-	Apollo.CreateTimer("TEMP_PetStatusUpdate_HACK", 5, false)
+	self.timerPetStatusUpdate = ApolloTimer.Create(5.0, false, "TEMP_PetStatusUpdate_HACK", self)
 end
 function CombatLog:PostOnChannel(strResult)
 	ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Combat, string.format("<P Font=\"CRB_InterfaceMedium\">%s</P>", strResult), "")
@@ -389,45 +390,57 @@ function CombatLog:OnCombatLogLifeSteal(tEventArgs)
 end
 
 function CombatLog:OnCombatLogTransference(tEventArgs)
-	-- OnCombatLogDamage does exactly what we need so just pass along the tEventArgs
-	self:OnCombatLogDamage(tEventArgs)
+	if not self.unitPlayer then
+		self.unitPlayer = GameLib.GetControlledUnit()
+	end
 
+	local bDisableOtherPlayers = Apollo.GetConsoleVariable("cmbtlog.disableOtherPlayers")
+	
+	-- OnCombatLogDamage does exactly what we need so just pass along the tEventArgs
+	if not bDisableOtherPlayers or self.unitPlayer == tEventArgs.unitCaster then
+		self:OnCombatLogDamage(tEventArgs)
+	end
+	
 	local tCastInfo = self:HelperCasterTargetSpell(tEventArgs, true, false)
 	-- healing data is stored in a table where each subtable contains a different vital that was healed
 	for _, tHeal in ipairs(tEventArgs.tHealData) do
-		local strVital = Apollo.GetString("CombatLog_UnknownVital")
-		if tHeal.eVitalType then
-			strVital = Unit.GetVitalTable()[tHeal.eVitalType].strName
-		end
-
-		local strAmount = string.format("<T TextColor=\"%s\">%s</T>", self.crVitalModifier, tHeal.nHealAmount)
-		local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_GainVital"), tCastInfo.strCaster, strAmount, strVital, tCastInfo.strTarget)
-
-		if tHeal.nOverheal and tHeal.nOverheal > 0 then
-			local strOverhealString = ""
-			if tHeal.eVitalType == GameLib.CodeEnumVital.ShieldCapacity then
-				strOverhealString = Apollo.GetString("CombatLog_Overshield")
-			else
-				strOverhealString = Apollo.GetString("CombatLog_Overheal")
+		if not bDisableOtherPlayers or self.unitPlayer == tHeal.unitHealed then
+			local strVital = Apollo.GetString("CombatLog_UnknownVital")
+			if tHeal.eVitalType then
+				strVital = Unit.GetVitalTable()[tHeal.eVitalType].strName
 			end
-			strAmount = string.format("<T TextColor=\"white\">%s</T>", tHeal.nOverheal)
-			strResult = String_GetWeaselString(strOverhealString, strResult, strAmount)
-		end
+			
+			-- units in caster's group can get healed
+			if tHeal.unitHealed ~= tEventArgs.unitCaster then
+				tCastInfo.strTarget = tCastInfo.strCaster
+				tCastInfo.strCaster = self:HelperGetNameElseUnknown(tHeal.unitHealed)
+			end
 
-		if tEventArgs.eCombatResult == GameLib.CodeEnumCombatResult.Critical then
-			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_Critical"), strResult)
-		end
+			local strAmount = string.format("<T TextColor=\"%s\">%s</T>", self.crVitalModifier, tHeal.nHealAmount)
+			local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_GainVital"), tCastInfo.strCaster, strAmount, strVital, tCastInfo.strTarget)
 
-		if not self.unitPlayer then
-			self.unitPlayer = GameLib.GetControlledUnit()
-		end
+			if tHeal.nOverheal and tHeal.nOverheal > 0 then
+				local strOverhealString = ""
+				if tHeal.eVitalType == GameLib.CodeEnumVital.ShieldCapacity then
+					strOverhealString = Apollo.GetString("CombatLog_Overshield")
+				else
+					strOverhealString = Apollo.GetString("CombatLog_Overheal")
+				end
+				strAmount = string.format("<T TextColor=\"white\">%s</T>", tHeal.nOverheal)
+				strResult = String_GetWeaselString(strOverhealString, strResult, strAmount)
+			end
 
-		-- TODO: Analyze if we can refactor (this has no spell)
-		local strColor = kstrColorCombatLogIncomingGood
-		if tEventArgs.unitCaster ~= self.unitPlayer then
-			strColor = kstrColorCombatLogOutgoing
+			if tEventArgs.eCombatResult == GameLib.CodeEnumCombatResult.Critical then
+				strResult = String_GetWeaselString(Apollo.GetString("CombatLog_Critical"), strResult)
+			end
+
+			-- TODO: Analyze if we can refactor (this has no spell)
+			local strColor = kstrColorCombatLogIncomingGood
+			if tEventArgs.unitCaster ~= self.unitPlayer then
+				strColor = kstrColorCombatLogOutgoing
+			end
+			self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", strColor, strResult))
 		end
-		self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", strColor, strResult))
 	end
 end
 
@@ -446,7 +459,7 @@ function CombatLog:OnCombatLogInterrupted(tEventArgs)
 		else
 			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSource"), strResult, tEventArgs.unitCaster:GetName())
 		end
-	elseif tEventArgs.strCastResult then
+	elseif tEventArgs.strCastResult and tEventArgs.strCastResult ~= "" then
 		strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSelf"), strResult, tEventArgs.strCastResult)
 	end
 
@@ -576,6 +589,11 @@ function CombatLog:OnCombatLogExperience(tEventArgs)
 		local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_ElderPointsGained"), tEventArgs.nElderPoints)
 		self:PostOnChannel(string.format("<P TextColor=\"%s\">%s</P>", kstrColorCombatLogXP, strResult))
 	end
+
+	if tEventArgs.nRestEP > 0 then
+		local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_RestEPGain"), tEventArgs.nRestEP)
+		self:PostOnChannel(string.format("<P TextColor=\"%s\">%s</P>", kstrColorCombatLogXP, strResult))
+	end
 end
 
 function CombatLog:OnCombatLogEndGameCurrencies(tEventArgs)
@@ -625,7 +643,7 @@ function CombatLog:OnFactionFloater(unitTarget, pstrMessage, nAmount, strFaction
 end
 
 function CombatLog:OnPetStatusUpdated()
-	Apollo.CreateTimer("TEMP_PetStatusUpdate_HACK", 1, false)
+	self.timerPetStatusUpdate:Set(1.0, false)
 end
 
 function CombatLog:TEMP_PetStatusUpdate_HACK()
@@ -634,6 +652,26 @@ end
 
 function CombatLog:OnChangeWorld()
 	self.unitPlayer = GameLib.GetControlledUnit()
+end
+
+function CombatLog:OnPlayerEquippedItemChanged(nEquippedSlot, itemNew, itemOld)
+	local strResult = ""
+	if not itemNew then --unequipping only
+		local strOldItemName = itemOld:GetName()
+		local strOldItemTypeName = itemOld:GetItemTypeName()
+		strResult = String_GetWeaselString(Apollo.GetString("CombatLog_UnEquip"), strOldItemName, strOldItemTypeName)
+	else
+		local strNewItemName = itemNew:GetName()
+		local strNewItemTypeName = itemNew:GetItemTypeName()
+		if itemOld then --equipping an item and replacing
+			local strPrevItemName = itemOld:GetName()
+			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_EquipReplace"), strNewItemName, strPrevItemName, strNewItemTypeName)
+		else --just equipping an item
+			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_Equip"), strNewItemName, strNewItemTypeName)
+		end
+	end
+	self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", kstEquipColor, strResult))
+
 end
 
 -----------------------------------------------------------------------------------------------

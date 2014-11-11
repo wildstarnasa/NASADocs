@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Sprites>
     <Sprite Name="spr_CM_Engineer_Base_Innate" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="967" y0="0" y1="0" y2="0" y3="0" y4="0" y5="228" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="160" x2="215" x3="745" x4="807" x5="967" y0="0" y1="0" y2="0" y3="0" y4="0" y5="228" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="spr_CM_Engineer_Base_OutOfCombat" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="967" y0="229" y1="0" y2="0" y3="0" y4="0" y5="457" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="160" x2="215" x3="745" x4="807" x5="967" y0="229" y1="229" y2="229" y3="229" y4="229" y5="457" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="spr_CM_Engineer_Base_InCombat" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="967" y0="458" y1="0" y2="0" y3="0" y4="0" y5="686" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="160" x2="215" x3="745" x4="807" x5="967" y0="458" y1="458" y2="458" y3="458" y4="458" y5="686" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarFill_OutOfCombat" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="687" y1="0" y2="0" y3="0" y4="0" y5="749" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarFill_OutOfCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="687" y1="687" y2="687" y3="687" y4="687" y5="749" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarFill_InCombat1" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="750" y1="0" y2="0" y3="0" y4="0" y5="812" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarFill_InCombat1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="750" y1="750" y2="750" y3="750" y4="750" y5="812" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarFill_InCombat2" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="813" y1="0" y2="0" y3="0" y4="0" y5="875" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarFill_InCombat2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="813" y1="813" y2="813" y3="813" y4="813" y5="875" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarFill_InCombat3" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="876" y1="0" y2="0" y3="0" y4="0" y5="938" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarFill_InCombat3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="390" y0="876" y1="876" y2="876" y3="876" y4="876" y5="938" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarEdgeGlow_OutOfCombat" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="0" x2="0" x3="0" x4="0" x5="463" y0="688" y1="0" y2="0" y3="0" y4="0" y5="759" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarEdgeGlow_OutOfCombat" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="391" x2="391" x3="391" x4="391" x5="463" y0="688" y1="688" y2="688" y3="688" y4="688" y5="759" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarEdgeGlow_InCombat1" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="0" x2="0" x3="0" x4="0" x5="463" y0="760" y1="0" y2="0" y3="0" y4="0" y5="831" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarEdgeGlow_InCombat1" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="391" x2="391" x3="391" x4="391" x5="463" y0="760" y1="760" y2="760" y3="760" y4="760" y5="831" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarEdgeGlow_InCombat2" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="0" x2="0" x3="0" x4="0" x5="463" y0="832" y1="0" y2="0" y3="0" y4="0" y5="903" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarEdgeGlow_InCombat2" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="391" x2="391" x3="391" x4="391" x5="463" y0="832" y1="832" y2="832" y3="832" y4="832" y5="903" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_BarEdgeGlow_InCombat3" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="0" x2="0" x3="0" x4="0" x5="463" y0="904" y1="0" y2="0" y3="0" y4="0" y5="975" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_BarEdgeGlow_InCombat3" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="391" x1="391" x2="391" x3="391" x4="391" x5="463" y0="904" y1="904" y2="904" y3="904" y4="904" y5="975" HotspotX="36" HotspotY="35" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_Pet_Flyout" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="464" x1="0" x2="0" x3="0" x4="0" x5="618" y0="779" y1="0" y2="0" y3="0" y4="0" y5="933" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_Pet_Flyout" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="464" x1="464" x2="464" x3="464" x4="464" x5="618" y0="779" y1="779" y2="779" y3="779" y4="779" y5="933" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	<Sprite Name="spr_CM_Engineer_Pet_Container" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="619" x1="0" x2="0" x3="0" x4="0" x5="825" y0="779" y1="0" y2="0" y3="0" y4="0" y5="877" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="spr_CM_Engineer_Pet_Container" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CM_Engineer.tga" x0="619" x1="619" x2="619" x3="619" x4="619" x5="825" y0="779" y1="779" y2="779" y3="779" y4="779" y5="877" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-	
-	<AutoButton Name="btn_CM_Engineer_Flyout" Texture="UI\Assets\Textures\UI_CM_Engineer.tex" x0="464" x1="0" x2="0" x3="0" x4="0" x5="519" y0="687" y1="0" y2="0" y3="0" y4="0" y5="742" StateBits="31" Direction="Across"/>
-	<AutoButton Name="btn_CM_Engineer_HidePet" Texture="UI\Assets\Textures\UI_CM_Engineer.tex" x0="464" x1="0" x2="0" x3="0" x4="0" x5="501" y0="743" y1="0" y2="0" y3="0" y4="0" y5="778" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_CM_Engineer_Flyout" Texture="UI\Assets\Textures\UI_CM_Engineer.tex" x0="464" x1="464" x2="464" x3="464" x4="464" x5="519" y0="687" y1="687" y2="687" y3="687" y4="687" y5="742" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_CM_Engineer_HidePet" Texture="UI\Assets\Textures\UI_CM_Engineer.tex" x0="464" x1="464" x2="464" x3="464" x4="464" x5="501" y0="743" y1="743" y2="743" y3="743" y4="743" y5="778" StateBits="31" Direction="Across"/>
 </Sprites>

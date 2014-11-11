@@ -20,7 +20,7 @@ end
 
 function HUDInteract:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
 	self.xmlDoc = XmlDoc.CreateFromFile("HUDInteract.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function HUDInteract:OnDocumentReady()
@@ -48,8 +48,8 @@ function HUDInteract:OnDocumentReady()
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "InteractForm", "FixedHudStratum", self)
 	self.xmlDoc = nil
 
-	self.InteractUnit = nil
-	
+	self.unitInteract = nil
+
 	self:OnOptionsUpdated()
 end
 
@@ -59,7 +59,7 @@ function HUDInteract:OnOptionsUpdated()
 	else
 		self.bInteractTextOnUnit = false
 	end
-	
+
 	if self.wndInteractMarkerOnUnit and self.wndInteractMarkerOnUnit:IsValid() then
 		self.wndInteractMarkerOnUnit:FindChild("InteractionOnUnitPopout"):Show(self.bInteractTextOnUnit)
 		self:HideInteractWindows()
@@ -88,10 +88,10 @@ function HUDInteract:OnInteractiveUnitChanged(unitArg, strArg)
 		return
 	end
 
-	self.InteractUnit = unitArg
-	
+	self.unitInteract = unitArg
+
 	-- HUD Alert Interact
-	local bHideLootWhileVacuum = GameLib.CanVacuum() and strArg == Apollo.GetString("HUDAlert_Loot")
+	local bHideLootWhileVacuum = GameLib.CanVacuum() and unitArg and unitArg:GetLoot()
 	if bHideLootWhileVacuum or unitArg == nil or strArg == nil then
 		self:HideInteractWindows()
 		return
@@ -168,14 +168,11 @@ function HUDInteract:OnDialog_ShowState(eState, tQuest) -- Hide Interact during 
 end
 
 function HUDInteract:OnDialog_Close() -- Hide Interact during Quest Dialog
-	
 	self.bDialogWindowUp = false
-	
-	if self.InteractUnit ~= nil then
-		self.wndMain:Show(true)
-		self.wndInteractMarkerOnUnit:Show(true)
+	if self.unitInteract ~= nil then
+		self.wndMain:Show(not self.bInteractTextOnUnit)
+		self.wndInteractMarkerOnUnit:Show(self.bInteractTextOnUnit)
 	end
-	
 end
 
 -----------------------------------------------------------------------------------------------

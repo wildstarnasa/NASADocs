@@ -2,24 +2,16 @@
 -- Client Lua Script for DecorPreview
 -- Copyright (c) NCsoft. All rights reserved
 -----------------------------------------------------------------------------------------------
- 
+
 require "Window"
 require "HousingLib"
- 
------------------------------------------------------------------------------------------------
--- DecorPreview Module Definition
------------------------------------------------------------------------------------------------
-local DecorPreview = {} 
- 
------------------------------------------------------------------------------------------------
--- Initialization
------------------------------------------------------------------------------------------------
+
+local DecorPreview = {}
+
 function DecorPreview:new(o)
     o = o or {}
     setmetatable(o, self)
-    self.__index = self 
-
-	-- initialize our variables
+    self.__index = self
 	o.decorInfoId = 0
     return o
 end
@@ -27,33 +19,23 @@ end
 function DecorPreview:Init()
     Apollo.RegisterAddon(self)
 end
- 
 
------------------------------------------------------------------------------------------------
--- DecorPreview OnLoad
------------------------------------------------------------------------------------------------
 function DecorPreview:OnLoad()
-    -- Register events
-	Apollo.RegisterEventHandler("DecorPreviewOpen", "OnOpenPreviewDecor", self)
+	Apollo.RegisterEventHandler("GenericEvent_LoadDecorPreview", "OnGenericEvent_LoadDecorPreview", self)
 	Apollo.RegisterEventHandler("DecorPreviewClose", "OnCloseDecorPreviewWindow", self)
-    
-    -- load our forms
-    self.wndDecorPreview 	= Apollo.LoadForm("DecorPreview.xml", "DecorPreviewWindow", nil, self)
-    self.wndModelWindow 	= self.wndDecorPreview:FindChild("ModelWindow")
-    self.wndRotateRight 	= self.wndDecorPreview:FindChild("RotateRightButton")
-    self.wndRotateLeft 		= self.wndDecorPreview:FindChild("RotateLeftButton")
-	
-	self.wndDecorPreview:SetSizingMinimum(280, 270)
-	self.wndDecorPreview:SetSizingMaximum(800, 700)
-
 end
 
+function DecorPreview:OnGenericEvent_LoadDecorPreview(idDecorInfo)
+	if not self.wndDecorPreview or not self.wndDecorPreview:IsValid() then
+		self.wndDecorPreview 	= Apollo.LoadForm("DecorPreview.xml", "DecorPreviewWindow", nil, self)
+		self.wndModelWindow 	= self.wndDecorPreview:FindChild("ModelWindow")
+		self.wndRotateRight 	= self.wndDecorPreview:FindChild("RotateRightButton")
+		self.wndRotateLeft 		= self.wndDecorPreview:FindChild("RotateLeftButton")
 
------------------------------------------------------------------------------------------------
--- DecorPreview Functions
------------------------------------------------------------------------------------------------
+		self.wndDecorPreview:SetSizingMinimum(280, 270)
+		self.wndDecorPreview:SetSizingMaximum(800, 700)
+	end
 
-function DecorPreview:OnOpenPreviewDecor(idDecorInfo)
     self.wndDecorPreview:Show(true)
     self.idDecorInfo = idDecorInfo
     self:ShowDecorPreviewWindow()
@@ -66,7 +48,7 @@ function DecorPreview:ShowDecorPreviewWindow()
 	if not self.wndDecorPreview:IsVisible() then
 		return
 	end
-	
+
 	self.wndModelWindow:SetAnimated(true)
 	self.wndModelWindow:SetDecorInfo(self.idDecorInfo)
 end
@@ -74,18 +56,19 @@ end
 ---------------------------------------------------------------------------------------------------
 function DecorPreview:OnWindowClosed()
 	-- called after the window is closed by:
-	--	self.winMasterCustomizeFrame:Close() or 
+	--	self.winMasterCustomizeFrame:Close() or
 	--  hitting ESC or
 	--  C++ calling Event_CloseDecorPreviewWindow()
-	
+
 	Sound.Play(Sound.PlayUIWindowClose)
 end
 
 ---------------------------------------------------------------------------------------------------
 function DecorPreview:OnCloseDecorPreviewWindow()
 	-- close the window which will trigger OnWindowClosed
+	self.wndDecorPreview:Destroy()
+	self.wndDecorPreview = nil
 	self.tModelAssetPath = nil
-	self.wndDecorPreview:Close()
 end
 
 ---------------------------------------------------------------------------------------------------

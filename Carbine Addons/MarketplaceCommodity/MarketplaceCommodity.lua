@@ -276,11 +276,11 @@ function MarketplaceCommodity:InitializeSell()
 	end
 
 	-- Now build the window and do another layer of filtering
-	local strSearchFilter = string.lower(self.wndMain:FindChild("SearchEditBox"):GetText() or "")
+	local strSearchFilter = Apollo.StringToLower(self.wndMain:FindChild("SearchEditBox"):GetText() or "")
 	local bSkipSearchFilter = string.len(strSearchFilter) == 0
 	for key, tCurrData in pairs(tBothItemTables) do
 		local tCurrItem = tCurrData.tCurrItem
-		if tCurrItem and tCurrItem:IsCommodity() and (bSkipSearchFilter or string.find(string.lower(tCurrData.strName), strSearchFilter)) then
+		if tCurrItem and tCurrItem:IsCommodity() and (bSkipSearchFilter or string.find(Apollo.StringToLower(tCurrData.strName), strSearchFilter)) then
 			local bSellNow = self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked()
 			local strWindow = bSellNow and "SimpleListItem" or "AdvancedListItem"
 			local strButtonText = bSellNow and Apollo.GetString("MarketplaceCommodity_SellNow") or Apollo.GetString("MarketplaceCommodity_CreateSellOrder")
@@ -500,7 +500,7 @@ function MarketplaceCommodity:HelperValidateListInputForSubmit(wndParent)
 	end
 
 	if wndListInputPrice then
-		wndListInputPrice:SetTextColor(bCanAfford and "white" or "UI_BtnTextRedNormal")
+		wndListInputPrice:SetTextColor(bCanAfford and "white" or "xkcdReddish")
 	end
 
 	local wndQuantity = wndParent:FindChild("ListInputNumber")
@@ -521,6 +521,11 @@ function MarketplaceCommodity:HelperValidateListInputForSubmit(wndParent)
 			local monPricePerUnit = wndParent:FindChild("ListInputPrice"):GetCurrency() -- not an integer
 			local nOrderCount = tonumber(wndParent:FindChild("ListInputNumber"):GetText())
 			local bBuyTab = self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked()
+
+			if wndParent:FindChild("ListLowerThanVendor") then
+				local nVendorPriceAfterFees = tCurrItem:GetSellPrice():GetAmount() * (1 + (kCommodityAuctionRake / 100))
+				wndParent:FindChild("ListLowerThanVendor"):Show(monPricePerUnit:GetAmount() > 0 and nVendorPriceAfterFees > monPricePerUnit:GetAmount())
+			end
 
 			local orderNew = bBuyTab and CommodityOrder.newBuyOrder(tCurrItem:GetItemId()) or CommodityOrder.newSellOrder(tCurrItem:GetItemId())
 			if nOrderCount and monPricePerUnit:GetAmount() > 0 then
@@ -821,15 +826,15 @@ function MarketplaceCommodity:OnCommodityInfoResults(nItemId, tStats, tOrders)
 	-- Fill in the second cash window with the first found
 	local nValueForInput = 0
 	local nValueForLeftPrice = 0
+	local strNoData = Apollo.GetString("MarketplaceCommodity_AveragePriceNoData")
 	if self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() then
 		nValueForInput = nAverageBig
 		nValueForLeftPrice = nAverageBig
-		wndMatch:FindChild("ListSubtitleLeft"):SetText(Apollo.GetString(nAverageBig and "MarketplaceCommodity_AveragePrice" or "MarketplaceCommodity_AveragePriceNoData"))
-
+		wndMatch:FindChild("ListSubtitleLeft"):SetText(nAverageBig and Apollo.GetString("MarketplaceCommodity_AverageBuyPrice") or strNoData)
 	elseif self.wndMain:FindChild("HeaderSellNowBtn"):IsChecked() then
 		nValueForInput = nAverageSmall
 		nValueForLeftPrice = nAverageSmall
-		wndMatch:FindChild("ListSubtitleLeft"):SetText(Apollo.GetString(nAverageSmall and "MarketplaceCommodity_AveragePrice" or "MarketplaceCommodity_AveragePriceNoData"))
+		wndMatch:FindChild("ListSubtitleLeft"):SetText(nAverageSmall and Apollo.GetString("MarketplaceCommodity_AverageSellPrice") or strNoData)
 	else
 		nValueForLeftPrice = nSmall
 		wndMatch:FindChild("ListSubtitlePriceRight"):Show(nBig)
@@ -837,12 +842,12 @@ function MarketplaceCommodity:OnCommodityInfoResults(nItemId, tStats, tOrders)
 
 		if self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked() then
 			nValueForInput = nAverageSmall
-			wndMatch:FindChild("ListSubtitleLeft"):SetText(Apollo.GetString("MarketplaceCommodity_CompetitionLabel") .. "\n" .. (nSmall and "" or Apollo.GetString("CRB_NoData")))
-			wndMatch:FindChild("ListSubtitleRight"):SetText(Apollo.GetString("MarketplaceCommodity_BuyNowLabel") .. "\n" .. (nBig and "" or Apollo.GetString("CRB_NoData")))
+			wndMatch:FindChild("ListSubtitleLeft"):SetText(Apollo.GetString("MarketplaceCommodity_HighestOfferLabel") .. "\n" .. (nSmall and "" or strNoData))
+			wndMatch:FindChild("ListSubtitleRight"):SetText(Apollo.GetString("MarketplaceCommodity_BuyNowLabel") .. "\n" .. (nBig and "" or strNoData))
 		elseif self.wndMain:FindChild("HeaderSellOrderBtn"):IsChecked() then
 			nValueForInput = nAverageBig
-			wndMatch:FindChild("ListSubtitleLeft"):SetText(Apollo.GetString("MarketplaceCommodity_SellNowLabel") .. "\n" .. (nSmall and "" or Apollo.GetString("CRB_NoData")))
-			wndMatch:FindChild("ListSubtitleRight"):SetText(Apollo.GetString("MarketplaceCommodity_CompetitionLabel") .. "\n" .. (nBig and "" or Apollo.GetString("CRB_NoData")))
+			wndMatch:FindChild("ListSubtitleLeft"):SetText(Apollo.GetString("MarketplaceCommodity_SellNowLabel") .. "\n" .. (nSmall and "" or strNoData))
+			wndMatch:FindChild("ListSubtitleRight"):SetText(Apollo.GetString("MarketplaceCommodity_LowestOfferLabel") .. "\n" .. (nBig and "" or strNoData))
 		end
 	end
 
@@ -877,7 +882,7 @@ function MarketplaceCommodity:OnCommodityInfoResults(nItemId, tStats, tOrders)
 		end
 	end
 	wndMatch:FindChild("ListInputPrice"):SetAmount(nValueForInput or 0)
-	wndMatch:FindChild("ListInputPrice"):SetTextColor(bCanAfford and "white" or "UI_BtnTextRedNormal")
+	wndMatch:FindChild("ListInputPrice"):SetTextColor(bCanAfford and "white" or "xkcdReddish")
 	wndMatch:FindChild("ListSubtitlePriceLeft"):Show(nValueForLeftPrice)
 	wndMatch:FindChild("ListSubtitlePriceLeft"):SetAmount(nValueForLeftPrice or 0)
 
@@ -936,8 +941,7 @@ function MarketplaceCommodity:OnPostCustomMessage(strMessage, bResultOK, nDurati
 	self.wndMain:FindChild("PostResultNotification"):Show(true)
 	self.wndMain:FindChild("PostResultNotification"):SetTooltip(strTitle)
 	self.wndMain:FindChild("PostResultNotificationSubText"):SetText(strMessage)
-	self.wndMain:FindChild("PostResultNotificationCheck"):SetSprite(bResultOK and "Icon_Windows_UI_CRB_Checkmark" or "LootCloseBox")
-	self.wndMain:FindChild("PostResultNotificationLabel"):SetTextColor(bResultOK and ApolloColor.new("ff7fffb9") or ApolloColor.new("ffb80000"))
+	self.wndMain:FindChild("PostResultNotificationLabel"):SetTextColor(bResultOK and ApolloColor.new("UI_TextHoloTitle") or ApolloColor.new("xkcdLightOrange"))
 	self.wndMain:FindChild("PostResultNotificationLabel"):SetText(strTitle)
 	Apollo.CreateTimer("PostResultTimer", nDuration, false)
 end
@@ -990,6 +994,12 @@ end
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
+
+function MarketplaceCommodity:OnListIconMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
 
 function MarketplaceCommodity:OnPostResultNotificationClick(wndHandler, wndControl)
 	if wndHandler == wndControl then

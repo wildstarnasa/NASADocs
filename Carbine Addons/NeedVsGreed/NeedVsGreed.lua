@@ -8,7 +8,7 @@ require "Sound"
 
 local NeedVsGreed = {}
 
-local ktEvalColors = 
+local ktEvalColors =
 {
 	[Item.CodeEnumItemQuality.Inferior] 		= ApolloColor.new("ItemQuality_Inferior"),
 	[Item.CodeEnumItemQuality.Average] 			= ApolloColor.new("ItemQuality_Average"),
@@ -32,7 +32,7 @@ end
 
 function NeedVsGreed:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("NeedVsGreed.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function NeedVsGreed:OnDocumentReady()
@@ -43,7 +43,7 @@ function NeedVsGreed:OnDocumentReady()
     Apollo.RegisterTimerHandler("WinnerCheckTimer", 	"OnOneSecTimer", self)
     Apollo.RegisterEventHandler("LootRollWon", 			"OnLootRollWon", self)
     Apollo.RegisterEventHandler("LootRollAllPassed", 	"OnLootRollAllPassed", self)
-	
+
 	Apollo.RegisterEventHandler("LootRollSelected", 	"OnLootRollSelected", self)
 	Apollo.RegisterEventHandler("LootRollPassed", 		"OnLootRollPassed", self)
 	Apollo.RegisterEventHandler("LootRoll", 			"OnLootRoll", self)
@@ -53,12 +53,12 @@ function NeedVsGreed:OnDocumentReady()
 	Apollo.CreateTimer("WinnerCheckTimer", 1.0, false)
 	Apollo.StopTimer("WinnerCheckTimer")
 	self.wndMain = nil
-	
+
 	self.bTimerRunning = false
 	self.tKnownLoot = nil
 	self.tLootRolls = nil
 	self.tMostRelevant = nil
-	
+
 	if GameLib.GetLootRolls() then
 		self:OnGroupLoot()
 	end
@@ -94,11 +94,11 @@ function NeedVsGreed:UpdateKnownLoot()
 	for idx, tCurrentElement in ipairs(self.tLootRolls) do
 		self.tKnownLoot[tCurrentElement.nLootId] = tCurrentElement
 	end
-	
+
 	if self.tMostRelevant then
 		self.tMostRelevant = self.tKnownLoot[self.tMostRelevant.nLootId]
 	end
-	
+
 	-- NOTE: self.tMostRelevant may have been set to nil above.
 	if not self.tMostRelevant then
 		for nLootId, tCurrentElement in pairs(self.tKnownLoot) do
@@ -151,6 +151,7 @@ function NeedVsGreed:DrawLoot(tCurrentElement, nItemsInQueue)
 	local tGlyphData = tCurrentElement.tSigilData
 	self.wndMain:FindChild("LootTitle"):SetText(itemCurrent:GetName())
 	self.wndMain:FindChild("LootTitle"):SetTextColor(ktEvalColors[itemCurrent:GetItemQuality()])
+	self.wndMain:FindChild("GiantItemIcon"):SetData(itemCurrent)
 	self.wndMain:FindChild("GiantItemIcon"):SetSprite(itemCurrent:GetIcon())
 	self:HelperBuildItemTooltip(self.wndMain:FindChild("GiantItemIcon"), itemCurrent, itemModData, tGlyphData)
 
@@ -164,10 +165,10 @@ function NeedVsGreed:DrawLoot(tCurrentElement, nItemsInQueue)
 	-- TODO Timelimit
 	local nTimeLeft = math.floor(tCurrentElement.nTimeLeft / 1000)
 	self.wndMain:FindChild("TimeLeftText"):Show(true)
-	
+
 	local nTimeLeftSecs = nTimeLeft % 60
 	local nTimeLeftMins = math.floor(nTimeLeft / 60)
-	
+
 	local strTimeLeft = tostring(nTimeLeftMins)
 	if nTimeLeft < 0 then
 		strTimeLeft = "0:00"
@@ -196,7 +197,7 @@ function NeedVsGreed:OnLootRollWon(itemLooted, strWinner, bNeed)
 	end
 
 	-- Example Message: Alvin used Greed Roll on Item Name for 45 (LootRoll).
-	Event_FireGenericEvent("GenericEvent_LootChannelMessage", String_GetWeaselString(Apollo.GetString("NeedVsGreed_ItemWon"), strWinner, itemLooted:GetName(), strNeedOrGreed))
+	Event_FireGenericEvent("GenericEvent_LootChannelMessageNeedVsGreed", String_GetWeaselString(Apollo.GetString("NeedVsGreed_ItemWon"), strWinner, itemLooted:GetName(), strNeedOrGreed), itemLooted)
 end
 
 function NeedVsGreed:OnLootRollSelected(nLootItem, strPlayer, bNeed)
@@ -205,7 +206,7 @@ function NeedVsGreed:OnLootRollSelected(nLootItem, strPlayer, bNeed)
 	if bNeed then
 		strNeedOrGreed = Apollo.GetString("NeedVsGreed_NeedRoll")
 	end
-	
+
 	-- Example Message: strPlayer has selected to bNeed for nLootItem
 	Event_FireGenericEvent("GenericEvent_LootChannelMessage", String_GetWeaselString(Apollo.GetString("NeedVsGreed_LootRollSelected"), strPlayer, strNeedOrGreed, nLootItem:GetName()))
 end
@@ -229,6 +230,12 @@ end
 -----------------------------------------------------------------------------------------------
 -- Buttons
 -----------------------------------------------------------------------------------------------
+
+function NeedVsGreed:OnGiantItemIconMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
 
 function NeedVsGreed:OnNeedBtn(wndHandler, wndControl)
 	GameLib.RollOnLoot(self.wndMain:GetData(), true)

@@ -52,6 +52,7 @@ function RealmSelect:OnLoad()
 
 	Apollo.RegisterEventHandler("RealmListChanged", "OnRealmListChanged", self)
 	Apollo.RegisterEventHandler("AnimationFinished", "OnAnimationFinished", self)
+	Apollo.RegisterEventHandler("RealmBack", "OnExitBtn", self)
 
 	Apollo.RegisterEventHandler("NetworkStatus", "OnNetworkStatus", self)
 	Apollo.RegisterTimerHandler("NetworkStatusTimer", "OnNetworkStatusTimer", self)

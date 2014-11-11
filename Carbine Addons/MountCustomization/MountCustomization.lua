@@ -54,9 +54,9 @@ function MountScreen:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-	
+
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
-	
+
 	Apollo.RegisterEventHandler("GenericEvent_InitializeMountsCustomization", "OnGenericEvent_InitializeMountsCustomization", self)
 	Apollo.RegisterEventHandler("GenericEvent_DestroyMountsCustomization", "OnGenericEvent_DestroyMountsCustomization", self)
 end
@@ -78,7 +78,7 @@ function MountScreen:OnGenericEvent_DestroyMountCustomization()
 	end
 end
 
-function MountScreen:OnGenericEvent_InitializeMountsCustomization(wndParent)
+function MountScreen:OnGenericEvent_InitializeMountsCustomization(wndParent, idMount)
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
 	end
@@ -104,6 +104,7 @@ function MountScreen:OnGenericEvent_InitializeMountsCustomization(wndParent)
 
 	-- Stable
 	local bFirstMountInList = nil
+	local wndSelected = nil
 	local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
 	for idx, tMountData in pairs(tMountList) do
 		if tMountData.bIsActive then
@@ -115,14 +116,27 @@ function MountScreen:OnGenericEvent_InitializeMountsCustomization(wndParent)
 
 			local tMountTierData = tMountData.tTiers[tMountData.nCurrentTier]
 			wndCurr:FindChild("MountItemActionBarBtn"):SetSprite(tMountTierData.splObject and tMountTierData.splObject:GetIcon() or "Icon_ItemArmorWaist_Unidentified_Buckle_0001")
-
 			if not bFirstMountInList then
 				bFirstMountInList = true
-				self:DrawNewMount(tMountData)
-				wndCurr:FindChild("MountItemMouseCatcherArt"):Show(true)
+				wndSelected = wndCurr
+			end
+			
+			if self.tLastSelectedData and tMountData.strName  == self.tLastSelectedData.strName then
+				wndSelected = wndCurr
+			end
+			
+			if idMount and tMountData.tTiers[1] and tMountData.tTiers[1].splObject:GetId() == idMount then
+				local wndMouseCatcher = wndCurr:FindChild("MountItemMouseCatcher")
+				self:OnMountItemClick(wndMouseCatcher, wndMouseCatcher)
 			end
 		end
 	end
+
+	if wndSelected then
+		self:DrawNewMount(wndSelected:FindChild("MountItemMouseCatcher"):GetData())
+		wndSelected:FindChild("MountItemMouseCatcherArt"):Show(true)
+	end
+	
 	self.wndMain:FindChild("StableList"):ArrangeChildrenTiles(0)
 	self.wndMain:FindChild("PortraitContainer"):SetText(#self.wndMain:FindChild("StableList"):GetChildren() == 0 and Apollo.GetString("MountScreen_NothingUnlocked") or "")
 end
@@ -214,7 +228,7 @@ function MountScreen:DrawNewMount(tMountData)
 			wndCurr:FindChild("CustomizeFlairBtn"):SetTooltip(tFlairData:GetTooltip())
 			--wndCurr:FindChild("CustomizeFlairBtn"):AttachWindow(wndCurr:FindChild("CustomizeFlairCheck"))
 			--wndCurr:FindChild("CustomizeFlairIcon"):SetSprite(tFlairData:GetIconPath())
-			
+
 			if eFlairType ~= PetCustomizationLib.PetFlairType_GroundMountSide then
 				wndCurr:FindChild("CustomizeFlairBtn"):SetText(tFlairData:GetName() or "")
 			else
@@ -253,6 +267,7 @@ function MountScreen:OnMountItemClick(wndHandler, wndControl) -- MountItemMouseC
 	end
 	wndHandler:FindChild("MountItemMouseCatcherArt"):Show(true)
 
+	self.tLastSelectedData = wndHandler:GetData()
 	self:DrawNewMount(wndHandler:GetData())
 end
 
@@ -276,7 +291,7 @@ function MountScreen:OnCustomizeFlairCheck(wndHandler, wndControl) -- CustomizeF
 			wndCurr:FindChild("CustomizeFlairBtn"):SetCheck(wndCurr:FindChild("CustomizeFlairBtn") == wndHandler)
 		end
 	end
-	
+
 	local nUnlockCount = objFlair:GetUnlockCount()
 	local nPrevUnlockCount = objPrevFlair and objPrevFlair:GetUnlockCount() or 0
 	if objFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and (nUnlockCount == 1 or nPrevUnlockCount == 1) then
@@ -294,7 +309,7 @@ function MountScreen:OnCustomizeFlairCheck(wndHandler, wndControl) -- CustomizeF
 					wndCustomizeBtn:Enable(false)
 					wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
 				end
-				
+
 				if nPrevUnlockCount == 1 and wndCustomizeBtn:GetData()[1] == objPrevFlair then
 					wndCustomizeBtn:Enable(true)
 				end

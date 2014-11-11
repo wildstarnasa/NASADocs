@@ -109,7 +109,7 @@ function Reputation:OnReputationChanged(tFaction)
 
 	if self.tStrToWndMapping[tFaction.strParent] then -- Find if the parent and it exists
 		for key, wndCurr in pairs(self.tStrToWndMapping[tFaction.strParent]:FindChild("ItemsContainer"):GetChildren()) do
-			if wndCurr:GetData() == string.lower(tFaction.nOrder .. tFaction.strName) then
+			if wndCurr:GetData() == Apollo.StringToLower(tFaction.nOrder .. tFaction.strName) then
 				self:BuildListItemProgress(wndCurr, tFaction)
 				return
 			end
@@ -219,7 +219,7 @@ function Reputation:BuildFaction(tFaction, wndParent)
 	end
 
 	-- This data is used for sorting (First by Order then by Name if there is a tie. Lua's "<" operator will handle this on string comparisons.)
-	wndCurr:SetData(string.lower(tFaction.nOrder .. tFaction.strName))
+	wndCurr:SetData(Apollo.StringToLower(tFaction.nOrder .. tFaction.strName))
 end
 
 function Reputation:BuildTopLevel(wndCurr, tFaction)

@@ -125,7 +125,7 @@ function WarpartyRegister:Validate()
 	self.wndRegister:Enable(bValid)
 
 	local nNameLength = string.len(self.tCreate.strName or "")
-	if nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
+	if nNameLength < 3 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
 		self.WndWarpartyNameLimit:SetTextColor(crGuildNameLengthError)
 	else
 		self.WndWarpartyNameLimit:SetTextColor(crGuildNameLengthGood)

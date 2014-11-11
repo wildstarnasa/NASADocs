@@ -44,7 +44,7 @@ function MarketplaceListings:OnDocumentReady()
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleMarketplaceListings", 	"OnToggle", self)
 	Apollo.RegisterEventHandler("ToggleAuctionList", 						"OnToggle", self)
-	
+
 	Apollo.RegisterEventHandler("OwnedItemAuctions", 						"OnOwnedItemAuctions", self)
 	Apollo.RegisterEventHandler("OwnedCommodityOrders", 					"OnOwnedCommodityOrders", self)
 	Apollo.RegisterEventHandler("CREDDExchangeInfoResults", 				"OnCREDDExchangeInfoResults", self)
@@ -70,7 +70,8 @@ function MarketplaceListings:OnDocumentReady()
 end
 
 function MarketplaceListings:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AuctionListings"), {"InterfaceMenu_ToggleMarketplaceListings", "", "Icon_Windows32_UI_CRB_InterfaceMenu_MarketplaceListings"})
+	local tData = { "InterfaceMenu_ToggleMarketplaceListings", "", "Icon_Windows32_UI_CRB_InterfaceMenu_MarketplaceListings" }
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_AuctionListings"), tData)
 end
 
 function MarketplaceListings:OnToggle()
@@ -79,13 +80,26 @@ function MarketplaceListings:OnToggle()
 		self.wndMain = nil
 	else
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceListingsForm", nil, self)
-		self.wndMain:SetSizingMinimum(400, 300)
+		self.wndMain:SetSizingMinimum(450, 300)
+		self.wndMain:SetSizingMaximum(450, 1000)
 		self.wndMain:Show(false, true)
-		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AuctionListings")})
+
+		self.wndCreddHeader = Apollo.LoadForm(self.xmlDoc, "HeaderItem", self.wndMain:FindChild("MainScroll"), self)
+		self.wndCreddHeader:FindChild("HeaderItemBtn"):SetCheck(true)
+
+		self.wndAuctionBuyHeader = Apollo.LoadForm(self.xmlDoc, "HeaderItem", self.wndMain:FindChild("MainScroll"), self)
+		self.wndAuctionBuyHeader:FindChild("HeaderItemBtn"):SetCheck(true)
+
+		self.wndAuctionSellHeader = Apollo.LoadForm(self.xmlDoc, "HeaderItem", self.wndMain:FindChild("MainScroll"), self)
+		self.wndAuctionSellHeader:FindChild("HeaderItemBtn"):SetCheck(true)
+
+		self.wndCommodityHeader = Apollo.LoadForm(self.xmlDoc, "HeaderItem", self.wndMain:FindChild("MainScroll"), self)
+		self.wndCommodityHeader:FindChild("HeaderItemBtn"):SetCheck(true)
 
 		self:RequestData()
 
 		Apollo.StartTimer("MarketplaceUpdateTimer")
+		Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AuctionListings"), nSaveVersion = 2 })
 	end
 end
 
@@ -104,7 +118,9 @@ function MarketplaceListings:RequestData()
 
 	self.wndMain:FindChild("MainScroll"):Show(false)
 	self.wndMain:FindChild("WaitScreen"):Show(true)
-	self.wndMain:FindChild("MainScroll"):DestroyChildren()
+	for idx, wndCurr in pairs({ self.wndCreddHeader, self.wndAuctionBuyHeader, self.wndAuctionSellHeader, self.wndCommodityHeader }) do
+		wndCurr:FindChild("HeaderItemList"):DestroyChildren()
+	end
 
 	MarketplaceLib.RequestOwnedCommodityOrders() -- Leads to OwnedCommodityOrders
 	MarketplaceLib.RequestOwnedItemAuctions() -- Leads to OwnedItemAuctions
@@ -118,7 +134,9 @@ function MarketplaceListings:RedrawData()
 
 	self.wndMain:FindChild("MainScroll"):Show(false)
 	self.wndMain:FindChild("WaitScreen"):Show(true)
-	self.wndMain:FindChild("MainScroll"):DestroyChildren()
+	for idx, wndCurr in pairs({ self.wndCreddHeader, self.wndAuctionBuyHeader, self.wndAuctionSellHeader, self.wndCommodityHeader }) do
+		wndCurr:FindChild("HeaderItemList"):DestroyChildren()
+	end
 
 	if self.tOrders ~= nil then
 		self:OnOwnedCommodityOrders(self.tOrders)
@@ -140,7 +158,7 @@ function MarketplaceListings:OnOwnedItemAuctions(tAuctions)
 
 	for nIdx, aucCurrent in pairs(tAuctions) do
 		if aucCurrent and ItemAuction.is(aucCurrent) then
-			self:BuildAuctionOrder(nIdx, aucCurrent)
+			self:BuildAuctionOrder(nIdx, aucCurrent, aucCurrent:IsOwned() and self.wndAuctionSellHeader:FindChild("HeaderItemList") or self.wndAuctionBuyHeader:FindChild("HeaderItemList"))
 		end
 	end
 
@@ -155,12 +173,11 @@ function MarketplaceListings:OnOwnedCommodityOrders(tOrders)
 	self.tOrders = tOrders
 
 	for nIdx, tCurrOrder in pairs(tOrders) do
-		self:BuildCommodityOrder(nIdx, tCurrOrder)
+		self:BuildCommodityOrder(nIdx, tCurrOrder, self.wndCommodityHeader:FindChild("HeaderItemList"))
 	end
 
 	self:SharedDrawMain()
 end
-
 
 function MarketplaceListings:OnCREDDExchangeInfoResults(arMarketStats, arOrders)
 	if not self.wndMain or not self.wndMain:IsValid() then
@@ -170,7 +187,7 @@ function MarketplaceListings:OnCREDDExchangeInfoResults(arMarketStats, arOrders)
 	self.tCreddList = arOrders
 
 	for nIdx, tCurrOrder in pairs(self.tCreddList) do
-		self:BuildCreddOrder(nIdx, tCurrOrder)
+		self:BuildCreddOrder(nIdx, tCurrOrder, self.wndCreddHeader:FindChild("HeaderItemList"))
 	end
 
 	self:SharedDrawMain()
@@ -182,17 +199,44 @@ function MarketplaceListings:SharedDrawMain()
 	self.wndMain:Show(true)
 	self.wndMain:FindChild("MainScroll"):Show(true)
 	self.wndMain:FindChild("WaitScreen"):Show(false)
+
+	-- Resizing
+	local tHeaders =
+	{
+		{ strTitle = "Marketplace_CreddLimit",		wnd = self.wndCreddHeader, 			nLimit = 0 }, -- No limit for CREDD
+		{ strTitle = "Marketplace_AuctionLimitBuy", wnd = self.wndAuctionBuyHeader, 	nLimit = 0 }, -- No limit for Auction Bids
+		{ strTitle = "Marketplace_AuctionLimit", 	wnd = self.wndAuctionSellHeader,	nLimit = MarketplaceLib.kMaxPlayerAuctions },
+		{ strTitle = "Marketplace_CommodityLimit", 	wnd = self.wndCommodityHeader, 		nLimit = MarketplaceLib.kMaxPlayerCommodityOrders },
+	}
+	for idx, tHeaderData in pairs(tHeaders) do
+		local wndCurr = tHeaderData.wnd
+		local nChildren = #wndCurr:FindChild("HeaderItemList"):GetChildren()
+		if nChildren == 0 then
+			wndCurr:Show(false)
+		else
+			local nHeight = wndCurr:FindChild("HeaderItemList"):ArrangeChildrenVert(0)
+			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
+			wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + (wndCurr:FindChild("HeaderItemBtn"):IsChecked() and nHeight or 0) + 41)
+			wndCurr:Show(true)
+		end
+		wndCurr:FindChild("HeaderItemBtn"):SetText(String_GetWeaselString(Apollo.GetString(tHeaderData.strTitle), nChildren, tHeaderData.nLimit))
+	end
+
 	self.wndMain:FindChild("MainScroll"):SetText(nNumChildren == 0 and Apollo.GetString("MarketplaceListings_NoActiveListings") or "")
-	self.wndMain:FindChild("MainScroll"):ArrangeChildrenVert(0, function(a,b) return a:GetName() > b:GetName() end)
+	self.wndMain:FindChild("MainScroll"):ArrangeChildrenVert(0)
+end
+
+function MarketplaceListings:OnHeaderItemToggle(wndHandler, wndControl)
+	self:SharedDrawMain()
 end
 
 -----------------------------------------------------------------------------------------------
 -- Item Drawing
 -----------------------------------------------------------------------------------------------
 
-function MarketplaceListings:BuildAuctionOrder(nIdx, aucCurrent)
+function MarketplaceListings:BuildAuctionOrder(nIdx, aucCurrent, wndParent)
 	local tItem = aucCurrent:GetItem()
-	local wndCurr = self:FactoryProduce(self.wndMain:FindChild("MainScroll"), "AuctionItem", aucCurrent)
+	local wndCurr = self:FactoryProduce(wndParent, "AuctionItem", aucCurrent)
 
 	local bIsOwnAuction = aucCurrent:IsOwned()
 	local nCount = aucCurrent:GetCount()
@@ -214,7 +258,7 @@ function MarketplaceListings:BuildAuctionOrder(nIdx, aucCurrent)
 		wndCurr:FindChild("ListExpiresIconGreen"):Show(true)
 	else
 		wndCurr:FindChild("AuctionTimeLeftText"):SetTextRaw(ktTimeRemaining[eTimeRemaining])
-		wndCurr:FindChild("AuctionTimeLeftText"):SetTextColor(ApolloColor.new("xkcdDullRed"))
+		wndCurr:FindChild("AuctionTimeLeftText"):SetTextColor(ApolloColor.new("xkcdReddish"))
 		wndCurr:FindChild("ListExpiresIconRed"):Show(true)
 		wndCurr:FindChild("ListExpiresIconGreen"):Show(false)
 	end
@@ -224,17 +268,22 @@ function MarketplaceListings:BuildAuctionOrder(nIdx, aucCurrent)
 	wndCurr:FindChild("AuctionCancelBtn"):Show(bIsOwnAuction)
 	wndCurr:FindChild("AuctionCancelBtnTooltipHack"):Show(bIsOwnAuction and nBidAmount ~= 0)
 	wndCurr:FindChild("AuctionPrice"):SetAmount(nBidAmount, true) -- 2nd arg is bInstant
-	wndCurr:FindChild("MinimumPrice"):SetAmount(nMinBidAmount, true) -- 2nd arg is bInstant
 	wndCurr:FindChild("BuyoutPrice"):SetAmount(nBuyoutAmount, true) -- 2nd arg is bInstant
+	wndCurr:FindChild("MinimumPrice"):SetAmount(nMinBidAmount, true) -- 2nd arg is bInstant
 	wndCurr:FindChild("AuctionBigIcon"):SetSprite(tItem:GetIcon())
 	wndCurr:FindChild("AuctionIconAmountText"):SetText(nCount == 1 and "" or nCount)
 	wndCurr:FindChild("AuctionItemName"):SetText(String_GetWeaselString(strPrefix, tItem:GetName()))
 	Tooltip.GetItemTooltipForm(self, wndCurr:FindChild("AuctionBigIcon"), tItem, {bPrimary = true, bSelling = false, itemCompare = tItem:GetEquippedItemForItemType()})
+
+	wndCurr:FindChild("AuctionItemName"):SetHeightToContentHeight()
+	local AuctionItemNameHeight = wndCurr:FindChild("AuctionItemName"):GetHeight()
+	local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
+	wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + AuctionItemNameHeight + 80) -- 80 is bottom content
 end
 
-function MarketplaceListings:BuildCommodityOrder(nIdx, aucCurrent)
+function MarketplaceListings:BuildCommodityOrder(nIdx, aucCurrent, wndParent)
 	local tItem = aucCurrent:GetItem()
-	local wndCurr = self:FactoryProduce(self.wndMain:FindChild("MainScroll"), "CommodityItem", aucCurrent)
+	local wndCurr = self:FactoryProduce(wndParent, "CommodityItem", aucCurrent)
 
 	-- Tint a different color if Buy
 	local nCount = aucCurrent:GetCount()
@@ -248,10 +297,18 @@ function MarketplaceListings:BuildCommodityOrder(nIdx, aucCurrent)
 	wndCurr:FindChild("CommodityPrice"):SetAmount(aucCurrent:GetPricePerUnit():GetAmount(), true) -- 2nd arg is bInstant
 	wndCurr:FindChild("CommodityTimeLeftText"):SetText(self:HelperFormatTimeString(aucCurrent:GetExpirationTime()))
 	Tooltip.GetItemTooltipForm(self, wndCurr:FindChild("CommodityBigIcon"), tItem, {bPrimary = true, bSelling = false, itemCompare = tItem:GetEquippedItemForItemType()})
+
+	wndCurr:FindChild("CommodityItemName"):SetHeightToContentHeight()
+	local CommodityItemNameHeight = wndCurr:FindChild("CommodityItemName"):GetHeight()
+	local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
+	if wndCurr:FindChild("CommodityItemName"):GetHeight() > 25 then
+		wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + CommodityItemNameHeight + 50) -- 50 is bottom content
+	end
+
 end
 
-function MarketplaceListings:BuildCreddOrder(nIdx, aucCurrent)
-	local wndCurr = self:FactoryProduce(self.wndMain:FindChild("MainScroll"), "CreddItem", aucCurrent)
+function MarketplaceListings:BuildCreddOrder(nIdx, aucCurrent, wndParent)
+	local wndCurr = self:FactoryProduce(wndParent, "CreddItem", aucCurrent)
 	wndCurr:FindChild("CreddCancelBtn"):SetData(aucCurrent)
 	wndCurr:FindChild("CreddLabel"):SetText(aucCurrent:IsBuy() and Apollo.GetString("MarketplaceCredd_BuyLabel") or Apollo.GetString("MarketplaceCredd_SellLabel"))
 	wndCurr:FindChild("CreddPrice"):SetAmount(aucCurrent:GetPrice(), true) -- 2nd arg is bInstant
@@ -269,15 +326,15 @@ function MarketplaceListings:OnCancelBtn(wndHandler, wndControl)
 	end
 	self.wndMain:FindChild("ConfirmBlocker"):Show(true)
 	self.wndConfirmDelete:Invoke()
-	
+
 	self.wndConfirmDelete:FindChild("CancelCommodityConfirmBtn"):Show(wndHandler:GetName() == "CommodityCancelBtn")
 	self.wndConfirmDelete:FindChild("CancelAuctionConfirmBtn"):Show(wndHandler:GetName() == "AuctionCancelBtn")
 	self.wndConfirmDelete:FindChild("CancelCREDDListingBtn"):Show(wndHandler:GetName() == "CreddCancelBtn")
-	
+
 	if wndHandler:GetName() == "CommodityCancelBtn" then
 		self.wndConfirmDelete:FindChild("CancelCommodityConfirmBtn"):SetData(aucCurrent)
 		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("MarketplaceListings_CancelCommodityConfirm"))
-		
+
 	elseif wndHandler:GetName() == "AuctionCancelBtn" then
 		self.wndConfirmDelete:FindChild("CancelAuctionConfirmBtn"):SetData(aucCurrent)
 		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("MarketplaceListings_CancelAuctionConfirm"))
@@ -449,16 +506,12 @@ function MarketplaceListings:OnItemAuctionResult(eAuctionResult, aucAdded)
 end
 
 function MarketplaceListings:OnItemListingClose(wndHandler, wndControl)
-	
 	if self.wndConfirmDelete and self.wndConfirmDelete:IsValid() then
 		self.wndConfirmDelete:Destroy()
 	end
-	
+
 	self.wndMain:FindChild("ConfirmBlocker"):Show(false)
-
 end
-
-
 
 -----------------------------------------------------------------------------------------------
 -- Helpers

@@ -4,10 +4,7 @@ local ItemWindowSubclassRegistrarInst = {}
 function ItemWindowSubclass:new(o)
     o = o or {}
     setmetatable(o, self)
-    self.__index = self 
-
-    -- initialize variables here
-
+    self.__index = self
     return o
 end
 
@@ -28,19 +25,19 @@ end
 
 function ItemWindowSubclass:OnShowing(wnd, fShown)
 end
- 
+
 function ItemWindowSubclass:OnHiding(wnd, fShown)
 end
 
 function ItemWindowSubclass:OnShowComplete(wnd)
 end
- 
+
 function ItemWindowSubclass:OnHideComplete(wnd)
 end
- 
+
 function ItemWindowSubclass:SetItem(itemCurr)
-    if not itemCurr or (not Item.isInstance(itemCurr)  and not Item.isData(itemCurr)) then
-	    self:SetItemData(#ItemWindowSubclassRegistrarInst.arQualityColors + 1, "")
+    if not itemCurr or (not Item.isInstance(itemCurr) and not Item.isData(itemCurr)) then
+	    self:SetItemData(itemCurr, #ItemWindowSubclassRegistrarInst.arQualityColors + 1, "")
 	    return
 	end
 	if itemCurr then
@@ -48,51 +45,50 @@ function ItemWindowSubclass:SetItem(itemCurr)
 		if eQuality == 0 then
 			eQuality = itemCurr:GetItemQuality()
 		end
-		self:SetItemData(eQuality, itemCurr:GetIcon())
+		self:SetItemData(itemCurr, eQuality, itemCurr:GetIcon())
 	end
 end
 
-function ItemWindowSubclass:SetItemData(eQuality, strIcon)
+function ItemWindowSubclass:SetItemData(itemCurr, eQuality, strIcon)
 	self.eQuality = eQuality
 	self.strIcon = strIcon
+	self.wnd:SetData(itemCurr) -- Can be nil
 	self.wnd:SetSprite(self.strIcon)
 	if self.tPixieOverlay == nil then
-		self.tPixieOverlay = {
-			strSprite = "UI_BK3_ItemQualityWhite",
+		self.tPixieOverlay =
+		{
+			strSprite = ItemWindowSubclassRegistrarInst.arQualitySprites[math.max(1, math.min(eQuality, #ItemWindowSubclassRegistrarInst.arQualitySprites))],
 			loc = {fPoints = {0, 0, 1, 1}, nOffsets = {0, 0, 0, 0}},
-			cr = ItemWindowSubclassRegistrarInst.arQualityColors[math.max(1, math.min(eQuality, #ItemWindowSubclassRegistrarInst.arQualityColors))]
+			--cr = ItemWindowSubclassRegistrarInst.arQualityColors[math.max(1, math.min(eQuality, #ItemWindowSubclassRegistrarInst.arQualityColors))]
 		}
 		self.tPixieOverlay.id = self.wnd:AddPixie(self.tPixieOverlay)
 	else
-		self.tPixieOverlay.cr = ItemWindowSubclassRegistrarInst.arQualityColors[math.max(1, math.min(eQuality, #ItemWindowSubclassRegistrarInst.arQualityColors))]
+		self.tPixieOverlay.strSprite = ItemWindowSubclassRegistrarInst.arQualitySprites[math.max(1, math.min(eQuality, #ItemWindowSubclassRegistrarInst.arQualitySprites))]
+		--self.tPixieOverlay.cr = ItemWindowSubclassRegistrarInst.arQualityColors[math.max(1, math.min(eQuality, #ItemWindowSubclassRegistrarInst.arQualityColors))]
 		self.wnd:UpdatePixie(self.tPixieOverlay.id, self.tPixieOverlay)
 	end
-
 end
 
------------------------------------------------------------------------------------------------
--- ItemWindowSubclassRegistrar Instance
------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------
--- ItemWindowSubclassRegistrarModule Definition
------------------------------------------------------------------------------------------------
-local ItemWindowSubclassRegistrar = {} 
- 
------------------------------------------------------------------------------------------------
--- Constants
------------------------------------------------------------------------------------------------
--- e.g. local kiExampleVariableMax = 999
- 
------------------------------------------------------------------------------------------------
--- Initialization
------------------------------------------------------------------------------------------------
+function ItemWindowSubclass:OnMouseButtonUp(wndHandler, wndControl, eMouseButton)
+	if wndHandler and wndHandler == wndControl then
+		local itemArg = self.wnd:GetData()
+		local bCorrectKey = eMouseButton == GameLib.CodeEnumInputMouse.Right and (Apollo.IsShiftKeyDown() or Apollo.IsControlKeyDown() or Apollo.IsAltKeyDown())
+		if bCorrectKey and itemArg and (Item.isInstance(itemArg) or Item.isData(itemCurr)) then
+			Event_FireGenericEvent("GenericEvent_ContextMenuItem", itemArg)
+			return
+		end
+	end
+end
+
+local ItemWindowSubclassRegistrar = {}
+
 function ItemWindowSubclassRegistrar:new(o)
     o = o or {}
     setmetatable(o, self)
-    self.__index = self 
+    self.__index = self
 
-    -- initialize variables here
-	o.arQualityColors = {
+	o.arQualityColors =
+	{
 		ApolloColor.new("ItemQuality_Inferior"),
 		ApolloColor.new("ItemQuality_Average"),
 		ApolloColor.new("ItemQuality_Good"),
@@ -103,35 +99,42 @@ function ItemWindowSubclassRegistrar:new(o)
 		ApolloColor.new("00000000")
 	}
 
+	o.arQualitySprites =
+	{
+		"UI_RarityBorder_Grey",
+		"UI_RarityBorder_White",
+		"UI_RarityBorder_Green",
+		"UI_RarityBorder_Blue",
+		"UI_RarityBorder_Purple",
+		"UI_RarityBorder_Orange",
+		"UI_RarityBorder_Pink",
+		"UI_RarityBorder_White",
+	}
+
     return o
 end
 
 function ItemWindowSubclassRegistrar:Init()
     Apollo.RegisterAddon(self)
-    Apollo.RegisterWindowSubclass("ItemWindowSubclass", self, 
-		{
-			-- {strEvent="WindowEvent", strFunction="OnWindowEvent"},
-		})
-
+	local tEventHandlers =
+	{
+		{strEvent = "MouseButtonUp", strFunction = "OnMouseButtonUp"},
+	}
+	Apollo.RegisterWindowSubclass("ItemWindowSubclass", self, tEventHandlers)
 end
-
 
 -----------------------------------------------------------------------------------------------
 -- ItemWindowSubclassRegistrar:OnLoad
 -----------------------------------------------------------------------------------------------
+
 function ItemWindowSubclassRegistrar:OnLoad()
-    -- Register handlers for events, slash commands and timer, etc.
-    -- e.g. Apollo.RegisterEventHandler("KeyDown", "OnKeyDown", self)
-	if Apollo.IsWindowSubclassRegistered("ItemWindowSubclass") then
-	end
+
 end
 
 function ItemWindowSubclassRegistrar:SubclassWindow(wndNew, strSubclass, strParam)
 	local subclass = ItemWindowSubclass:new({wnd = wndNew})
 	wndNew:SetWindowSubclass(subclass, strParam)
 end
-
-
 
 ItemWindowSubclassRegistrarInst = ItemWindowSubclassRegistrar:new()
 ItemWindowSubclassRegistrarInst:Init()

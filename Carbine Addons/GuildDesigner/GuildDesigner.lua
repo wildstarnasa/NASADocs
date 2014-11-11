@@ -74,8 +74,6 @@ function GuildDesigner:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildInfluenceAndMoney", 	"OnGuildInfluenceAndMoney", self)
 	Apollo.RegisterEventHandler("GuildRegistrarClose",		"OnCloseVendorWindow", self)
 	
-	Apollo.RegisterTimerHandler("GuildDesigner_ModifySuccessfulTimer",	"OnGuildDesigner_ModifySuccessfulTimer", self)
-	Apollo.RegisterTimerHandler("GuildDesigner_ModifyErrorTimer", 		"OnGuildDesigner_ModifyErrorTimer", self)	
 	--Apollo.RegisterEventHandler("GuildRegistrarOpen", 	"OnGuildDesignerOn", self)	
  	--Apollo.RegisterEventHandler("ToggleGuildDesigner", 	"OnGuildDesignerOn", self) -- TODO: War Parties NYI  
     
@@ -174,7 +172,9 @@ function GuildDesigner:FormatNoGuild()
 	self.wndRegisterBtn:Enable(false)
 	self.wndAlert:Show(true)
 	self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("GuildDesigner_NoGuild"))
+	self.wndAlert:FindChild("MessageAlertText"):SetTextColor(ApolloColor.new("xkcdLightOrange"))
 	self.wndAlert:FindChild("MessageBodyText"):SetText(Apollo.GetString("GuildDesginer_MustBeInGuild"))
+
 end
 
 function GuildDesigner:ResetOptions()
@@ -447,6 +447,7 @@ end
 
 function GuildDesigner:OnResetAllBtn(wndHandler, wndControl)
 	self:SetDefaults()
+	self.wndRegisterBtn:Enable(false)
 end
 
 -- FAILURE ONLY
@@ -464,7 +465,7 @@ function GuildDesigner:OnGuildResultInterceptResponse( guildCurr, eGuildType, eR
 	self.bShowingResult = true
 	
 	self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("GuildDesigner_Whoops"))
-	Apollo.CreateTimer("GuildDesigner_ModifyErrorTimer", 3.00, false)			
+	self.timerModifyError = ApolloTimer.Create(3.00, false, "OnGuildDesigner_ModifyErrorTimer", self)				
 
 	self.wndAlert:FindChild("MessageBodyText"):SetText(strAlertMessage)
 	self.wndAlert:Show(true)
@@ -479,7 +480,8 @@ function GuildDesigner:OnGuildDesignUpdated(guildUpdated)
 	self.bShowingResult = true
 	
 	self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("GuildDesigner_Success"))
-	Apollo.CreateTimer("GuildDesigner_ModifySuccessfulTimer", 3.00, false)
+	self.wndAlert:FindChild("MessageAlertText"):SetTextColor(ApolloColor.new("UI_TextHoloTitle"))
+	self.timerModifySuccess = ApolloTimer.Create(3.00, false, "OnGuildDesigner_ModifySuccessfulTimer", self)
 
 	self.wndAlert:FindChild("MessageBodyText"):SetText(Apollo.GetString("GuildDesigner_Updated"))
 	self.wndAlert:Show(true)

@@ -78,7 +78,7 @@ function TaxiMap:OnDocumentReady()
 end
 
 function TaxiMap:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Taxi_Vendor")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Taxi_Vendor"), nSaveVersion = 2})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -273,13 +273,13 @@ function TaxiMap:OnTaxiMapButtonDown(wndHandler, wndControl, eButton, nX, nY, bD
 		if tTaxi.bUnlocked then
 			if self.unitTaxi:GetFlightPathToPoint(tTaxi.idNode) then
 				self.unitTaxi:PurchaseFlightPath(tTaxi.idNode)
-			else
+			elseif not tTaxi.bOrigin then
 				self.wndMessage:FindChild("MessageText"):SetText(Apollo.GetString("TaxiMap_CantRoute"))
 				self.wndMessage:Show(true)
 				Apollo.StopTimer("Taxi_MessageDisplayTimer")
 				Apollo.CreateTimer("Taxi_MessageDisplayTimer", 4.000, false)
 			end
-		else
+		elseif not tTaxi.bOrigin then
 			self.wndMessage:FindChild("MessageText"):SetText(Apollo.GetString("TaxiMap_NotUnlocked"))
 			self.wndMessage:Show(true)
 			Apollo.StopTimer("Taxi_MessageDisplayTimer")

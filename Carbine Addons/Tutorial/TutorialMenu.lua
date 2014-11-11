@@ -113,6 +113,7 @@ function TutorialMenu:OnTutorialMenuOn()
 	self:UpdateVisibilityFlags()
 	self.wndResetBlocker:Show(false)
 	self.wndMain:Show(true) -- show the window
+	self.wndMain:ToFront()
 end
 
 function TutorialMenu:BuildFullList()
@@ -291,6 +292,7 @@ function TutorialMenu:OnTutorialItemBtn(wndHandler, wndControl)
 	if wndHandler ~= wndControl then return false end
 	local nTutorialId = wndControl:GetData()
 	local tChosen = nil
+	wndHandler:GetParent()
 
 	if nTutorialId ~= nil then
 		for idx, entry in pairs(self.tTutorialBtns) do
@@ -338,8 +340,9 @@ function TutorialMenu:OnViewBtn(wndHandler, wndControl)
 	self.wndSearch:FindChild("SearchTopLeftInputBox"):ClearFocus()
 	local tEntry = wndControl:GetData()
 	if tEntry == nil then return end
-	
-	Event_FireGenericEvent("ShowTutorial", tEntry.id, true)
+	tEntry.wnd:FindChild("ReadTutorialNew"):Show(false)
+	tEntry.wnd:FindChild("ReadTutorialCheck"):Show(true)
+	Event_FireGenericEvent("ForceTutorial", tEntry.id, true)
 end
 
 function TutorialMenu:OnMiddleLevelViewBtn(wndHandler, wndControl)
@@ -401,11 +404,10 @@ function TutorialMenu:OnCancelResetBtn(wndHandler, wndControl)
 end
 
 function TutorialMenu:OnSearchTopLeftInputBoxChanged(wndHandler, wndControl)
-	local strInput = string.lower(wndHandler:GetText())
+	local strInput = Apollo.StringToLower(wndHandler:GetText())
 	local bInputExists = string.len(strInput) > 0
 
 	self.wndSearch:FindChild("SearchTopLeftClearBtn"):Show(bInputExists)
-	self.wndSearch:FindChild("SearchOverlayBlocker"):Show(not bInputExists)
 	
 	if not bInputExists then
 		-- TODO: get current selection, reset the UI to that if it exists (probably store it on the right scroll container)
@@ -417,7 +419,7 @@ function TutorialMenu:OnSearchTopLeftInputBoxChanged(wndHandler, wndControl)
 	local tCategories = {}
 	self.tFilteredList = {}
 	for idx, entry in pairs(self.tFullList) do
-		local strTitle = string.lower(entry.title)
+		local strTitle = Apollo.StringToLower(entry.title)
 		if string.find(strTitle, strInput) ~= nil then
 			table.insert(self.tFilteredList, entry)
 

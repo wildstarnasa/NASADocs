@@ -21,16 +21,22 @@ local knNewMissionRunnerTimeout = 30 --the number of pulses of the above timer b
 
 local karMissionTypeToFormattedString =
 {
-	[""]													= "", -- Valid error state
-	[Apollo.GetString("SoldierMission_HoldoutKey")] 		= "SoldierMission_Holdout",
-	[Apollo.GetString("SoldierMission_AssassinationKey")] 	= "SoldierMission_Assassination",
-	[Apollo.GetString("SoldierMission_DemolitionKey")] 		= "SoldierMission_Demolition",
-	[Apollo.GetString("SoldierMission_RescueOpsKey")] 		= "SoldierMission_RescueOps",
-	[Apollo.GetString("SoldierMission_RescueOpKey")] 		= "SoldierMission_RescueOp",
-	[Apollo.GetString("SoldierMission_SwatKey")] 			= "SoldierMission_Swat",
-	[Apollo.GetString("SoldierMission_DefendKey")] 			= "SoldierMission_Defend",
-	[Apollo.GetString("SoldierMission_FirstStrikeKey")] 	= "SoldierMission_FirstStrike",
-	[Apollo.GetString("SoldierMission_SecurityKey")] 		= "SoldierMission_Security",
+	[PathMission.PathMissionType_Soldier_Assassinate] 	= "SoldierMission_Assassination",
+	[PathMission.PathMissionType_Soldier_Demolition] 	= "SoldierMission_Demolition",
+	[PathMission.PathMissionType_Soldier_Rescue] 		= "SoldierMission_RescueOps",
+	[PathMission.PathMissionType_Soldier_SWAT] 			= "SoldierMission_Swat",
+}
+
+local karHoldoutTypeToFormattedString =
+{
+	[PathMission.PathSoldierEventType_Holdout] 				= "SoldierMission_Holdout",
+	[PathMission.PathSoldierEventType_Defend] 				= "SoldierMission_Defend",
+	[PathMission.PathSoldierEventType_Timed] 				= "SoldierMission_Holdout",
+	[PathMission.PathSoldierEventType_TimedDefend] 			= "SoldierMission_Holdout",
+	[PathMission.PathSoldierEventType_WhackAMole] 			= "SoldierMission_FirstStrike",
+	[PathMission.PathSoldierEventType_WhackAMoleTimed]		= "SoldierMission_FirstStrike",
+	[PathMission.PathSoldierEventType_StopTheThieves] 		= "SoldierMission_Security",
+	[PathMission.PathSoldierEventType_StopTheThievesTimed] 	= "SoldierMission_Security",
 }
 
 local knSaveVersion = 1
@@ -75,9 +81,10 @@ function PathSoldierMain:OnRestore(eType, tSavedData)
 end
 
 function PathSoldierMain:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+
 	Apollo.RegisterEventHandler("Datachron_LoadPathSoldierContent", "OnLoadFromDatachron", self)
 	Apollo.RegisterEventHandler("Datachron_LoadQuestHoldoutContent", "OnLoadFromDatachron", self)
 end
@@ -362,8 +369,9 @@ function PathSoldierMain:UpdateListitem(wndListItem, pmCurrMission)
 	end
 
 	local eMissionType = pmCurrMission:GetType()
-	local nColonPosition = string.find(pmCurrMission:GetName(), ": ") -- TODO HACK!
-	local strMissionType = Apollo.GetString(karMissionTypeToFormattedString[nColonPosition and string.sub(pmCurrMission:GetName(), 0, nColonPosition) or ""]) or ""
+	local nColonPosition = string.find(pmCurrMission:GetName(), ": ") or -1 -- TODO HACK!
+	local strMissionTypeKey = eMissionType ~= PathMission.PathMissionType_Soldier_Holdout and karMissionTypeToFormattedString[eMissionType] or karHoldoutTypeToFormattedString[pmCurrMission:GetSubType()]
+	local strMissionType = strMissionTypeKey and Apollo.GetString(strMissionTypeKey) or ""
 	local strItemSprite = self:HelperComputeIconPath(eMissionType, pmCurrMission:GetSubType())
 	local strListItemName = string.len(strMissionType) > 0 and string.sub(pmCurrMission:GetName(), nColonPosition + 2) or pmCurrMission:GetName()
 	wndListItem:FindChild("ListItemBigBtn"):SetData(pmCurrMission)
@@ -400,8 +408,9 @@ function PathSoldierMain:UpdateListitem(wndListItem, pmCurrMission)
 		local strColor = nCompleted == 0 and "ff2f94ac" or "ff31fcf6"
 		strHoldoutParameter = string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s<T TextColor=\"ff2f94ac\">/%s</T></T>", strColor, nCompleted, nNeeded)
 	end
-	wndListItem:FindChild("ListItemSubtitle"):SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">(%s) %s</P>", strHoldoutParameter, strMissionType))
-
+	
+	strMissionType = strHoldoutParameter == "" and strMissionType or string.format("(%s) %s", strHoldoutParameter, strMissionType)
+	wndListItem:FindChild("ListItemSubtitle"):SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">%s</P>", strMissionType))	
 	-- Resize
 	local nWidth, nHeight = wndListItem:FindChild("ListItemName"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wndListItem:GetAnchorOffsets()
@@ -436,7 +445,8 @@ function PathSoldierMain:DrawExtraHoldoutListItemData(wndListItem, pmCurrMission
 	elseif eEventType == PathMission.PathSoldierEventType_Holdout 
 		or eEventType == PathMission.PathSoldierEventType_Defend 
 		or eEventType == PathMission.PathSoldierEventType_TowerDefense 
-		or eEventType == PathMission.PathSoldierEventType_StopTheThieves then
+		or eEventType == PathMission.PathSoldierEventType_StopTheThieves 
+		or eEventType == PathMission.PathSoldierEventType_WhackAMole then
 		if eEventState == PathMission.PlayerPathSoldierEventMode_Active then
 			strHoldoutParameter = (seEvent:GetWaveCount() - seEvent:GetWavesReleased()) .. "x"
 		else

@@ -40,6 +40,16 @@ local ktInviteClassIcons =
 	[GameLib.CodeEnumClass.Spellslinger]	 	= "Icon_Windows_UI_CRB_Spellslinger"
 }
 
+local ktIdToClassTooltip =
+{
+	[GameLib.CodeEnumClass.Esper] 			= "CRB_Esper",
+	[GameLib.CodeEnumClass.Medic] 			= "CRB_Medic",
+	[GameLib.CodeEnumClass.Stalker] 		= "ClassStalker",
+	[GameLib.CodeEnumClass.Warrior] 		= "CRB_Warrior",
+	[GameLib.CodeEnumClass.Engineer] 		= "CRB_Engineer",
+	[GameLib.CodeEnumClass.Spellslinger] 	= "CRB_Spellslinger",
+}
+
 local karMessageIconString =
 {
 	"MessageIcon_Sent",
@@ -109,6 +119,7 @@ local ktInviteResultStrings =
 	[GroupLib.Result.Accepted] 				= {strMsg = Apollo.GetString("Group_InviteAccepted"), 			strIcon = ktMessageIcon.Accept},
 	[GroupLib.Result.NotAcceptingRequests] 	= {strMsg = Apollo.GetString("Group_NotAcceptingRequests"), 	strIcon = ktMessageIcon.Deny},
 	[GroupLib.Result.Busy]				 	= {strMsg = Apollo.GetString("Group_Busy"), 					strIcon = ktMessageIcon.Deny},
+	[GroupLib.Result.PrivilegeRestricted] 	= {strMsg = Apollo.GetString("Group_Invite_PrivilegeRestricted"),strIcon = ktMessageIcon.Deny},
 }
 
 local ktJoinRequestResultStrings =
@@ -132,6 +143,7 @@ local ktJoinRequestResultStrings =
 	[GroupLib.Result.SentToLeader]		 	= {strMsg = Apollo.GetString("Group_SentToLeader"), 				strIcon = ktMessageIcon.Sent},
 	[GroupLib.Result.LeaderOffline]		 	= {strMsg = Apollo.GetString("Group_LeaderOffline"), 				strIcon = ktMessageIcon.Deny},
 	[GroupLib.Result.WrongFaction]		 	= {strMsg = Apollo.GetString("GroupWrongFaction"), 					strIcon = ktMessageIcon.Deny},
+	[GroupLib.Result.PrivilegeRestricted]	= {strMsg = Apollo.GetString("Group_Join_PrivilegeRestricted"), 	strIcon = ktMessageIcon.Deny},
 }
 
 local ktReferralStrings =
@@ -294,9 +306,12 @@ function GroupDisplay:OnLoad()
 end
 
 function GroupDisplay:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
+
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+
 	Apollo.RegisterEventHandler("Group_Invited",			"OnGroupInvited", self)				-- ( name )
 	Apollo.RegisterEventHandler("Group_Invite_Result",		"OnGroupInviteResult", self)		-- ( name, result )
 	Apollo.RegisterEventHandler("Group_JoinRequest",		"OnGroupJoinRequest", self)			-- ( name )
@@ -416,6 +431,10 @@ function GroupDisplay:OnDocumentReady()
 	end
 end
 
+function GroupDisplay:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndGroupHud, strName = Apollo.GetString("Group_CurrentGroup")})
+end
+
 function GroupDisplay:GroupDisplayOptions_TEMP()
 	-- TEMP HACK: Try again in case this loads first
 	Event_FireGenericEvent("GenericEvent_InitializeGroupLeaderOptions", self.wndGroupHud:FindChild("GroupControlsBtn"))
@@ -430,19 +449,23 @@ function GroupDisplay:LoadPortrait(idx)
 
 	self.tGroupWndPortraits[idx] =
 	{
-		idx 				= idx,
-		wndHud 				= wndHud,
-		wndLeader 			= wndHud:FindChild("Leader"),
-		wndName 			= wndHud:FindChild("Name"),
-		wndClass 			= wndHud:FindChild("Class"),
-		wndHealth 			= wndHud:FindChild("Health"),
-		wndShields 			= wndHud:FindChild("Shields"),
-		wndMaxShields 		= wndHud:FindChild("MaxShields"),
-		wndMaxAbsorb 		= wndHud:FindChild("MaxAbsorbBar"),
-		wndLowHealthFlash	= wndHud:FindChild("LowHealthFlash"),
-		wndPathIcon 		= wndHud:FindChild("PathIcon"),
-		wndOffline			= wndHud:FindChild("Offline"),
-		wndMark				= wndHud:FindChild("Mark")
+		idx 						= idx,
+		wndHud 						= wndHud,
+		wndLeader 					= wndHud:FindChild("Leader"),
+		wndName 					= wndHud:FindChild("Name"),
+		wndClass 					= wndHud:FindChild("Class"),
+		wndHealth 					= wndHud:FindChild("Health"),
+		wndShields 					= wndHud:FindChild("Shields"),
+		wndMaxShields 				= wndHud:FindChild("MaxShields"),
+		wndMaxAbsorb 				= wndHud:FindChild("MaxAbsorbBar"),
+		wndLowHealthFlash			= wndHud:FindChild("LowHealthFlash"),
+		wndPathIcon 				= wndHud:FindChild("PathIcon"),
+		wndOffline					= wndHud:FindChild("Offline"),
+		wndDeadIndicator			= wndHud:FindChild("DeadIndicator"),
+		wndGroupPortraitHealthBG	= wndHud:FindChild("GroupPortraitHealthBG"),
+		wndGroupDisabledFrame		= wndHud:FindChild("GroupDisabledFrame"),
+		wndGroupPortraitBtn			= wndHud:FindChild("GroupPortraitBtn"),
+		wndMark						= wndHud:FindChild("Mark")
 	}
 
 	self.tGroupWndPortraits[idx].wndHud:Show(false)
@@ -459,7 +482,7 @@ function GroupDisplay:LoadPortrait(idx)
 	end
 
 	self.tGroupWndPortraits[idx].wndHud:SetData(idx)
-	self.tGroupWndPortraits[idx].wndHud:FindChild("GroupPortraitBtn"):SetData(idx)
+	self.tGroupWndPortraits[idx].wndGroupPortraitBtn:SetData(idx)
 
 	self:HelperResizeGroupContents()
 end
@@ -467,6 +490,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Recieved an Invitation
 ---------------------------------------------------------------------------------------------------
+
 function GroupDisplay:OnGroupInvited(strInviterName) -- builds the invite when I recieve it
 	ChatSystemLib.PostOnChannel(self.eChatChannel, String_GetWeaselString(Apollo.GetString("GroupInvite"), strInviterName), "")
 	self.strInviterName = strInviterName
@@ -520,9 +544,6 @@ end
 
 function GroupDisplay:OnGroupJoinRequest(strInviterName) -- builds the invite when I recieve it
 	-- undone need token passed as context
-
-	--Apollo.DPF("GroupDisplay:OnGroupJoinRequest")
-
 	-- a join message means that someone has requested to join our existing party
 	local str = String_GetWeaselString(Apollo.GetString("GroupJoinRequest"), strInviterName)
 	self.wndRequest:FindChild("Title"):SetText(str)
@@ -532,9 +553,6 @@ end
 
 function GroupDisplay:OnGroupReferral(nMemberIndex, strTarget) -- builds the invite when I receive it
 	-- undone need token passed as context
-
-	--Apollo.DPF("GroupDisplay:OnGroupReferral")
-
 	-- a join message means that someone has requested to join our existing party
 	local str = String_GetWeaselString(Apollo.GetString("GroupReferral"), strTarget)
 	self.wndRequest:FindChild("Title"):SetText(str)
@@ -543,7 +561,6 @@ function GroupDisplay:OnGroupReferral(nMemberIndex, strTarget) -- builds the inv
 end
 
 function GroupDisplay:OnInviteTimer()
-
 	self.fInviteTimerDelta = self.fInviteTimerDelta + 1
 	if self.fInviteTimerDelta <= 31 then
 		local strTime = string.format("%d:%02d", math.floor(self.fInviteTimerDelta / 60), math.ceil(30 - (self.fInviteTimerDelta % 60)))
@@ -567,6 +584,14 @@ function GroupDisplay:OnGroupInviteDialogDecline()
 	self.fInviteTimerStartTime = nil
 	Apollo.StopTimer("InviteTimer")
 	Sound.Play(Sound.PlayUISocialPartyInviteDecline)
+end
+
+function GroupDisplay:OnReportGroupInviteSpamBtn()
+	Event_FireGenericEvent("GenericEvent_ReportPlayerGroupInvite", 30 - self.fInviteTimerDelta) -- Order is important
+	-- GroupLib.DeclineInvite() -- Do NOT decline the invite. The report system needs it still valid for full details.
+	self.wndGroupInviteDialog:Show(false)
+	self.fInviteTimerStartTime = nil
+	Apollo.StopTimer("InviteTimer")
 end
 
 function GroupDisplay:OnRaidInfoResponse(arRaidInfo)
@@ -822,12 +847,18 @@ function GroupDisplay:DrawMemberPortrait(tPortrait, tMemberInfo)
 	if tPortrait == nil or tMemberInfo == nil then
 		return
 	end
+
 	local unitMember = GroupLib.GetUnitForGroupMember(tPortrait.idx)
+	local tMemberVisibility = GroupLib.GetMemberVisibility(tPortrait.idx)
+	local bRightPhase = tPortrait.idx == 1 or (tMemberVisibility.bCanISee and tMemberVisibility.bCanSeeMe)
+	local bOutOfRange = not unitMember
 
     local strName = tMemberInfo.strCharacterName
 	if not tMemberInfo.bIsOnline then
         strName = String_GetWeaselString(Apollo.GetString("Group_OfflineMember"), strName)
-	elseif not unitMember then
+	elseif not bRightPhase then
+		strName = String_GetWeaselString(Apollo.GetString("Group_WrongPhaseMember"), strName)
+	elseif bOutOfRange then
 		strName = String_GetWeaselString(Apollo.GetString("Group_OutOfRangeMember"), strName)
     end
 
@@ -839,29 +870,35 @@ function GroupDisplay:DrawMemberPortrait(tPortrait, tMemberInfo)
 		strName = String_GetWeaselString(Apollo.GetString("Group_DPSTag"), strName)
 	end
 
-	self.tGroupWndPortraits[tPortrait.idx].wndHud:FindChild("GroupPortraitBtn"):SetData({ tPortrait.idx, tMemberInfo.strCharacterName })
+	local bDead = tMemberInfo.nHealth == 0 and tMemberInfo.nHealthMax ~= 0
+	if bDead then
+		tPortrait.wndName:SetTextColor(ApolloColor.new("xkcdReddish"))
+	elseif bOutOfRange or not tMemberInfo.bIsOnline then
+		tPortrait.wndName:SetTextColor(ApolloColor.new("UI_WindowTitleGray"))
+	else
+		tPortrait.wndName:SetTextColor(ApolloColor.new("ff7effb8"))
+	end
+
+	self.tGroupWndPortraits[tPortrait.idx].wndGroupPortraitBtn:SetData({ tPortrait.idx, tMemberInfo.strCharacterName })
 	tPortrait.wndName:SetText(strName)
 	tPortrait.wndLeader:Show(tMemberInfo.bIsLeader)
 	tPortrait.wndClass:Show(tMemberInfo.bIsOnline)
 	tPortrait.wndPathIcon:Show(tMemberInfo.bIsOnline)
 	tPortrait.wndOffline:Show(not tMemberInfo.bIsOnline)
-	tPortrait.wndHud:FindChild("DeadIndicator"):Show(bDead)
-	tPortrait.wndHud:FindChild("GroupPortraitHealthBG"):Show(tMemberInfo.nHealth > 0)
-	tPortrait.wndHud:FindChild("GroupDisabledFrame"):Show(false)
-	tPortrait.wndHud:FindChild("GroupPortraitBtn"):Show(true)
+	tPortrait.wndLowHealthFlash:Show(tMemberInfo.bIsOnline)
+	tPortrait.wndDeadIndicator:Show(bDead)
+	tPortrait.wndGroupPortraitHealthBG:Show(tMemberInfo.nHealth > 0)
+	tPortrait.wndGroupDisabledFrame:Show(bOutOfRange)
+	tPortrait.wndGroupPortraitBtn:ChangeArt(bOutOfRange and "CRB_DEMO_WrapperSprites:btnDemo_CharInvisible" or "CRB_GroupFrame:sprGroup_Btn_Holo")
 
 	local unitTarget = GameLib.GetTargetUnit()
-	tPortrait.wndHud:FindChild("GroupPortraitBtn"):SetCheck(unitTarget and unitTarget == unitMember) --tPortrait.unitMember
+	tPortrait.wndGroupPortraitBtn:SetCheck(unitTarget and unitTarget == unitMember) --tPortrait.unitMember
 
-	local bDead = tMemberInfo.nHealth == 0 and tMemberInfo.nHealthMax ~= 0
-	if bDead or not tMemberInfo.bIsOnline then
-		tPortrait.wndName:SetTextColor(ApolloColor.new("ffb80000"))
-	else
-		tPortrait.wndName:SetTextColor(ApolloColor.new("ff7effb8"))
-	end
 	tPortrait.wndHud:FindChild("GroupPortraitArrangeVert"):ArrangeChildrenVert(1)
 
-	self:HelperUpdateHealth(tPortrait, tMemberInfo)
+	if tMemberInfo.nHealth > 0 then
+		self:HelperUpdateHealth(tPortrait, tMemberInfo)
+	end
 
 	-- Set the Path Icon
 	local strPathSprite = ""
@@ -870,11 +907,14 @@ function GroupDisplay:DrawMemberPortrait(tPortrait, tMemberInfo)
 	end
 	tPortrait.wndPathIcon:SetSprite(strPathSprite)
 
+	local nLevel = tMemberInfo.nEffectiveLevel > 0 and tMemberInfo.nEffectiveLevel or tMemberInfo.nLevel
+	local strClass = Apollo.GetString(ktIdToClassTooltip[tMemberInfo.eClassId])
 	local strClassSprite = ""
 	if ktInviteClassIcons[tMemberInfo.eClassId] then
 		strClassSprite = ktInviteClassIcons[tMemberInfo.eClassId]
 	end
 	tPortrait.wndClass:SetSprite(strClassSprite)
+	tPortrait.wndClass:SetTooltip(String_GetWeaselString(Apollo.GetString("CRB_LevelCLass"), nLevel, strClass))
 
 	tPortrait.wndMark:Show(tMemberInfo.nMarkerId ~= 0)
 	if tMemberInfo.nMarkerId ~= 0 then

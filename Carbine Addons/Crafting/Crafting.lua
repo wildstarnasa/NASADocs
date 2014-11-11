@@ -46,21 +46,23 @@ function Crafting:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-
-	Apollo.RegisterEventHandler("WindowManagementReady", 								"OnWindowManagementReady", self)
+	
+	--Apollo.RegisterEventHandler("WindowManagementReady", 						"OnWindowManagementReady", self) -- Temporarily disabled
 
 	Apollo.RegisterEventHandler("GenericEvent_CraftingSummaryIsFinished", 				"OnCloseBtn", self)
 	Apollo.RegisterEventHandler("GenericEvent_CraftingResume_CloseCraftingWindows",		"ExitAndReset", self)
 	Apollo.RegisterEventHandler("GenericEvent_BotchCraft", 								"ExitAndReset", self)
+	Apollo.RegisterEventHandler("GenericEvent_StopCircuitCraft",						"ExitAndReset", self)
 	Apollo.RegisterEventHandler("GenericEvent_StartCircuitCraft",						"OnGenericEvent_StartCircuitCraft", self)
 	Apollo.RegisterEventHandler("CraftingInterrupted",									"OnCraftingInterrupted", self)
 
-	Apollo.RegisterTimerHandler("Crafting_TimerCraftingStationCheck", 					"OnCrafting_TimerCraftingStationCheck", self)
-	Apollo.CreateTimer("Crafting_TimerCraftingStationCheck", 1, true)
+	Apollo.RegisterEventHandler("P2PTradeInvite", 										"OnP2PTradeExitAndReset", self)
+	Apollo.RegisterEventHandler("P2PTradeWithTarget", 									"OnP2PTradeExitAndReset", self)
 
-	Apollo.RegisterTimerHandler("CircuitCrafting_CraftBtnTimer", 						"OnCircuitCrafting_CraftBtnTimer", self)
-	Apollo.CreateTimer("CircuitCrafting_CraftBtnTimer", 3.25, false)
-	Apollo.StopTimer("CircuitCrafting_CraftBtnTimer")
+	self.timerCraftingSation = ApolloTimer.Create(1.0, true, "OnCrafting_TimerCraftingStationCheck", self)
+
+	self.timerBtn = ApolloTimer.Create(3.25, false, "OnCircuitCrafting_CraftBtnTimer", self)
+	self.timerBtn:Stop()
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CraftingForm", nil, self)
 	self.wndMain:Show(false, true)
@@ -74,7 +76,7 @@ function Crafting:OnDocumentReady()
 end
 
 function Crafting:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("DialogResponse_CraftingStation")})
+	--Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("DialogResponse_CraftingStation")})
 end
 
 function Crafting:OnCrafting_TimerCraftingStationCheck() -- Hackish: These are async from the rest of the UI (and definitely can't handle data being set)
@@ -118,33 +120,34 @@ function Crafting:OnGenericEvent_StartCircuitCraft(idSchematic)
 		-- Materials
 		self.wndMain:FindChild("NoMaterialsBlocker"):FindChild("NoMaterialsList"):DestroyChildren()
 		for idx, tData in pairs(tSchematicInfo.tMaterials) do
-			if tData.nAmount > tData.itemMaterial:GetBackpackCount() then
+			local nOwnedCount = tData.itemMaterial:GetBackpackCount() + tData.itemMaterial:GetBankCount()
+			if tData.nAmount > nOwnedCount then
 				bHasMaterials = false
 			end
 
 			local wndCurr = Apollo.LoadForm(self.xmlDoc, "RawMaterialsItem", self.wndMain:FindChild("NoMaterialsBlocker"):FindChild("NoMaterialsList"), self)
 			wndCurr:FindChild("RawMaterialsIcon"):SetSprite(tData.itemMaterial:GetIcon())
-			wndCurr:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), tData.itemMaterial:GetBackpackCount(), tData.nAmount))
-			wndCurr:FindChild("RawMaterialsNotEnough"):Show(tData.nAmount > tData.itemMaterial:GetBackpackCount())
+			wndCurr:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), nOwnedCount, tData.nAmount))
+			wndCurr:FindChild("RawMaterialsNotEnough"):Show(tData.nAmount > nOwnedCount)
 			Tooltip.GetItemTooltipForm(self, wndCurr, tData.itemMaterial, {bSelling = false})
 		end
 
 		-- Fake Material
 		local tAvailableCores = CraftingLib.GetAvailablePowerCores(idSchematic)
 		if tAvailableCores then -- Some crafts won't have power cores
-			local nBackpackCount = 0
+			local nOwnedCount = 0
 			for idx, tMaterial in pairs(tAvailableCores) do
-				nBackpackCount = nBackpackCount + tMaterial:GetBackpackCount()
+				nOwnedCount = nOwnedCount + tMaterial:GetBackpackCount() + tMaterial:GetBankCount()
 			end
 
-			if nBackpackCount < 1 then
+			if nOwnedCount < 1 then
 				bHasMaterials = false
 			end
 
 			local wndCurr = Apollo.LoadForm(self.xmlDoc, "RawMaterialsItem", self.wndMain:FindChild("NoMaterialsBlocker"):FindChild("NoMaterialsList"), self)
-			wndCurr:FindChild("RawMaterialsIcon"):SetSprite("ClientSprites:Icon_ItemMisc_UI_Item_Crafting_PowerCore_Green")
-			wndCurr:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_OutOfOne"), nBackpackCount))
-			wndCurr:FindChild("RawMaterialsNotEnough"):Show(nBackpackCount < 1)
+			wndCurr:FindChild("RawMaterialsIcon"):SetSprite("Icon_CraftingUI_Item_Crafting_PowerCore_Green")
+			wndCurr:FindChild("RawMaterialsIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_OutOfOne"), nOwnedCount))
+			wndCurr:FindChild("RawMaterialsNotEnough"):Show(nOwnedCount < 1)
 
 			local strTooltip = Apollo.GetString("CBCrafting_PowerCoreHelperTooltip")
 			if tSchematicInfo and tSchematicInfo.eTier and karPowerCoreTierToString[tSchematicInfo.eTier] then
@@ -219,12 +222,18 @@ function Crafting:OnCraftBtnClicked(wndHandler, wndControl) -- CraftButton, data
 		Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("PostCraftBlocker"):FindChild("CraftingSummaryContainer"), tCraftInfo.itemPreview)
 		self.wndMain:FindChild("PostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(true)
 		self.wndMain:FindChild("PostCraftBlocker"):Show(true)
-		Apollo.StartTimer("CircuitCrafting_CraftBtnTimer")
+		self.timerBtn:Start()
+
+		-- TODO Quick hack to remove tutorial arrows
+		local wndTutorialArrow = self.wndMain:FindChild("SocketsLayer"):FindChild("Tutorial_SmallRightArrow") -- Unoptimized, can be anywhere
+		if wndTutorialArrow then
+			wndTutorialArrow:Destroy()
+		end
 	end
 end
 
 function Crafting:OnCraftingInterrupted()
-	Apollo.StopTimer("CircuitCrafting_CraftBtnTimer")
+	self.timerBtn:Stop()
 	self.wndMain:FindChild("PostCraftBlocker"):Show(false)
 	self.wndMain:FindChild("PostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(false)
 end
@@ -241,13 +250,16 @@ function Crafting:OnCloseBtn(wndHandler, wndControl)
 		return
 	end
 
-	self:ExitAndReset()
-
-	local tCurrentCraft = CraftingLib.GetCurrentCraft()
-	if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
-		Event_FireGenericEvent("GenericEvent_LootChannelMessage", Apollo.GetString("CoordCrafting_CraftingInterrupted"))
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+		local tCurrentCraft = CraftingLib.GetCurrentCraft()
+		if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
+			Event_FireGenericEvent("GenericEvent_LootChannelMessage", Apollo.GetString("CoordCrafting_CraftingInterrupted"))
+		end
+		
+		Event_FireGenericEvent("AlwaysShowTradeskills")
 	end
-	Event_FireGenericEvent("AlwaysShowTradeskills")
+
+	self:ExitAndReset()
 end
 
 function Crafting:ExitAndReset() -- Botch Craft calls this directly
@@ -255,12 +267,19 @@ function Crafting:ExitAndReset() -- Botch Craft calls this directly
 
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:FindChild("PostCraftBlocker"):Show(false)
-		self.wndMain:Close()
+		self.wndMain:Close() -- Leads to OnCloseBtn
 	end
 
 	if self.luaSchematic then
 		self.luaSchematic:delete()
 		self.luaSchematic = nil
+	end
+end
+
+function Crafting:OnP2PTradeExitAndReset()
+	local tCurrentCraft = CraftingLib.GetCurrentCraft()
+	if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 and self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+		self:ExitAndReset()
 	end
 end
 

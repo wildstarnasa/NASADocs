@@ -40,11 +40,11 @@ end
 
 function RaidFrameLeaderOptions:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("RaidFrameLeaderOptions.xml")
-	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
+	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
 function RaidFrameLeaderOptions:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 	Apollo.RegisterEventHandler("GenericEvent_Raid_ToggleLeaderOptions", 	"Initialize", self)
@@ -58,6 +58,7 @@ end
 function RaidFrameLeaderOptions:Initialize(bShow)
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 	end
 
 	if not bShow then
@@ -65,11 +66,9 @@ function RaidFrameLeaderOptions:Initialize(bShow)
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "RaidFrameLeaderOptionsForm", nil, self)
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Options")})
-	
 	self.wndMain:SetSizingMinimum(self.wndMain:GetWidth(), self.wndMain:GetHeight())
 	self.wndMain:SetSizingMaximum(self.wndMain:GetWidth(), 1000)
-	
+
 	Apollo.StartTimer("RaidBuildTimer")
 	self:BuildList()
 end
@@ -78,6 +77,7 @@ function RaidFrameLeaderOptions:BuildList()
 	if not GroupLib.InRaid() then
 		if self.wndMain and self.wndMain:IsValid() then
 			self.wndMain:Destroy()
+			self.wndMain = nil
 		end
 		return
 	end
@@ -238,6 +238,7 @@ end
 function RaidFrameLeaderOptions:OnOptionsCloseBtn() -- Also OnSetRaidLeaderConfirmBtn
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
+		self.wndMain = nil
 		Event_FireGenericEvent("GenericEvent_Raid_UncheckLeaderOptions")
 	end
 	Apollo.StopTimer("RaidBuildTimer")

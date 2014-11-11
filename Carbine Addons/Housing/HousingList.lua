@@ -49,6 +49,8 @@ end
 -----------------------------------------------------------------------------------------------
 function HousingList:OnLoad()
     -- Register events
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+	
 	Apollo.RegisterEventHandler("HousingButtonList", 				"OnHousingButtonList", self)
 	Apollo.RegisterEventHandler("HousingButtonRemodel", 			"OnHousingButtonRemodel", self)
 	Apollo.RegisterEventHandler("HousingButtonLandscape", 			"OnHousingButtonLandscape", self)
@@ -77,6 +79,10 @@ function HousingList:OnLoad()
 	HousingLib.RefreshUI()
 end
 
+function HousingList:OnWindowManagementReady()
+	local strName = string.format("%s: %s", Apollo.GetString("CRB_Housing"), Apollo.GetString("HousingList_Header"))
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndDecorList, strName = strName})
+end
 
 -----------------------------------------------------------------------------------------------
 -- HousingList Functions
@@ -97,21 +103,21 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingList:OnHousingButtonCrate()
-	if self.wndDecorList:IsVisible() then
+	if self.wndDecorList:IsVisible() or (self.wndCrateUnderPopup ~= nil and self.wndCrateUnderPopup:IsVisible()) then
 		self:OnCloseHousingListWindow()
 	end
 end	
 
 ---------------------------------------------------------------------------------------------------
 function HousingList:OnHousingButtonRemodel()
-	if self.wndDecorList:IsVisible() then
+	if self.wndDecorList:IsVisible() or (self.wndCrateUnderPopup ~= nil and self.wndCrateUnderPopup:IsVisible()) then
 		self:OnCloseHousingListWindow()
 	end
 end	
 
 ---------------------------------------------------------------------------------------------------
 function HousingList:OnHousingButtonLandscape()
-	if self.wndDecorList:IsVisible() then
+	if self.wndDecorList:IsVisible() or (self.wndCrateUnderPopup ~= nil and self.wndCrateUnderPopup:IsVisible()) then
 		self:OnCloseHousingListWindow()
 	end
 end	
@@ -163,6 +169,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingList:OnCancelCrateAll(wndControl, wndHandler)
+    self.wndDecorList:Show(true)
     self:ResetPopups()
 end
 
@@ -221,9 +228,11 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingList:OnRecallAllBtn(wndControl, wndHandler)
+    self:ResetPopups()
     self.wndCrateUnderPopup = Apollo.LoadForm(self.xmlDoc, "PopupCrateUnder", nil, self)
     self.wndCrateUnderPopup:Show(true)
     self.wndCrateUnderPopup:ToFront()
+    self.wndDecorList:Show(false)
 end
 
 ---------------------------------------------------------------------------------------------------

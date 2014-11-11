@@ -10,7 +10,7 @@ require "DialogResponse"
 require "GameLib"
 
 local StoryPanel = {}
-local kcrAlertColor = "UI_BtnTextRedNormal"
+local kcrAlertColor = "UI_WindowTitleYellow"
 local kcrInfoColor = "UI_TextHoloTitle"
 local kstrAlertFont = "CRB_HeaderMedium"
 local kstrInfoFont = "CRB_HeaderMedium"
@@ -82,7 +82,7 @@ function StoryPanel:OnStoryShow(eWindowType, tLines, nDisplayLength)
 			if strCurr then
 				bTextFound = true
 				if eWindowType == GameLib.CodeEnumStoryPanel.Urgent then
-					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrAlertFont, kcrAlertColor, strCurr)
+					strAMLText = string.format("%s<P Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrAlertFont, kcrAlertColor, strCurr)
 				elseif eWindowType == GameLib.CodeEnumStoryPanel.Informational then
 					strAMLText = string.format("%s<P Align=\"Center\" Font=\"%s\" TextColor=\"%s\">%s</P>", strAMLText, kstrInfoFont, kcrInfoColor, strCurr)
 				else

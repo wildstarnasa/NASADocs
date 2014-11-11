@@ -1,0 +1,4 @@
+<Addon Name="LootConfirm" Version="1">
+    <Script Name="LootConfirm.lua" />
+    <Form Name="LootConfirm.xml" />
+</Addon>

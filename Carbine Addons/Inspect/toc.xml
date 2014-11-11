@@ -1,4 +1,0 @@
-<Addon Name="Inspect" Version="1">
-    <Script Name="Inspect.lua" />
-    <Form Name="Inspect.xml" />
-</Addon>

@@ -21,6 +21,7 @@ require "CombatFloater"
 require "Unit"
 require "Challenges"
 require "ChallengesLib"
+require "Sound"
 
 local FloatTextPanel = {}
 local kstrSubPanelFont = "CRB_InterfaceLarge_B"
@@ -55,17 +56,12 @@ function FloatTextPanel:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-
     return o
 end
 
 function FloatTextPanel:Init()
     Apollo.RegisterAddon(self)
 end
-
------------------------------------------------------------------------------------------------
--- FloatTextPanel OnLoad
------------------------------------------------------------------------------------------------
 
 function FloatTextPanel:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("FloatTextPanel.xml")
@@ -76,25 +72,30 @@ function FloatTextPanel:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
+
 	Apollo.RegisterEventHandler("Death", "OnDeath", self)
 	Apollo.RegisterEventHandler("QuestInit", "OnQuestInit", self)
 	Apollo.RegisterEventHandler("QuestFloater", "OnQuestNotice", self)
 	Apollo.RegisterEventHandler("SettlerHubReward", "OnSettlerHubReward", self)
 	Apollo.RegisterEventHandler("EpisodeStateChanged", "OnEpisodeStateChanged", self)
 	Apollo.RegisterEventHandler("AchievementUpdated", "OnAchievementUpdated", self)
+	Apollo.RegisterEventHandler("ProfessionAchievementUpdated", "OnAchievementUpdated", self)
 	Apollo.RegisterEventHandler("AlertAchievement", "OnAchievementNotice", self)
 	Apollo.RegisterEventHandler("AlertTitle", "OnTitletNotice", self)
 	Apollo.RegisterEventHandler("PlayerPathMissionUnlocked", "OnPlayerPathMissionUnlocked", self)
 	Apollo.RegisterEventHandler("PlayerPathMissionUpdate", "OnPlayerPathUpdated", self) -- specific mission update, send the mission
+	Apollo.RegisterEventHandler("ChangeWorld", "OnChangeWorld", self)
+	Apollo.RegisterEventHandler("ToggleFramerate", "OnToggleFramerate", self)
+	Apollo.RegisterEventHandler("HintArrowDistanceUpdate", "OnHintArrowDistanceUpdate", self)
+	Apollo.RegisterEventHandler("RealmBroadcastTierHigh", "OnRealmBroadcastTierHigh", self)
+
 	Apollo.RegisterTimerHandler("FirstMessageDelaySub", "OnFirstMessageDelaySub", self)
 	Apollo.RegisterTimerHandler("DelayAlertMain", "OnDelayAlertMain", self)
 	Apollo.RegisterTimerHandler("DelayAlertMainAnim", "OnDelayAlertMainAnim", self)
 	Apollo.RegisterTimerHandler("MessageTimerMain", "OnMessageTimerMain", self)
 	Apollo.RegisterTimerHandler("MessageTimerMainDelay", "OnMessageTimerMainDelay", self)
 	Apollo.RegisterTimerHandler("DelayExpiredMain", "OnDelayExpiredMain", self)
-	Apollo.RegisterEventHandler("ToggleFramerate", "OnToggleFramerate", self)
 	Apollo.RegisterTimerHandler("FramerateRefreshTimer", "OnFramerateRefreshTimer", self)
-	Apollo.RegisterEventHandler("HintArrowDistanceUpdate", "OnHintArrowDistanceUpdate", self)
 
     -- load our forms
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "FloaterPanel", nil, self)
@@ -234,7 +235,13 @@ function FloatTextPanel:OnAchievementUpdated(achUpdated)
 end
 
 function FloatTextPanel:OnAchievementOpenBtn(wndHandler, wndControl)
-	Event_FireGenericEvent("FloatTextPanel_ToggleAchievementWindow", wndHandler:GetData())
+	local achData = wndHandler:GetData()
+	local tTradeSkillLayout = achData and achData:GetTradeskillLayout()
+	if not tTradeSkillLayout then --send to progress log
+		Event_FireGenericEvent("FloatTextPanel_ToggleAchievementWindow", achData)
+	elseif tTradeSkillLayout then --Send to tradeskill tree
+		Event_FireGenericEvent("FloatTextPanel_ToggleTechTreeWindow", nil, achData)
+	end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -371,11 +378,32 @@ function FloatTextPanel:OnHintArrowDistanceUpdate(fDistance)
 	end
 end
 
+function FloatTextPanel:OnChangeWorld()
+	if self.wndHintArrowDistance and self.wndHintArrowDistance:IsValid() then
+		self.wndHintArrowDistance:Show(false)
+	end
+end
+
 function FloatTextPanel:ClearFieldsMain() --clear everything
 	for i = 1, #self.tMainWindow do
 		self.tMainWindow[i]:FindChild("Text"):SetText("")
 		self.tMainWindow[i]:Show(false)
 	end
+end
+
+function FloatTextPanel:OnRealmBroadcastTierHigh(strMessage)
+	-- We allow multiple windows
+	local wndBroadcast = Apollo.LoadForm("FloatTextPanel.xml", "RealmBroadcastHigh", nil, self)
+	wndBroadcast:FindChild("RealmBroadcastClose"):SetData(wndBroadcast)
+	wndBroadcast:FindChild("RealmBroadcastText"):SetText(strMessage)
+	wndBroadcast:Invoke()
+	Sound.Play(Sound.PlayUIMemoryWin)
+end
+
+function FloatTextPanel:OnRealmBroadcastClose(wndHandler, wndControl)
+	local wndParent = wndHandler:GetData()
+	wndParent:Destroy()
+	wndParent = nil
 end
 
 -----------------------------------------------------------------------------------------------
@@ -517,7 +545,7 @@ function FloatTextPanel:PathUpdateMessageSettler(mission) -- uses a ML window
 end
 
 function FloatTextPanel:PathUpdateMessageScientist(mission) -- uses a ML window
-	
+
 	local strMissionTitle = mission:GetName()
 	local nNumNeeded = mission:GetNumNeeded()	-- a percent out of 100
 	local nNumCompleted = mission:GetNumCompleted()	-- a percent out of 100

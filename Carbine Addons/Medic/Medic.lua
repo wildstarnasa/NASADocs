@@ -62,8 +62,7 @@ function Medic:OnCharacterCreated()
 	Apollo.RegisterEventHandler("VarChange_FrameCount", "OnFrame", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "MedicResourceForm", g_wndActionBarResources, self)
-    self.wndMain:Show(false)
-
+    
 	local strResource = string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", Apollo.GetString("CRB_MedicResource"))
 	self.wndMain:FindChild("ResourceContainer1"):SetTooltip(strResource)
 	self.wndMain:FindChild("ResourceContainer2"):SetTooltip(strResource)
@@ -98,10 +97,6 @@ function Medic:OnFrame()
 		return
 	end
 
-	if not self.wndMain:IsVisible() then
-		self.wndMain:Show(true)
-	end
-
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect() -- legacy code
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop - 15, true)
 
@@ -121,20 +116,6 @@ function Medic:OnFrame()
 
 	local strMana = String_GetWeaselString(Apollo.GetString("Medic_FocusTooltip"), nManaCurrent, nManaMax)
 	self.wndMain:FindChild("ManaProgressBar"):SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", strMana))
-
-	--Toggle Visibility based on ui preference
-	local unitPlayer = GameLib.GetPlayerUnit()
-	local nVisibility = Apollo.GetConsoleVariable("hud.ResourceBarDisplay")
-
-	if nVisibility == 2 then --always off
-		self.wndMain:Show(false)
-	elseif nVisibility == 3 then --on in combat
-		self.wndMain:Show(unitPlayer:IsInCombat())
-	elseif nVisibility == 4 then --on out of combat
-		self.wndMain:Show(not unitPlayer:IsInCombat())
-	else
-		self.wndMain:Show(true)
-	end
 end
 
 function Medic:DrawCores(unitPlayer)

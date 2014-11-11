@@ -56,8 +56,8 @@ function MatchMaker:new(o)
 	o.fDuelWarning		= 0
 	--o.myTeam = 0
 	--o.myWarparty = 0
-	o.eSelectedTab 		= MatchingGame.MatchType.RatedBattleground
-	o.eQueuedTab		= MatchingGame.MatchType.RatedBattleground
+	o.eSelectedTab 		= MatchingGame.MatchType.Battleground
+	o.eQueuedTab		= MatchingGame.MatchType.Battleground
 	--o.matchQueued		= nil
 
 	o.matchesSelected 	= {}
@@ -157,7 +157,6 @@ function MatchMaker:OnDocumentReady()
     self.wndMain 					= Apollo.LoadForm(self.xmlDoc, "MatchMakerFrame", nil, self)
 	self.wndModeList 				= self.wndMain:FindChild("ModeToggleList")
 	self.wndModeListToggle 			= self.wndMain:FindChild("ModeToggle")
-
 
 	self.wndModeListToggle:AttachWindow(self.wndModeList)
 
@@ -377,6 +376,12 @@ function MatchMaker:OnMatchMakerOn()
 				self.eSelectedTab = ktEventTypeToMatchType[eType]
 			end
 		end
+		
+		-- Public event types don't know if they're in rated or unrated matches.
+		-- Check GameLib for a rated match and change the selected tab accordingly.
+		if GameLib.InRatedPvpMatch then
+			self.eSelectedTab = MatchingGame.MatchType.Battleground and MatchingGame.MatchType.RatedBattleground or MatchingGame.MatchType.RatedArena
+		end
 	end
 
 	local tGames = MatchingGame.GetAvailableMatchingGames(self.eSelectedTab)
@@ -390,40 +395,40 @@ function MatchMaker:OnMatchMakerOn()
 	if self.eSelectedTab == MatchingGame.MatchType.Battleground then
 		local strMode = Apollo.GetString("MatchMaker_PracticeGrounds")
 		self.wndModeListToggle:SetText(strMode)
-		self.wndModeList:FindChild("BattlegroundBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("BattlegroundBtn"))
 		self:HelperConfigureListAndRealmSelect()
 		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_AvailablePrepend"), strMode))
 	elseif self.eSelectedTab == MatchingGame.MatchType.Arena then
 		self.wndModeListToggle:SetText(Apollo.GetString("MatchMaker_Arenas"))
-		self.wndModeList:FindChild("ArenaBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("ArenaBtn"))
 		self:HelperConfigureListAndTeams(self.tArenaTeams)
 		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_AvailableArena")))
 	elseif self.eSelectedTab == MatchingGame.MatchType.Dungeon then
 		local strMode = Apollo.GetString("CRB_Dungeons")
 		self.wndModeListToggle:SetText(strMode)
-		self.wndModeList:FindChild("DungeonBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("DungeonBtn"))
 		self:HelperConfigureListAndRole()
 		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_AvailablePrepend"), strMode))
 	elseif self.eSelectedTab == MatchingGame.MatchType.Adventure then
 		local strMode = Apollo.GetString("MatchMaker_Adventures")
 		self.wndModeListToggle:SetText(strMode)
-		self.wndModeList:FindChild("AdventureBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("AdventureBtn"))
 		self:HelperConfigureListAndRole()
 		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_CurrentPrepend"), strMode))
 	elseif self.eSelectedTab == MatchingGame.MatchType.Warplot then
 		self.wndModeListToggle:SetText(Apollo.GetString("MatchMaker_Warplots"))
-		self.wndModeList:FindChild("WarplotsBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("WarplotsBtn"))
 		self:HelperConfigureListAndTeams(self.tWarparty)
 		self.wndListParent:FindChild("HeaderLabel"):SetText(Apollo.GetString("MatchMaker_AvailableWarplots"))
 	elseif self.eSelectedTab == MatchingGame.MatchType.RatedBattleground then
 		local strMode = Apollo.GetString("CRB_Battlegrounds")
 		self.wndModeListToggle:SetText(strMode)
-		self.wndModeList:FindChild("RatedBattlegroundBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("RatedBattlegroundBtn"))
 		self:HelperConfigureListAndRating()
 		self.wndListParent:FindChild("HeaderLabel"):SetText(Apollo.GetString("MatchMaker_AvailableBGs"))
 	elseif self.eSelectedTab == MatchingGame.MatchType.OpenArena then
 		self.wndModeListToggle:SetText(Apollo.GetString("MatchMaker_OpenArenas"))
-		self.wndModeList:FindChild("OpenArenaBtn"):SetCheck(true)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("OpenArenaBtn"))
 		self:HelperConfigureListAndRealmSelect()
 		self.wndListParent:FindChild("HeaderLabel"):SetText(Apollo.GetString("MatchMaker_AvailableOpenArenas"))
 	end
@@ -453,13 +458,19 @@ function MatchMaker:OnMatchMakerOn()
 		end
 	end
 
+	local nNumberOfGames = #tGames
 	for idx, matchGame in ipairs(tGames) do
-		local wndEntry = Apollo.LoadForm(self.xmlDoc, "GameEntry", self.wndList, self)
-		--wndEntry:FindChild("MatchingGameSelectBtn"):SetText("  " .. matchGame:GetName())
-		wndEntry:FindChild("MatchingGameLabel"):SetText(matchGame:GetName())
-		wndEntry:FindChild("MatchingGameSelectBtn"):SetData(matchGame)
-		wndEntry:FindChild("MatchingGameSelectBtn"):SetTooltip(matchGame:GetDescription())
-		wndEntry:FindChild("EntryInfoBtn"):SetData(matchGame:GetDescription())
+		local bIsRandom = matchGame:IsRandom()
+		--random counts as one entry so if greater than 2
+		if not bIsRandom or (bIsRandom and nNumberOfGames > 2) then
+			local wndEntry = Apollo.LoadForm(self.xmlDoc, "GameEntry", self.wndList, self)
+			--wndEntry:FindChild("MatchingGameSelectBtn"):SetText("  " .. matchGame:GetName())
+			wndEntry:FindChild("MatchingGameLabel"):SetText(matchGame:GetName())
+			wndEntry:FindChild("MatchingGameSelectBtn"):SetData(matchGame)
+			wndEntry:FindChild("MatchingGameSelectBtn"):SetTooltip(matchGame:GetDescription())
+			wndEntry:FindChild("EntryInfoBtn"):SetData(matchGame:GetDescription())
+		end
+		
 	end
 
 	self:RefreshStatus()
@@ -524,9 +535,7 @@ function MatchMaker:HelperConfigureListAndTeams(tTeam)
 	self.wndRole:Show(false)
 	self.wndRealmFilterContainer:Show(false)
 	self.wndMyRating:Show(false)
-
-	self.wndArenaTeams:FindChild("ArenaHeaderLabel"):SetText(Apollo.GetString("MatchMaker_MyArenaTeam"))
-
+	
 	-- teams
 	self.wndArenaTeams:FindChild("TeamList"):DestroyChildren()
 
@@ -559,8 +568,7 @@ function MatchMaker:HelperConfigureListAndTeams(tTeam)
 		wndEntry:FindChild("ArrowMark"):Show(true)
 
 		local tRating = MatchingGame.GetPvpRating(tTeam[idx].eRatingType)
-		wndEntry:FindChild("MyRatingLabel"):SetText(Apollo.GetString("MatchMaker_MyRating"))
-		wndEntry:FindChild("MyRatingValue"):SetText(tRating.nRating or 0)
+		wndEntry:FindChild("MyRatingValue"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_MyRating"), tRating.nRating or 0))
 
 		if tTeam[idx].bIsLeader == true then -- leader (we can assume has)
 			wndEntry:FindChild("LeaderMark"):Show(true)
@@ -568,9 +576,8 @@ function MatchMaker:HelperConfigureListAndTeams(tTeam)
 		elseif tTeam[idx].bHasTeam then -- has team
 			wndEntry:FindChild("TeamLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_TeamRating"), tTeam[idx].strName, tTeam[idx].nRating))
 		else
-			wndEntry:FindChild("TeamLabel"):SetText(Apollo.GetString("MatchMaker_ClickToRegister"))
+			wndEntry:FindChild("TeamLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_RegisterATeam")))
 			wndEntry:FindChild("ArrowMark"):Show(false)
-			--wnd:FindChild("RegisterFrame"):Show(true)
 		end
 	end
 
@@ -825,7 +832,7 @@ function MatchMaker:RefreshStatus()
 			end
 		else
 			local tMatchState = MatchingGame:GetPVPMatchState()
-			local bCanDisband = not tMatchState or tMatchState.eRules ~= MatchingGame.Rules.DeathmatchPool -- Not in PvP. If In PvP, then not in Deathmatch
+			local bCanDisband = not tMatchState -- Not in PvP.
 
 			self.wndListBlocker:Show(true)
 			self.wndListBlocker:SetText(Apollo.GetString("MatchMaker_CurrentlyInMatch"))
@@ -904,7 +911,7 @@ function MatchMaker:RefreshStatus()
 end
 
 function MatchMaker:OnGameReady(bInProgress)
-	local strMessage = ""
+	local strMessage = Apollo.GetString("MatchMaker_Group")
 
 	self:HelperFindMatchesQueued()
 
@@ -927,7 +934,7 @@ function MatchMaker:OnGameReady(bInProgress)
 		strMessage = String_GetWeaselString(Apollo.GetString("MatchMaker_InProgress"), strMessage)
 	end
 
-	if strFirstMatchName and self.matchesQueued == 1 then
+	if strFirstMatchName and #self.matchesQueued == 1 then
 		strMessage = String_GetWeaselString(Apollo.GetString("MatchMaker_FoundSpecific"), strFirstMatchName, strMessage)
 	else
 		strMessage = String_GetWeaselString(Apollo.GetString("MatchMaker_Found"), strMessage)
@@ -1035,7 +1042,7 @@ function MatchMaker:OnRoleCheckStarted()
 	local tSelectedRoles = MatchingGame.GetSelectedRoles()
 	if tSelectedRoles ~= nil then
 		for idx, eRole in ipairs(tSelectedRoles) do
-			for idx, eRole in ipairs(tEligibleRoles) do
+			for idx, eRole in ipairs(tSelectedRoles) do
 				self.tRoleCheckRoleButtons[eRole]:SetCheck(true)
 			end
 		end
@@ -1235,12 +1242,14 @@ end
 function MatchMaker:OnMatchingGameSelect(wndHandler, wndControl)
 	--local parent = wnd:GetParent()
 	local matchGame = wndControl:GetData()
+	
+	Event_FireGenericEvent("SendVarToRover", "matchGame", matchGame)
 
-	if matchGame:IsRandom() then --If a random type match is selected, select no others
+	if matchGame:IsRandom() or matchGame:GetType() == MatchingGame.MatchType.Arena  or matchGame:GetType() == MatchingGame.MatchType.OpenArena then --If a random type match is selected, select no others
 		self.matchesSelected = {}
 	else --If a non random type match is selected, clear any random selections
 		for strMatchName, oMatchGame in pairs(self.matchesSelected) do
-			if oMatchGame:IsRandom() then
+			if oMatchGame:IsRandom() or oMatchGame:GetType() == MatchingGame.MatchType.Arena or oMatchGame:GetType() == MatchingGame.MatchType.Arena then
 				self.matchesSelected[oMatchGame:GetName()] = nil
 			end
 		end
@@ -1320,9 +1329,9 @@ function MatchMaker:OnSelectArenas(wndHandler, wndControl)
 	if self.eSelectedTab == MatchingGame.MatchType.Arena then
 		return
 	end
-
+	
 	self.matchesSelected = {}
-
+	self.wndArenaTeams:FindChild("ArenaHeaderLabel"):SetText(Apollo.GetString("MatchMaker_MyArenaTeam"))
 	self.eSelectedTab = MatchingGame.MatchType.Arena
 	self:OnMatchMakerOn()
 end
@@ -1355,7 +1364,7 @@ function MatchMaker:OnSelectWarplots(wndHandler, wndControl)
 	end
 
 	self.matchesSelected = {}
-
+	self.wndArenaTeams:FindChild("ArenaHeaderLabel"):SetText(Apollo.GetString("MatchMaker_MyWarparties"))
 	self.eSelectedTab = MatchingGame.MatchType.Warplot
 	self:OnMatchMakerOn()
 end
@@ -1671,7 +1680,7 @@ function MatchMaker:DisplayPendingInfo()
 end
 
 function MatchMaker:OnCheckRating(strCommand, strRatingType)
-	strRatingType = string.lower(strRatingType)
+	strRatingType = Apollo.StringToLower(strRatingType)
 	local tRating = nil
 
 	if strRatingType == Apollo.GetString("ArenaRoster_2v2") then
