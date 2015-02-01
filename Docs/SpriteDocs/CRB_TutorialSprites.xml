@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprTut_BackerLarge" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_0.tga" x0="0" x1="0" x2="0" x3="16" x4="272" x5="287" y0="0" y1="0" y2="0" y3="14" y4="87" y5="102" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_BackerLargeLit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_102.tga" x0="0" x1="0" x2="0" x3="16" x4="272" x5="287" y0="0" y1="0" y2="0" y3="14" y4="87" y5="102" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_BackerLargePulse" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_102.tga" x0="0" x1="0" x2="0" x3="16" x4="272" x5="287" y0="0" y1="0" y2="0" y3="14" y4="87" y5="102" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_102.tga" x0="0" x1="0" x2="0" x3="16" x4="272" x5="287" y0="0" y1="0" y2="0" y3="14" y4="87" y5="102" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_102.tga" x0="0" x1="0" x2="0" x3="16" x4="272" x5="287" y0="0" y1="0" y2="0" y3="14" y4="87" y5="102" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_BackerSmall" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_135_436.tga" x0="0" x1="0" x2="0" x3="6" x4="132" x5="138" y0="0" y1="0" y2="0" y3="6" y4="32" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_BackerSmallLit" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_135_475.tga" x0="0" x1="0" x2="0" x3="6" x4="132" x5="138" y0="0" y1="0" y2="0" y3="6" y4="32" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_BackerSmallPulse" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_135_475.tga" x0="0" x1="0" x2="0" x3="6" x4="132" x5="138" y0="0" y1="0" y2="0" y3="6" y4="32" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_135_475.tga" x0="0" x1="0" x2="0" x3="6" x4="132" x5="138" y0="0" y1="0" y2="0" y3="6" y4="32" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_135_475.tga" x0="0" x1="0" x2="0" x3="6" x4="132" x5="138" y0="0" y1="0" y2="0" y3="6" y4="32" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorUL" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_205.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorL" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_231_283.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorLL" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_154_205.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorUR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_231_205.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_282.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorLR" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_77_282.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_ConnectorU" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_154_282.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_IconFlash" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_102_436.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_102_436.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_102_436.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTut_IconMore" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_361.tga" x0="98" x1="98" x2="98" x3="98" x4="98" x5="134" y0="105" y1="105" y2="105" y3="105" y4="105" y5="136" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="btnTut_OpenPrompt" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_361.tga" x0="0" x1="0" x2="0" x3="17" x4="80" x5="101" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnTut_Close" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_361.tga" x0="101" x1="101" x2="101" x3="101" x4="101" x5="131" y0="1" y1="1" y2="1" y3="1" y4="1" y5="29" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnTut_OpenAlert" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_0_361.tga" x0="101" x1="101" x2="101" x3="101" x4="101" x5="144" y0="32" y1="32" y2="32" y3="32" y4="32" y5="73" StateBits="31" Direction="Across"/>
+    <Sprite Name="sprTut_ConnectorLeft" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tutorial_77_205.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="77" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

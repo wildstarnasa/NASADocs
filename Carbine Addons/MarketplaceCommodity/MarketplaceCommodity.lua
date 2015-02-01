@@ -523,7 +523,13 @@ function MarketplaceCommodity:HelperValidateListInputForSubmit(wndParent)
 			local bBuyTab = self.wndMain:FindChild("HeaderBuyNowBtn"):IsChecked() or self.wndMain:FindChild("HeaderBuyOrderBtn"):IsChecked()
 
 			if wndParent:FindChild("ListLowerThanVendor") then
-				local nVendorPriceAfterFees = tCurrItem:GetSellPrice():GetAmount() * (1 + (kCommodityAuctionRake / 100))
+				local nItemPrice = 0
+			
+				if tCurrItem:GetSellPrice() ~= nil then
+					nItemPrice = tCurrItem:GetSellPrice():GetAmount()
+				end
+			
+				local nVendorPriceAfterFees = nItemPrice * (1 + (kCommodityAuctionRake / 100))
 				wndParent:FindChild("ListLowerThanVendor"):Show(monPricePerUnit:GetAmount() > 0 and nVendorPriceAfterFees > monPricePerUnit:GetAmount())
 			end
 

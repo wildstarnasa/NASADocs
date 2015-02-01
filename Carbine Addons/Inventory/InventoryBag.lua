@@ -307,7 +307,7 @@ function InventoryBag:OnInterfaceMenuListHasLoaded()
 end
 
 function InventoryBag:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Inventory")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Inventory"), nSaveVersion=2})
 end
 
 function InventoryBag:OnCharacterCreated()

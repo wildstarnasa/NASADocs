@@ -41,6 +41,7 @@ local ktRealmTransferResults =
 	[PreGameLib.CodeEnumCharacterModifyResults.RealmTransferFailed_HasMail]				=	"AccountServices_Error_HasMail",
 	[PreGameLib.CodeEnumCharacterModifyResults.RealmTransferFailed_ServerFull]			=	"AccountServices_Error_ServerFull",
 	[PreGameLib.CodeEnumCharacterModifyResults.RealmTransferFailed_Money]				=	"AccountServices_Error_TooMuchMoney",
+	[PreGameLib.CodeEnumCharacterModifyResults.RealmTransferFailed_HasSavedInstance]	=	"AccountServices_Error_HasSavedInstance",
 }
 
 local ktCreddRedeemResults =

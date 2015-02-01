@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprTT_SimpleBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_212_150.tga" x0="0" x1="0" x2="0" x3="38" x4="112" x5="137" y0="0" y1="0" y2="0" y3="9" y4="28" y5="37" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="e1ffffff" EndColor="e1ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_BasicBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_213_6.tga" x0="0" x1="0" x2="0" x3="18" x4="114" x5="134" y0="0" y1="0" y2="0" y3="17" y4="116" y5="133" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_MainFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_0.tga" x0="0" x1="0" x2="0" x3="28" x4="184" x5="207" y0="0" y1="0" y2="0" y3="58" y4="131" y5="183" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_MainFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_184.tga" x0="0" x1="0" x2="0" x3="2" x4="205" x5="207" y0="0" y1="0" y2="0" y3="2" y4="106" y5="108" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_SeparatorThick" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_293.tga" x0="0" x1="0" x2="107" x3="107" x4="132" x5="252" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_SeparatorThin1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_314.tga" x0="0" x1="0" x2="0" x3="81" x4="99" x5="246" y0="0" y1="0" y2="0" y3="0" y4="0" y5="20" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_SeparatorThin2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_336.tga" x0="0" x1="0" x2="0" x3="102" x4="119" x5="246" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderOrange" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_355.tga" x0="0" x1="0" x2="0" x3="77" x4="220" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderPurple" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_419.tga" x0="0" x1="0" x2="0" x3="44" x4="227" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderBlue" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_483.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderGreen" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_547.tga" x0="0" x1="0" x2="0" x3="47" x4="232" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderGrey" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_611.tga" x0="0" x1="0" x2="0" x3="69" x4="232" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderWhite" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_808.tga" x0="0" x1="0" x2="0" x3="69" x4="232" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetGrey" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_610.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetWhite" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_807.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetDarkGrey" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_610.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffa6a6a6" EndColor="ffa6a6a6"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetPink" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_935.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffff7dff" EndColor="ffff7dff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetLightPurple" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_871.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetGreen" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_546.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetBlue" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_482.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetPurple" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_418.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderInsetOrange" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_253_354.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="40" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_MainFooter" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_88_679.tga" x0="0" x1="0" x2="0" x3="78" x4="106" x5="194" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_TargetBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_210_194.tga" x0="0" x1="18" x2="55" x3="68" x4="104" x5="123" y0="0" y1="0" y2="0" y3="22" y4="43" y5="52" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_BatteryFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_776.tga" x0="0" x1="0" x2="0" x3="8" x4="20" x5="212" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_BatteryBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_712.tga" x0="0" x1="0" x2="0" x3="27" x4="39" x5="250" y0="0" y1="0" y2="0" y3="0" y4="0" y5="54" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderPink" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_936.tga" x0="0" x1="0" x2="0" x3="69" x4="232" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffff7dff" EndColor="ffff7dff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderLightPurple" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_872.tga" x0="0" x1="0" x2="0" x3="69" x4="232" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTT_HeaderDarkGrey" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_611.tga" x0="0" x1="0" x2="0" x3="69" x4="232" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffa6a6a6" EndColor="ffa6a6a6"/>
+    </Sprite>
+    <AutoButton Name="btnTT_CloseTooltip" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tooltip_0_674.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="21" y0="0" y1="0" y2="0" y3="0" y4="0" y5="23" Stretchy="1" StateBits="15" Direction="Across"/>
+</Sprites>

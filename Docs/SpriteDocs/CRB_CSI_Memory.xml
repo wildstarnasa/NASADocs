@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_CSI_Memory_Frame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Memory_CSI_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="365" y0="0" y1="0" y2="0" y3="0" y4="0" y5="365" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="btn_CSI_MemoryGreen" Texture="UI\Assets\TexPieces\UI_CRB_Memory_CSI_0_366.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="152" y0="0" y1="0" y2="0" y3="0" y4="0" y5="151" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_CSI_MemoryOrange" Texture="UI\Assets\TexPieces\UI_CRB_Memory_CSI_0_518.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="151" y0="0" y1="0" y2="0" y3="0" y4="0" y5="151" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_CSI_MemoryBlue" Texture="UI\Assets\TexPieces\UI_CRB_Memory_CSI_0_670.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="152" y0="0" y1="0" y2="0" y3="0" y4="0" y5="151" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_CSI_MemoryPurple" Texture="UI\Assets\TexPieces\UI_CRB_Memory_CSI_0_822.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="152" y0="0" y1="0" y2="0" y3="0" y4="0" y5="151" Stretchy="1" StateBits="31" Direction="Across"/>
+    <Sprite Name="spr_CSI_Memory_KitCenter" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Memory_CSI_366_83.tga" x0="0" x1="0" x2="0" x3="40" x4="97" x5="137" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

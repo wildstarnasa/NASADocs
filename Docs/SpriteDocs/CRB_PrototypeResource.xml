@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprResource_Base" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="12" x1="12" x2="12" x3="12" x4="12" x5="703" y0="34" y1="34" y2="34" y3="34" y4="34" y5="92" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="12" x1="12" x2="12" x3="12" x4="12" x5="703" y0="34" y1="34" y2="34" y3="34" y4="34" y5="92" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_Health" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="244" x1="244" x2="244" x3="244" x4="244" x5="472" y0="10" y1="10" y2="10" y3="10" y4="10" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_0" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="38" x1="38" x2="38" x3="38" x4="38" x5="108" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_1" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="137" x1="137" x2="137" x3="137" x4="137" x5="207" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_2" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="236" x1="236" x2="236" x3="236" x4="236" x5="306" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_3" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="334" x1="334" x2="334" x3="334" x4="334" x5="404" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_4" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="432" x1="432" x2="432" x3="432" x4="432" x5="502" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_5" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="531" x1="531" x2="531" x3="531" x4="531" x5="601" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_6" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="630" x1="630" x2="630" x3="630" x4="630" x5="700" y0="103" y1="103" y2="103" y3="103" y4="103" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_HealthRed" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="4" x1="4" x2="4" x3="4" x4="4" x5="233" y0="10" y1="10" y2="10" y3="10" y4="10" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprResource_HealthYellow" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PrototypeResourcePanel.tga" x0="482" x1="482" x2="482" x3="482" x4="482" x5="711" y0="10" y1="10" y2="10" y3="10" y4="10" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>

@@ -56,11 +56,11 @@ function ActionBarShortcut:OnRestore(eType, tSavedData)
 		return
 	end
 	
-	if tSavedData.bDocked then
+	if tSavedData.bDocked ~= nil then
 		self.bDocked = tSavedData.bDocked
 	end
 	
-	if tSavedData.bHorz then
+	if tSavedData.bHorz ~= nil then
 		self.bHorz = tSavedData.bHorz
 	end
 	

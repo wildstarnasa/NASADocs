@@ -298,6 +298,8 @@ function ArenaTeam:BuildRosterList(guildCurr, tRoster)
 	local tRanks = guildCurr:GetRanks()
 	local wndGrid = self.wndMain:FindChild("RosterGrid")
 	
+	wndGrid:DeleteAll()
+	
 	-- TODO: enums
 	local nSlots = 0 -- default is 2v2	
 	local nSlotsMax = 3 -- default is 2v2

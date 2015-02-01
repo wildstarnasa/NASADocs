@@ -53,7 +53,8 @@ function OptionsInterface:OnRestore(eType, tSavedData)
 
 	if tSavedData  then -- and tSavedData.nSaveVersion == knSaveVersion
 		g_InterfaceOptions = tSavedData.tSavedInterfaceOptions
-
+		self:HelperSetUpGlobalIfNil()
+		
 		if tSavedData.tTrackedWindowsByName then
 			self.tTrackedWindowsByName = tSavedData.tTrackedWindowsByName
 		end

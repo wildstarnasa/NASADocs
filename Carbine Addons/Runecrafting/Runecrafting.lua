@@ -1013,15 +1013,17 @@ function Runecrafting:OnRuneSlotQueryDragDrop(wndHandler, wndControl, x, y, wndS
 end
 
 function Runecrafting:OnRuneSlotDragDrop(wndHandler, wndControl, x, y, wndSource, strType, nDragInventoryItemIdx, bDragDropHasBeenReset)
-	local itemSource = self.wndMain:FindChild("HiddenBagWindow"):GetItem(nDragInventoryItemIdx)
-	if itemSource and strType == "DDBagItem" then
+	local itemRune = self.wndMain:FindChild("HiddenBagWindow"):GetItem(nDragInventoryItemIdx)
+	if itemRune and strType == "DDBagItem" then
 		local tCurrRuneSlot = wndHandler:GetData()[2]
 		local tItemRuneInfo = self.wndMain:FindChild("HiddenBagWindow"):GetItem(nDragInventoryItemIdx):GetRuneInfo()
 		if self:HelperCheckElementMatch(tItemRuneInfo, tCurrRuneSlot) then
 			if tCurrRuneSlot.idRune == 0 then -- No rune in slot
-				self:DrawAddRuneConfirm(wndHandler:GetParent(), self.wndMain:FindChild("HiddenBagWindow"):GetItem(nDragInventoryItemIdx))
+				local nSlotIndex = wndHandler:GetData()[1]
+				local itemSource = wndHandler:GetData()[3]
+				self:DrawAddRuneConfirm(wndHandler:GetParent(), itemSource, nSlotIndex, itemRune)
 			else -- Replace rune in slot
-				self:DrawRuneReplaceConfirm(wndHandler:GetParent(), self.wndMain:FindChild("HiddenBagWindow"):GetItem(nDragInventoryItemIdx))
+				self:DrawRuneReplaceConfirm(wndHandler:GetParent(), itemRune)
 			end
 		end
 		return false

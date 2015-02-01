@@ -502,7 +502,7 @@ function HousingRemodel:OnRandomResidenceList()
 	self.wndRandomList:FindChild("ListContainer"):DestroyChildren()
 
 	local arResidences = HousingLib.GetRandomResidenceList()
-	Event_FireGenericEvent("SendVarToRover", "arResidences", arResidences)
+
 	for key, tHouse in pairs(arResidences) do
 		local wnd = Apollo.LoadForm(self.xmlDoc, "RandomFriendForm", self.wndRandomList:FindChild("ListContainer"), self)
 		wnd:SetData(tHouse.nId) -- set the full table since we have no direct lookup for neighbors

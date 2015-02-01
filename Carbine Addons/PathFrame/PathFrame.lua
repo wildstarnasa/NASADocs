@@ -159,7 +159,10 @@ function PathFrame:DrawPathAbilityList()
 		end
 	end
 	
-	self:HelperSetPathAbility(self.nSelectedPathId)
+	if self.nSelectedPathId ~= ActionSetLib.GetCurrentActionSet()[10] then
+		self:HelperSetPathAbility(self.nSelectedPathId)
+	end
+	
 	self.bHasPathAbilities = nCount > 1
 	self.wndMain:Show(nCount > 0)
 	self.wndMain:FindChild("PathOptionToggle"):Enable(self.bHasPathAbilities)

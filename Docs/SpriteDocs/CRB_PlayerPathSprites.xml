@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprPP_ExpBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_0_36.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="289" y0="0" y1="0" y2="0" y3="0" y4="0" y5="52" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SciBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_290_36.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="289" y0="0" y1="0" y2="0" y3="0" y4="0" y5="52" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpRelicFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_580_36.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="55" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SciBotHealth" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_637_36.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="235" y0="0" y1="0" y2="0" y3="0" y4="0" y5="14" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SetDepotFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_637_51.tga" x0="0" x1="0" x2="0" x3="5" x4="167" x5="172" y0="0" y1="0" y2="0" y3="0" y4="9" y5="9" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpSignalFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_637_62.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="146" y0="0" y1="0" y2="0" y3="0" y4="0" y5="13" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ScreenFraming" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_829_51.tga" x0="0" x1="0" x2="0" x3="8" x4="18" x5="26" y0="0" y1="0" y2="0" y3="8" y4="18" y5="26" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SettlerFraming" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_811_51.tga" x0="0" x1="0" x2="0" x3="5" x4="11" x5="16" y0="0" y1="0" y2="0" y3="9" y4="10" y5="13" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_0_127.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="43" y0="0" y1="0" y2="0" y3="0" y4="0" y5="45" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ListGlowBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_46_129.tga" x0="0" x1="0" x2="0" x3="14" x4="21" x5="36" y0="0" y1="0" y2="0" y3="13" y4="19" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ListGlowOver" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_85_129.tga" x0="0" x1="0" x2="0" x3="14" x4="20" x5="36" y0="0" y1="0" y2="0" y3="13" y4="19" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_85_129.tga" x0="0" x1="0" x2="0" x3="14" x4="20" x5="36" y0="0" y1="0" y2="0" y3="13" y4="19" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_85_129.tga" x0="0" x1="0" x2="0" x3="14" x4="20" x5="36" y0="0" y1="0" y2="0" y3="13" y4="19" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.600" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SciSpawnArrowUp" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_123_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SciSpawnArrowDown" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_123_129.tga" x0="32" x1="32" x2="32" x3="32" x4="32" x5="66" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SciCreatureFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_522_90.tga" x0="0" x1="0" x2="0" x3="21" x4="150" x5="167" y0="0" y1="0" y2="0" y3="10" y4="15" y5="23" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="afffffff" EndColor="afffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ButtonGlowBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_182_90.tga" x0="0" x1="0" x2="0" x3="12" x4="24" x5="36" y0="0" y1="0" y2="0" y3="12" y4="23" y5="36" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="afffffff" EndColor="afffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ButtonGlowOver" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_220_90.tga" x0="0" x1="0" x2="0" x3="11" x4="19" x5="36" y0="0" y1="0" y2="0" y3="10" y4="23" y5="36" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_220_90.tga" x0="0" x1="0" x2="0" x3="11" x4="19" x5="36" y0="0" y1="0" y2="0" y3="12" y4="23" y5="36" Stretchy="1" HotspotX="0" HotspotY="0" Duration="2.000" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_SciBaseNoInset" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_189_129.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="289" y0="0" y1="0" y2="0" y3="0" y4="0" y5="52" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpTargetIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_479_128.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpCountBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_479_146.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="172" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpMeterBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_652_146.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="150" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ListEntryIconFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_877_224.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ListEntryIconFrameGreen" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_877_261.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPP_ExpTargetIconFlash" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_479_128.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffffff" EndColor="00ffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Path_Explorer_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_PathIcons_0_0.TGA" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Path_Soldier_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_PathIcons_256_0.TGA" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Path_Settler_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_PathIcons_512_0.TGA" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Path_Scientist_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_PathIcons_768_0.TGA" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Composite Name="sprPP_ListGlow" Cycle="0">
+        <Layer Name="sprPP_ListGlowBase"/>
+        <Layer Name="sprPP_ListGlowOver"/>
+    </Composite>
+    <Composite Name="sprPP_ButtonGlow" Cycle="0">
+        <Layer Name="sprPP_ButtonGlowBase"/>
+        <Layer Name="sprPP_ButtonGlowOver"/>
+    </Composite>
+    <AutoButton Name="btnPP_ListForward" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_690_118.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="27" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_ListBack" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_690_90.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="27" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btnPP_BaseGrey" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_400_90.tga" x0="0" x1="0" x2="0" x3="10" x4="13" x5="24" y0="0" y1="0" y2="0" y3="10" y4="13" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_HologramBase" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_258_90.tga" x0="0" x1="0" x2="0" x3="7" x4="21" x5="28" y0="0" y1="0" y2="0" y3="6" y4="21" y5="28" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_BaseBlue" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_0_90.tga" x0="0" x1="0" x2="0" x3="7" x4="28" x5="36" y0="0" y1="0" y2="0" y3="9" y4="28" y5="36" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_SciListEntry" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_0_0.tga" x0="0" x1="0" x2="0" x3="19" x4="158" x5="181" y0="0" y1="0" y2="0" y3="11" y4="23" y5="35" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_ListEntryGreen" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_0_184.tga" x0="0" x1="0" x2="0" x3="35" x4="177" x5="181" y0="0" y1="2" y2="4" y3="32" y4="34" y5="36" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_WindowHighlight" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_800_91.tga" x0="0" x1="0" x2="0" x3="2" x4="11" x5="14" y0="0" y1="0" y2="0" y3="2" y4="11" y5="13" Stretchy="1" StateBits="29" Direction="Across"/>
+    <AutoButton Name="btnPP_ListEntryGreenNoBox" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_0_258.tga" x0="0" x1="0" x2="0" x3="5" x4="170" x5="175" y0="0" y1="4" y2="32" y3="32" y4="32" y5="36" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPP_ListEntryIconToggle" Texture="UI\Assets\TexPieces\UI_CRB_PPath_TEMP_883_36.tga" x0="0" x1="0" x2="0" x3="5" x4="17" x5="22" y0="0" y1="0" y2="0" y3="5" y4="18" y5="22" Stretchy="1" StateBits="13" Direction="Down"/>
+</Sprites>

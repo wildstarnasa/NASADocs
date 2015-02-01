@@ -1242,8 +1242,6 @@ end
 function MatchMaker:OnMatchingGameSelect(wndHandler, wndControl)
 	--local parent = wnd:GetParent()
 	local matchGame = wndControl:GetData()
-	
-	Event_FireGenericEvent("SendVarToRover", "matchGame", matchGame)
 
 	if matchGame:IsRandom() or matchGame:GetType() == MatchingGame.MatchType.Arena  or matchGame:GetType() == MatchingGame.MatchType.OpenArena then --If a random type match is selected, select no others
 		self.matchesSelected = {}

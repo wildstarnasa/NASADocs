@@ -121,7 +121,10 @@ function Death:OnRestore(eType, tSavedData)
 	self.tSavedData = tSavedData
 	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		self.bHasCasterRezRequest = tSavedData.bCasterRezzed
-		self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
+		
+		if tSavedData.tWindowLocation then
+			self.locSavedWindowLoc = WindowLocation.new(tSavedData.tWindowLocation)
+		end
 	end
 end
 

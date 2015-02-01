@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="spr_Stalker_BaseFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="251" y0="0" y1="0" y2="0" y3="0" y4="0" y5="66" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_Actuator" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_404_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="37" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorFill1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_253_10.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="9" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorFill2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_293_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="17" y0="0" y1="0" y2="0" y3="0" y4="0" y5="13" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorFill4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_393_10.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="9" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorFill3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_345_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="17" y0="0" y1="0" y2="0" y3="0" y4="0" y5="13" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorPulse" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_374_39.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="23" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_374_39.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="23" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_374_39.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="23" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_374_39.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="23" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.500" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_SemiCircleThick" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_15_82.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="58" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_SemiCircleThin" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_116_82.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="70" y0="0" y1="0" y2="0" y3="0" y4="0" y5="58" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_MiddleCover" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_253_47.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="38" y0="0" y1="0" y2="0" y3="0" y4="0" y5="17" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_MiddleFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_320_40.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="50" y0="0" y1="0" y2="0" y3="0" y4="0" y5="23" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_SemiCircleFlash" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_201_68.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="100" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_201_68.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="100" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorFlash" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_303_68.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="65" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_303_68.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="65" y0="0" y1="0" y2="0" y3="0" y4="0" y5="57" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="ffffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="spr_Stalker_ActuatorEmpty" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Stalker_293_39.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="23" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Composite Name="spr_Stalker_ActuatorFill" Cycle="0">
+        <Layer Name="spr_Stalker_ActuatorEmpty"/>
+        <Layer Name="spr_Stalker_ActuatorFillPulse"/>
+        <Layer Name="spr_Stalker_ActuatorPulse"/>
+    </Composite>
+</Sprites>

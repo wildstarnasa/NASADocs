@@ -434,14 +434,6 @@ function FriendsList:OnFriendsListOn()
 		return
 	end
 	
-	self.arIgnored = {}
-	self.arFriends = {}
-	self.arRivals = {}
-	self.arSuggested = {}
-	self.arAccountFriends = {}
-	self.arAccountInvites = {}
-	self.arInvites = {}
-
 	for key, tFriend in pairs(FriendshipLib.GetList()) do
 		if tFriend.bIgnore == true then
 			self.arIgnored[tFriend.nId] = tFriend
@@ -1657,7 +1649,7 @@ function FriendsList:PerformLastSort()
 
 	if strLastSort == wndName.."2" then
 		bDesc = true
-	elseif strLastSort == "Special" then
+	elseif strLastSort == "Special" and #self.tWndRefs.wndListContainer:GetChildren() > 1 then
 		self.tWndRefs.wndListContainer:ArrangeChildrenVert(0, function(wndLeft, wndRight)
 			if eCurrentTab ~= LuaCodeEnumTabTypes.Friend then
 				return self:SortDefaultOther(wndLeft, wndRight)

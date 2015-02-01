@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprHouseImage" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="427" y0="0" y1="0" y2="0" y3="0" y4="0" y5="208" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprHeaderBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="481" y0="0" y1="0" y2="0" y3="0" y4="0" y5="125" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprLandscapeBack" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_0_126.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="451" y0="0" y1="0" y2="0" y3="0" y4="0" y5="301" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGrid" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_0_536.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="202" y0="0" y1="0" y2="0" y3="0" y4="0" y5="202" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprWindowGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_202_536.tga" x0="0" x1="0" x2="0" x3="60" x4="98" x5="158" y0="0" y1="0" y2="0" y3="60" y4="106" y5="166" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceWaterOn" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_426_538.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceWaterOff" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_361_538.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourcePowerOn" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_426_605.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourcePowerOff" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_361_605.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceFeedOn" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_426_672.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceFeedOff" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_361_672.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprOccupiedMarker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_423_428.tga" x0="0" x1="0" x2="0" x3="13" x4="17" x5="31" y0="0" y1="0" y2="0" y3="14" y4="18" y5="31" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="96ffffff" EndColor="96ffffff"/>
+    </Sprite>
+    <Sprite Name="sprRotateRightIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_428_0.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="26" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprRotateLeftIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_428_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="24" y1="24" y2="24" y3="24" y4="24" y5="48" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprMoveIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_428_0.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="31" y0="47" y1="47" y2="47" y3="47" y4="47" y5="77" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTrashIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_431_77.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprBrokerMap" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_0_212.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="805" y0="0" y1="0" y2="0" y3="0" y4="0" y5="608" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPlugBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_0_824.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="248" y0="0" y1="0" y2="0" y3="0" y4="0" y5="212" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPlugFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_459_834.tga" x0="0" x1="0" x2="0" x3="11" x4="15" x5="26" y0="0" y1="0" y2="0" y3="12" y4="15" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceFrame_Left" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_272_831.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="51" y0="0" y1="0" y2="0" y3="0" y4="0" y5="35" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceFrame_Right" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_327_831.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="53" y0="0" y1="0" y2="0" y3="0" y4="0" y5="35" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceFrame_Top" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_382_831.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprResourceFrame_Bottom" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_419_831.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconFeed_On" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_493_834.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconFeed_Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_493_871.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconPower_On" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_528_834.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconPower_Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_528_871.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconWater_On" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_563_834.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconWater_Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_563_871.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconShadow_On" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_598_834.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconShadow_Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_598_871.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconFertilizer_On" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_634_834.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprIconFertilizer_Off" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_634_871.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCustomizeBlockerFull" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_839_75.tga" x0="0" x1="0" x2="4" x3="460" x4="464" x5="464" y0="0" y1="0" y2="4" y3="681" y4="685" y5="685" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprCustomizeBlockerSmall" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_1252_38.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="38" y0="0" y1="0" y2="0" y3="0" y4="0" y5="37" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprRoomImage" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_810_777.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="425" y0="0" y1="0" y2="0" y3="0" y4="0" y5="207" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPreview" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_772_824.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="27" y0="1" y1="1" y2="1" y3="1" y4="1" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <AutoButton Name="btnLaunchEye" Texture="UI\Assets\TexPieces\UI_CRB_Housing_1_430.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="51" y0="0" y1="0" y2="0" y3="0" y4="0" y5="47" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCustomizeOption" Texture="UI\Assets\TexPieces\UI_CRB_Housing_0_479.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="105" y0="0" y1="0" y2="0" y3="0" y4="0" y5="52" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnPropertyMarker" Texture="UI\Assets\TexPieces\UI_CRB_Housing_256_428.tga" x0="0" x1="10" x2="12" x3="21" x4="23" x5="33" y0="0" y1="10" y2="12" y3="21" y4="23" y5="33" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnHologramRedfill" Texture="UI\Assets\TexPieces\UI_CRB_Housing_0_741.tga" x0="0" x1="0" x2="0" x3="11" x4="20" x5="31" y0="0" y1="0" y2="0" y3="11" y4="18" y5="29" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnBrokerSelection" Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_463_0.tga" x0="0" x1="0" x2="0" x3="14" x4="17" x5="31" y0="0" y1="0" y2="0" y3="13" y4="16" y5="30" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnRemodelOption" Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_429_160.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="42" y0="0" y1="0" y2="0" y3="0" y4="0" y5="44" Stretchy="1" StateBits="23" Direction="Across"/>
+    <AutoButton Name="btnPreviewChanges" Texture="UI\Assets\TexPieces\UI_CRB_Housing_Temp_772_824.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="28" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" StateBits="31" Direction="Down"/>
+</Sprites>

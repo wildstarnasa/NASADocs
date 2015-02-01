@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="GroupFrameBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_Portrait_Group.tga" x0="0" x1="171" x2="171" x3="171" x4="171" x5="171" y0="0" y1="53" y2="53" y3="53" y4="53" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="GroupHealthFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_Portrait_Group.tga" x0="170" x1="268" x2="268" x3="268" x4="268" x5="268" y0="32" y1="40" y2="40" y3="40" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="GroupManaFill" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_Portrait_Group.tga" x0="170" x1="268" x2="268" x3="268" x4="268" x5="268" y0="42" y1="50" y2="50" y3="50" y4="50" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="GroupPBCap" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_Portrait_Group.tga" x0="177" x1="187" x2="187" x3="187" x4="187" x5="187" y0="21" y1="29" y2="29" y3="29" y4="29" y5="29" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="GroupClassFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_Portrait_Group.tga" x0="191" x1="218" x2="218" x3="218" x4="218" x5="218" y0="2" y1="28" y2="28" y3="28" y4="28" y5="28" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

@@ -132,13 +132,14 @@ function TradeskillTrainer:OnProfListItemClick(wndHandler, wndControl) -- wndHan
 	self.wndMain:FindChild("RightContainer:BottomBG:LearnTradeskillBtn"):SetData(wndHandler:GetData()) -- Also used in Swap
 	self.wndMain:FindChild("RightContainer:BottomBG:FullDescription"):SetText(tTradeskillInfo.strDescription)
 
-	local nCooldown = tTradeskillInfo and tTradeskillInfo.nRelearnCooldownDays or 0
-	if nCooldown > 0 then
+	local nCooldownCurrent = CraftingLib.GetRelearnCooldown() or 0
+	local nCooldownNew = tTradeskillInfo and tTradeskillInfo.nRelearnCooldownDays or 0
+	if nCooldownCurrent > 0 then
 		local strCooldownText = ""
-		if nCooldown < 1 then
+		if nCooldownCurrent < 1 then
 			strCooldownText = Apollo.GetString("TradeskillTrainer_SwapOnCooldownShort")
 		else
-			strCooldownText = String_GetWeaselString(Apollo.GetString("TradeskillTrainer_SwapOnCooldown"), tostring(math.floor(nCooldown)))
+			strCooldownText = String_GetWeaselString(Apollo.GetString("TradeskillTrainer_SwapOnCooldown"), tostring(math.floor(nCooldownCurrent + 0.5)))
 		end
 		self.wndMain:FindChild("RightContainer:BottomBG:CooldownLocked"):Show(true)
 		self.wndMain:FindChild("RightContainer:BottomBG:CooldownLocked:CooldownLockedText"):SetText(strCooldownText)
@@ -146,14 +147,14 @@ function TradeskillTrainer:OnProfListItemClick(wndHandler, wndControl) -- wndHan
 		self.wndMain:FindChild("RightContainer:BottomBG:AlreadyKnown"):Show(true)
 	elseif bAtMax and not bAlreadyKnown then
 		local nRelearnCost = CraftingLib.GetRelearnCost(idTradeskill):GetAmount()
-		local strCooldown = String_GetWeaselString(Apollo.GetString("Tradeskill_Trainer_CooldownDynamic"), nCooldown)
-		local strCooldownTooltip = String_GetWeaselString(Apollo.GetString("Tradeskill_Trainer_CooldownDynamicTooltip"), nCooldown)
+		local strCooldown = String_GetWeaselString(Apollo.GetString("Tradeskill_Trainer_CooldownDynamic"), nCooldownNew)
+		local strCooldownTooltip = String_GetWeaselString(Apollo.GetString("Tradeskill_Trainer_CooldownDynamicTooltip"), nCooldownNew)
 
 		local wndSwapContainer = self.wndMain:FindChild("RightContainer:BottomBG:SwapContainer")
 		wndSwapContainer:Show(true)
-		wndSwapContainer:FindChild("CostWindow"):Show(nRelearnCost > 0)
+		wndSwapContainer:FindChild("CostWindow"):Show(nRelearnCost > 0 or nCooldownNew > 0)
 		wndSwapContainer:FindChild("CostWindow:SwapCashWindow"):SetAmount(nRelearnCost)
-		wndSwapContainer:FindChild("SwapTimeWarningContainer"):Show(nRelearnCost > 0)
+		wndSwapContainer:FindChild("SwapTimeWarningContainer"):Show(nRelearnCost > 0 or nCooldownNew > 0)
 		wndSwapContainer:FindChild("SwapTimeWarningContainer"):SetTooltip(strCooldownTooltip)
 		wndSwapContainer:FindChild("SwapTimeWarningContainer:SwapTimeWarningLabel"):SetText(strCooldown)
 	elseif not bAtMax and not bAlreadyKnown then

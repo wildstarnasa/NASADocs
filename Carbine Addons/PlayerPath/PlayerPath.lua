@@ -449,13 +449,22 @@ end
 ----------------------------------------------------------------------------------------------------------
 
 function PlayerPath:DrawMissions(tSelectedEpisode, bFullRedraw)
-
 	if bFullRedraw then
-		local wndAvailable = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", Apollo.GetString("CRB_CallbackAvailable"))
-		wndAvailable:FindChild("HeaderBtn"):SetCheck(true)
-		local wndCompleted = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", Apollo.GetString("QuestCompleted"))
-		self:HelperDrawCategoryMissions(wndAvailable, tSelectedEpisode)
-		self:HelperDrawCategoryMissions(wndCompleted, tSelectedEpisode)
+		if self.wndAvailable and self.wndAvailable:IsValid() then
+			self.wndAvailable:Destroy()
+		end
+		
+		self.wndAvailable = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", Apollo.GetString("CRB_CallbackAvailable"))
+		self.wndAvailable:FindChild("HeaderBtn"):SetCheck(true)
+		
+		if self.wndCompleted and self.wndCompleted:IsValid() then
+			self.wndCompleted:Destroy()
+		end
+		
+		self.wndCompleted = self:FactoryProduce(self.wndMissionLog:FindChild("MissionList"), "MissionContainerForm", Apollo.GetString("QuestCompleted"))
+		
+		self:HelperDrawCategoryMissions(self.wndAvailable, tSelectedEpisode)
+		self:HelperDrawCategoryMissions(self.wndCompleted, tSelectedEpisode)
 	else
 		--REDRAW Some category
 		local tMissionListChildren = self.wndMissionLog:FindChild("MissionList"):GetChildren()
@@ -530,35 +539,32 @@ function PlayerPath:HelperDrawCategoryMissions(wndRedraw, tSelectedEpisode)
 end
 
 function PlayerPath:ResizeItems()
-	local wndAvailable = self.wndMissionLog:FindChild("MissionList"):FindChildByUserData("Available")
-	local wndCompleted = self.wndMissionLog:FindChild("MissionList"):FindChildByUserData("Completed")
-
-	if wndAvailable:FindChild("HeaderBtn"):IsChecked() then
+	if self.wndAvailable:FindChild("HeaderBtn"):IsChecked() then
 		local nHeight = 0
-		for idx, wndCurr in pairs(wndAvailable:FindChild("HeaderContainer"):GetChildren()) do
+		for idx, wndCurr in pairs(self.wndAvailable:FindChild("HeaderContainer"):GetChildren()) do
 			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
 			nHeight = nHeight + (nBottom - nTop)
 		end
-		local nLeft, nTop, nRight, nBottom = wndAvailable:GetAnchorOffsets()
-		wndAvailable:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
-		wndAvailable:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
-		wndAvailable:FindChild("HeaderContainer"):Show(true)
+		local nLeft, nTop, nRight, nBottom = self.wndAvailable:GetAnchorOffsets()
+		self.wndAvailable:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
+		self.wndAvailable:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
+		self.wndAvailable:FindChild("HeaderContainer"):Show(true)
 	else
-		wndAvailable:FindChild("HeaderContainer"):Show(false)
+		self.wndAvailable:FindChild("HeaderContainer"):Show(false)
 	end
 
-	if wndCompleted:FindChild("HeaderBtn"):IsChecked() then
+	if self.wndCompleted:FindChild("HeaderBtn"):IsChecked() then
 		nHeight = 0
-		for idx, wndCurr in pairs(wndCompleted:FindChild("HeaderContainer"):GetChildren()) do
+		for idx, wndCurr in pairs(self.wndCompleted:FindChild("HeaderContainer"):GetChildren()) do
 			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
 			nHeight = nHeight + (nBottom - nTop)
 		end
-		nLeft, nTop, nRight, nBottom = wndCompleted:GetAnchorOffsets()
-		wndCompleted:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
-		wndCompleted:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
-		wndCompleted:FindChild("HeaderContainer"):Show(true)
+		nLeft, nTop, nRight, nBottom = self.wndCompleted:GetAnchorOffsets()
+		self.wndCompleted:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 65)
+		self.wndCompleted:FindChild("HeaderContainer"):ArrangeChildrenVert(0)
+		self.wndCompleted:FindChild("HeaderContainer"):Show(true)
 	else
-		wndCompleted:FindChild("HeaderContainer"):Show(false)
+		self.wndCompleted:FindChild("HeaderContainer"):Show(false)
 	end
 
 	self.wndMissionLog:FindChild("MissionList"):ArrangeChildrenVert(0)
@@ -780,6 +786,7 @@ function PlayerPath:FactoryProduce(wndParent, strFormName, strCategoryName)
 		wndNew:SetData(strCategoryName)
 		wndNew:FindChild("HeaderBtnText"):SetText(strCategoryName)
 	end
+	
 	return wndNew
 end
 

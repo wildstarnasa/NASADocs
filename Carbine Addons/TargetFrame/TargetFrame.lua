@@ -799,7 +799,7 @@ function TargetFrame:SetTargetForFrame(wndFrame, unitTarget, bTargetChanged)
 		--Iconic and Max Level Players
 		local idArchetype = unitTarget:GetArchetype() and unitTarget:GetArchetype().idArchetype or 0
 		local strFaction = karFactionToString[unitTarget:GetFaction()] or ""
-		local bPetClone = unitTarget:GetType() == "Pet" and unitTarget:GetName() == unitTarget:GetUnitOwner():GetName()
+		local bPetClone =  unitTarget:GetUnitOwner() and unitTarget:GetType() == "Pet" and unitTarget:GetName() == unitTarget:GetUnitOwner():GetName() or false
 		
 		if (idArchetype == Unit.CodeEnumArchetype.Iconic or ((unitTarget:GetType() == "Player" or bPetClone) and unitTarget:GetLevel() == knMaxLevel)) then
 			strAttachment = eDisposition == Unit.CodeEnumDisposition.Friendly and "FriendlyIconic" or "HostileIconic"

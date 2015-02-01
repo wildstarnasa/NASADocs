@@ -298,7 +298,7 @@ function Achievements:UpdateAchievementEntry(achUpdated)
 	if wndAchievement then
 		if achUpdated:IsChecklist() then
 			self:UpdateChecklistAchievement(achUpdated, wndAchievement)
-		elseif achUpdated:GetChildTier() then
+		elseif achUpdated:GetChildTier() or achUpdated:GetParentTier() then
 			if wndAchievement:GetName() == "TierItem" then
 				wndAchievement = wndAchievement:FindChild("TierItemBtn"):GetData()
 			end

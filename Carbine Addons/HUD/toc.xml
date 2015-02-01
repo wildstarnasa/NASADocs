@@ -1,4 +1,0 @@
-<Addon Name="HUD" Version="1">
-    <Script Name="HUD.lua" />
-    <Form Name="HUD.xml" />
-</Addon>

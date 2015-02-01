@@ -32,6 +32,10 @@ local knChannelListHeight = 275
 
 local knWindowStayOnScreenOffset = 50
 
+local knFadeTimerfrequency = 1
+local knTimeToFade = 300
+local knTimeToFadeAfterAction = 30
+
 local knSaveVersion = 8
 local knMaxRecentEntries = 10
 local kMaxShownEntries = 4
@@ -324,7 +328,7 @@ function ChatLog:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("VarChange_FrameCount",					"OnChatLineTimer", self)
 
-	self.timerFade = ApolloTimer.Create(5.0, true, "OnChatLineFadeTimer", self)
+	self.timerFade = ApolloTimer.Create(knFadeTimerfrequency, true, "OnChatLineFadeTimer", self)
 
 	self.nCurrentTimeMS = GameLib.GetGameTime()
 	self.nChatIndex = 0
@@ -371,11 +375,6 @@ function ChatLog:OnDocumentReady()
 	self.tLinks 			= {}
 	self.nNextLinkIndex 	= 1
 	self.nMaxChatLines 		= 256
-	self.nChatLineFadeTime	= 900
-	self.nChatLineFadeStartThreshold = 845
-	self.nChatLineFadeOpacityMin = 0.20
-	self.nChatLineFadeOpacityRate = 1/self.nChatLineFadeTime
-
 	self.twndItemLinkTooltips = {}
 
 	self.tEmotes = {}
@@ -387,7 +386,7 @@ function ChatLog:OnDocumentReady()
 	---------------OPTIONS---------------
 	self.wndChatOptions = Apollo.LoadForm(self.xmlDoc, "ChatOptionsForm", nil, self)
 	if self.locSavedOptionsLoc then
-		self.wndChatOptions:MoveToLocation(self.locSavedOptionsLoc)
+		--self.wndChatOptions:MoveToLocation(self.locSavedOptionsLoc)
 	end
 
 	local wndOptionsContainer = self.wndChatOptions:FindChild("TwoOptionsContainer")
@@ -665,7 +664,7 @@ function ChatLog:NewChatWindow(strTitle, tViewedChannels, bCombatLog, channelCur
 	local wndChatChild = wndChatWindow:FindChild("Chat")
 	for idx = 1, self.nMaxChatLines do
 		local wndChatLine = Apollo.LoadForm(self.xmlDoc, "ChatLine", wndChatChild, self)
-		wndChatLine:SetData({ ["nLine"]=idx, ["nAddedTime"]=GameLib.GetGameTime() })
+		wndChatLine:SetData({ ["nLine"]=idx, ["nAddedTime"]=knTimeToFade, ["bFading"]=false })
 		wndChatLine:Show(false)
 		tChatData.tChildren:Push(wndChatLine)
 	end
@@ -1002,8 +1001,6 @@ function ChatLog:ShowQueuedMessages(wndForm, nDeltaTimeMS)
 		nMessages = 1
 	end
 
-	local nCurrentGameTime = GameLib.GetGameTime()
-
 	-- grab queued message and put it into oldest chat line window. Move window to bottom. Only do 20 at a time.
 	local bPrettyItUp = false
 	for iCount = 1, nMessages do
@@ -1015,7 +1012,8 @@ function ChatLog:ShowQueuedMessages(wndForm, nDeltaTimeMS)
 		self:HelperGenerateChatMessage(tQueuedMessage)
 
 		local wndChatLine = tChatData.tChildren:Pop()
-		wndChatLine:SetData({ ["nLine"]=tChatData.nNextIndex, ["nAddedTime"]=nCurrentGameTime, ["nOpacity"]=1, ["bFading"]=false })
+		wndChatLine:SetData({ ["nLine"]=tChatData.nNextIndex, ["nAddedTime"]=knTimeToFade, ["bFading"]=false })
+		wndChatLine:SetOpacity(1, 0)
 		wndChatLine:Show(true)
 		if tQueuedMessage.strMessage then
 			wndChatLine:SetText( tQueuedMessage.strMessage )
@@ -1053,38 +1051,55 @@ function ChatLog:PrettyItUp(wndForm)
 end
 
 function ChatLog:OnChatLineFadeTimer()
-	local nCurrentGameTime = GameLib.GetGameTime()
-
 	for idx, wndChat in pairs(self.tChatWindows) do
-		local tChatData = wndChat:GetData()
-		local wndChatList = wndChat:FindChild("Chat")
-		local wndInput = wndChat:FindChild("Input")
-		local strInput = wndInput:GetText()
-		local bForceOpaque = (wndChatList:GetVScrollPos() ~= wndChatList:GetVScrollRange())
-			or (strInput ~= nil and strInput ~= "")
-			or wndChat:ContainsMouse()
+		self:RunChatWindowFade(wndChat)
+	end
+end
 
-		for idx, wndChatLine in pairs(tChatData.tChildren:GetItems()) do
-			if wndChatLine:IsShown() then
-				local tChatLineData = wndChatLine:GetData()
+function ChatLog:RunChatWindowFade(wndChat)
+	local tChatData = wndChat:GetData()
+	local wndChatList = wndChat:FindChild("Chat")
+	local wndInput = wndChat:FindChild("Input")
+	local strInput = wndInput:GetText()
+	local bForceOpaque = (wndChatList:GetVScrollPos() ~= wndChatList:GetVScrollRange())
+		or (strInput ~= nil and strInput ~= "")
+		or wndChat:ContainsMouse()
+		or not self.bEnableBGFade
 
-				local nFadeTimePassed = nCurrentGameTime - tChatLineData.nAddedTime
+	for idx, wndChatLine in pairs(tChatData.tChildren:GetItems()) do
+		if wndChatLine:IsShown() then
+			local tChatLineData = wndChatLine:GetData()
 
-				if bForceOpaque then
-					if tChatLineData.bFading then
-						tChatLineData.nOpacity = wndChatLine:GetOpacity()
-						wndChatLine:SetOpacity(1, 0)
-					end
-					tChatLineData.nAddedTime = tChatLineData.nAddedTime + 5
-					tChatLineData.bFading = false
-					wndChatLine:SetData(tChatLineData)
-				elseif nFadeTimePassed > self.nChatLineFadeStartThreshold and not tChatLineData.bFading then
-					tChatLineData.bFading = true
-					wndChatLine:SetData(tChatLineData)
-					wndChatLine:SetOpacity(tChatLineData.nOpacity, 0)
-					wndChatLine:SetOpacity(self.nChatLineFadeOpacityMin, self.nChatLineFadeOpacityRate)
+			if bForceOpaque then
+				wndChatLine:SetOpacity(1, 0)
+			else
+				local nTimeLeft = tChatLineData.nAddedTime - knFadeTimerfrequency
+				tChatLineData.nAddedTime = nTimeLeft
+				if nTimeLeft <= 0 then
+					wndChatLine:SetOpacity(0.2, 1)
 				end
 			end
+			
+			wndChatLine:SetData(tChatLineData)
+		end
+	end
+end
+
+function ChatLog:OnMouseEnter(wndHandler, wndControl, x, y)
+	if wndHandler ~= wndControl then
+		return
+	end
+	self:RunChatWindowFade(wndControl)
+end
+
+function ChatLog:ChatActionTaken(wndChat)
+	local tChatData = wndChat:GetData()
+
+	for idx, wndChatLine in pairs(tChatData.tChildren:GetItems()) do
+		if wndChatLine:IsShown() then
+			local tChatLineData = wndChatLine:GetData()
+			tChatLineData.nAddedTime = math.max(knTimeToFadeAfterAction, tChatLineData.nAddedTime)
+			wndChatLine:SetData(tChatLineData)
 		end
 	end
 end
@@ -1479,6 +1494,8 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 			wndInput:SetTextColor(kcrInvalidColor)
 			wndInput:SetPrompt("X " .. tInput.strCommand)
 		end
+		
+		self:ChatActionTaken(wndControl:GetParent())
 	end
 end
 
@@ -2418,6 +2435,8 @@ function ChatLog:OnBGFade(wndHandler, wndControl)
 	self.bEnableBGFade = wndControl:GetData()
 	self.bEnableNCFade = wndControl:GetData()
 
+	local nCurrentGameTime = GameLib.GetGameTime()
+	
 	for idx, wndChatWindow in pairs(self.tChatWindows) do
 		wndChatWindow:SetStyle("AutoFadeNC", self.bEnableNCFade)
 		if self.bEnableNCFade then
@@ -2915,7 +2934,7 @@ function ChatLog:OnTradeSkillSigilResult(eResult)
 	Event_FireGenericEvent("GenericEvent_LootChannelMessage", kstrTradeskillResultTable[eResult])
 end
 
--------------------------------------
-
 local ChatLogInstance = ChatLog:new()
 ChatLogInstance:Init()
+
+

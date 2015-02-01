@@ -302,8 +302,6 @@ function Vendor:SizeHeader(wndHeader)
 end
 
 function Vendor:DrawListItems(wndParent, tItems)
-	Event_FireGenericEvent("SendVarToRover", "wndParent", wndParent, 0)
-	Event_FireGenericEvent("SendVarToRover", "tItems", tItems, 0)
 	for key, tCurrItem in pairs(tItems) do
 		if not tCurrItem.bFutureStock then
 			local wndCurr = self:FactoryCacheProduce(wndParent, "VendorListItem", "I"..tCurrItem.idUnique)
@@ -565,6 +563,7 @@ function Vendor:OnGenericError(eError, strMessage)
 		[GameLib.CodeEnumGenericError.Item_QuestViolation] 				= "",
 		[GameLib.CodeEnumGenericError.Item_Unique] 						= "",
 		[GameLib.CodeEnumGenericError.Faction_NotEnoughRep] 			= "",
+		[GameLib.CodeEnumGenericError.Item_NeedsRepair]					= "",
 	}
 
 	if self.wndVendor and self.wndVendor:IsShown() and tPurchaseFailEvent[eError] then
@@ -658,6 +657,8 @@ function Vendor:RefreshRepairTab()
 			tItem.idUnique = tItem.idLocation
 		end
 	end
+	
+	self.wndVendor:FindChild("TotalRepairFeesCashWindow"):SetAmount(GameLib.GetRepairAllCost(), false)
 
 	local nCount = tNewRepairableItems and #tNewRepairableItems or 0
 
@@ -860,7 +861,9 @@ function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
 
 	-- The following code allows for tMyGuild to be nil
 	local nLeft, nTop, nRight, nBottom = self.wndVendor:FindChild("LeftSideContainer"):GetAnchorOffsets()
+	local nLeft2, nTop2, nRight2, nBottom2 = self.wndVendor:FindChild("BottomContainer"):GetAnchorOffsets()
 	self.wndVendor:FindChild("LeftSideContainer"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -84 or -84) -- TODO HACKY: Hardcoded formatting
+	self.wndVendor:FindChild("BottomContainer"):SetAnchorOffsets(nLeft2, (tMyGuild and bIsRepairing) and -138 or -88, nRight2, nBottom2)
 	self.wndVendor:FindChild("GuildRepairContainer"):Show(tMyGuild and bIsRepairing)
 
 	if tMyGuild then -- If not valid, it won't be shown anyways
@@ -1009,6 +1012,12 @@ function Vendor:SetBuyButtonText()
 		strCaption = Apollo.GetString(self.wndVendor:FindChild("Buy"):GetData() and "Vendor_Repair" or "Vendor_RepairAll")
 	else
 		strCaption = Apollo.GetString("Vendor_Purchase")
+	end
+	
+	if self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
+		self.wndVendor:FindChild("BottomContainer:RepairTotalFees"):Show(true)
+	else
+		self.wndVendor:FindChild("BottomContainer:RepairTotalFees"):Show(false)
 	end
 
 	self.wndVendor:FindChild("Buy"):SetText(String_GetWeaselString(strCaption, ""))

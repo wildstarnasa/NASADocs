@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprPersonaBase" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_0_200.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="123" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPersonaChuteGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_4_119.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="124" y0="0" y1="0" y2="0" y3="0" y4="0" y5="79" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPersonaBagIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_141_43.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="11" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPersonaWrenchIcon" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_141_55.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="10" y0="0" y1="0" y2="0" y3="0" y4="0" y5="11" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprPersonaGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_128_100.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="66" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="64ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_128_100.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="66" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="2.000" StartColor="ffffffff" EndColor="64ffffff"/>
+    </Sprite>
+    <Sprite Name="sprGroupBagFrame" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_153_43.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="45" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprGroupBagGlow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_128_155.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="64ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_128_155.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.750" StartColor="ffffffff" EndColor="64ffffff"/>
+    </Sprite>
+    <AutoButton Name="btnPersonaInventory" Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="42" y0="0" y1="0" y2="0" y3="0" y4="0" y5="42" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnAbilities" Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_0_43.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="28" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnCharacter" Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_0_72.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="28" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnGroupBag" Texture="UI\Assets\TexPieces\UI_CRB_PersonaCorner_0_256.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="26" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="InvBtn_SalvageToggle" Texture="UI\Assets\TexPieces\UI_CRB_InventoryToggles_TEMP_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="2" y5="37" StateBits="31" Direction="Across"/>
+    <AutoButton Name="InvBtn_TrashToggle" Texture="UI\Assets\TexPieces\UI_CRB_InventoryToggles_TEMP_0_37.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="2" y5="37" StateBits="31" Direction="Across"/>
+    <AutoButton Name="InvBtn_ModifyToggle" Texture="UI\Assets\TexPieces\UI_CRB_InventoryToggles_TEMP_0_74.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="33" y0="0" y1="0" y2="0" y3="0" y4="2" y5="37" StateBits="31" Direction="Across"/>
+    <Sprite Name="sprInv_BottomFrameTall" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_InventoryToggles_TEMP_0_111.tga" x0="0" x1="8" x2="15" x3="36" x4="42" x5="51" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprInv_BottomFrameNarrow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_InventoryToggles_TEMP_51_111.tga" x0="0" x1="12" x2="36" x3="54" x4="77" x5="90" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

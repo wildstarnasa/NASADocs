@@ -85,6 +85,7 @@
                 <Event Name="ButtonSignal" Function="OnSuggestedMenuClose"/>
             </Control>
         </Control>
+        <Event Name="MouseEnter" Function="OnMouseEnter"/>
     </Form>
     <Form Class="MLWindow" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="100" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="ChatLine" Border="0" Picture="0" SwallowMouseClicks="0" Moveable="0" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" Sprite="sprChatTiledLine" TooltipColor="" Tooltip=""/>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="24" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ChatType" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TextId="" TooltipColor="">

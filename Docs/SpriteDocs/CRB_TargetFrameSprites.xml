@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Sprites>
+    <Sprite Name="sprTF_Vulnerable" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="205" y0="0" y1="0" y2="0" y3="0" y4="0" y5="130" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="205" x1="205" x2="205" x3="205" x4="205" x5="410" y0="0" y1="0" y2="0" y3="0" y4="0" y5="130" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="410" x1="410" x2="410" x3="410" x4="410" x5="615" y0="0" y1="0" y2="0" y3="0" y4="0" y5="130" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="615" x1="615" x2="615" x3="615" x4="615" x5="820" y0="0" y1="0" y2="0" y3="0" y4="0" y5="130" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="820" x1="820" x2="820" x3="820" x4="820" x5="1025" y0="1" y1="1" y2="1" y3="1" y4="1" y5="130" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="205" y0="130" y1="130" y2="130" y3="130" y4="130" y5="260" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="820" x1="820" x2="820" x3="820" x4="820" x5="1025" y0="0" y1="0" y2="0" y3="0" y4="0" y5="130" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="205" x1="205" x2="205" x3="205" x4="205" x5="410" y0="130" y1="130" y2="130" y3="130" y4="130" y5="260" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="410" x1="410" x2="410" x3="410" x4="410" x5="615" y0="130" y1="130" y2="130" y3="130" y4="130" y5="260" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="615" x1="615" x2="615" x3="615" x4="615" x5="820" y0="130" y1="130" y2="130" y3="130" y4="130" y5="260" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="820" x1="820" x2="820" x3="820" x4="820" x5="1025" y0="130" y1="130" y2="130" y3="130" y4="130" y5="260" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="820" x1="820" x2="820" x3="820" x4="820" x5="1025" y0="130" y1="130" y2="130" y3="130" y4="130" y5="260" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.010" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_VulnFadeIn" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_Vulnerable_33_34.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="ffffff" EndColor="c8ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_VulnFadeOut" Cycle="0">
+        <Frame Texture="UI\Assets\TexPieces\UI_Vulnerable_33_34.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="c8ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HorVulnBarFrame1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_9_260.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="145" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HorVulnBarFrame2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_163_260.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="145" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_163_260.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="145" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_163_260.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="145" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_PathSoldier" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PlayerPathIcons.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="320" y0="0" y1="0" y2="0" y3="0" y4="0" y5="360" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_PathScientist" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PlayerPathIcons.tga" x0="319" x1="319" x2="319" x3="319" x4="319" x5="640" y0="0" y1="0" y2="0" y3="0" y4="0" y5="360" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_PathExplorer" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PlayerPathIcons.tga" x0="640" x1="640" x2="640" x3="640" x4="640" x5="960" y0="0" y1="0" y2="0" y3="0" y4="0" y5="360" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_PathSettler" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_PlayerPathIcons.tga" x0="958" x1="958" x2="958" x3="958" x4="958" x5="1280" y0="0" y1="0" y2="0" y3="0" y4="0" y5="360" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseLong" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="298" y0="0" y1="0" y2="0" y3="0" y4="0" y5="63" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseShort" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_75_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="200" y0="0" y1="0" y2="0" y3="0" y4="0" y5="63" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseCluster" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_3_67.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="68" y0="0" y1="0" y2="0" y3="0" y4="0" y5="69" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_FrameOverlord" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_0_139.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="82" y0="0" y1="0" y2="0" y3="0" y4="0" y5="82" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_FrameElite" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_83_139.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="91" y0="0" y1="0" y2="0" y3="0" y4="0" y5="87" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_FrameEliteCap" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_175_139.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="49" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_FrameBoss" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_225_139.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="103" y0="0" y1="0" y2="0" y3="0" y4="0" y5="84" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_FrameBossCap" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_355_139.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="80" y0="0" y1="0" y2="0" y3="0" y4="0" y5="47" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_MaskLarge" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_436_120.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="52" y0="0" y1="0" y2="0" y3="0" y4="0" y5="53" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_MaskSmall" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_437_174.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="37" y0="0" y1="0" y2="0" y3="0" y4="0" y5="37" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLong" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_299_0.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="209" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthShort" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_299_27.tga" x0="1" x1="1" x2="1" x3="1" x4="1" x5="111" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_ThreatShort" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_300_45.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="105" y0="0" y1="0" y2="0" y3="0" y4="0" y5="9" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_ThreatLong" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_300_17.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="202" y0="0" y1="0" y2="0" y3="0" y4="0" y5="9" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_ThreatCluster" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_426_74.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="45" y0="0" y1="0" y2="0" y3="0" y4="0" y5="45" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthClusterVuln" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_362_74.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthCluster" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_299_74.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthShortVulnFrame1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_414_27.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="110" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastIconEvade" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_440_233.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastIconUnInter" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_475_233.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastIconInterrupt" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_440_269.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastMeterCapRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_418_230.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="10" HotspotY="7" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastMeterCapOrng" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_418_266.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="10" HotspotY="7" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastMeterRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_218_234.tga" x0="0" x1="0" x2="0" x3="19" x4="95" x5="112" y0="0" y1="0" y2="0" y3="0" y4="0" y5="13" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastMeterOrange" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_219_270.tga" x0="0" x1="0" x2="0" x3="14" x4="95" x5="111" y0="0" y1="0" y2="0" y3="0" y4="0" y5="13" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastBaseRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_3_234.tga" x0="0" x1="0" x2="0" x3="16" x4="109" x5="127" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_CastBaseOrange" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_3_270.tga" x0="0" x1="0" x2="0" x3="17" x4="109" x5="127" y0="0" y1="0" y2="0" y3="0" y4="0" y5="22" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseClusterElite" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_0_304.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="75" y0="0" y1="0" y2="0" y3="0" y4="0" y5="75" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseClusterBoss" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_81_300.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="73" y0="0" y1="0" y2="0" y3="0" y4="0" y5="87" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLongVulnFrame1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrames_300_55.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="208" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLongVulnFrame2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="435" x1="435" x2="435" x3="435" x4="435" x5="643" y0="259" y1="259" y2="259" y3="259" y4="259" y5="275" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="435" x1="435" x2="435" x3="435" x4="435" x5="643" y0="259" y1="259" y2="259" y3="259" y4="259" y5="275" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="435" x1="435" x2="435" x3="435" x4="435" x5="643" y0="259" y1="259" y2="259" y3="259" y4="259" y5="275" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.400" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthShortVulnFrame2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="315" x1="315" x2="315" x3="315" x4="315" x5="425" y0="259" y1="259" y2="259" y3="259" y4="259" y5="275" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="315" x1="315" x2="315" x3="315" x4="315" x5="425" y0="259" y1="259" y2="259" y3="259" y4="259" y5="275" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="ffffffff" EndColor="ffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_VulnerableState_0_0.tga" x0="315" x1="315" x2="315" x3="315" x4="315" x5="425" y0="259" y1="259" y2="259" y3="259" y4="259" y5="275" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.400" StartColor="ffffff" EndColor="ffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_ShieldCluster" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\PlayerPathContent_TEMP_0_450.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseElite_Secondary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_284_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_288.tga" x0="279" x1="279" x2="279" x3="279" x4="279" x5="307" y0="80" y1="80" y2="80" y3="80" y4="80" y5="150" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_FriendBacker" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_330_631.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="52" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyTick_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_307_408.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyTick_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_307_398.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyTick_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_307_388.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyTick_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_307_378.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyTick_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_307_368.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="11" y0="0" y1="0" y2="0" y3="0" y4="0" y5="10" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLong_Vuln" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_384.tga" x0="0" x1="0" x2="0" x3="15" x4="151" x5="165" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLong_Shield" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_400.tga" x0="0" x1="0" x2="0" x3="15" x4="151" x5="165" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLong_Norm" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_416.tga" x0="0" x1="0" x2="0" x3="15" x4="151" x5="165" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthShort_Vuln" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_168_384.tga" x0="0" x1="0" x2="0" x3="14" x4="94" x5="107" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthShort_Shield" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_168_400.tga" x0="0" x1="0" x2="0" x3="14" x4="94" x5="107" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthShort_Norm" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_168_416.tga" x0="0" x1="0" x2="0" x3="14" x4="94" x5="107" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthRadial_Norm" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_432.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthRadial_Vuln" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_126_432.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthRadial_Shield" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_63_432.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="62" y0="0" y1="0" y2="0" y3="0" y4="0" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthLong_Absorb" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_496.tga" x0="0" x1="0" x2="0" x3="15" x4="151" x5="165" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseElite_Primary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_0.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="284" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseSuperior_Primary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_96.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="284" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseChampion_Primary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_192.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="284" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseStandard_Primary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_288.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="284" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseMinion_Primary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_288.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="284" y0="96" y1="96" y2="96" y3="96" y4="96" y5="192" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseFodder_Primary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_432.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="284" y0="48" y1="48" y2="48" y3="48" y4="48" y5="144" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseSuperior_Secondary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_284_96.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseChampion_Secondary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_284_192.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseStandard_Secondary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_288.tga" x0="284" x1="284" x2="284" x3="284" x4="284" x5="388" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseMinion_Secondary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_288.tga" x0="284" x1="284" x2="284" x3="284" x4="284" x5="388" y0="96" y1="96" y2="96" y3="96" y4="96" y5="192" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseFodder_Secondary" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_284_480.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="96" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_GroupRank_Base" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_647.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_Green" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_631.tga" x0="0" x1="0" x2="0" x3="14" x4="15" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_Yellow" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_30_631.tga" x0="0" x1="0" x2="0" x3="14" x4="15" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_Red" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_60_631.tga" x0="0" x1="0" x2="0" x3="14" x4="15" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_Shield" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_90_631.tga" x0="0" x1="0" x2="0" x3="14" x4="15" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_Vulnerable" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_120_631.tga" x0="0" x1="0" x2="0" x3="14" x4="15" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_Absorb" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_150_631.tga" x0="0" x1="0" x2="0" x3="14" x4="15" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_GreenRound" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_YellowRound" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_63_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_RedRound" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_126_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_ShieldRound" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_189_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_AbsorbRound" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_252_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_VulnRound" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_315_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyFrame_0" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_180_632.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyFrame_1" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_205_632.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyFrame_2" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_230_632.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyFrame_3" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_255_632.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyFrame_4" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_280_632.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_DifficultyFrame_5" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_305_632.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="25" y0="0" y1="0" y2="0" y3="0" y4="0" y5="61" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_ScalingMark" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_26_648.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="22" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseAssist" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_101_693.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="180" y0="0" y1="0" y2="0" y3="0" y4="0" y5="43" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_BaseToT" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_49_687.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="52" y0="0" y1="0" y2="0" y3="0" y4="0" y5="60" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_AssistType_ToTFriend" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_48_647.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="31" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_AssistType_ToTHostile" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_1_672.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="31" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_AssistType_AltFriend" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_48_647.tga" x0="38" x1="38" x2="38" x3="38" x4="38" x5="77" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_AssistType_AltHostile" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_126_647.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="39" y0="0" y1="0" y2="0" y3="0" y4="0" y5="39" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Composite Name="compTF_HorVulnBar" Cycle="0">
+        <Layer Name="sprTF_HorVulnBarFrame1"/>
+        <Layer Name="sprTF_HorVulnBarFrame2"/>
+    </Composite>
+    <Composite Name="sprTF_HealthLongVuln" Cycle="0">
+        <Layer Name="sprTF_HealthLongVulnFrame1"/>
+        <Layer Name="sprTF_HealthLongVulnFrame2"/>
+    </Composite>
+    <Composite Name="sprTF_HealthShortVuln" Cycle="0">
+        <Layer Name="sprTF_HealthShortVulnFrame1"/>
+        <Layer Name="sprTF_HealthShortVulnFrame2"/>
+    </Composite>
+    <Sprite Name="sprTF_HealthFill_GreenRoundStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_0_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_YellowRoundStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_63_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_RedRoundStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_126_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_ShieldRoundStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_189_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_AbsorbRoundStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_252_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprTF_HealthFill_VulnRoundStretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_TargetFrame_TEMP_315_576.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="55" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

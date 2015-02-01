@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<Sprites>
+    <Sprite Name="sprCrafting_TEMP_Tutorial" Cycle="1">
+        <Frame Texture="UI\Textures\UI_Tutorial_Crafting_TEMP.tga" x0="163" x1="163" x2="163" x3="1107" x4="1107" x5="1107" y0="41" y1="41" y2="41" y3="41" y4="41" y5="982" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCrafting_TEMP_TutorialStretch" Cycle="1">
+        <Frame Texture="UI\Textures\UI_Tutorial_Crafting_TEMP.tga" x0="163" x1="163" x2="163" x3="163" x4="163" x5="1107" y0="41" y1="41" y2="41" y3="41" y4="41" y5="982" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCrafting_TEMP_ScreenOne" Cycle="1">
+        <Frame Texture="UI\Textures\UI_Tutorial_Crafting_TEMP.tga" x0="163" x1="163" x2="163" x3="163" x4="163" x5="1101" y0="500" y1="500" y2="500" y3="500" y4="500" y5="982" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCrafting_TEMP_ScreenTwo" Cycle="1">
+        <Frame Texture="UI\Textures\UI_Tutorial_Crafting_TEMP.tga" x0="163" x1="163" x2="163" x3="163" x4="163" x5="1107" y0="41" y1="41" y2="41" y3="41" y4="41" y5="471" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCrafting_TEMP_TutorialArmorer" Cycle="1">
+        <Frame Texture="UI\Textures\UI_Tutorial_Armorer_TEMP.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="896" y0="0" y1="0" y2="0" y3="0" y4="0" y5="759" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprCrafting_TEMP_TutorialTradeQuests" Cycle="1">
+        <Frame Texture="UI\Textures\UI_Tutorial_Armorer_TEMP.tga" x0="897" x1="897" x2="897" x3="897" x4="897" x5="1324" y0="0" y1="0" y2="0" y3="0" y4="0" y5="545" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+</Sprites>
