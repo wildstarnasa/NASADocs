@@ -33,7 +33,6 @@ function LiveEvent:OnLoad()
 end
 
 function LiveEvent:OnDocLoaded()
-	--[[
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged",  	"OnPlayerCurrencyChanged", self)
 	Apollo.RegisterEventHandler("LiveEvent_ToggleWindow", 	"OnLiveEvent_ToggleWindow", self)
 	Apollo.RegisterTimerHandler("LiveEvent_UpdateTimer", 	"UpdateList", self)
@@ -41,9 +40,6 @@ function LiveEvent:OnDocLoaded()
 	Apollo.StopTimer("LiveEvent_UpdateTimer")
 
 	self.wndMain = nil
-	]]--
-	
-	self.xmlDoc = nil -- TEMP
 end
 
 function LiveEvent:OnLiveEvent_ToggleWindow()
@@ -200,3 +196,13 @@ end
 
 local LiveEventInst = LiveEvent:new()
 LiveEventInst:Init()
+ss="Window" LAnchorPoint="0" LAnchorOffset="66" TAnchorPoint=".6" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-9" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Name="SalvageListItemType" TextId="Challenges_NoProgress" BGColor="ffffffff" TextColor="UI_TextHoloBodyCyan" DT_VCENTER="1" DT_WORDBREAK="1" TooltipColor=""/>
+        </Control>
+    </Form>
+</Forms>
+øSÂŽ|5©Döñ‘ðpj;V³¿~„òþÑï3Ë?áÏ¿7+ûSÃŽ0¯]áuéë<ûo¥+ç_1c~ÇãÓDäþŠx†¼d:²É¦ ò­Ä‚J„‰áëF„›‚¥Aô{"ü‘`9úü0æsŒ1ÆcŒ1ÆcŒ1ÆcŒ1Æãsƒÿ?&x¬Ê      ³ °:åý H H@èAç9ÿÿÿÿ        èAç9ÿÿÿÿ ñ¤I’$(BÇ9/¿ÿÿ'œà–¹$ªRç9
+¯õUJ
+œàRw—˜Mk(B
+¯½µ€@¦ðñ„,c+/--Ø–1éóœqŒ-©‰ÙÓ¬#ÇbºóœÓœ«©©©ÙÓ±çTIÕóœóœ    Ø•˜ƒ5P4ÓœqŒzzbb?‹ÕZ/:„,càèxxPÐ¨µ¬_'Mk(B èþ^.Ð8Ööó$ËZèA úWU X_'I’$IJç9è_UU        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ(1y•WªRèA%%55{1ïð1•w„ëZ/--½Øz&`
+/™»óœ0„‹-õÙž   m›$Óœ’”ÿ UÙž   m›$ÓœqŒ ª ×q Õ¤_?²”Ï{€ààzu(X/ö¢³>ï{ëZxxx^$à£>sB'ŠRç9xX\^        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ y‘xÉ›äIJç9-5µÕW¥àRw™»Mk(B
++¯õ~1Pnv›ü„ëZ«ÿÕA °m¶$0„,c ªÿU‚@ °m¶$0„,c ªÿU|,€¸±­ÿ'ï{ëZ€èþWK	-ö¬S?Mk(Bèø~_ `2'N’$(Bç9øüÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ ï›I’$IJç9/½UU)à’ù$ªRèA ¯UU+ @’¶$ËZB ªUU* @’¶$ËZB êUU'€FÖþ“$ŠRç9 êU  Ó'I’$IJç9x_UU        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ            œÙ Ì ÎQæý H@H         èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ            œÙ – ”'æý H@H         èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ

@@ -80,7 +80,7 @@ function HousingDecorate:OnLoad()
 	Apollo.RegisterEventHandler("HousingPanelControlClose", 		"OnClosePanelControl", self)
 	Apollo.RegisterEventHandler("WarPartyBattleOpen", 				"OnOpenBattle", self)
 	Apollo.RegisterEventHandler("WarPartyBattleClose", 				"OnCloseBattle", self)
-	Apollo.RegisterEventHandler("ChangeWorld", 						"OnCancelFreePlace", self)
+	Apollo.RegisterEventHandler("ChangeWorld", 						"OnChangeWorld", self)
 	
 	Apollo.RegisterEventHandler("HousingSelectHook", 				"OnHookSelect", self)
 	Apollo.RegisterEventHandler("HousingHookDecorPlaced", 			"OnHookDecorPlaced", self)	
@@ -173,7 +173,7 @@ function HousingDecorate:OnLoad()
 	nLeft, nTop, nRight, nBottom = self.wndVendorFrame:GetAnchorOffsets()
 	self.nVendorTop = nTop
 	
-	self.wndBuyButton:Enable(false)
+	self.wndBuyButton:Show(false)
 	self.wndDeleteButton:Enable(false)
 	self.wndCancelButton:Enable(false)
 	self.wndIntClearSearchBtn:Show(false)
@@ -439,7 +439,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function HousingDecorate:OnInvalidHookSelect()
-	self.wndBuyButton:Enable(false)
+	self.wndBuyButton:Show(false)
 	self.wndDeleteButton:Enable(false)
 	self.wndCancelButton:Enable(false)
 end
@@ -486,7 +486,7 @@ function HousingDecorate:OnDecoratePreview(wndControl, wndHandler) -- attaching 
                 bCanAfford = GameLib.GetPlayerCurrency():GetAmount(self.eDisplayedCurrencyType, self.eDisplayedGroupCurrencyType) >= tItemData.nCost
             end
             self.bCanPlaceHere = bCanAfford and bThereIsRoom and bValidPlacement
-            self.wndBuyButton:Enable(self.bCanPlaceHere)
+            self.wndBuyButton:Show(self.bCanPlaceHere)
             self.wndCancelButton:Enable(true)
             self.wndDeleteButton:Enable(false)
             
@@ -519,8 +519,7 @@ function HousingDecorate:OnBuyBtn(wndControl, wndHandler)
 
    	self.wndIntSearchWindow:ClearFocus()
 	self.wndExtSearchWindow:ClearFocus()
-
-    if self.bIsVendor then
+	if self.bIsVendor then
 	    HousingLib.Decorate(self.nPreviewDecorHandle)
 	else
 	    HousingLib.PlaceDecorFromCrate(self.nPreviewDecorHandle)
@@ -544,11 +543,11 @@ function HousingDecorate:OnBuyBtn(wndControl, wndHandler)
 			self.wndBuyToCrateButton:Enable(false)
             self.idSelectedItem = nil
             self.eSelectedItemType = nil
+			self:HelperTogglePreview(false)
+			self.wndTogglePreview:Enable(false)	
         else
 			self.wndMessageDisplay:SetText(kstrPlaceAgain)
 		end
-		self:HelperTogglePreview(not self.bHidePreview)	
-		self.wndTogglePreview:Enable(true)
 	else -- vendor
 		self.wndMessageDisplay:SetText(kstrPlaceAgain)
 		self:HelperTogglePreview(not self.bHidePreview)
@@ -687,11 +686,9 @@ function HousingDecorate:OnWindowClosed() -- might not be used?
 	self.wndListView:DeleteAll()
 	self.wndListView:SetCurrentRow(0)
 	self.wndBuyToCrateButton:Enable(false)
-	self.nSortType = 0
 	self.idSelectedItem = 0
 	self.eSelectedItemType = 0
 	self.tDecorList = nil
-	self:HelperOnSortByUpdateDropdown(Apollo.GetString("HousingDecorate_AllTypes"))
 	self.wndIntSearchWindow:SetText("")
 	self.wndExtSearchWindow:SetText("")
 	self.wndIntClearSearchBtn:Show(false)
@@ -727,6 +724,8 @@ function HousingDecorate:ShowDecorateWindow(bClear)
     
     self.wndExtShowOnlyToggleBtn:Show(self.bIsVendor)
     self.wndIntShowOnlyToggleBtn:Show(self.bIsVendor)
+	self.wndExtHeaderWindow:FindChild("ShowExteriorOnlyTxt"):Show(self.bIsVendor)
+	self.wndIntHeaderWindow:FindChild("ShowInteriorOnlyTxt"):Show(self.bIsVendor)
     
     if self.bIsVendor then
 		self.wndBuyButton:SetText(Apollo.GetString("HousingDecorate_Buy"))
@@ -879,7 +878,7 @@ function HousingDecorate:OnHookDecorPlaced(nItemHandle)
     end
     
     self.bCanPlaceHere = bCanAfford and validPlacement
-    self.wndBuyButton:Enable(self.bCanPlaceHere)
+    self.wndBuyButton:Show(self.bCanPlaceHere)
     self.wndDeleteButton:Enable(false)
 end
 
@@ -902,7 +901,7 @@ function HousingDecorate:OnFreePlaceDecorPlaced(nItemHandle)
     end
     
     self.bCanPlaceHere = bCanAfford and bThereIsRoom and bValidPlacement
-    self.wndBuyButton:Enable(self.bCanPlaceHere)
+    self.wndBuyButton:Show(self.bCanPlaceHere)
     self.wndDeleteButton:Enable(false)
 end
 
@@ -925,7 +924,7 @@ function HousingDecorate:OnFreePlaceDecor_FromVendor() -- free placing from vend
 			self.nPreviewDecorHandle = nItemHandle
 			self.wndDecorIconFrame:Show(true)
 			self:OnActivateDecorIcon(self.nPreviewDecorHandle)
-            self.wndBuyButton:Enable(self.bCanPlaceHere)
+            self.wndBuyButton:Show(self.bCanPlaceHere)
 			self.wndCancelButton:Enable(true)
 			self.wndDeleteButton:Enable(false)
 			self:ShowItems(self.wndListView, self.tDecorList, 0)
@@ -951,7 +950,7 @@ function HousingDecorate:OnFreePlaceDecor_FromCrate()
 			self.nPreviewDecorHandle = nItemHandle
 			self.wndDecorIconFrame:Show(true)
 			self:OnActivateDecorIcon(self.nPreviewDecorHandle)
-			self.wndBuyButton:Enable(self.bCanPlaceHere)
+			self.wndBuyButton:Show(self.bCanPlaceHere)
 			self.wndCancelButton:Enable(true)
 			self.wndDeleteButton:Enable(false)
 			self:ShowItems(self.wndListView, self.tDecorList, 0)
@@ -976,6 +975,14 @@ function HousingDecorate:OnFreePlaceCrateBtn(wndHandler, wndControl)
 end
 
 ---------------------------------------------------------------------------------------------------
+function HousingDecorate:OnChangeWorld()
+	if HousingLib.IsHousingWorld() then
+		self.nSortType = 0
+		self:HelperOnSortByUpdateDropdown(Apollo.GetString("HousingDecorate_AllTypes"))
+		self:OnCancelFreePlace()
+	end
+end
+
 function HousingDecorate:OnCancelFreePlace(wndHandler, wndControl) -- from UI buttons
 			    	
 	if self.nFreePlaceDecorHandle ~= 0 then
@@ -2223,3 +2230,5 @@ end
 -----------------------------------------------------------------------------------------------
 local HousingDecorateInst = HousingDecorate:new()
 HousingDecorateInst:Init()
+ltipType="OnCursor" Name="ButtonInitialYes" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Text="" TextId="CRB_Accept" AutoScaleText="0" TestAlpha="1" WindowSoundTemplate="HoloButtonLarge">
+                <Event Name="ButtonSignal" Functio

@@ -3,3 +3,115 @@
     <Script Name="CustomerSurvey.lua"/>
     <Form Name="CustomerSurvey.xml"/>
 </Addon>
+-----------------------------------------------------
+
+require "Window"
+require "CustomerSurveyTypeLib"
+require "CustomerSurveyLib"
+
+local CustomerSurvey = {}
+function CustomerSurvey:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function CustomerSurvey:Init()
+    Apollo.RegisterAddon(self)
+end
+
+function CustomerSurvey:OnLoad()
+   	Apollo.RegisterEventHandler("NewCustomerSurveyRequest", "OnSurveyRequest", self)
+	Apollo.RegisterEventHandler("UnitEnteredCombat", "OnEnteredCombat", self)
+end
+
+function CustomerSurvey:Initialize()
+	if self.wndMain and self.wndMain:IsValid() then
+		return
+	end
+
+    self.wndMain = Apollo.LoadForm("CustomerSurvey.xml", "CustomerSurveyForm", nil, self)
+	self.wndAlertContainer = nil
+	self.wndCommentEntry = nil
+	self.csActiveSurvey = nil
+	self.bInCombat = false
+	self.tRadios = {}
+	self.nAnswered = 0
+end
+
+function CustomerSurvey:OnSurveyRequest()
+	self:Initialize()
+	self:RedrawAll()
+end
+
+function CustomerSurvey:OnEnteredCombat(unit, bInCombat)
+	if self.wndMain and unit == GameLib.GetPlayerUnit() then
+		self.bInCombat = bInCombat
+		if bInCombat then
+			self:RedrawAll()
+		end
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Main Draw Method
+-----------------------------------------------------------------------------------------------
+
+function CustomerSurvey:RedrawAll()
+	self:UpdateAlert()
+	self:UpdateSurvey()
+end
+
+function CustomerSurvey:UpdateAlert()
+	if self.wndAlertContainer and self.wndAlertContainer:IsValid() then
+		self.wndAlertContainer:Destroy()
+	end
+
+	self.wndAlertContainer = Apollo.LoadForm("CustomerSurvey.xml", "CustomerSurveyAlertContainer", "FixedHudStratum", self)
+	for idx = 1, 3 do
+		local tSurvey = CustomerSurveyLib.GetPending(idx)
+		if tSurvey then
+			local wndAlert = Apollo.LoadForm("CustomerSurvey.xml", "CustomerSurveyAlert", self.wndAlertContainer:FindChild("List"), self)
+			wndAlert:SetData(tSurvey)
+			wndAlert:FindChild("CustomerSurveyAlertBtn"):SetData(tSurvey)
+			wndAlert:SetTooltip(String_GetWeaselString(Apollo.GetString("CustomerSurvey_ClickToTake"), tSurvey:GetTitle()))
+		end
+	end
+
+	self.wndAlertContainer:FindChild("List"):ArrangeChildrenHorz(0)
+	self.wndAlertContainer:FindChild("List"):SetText(CustomerSurveyLib.GetPendingCount() > 3 and Apollo.GetString("CRB_Elipsis") or "")
+	if #self.wndAlertContainer:FindChild("List"):GetChildren() <= 1 then
+		self.wndAlertContainer:Destroy()
+	end
+end
+
+function CustomerSurvey:UpdateSurvey()
+	local bDoShow = false
+	if self.csActiveSurvey == nil then
+		self.csActiveSurvey = CustomerSurveyLib.GetPending(1)
+	end
+	
+	if self.csActiveSurvey then
+		local tQuestions = self.csActiveSurvey:GetQuestions()
+		if tQuestions then
+			bDoShow = true
+			self.wndMain:FindChild("OkButton"):Enable(false)
+			self.wndMain:FindChild("TitleLabel"):SetText(self.csActiveSurvey:GetTitle())
+			self.wndMain:FindChild("QuestionsForm"):DestroyChildren()
+			
+			self.nAnswered = 0
+			
+			for idx, strQuestion in pairs(tQuestions) do
+				local wndCurr = Apollo.LoadForm("CustomerSurvey.xml", "QuestionEntry", self.wndMain:FindChild("QuestionsForm"), self)
+				wndCurr:FindChild("QuestionLabel"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloTitle\">"..strQuestion.."</P>")
+				local nWidth, nHeight = wndCurr:FindChild("QuestionLabel"):SetHeightToContentHeight()
+
+				local nPicked = self.csActiveSurvey:GetResults(idx)
+				if nPicked and nPicked > 0 then
+					wndCurr:FindChild("BottomForm"):FindChild("SurveyResultForm"):SetRadioSel("SurveyResult", nPicked)
+					self.nAnswered = self.nAnswered + 1
+				end
+				
+				local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
+				wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTo

@@ -12,3 +12,86 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-16" RAnchorPoint="1" RAnchorOffset="10" BAnchorPoint="1" BAnchorOffset="4" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ClueSeparator" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetDividerBright_H"/>
     </Form>
 </Forms>
+" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="64" DT_VCENTER="1" DT_CENTER="1" Name="CloseButton" BGColor="white" TextColor="white" NewControlDepth="2" WindowSoundTemplate="HoloButtonSmall" Text="" TextId="" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TestAlpha="1">
+                <Event Name="ButtonSignal" Function="OnCancel"/>
+            </Control>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="0" TAnchorOffset="67" RAnchorPoint="1" RAnchorOffset="-50" BAnchorPoint="0.5" BAnchorOffset="-20" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="Message" BGColor="white" TextColor="UI_TextHoloTitle" TooltipColor="" DT_CENTER="1" DT_VCENTER="1" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
+            <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-58" TAnchorPoint="0.5" TAnchorOffset="-15" RAnchorPoint=".5" RAnchorOffset="58" BAnchorPoint="0.5" BAnchorOffset="25" RelativeToClient="1" Font="CRB_HeaderGigantic" Text="" Template="Default" TooltipType="OnCursor" Name="Time" BGColor="white" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" DT_CENTER="1" DT_VCENTER="1" TextId=""/>
+        </Control>
+        <Event Name="WindowClosed" Function="OnCancel"/>
+    </Form>
+</Forms>
+therBar,tActionBar in pairs(self.tActionBarsVert) do
+		if nOtherBar ~= nBar and tActionBar:IsShown() then
+			local tOtherPosition = self:GetBarPosition(nOtherBar)
+
+			if tOtherPosition and tOtherPosition.tCenter and tOtherPosition.tCenter.nX == tPosition.tCenter.nX then
+				nRowHeight = nRowHeight + tOtherPosition.tSize.nHeight
+				nRowY = (nRowY * #arRow + tOtherPosition.tCenter.nY) / (#arRow + 1)
+				arRow[#arRow + 1] = self.tActionBarsVert[nOtherBar]
+			end
+		end
+	end
+
+	-- if there were any overlapping then rearrange all of them
+	if #arRow > 1 then
+		local kOverlap = 4
+
+		local nTop = nRowY - nRowHeight / 2
+		local tDisplay = Apollo.GetDisplaySize()
+		if tDisplay and tDisplay.nWidth then
+			if nTop + nRowHeight > tDisplay.nWidth / 2 then
+				nTop = nRowHeight / -2
+			end
+		end
+		nTop = nTop + kOverlap * #arRow
+
+		for nIdx, nTmpBar in pairs(arRow) do
+			local tTmpPosition = self:GetBarPosition(nTmpBar)
+			self:SetBarPosition(nTmpBar, nil, { nY = nTop + tTmpPosition.tSize.nHeight / 2 } )
+			nTop = nTop + tTmpPosition.tSize.nHeight - kOverlap
+		end
+	end
+end
+
+function ActionBarShortcut:ShowWindow(nBar, bIsVisible, nShortcuts)
+    if self.tActionBarsHorz[nBar] == nil then
+		return
+	end
+	
+	self.tActionBarSettings[nBar] = {}
+	self.tActionBarSettings[nBar].bIsVisible = bIsVisible
+	self.tActionBarSettings[nBar].nShortcuts = nShortcuts
+
+	if nShortcuts and bIsVisible then
+		--self:ShowBarDocked(nBar, bIsVisible, nShortcuts)
+		self:ShowBarFloatHorz(nBar, bIsVisible, nShortcuts)
+		self:ShowBarFloatVert(nBar, bIsVisible, nShortcuts)
+	end
+	
+	if not self.bTimerRunning then
+		self.timerShorcutArt:Start()
+		self.bTimerRunning = true
+	end
+
+	self.tActionBars[nBar]:Show(bIsVisible and self.bDocked, not bIsVisible)
+	self.tActionBarsHorz[nBar]:Show(bIsVisible and not self.bDocked and self.bHorz, not bIsVisible)
+	self.tActionBarsVert[nBar]:Show(bIsVisible and not self.bDocked and not self.bHorz, not bIsVisible)
+end
+
+function ActionBarShortcut:OnActionBarShortcutArtTimer()
+	self.bTimerRunning = false
+	local bBarVisible = false
+
+	for nbar, tSettings in pairs(self.tActionBarSettings) do
+		bBarVisible = bBarVisible or (tSettings.bIsVisible and self.bDocked)
+	end
+	
+	Event_FireGenericEvent("ShowActionBarShortcutDocked", bBarVisible)
+end
+
+function ActionBarShortcut:OnDockBtn(wndControl, wndHandler)
+	self.bDocked = not self.bDocked
+	self.bHorz = true
+	
+	for nbar, tActionBar in pairs(self.tActionBars) d

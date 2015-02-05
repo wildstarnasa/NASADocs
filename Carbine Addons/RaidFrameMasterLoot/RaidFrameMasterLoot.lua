@@ -189,3 +189,9 @@ end
 
 local RaidFrameMasterLootInst = RaidFrameMasterLoot:new()
 RaidFrameMasterLootInst:Init()
+ont="CRB_InterfaceSmall_O" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="66" BAnchorPoint="0" BAnchorOffset="25" DT_VCENTER="0" DT_CENTER="0" TooltipType="OnCursor" Name="SetMainAssistBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ff2f94ac" PressedTextColor="ff31fcf6" FlybyTextColor="ff31fcf6" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="" GlobalRadioGroup="" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="RaidFrame_CombatAssistTooltip" RelativeToClient="1" NeverBringToFront="1" HideInEditor="0">
+            <Event Name="ButtonCheck" Function="OnConfigSetAsMainAssistCheck"/>
+            <Event Name="ButtonUncheck" Function="OnConfigSetAsMainAssistUncheck"/>
+            <Pixie LAnchorPoint="0.5" LAnchorOffset="-10" TAnchorPoint="0.5" TAnchorOffset="-8" RAnchorPoint="0.5" RAnchorOffset="12" BAnchorPoint="0.5" BAnchorOffset="9" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="CRB_Raid:sprRaid_Icon_AssistLeader" Line="0"/>
+        </Control>
+        <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo" Font="CRB_InterfaceSmall_O" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="68" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="100" BAnchorPoint="0" BAnchorOffset="25" DT_VCENTER="0" DT_CENTER="0" TooltipType="OnCursor" Name="SetRaidAssistBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ff2f94ac" PressedTextColor="ff31fcf6" FlybyTextColor="ff31fcf6" PressedFlybyTex

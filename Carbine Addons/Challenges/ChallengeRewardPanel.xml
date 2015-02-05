@@ -36,3 +36,57 @@
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="0" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="TierDividerItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TooltipColor=""/>
 </Forms>
+ the window item created
+	self.nItems = self.nItems+1
+
+	if tRewards.itemReward then
+		wndChallengeItem:FindChild("LootIcon"):SetItemInfo(tRewards.itemReward, tRewards.nAmount)
+		wndChallengeItem:FindChild("ChallengeItemBtn"):SetData(tRewards.itemReward)
+	elseif tRewards.monReward then
+		wndChallengeItem:FindChild("LootIcon"):SetMoneyInfo(tRewards.monReward, tRewards.nAmount)
+	elseif tRewards.splReward then
+		wndChallengeItem:FindChild("LootIcon"):SetSpellInfo(tRewards.splReward)
+	elseif tRewards.nXp then
+		wndChallengeItem:FindChild("LootIcon"):SetXpInfo(tRewards.nXp)
+	elseif tRewards.nRepId then
+		wndChallengeItem:FindChild("LootIcon"):SetReputationInfo(tRewards.nRepId, tRewards.nRepAmount)
+	end
+
+	self.tTierCounts[tRewards.nChallengeTier] = self.tTierCounts[tRewards.nChallengeTier] + 1
+
+	wndChallengeItem:FindChild("ChallengeItemBtn"):SetBGColor(CColor.new(1.0, 1.0, 1.0, 1.0))
+	wndChallengeItem:FindChild("Backer"):SetBGColor(CColor.new(1.0, 1.0, 1.0, 1.0))
+	wndChallengeItem:FindChild("LootIcon"):SetBGColor(CColor.new(1.0, 1.0, 1.0, 1.0))
+	wndChallengeItem:FindChild("2xMarker"):SetText(String_GetWeaselString(Apollo.GetString("ChallengeReward_Multiplier"), ChallengesLib.GetLootBonusMultiplier(self.iRewardTier)))
+	wndChallengeItem:FindChild("2xMarker"):SetTextColor(kcrDoubleMarkerOff)
+	self.tValidWindows[idx] = wndChallengeItem
+	wndChallengeItem:FindChild("LootIconBlocker"):SetBGColor(CColor.new(0, 0, 0, 0))
+	wndChallengeItem:FindChild("LootIconBlocker"):SetData(true)
+	wndChallengeItem:FindChild("LootIconBlocker"):Enable(true)
+
+	wndChallengeItem:FindChild("ChallengeItemBtn"):Enable(true)
+	wndChallengeItem:FindChild("2xMarker"):Show(true)
+
+	wndChallengeItem:SetData(idx)
+end
+
+-----------------------------------------------------------------------------------------------
+-- Start Btn and Spinning
+-----------------------------------------------------------------------------------------------
+function ChallengeRewardPanel:OnChallengeItemBtn(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right then -- Right click should always be safe, instead of only safe on certain buttons
+		if wndHandler:GetData() then -- Can be nil, E.G. XP has no item data
+			Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+		end
+		return
+	end
+
+	self.bInRandomizer = true
+	for idx = 1, #self.tItems do
+		if not self.tItems[idx]:FindChild("ChallengeItemBtn"):IsChecked() then
+			self.tItems[idx]:FindChild("ChallengeItemBtn"):Enable(false)
+			self.tItems[idx]:FindChild("LootIconBlocker"):Enable(false)
+			self.tItems[idx]:FindChild("2xMarker"):SetTextColor(CColor.new(0, 0, 0, .25))
+		else
+			self.tItems[idx]:FindChild("ChallengeItemBtn"):Enable(false)
+			self.tItems[idx]:FindChi

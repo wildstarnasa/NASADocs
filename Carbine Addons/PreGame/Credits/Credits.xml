@@ -34,3 +34,49 @@
         </Control>
     </Form>
 </Forms>
+"rozz", "ruc", "rum", "uc", "ui", "um", "un", "uo",},
+		},
+
+		[PreGameLib.CodeEnumRace.Mechari] =
+		{
+			arFirstNamePrefix = {"A", "Ac", "Acr", "Ad", "Al", "Amph", "Ar", "Arc", "Arch", "Con", "Cry", "Cyb", "Dat", "Dem", "Ex", "Gig", "Hy", "Hyd", "Hydr", "Id", "In", "Lev", "Log", "Lor", "Ly", "Lyt", "Magn", "Mec", "Mem", "Mor", "Neur", "Nor", "Ny", "Pen", "Per", "Ser", "Tir", "Tor", "Tra", "Typ", "Tyr", "Umbr", "Var", "Vec", "Ver", "Vid", "Vir", "Vol", "Vy", "Vyt", "Zyr",},
+			[PreGameLib.CodeEnumGender.Male] = {"ac", "ax", "eic", "ept", "ex", "ic", "in", "io", "iom", "ion", "ix", "o", "oc", "ose", "ox", "um", "uon", "ux", "is",},
+			[PreGameLib.CodeEnumGender.Female] = {"a", "eica", "ena", "ene", "exa", "ia", "ie", "ina", "inia", "itie", "osia", "umia", "ydra",},
+			arLastNamePrefix = {"Alpha", "Beta", "Centi", "Deca", "Deci", "Deco", "Delta", "Dua", "Duo", "Duode", "Gamma", "Giga", "Hexa", "Kilo", "Macro", "Meta", "Micro", "Milli", "Mono", "Nova", "Novi", "Novo", "Octa", "Octi", "Octo", "Omega", "Omni", "Quadra", "Quadri", "Quadro", "Quinta", "Quinti", "Quinto", "Secta", "Secti", "Secto", "Septa", "Septi", "Septo", "Sigma", "Tau", "Tera", "Theta", "Tria", "Trio", "Ulti", "Ultra", "Una", "Uni", "Uno", "Zeta",},
+			arLastNameSuffix = {"bolt", "cell", "con", "core", "cron", "cus", "lux", "mac", "max", "mec", "mox", "nex", "niex", "nion", "nix", "noc", "noid", "nox", "pax", "phax", "phex", "phix", "plex", "rax", "rem", "rex", "rion", "rix", "rom", "rox", "spark", "tec", "tec", "tech", "triax", "trion", "troid", "tron", "vac", "vec", "vex", "viex", "vion", "volt", "vox", "xen", "xine", "xon", "zec", "zoid", "zox",},
+		},
+	},
+}
+
+function RandomNameGenerator(idRace, idFaction, idGender)	
+	local tNameOptions = ktCharacterNames[idFaction][idRace]
+	if not tNameOptions then
+		return
+	end
+	
+	local tName =
+	{
+		strFirstName = "",
+		strLastName = "",
+	}
+	
+	if tNameOptions.arFirstNamePrefix then
+		tName.strFirstName = tNameOptions.arFirstNamePrefix[math.ceil(math.random(#tNameOptions.arFirstNamePrefix))] .. tNameOptions[idGender][math.ceil(math.random(#tNameOptions[idGender]))]
+	else
+		tName.strFirstName = tNameOptions[idGender][math.ceil(math.random(#tNameOptions[idGender]))]
+	end
+	
+	tName.strLastName = tNameOptions.arLastNamePrefix[math.ceil(math.random(#tNameOptions.arLastNamePrefix))] .. tNameOptions.arLastNameSuffix[math.ceil(math.random(#tNameOptions.arLastNameSuffix))]
+	
+	return tName
+end
+
+local CharacterNamesInst = CharacterNames:new()
+CharacterNames:Init()t="1" RAnchorOffset="-44" BAnchorPoint="0" BAnchorOffset="244" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="SubCategory" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" CellBGNormalColor="" CellBGSelectedColor="" CellBGNormalFocusColor="" CellBGSelectedFocusColor="" TextNormalColor="" TextSelectedColor="" TextNormalFocusColor="" TextSelectedFocusColor="" Border="1" VScroll="1" UseTemplateBG="1">
+            <Event Name="GridSelChange" Function="OnSubcategoryChanged"/>
+        </Control>
+        <Control Class="EditBox" Name="Description" ReadOnly="0" MultiLine="1" Template="Holo_ScrollList" VScroll="0" LAnchorPoint="0" LAnchorOffset="52" TAnchorPoint="1" TAnchorOffset="-296" RAnchorPoint="1" RAnchorOffset="-54" BAnchorPoint="1" BAnchorOffset="-113" BGColor="ff000000" TextColor="ffffffff" Focus="True" Border="1" UseTemplateBG="1" RelativeToClient="1" TextId="" TooltipColor="" Text="" WantReturn="1" DT_WORDBREAK="1">
+            <Event Name="EditBoxReturn" Function="OnOkBtn"/>
+            <Event Name="EditBoxChanged" Function="OnDescriptionChanged"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Fo

@@ -22,3 +22,32 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="287" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="319" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceLarge_O" Text="55" Template="Default" Name="NumberText" BGColor="white" TextColor="UI_TextHoloBodyHighlight" NewControlDepth="5" TextId="" DT_VCENTER="1" DT_CENTER="1" TooltipColor=""/>
     </Form>
 </Forms>
+rite(tSprites.strEdgeColor)
+end
+
+local HazardInst = Hazards:new()
+HazardInst:Init()
+-----------------------------------------------------------------------------------------------
+-- Interaction
+-----------------------------------------------------------------------------------------------
+
+function HUDInteract:OnAlertItemMouseEnter(wndHandler, wndControl)
+	local wndParent = wndHandler:GetParent()
+	wndParent:FindChild("AlertItemHover"):Show(true)
+end
+
+function HUDInteract:OnAlertItemMouseExit(wndHandler, wndControl)
+	local wndParent = wndHandler:GetParent()
+	wndParent:FindChild("AlertItemHover"):Show(false)
+end
+
+function HUDInteract:OnToggleInteractPopoutText(bToggle)
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:FindChild("AlertPopout") then
+		self.wndMain:FindChild("AlertPopout"):Show(bToggle, not bToggle)
+		self.wndMain:FindChild("AlertItemKeybind"):SetSprite(bToggle and "sprAlert_Square_Blue" or "sprAlert_Square_Black")
+	end
+end
+
+local HUDInteractInst = HUDInteract:new()
+HUDInteractInst:Init()
+il

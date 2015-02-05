@@ -178,7 +178,7 @@ function Abilities:OnWindowClosed(wndHandler, wndControl)
 	end
 
 	if self.tWndRefs.wndMain ~= nil and self.tWndRefs.wndMain:IsValid() then
-		if self.bDirtyBit and not self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
+		if self.bDirtyBit and not GameLib.GetPlayerUnit():IsInCombat() and not self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
 			self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
 			self.tWndRefs.wndMain:Invoke() -- Reshow
 		else
@@ -188,7 +188,7 @@ function Abilities:OnWindowClosed(wndHandler, wndControl)
 end
 
 function Abilities:OnClose()
-	if self.bDirtyBit and not self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
+	if self.bDirtyBit and not GameLib.GetPlayerUnit():IsInCombat() and not self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):IsShown() then
 		self.tWndRefs.wndMain:FindChild("LeaveConfirmationContainer"):Invoke()
 	else
 		self:OnCloseFinal()
@@ -206,7 +206,6 @@ function Abilities:OnCloseFinal() -- Window Escape Key also routes here
 		AbilityBook.ClearCachedEldanAugmentationSpec() -- If we fully exit, undo changes
 
 		wndMain:Close()
-		wndMain:Destroy()
 	end
 
 	Event_FireGenericEvent("ToggleBlockBarsVisibility", false) -- TODO: Remove this, you can click close with a drag to circumvent the soft gate
@@ -221,6 +220,7 @@ function Abilities:OnSetResetClick(wndHandler, wndControl)
 	AbilityBook.ClearCachedEldanAugmentationSpec()
 	self:RedrawFromScratch()
 	Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.tWndRefs.wndMain:FindChild("BGFrame:AMPBuilderMain"))
+	Event_FireGenericEvent("GenericEvent_ResetCachedAMPs")
 end
 
 function Abilities:OnSetActivateClick(wndHandler, wndControl)
@@ -355,7 +355,24 @@ function Abilities:DrawSpellBook()
 	-- Determine Base ability and the HighestTier ability
 	local tActiveAbilityList = {}
 	local tNotActiveAbilityList = {}
-	local tAllAbilities = AbilityBook.GetAbilitiesList(eSelectedFilter) or {}
+	local tAllAbilities = {}
+	if eSelectedFilter then
+		tAllAbilities = AbilityBook.GetAbilitiesList(eSelectedFilter)
+	
+	else
+		for idx, tBaseAbility in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Assault) or {}) do
+			table.insert(tAllAbilities, tBaseAbility)
+		end
+
+		for idx, tBaseAbility in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Support) or {}) do
+			table.insert(tAllAbilities, tBaseAbility)
+		end
+
+		for idx, tBaseAbility in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Utility) or {}) do
+			table.insert(tAllAbilities, tBaseAbility)
+		end
+	end
+
 	for idx, tBaseAbility in pairs(tAllAbilities) do
 		local tHighestTier = tBaseAbility.tTiers[1] -- assume the first tier is the highest tier
 		if tBaseAbility.bIsActive then
@@ -752,11 +769,24 @@ function Abilities:OnLevelUpUnlock_TierPointSystem(splAbility)
 	self:OnAbilitiesTabCheck(wndAbilityBuilderTabBtn, wndAbilityBuilderTabBtn)
 	self.tWndRefs.wndMain:FindChild("BGFrame:BGTopContainer:AMPTabBtn"):SetCheck(false)
 
+	local bSetCheck = false
 	for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:SpellFilterTabContainer"):GetChildren()) do
 		local tAbility = AbilityBook.GetAbilityInfo(splAbility, wndCurr:GetData())
-		wndCurr:SetCheck(tAbility ~= nil)
+		if tAbility then
+			wndCurr:SetCheck(true)
+			bSetCheck = true
+		else
+			wndCurr:SetCheck(false)
+		end
 	end
 
+	--if no tab checked, set a default: assault
+	if not bSetCheck then
+		local wndAssualtTab = self.tWndRefs.wndMain:FindChild("SpellFilterTab_Assault")
+		if wndAssualtTab then
+			wndAssualtTab:SetCheck(true)
+		end
+	end
 	self:DrawSpellBook()
 end
 
@@ -893,3 +923,4 @@ end
 
 local AbilitiesInst = Abilities:new()
 AbilitiesInst:Init()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

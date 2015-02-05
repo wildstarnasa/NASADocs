@@ -18,3 +18,83 @@
         </Control>
     </Form>
 </Forms>
+.. " (" .. math.floor(tVoteData.fTimeRemaining) .. ")")
+	end
+end
+
+function PublicEventVote:OnPublicEventVoteTallied(nChoice)
+	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then 
+		return 
+	end
+
+	for key, wndCurr in pairs(self.wndMain:FindChild("VoteFrameScroll"):GetChildren()) do
+		if wndCurr:FindChild("VoteOptionBtn"):GetData() == nChoice then
+			wndCurr:FindChild("VoteOptionBtnCheck"):SetData(wndCurr:FindChild("VoteOptionBtnCheck"):GetData() + 1)
+		end
+	end
+end
+
+function PublicEventVote:OnVoteOptionBtn(wndHandler, wndControl) -- VoteOptionBtn, data is tOptionData
+	if not PublicEvent.CanVote() or not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then 
+		return 
+	end
+
+	PublicEvent.CastVote(wndHandler:GetData())
+	wndHandler:FindChild("VoteOptionBtnCheck"):Show(true)
+	-- OnPublicEventVoteTallied should get fired and update this
+
+	-- Disable all other buttons
+	for key, wndCurr in pairs(self.wndMain:FindChild("VoteFrameScroll"):GetChildren()) do
+		if wndCurr ~= wndHandler then
+			wndCurr:FindChild("VoteOptionBtn"):Enable(false)
+		end
+	end
+	
+	self.nSelectedVote = wndHandler:GetData()
+end
+
+function PublicEventVote:OnPublicEventVoteEnded(nWinner)
+	if not self.wndMain or not self.wndMain:IsValid() then
+		self:Initialize()
+	end
+
+	local bResultFound = false
+	for key, wndCurr in pairs(self.wndMain:FindChild("VoteFrameScroll"):GetChildren()) do
+		if wndCurr:FindChild("VoteOptionBtn"):GetData() == nWinner then
+			bResultFound = true
+			wndCurr:FindChild("VoteOptionBtn"):Enable(false)
+			
+			local tVoteInfo =
+			{
+				["name"] = Apollo.GetString("PublicEventVote_Votes"),
+				["count"] = wndCurr:FindChild("VoteOptionBtnCheck"):GetData(),
+			}
+			wndCurr:FindChild("VoteOptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">" .. String_GetWeaselString(Apollo.GetString("PublicEventVote_Winner"), tVoteInfo) .. "</P>")
+		else
+			wndCurr:Destroy()
+		end
+	end
+
+	if not bResultFound then
+		self.wndMain:FindChild("VoteDescription"):SetText(Apollo.GetString("PublicEventVote_NonePicked"))
+	end
+
+	self.wndMain:Show(true)
+	self.wndMain:FindChild("VoteTitle"):SetText(Apollo.GetString("PublicEventVote_VotingComplete"))
+	self.wndMain:FindChild("VoteFrameScroll"):ArrangeChildrenVert(0)
+	self.wndMain:FindChild("VoteFrameScroll"):RecalculateContentExtents()
+	self.wndMain:FindChild("VoteFrameScroll"):SetVScrollPos(0)
+
+	
+	Apollo.CreateTimer("HideWinnerTimer", 5.0, false)
+	Apollo.StartTimer("HideWinnerTimer")
+	
+	self.nSelectedVote = nil
+	
+	Sound.Play(Sound.PlayUIWindowPublicEventVoteVotingEnd)
+end
+
+function PublicEventVote:OnVoteFrameHideBtn(wndHandler, wndControl)
+	self.wndMain:Destroy()
+	self.wndMain = nil
+	Sound.Play(Sound.PlayUIWindowPublicEven

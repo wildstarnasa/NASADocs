@@ -438,4 +438,10 @@ function NCCB:Interact(text, bartype, speed, sweetspot, width1, width2)
 end
 
 local NCCBInstance = NCCB:new()
-NCCBInstance:Init()
+NCCBInstance:Init() RAnchorOffset="359" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Metal_ScrollList" TooltipType="OnCursor" Name="StableList" BGColor="white" TextColor="white" TooltipColor="" HideInEditor="0" HScroll="0" IgnoreMouse="1" Sprite="" Picture="1" NewControlDepth="10" UseTemplateBG="1" Border="0" VScroll="1" TooltipFont="CRB_InterfaceSmall" Tooltip=""/>
+        <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="381" BAnchorPoint="1" BAnchorOffset="0" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="CRB_Basekit:kitBase_MetalGrey_Large" Line="0"/>
+        <Pixie LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="1" TAnchorOffset="-121" RAnchorPoint="0" RAnchorOffset="376" BAnchorPoint="1" BAnchorOffset="3" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="BK3:sprMetal_FooterCharacter" Line="0"/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="13" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="Front Flair" Template="Default" TooltipType="OnCursor" Name="CustomizeFrontLabel" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_CENTER="1" Visible="1" HideInEditor="0" DT_VCENTER="1" NewControlDepth="1"/>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="2" BAnchorPoint="0" BAnchorOffset="27" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CustomizeFlairItem" BGColor="white" TextColor="white" TooltipColor="" Picture="0" IgnoreMouse="1">
+        <Control Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceSmall" ButtonType="Check" LAnchorPoint="0" LAnchorO

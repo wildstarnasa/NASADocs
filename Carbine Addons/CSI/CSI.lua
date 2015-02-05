@@ -379,14 +379,15 @@ function CSI:OnProgressClickWindowCompletionLevel(nPercentage, bIsReversed) -- U
 		-- Fail if they missed it
 		local tCSI = CSIsLib.GetActiveCSI()
 		
-		local bFailed1 = nPercentage > self.nLocation1Right and wndProgressButton:IsVisible() and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown()
-		local bFailed2 = nPercentage > self.nLocation2Right and wndProgressButton2:IsVisible() and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown()
+		local bFailed1 = nPercentage > self.nLocation1Right and wndProgressButton:IsVisible() and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown() and not wndProgressButton:FindChild("ProgressButtonFail"):IsShown()
+		local bFailed2 = nPercentage > self.nLocation2Right and wndProgressButton2:IsVisible() and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown() and not wndProgressButton2:FindChild("ProgressButtonFail"):IsShown()
 
 		if tCSI.eType == CSIsLib.ClientSideInteractionType_Metronome then -- Special case for reversing Metronome (compare < instead of >)
 			if bIsReversed then
-				bFailed1 = nPercentage < self.nLocation1Left and nPercentage < self.nLocation1Right and wndProgressButton:IsVisible() and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown()
-				bFailed2 = nPercentage < self.nLocation2Left and nPercentage < self.nLocation2Right and wndProgressButton2:IsVisible() and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown() 
+				bFailed1 = nPercentage < self.nLocation1Left and nPercentage < self.nLocation1Right and wndProgressButton:IsVisible() and not wndProgressButton:FindChild("ProgressButtonCheck"):IsShown() and not wndProgressButton:FindChild("ProgressButtonFail"):IsShown()
+				bFailed2 = nPercentage < self.nLocation2Left and nPercentage < self.nLocation2Right and wndProgressButton2:IsVisible() and not wndProgressButton2:FindChild("ProgressButtonCheck"):IsShown() and not wndProgressButton2:FindChild("ProgressButtonFail"):IsShown()
 			end
+			
 			self.wndProgress:FindChild("ProgressBarFrame:ProgressBar"):SetData(nPercentage)
 
 			-- Miss tracking
@@ -409,15 +410,15 @@ function CSI:OnProgressClickWindowCompletionLevel(nPercentage, bIsReversed) -- U
 			end
 		end
 
-		if bFailed1 then
+		if bFailed1 then			
 			Sound.Play(Sound.PlayUIAlertPopUpMessageReceived)
-			wndProgressButton:FindChild("ProgressButtonFail"):Show(true)
+			wndProgressButton:FindChild("ProgressButtonFail"):Invoke()
 			wndProgressButton:FindChild("ProgressButtonText"):Show(false)
 		end
 
-		if bFailed2 then
+		if bFailed2 then			
 			Sound.Play(Sound.PlayUIAlertPopUpMessageReceived)
-			wndProgressButton2:FindChild("ProgressButtonFail"):Show(true)
+			wndProgressButton2:FindChild("ProgressButtonFail"):Invoke()
 			wndProgressButton2:FindChild("ProgressButtonText"):Show(false)
 		end
 	end
@@ -437,7 +438,8 @@ function CSI:OnProgressClickWindowCompletionLevel(nPercentage, bIsReversed) -- U
 		end
 
 		-- Reset ClickTimeFrames for Metronome at the 0 and 100 point
-		if tCSI and tCSI.eType == CSIsLib.ClientSideInteractionType_Metronome and (nPercentage < 1 or nPercentage > 95) then
+		-- The upper bounds seems highly innaccurate.  
+		if tCSI and tCSI.eType == CSIsLib.ClientSideInteractionType_Metronome and (nPercentage < 1 or nPercentage > 98) then
 			local wndProgressButton = self.wndProgress:FindChild("ClickTimeFrame"):FindChild("ClickProgressButton")
 			local wndProgressButton2 = self.wndProgress:FindChild("ClickTimeFrame2"):FindChild("ClickProgressButton")
 			
@@ -584,7 +586,7 @@ function CSI:HelperComputeProgressFailOrWin()
 		wndProgressButton2:FindChild("ProgressButtonText"):Show(false)
 		wndProgressButton2:FindChild("ProgressButtonCheck"):Show(false)
 		self:HelperFail()
-	elseif nPercentage < self.nLocation2Right and wndProgressButton2:FindChild("ProgressButtonFail"):IsShown() then
+	elseif nPercentage < self.nLocation2Right and nPercentage > self.nLocation1Right and wndProgressButton2:FindChild("ProgressButtonFail"):IsShown() then
 		self:HelperFail()
 	end
 
@@ -913,3 +915,4 @@ end
 
 local CSIInst = CSI:new()
 CSIInst:Init()
+L|=‡∂%≈év.√ÈËz|=†1›üÚ^Ò'üıœVùÌ∫N´Hgå∞‘LÀõ´@}Úù‡û◊C∫°‰¯^)z&´áê·˚WæK≥u®

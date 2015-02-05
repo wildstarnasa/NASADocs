@@ -21,3 +21,54 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="215" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceLarge_O" Text="" Template="Default" TooltipType="OnCursor" Name="VictimNamelabel" BGColor="ffffffff" TextColor="ConTough" TooltipColor="" TextId="CRB_Test_Set_name" DT_VCENTER="1"/>
     </Form>
 </Forms>
+.wndMain:Destroy()
+		self.tWndRefs = {}
+	end
+end
+
+function PvPKillBoard:HelperSizeLabelWindowToText(wndLabel)
+	local nLeft, nTop, nRight, nBottom = wndLabel:GetAnchorOffsets()
+	wndLabel:SetAnchorOffsets(nLeft, nTop, nLeft+Apollo.GetTextWidth("CRB_InterfaceLarge_O", wndLabel:GetText()), nBottom)
+end
+
+---------------------------------------------------------------------------------------------------
+-- PvPKillBoardForm Functions
+---------------------------------------------------------------------------------------------------
+
+function PvPKillBoard:OnMinimizedExpandClick( wndHandler, wndControl, eMouseButton )
+	self.tWndRefs.wndExpanded:Show(not self.tWndRefs.wndExpanded:IsShown())
+end
+
+-----------------------------------------------------------------------------------------------
+-- PvPKillBoard Instance
+-----------------------------------------------------------------------------------------------
+local PvPKillBoardInst = PvPKillBoard:new()
+PvPKillBoardInst:Init()
+else
+			wndCurr:Destroy()
+		end
+	end
+
+	if not bResultFound then
+		self.wndMain:FindChild("VoteDescription"):SetText(Apollo.GetString("PublicEventVote_NonePicked"))
+	end
+
+	self.wndMain:Show(true)
+	self.wndMain:FindChild("VoteTitle"):SetText(Apollo.GetString("PublicEventVote_VotingComplete"))
+	self.wndMain:FindChild("VoteFrameScroll"):ArrangeChildrenVert(0)
+	self.wndMain:FindChild("VoteFrameScroll"):RecalculateContentExtents()
+	self.wndMain:FindChild("VoteFrameScroll"):SetVScrollPos(0)
+
+	
+	Apollo.CreateTimer("HideWinnerTimer", 5.0, false)
+	Apollo.StartTimer("HideWinnerTimer")
+	
+	self.nSelectedVote = nil
+	
+	Sound.Play(Sound.PlayUIWindowPublicEventVoteVotingEnd)
+end
+
+function PublicEventVote:OnVoteFrameHideBtn(wndHandler, wndControl)
+	self.wndMain:Destroy()
+	self.wndMain = nil
+	Sound.Play(Sound.PlayUIWindowPublicEven

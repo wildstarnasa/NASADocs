@@ -79,7 +79,7 @@ function GuildRegistration:OnDocumentReady()
 	self.timerSuccessMessage = ApolloTimer.Create(3.00, false, "OnSuccessfulMessageTimer", self)
 	self.timerSuccessMessage:Stop()
 
-	self.timerForcedRename = ApolloTimer.Create(1.50, false, "OnGuildRegistration_CheckForcedRename", self)
+	self.timerForcedRename = ApolloTimer.Create(5.50, false, "OnGuildRegistration_CheckForcedRename", self)
 	self.timerForcedRename:Start() -- Check for Forced Renames
 
 	Apollo.RegisterEventHandler("GuildRegistrarOpen", 		"OnGuildRegistrationOn", self)
@@ -530,14 +530,12 @@ end
 -----------------------------------------------------------------------------------------------
 -- Forced Rename Code
 -----------------------------------------------------------------------------------------------
-
 function GuildRegistration:OnGuildRegistration_CheckForcedRename()
 	for idx, guildCurr in pairs(GuildLib.GetGuilds()) do
 		if guildCurr and guildCurr:GetFlags() and guildCurr:GetFlags().bRename and guildCurr:GetMyRank() == 1 then
 			local strGuildType = ktstrGuildTypes[guildCurr:GetType()]
 			self.wndForcedRename = Apollo.LoadForm(self.xmlDoc, "RenameSocialAlert", nil, self)
 			self.wndForcedRename:FindChild("TitleBlock"):SetText(String_GetWeaselString(Apollo.GetString("ForceRenameSocial_TitleBlock"), strGuildType, guildCurr:GetName()))
-			--self.wndForcedRename:FindChild("RenameEditBox"):SetPrompt(guildCurr:GetName())
 			self.wndForcedRename:FindChild("RenameEditBox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName))
 			self.wndForcedRename:FindChild("StatusValidAlert"):Show(true)
 			self.wndForcedRename:FindChild("RenameSocialConfirm"):SetData(guildCurr)
@@ -577,8 +575,23 @@ end
 function GuildRegistration:OnRenameSocialConfirm(wndHandler, wndControl)
 	wndHandler:GetData():Rename(self.wndForcedRename:FindChild("RenameEditBox"):GetText())
 	self:OnRenameSocialCancel()
-	self.timerForcedRename:Start() -- Do it again if we have a 2nd one to do
+	self.timerForcedRename:Start()
 end
 
 local GuildRegistrationInst = GuildRegistration:new()
 GuildRegistrationInst:Init()
+isabled">
+            <Event Name="ButtonSignal" Function="OnResetAllBtn"/>
+        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="31" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HolomarkPartListItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TextId="" HScroll="0" UseTemplateBG="0" TooltipColor="" Tooltip="">
+        <Control Class="Button" Base="BK3:btnHolo_ListView_Mid" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="HolomarkPartBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="Type" TextId="" NotRelative="0" TooltipColor="" RelativeToClient="1" AutoScaleText="1">
+            <Event Name="ButtonSignal" Function="OnHolomarkPartItemSelected"/>
+        </Control>
+    </Form>
+</Forms>
+t="0" TAnchorOffset="-1" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="39" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="PromoteMemberLabel" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TextId="Circles_LeaderPromote" TooltipColor="" Tooltip="" NewControlDepth="3" DT_WORDBREAK="1"/>
+                    <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_Close2" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-35" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-17" BAnchorPoint="0" BAnchorOffset="20" DT_VCENTER="1" DT_CENTER="1" Name="PromoteMemberCloseBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" TooltipColor="" Visible="1">
+                        <Event Name="ButtonSignal" Function="OnRosterPromoteMemberCloseBtn"/>
+                    </Control>
+                    <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorO

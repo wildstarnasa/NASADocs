@@ -60,3 +60,7 @@
     <AutoButton Name="EncyclopediaBtn" Texture="UI\Datachron\UI_DatachronIcons.tga" Left="0" Top="100" Width="50" Height="50" StateBits="31" Direction="Across" />
     <AutoButton Name="NewspaperBtn" Texture="UI\Datachron\UI_DatachronIcons.tga" Left="0" Top="150" Width="50" Height="50" StateBits="31" Direction="Across" />
 </Sprites>
+tiveToClient="1" Font="Default" Text="" Template="Holo_Background_Datachron" Name="QueuedCallsContainer" BGColor="white" TextColor="white" Visible="0" IgnoreMouse="1" Sprite="" TransitionShowHide="1" HideInEditor="0" NewWindowDepth="1" TooltipColor="" Picture="1">
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="3" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-1" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollListSmall" Name="QueuedCallsList" BGColor="white" TextColor="white" VScroll="1" IgnoreMouse="1" TooltipColor=""/>
+                <Pixie LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="-1" BAnchorPoint="1" BAnchorOffset="-1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" BGColor="white" TextColor="black" Rotation="0" Font="Default"/>
+                <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnc

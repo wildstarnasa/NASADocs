@@ -331,11 +331,8 @@ function FriendsList:OnGenericEvent_InitializeFriends(wndParent)
 
 	self.tWndRefs.wndMain:FindChild("TabContainer"):ArrangeChildrenHorz(1)
 
-	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("OptionsBtnFlash"))
-	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
+self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
 	self.tWndRefs.wndModifyNoteBtn:AttachWindow(self.tWndRefs.wndModifyNoteBtn:FindChild("NoteWindow"))
-	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer:SelfBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer:SelfBtn:SelfWindow"))
-	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer:SelfModifyNameBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer:SelfModifyNameBtn:NameWindow"))
 	self.tWndRefs.wndMain:FindChild("AddBtn"):AttachWindow(self.tWndRefs.wndMessage:FindChild("AddFriendContainer"))
 	self.tWndRefs.wndMain:FindChild("AddPlayerBtn"):AttachWindow(self.tWndRefs.wndMessage:FindChild("PlayerAddWindow"))
 	self.tWndRefs.wndMain:FindChild("AddAccountBtn"):AttachWindow(self.tWndRefs.wndMessage:FindChild("AccountAddWindow"))
@@ -492,6 +489,7 @@ function FriendsList:OnFriendshipAdd(nFriendId)
 	if tFriend.bIgnore == true then
 		self.arIgnored[nFriendId] = tFriend
 		bViewingList = self.tWndRefs.wndListContainer:GetData() == LuaCodeEnumTabTypes.Ignore
+		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_System, String_GetWeaselString(Apollo.GetString("Social_AddedToIgnore"), tFriend.strCharacterName))
 	else
 		if tFriend.bFriend == true then -- can be friend and rival
 			self.arFriends[nFriendId] = tFriend
@@ -860,6 +858,11 @@ function FriendsList:UpdateControls()
 	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		return
 	end
+	
+	local wndOptionHolder = self.tWndRefs.wndMain:FindChild("BGOptionsHolder")
+	
+	wndOptionHolder:Show(self.tWndRefs.wndMain:FindChild("FriendTabBtn1"):IsChecked())
+	wndOptionHolder:FindChild("OptionsBtn"):SetCheck(false)
 
 	if self.tWndRefs.wndMain:FindChild("FriendTabBtn1"):IsChecked() then
 		self:DrawControls(LuaCodeEnumTabTypes.Friend)
@@ -872,8 +875,6 @@ function FriendsList:UpdateControls()
 		self:UpdateControlsSuggested()
 		return
 	end
-	
-	self.tWndRefs.wndMain:FindChild("BGOptionsHolder"):Show(self.tWndRefs.wndMain:FindChild("FriendTabBtn1"):IsChecked())
 
 	local tPersonalStatus = FriendshipLib.GetPersonalStatus()
 	--self.tWndRefs.wndStatusDropDownLabel:SetText(karStatusText[tPersonalStatus.nPresenceState])
@@ -1016,6 +1017,14 @@ function FriendsList:HelperDrawMemberWindowAccountFriend(wnd, tFriend)
 			wnd:FindChild("Server"):SetText(String_GetWeaselString(Apollo.GetString("Friends_RealmText"), tFirstFriendCharacter.strRealm))
 		end
 
+		if tFirstFriendCharacter.nFactionId == Unit.CodeEnumFaction.ExilesPlayer then -- exiles
+			wnd:FindChild("Server"):SetTextColor(kcrColorExile)
+		elseif tFirstFriendCharacter.nFactionId == Unit.CodeEnumFaction.DominionPlayer then
+			wnd:FindChild("Server"):SetTextColor(kcrColorDominion)
+		else
+			wnd:FindChild("Server"):SetTextColor(kcrColorOnline)
+		end
+		
 		wnd:FindChild("LastOnline"):SetTooltip(String_GetWeaselString(Apollo.GetString("Friends_CurrentLocation"), tFirstFriendCharacter.strWorldZone))
 		wnd:FindChild("LastOnline"):SetText(tFirstFriendCharacter.strWorldZone)
 
@@ -1038,7 +1047,6 @@ function FriendsList:HelperDrawMemberWindowAccountFriend(wnd, tFriend)
 	wnd:FindChild("StatusIcon"):SetBGColor(karStatusColors[tFriend.nPresenceState])
 	wnd:FindChild("Name"):SetTextColor(crColorToUse)
 	wnd:FindChild("Level"):SetTextColor(crColorToUse)
-	wnd:FindChild("Server"):SetTextColor(crColorToUse)
 	wnd:FindChild("LastOnline"):SetTextColor(crColorToUse)
 
 	self:HelperFormatNote(wnd:FindChild("NoteIcon"), tFriend.strPrivateNote)
@@ -1375,7 +1383,7 @@ function FriendsList:OnSubCloseBtn(wndHandler, wndControl)
 end
 
 function FriendsList:OnCancelNameChange(wndHandler, wndControl)
-	wndControl:GetParent():Close()
+	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):Close()
 end
 
 -- Note Sub-Window Functions
@@ -1415,9 +1423,9 @@ function FriendsList:OnNoteWindowEdit(wndHandler, wndControl, strNewNote)
 	local wndEntry = self:GetFriendshipWindowByFriendId(tFriend.nId)
 
 	if wndEntry:GetName() == "AccountFriendForm" then
-		bValid = strNewNote ~= "" and GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.FriendshipAccountPrivateNote, eProfanityFilter)
+		bValid = GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.FriendshipAccountPrivateNote, eProfanityFilter)
 	else
-		bValid = strNewNote ~= "" and GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.FriendshipNote, eProfanityFilter)
+		bValid = GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.FriendshipNote, eProfanityFilter)
 	end
 
 	wndNote:FindChild("NoteConfirmBtn"):Enable(bValid)
@@ -1491,17 +1499,15 @@ function FriendsList:OnSelfNoteWindowEdit( wndHandler, wndControl, strNewNote )
 	local wndNote = wndControl:GetParent()
 	local tFriend = wndNote:GetData()
 
-	local bValid = strNewNote ~= "" and GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.FriendshipAccountPublicNote, eProfanityFilter)
+	local bValid = GameLib.IsTextValid(strNewNote or "", GameLib.CodeEnumUserText.FriendshipAccountPublicNote, eProfanityFilter)
 	wndNote:FindChild("SelfNoteConfirmBtn"):Enable(bValid)
 	wndNote:FindChild("StatusValidAlert"):Show(not bValid)
 end
 
 function FriendsList:OnNameConfirmBtn( wndHandler, wndControl)
 	local wndNote = wndControl:GetParent()
-
 	FriendshipLib.SetPublicDisplayName(wndNote:FindChild("NameEditBox"):GetText())
-
-	wndNote:Show(false)
+	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):Close()
 end
 
 function FriendsList:OnNameWindowEdit( wndHandler, wndControl, strText )
@@ -1514,7 +1520,7 @@ end
 
 function FriendsList:OnNameBtn( wndHandler, wndControl)
 	local tFriend = wndControl:GetData()
-	local wndName = wndControl:FindChild("NameWindow")
+	local wndName = self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer")
 
 	local strName = FriendshipLib.GetPersonalStatus().strDisplayName
 
@@ -1536,7 +1542,6 @@ function FriendsList:OnChangeAccountStatusBtn( wndHandler, wndControl)
 		self.tWndRefs.wndMain:FindChild("SelfWindowAvailableBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Available)
 		self.tWndRefs.wndMain:FindChild("SelfWindowAwaylBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Away)
 		self.tWndRefs.wndMain:FindChild("SelfWindowBusyBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Busy)
---		self.tWndRefs.wndMain:FindChild("SelfWindowInvisibleBtn"):SetCheck(nPresenceState == FriendshipLib.AccountPresenceState_Invisible)
 	end
 
 end
@@ -1985,7 +1990,6 @@ function FriendsList:SortNote(bDesc, wndLeft, wndRight)
 
 	return bDesc ~= bLeft
 end
-
 
 -----------------------------------------------------------------------------------------------
 -- FEEDBACK WINDOW
@@ -2460,8 +2464,16 @@ function FriendsList:FactoryProduce(wndParent, strFormName, tObject)
 	return wndNew
 end
 
+---------------------------------------------------------------------------------------------------
+-- CirclesMainForm Functions
+---------------------------------------------------------------------------------------------------
+
+function FriendsList:OnOfflineBtn( wndHandler, wndControl, eMouseButton )
+end
+
 -----------------------------------------------------------------------------------------------
 -- FriendsList Instance
 -----------------------------------------------------------------------------------------------
 local FriendsListInst = FriendsList:new()
 FriendsListInst:Init()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

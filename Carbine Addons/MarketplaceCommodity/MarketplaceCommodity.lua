@@ -257,7 +257,10 @@ function MarketplaceCommodity:InitializeSell()
 		if HelperValidateCategory(tCategoryFilterDataIds, tCurrData.itemInBag) then
 			table.insert(tBothItemTables, { tCurrItem = tCurrData.itemInBag, strName = tCurrData.itemInBag:GetName() })
 		end
-		tAllCategoryNames[tCurrData.itemInBag:GetItemCategoryName()] = true
+		
+		if not tCurrData.itemInBag:IsSoulbound() then
+			tAllCategoryNames[tCurrData.itemInBag:GetItemCategoryName()] = true
+		end
 	end
 	for key, tSatchelItemCategory in pairs(unitPlayer:GetSupplySatchelItems(1)) do
 		for key2, tCurrData in pairs(tSatchelItemCategory) do
@@ -278,6 +281,7 @@ function MarketplaceCommodity:InitializeSell()
 	-- Now build the window and do another layer of filtering
 	local strSearchFilter = Apollo.StringToLower(self.wndMain:FindChild("SearchEditBox"):GetText() or "")
 	local bSkipSearchFilter = string.len(strSearchFilter) == 0
+	
 	for key, tCurrData in pairs(tBothItemTables) do
 		local tCurrItem = tCurrData.tCurrItem
 		if tCurrItem and tCurrItem:IsCommodity() and (bSkipSearchFilter or string.find(Apollo.StringToLower(tCurrData.strName), strSearchFilter)) then
@@ -286,7 +290,6 @@ function MarketplaceCommodity:InitializeSell()
 			local strButtonText = bSellNow and Apollo.GetString("MarketplaceCommodity_SellNow") or Apollo.GetString("MarketplaceCommodity_CreateSellOrder")
 			self:BuildListItem(tCurrItem, strWindow, strButtonText)
 
-			-- TODO: Count the number of request and load spinner until they all come back
 			MarketplaceLib.RequestCommodityInfo(tCurrItem:GetItemId()) -- Leads to OnCommodityInfoResults
 		end
 	end
@@ -1024,3 +1027,10 @@ end
 
 local MarketplaceCommodityInst = MarketplaceCommodity:new()
 MarketplaceCommodityInst:Init()
+·Dâ	CóC.÷û¤L™2eÊ!VÖON‹Rëá½*Uœ }Ú£´O§ª‰^d¼)ØÄõ ıá™Ğ_‘ñ úé˜zşnû‡s£Æïïp¿Jd=å‡óó•ıÃˆzÑØ¦+}Ÿ„ısÅ„ìKC÷ûËµø©ß@#ÒçD}ÿ—Ìİ2×»Ÿe» Qæ%nÎ¾€ıx<cß×É'ó„ùuì.\ÏöXØĞ_@dK
+ú~8^Æÿ©ÀßæCùZëûáx?eŒÅétfêz¤nï¦L™2eÊÚ°¾ëÇÁã+VÙ«+shı“Ìù*ëS'±®®Öíï™õ±‰¸>¡~ú±$îÑ6ß´sØŸ¯ˆß'ãÛÃùúº‰ß¦ïs[¿gÀP»ÏS¨ŞãĞú_ëãK”[D=^Û0à“¹S0Ø{½—P=Ñ³÷;Ì'¯|pUæYübóåËûÆc>h%Ê‰„òÆæ#ÎôñC½Ú–Ï“æ×{RÈ×Ï6Ïõ¿3Ãúß4ûR¦L™òÈgè?ÍxÂÑÆ‰çSÀß ’ÅåÊˆ±ä„şè7;…£ÏŸ¦÷£?6úŞ«ˆÇ¥ú>±÷‡/Èµø€P¼‰r~Ë%û Ìq†ÌĞÿ_Û÷Ö˜»¥lü4<~«•('"n÷™eÙÓ÷‘öŠ'~Ûr™S­Ï§5gCÿGöWMgÿÊ”)S¦œÎ­xÂÑÆ!ûz*ıµ¡>ÆñÊZŸOZô?±ŞˆZ@Gù±Òï‘oiS0}ş0„;`}®™Ãzâ«tí?ä_Uúû*?›¿G´~z&ª÷3ú¾óâğ(Íï÷¨ó›IÙïOÏñy‘ú¿õƒ>™;xÖ>¹°Õï_Ï3ö÷<«ñøu.ƒÑ˜¶z|‰Ï70ŸÛW`½¾ÚyssVïGÆÿ‰úß…òÿ³1Ÿ1)Å/R¦L™r®²2~ˆúošöO×ºÑG”‡ŸÚÔú‘aÔõxÕşf‹ËÇ«/s½>e%·Œ½oî3çd–ò‡–´­_£İ/œG»|éù¦ş2Mß×ÕæK…ûGÄÌ÷÷äP=IØ¯¯áTmƒÌübÖ ôÈ¼”¯°×­Açã,……Cí/Óõ±oymÎäóÇÓ¼Ÿ }ƒ(G“ù,¡ø7Ê”)SÎU¬G—ˆÿ(\_9ƒó£t|
+{DµêUQ¦œ—«u~¶Ş8 Tò€˜Ÿ:…ÓVpÓô×0CÿúWk÷}H/œš];·¢~U°_xÙ¾Wú•Ç{-éx€P¼¿Ò¿êÉ`|¸äo&øµïŸGYı~Ô²Ÿh8Eïr'^Ëüp©»«ë·+d†ÏsC_7ªß7ov~Q³[æv¾Ùµè‹æ<~œİ9¾f§¤±?_ä|£¬ß/åóöb­õ{ªût8®L]¿dæ?Ú€2eÊ#ƒ#ûÉ%Ò/%Úü˜Zı”(õğsÈ_@™r"5?6‡ÖËáõ-:ŞÎP¼{×»ÍlÃõª—ğ¬ı÷?zÀ¿ÆßZÊ´ºÇ«*ØÚ¾WOÈ|T0NùÑÀÔÏ{)ÏØûk}Àüğ‘òmÛpıï4é.]ç£¿~yé·oGôGU÷S-Võw13^ÑLûóõz½‹ŠÖ_B]‚ó¤¯şDx~¹!Sçs®êÓò›Q<ÿSZ¯ì¹Õ÷«w×±İƒ]¨"ÿL‘W#:_“;híí™ñÌæ‡—ïìÚ~to8¿ß'³Öz=ıñş*°X,ù™º~I­om©ä/R¦L™r¦8~rÙÍ­TÅ{ÏQq1õoR¥,éâş÷Tè¹j×û
+ö ëÙş´µĞ9ıgèøSÌwÿuüüâûXû©¾WQ=í£ÂS&4-Dõ¶[D}í?ıV™ÏWA}27cúgv=ÏŠÓo:ß*Ö¾ oò÷·óÛ\?ëòË<ÓÍØç­=/c¨·¥p:fişFñÜ?¤½5”_ÿç£Í×¤ÿVû÷YŞ‡„şÌv}Š=<¢XıQ#ãİÄŠù|uuææèöK|¦¿š]ÀDû›%Î/w¾öû5x{€ôåÛ·Ö«}µ—dŞÀìÌÄ^tüõnÖvœ<‰¹Âv]¾,ózş õ’¯	§KLæòLî)c–×Î+³Öz=UÏ§Ø»y3ªïŠ÷èOë÷]h~dFĞüH™2åÜei= XßpTOS¦œ“œíxîÔõ¿Ã~õıiûdnçëØSÒÃ0ŞİP`I~ı[µojšq@æ¥<k/ì9‰¾o¦ÜñO ]¥¨ÿßzëÄ'2Ÿ«ªä»vmßš©óï»Ïç÷ËlœrÈjØß] s‡°İe¸æEã—¸™›ÛV¯>ƒÏï´u_oŠWHFÿÛl¸şbÔú‘ŞøëGä¿_İODª/¯Ûç%Úõêüb•}Ü£âˆú)1ë“IõqdLËüäUÅ÷·KÚııâÙÙ.ê“¹C¨c;ĞùÁù¥ Ì9=Şıÿ}GÊüø|Â:×"fXßÿdm£Ì-übó¾ñNB¯òlïDòóGÊÇ×'uûÄïŒş6ŸOæ\¯ç¯fÏ`É7 ø
+­ŸÏhÏ+Íw¢L™rvXiOoHóƒ)SœéxîÔõ.ÏúƒxıÙ!,f{,–k2oà·¹ÖwãñŒ½Ğ4>yÿ¶øùà‡§P¼ÿz~œ½Ğ0	ùÛ(Ü~,s¥û´õ‚ÇBü}A«alYÆúE-ã¬×÷!ÿÛzşLIØˆâıëİœ€«ğöƒV?˜Œ)Ú:ãıÚ|¼õ)åO„óG”ñ#1ü¿!–-Füúpõ8“yŸ©ëÉV«ö¯Ò·//‡ì7±ü“‰Ùƒ¢İ_ê~¥éìçw®j?±kÅ
+™7ğì«ãMèyñ>¯v½-ó2±O¿õ-d8_Õ"\ÿj÷ßğa^ïß¤ëo„³÷£8¿-wœéßw¤Õ÷sòSÆlŞœ¹~~iÑû&­÷G™2eMô¿‡®w(Sm}ÍiØ/Û<_™ßõ0èùHæõ<kïé^07»®¯í2Ë¼LÔ·Ó§€Ş	‡ËA}Šç%ú×‰úİ7ğ«xÿãì×v¡é,qvyCæ<sóÂÕhûùªqlÙóİ(^ İ×ÖûZˆ²}!Ÿ)ñ^÷#^êr˜/î~é“e<®]Äõÿ¡}Ä»?Ÿø|Ë ïWr÷©ÿBö£Ìİ?j=U¿“²G5­ç’)ÚŸ“!û1¤fOß_€d.ñI®ùu¬¨ÿ	{k?¹¯=íüÊYóe›Ì•nÆ~â“/ü2Ÿ`0¢x#ñhíµ§Ş’Ö5ZÊPşÖ¿×póßù<™CõıF¿ŸKGùıÑ§ÜŠ‡¢L™rî²¶ë}Ê”)kÇaı¯î—Íiu<0¾×;µCæ€pĞº·ÿÊ·_Ï×±ù=×~%sØåoòùÓò u`Ñ‰÷ñşxöù~ºm¨ïƒù¾\Ğ/£TOë§½×"óL·ø×4]y»«Â<á‘¿ÏkÁeo_É´N;yyR¶®¬ç?CÁ­ÛĞéH×Ï’‚¾óşÑıˆ²öúEİ¿Œãâ÷'WŸT²/¥POè¸Tßcp†Ìğy9Õè¹Ş=ÎùÚ.™;øí.0ˆŸï™îÓÖqı_W¶–õtÿ3/êÿïL.Dõ86ğöiW=(~ÆçCúê¤Ê-ÂïD½ï[.óH‹ï×ºŸ_âÏOâëwP©ÎÏñ¦/E™2åÑÃt½6š8ÛõÓ)ë›Cş5ì/šÏÅşŞâêåfÿ@ƒOæ¥üVë;cqü½Tÿ
+´¡xû%nNüï;¨>V;?Î¾:xÅç·@ÿ[ijüß?‹Ÿğ_§ğ [GØîä9sSÍõ6<¾İµ“10—ŸA|^ëß7÷Õÿ¹ÃRÿÊoõù*Ÿ–`ĞlşÏv=©¾_Ê\éZß›ñ½2¯ç›·“ÌK¤|š_=‚·ì  ÍGUìâ§çÿ½ÌB3Ûm4yÏÚW¯BãÖndR¨O’òùÃş}¸^ÅHóïG÷×Q?¿á8ª¾W÷ËJÀş%Å˜l4Ÿ€2eÊTÿrÎtıtÊ¹ÍÙç¼?ëYŸ Ì»÷3ÌËD

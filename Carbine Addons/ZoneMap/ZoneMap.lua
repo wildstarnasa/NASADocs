@@ -37,6 +37,28 @@ local ktHexColor =
 	tNemesisRgn		= { crBorder = CColor.new(1, 1, 1, 1),			crInterior = CColor.new(1, 1, 1, 0.4) }
 }
 
+local ktMarkerCategories =
+{
+	QuestNPCs 			= 1,
+	TrackedQuests 		= 2,
+	Missions 			= 3,
+	Challenges 			= 4,
+	PublicEvents 		= 5,
+	Tradeskills 		= 6,
+	Vendors 			= 7,
+	Services 			= 8,
+	Portals 			= 9,
+	BindPoints 			= 10,
+	GroupObjectives 	= 11,
+	MiningNodes 		= 12,
+	RelicNodes 			= 13,
+	SurvivalistNodes 	= 14,
+	FarmingNodes 		= 15,
+	NemesisRegions 		= 16,
+	Taxis 				= 17,
+	CityDirections 		= 18,
+}
+
 local karCityDirectionsTypeToIcon =
 {
 	[GameLib.CityDirectionType.Mailbox] 		= "ClientSprites:Icon_Windows_UI_ReadMail",
@@ -53,18 +75,34 @@ local karCityDirectionsTypeToIcon =
 local ktGlobalPortalInfo =
 {
 	-- Dungeons
-	Stormtalon			= { unlockEnumId = 1,		worldLocId = 12676 },
-	KelVoreth			= { unlockEnumId = 2,		worldLocId = 24997 },
-	Skullcano			= { unlockEnumId = 3,		worldLocId = 25038 },
-	SwordMaiden			= { unlockEnumId = 4,		worldLocId = 32913 },
+	Stormtalon					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_Stormtalon,				worldLocIds = { 12676 } },
+	KelVoreth					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_KelVoreth,					worldLocIds = { 24997 } },
+	Skullcano					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_Skullcano,					worldLocIds = { 25038 } },
+	SwordMaiden					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_SwordMaiden,				worldLocIds = { 32913 } },
+	UltimateProtogames			= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_UltimateProtogames,		worldLocIds = { 48584 } },
+	ProtogamesAcademyExile		= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_ProtogamesAcademyExile,	worldLocIds = { 48518, 48519 },	idZones = { GameLib.MapZone.Algoroc, GameLib.MapZone.Celestion } },
+	ProtogamesAcademyDominion	= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapDungeon_ProtogamesAcademyDominion,	worldLocIds = { 48532, 48533 },	idZones = { GameLib.MapZone.Ellevar, GameLib.MapZone.Deradune } },
 
 	-- Adventures
-	Hycrest				= { unlockEnumId = 116,		worldLocId = 41211 },
-	Astrovoid			= { unlockEnumId = 117,		worldLocId = 38344 },
-	NorthernWilds		= { unlockEnumId = 118,		worldLocId = 38354 },
-	Galeras				= { unlockEnumId = 169,		worldLocId = 38355 },
-	Whitevale			= { unlockEnumId = 138,		worldLocId = 41168 },
-	Malgrave			= { unlockEnumId = 119,		worldLocId = 41717 }
+	Hycrest						= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapAdventure_Hycrest,					worldLocIds = { 41211 } },
+	Astrovoid					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapAdventure_Astrovoid,				worldLocIds = { 38344 } },
+	NorthernWilds				= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapAdventure_NorthernWilds,			worldLocIds = { 38354 } },
+	Galeras						= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapAdventure_Galeras,					worldLocIds = { 38355 } },
+	Whitevale					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapAdventure_Whitevale,				worldLocIds = { 41168 } },
+	Malgrave					= { unlockEnumId = GameLib.LevelUpUnlock.WorldMapAdventure_Malgrave,				worldLocIds = { 41717 } }
+}
+
+local ktConColors =
+{
+	[Unit.CodeEnumLevelDifferentialAttribute.Grey] 		= "ff9aaea3",
+	[Unit.CodeEnumLevelDifferentialAttribute.Green] 	= "ff37ff00",
+	[Unit.CodeEnumLevelDifferentialAttribute.Cyan] 		= "ff46ffff",
+	[Unit.CodeEnumLevelDifferentialAttribute.Blue] 		= "ff3052fc",
+	[Unit.CodeEnumLevelDifferentialAttribute.White] 	= "ffffffff",
+	[Unit.CodeEnumLevelDifferentialAttribute.Yellow] 	= "ffffd400",
+	[Unit.CodeEnumLevelDifferentialAttribute.Orange] 	= "ffff6a00",
+	[Unit.CodeEnumLevelDifferentialAttribute.Red] 		= "ffff0000",
+	[Unit.CodeEnumLevelDifferentialAttribute.Magenta] 	= "fffb00ff",
 }
 
 -- TODO: Distinguish markers for different nodes from each other
@@ -78,6 +116,7 @@ local knSaveVersion = 4
 
 -- ** Add new object types here ** --
 function ZoneMap:CreateOverlayObjectTypes()
+	-- Tooltip draw order is based on the order of these values.  If we want it to change, the order that we create the overlays needs to change.
 	self.eObjectTypeQuest				= self.wndZoneMap:CreateOverlayType(ktHexColor.tQuest.crBorder, ktHexColor.tQuest.crInterior, "CRB_MegamapSprites:sprMap_QuestMarker", "CRB_MegamapSprites:sprMap_QuestMarkerLit")
 	self.eObjectTypeChallenge			= self.wndZoneMap:CreateOverlayType(ktHexColor.tChallenge.crBorder, ktHexColor.tChallenge.crInterior, "sprChallengeTypeGenericLarge", "sprChallengeTypeGenericLarge")
 	self.eObjectTypePublicEvent			= self.wndZoneMap:CreateOverlayType(ktHexColor.tPublicEvent.crBorder, ktHexColor.tPublicEvent.crInterior, "sprMM_POI", "sprMM_POI")
@@ -87,12 +126,13 @@ function ZoneMap:CreateOverlayObjectTypes()
 	self.eObjectTypeLocation			= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeHexGroup			= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeMapTrackedUnit		= self.wndZoneMap:CreateOverlayType()
-	self.eObjectTypeCityDirection		= self.wndZoneMap:CreateOverlayType()
+	self.eObjectTypeCityDirectionPing	= self.wndZoneMap:CreateOverlayType()
 
 	-- units
 	self.eObjectTypeQuestReward 		= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeQuestReceiving 		= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeQuestNew 			= self.wndZoneMap:CreateOverlayType()
+	self.eObjectTypeQuestNewTradeskill	= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeQuestNewSoon 		= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeTradeskills 		= self.wndZoneMap:CreateOverlayType()
 	self.eObjectTypeVendor 				= self.wndZoneMap:CreateOverlayType()
@@ -130,27 +170,57 @@ function ZoneMap:CreateOverlayObjectTypes()
 end
 
 function ZoneMap:CreatePOIIcons()
-	-- Table entries follow {Icon, Edge Icon, Descriptive String}
 	self.tPOITypes =
 	{
-		tTrackedQuest 		= {"IconSprites:Icon_MapNode_Map_Quest",		"", Apollo.GetString("CRB_Quest")},
-		tTrackedQuestActive = {"IconSprites:Icon_MapNode_Map_Quest",		"", Apollo.GetString("CRB_Quest")},
-		tPathSoldier 		= {"IconSprites:Icon_MapNode_Map_Soldier",		"", Apollo.GetString("ZoneMap_SoldierMission")}, -- must always match the sprite passed with the event
-		tPathSettler 		= {"IconSprites:Icon_MapNode_Map_Settler",		"", Apollo.GetString("ZoneMap_SettlerMission")}, -- must always match the sprite passed with the event
-		tPathScientist 		= {"IconSprites:Icon_MapNode_Map_Scientist",	"", Apollo.GetString("ZoneMap_ScientistMission")}, -- must always match the sprite passed with the event
-		tPathExplorer 		= {"IconSprites:Icon_MapNode_Map_Explorer",		"", Apollo.GetString("ZoneMap_ExplorerMission")}, -- must always match the sprite passed with the event
-		tChallenge 			= {"IconSprites:Icon_MapNode_Map_Generic_POI",	"", Apollo.GetString("CBCrafting_Challenge")}, -- TODO
-		tChallengeFlash 	= {"IconSprites:Icon_MapNode_Map_Generic_POI",	"", Apollo.GetString("ZoneMap_ChallengeLocation")}, -- TODO
-		tQuestReward 		= {"IconSprites:Icon_MapNode_Map_Quest",		"", Apollo.GetString("ZoneMap_QuestRedeemer")},
-		tQuestRecieve		= {"IconSprites:Icon_MapNode_Map_Quest",		"", Apollo.GetString("ZoneMap_QuestRedeemer")},
-		tQuestNew 			= {"IconSprites:Icon_MapNode_Map_Quest",		"", Apollo.GetString("ZoneMap_QuestGiver")},
-		tQuestNewSoon 		= {"IconSprites:Icon_MapNode_Map_Quest_Disabled", "", Apollo.GetString("ZoneMap_QuestGiver")},
-		tVendor 			= {"IconSprites:Icon_MapNode_Map_Vendor",		"", Apollo.GetString("CRB_Vendor")},
-		tBindPointActive 	= {"IconSprites:Icon_MapNode_Map_Gate",			"", Apollo.GetString("ZoneMap_CurrentBindPoint")},
-		tBindPointInactive 	= {"IconSprites:Icon_MapNode_Map_Gate",			"", Apollo.GetString("ZoneMap_AvailableBindPoint")},
-		tInstancePortal 	= {"IconSprites:Icon_MapNode_Map_Portal",		"", Apollo.GetString("ZoneMap_InstancePortal")}, -- TODO
-		tPublicEvent 		= {"sprMap_IconCompletion_Challenge",			"", Apollo.GetString("ZoneMap_PublicEvent")}, -- TODO
-		tTradeskills 		= {"IconSprites:Icon_MapNode_Map_Tradeskill",	"", Apollo.GetString("ZoneMap_TradeskillPOI")},
+		--tChallengeFlash 	= {strSprite = "Icon_MapNode_Map_Generic_POI",				strType = Apollo.GetString("ZoneMap_ChallengeLocation")}, -- TODO
+		[self.eObjectTypeQuest]					= {strSprite = "",												eCategory = ktMarkerCategories.TrackedQuests,		strType = Apollo.GetString("MiniMap_QuestObjectives")},
+		[self.eObjectTypeChallenge]				= {strSprite = "Icon_MapNode_Map_Generic_POI",					eCategory = ktMarkerCategories.Challenges,			strType = Apollo.GetString("CBCrafting_Challenge")}, -- TODO
+		[self.eObjectTypePublicEvent] 			= {strSprite = "sprMap_IconCompletion_Challenge",				eCategory = ktMarkerCategories.PublicEvents,		strType = Apollo.GetString("ZoneMap_PublicEvent")}, -- TODO
+		-- Mission sprites will be set up in ToggleWindow	
+		[self.eObjectTypeMission] 				= {strSprite = "",												eCategory = ktMarkerCategories.Missions,			strType = ""},
+		[self.eObjectTypeNemesisRegion]			= {strSprite = "",												eCategory = ktMarkerCategories.NemesisRegions,		strType = Apollo.GetString("ZoneMap_NemesisRegions")},
+		[self.eObjectTypeLocation]				= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeHexGroup]				= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeMapTrackedUnit]		= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeCityDirectionPing]	= {strSprite = "",													eCategory = nil,									strType = ""},
+		[self.eObjectTypeQuestReward] 			= {strSprite = "sprMM_QuestCompleteUntracked",					eCategory = ktMarkerCategories.QuestNPCs,			strType = Apollo.GetString("ZoneMap_QuestRedeemer")},
+		[self.eObjectTypeQuestReceiving]		= {strSprite = "sprMM_QuestCompleteUntracked",					eCategory = ktMarkerCategories.QuestNPCs,			strType = Apollo.GetString("ZoneMap_QuestRedeemer")},
+		[self.eObjectTypeQuestNew] 				= {strSprite = "Icon_MapNode_Map_Quest",						eCategory = ktMarkerCategories.QuestNPCs,			strType = Apollo.GetString("ZoneMap_QuestGiver")},
+		[self.eObjectTypeQuestNewTradeskill]	= {strSprite = "",												eCategory = ktMarkerCategories.QuestNPCs,			strType = Apollo.GetString("ZoneMap_QuestGiver")},
+		[self.eObjectTypeQuestNewSoon] 			= {strSprite = "Icon_MapNode_Map_Quest_Disabled", 				eCategory = ktMarkerCategories.QuestNPCs,			strType = Apollo.GetString("ZoneMap_QuestGiver")},
+		[self.eObjectTypeTradeskills]			= {strSprite = "IconSprites:Icon_MapNode_Map_Tradeskill",		eCategory = ktMarkerCategories.Tradeskills,			strType = Apollo.GetString("ZoneMap_TradeskillPOI")},
+		[self.eObjectTypeVendor] 				= {strSprite = "Icon_MapNode_Map_Vendor",						eCategory = ktMarkerCategories.Vendors,				strType = Apollo.GetString("CRB_Vendor")},
+		[self.eObjectTypeAuctioneer]			= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("MarketplaceAuction_AuctionHouse")},
+		[self.eObjectTypeCommodity]				= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("MarketplaceCommodity_CommoditiesExchange")},
+		[self.eObjectTypeInstancePortal] 		= {strSprite = "Icon_MapNode_Map_Portal",						eCategory = ktMarkerCategories.Portals,				strType = Apollo.GetString("ZoneMap_InstancePortal")}, -- TODO
+		[self.eObjectTypeBindPointActive] 		= {strSprite = "Icon_MapNode_Map_Gate",							eCategory = ktMarkerCategories.BindPoints,			strType = Apollo.GetString("ZoneMap_CurrentBindPoint")},
+		[self.eObjectTypeBindPointInactive] 	= {strSprite = "Icon_MapNode_Map_Gate",							eCategory = ktMarkerCategories.BindPoints,			strType = Apollo.GetString("ZoneMap_AvailableBindPoint")},
+		[self.eObjectTypeMiningNode]			= {strSprite = "",												eCategory = ktMarkerCategories.MiningNodes,			strType = Apollo.GetString("ZoneMap_MiningNodes")},
+		[self.eObjectTypeRelicHunterNode]		= {strSprite = "",												eCategory = ktMarkerCategories.RelicNodes,			strType = Apollo.GetString("ZoneMap_RelicHunterNodes")},
+		[self.eObjectTypeSurvivalistNode]		= {strSprite = "",												eCategory = ktMarkerCategories.SurvivalistNodes,	strType = Apollo.GetString("ZoneMap_SurvivalistNodes")},
+		[self.eObjectTypeFarmingNode]			= {strSprite = "",												eCategory = ktMarkerCategories.FarmingNodes,		strType = Apollo.GetString("ZoneMap_FarmingNodes")},
+		[self.eObjectTypeFishingNode]			= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeHazard]				= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeVendorFlight]			= {strSprite = "",												eCategory = ktMarkerCategories.Taxis,				strType = Apollo.GetString("ZoneMap_Taxis")},
+		[self.eObjectTypeFriend]				= {strSprite = "",												eCategory = nil,									strType = Apollo.GetString("MiniMap_Friends")},
+		[self.eObjectTypeRival]					= {strSprite = "",												eCategory = nil,									strType = Apollo.GetString("MiniMap_Rivals")},
+		[self.eObjectTypeTrainer]				= {strSprite = "",												eCategory = nil,									strType = Apollo.GetString("ZoneMap_Trainer")},
+		[self.eObjectTypeQuestKill]				= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeQuestTarget]			= {strSprite = "",												eCategory = ktMarkerCategories.QuestNPCs,			strType = ""},
+		[self.eObjectTypePublicEventKill]		= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypePublicEventTarget]		= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeVendorFlightPathNew]	= {strSprite = "",												eCategory = ktMarkerCategories.Taxis,				strType = Apollo.GetString("ZoneMap_Taxis")},
+		[self.eObjectTypeNeutral]				= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeHostile]				= {strSprite = "",												eCategory = nil,									strType = ""},
+		[self.eObjectTypeGroupMember]			= {strSprite = "",												eCategory = nil,									strType = Apollo.GetString("MiniMap_GroupMembers")},
+		[self.eObjectCityDirections]			= {strSprite = "Icon_MapNode_Map_CityDirections",				eCategory = ktMarkerCategories.CityDirections,		strType = Apollo.GetString("ZoneMap_CityDirections")},
+		[self.eObjectTypeCREDDExchange]			= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("MarketplaceCredd_Title")},
+		[self.eObjectTypeCostume]				= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("ZoneMap_CostumeAndDyes")},
+		[self.eObjectTypeBank]					= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("Bank_Header")},
+		[self.eObjectTypeGuildBank]				= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("GuildBank_Title")},
+		[self.eObjectTypeGuildRegistrar]		= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("DialogResponse_GuildRegistrar")},
+		[self.eObjectTypeMail]					= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("InterfaceMenu_Mail")},
+		[self.eObjectTypeConvert]				= {strSprite = "",												eCategory = ktMarkerCategories.Services,			strType = Apollo.GetString("ResourceConversion_Title")},
 	}
 end
 
@@ -195,6 +265,7 @@ function ZoneMap:GetAllUnitTypes()
 		self.eObjectTypeGuildRegistrar,
 		self.eObjectTypeMail,
 		self.eObjectTypeConvert,
+		self.eObjectTypeQuestNewTradeskill,
 	}
 
 	return tUnitTypes
@@ -276,6 +347,9 @@ function ZoneMap:BuildCustomMarkerInfo()
 		QuestRewardExplorer			= { nOrder = 13,	objectType = self.eObjectTypeQuestReward, 		strIcon = "IconSprites:Icon_MapNode_Map_Explorer_Accepted", 	bNeverShowOnEdge = true, bHideIfHostile = true },
 		QuestNewDaily				= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 			bNeverShowOnEdge = true, bHideIfHostile = true },
 		QuestNew					= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Quest", 			bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestNewTradeskill			= { nOrder = 14,	objectType = self.eObjectTypeQuestNewTradeskill, 	strIcon = "IconSprites:Icon_MapNode_Map_Quest_Tradeskill", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestGivingTradeskill		= { nOrder = 14,	objectType = self.eObjectTypeQuestNewTradeskill, 	strIcon = "IconSprites:Icon_MapNode_Map_Quest_Tradeskill", 	bNeverShowOnEdge = true, bHideIfHostile = true },
+		QuestReceivingTradeskill 	= { nOrder = 14,	objectType = self.eObjectTypeQuestNewTradeskill, 	strIcon = "IconSprites:Icon_MapNode_Map_Quest_Tradeskill", 	bNeverShowOnEdge = true, bHideIfHostile = true },
 		QuestNewSoldier				= { nOrder = 15,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Soldier", 			bNeverShowOnEdge = true, bHideIfHostile = true },
 		QuestNewSettler				= { nOrder = 16,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Settler", 			bNeverShowOnEdge = true, bHideIfHostile = true },
 		QuestNewScientist			= { nOrder = 17,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Scientist", 		bNeverShowOnEdge = true, bHideIfHostile = true },
@@ -304,7 +378,7 @@ function ZoneMap:BuildCustomMarkerInfo()
 		CityDirections				= { nOrder = 40,	objectType = self.eObjectCityDirections, 		strIcon = "IconSprites:Icon_MapNode_Map_CityDirections", 		bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		Dye							= { nOrder = 41,	objectType = self.eObjectTypeCostume, 			strIcon = "IconSprites:Icon_MapNode_Map_DyeSpecialist", 		bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		FlightPathSettler			= { nOrder = 42,	objectType = self.eObjectTypeVendorFlight, 		strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Flight", 		bNeverShowOnEdge = true, bFixedSizeMedium = true },
-		FlightPath					= { nOrder = 43,	objectType = self.eObjectTypeVendorFlightPathNew, strIcon = "IconSprites:Icon_MapNode_Map_Taxi", 			bNeverShowOnEdge = true, bFixedSizeMedium = true },
+		FlightPath					= { nOrder = 43,	objectType = self.eObjectTypeVendorFlightPathNew,			strIcon = "IconSprites:Icon_MapNode_Map_Taxi", 			bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		FlightPathNew				= { nOrder = 44,	objectType = self.eObjectTypeVendorFlight, 		strIcon = "IconSprites:Icon_MapNode_Map_Taxi_Undiscovered", 	bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		TalkTo						= { nOrder = 45,	objectType = self.eObjectTypeQuestTarget, 		strIcon = "IconSprites:Icon_MapNode_Map_Chat", 			bNeverShowOnEdge = true, bFixedSizeMedium = true },
 		InstancePortal				= { nOrder = 46,	objectType = self.eObjectTypeInstancePortal, 	strIcon = "IconSprites:Icon_MapNode_Map_Portal", 			bNeverShowOnEdge = true },
@@ -349,7 +423,7 @@ function ZoneMap:BuildShownTypesArrays()
 		self.eObjectTypeHexGroup,
 		self.eObjectTypeQuest,
 		self.eObjectTypeMapTrackedUnit,
-		self.eObjectTypeCityDirection,
+		self.eObjectTypeCityDirectionPing,
 		self.eObjectTypeNemesisRegion
 	}
 
@@ -362,7 +436,7 @@ function ZoneMap:BuildShownTypesArrays()
 		self.eObjectTypeHexGroup,
 		self.eObjectTypeQuest,
 		self.eObjectTypeMapTrackedUnit,
-		self.eObjectTypeCityDirection,
+		self.eObjectTypeCityDirectionPing,
 		self.eObjectTypeNemesisRegion
 	}
 
@@ -375,7 +449,7 @@ function ZoneMap:BuildShownTypesArrays()
 		self.eObjectTypeHexGroup,
 		self.eObjectTypeQuest,
 		self.eObjectTypeMapTrackedUnit,
-		self.eObjectTypeCityDirection,
+		self.eObjectTypeCityDirectionPing,
 		self.eObjectTypeNemesisRegion
 	}
 
@@ -395,28 +469,28 @@ function ZoneMap:BuildShownTypesArrays()
 
 	-- Here are our arrays for what we actually show after considering user toggling
 	self.arShownTypesSuperPanning = { }
-	for i, type in pairs(self.arAllowedTypesSuperPanning) do
-		table.insert(self.arShownTypesSuperPanning, type)
+	for idx, eType in pairs(self.arAllowedTypesSuperPanning) do
+		table.insert(self.arShownTypesSuperPanning, eType)
 	end
 
 	self.arShownTypesPanning = { }
-	for i, type in pairs(self.arAllowedTypesPanning) do
-		table.insert(self.arShownTypesPanning , type)
+	for idx, eType in pairs(self.arAllowedTypesPanning) do
+		table.insert(self.arShownTypesPanning , eType)
 	end
 
 	self.arShownTypesScaled = { }
-	for i, type in pairs(self.arAllowedTypesScaled) do
-		table.insert(self.arShownTypesScaled , type)
+	for idx, eType in pairs(self.arAllowedTypesScaled) do
+		table.insert(self.arShownTypesScaled , eType)
 	end
 
 	self.arShownTypesContinent = { }
-	for i, type in pairs(self.arAllowedTypesContinent) do
-		table.insert(self.arShownTypesContinent , type)
+	for idx, eType in pairs(self.arAllowedTypesContinent) do
+		table.insert(self.arShownTypesContinent , eType)
 	end
 
 	self.arShownTypesWorld = { }
-	for i, type in pairs(self.arAllowedTypesWorld) do
-		table.insert(self.arShownTypesWorld , type)
+	for idx, eType in pairs(self.arAllowedTypesWorld) do
+		table.insert(self.arShownTypesWorld , eType)
 	end
 end
 
@@ -455,6 +529,8 @@ function ZoneMap:OnRestore(eType, tSavedData)
 	self.bControlPanelShown = tSavedData.bControlPanelShown -- TODO: Not actually a boolean, OnRestore bugged with booleans at the moment
 	if tSavedData.tCheckedOptions then
 		self.tButtonChecks = tSavedData.tCheckedOptions
+		
+		self:RehideAllToggledIcons()
 	end
 	if tSavedData.eZoomLevel then
 		self.eDisplayMode = tSavedData.eZoomLevel
@@ -533,34 +609,37 @@ function ZoneMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("CityDirectionsClose",					"OnCityDirectionsClosed", self)
 
 	--Levelup unlocks
-	Apollo.RegisterEventHandler("UI_LevelChanged",									"OnLevelChanged", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Astrovoid", 		"OnLevelUpUnlock_WorldMapAdventure_Astrovoid", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Galeras", 			"OnLevelUpUnlock_WorldMapAdventure_Galeras", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Hycrest", 			"OnLevelUpUnlock_WorldMapAdventure_Hycrest", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Malgrave", 		"OnLevelUpUnlock_WorldMapAdventure_Malgrave", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_NorthernWilds", 	"OnLevelUpUnlock_WorldMapAdventure_NorthernWilds", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Whitevale", 		"OnLevelUpUnlock_WorldMapAdventure_Whitevale", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_SwordMaiden", 		"OnLevelUpUnlock_WorldMapDungeon_SwordMaiden", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_Skullcano", 			"OnLevelUpUnlock_WorldMapDungeon_Skullcano", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_KelVoreth", 			"OnLevelUpUnlock_WorldMapDungeon_KelVoreth", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_Stormtalon", 		"OnLevelUpUnlock_WorldMapDungeon_Stormtalon", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Wilderrun", 			"OnLevelUpUnlock_WorldMapNewZone_Wilderrun", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Whitevale", 			"OnLevelUpUnlock_WorldMapNewZone_Whitevale", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_NorthernWilds", 		"OnLevelUpUnlock_WorldMapNewZone_NorthernWilds", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Malgrave", 			"OnLevelUpUnlock_WorldMapNewZone_Malgrave", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_LevianBay", 			"OnLevelUpUnlock_WorldMapNewZone_LevianBay", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Grimvault", 			"OnLevelUpUnlock_WorldMapNewZone_Grimvault", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Galeras", 			"OnLevelUpUnlock_WorldMapNewZone_Galeras", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Farside", 			"OnLevelUpUnlock_WorldMapNewZone_Farside", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_EverstarGrove", 		"OnLevelUpUnlock_WorldMapNewZone_EverstarGrove", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Ellevar", 			"OnLevelUpUnlock_WorldMapNewZone_Ellevar", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Deradune", 			"OnLevelUpUnlock_WorldMapNewZone_Deradune", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_CrimsonIsle", 		"OnLevelUpUnlock_WorldMapNewZone_CrimsonIsle", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Celestion", 			"OnLevelUpUnlock_WorldMapNewZone_Celestion", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Auroria", 			"OnLevelUpUnlock_WorldMapNewZone_Auroria", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Algoroc", 			"OnLevelUpUnlock_WorldMapNewZone_Algoroc", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapCapital_Illium", 			"OnLevelUpUnlock_WorldMapCapital_Illium", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapCapital_Thayd", 				"OnLevelUpUnlock_WorldMapCapital_Thayd", self)
+	Apollo.RegisterEventHandler("UI_LevelChanged",											"OnLevelChanged", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Astrovoid", 				"OnLevelUpUnlock_WorldMapAdventure_Astrovoid", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Galeras", 					"OnLevelUpUnlock_WorldMapAdventure_Galeras", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Hycrest", 					"OnLevelUpUnlock_WorldMapAdventure_Hycrest", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Malgrave", 				"OnLevelUpUnlock_WorldMapAdventure_Malgrave", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_NorthernWilds", 			"OnLevelUpUnlock_WorldMapAdventure_NorthernWilds", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapAdventure_Whitevale", 				"OnLevelUpUnlock_WorldMapAdventure_Whitevale", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_UltimateProtogames", 		"OnLevelUpUnlock_WorldMapDungeon_UltimateProtogames", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_SwordMaiden", 				"OnLevelUpUnlock_WorldMapDungeon_SwordMaiden", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_Skullcano", 					"OnLevelUpUnlock_WorldMapDungeon_Skullcano", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_KelVoreth", 					"OnLevelUpUnlock_WorldMapDungeon_KelVoreth", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_Stormtalon", 				"OnLevelUpUnlock_WorldMapDungeon_Stormtalon", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_ProtogamesAcademyExile",		"OnLevelUpUnlock_WorldMapDungeon_ProtogamesAcademyExile", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapDungeon_ProtogamesAcademyDominion",	"OnLevelUpUnlock_WorldMapDungeon_ProtogamesAcademyDominion", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Wilderrun", 					"OnLevelUpUnlock_WorldMapNewZone_Wilderrun", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Whitevale", 					"OnLevelUpUnlock_WorldMapNewZone_Whitevale", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_NorthernWilds", 				"OnLevelUpUnlock_WorldMapNewZone_NorthernWilds", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Malgrave", 					"OnLevelUpUnlock_WorldMapNewZone_Malgrave", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_LevianBay", 					"OnLevelUpUnlock_WorldMapNewZone_LevianBay", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Grimvault", 					"OnLevelUpUnlock_WorldMapNewZone_Grimvault", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Galeras", 					"OnLevelUpUnlock_WorldMapNewZone_Galeras", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Farside", 					"OnLevelUpUnlock_WorldMapNewZone_Farside", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_EverstarGrove", 				"OnLevelUpUnlock_WorldMapNewZone_EverstarGrove", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Ellevar", 					"OnLevelUpUnlock_WorldMapNewZone_Ellevar", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Deradune", 					"OnLevelUpUnlock_WorldMapNewZone_Deradune", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_CrimsonIsle", 				"OnLevelUpUnlock_WorldMapNewZone_CrimsonIsle", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Celestion", 					"OnLevelUpUnlock_WorldMapNewZone_Celestion", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Auroria", 					"OnLevelUpUnlock_WorldMapNewZone_Auroria", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapNewZone_Algoroc", 					"OnLevelUpUnlock_WorldMapNewZone_Algoroc", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapCapital_Illium", 					"OnLevelUpUnlock_WorldMapCapital_Illium", self)
+	Apollo.RegisterEventHandler("LevelUpUnlock_WorldMapCapital_Thayd", 						"OnLevelUpUnlock_WorldMapCapital_Thayd", self)
 
 	--Group Events
 	Apollo.RegisterEventHandler("Group_UpdatePosition", 				"OnGroupUpdatePosition", self)			-- ( arMembers )
@@ -731,37 +810,34 @@ function ZoneMap:OnDocumentReady()
 	-- Rest of options
 	local tButtonList =
 	{
-		{Apollo.GetString("ZoneMap_QuestNPCs"), 		true,	"Icon_MapNode_Map_Quest"},
-		{Apollo.GetString("ZoneMap_TrackedQuests"), 	true,	"sprMM_QuestTracked"},
-		{Apollo.GetString("ZoneMap_Missions"), 			true,	""}, -- Will be updated later
-		{Apollo.GetString("ZoneMap_Challenges"), 		true,	"sprChallengeTypeGenericLarge"},
-		{Apollo.GetString("ZoneMap_PublicEvents"), 		true,	"sprMM_POI"},
-		{Apollo.GetString("ZoneMap_Tradeskills"), 		true,	"Icon_MapNode_Map_Tradeskill"},
-		{Apollo.GetString("ZoneMap_NearbyVendors"), 	true,	"Icon_MapNode_Map_Vendor"},
-		{Apollo.GetString("ZoneMap_Services"), 			true,	"Icon_MapNode_Map_Vendor"},
-		{Apollo.GetString("ZoneMap_NearbyPortals"), 	true,	"Icon_MapNode_Map_Portal"},
-		{Apollo.GetString("ZoneMap_NearbyBindPoints"), 	true,	"Icon_MapNode_Map_Gate"},
-		{Apollo.GetString("ZoneMap_GroupObjectives"), 	true,	"GroupLeaderIcon"},
-		{Apollo.GetString("ZoneMap_MiningNodes"), 		true,	"Icon_MapNode_Map_Node_Mining"},
-		{Apollo.GetString("ZoneMap_RelicHunterNodes"), 	true,	"Icon_MapNode_Map_Node_Relic"},
-		{Apollo.GetString("ZoneMap_SurvivalistNodes"), 	true,	"Icon_MapNode_Map_Node_Tree"},
-		{Apollo.GetString("ZoneMap_FarmingNodes"), 		true,	"Icon_MapNode_Map_Node_Plant"},
-		{Apollo.GetString("ZoneMap_NemesisRegions"), 	false, 	"Icon_MapNode_Map_Rival"},
-		{Apollo.GetString("ZoneMap_Taxis"), 			true,	"Icon_MapNode_Map_Taxi"},
-		{Apollo.GetString("ZoneMap_CityDirections"), 	true,	"Icon_MapNode_Map_CityDirections"},
+		[ktMarkerCategories.QuestNPCs] 			= {strLabel = Apollo.GetString("ZoneMap_QuestNPCs"), 			bShown = true,	strIcon = "Icon_MapNode_Map_Quest"},
+		[ktMarkerCategories.TrackedQuests] 		= {strLabel = Apollo.GetString("ZoneMap_TrackedQuests"), 		bShown = true,	strIcon = "sprMM_QuestTracked"},
+		[ktMarkerCategories.Missions] 			= {strLabel = Apollo.GetString("ZoneMap_Missions"), 			bShown = true,	strIcon = ""}, -- Will be updated later
+		[ktMarkerCategories.Challenges] 		= {strLabel = Apollo.GetString("ZoneMap_Challenges"), 			bShown = true,	strIcon = "sprChallengeTypeGenericLarge"},
+		[ktMarkerCategories.PublicEvents] 		= {strLabel = Apollo.GetString("ZoneMap_PublicEvents"), 		bShown = true,	strIcon = "sprMM_POI"},
+		[ktMarkerCategories.Tradeskills] 		= {strLabel = Apollo.GetString("ZoneMap_Tradeskills"), 			bShown = true,	strIcon = "Icon_MapNode_Map_Tradeskill"},
+		[ktMarkerCategories.Vendors] 			= {strLabel = Apollo.GetString("ZoneMap_NearbyVendors"), 		bShown = true,	strIcon = "Icon_MapNode_Map_Vendor"},
+		[ktMarkerCategories.Services] 			= {strLabel = Apollo.GetString("ZoneMap_Services"), 			bShown = true,	strIcon = "Icon_MapNode_Map_Vendor"},
+		[ktMarkerCategories.Portals] 			= {strLabel = Apollo.GetString("ZoneMap_NearbyPortals"), 		bShown = true,	strIcon = "Icon_MapNode_Map_Portal"},
+		[ktMarkerCategories.BindPoints] 		= {strLabel = Apollo.GetString("ZoneMap_NearbyBindPoints"), 	bShown = true,	strIcon = "Icon_MapNode_Map_Gate"},
+		[ktMarkerCategories.GroupObjectives] 	= {strLabel = Apollo.GetString("ZoneMap_GroupObjectives"), 		bShown = true,	strIcon = "GroupLeaderIcon"},
+		[ktMarkerCategories.MiningNodes] 		= {strLabel = Apollo.GetString("ZoneMap_MiningNodes"), 			bShown = true,	strIcon = "Icon_MapNode_Map_Node_Mining"},
+		[ktMarkerCategories.RelicNodes] 		= {strLabel = Apollo.GetString("ZoneMap_RelicHunterNodes"), 	bShown = true,	strIcon = "Icon_MapNode_Map_Node_Relic"},
+		[ktMarkerCategories.SurvivalistNodes] 	= {strLabel = Apollo.GetString("ZoneMap_SurvivalistNodes"), 	bShown = true,	strIcon = "Icon_MapNode_Map_Node_Tree"},
+		[ktMarkerCategories.FarmingNodes] 		= {strLabel = Apollo.GetString("ZoneMap_FarmingNodes"), 		bShown = true,	strIcon = "Icon_MapNode_Map_Node_Plant"},
+		[ktMarkerCategories.NemesisRegions] 	= {strLabel = Apollo.GetString("ZoneMap_NemesisRegions"), 		bShown = false, strIcon = "Icon_MapNode_Map_Rival"},
+		[ktMarkerCategories.Taxis] 				= {strLabel = Apollo.GetString("ZoneMap_Taxis"), 				bShown = true,	strIcon = "Icon_MapNode_Map_Taxi"},
+		[ktMarkerCategories.CityDirections] 	= {strLabel = Apollo.GetString("ZoneMap_CityDirections"), 		bShown = true,	strIcon = "Icon_MapNode_Map_CityDirections"},
 	}
 
-	for idx, tBtnData in ipairs(tButtonList) do
-		local wndCurr = self:FactoryProduce(self.wndMain:FindChild("MarkerPaneButtonList"), "MarkerBtn", idx)
-		if not self.tButtonChecks or self.tButtonChecks[idx] == nil then
-			self.tButtonChecks[idx] =  tBtnData[2]
+	for eCategory, tBtnData in ipairs(tButtonList) do
+		local wndCurr = self:FactoryProduce(self.wndMain:FindChild("MarkerPaneButtonList"), "MarkerBtn", eCategory)
+		if not self.tButtonChecks or self.tButtonChecks[eCategory] == nil then
+			self.tButtonChecks[eCategory] =  tBtnData.bShown
 		end
-		wndCurr:SetCheck(self.tButtonChecks[idx])
-		wndCurr:FindChild("MarkerBtnLabel"):SetText(tBtnData[1])
-		wndCurr:FindChild("MarkerBtnImage"):SetSprite(tBtnData[3])
-		if tBtnData[4] then
-			wndCurr:FindChild("MarkerBtnImage"):SetBGColor(tBtnData[4])
-		end
+		wndCurr:SetCheck(self.tButtonChecks[eCategory])
+		wndCurr:FindChild("MarkerBtnLabel"):SetText(tBtnData.strLabel)
+		wndCurr:FindChild("MarkerBtnImage"):SetSprite(tBtnData.strIcon)
 		wndCurr:FindChild("MarkerBtnLabel"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 	end
 	self.wndMain:FindChild("MarkerPaneButtonList"):ArrangeChildrenVert(0)
@@ -798,6 +874,8 @@ function ZoneMap:OnDocumentReady()
 			end
 		end
 	end
+	
+	self:RehideAllToggledIcons()
 end
 
 function ZoneMap:OnInterfaceMenuListHasLoaded()
@@ -870,24 +948,30 @@ function ZoneMap:ToggleWindow()
 
 		Event_FireGenericEvent("MapGhostMode", false)
 		self.wndMain:ToFront()
+		
+		--tPathSoldier 		= {strSprite = "Icon_MapNode_Map_Soldier",					strType = Apollo.GetString("ZoneMap_SoldierMission")}, -- must always match the sprite passed with the event
+		--tPathSettler 		= {strSprite = "Icon_MapNode_Map_Settler",					strType = Apollo.GetString("ZoneMap_SettlerMission")}, -- must always match the sprite passed with the event
+		--tPathScientist 		= {strSprite = "Icon_MapNode_Map_Scientist",				strType = Apollo.GetString("ZoneMap_ScientistMission")}, -- must always match the sprite passed with the event
+		--tPathExplorer 		= {strSprite = "Icon_MapNode_Map_Explorer",					strType = Apollo.GetString("ZoneMap_ExplorerMission")}, -- must always match the sprite passed with the event
 
 		-- TODO: Refactor
 		local ePlayerPathType = PlayerPathLib.GetPlayerPathType()
 		local wndMarkerPathIcon = self.wndMain:FindChild("MarkerPaneButtonList"):FindChildByUserData(3):FindChild("MarkerBtnImage")
 		if ePlayerPathType == PlayerPathLib.PlayerPathType_Soldier then
-			wndMarkerPathIcon:SetSprite("IconSprites:Icon_Windows_UI_CRB_Soldier")
+			self.tPOITypes[self.eObjectTypeMission] = {strSprite = "Icon_MapNode_Map_Soldier", strType = Apollo.GetString("ZoneMap_SoldierMission")}
 			self.wndZoneMap:SetOverlayTypeInfo(self.eObjectTypeMission, ktHexColor.tPath.crBorder, ktHexColor.tPath.crInterior, "sprMM_SmallIconSoldier", "sprMM_SmallIconSoldier")
 		elseif ePlayerPathType == PlayerPathLib.PlayerPathType_Settler then
-			wndMarkerPathIcon:SetSprite("IconSprites:Icon_Windows_UI_CRB_Colonist")
+			self.tPOITypes[self.eObjectTypeMission] = {strSprite = "Icon_MapNode_Map_Settler", strType = Apollo.GetString("ZoneMap_SettlerMission")}
 			self.wndZoneMap:SetOverlayTypeInfo(self.eObjectTypeMission, ktHexColor.tPath.crBorder, ktHexColor.tPath.crInterior, "sprMM_SmallIconSettler", "sprMM_SmallIconSettler")
 		elseif ePlayerPathType == PlayerPathLib.PlayerPathType_Explorer then
-			wndMarkerPathIcon:SetSprite("IconSprites:Icon_Windows_UI_CRB_Explorer")
+			self.tPOITypes[self.eObjectTypeMission] = {strSprite = "Icon_MapNode_Map_Explorer", strType = Apollo.GetString("ZoneMap_ExplorerMission")}
 			self.wndZoneMap:SetOverlayTypeInfo(self.eObjectTypeMission, ktHexColor.tPath.crBorder, ktHexColor.tPath.crInterior, "sprMM_SmallIconExplorer", "sprMM_SmallIconExplorer")
 		elseif ePlayerPathType == PlayerPathLib.PlayerPathType_Scientist then
-			wndMarkerPathIcon:SetSprite("IconSprites:Icon_Windows_UI_CRB_Scientist")
+			self.tPOITypes[self.eObjectTypeMission] = {strSprite = "Icon_MapNode_Map_Scientist", strType = Apollo.GetString("ZoneMap_ScientistMission")}
 			self.wndZoneMap:SetOverlayTypeInfo(self.eObjectTypeMission, ktHexColor.tPath.crBorder, ktHexColor.tPath.crInterior, "sprMM_SmallIconScientist", "sprMM_SmallIconScientist")
 		end
-
+		
+		wndMarkerPathIcon:SetSprite(self.tPOITypes[self.eObjectTypeMission].strSprite)
 		self:OnZoomChange()
 
 		self.wndZoneMap:HighlightRegionsByUserData(self.objActiveRegionUserData)
@@ -1216,7 +1300,6 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 
 	if self.eLastZoomLevel ~= eZoomLevel then
 		if eZoomLevel == tZoneMapEnums.SuperPanning then -- SuperPanning
-			return -- error handling (shouldn't be able to zoom at this level)
 		elseif eZoomLevel == tZoneMapEnums.Panning then -- Panning
 			if not self.wndZoneMap:CanZoomZone() then -- kick to scaled if the map now fits
 				self.wndZoneMap:SetDisplayMode(tZoneMapEnums.Scaled)
@@ -1253,7 +1336,7 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 
 	-- Dropdown name
 	local strZoneMapText = Apollo.GetString("CRBZoneMap_SelectAZone")
-	if eZoomLevel == tZoneMapEnums.Panning or eZoomLevel == tZoneMapEnums.Scaled then
+	if eZoomLevel == tZoneMapEnums.SuperPanning or eZoomLevel == tZoneMapEnums.Panning or eZoomLevel == tZoneMapEnums.Scaled then
 		strZoneMapText = tCurrentInfo.strName
 		-- TODO: strZoneMapText = (tHomeZone and tHomeZone.id ~= tCurrentInfo.id) and tCurrentInfo.strName or tCurrentInfo.strName .. " (Current)"
 	elseif eZoomLevel == tZoneMapEnums.World then
@@ -1277,28 +1360,48 @@ function ZoneMap:HelperCheckAndBuildSubzones(tZoneInfo, eZoomLevel) -- This repe
 	end
 
 	local tSubZoneInfo = self.wndZoneMap:GetAllSubZoneInfo(tZoneInfo.parentZoneId ~= 0 and tZoneInfo.parentZoneId or tZoneInfo.id)
-
+	local nHeightOfEntry = 0
+	
 	for idx, tZoneEntry in pairs(tSubZoneInfo or {}) do
 		local wndCurr = self:FactoryProduce(self.wndMain:FindChild("SubzoneListContent"), "ZoneComplexListEntry", tZoneEntry.id)
 		wndCurr:FindChild("ZoneComplexListBtn"):SetData(tZoneEntry)
 		wndCurr:FindChild("ZoneComplexListBtn"):SetCheck(tZoneInfo.id == tZoneEntry.id)
 		wndCurr:FindChild("ZoneComplextListTitle"):SetText(tZoneEntry.strName)
+		nHeightOfEntry = wndCurr:GetHeight() 
 	end
 
 	self.wndMain:FindChild("SubzoneListContent"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("SubzoneToggle"):Show(#self.wndMain:FindChild("SubzoneListContent"):GetChildren() > 0 and self.wndMain:GetWidth() > 575)
+	self.wndMain:FindChild("SubzoneToggle"):Show(tSubZoneInfo and #tSubZoneInfo > 0)
+	if tSubZoneInfo and #tSubZoneInfo > 0 then
+		local nSubZoneTotalCount = #tSubZoneInfo 
+		local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("SubzoneList"):GetAnchorOffsets()
+		self.wndMain:FindChild("SubzoneList"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + (nSubZoneTotalCount * nHeightOfEntry) + 9) -- + 9 of top bottom padding
+	end
+
 end
 
 function ZoneMap:HelperBuildZoneDropdown(idContinent) -- This only calls on button events, like picking from a dropdown menu
 	self.wndMain:FindChild("ZoneSelectItems"):DestroyChildren()
-	for key, tZoneEntry in pairs(self.wndZoneMap:GetContinentZoneInfo(idContinent)) do
+	
+	local tZoneInfo = self.wndZoneMap:GetContinentZoneInfo(idContinent)
+	--local tZoneInfo = self.wndZoneMap:GetContinentZoneInfo(tZoneInfo.parentZoneId ~= 0 and tZoneInfo.parentZoneId or tZoneInfo.id)
+	local nHeightOfEntry = 0
+	local nZoneTotalCount = 0
+	for key, tZoneEntry in pairs(tZoneInfo) do
 		if tZoneEntry.parentZoneId == 0 then -- zones only, no subzones
 			local wndCurr = self:FactoryProduce(self.wndMain:FindChild("ZoneSelectItems"), "ZoneComplexListEntry", tZoneEntry.id)
 			wndCurr:FindChild("ZoneComplexListBtn"):SetData(tZoneEntry)
 			wndCurr:FindChild("ZoneComplextListTitle"):SetText(tZoneEntry.strName)
+			nHeightOfEntry = wndCurr:GetHeight()
+			nZoneTotalCount = nZoneTotalCount + 1
 		end
 	end
 	self.wndMain:FindChild("ZoneSelectItems"):ArrangeChildrenVert(0)
+	
+	if nZoneTotalCount > 0 then
+		local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("ZoneComplexList"):GetAnchorOffsets()
+		self.wndMain:FindChild("ZoneComplexList"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + (nZoneTotalCount * nHeightOfEntry) + 9) -- + 9 of top bottom padding
+	end
 end
 
 
@@ -1394,14 +1497,14 @@ function ZoneMap:AddQuestIndicators()
 			if queCurr:IsActiveQuest() then
 				local tQuestRegions = queCurr:GetMapRegions()
 				for nObjIdx, tObjRegions in pairs(tQuestRegions) do
-					self.wndZoneMap:AddRegion(self.eObjectTypeQuest, tObjRegions.nWorldZoneId, tObjRegions.tRegions, queCurr, tObjRegions.tIndicator, tostring(nQuest), self.tPOITypes.tTrackedQuestActive[1])
+					self.wndZoneMap:AddRegion(self.eObjectTypeQuest, tObjRegions.nWorldZoneId, tObjRegions.tRegions, queCurr, tObjRegions.tIndicator, tostring(nQuest), self.tPOITypes[self.eObjectTypeQuestNew].strSprite)
 				end
 
 				nQuest = nQuest + 1
 			elseif self.tToggledIcons.bTracked then
 				local tQuestRegions = queCurr:GetMapRegions()
 				for nObjIdx, tObjRegions in pairs(tQuestRegions) do
-					self.wndZoneMap:AddRegion(self.eObjectTypeQuest, tObjRegions.nWorldZoneId, tObjRegions.tRegions, queCurr, tObjRegions.tIndicator, tostring(nQuest), self.tPOITypes.tTrackedQuest[1])
+					self.wndZoneMap:AddRegion(self.eObjectTypeQuest, tObjRegions.nWorldZoneId, tObjRegions.tRegions, queCurr, tObjRegions.tIndicator, tostring(nQuest), self.tPOITypes[self.eObjectTypeQuestNew].strSprite)
 				end
 
 				nQuest = nQuest + 1
@@ -1426,7 +1529,7 @@ function ZoneMap:GetMissionTooltip(pmCurrent)
 		[PlayerPathLib.PlayerPathType_Explorer]		= Apollo.GetString("ZoneMap_ExplorerMission")
 	}
 
-	local strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", String_GetWeaselString(Apollo.GetString("CRB_ZoneMapColon"), tPathNames[PlayerPathLib.GetPlayerPathType()]))
+	local strType = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", String_GetWeaselString(Apollo.GetString("CRB_ZoneMapColon"), tPathNames[PlayerPathLib.GetPlayerPathType()]))
 	local strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", pmCurrent:GetName())
 	return String_GetWeaselString(Apollo.GetString("ZoneMap_MissionTypeName"), strType, strName)
 end
@@ -1437,7 +1540,7 @@ function ZoneMap:GetPublicEventTooltip(peEvent)
 	end
 	self.tTooltipCache[peEvent] = true
 
-	local strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", Apollo.GetString("ZoneMap_PublicEventTooltipLabel"))
+	local strType = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", Apollo.GetString("ZoneMap_PublicEventTooltipLabel"))
 	local strName = ""
 	if PublicEvent.is(peEvent) then
 		strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", peEvent:GetName())
@@ -1458,7 +1561,7 @@ function ZoneMap:GetChallengeTooltip(oChallenge)
 	end
 	self.tTooltipCache[oChallenge] = true
 
-	local strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", Apollo.GetString("ZoneMap_ChallengeTooltipLabel"))
+	local strType = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", Apollo.GetString("ZoneMap_ChallengeTooltipLabel"))
 	local strName = ""
 	if Challenges.is(oChallenge) then
 		strName =  string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff",  oChallenge:GetName())
@@ -1477,7 +1580,7 @@ function ZoneMap:GetHexGroupTooltip(oHexGroup)
 	end
 	self.tTooltipCache[oHexGroup] = true
 
-	local strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", Apollo.GetString("ZoneMap_HexTooltipLabel"))
+	local strType = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", Apollo.GetString("ZoneMap_HexTooltipLabel"))
 	local strName = ""
 	if HexGroups.is(oHexGroup) then
 		strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", oHexGroup:GetTooltip())
@@ -1498,8 +1601,7 @@ function ZoneMap:GetNemesisRegionTooltip(oNemesisRegion)
 
 	local tRegion = self.wndZoneMap:GetNemesisRegionInfo(oNemesisRegion)
 	if tRegion ~= nil then
-		local strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", String_GetWeaselString(Apollo.GetString("ZoneMap_NemesisTooltipLabel"), tRegion.strFactionName))
-
+		local strType = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", String_GetWeaselString(Apollo.GetString("ZoneMap_NemesisTooltipLabel"), tRegion.strFactionName))
 		local strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", tRegion.strDescription)
 		return String_GetWeaselString(Apollo.GetString("ZoneMap_MissionTypeName"), strType, strName)
 	end
@@ -1513,7 +1615,7 @@ function ZoneMap:OnGenerateTooltip(wndHandler, wndControl, eType, nX, nY)
 	end
 
 	local strTooltipString = ""
-	local strType = ""
+	--local strType = ""
 	local strName = ""
 	local bTooltip = false
 
@@ -1525,6 +1627,8 @@ function ZoneMap:OnGenerateTooltip(wndHandler, wndControl, eType, nX, nY)
 	end
 
 	self.arHoverRegionUserDataList = {}
+	local tTooltips = {}
+	local tTypesUsed = {}
 
 	if eType == Tooltip.TooltipGenerateType_Default then
 		local nCount = 0
@@ -1535,78 +1639,157 @@ function ZoneMap:OnGenerateTooltip(wndHandler, wndControl, eType, nX, nY)
 		if tMap == nil then
 			return
 		end
+		
+		for key, tHexes in pairs(tMap) do -- hex groups
+			local strName = ""
 
+			if self.tButtonChecks[tHexes.eType] then
+				local bShowRegion = true
+				local strType = self.tPOITypes[tHexes.eType].strType
+				
+				
 
-		for k, tHexes in pairs(tMap) do -- hex groups
-			local strNew = ""
+				if tHexes.eType == self.eObjectTypeMission then
+					self.tTooltipCache[tHexes.userData] = true
+					strName = tHexes.userData:GetName()
+				elseif tHexes.eType == self.eObjectTypePublicEvent then
+					self.tTooltipCache[tHexes.userData] = true
+					
+					if PublicEvent.is(tHexes.userData) then
+						strName = tHexes.userData:GetName()
+					elseif PublicEventObjective.is(tHexes.userData) then
+						strName = tHexes.userData:GetDescription()
+					end
+				elseif tHexes.eType == self.eObjectTypeChallenge then
+					self.tTooltipCache[tHexes.userData] = true
+					strName = tHexes.userData:GetName()
+					bShowRegion = false
+				elseif tHexes.eType == self.eObjectTypeHexGroup then
+					self.tTooltipCache[tHexes.userData] = true
+					strName = tHexes.userData:GetTooltip()
+					bShowRegion = false
+				elseif tHexes.eType == self.eObjectTypeNemesisRegion then
+					self.tTooltipCache[tHexes.userData] = true
+					self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
+					bShowRegion = false
+					
+					local tRegion = self.wndZoneMap:GetNemesisRegionInfo(tHexes.userData)
+					if tRegion ~= nil then
+						strFaction = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", String_GetWeaselString(Apollo.GetString("ZoneMap_NemesisTooltipLabel"), tRegion.strFactionName))
+						strName = strFaction .. tRegion.strDescription
+					end
+				elseif tHexes.eType == self.eObjectTypeQuest and not self.tTooltipCache[tHexes.userData] then
+					self.tTooltipCache[tHexes.userData] = true
+					local strLevel = string.format("<T Font=\"%s\" TextColor=\"%s\">(%s)</T>", "CRB_InterfaceMedium", ktConColors[tHexes.userData:GetColoredDifficulty()], tHexes.userData:GetConLevel())
+					strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s %s</T>", "CRB_InterfaceMedium", "ffffffff", tHexes.userData:GetTitle(), strLevel)
+				end
+				
+				if not tTooltips[tHexes.eType] then
+					tTooltips[tHexes.eType] = 
+					{
+						strCategory = strType,
+						tStrings = {}
+					}
+					
+					table.insert(tTypesUsed, tHexes.eType)
+				end
+				
+				local strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", strName)
+				
+				if not tTooltips[tHexes.eType].tStrings[strName] then
+					tTooltips[tHexes.eType].tStrings[strName] = {}
+				end
+				
+				if tHexes.unit then
+					table.insert(tTooltips[tHexes.eType].tStrings[strName], tHexes.unit:GetId())
+				end
+				
+				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
 
-			local bShowRegion = true
-
-			if tHexes.eType == self.eObjectTypeMission then
-				strNew = self:GetMissionTooltip(tHexes.userData)
-				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
-			elseif tHexes.eType == self.eObjectTypePublicEvent then
-				strNew = self:GetPublicEventTooltip(tHexes.userData)
-				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
-			elseif tHexes.eType == self.eObjectTypeChallenge then
-				strNew = self:GetChallengeTooltip(tHexes.userData)
-				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
-				bShowRegion = false
-			elseif tHexes.eType == self.eObjectTypeHexGroup then
-				strNew = self:GetHexGroupTooltip(tHexes.userData)
-				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
-				bShowRegion = false
-			elseif tHexes.eType == self.eObjectTypeNemesisRegion then
-				strNew = self:GetNemesisRegionTooltip(tHexes.userData)
-				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
-				bShowRegion = false
-			elseif tHexes.eType == self.eObjectTypeQuest and not self.tTooltipCache[tHexes.userData] then
-				self.tTooltipCache[tHexes.userData] = true
-				strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", String_GetWeaselString(Apollo.GetString("CRB_ZoneMapColon"), self.tPOITypes.tTrackedQuest[3]))
-				strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", tHexes.userData:GetTitle())
-				strNew = String_GetWeaselString(Apollo.GetString("ZoneMap_MissionTypeName"), strType, strName)
-				self.tTooltipCompareTable[tHexes.userData] = tHexes.eType
-			end
-
-			if bShowRegion then
-				self.wndZoneMap:HighlightRegionsByUserData(tHexes.userData)
-				table.insert(self.arHoverRegionUserDataList, tHexes.userData)
-			end
-
-			if strNew ~= "" then
-				strTooltipString = strTooltipString .. string.format("<P>" .. strNew .. "</P>")
+				if bShowRegion then
+					self.wndZoneMap:HighlightRegionsByUserData(tHexes.userData)
+					table.insert(self.arHoverRegionUserDataList, tHexes.userData)
+				end
 			end
 		end
 
 		local tMapObjects = self.wndZoneMap:GetObjectsAt(tPoint.x, tPoint.y) -- all others
 		for key, tHexes in pairs(tMapObjects) do
-			local strNew = ""
-			if tHexes.eType == self.eObjectTypeMission then
-				strNew = self:GetMissionTooltip(tHexes.userData)
-			elseif tHexes.eType == self.eObjectTypePublicEvent then
-				strNew = self:GetPublicEventTooltip(tHexes.userData)
-			elseif tHexes.eType == self.eObjectTypeChallenge then
-				strNew = self:GetChallengeTooltip(tHexes.userData)
-			elseif tHexes.eType == self.eObjectTypeHexGroup then
-				strNew = self:GetHexGroupTooltip(tHexes.userData)
-			elseif tHexes.eType == self.eObjectTypeNemesisRegion then
-				strNew = self:GetNemesisRegionTooltip(tHexes.userData)
-			elseif tHexes.eType == self.eObjectTypeLocation then
-				return
-			else
-				for idx, tPOI in pairs(self.tPOITypes) do
-					if tHexes.strIcon == tPOI[1] then
-						strType = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ff8f8f8f", String_GetWeaselString(Apollo.GetString("CRB_ZoneMapColon"), tPOI[3]))
+			if self.tButtonChecks[self.tPOITypes[tHexes.eType].eCategory] then
+				local strName = ""
+				local strType = self.tPOITypes[tHexes.eType] and self.tPOITypes[tHexes.eType].strType or eType					
+				
+				if tHexes.eType == self.eObjectTypeMission or tHexes.eType == self.eObjectTypePublicEvent or tHexes.eType == self.eObjectTypeChallenge then
+					self.tTooltipCache[tHexes.userData] = true
+					strName = tHexes.userData:GetName()
+				elseif tHexes.eType == self.eObjectTypePublicEvent then
+					self.tTooltipCache[tHexes.userData] = true
+					
+					if PublicEvent.is(tHexes.userData) then
+						strName = tHexes.userData:GetName()
+					elseif PublicEventObjective.is(tHexes.userData) then
+						strName = tHexes.userData:GetDescription()
 					end
+				elseif tHexes.eType == self.eObjectTypeHexGroup then
+					self.tTooltipCache[tHexes.userData] = true
+					strName = tHexes.userData:GetTooltip()
+				elseif tHexes.eType == self.eObjectTypeNemesisRegion then
+					self.tTooltipCache[tHexes.userData] = true
+
+					local tRegion = self.wndZoneMap:GetNemesisRegionInfo(tHexes.userData)
+					if tRegion ~= nil then
+						strFaction = string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", String_GetWeaselString(Apollo.GetString("ZoneMap_NemesisTooltipLabel"), tRegion.strFactionName))
+						strName = strFaction .. tRegion.strDescription
+					end
+				elseif tHexes.eType == self.eObjectTypeLocation then
+					return
+				else
+					strName = tHexes.strName
 				end
-
-				strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", tHexes.strName)
-				strNew = String_GetWeaselString(Apollo.GetString("ZoneMap_MissionTypeName"), strType, strName)
+				
+				if not tTooltips[tHexes.eType] then
+					tTooltips[tHexes.eType] = 
+					{
+						strCategory = strType,
+						tStrings = {}
+					}
+					
+					table.insert(tTypesUsed, tHexes.eType)
+				end
+				
+				local strName = string.format("<T Font=\"%s\" TextColor=\"%s\">%s</T>", "CRB_InterfaceMedium", "ffffffff", strName)
+				if not tTooltips[tHexes.eType].tStrings[strName] then
+					tTooltips[tHexes.eType].tStrings[strName] = {}
+				end
+				
+				if tHexes.unit then
+					table.insert(tTooltips[tHexes.eType].tStrings[strName], tHexes.unit:GetId())
+				end
 			end
-
-			if strNew ~= "" then
-				strTooltipString = strTooltipString .. string.format("<P>" .. strNew .. "</P>")
+		end
+	end
+	
+	
+	table.sort(tTypesUsed)
+	
+	
+	for idx, eCategory in pairs(tTypesUsed) do
+		local tCategoryTooltips = tTooltips[eCategory]
+		
+		strTooltipString = strTooltipString .. string.format("<P><T Font=\"%s\" TextColor=\"%s\">%s</T></P>", "CRB_InterfaceMedium", "UI_TextHoloTitle", tCategoryTooltips.strCategory)
+		
+		for strName, tIds in pairs(tCategoryTooltips.tStrings) do
+			local nCount = 0
+			local strCount = ""
+			for idUnit, bExists in pairs(tIds) do
+				nCount = nCount + 1
 			end
+			
+			if nCount > 1 then
+				strCount = String_GetWeaselString(Apollo.GetString("Vendor_ItemCount"), nCount)
+			end
+			
+			strTooltipString = strTooltipString .. string.format("<P>-   " .. strName .. " " .. strCount .. "</P>")				
 		end
 	end
 
@@ -1664,7 +1847,6 @@ function ZoneMap:OnUpdateHexGroup(hexGroup)
 	local nIdHexGroup = hexGroup:GetId()
 
 	if hexGroup:IsVisible() then
-		local clrHexGroup = hexGroup:GetColor()
 		local eTypeHexGroup = self.eObjectTypeHexGroup
 
 		if self.tHexGroupObjects[nIdHexGroup] then
@@ -1738,105 +1920,105 @@ function ZoneMap:OnTerrainHexUncheck(wndHandler, wndControl)
 	Apollo.SetConsoleVariable("draw.hexGrid", false)
 end
 
-function ZoneMap:SetTypeVisibility(toggledType, visible)
+function ZoneMap:SetTypeVisibility(eToggledType, bVisible)
 	local eZoomLevel = self.wndZoneMap:GetDisplayMode()
-	if visible then
-		for i, type in pairs(self.arAllowedTypesSuperPanning) do
-			if toggledType == type then
-				table.insert(self.arShownTypesSuperPanning, type)
+	if bVisible then
+		for idx, eType in pairs(self.arAllowedTypesSuperPanning) do
+			if eToggledType == eType then
+				table.insert(self.arShownTypesSuperPanning, eType)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.SuperPanning then
-					self.wndZoneMap:ShowObjectsByType(toggledType)
-					self.wndZoneMap:ShowRegionsByType(toggledType)
+					self.wndZoneMap:ShowObjectsByType(eToggledType)
+					self.wndZoneMap:ShowRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arAllowedTypesPanning) do
-			if toggledType == type then
-				table.insert(self.arShownTypesPanning, type)
+		for idx, eType in pairs(self.arAllowedTypesPanning) do
+			if eToggledType == eType then
+				table.insert(self.arShownTypesPanning, eType)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.Panning then
-					self.wndZoneMap:ShowObjectsByType(toggledType)
-					self.wndZoneMap:ShowRegionsByType(toggledType)
+					self.wndZoneMap:ShowObjectsByType(eToggledType)
+					self.wndZoneMap:ShowRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arAllowedTypesScaled) do
-			if toggledType == type then
-				table.insert(self.arShownTypesScaled, type)
+		for idx, eType in pairs(self.arAllowedTypesScaled) do
+			if eToggledType == eType then
+				table.insert(self.arShownTypesScaled, eType)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.Scaled then
-					self.wndZoneMap:ShowObjectsByType(toggledType)
-					self.wndZoneMap:ShowRegionsByType(toggledType)
+					self.wndZoneMap:ShowObjectsByType(eToggledType)
+					self.wndZoneMap:ShowRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arAllowedTypesContinent) do
-			if toggledType == type then
-				table.insert(self.arShownTypesContinent, type)
+		for idx, eType in pairs(self.arAllowedTypesContinent) do
+			if eToggledType == eType then
+				table.insert(self.arShownTypesContinent, eType)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.Continent then
-					self.wndZoneMap:ShowObjectsByType(toggledType)
-					self.wndZoneMap:ShowRegionsByType(toggledType)
+					self.wndZoneMap:ShowObjectsByType(eToggledType)
+					self.wndZoneMap:ShowRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arAllowedTypesWorld) do
-			if toggledType == type then
-				table.insert(self.arShownTypesWorld, type)
+		for idx, eType in pairs(self.arAllowedTypesWorld) do
+			if eToggledType == eType then
+				table.insert(self.arShownTypesWorld, eType)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.World then
-					self.wndZoneMap:ShowObjectsByType(toggledType)
-					self.wndZoneMap:ShowRegionsByType(toggledType)
+					self.wndZoneMap:ShowObjectsByType(eToggledType)
+					self.wndZoneMap:ShowRegionsByType(eToggledType)
 				end
 			end
 		end
 	else
-		for i, type in pairs(self.arShownTypesSuperPanning) do
-			if toggledType == type then
-				table.remove(self.arShownTypesSuperPanning, i)
+		for idx, eType in pairs(self.arShownTypesSuperPanning) do
+			if eToggledType == eType then
+				table.remove(self.arShownTypesSuperPanning, idx)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.SuperPanning then
-					self.wndZoneMap:HideObjectsByType(toggledType)
-					self.wndZoneMap:HideRegionsByType(toggledType)
+					self.wndZoneMap:HideObjectsByType(eToggledType)
+					self.wndZoneMap:HideRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arShownTypesPanning) do
-			if toggledType == type then
-				table.remove(self.arShownTypesPanning, i)
+		for idx, eType in pairs(self.arShownTypesPanning) do
+			if eToggledType == eType then
+				table.remove(self.arShownTypesPanning, idx)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.Panning then
-					self.wndZoneMap:HideObjectsByType(toggledType)
-					self.wndZoneMap:HideRegionsByType(toggledType)
+					self.wndZoneMap:HideObjectsByType(eToggledType)
+					self.wndZoneMap:HideRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arShownTypesScaled) do
-			if toggledType == type then
-				table.remove(self.arShownTypesScaled, i)
+		for idx, eType in pairs(self.arShownTypesScaled) do
+			if eToggledType == eType then
+				table.remove(self.arShownTypesScaled, idx)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.Scaled then
-					self.wndZoneMap:HideObjectsByType(toggledType)
-					self.wndZoneMap:HideRegionsByType(toggledType)
+					self.wndZoneMap:HideObjectsByType(eToggledType)
+					self.wndZoneMap:HideRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arShownTypesContinent) do
-			if toggledType == type then
-				table.remove(self.arShownTypesContinent, i)
+		for idx, eType in pairs(self.arShownTypesContinent) do
+			if eToggledType == eType then
+				table.remove(self.arShownTypesContinent, idx)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.Continent then
-					self.wndZoneMap:HideObjectsByType(toggledType)
-					self.wndZoneMap:HideRegionsByType(toggledType)
+					self.wndZoneMap:HideObjectsByType(eToggledType)
+					self.wndZoneMap:HideRegionsByType(eToggledType)
 				end
 			end
 		end
 
-		for i, type in pairs(self.arShownTypesWorld) do
-			if toggledType == type then
-				table.remove(self.arShownTypesWorld, i)
+		for idx, eType in pairs(self.arShownTypesWorld) do
+			if eToggledType == eType then
+				table.remove(self.arShownTypesWorld, idx)
 				if eZoomLevel == ZoneMapWindow.CodeEnumDisplayMode.World then
-					self.wndZoneMap:HideObjectsByType(toggledType)
-					self.wndZoneMap:HideRegionsByType(toggledType)
+					self.wndZoneMap:HideObjectsByType(eToggledType)
+					self.wndZoneMap:HideRegionsByType(eToggledType)
 				end
 			end
 		end
@@ -1845,27 +2027,28 @@ end
 
 function ZoneMap:OnMarkerBtnCheck(wndHandler, wndControl)
 	local eType = wndHandler:GetData()
-	if eType == 1 then
+	if eType == ktMarkerCategories.QuestNPCs then
 		self:SetTypeVisibility(self.eObjectTypeQuestReward, true)
 		self:SetTypeVisibility(self.eObjectTypeQuestReceiving, true)
 		self:SetTypeVisibility(self.eObjectTypeQuestNew, true)
+		self:SetTypeVisibility(self.eObjectTypeQuestNewTradeskill, true)
 		self:SetTypeVisibility(self.eObjectTypeQuestSoon, true)
 		self:SetTypeVisibility(self.eObjectTypeQuestTarget, true)
-	elseif eType == 2 then
+	elseif eType == ktMarkerCategories.TrackedQuests then
 		self.tToggledIcons.bTracked = true
 		self:AddQuestIndicators()
 		self:UpdateQuestList()
-	elseif eType == 3 then
+	elseif eType == ktMarkerCategories.Missions then
 		self:OnMissionsCheck()
-	elseif eType == 4 then
+	elseif eType == ktMarkerCategories.Challenges then
 		self:OnChallengesCheck()
-	elseif eType == 5 then
+	elseif eType == ktMarkerCategories.PublicEvents then
 		self:OnPublicEventsCheck()
-	elseif eType == 6 then
+	elseif eType == ktMarkerCategories.Tradeskills then
 		self:SetTypeVisibility(self.eObjectTypeTradeskills, true)
-	elseif eType == 7 then
+	elseif eType == ktMarkerCategories.Vendors then
 		self:SetTypeVisibility(self.eObjectTypeVendor, true)
-	elseif eType == 8 then
+	elseif eType == ktMarkerCategories.Services then
 		self:SetTypeVisibility(self.eObjectTypeAuctioneer, true)
 		self:SetTypeVisibility(self.eObjectTypeCommodity, true)
 		self:SetTypeVisibility(self.eObjectTypeCostume, true)
@@ -1875,29 +2058,29 @@ function ZoneMap:OnMarkerBtnCheck(wndHandler, wndControl)
 		self:SetTypeVisibility(self.eObjectTypeCREDDExchange, true)
 		self:SetTypeVisibility(self.eObjectTypeMail, true)
 		self:SetTypeVisibility(self.eObjectTypeConvert, true)
-	elseif eType == 9 then
+	elseif eType == ktMarkerCategories.Portals then
 		self.tToggledIcons.bInstances = true
 		self:SetTypeVisibility(self.eObjectTypeInstancePortal, true)
-	elseif eType == 10 then
+	elseif eType == ktMarkerCategories.BindPoints then
 		self.tToggledIcons.bBindPoints = true
 		self:SetTypeVisibility(self.eObjectTypeBindPointActive, true)
 		self:SetTypeVisibility(self.eObjectTypeBindPointInactive, true)
-	elseif eType == 11 then
+	elseif eType == ktMarkerCategories.GroupObjectives then
 		self.tToggledIcons.bGroupObjectives = true
-	elseif eType == 12 then
+	elseif eType == ktMarkerCategories.MiningNodes then
 		self:SetTypeVisibility(self.eObjectTypeMiningNode, true)
-	elseif eType == 13 then
+	elseif eType == ktMarkerCategories.RelicNodes then
 		self:SetTypeVisibility(self.eObjectTypeRelicHunterNode, true)
-	elseif eType == 14 then
+	elseif eType == ktMarkerCategories.SurvivalistNodes then
 		self:SetTypeVisibility(self.eObjectTypeSurvivalistNode, true)
-	elseif eType == 15 then
+	elseif eType == ktMarkerCategories.FarmingNodes then
 		self:SetTypeVisibility(self.eObjectTypeFarmingNode, true)
-	elseif eType == 16 then
+	elseif eType == ktMarkerCategories.NemesisRegions then
 		self:SetTypeVisibility(self.eObjectTypeNemesisRegion, true)
-	elseif eType == 17 then
+	elseif eType == ktMarkerCategories.Taxis then
 		self:SetTypeVisibility(self.eObjectTypeVendorFlightPathNew, true)
 		self:SetTypeVisibility(self.eObjectTypeVendorFlight, true)
-	elseif eType == 18 then
+	elseif eType == ktMarkerCategories.CityDirections then
 		self:SetTypeVisibility(self.eObjectCityDirections, true)
 	end
 
@@ -1907,27 +2090,28 @@ end
 
 function ZoneMap:OnMarkerBtnUncheck(wndHandler, wndControl)
 	local eType = wndHandler:GetData()
-	if eType == 1 then
+	if eType == ktMarkerCategories.QuestNPCs then
 		self:SetTypeVisibility(self.eObjectTypeQuestReward, false)
 		self:SetTypeVisibility(self.eObjectTypeQuestReceiving, false)
 		self:SetTypeVisibility(self.eObjectTypeQuestNew, false)
+		self:SetTypeVisibility(self.eObjectTypeQuestNewTradeskill, false)
 		self:SetTypeVisibility(self.eObjectTypeQuestNewSoon, false)
 		self:SetTypeVisibility(self.eObjectTypeQuestTarget, false)
-	elseif eType == 2 then
+	elseif eType == ktMarkerCategories.TrackedQuests then
 		self.tToggledIcons.bTracked = false
 		self:AddQuestIndicators()
 		self:UpdateQuestList()
-	elseif eType == 3 then
+	elseif eType == ktMarkerCategories.Missions then
 		self:OnMissionsUncheck()
-	elseif eType == 4 then
+	elseif eType == ktMarkerCategories.Challenges then
 		self:OnChallengesUncheck()
-	elseif eType == 5 then
+	elseif eType == ktMarkerCategories.PublicEvents then
 		self:OnPublicEventsUncheck()
-	elseif eType == 6 then
+	elseif eType == ktMarkerCategories.Tradeskills then
 		self:SetTypeVisibility(self.eObjectTypeTradeskills, false)
-	elseif eType == 7 then
+	elseif eType == ktMarkerCategories.Vendors then
 		self:SetTypeVisibility(self.eObjectTypeVendor, false)
-	elseif eType == 8 then
+	elseif eType == ktMarkerCategories.Services then
 		self:SetTypeVisibility(self.eObjectTypeCommodity, false)
 		self:SetTypeVisibility(self.eObjectTypeAuctioneer, false)
 		self:SetTypeVisibility(self.eObjectTypeCostume, false)
@@ -1937,27 +2121,27 @@ function ZoneMap:OnMarkerBtnUncheck(wndHandler, wndControl)
 		self:SetTypeVisibility(self.eObjectTypeCREDDExchange, false)
 		self:SetTypeVisibility(self.eObjectTypeMail, false)
 		self:SetTypeVisibility(self.eObjectTypeConvert, false)
-	elseif eType == 9 then
+	elseif eType == ktMarkerCategories.Portals then
 		self:SetTypeVisibility(self.eObjectTypeInstancePortal, false)
-	elseif eType == 10 then
+	elseif eType == ktMarkerCategories.BindPoints then
 		self:SetTypeVisibility(self.eObjectTypeBindPointActive, false)
 		self:SetTypeVisibility(self.eObjectTypeBindPointInactive, false)
-	elseif eType == 11 then
+	elseif eType == ktMarkerCategories.GroupObjectives then
 		self.tToggledIcons.bGroupObjectives = false
-	elseif eType == 12 then
+	elseif eType == ktMarkerCategories.MiningNodes then
 		self:SetTypeVisibility(self.eObjectTypeMiningNode, false)
-	elseif eType == 13 then
+	elseif eType == ktMarkerCategories.RelicNodes then
 		self:SetTypeVisibility(self.eObjectTypeRelicHunterNode, false)
-	elseif eType == 14 then
+	elseif eType == ktMarkerCategories.SurvivalistNodes then
 		self:SetTypeVisibility(self.eObjectTypeSurvivalistNode, false)
-	elseif eType == 15 then
+	elseif eType == ktMarkerCategories.FarmingNodes then
 		self:SetTypeVisibility(self.eObjectTypeFarmingNode, false)
-	elseif eType == 16 then
+	elseif eType == ktMarkerCategories.NemesisRegions then
 		self:SetTypeVisibility(self.eObjectTypeNemesisRegion, false)
-	elseif eType == 17 then
+	elseif eType == ktMarkerCategories.Taxis then
 		self:SetTypeVisibility(self.eObjectTypeVendorFlightPathNew, false)
 		self:SetTypeVisibility(self.eObjectTypeVendorFlight, false)
-	elseif eType == 18 then
+	elseif eType == ktMarkerCategories.CityDirections then
 		self:SetTypeVisibility(self.eObjectCityDirections, false)
 	end
 
@@ -2059,6 +2243,69 @@ function ZoneMap:OnNemesisRegionsUncheck(wndHandler, wndControl)
 
 	self.wndZoneMap:HideObjectsByType(self.eObjectTypeNemesisRegion)
 	self.wndZoneMap:RemoveRegionByType(self.eObjectTypeNemesisRegion)
+end
+
+function ZoneMap:RehideAllToggledIcons()
+	if self.wndZoneMap ~= nil and self.tButtonChecks ~= nil then
+		for eType, bState in pairs(self.tButtonChecks) do
+			if not bState then
+				if eType == ktMarkerCategories.QuestNPCs then
+					self:SetTypeVisibility(self.eObjectTypeQuestReward, false)
+					self:SetTypeVisibility(self.eObjectTypeQuestReceiving, false)
+					self:SetTypeVisibility(self.eObjectTypeQuestNew, false)
+					self:SetTypeVisibility(self.eObjectTypeQuestNewTradeskill, false)
+					self:SetTypeVisibility(self.eObjectTypeQuestNewSoon, false)
+					self:SetTypeVisibility(self.eObjectTypeQuestTarget, false)
+				elseif eType == ktMarkerCategories.TrackedQuests then
+					self.tToggledIcons.bTracked = false
+					self:AddQuestIndicators()
+					self:UpdateQuestList()
+				elseif eType == ktMarkerCategories.Missions then
+					self:OnMissionsUncheck()
+				elseif eType == ktMarkerCategories.Challenges then
+					self:OnChallengesUncheck()
+				elseif eType == ktMarkerCategories.PublicEvents then
+					self:OnPublicEventsUncheck()
+				elseif eType == ktMarkerCategories.Tradeskills then
+					self:SetTypeVisibility(self.eObjectTypeTradeskills, false)
+				elseif eType == ktMarkerCategories.Vendors then
+					self:SetTypeVisibility(self.eObjectTypeVendor, false)
+				elseif eType == ktMarkerCategories.Services then
+					self:SetTypeVisibility(self.eObjectTypeCommodity, false)
+					self:SetTypeVisibility(self.eObjectTypeAuctioneer, false)
+					self:SetTypeVisibility(self.eObjectTypeCostume, false)
+					self:SetTypeVisibility(self.eObjectTypeBank, false)
+					self:SetTypeVisibility(self.eObjectTypeGuildBank, false)
+					self:SetTypeVisibility(self.eObjectTypeGuildRegistrar, false)
+					self:SetTypeVisibility(self.eObjectTypeCREDDExchange, false)
+					self:SetTypeVisibility(self.eObjectTypeMail, false)
+					self:SetTypeVisibility(self.eObjectTypeConvert, false)
+				elseif eType == ktMarkerCategories.Portals then
+					self:SetTypeVisibility(self.eObjectTypeInstancePortal, false)
+				elseif eType == ktMarkerCategories.BindPoints then
+					self:SetTypeVisibility(self.eObjectTypeBindPointActive, false)
+					self:SetTypeVisibility(self.eObjectTypeBindPointInactive, false)
+				elseif eType == ktMarkerCategories.GroupObjectives then
+					self.tToggledIcons.bGroupObjectives = false
+				elseif eType == ktMarkerCategories.MiningNodes then
+					self:SetTypeVisibility(self.eObjectTypeMiningNode, false)
+				elseif eType == ktMarkerCategories.RelicNodes then
+					self:SetTypeVisibility(self.eObjectTypeRelicHunterNode, false)
+				elseif eType == ktMarkerCategories.SurvivalistNodes then
+					self:SetTypeVisibility(self.eObjectTypeSurvivalistNode, false)
+				elseif eType == ktMarkerCategories.FarmingNodes then
+					self:SetTypeVisibility(self.eObjectTypeFarmingNode, false)
+				elseif eType == ktMarkerCategories.NemesisRegions then
+					self:SetTypeVisibility(self.eObjectTypeNemesisRegion, false)
+				elseif eType == ktMarkerCategories.Taxis then
+					self:SetTypeVisibility(self.eObjectTypeVendorFlightPathNew, false)
+					self:SetTypeVisibility(self.eObjectTypeVendorFlight, false)
+				elseif eType == ktMarkerCategories.CityDirections then
+					self:SetTypeVisibility(self.eObjectCityDirections, false)
+				end
+			end
+		end
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -2296,7 +2543,7 @@ function ZoneMap:OnFlashChallengeIcon(idChallenge, strDescription, fDuration, tP
 	self:OnRemoveChallengeIcon(idChallenge)
 
 	if self.tToggledIcons.bChallenges ~= false then
-		self:OnAddChallengeIcon(chalCurr, self.tPOITypes.tChallengeFlash[1])
+		self:OnAddChallengeIcon(chalCurr, "Icon_MapNode_Map_Generic_POI")
 		self.idChallengeFlashingIcon= idChallenge
 
 		-- create the timer to turn off this flashing icon
@@ -2866,8 +3113,8 @@ function ZoneMap:OnCityDirectionMarked(tLocInfo)
 	}
 
 	-- Only one city direction at a time, so stomp and remove and previous
-	self.wndZoneMap:RemoveObjectsByUserData(self.eObjectTypeCityDirection, strCityDirections)
-	self.wndZoneMap:AddObject(self.eObjectTypeCityDirection, tLocInfo.tLoc, tLocInfo.strName, tInfo, {bFixedSizeSmall = false}, false, strCityDirections)
+	self.wndZoneMap:RemoveObjectsByUserData(self.eObjectTypeCityDirectionPing, strCityDirections)
+	self.wndZoneMap:AddObject(self.eObjectTypeCityDirectionPing, tLocInfo.tLoc, tLocInfo.strName, tInfo, {bFixedSizeSmall = false}, false, strCityDirections)
 	Apollo.StartTimer("ZoneMap_TimeOutCityDirectionMarker")
 	Apollo.StartTimer("ZoneMap_PollCityDirectionsMarker")
 	self.tCityDirectionsLoc = tLocInfo.tLoc
@@ -2896,7 +3143,7 @@ function ZoneMap:OnZoneMap_TimeOutCityDirectionMarker()
 	Apollo.StopTimer("ZoneMap_PollCityDirectionsMarker")
 	Apollo.StopTimer("ZoneMap_TimeOutCityDirectionMarker")
 	Event_FireGenericEvent("ZoneMap_TimeOutCityDirectionEvent")
-	self.wndZoneMap:RemoveObjectsByUserData(self.eObjectTypeCityDirection, Apollo.GetString("ZoneMap_CityDirections"))
+	self.wndZoneMap:RemoveObjectsByUserData(self.eObjectTypeCityDirectionPing, Apollo.GetString("ZoneMap_CityDirections"))
 end
 
 -----------------------------------------------------------------------------------------
@@ -3173,8 +3420,10 @@ function ZoneMap:OnLevelChanged(level)
 			self.wndZoneMap:RemoveObjectsByUserData(self.eObjectTypeInstancePortal, data.unlockEnumId)
 
 			local tInfo = self:GetDefaultUnitInfo()
-			tInfo.strIcon = self.tPOITypes.tInstancePortal[1]
-			self.wndZoneMap:AddObjectByWorldLocId(self.eObjectTypeInstancePortal, data.worldLocId, unlock.strDescription, tInfo, {bNeverShowOnEdge = true}, self:IsTypeCurrentlyHidden(self.eObjectTypeInstancePortal), data.unlockEnumId)
+			tInfo.strIcon = self.tPOITypes[self.eObjectTypeInstancePortal].strSprite
+			for idx, worldLocId in pairs(data.worldLocIds) do
+				self.wndZoneMap:AddObjectByWorldLocId(self.eObjectTypeInstancePortal, worldLocId, unlock.strDescription, tInfo, {bNeverShowOnEdge = true}, self:IsTypeCurrentlyHidden(self.eObjectTypeInstancePortal), data.unlockEnumId)
+			end
 		end
 	end
 end
@@ -3219,6 +3468,10 @@ function ZoneMap:OnLevelUpUnlock_WorldMapAdventure_Whitevale()
 	self:HelperLevelupUnlockGotoMap(GameLib.MapZone.Wilderrun)
 end
 
+function ZoneMap:OnLevelUpUnlock_WorldMapDungeon_UltimateProtogames()
+	self:HelperLevelupUnlockGotoMap(GameLib.MapZone.Malgrave)
+end
+
 function ZoneMap:OnLevelUpUnlock_WorldMapDungeon_SwordMaiden()
 	self:HelperLevelupUnlockGotoMap(GameLib.MapZone.Wilderrun)
 end
@@ -3233,6 +3486,44 @@ end
 
 function ZoneMap:OnLevelUpUnlock_WorldMapDungeon_Stormtalon()
 	self:HelperLevelupUnlockGotoMap(GameLib.MapZone.Galeras)
+end
+
+function ZoneMap:OnLevelUpUnlock_WorldMapDungeon_ProtogamesAcademyExile()
+	local tCurrentZoneInto = GameLib.GetCurrentZoneMap()
+	if tCurrentZoneInto == nil then
+		return
+	end
+	
+	local tZones = ktGlobalPortalInfo.ProtogamesAcademyExile.idZones
+	if tZones ~= nil then
+		for idx, idZone in pairs(tZones) do
+			if tCurrentZoneInto.id == idZone then
+				self:HelperLevelupUnlockGotoMap(idZone)
+				return
+			end
+		end
+	end
+	
+	self:HelperLevelupUnlockGotoMap(ktGlobalPortalInfo.ProtogamesAcademyExile.idZones[1])
+end
+
+function ZoneMap:OnLevelUpUnlock_WorldMapDungeon_ProtogamesAcademyDominion()
+	local tCurrentZoneInto = GameLib.GetCurrentZoneMap()
+	if tCurrentZoneInto == nil then
+		return
+	end
+	
+	local tZones = ktGlobalPortalInfo.ProtogamesAcademyDominion.idZones
+	if tZones ~= nil then
+		for idx, idZone in pairs(tZones) do
+			if tCurrentZoneInto.id == idZone then
+				self:HelperLevelupUnlockGotoMap(idZone)
+				return
+			end
+		end
+	end
+	
+	self:HelperLevelupUnlockGotoMap(ktGlobalPortalInfo.ProtogamesAcademyDominion.idZones[1])
 end
 
 function ZoneMap:OnLevelUpUnlock_WorldMapCapital_Thayd()
@@ -3317,3 +3608,4 @@ local ZoneMap_Singleton = ZoneMap:new()
 ZoneMap_Singleton:Init()
 ZoneMapLibrary = ZoneMap_Singleton
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      

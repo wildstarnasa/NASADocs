@@ -580,3 +580,4 @@ end
 ---------------------------------------------------------------------------------------------------
 local PathExplorerMainInst = PathExplorerMain:new()
 PathExplorerMainInst:Init()
+ndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntr

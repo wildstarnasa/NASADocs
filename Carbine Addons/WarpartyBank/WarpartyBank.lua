@@ -698,3 +698,90 @@ end
 local WarpartyBankInst = WarpartyBank:new()
 WarpartyBankInst:Init()
 
+kSettingsDeleteBtn(wndControl, wndHandler)
+	local wndRankPopout = self.wndMain:FindChild("RankPopout")
+	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
+	local wndSettings = self.wndMain:FindChild("RankPopout"):FindChild("RankSettingsEntry")
+
+	local nRankIdx = wndSettings:GetData().nRankIdx
+	local guildCurr = self.wndMain:GetData()
+	
+	guildCurr:RemoveRank(nRankIdx)
+	
+	wndRankContainer:Show(true)
+	wndSettings:Show(false)
+end
+
+function Warparty:OnRankSettingsNameChanging(wndControl, wndHandler, strText)
+	self:HelperValidateAndRefreshRankSettingsWindow(self.wndRankPopout:FindChild("RankSettingsEntry"))
+end
+
+function Warparty:OnRankSettingsPermissionBtn(wndControl, wndHandler)
+	self:HelperValidateAndRefreshRankSettingsWindow(self.wndRankPopout:FindChild("RankSettingsEntry"))
+end
+
+function Warparty:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
+	local wndLimit = wndSettings:FindChild("Limit")
+	local tRank = wndSettings:GetData()
+	local strName = wndSettings:FindChild("OptionString"):GetText()
+	
+	if wndLimit ~= nil then
+		local nNameLength = string.len(strName or "")
+		
+		wndLimit:SetText(string.format("(%d/%d)", nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
+		
+		if nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
+			wndLimit:SetTextColor(crGuildNameLengthError)
+		else
+			wndLimit:SetTextColor(crGuildNameLengthGood)
+		end
+	end
+	
+	local bNameValid = strName ~= nil and strName ~= "" and GameLib.IsTextValid(strName, GameLib.CodeEnumUserText.GuildRankName, GameLib.CodeEnumUserTextFilterClass.Strict)
+	local bNameChanged = strName ~= tRank.strName
+	
+	local bPermissionChanged = false
+	for key, wndPermission in pairs(wndSettings:FindChild("PermissionContainer"):GetChildren()) do
+		local bPermissionChecked = wndPermission:FindChild("PermissionBtn"):IsChecked()
+		if tRank[wndPermission:GetData().strLuaVariable] ~= bPermissionChecked then
+			bPermissionChanged = true
+			break
+		end
+	end
+	
+	wndSettings:FindChild("RankPopoutOkBtn"):Enable((bNew and bNameValid) or (not bNew and bNameValid and (bNameChanged or bPermissionChanged)))
+end
+
+function Warparty:OnRankSettingsCloseBtn(wndControl, wndHandler)
+	local wndRankPopout = self.wndMain:FindChild("RankPopout")
+	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
+	local wndSettings = wndRankPopout:FindChild("RankSettingsEntry")
+
+	wndRankPopout:FindChild("RankContainer"):Show(true)
+	wndSettings:Show(false)
+end
+
+function Warparty:OnGuildRankChange(guildCurr)
+	if guildCurr ~= self.wndMain:GetData() then
+		return
+	end
+	self:OnGuildMemberChange(guildCurr)
+end
+
+function Warparty:OnRankPopoutCloseBtn(wndControl, wndHandler)
+	local wndParent = wndControl:GetParent()
+	wndParent:Show(false)
+end
+
+---------------------------------------------------------------------------------------------------
+-- WarpartyForm Functions
+---------------------------------------------------------------------------------------------------
+
+function Warparty:OnRosterPromoteMemberCloseBtn( wndHandler, wndControl, eMouseButton )
+	self.wndMain:FindChild("PromoteMemberContainer"):Show(false)
+	self.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
+end
+
+function Warparty:OnRosterDemoteMemberClick( wndHandler, wndControl, eMouseButton )
+	local guildCurr = self.wndMain:GetData()
+	local tMember = 

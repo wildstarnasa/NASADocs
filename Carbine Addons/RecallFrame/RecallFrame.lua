@@ -18,8 +18,8 @@ local RecallFrame = {}
 -- Constants
 -----------------------------------------------------------------------------------------------
 -- e.g. local kiExampleVariableMax = 999
-local knBottomPadding = 46 -- MUST MATCH XML
-local knTopPadding = 42 -- MUST MATCH XML
+local knBottomPadding = 52
+local knTopPadding = 42
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -380,3 +380,11 @@ end
 -----------------------------------------------------------------------------------------------
 local RecallFrameInst = RecallFrame:new()
 RecallFrameInst:Init()
+le="0" HideInEditor="0">
+                <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Raid:sprRaidTear_BigAbsorbProgBar" TooltipType="OnCursor" Name="CurrAbsorbBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" Sprite="" IgnoreMouse="1" ProgressEdgeGlow="" EdgeGlow="1" NoClipEdgeGlow="0" Tooltip=""/>
+            </Control>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MaxShieldBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" RightEdgeControlsAnchor="" Sprite="CRB_Raid:sprRaidTear_BigShieldEmptyBar" Picture="1" IgnoreMouse="1" HideInEditor="0" Visible="0">
+                <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Raid:sprRaidTear_BigShieldProgBar" TooltipType="OnCursor" Name="CurrShieldBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" Sprite="" IgnoreMouse="1" ProgressEdgeGlow="" EdgeGlow="1" NoClipEdgeGlow="0" Picture="1"/>
+            </Control>
+        </Control>
+        <Control Class="Window" Font="Thick" LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="26" RAnchorPoint="1" RAnchorOffset="12" BAnchorPoint="0" BAnchor

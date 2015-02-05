@@ -166,3 +166,20 @@ end
 -----------------------------------------------------------------------------------------------
 local HousingAlertsInst = HousingAlerts:new()
 HousingAlertsInst:Init()
+inSlotWindow" Name="ShoulderSlot" WhenEmpty="btn_Armor_ShoulderNormal" EquipmentSlot="3" Font="Thick" ButtonType="PushButton" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="152" RAnchorPoint="0" RAnchorOffset="97" BAnchorPoint="0" BAnchorOffset="199" DT_VCENTER="1" DT_CENTER="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreTooltipDelay="1" NewControlDepth="5" HideInEditor="0" Text="" Tooltip="" TooltipId="Character_ShoulderEmptyTooltip" TooltipColor="ffc0c0c0" TooltipFont="CRB_InterfaceMedium" TooltipType="OnCursor">
+            <Event Name="MouseButtonDown" Function="OnSlotClick"/>
+            <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
+        </Control>
+        <Control Class="MannequinSlotWindow" Name="ChestSlot" WhenEmpty="btn_Armor_ChestNormal" EquipmentSlot="0" Font="Thick" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="211" RAnchorPoint="0" RAnchorOffset="97" BAnchorPoint="0" BAnchorOffset="258" DT_VCENTER="1" DT_CENTER="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreTooltipDelay="1" NewControlDepth="5" HideInEditor="0" Tooltip="" TooltipId="Character_ChestEmptyTooltip" TooltipColor="ffc0c0c0" TooltipType="OnCursor" TooltipFont="CRB_InterfaceMedium">
+            <Event Name="MouseButtonDown" Function="OnSlotClick"/>
+            <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
+        </Control>
+        <Control Class="MannequinSlotWindow" Name="HandsSlot" WhenEmpty="btn_Armor_HandsNormal" EquipmentSlot="5" Font="Thick" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="270" RAnchorPoint="0" RAnchorOffset="96" BAnchorPoint="0" BAnchorOffset="317" DT_VCENTER="1" DT_CENTER="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreTooltipDelay="1" NewControlDepth="5" HideInEditor="0" Tooltip="" TooltipId="Character_HandsEmptyTooltip" TooltipColor="ffc0c0c0" TooltipType="OnCursor" TooltipFont="CRB_InterfaceMedium">
+            <Event Name="MouseButtonDown" Function="OnSlotClick"/>
+            <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
+        </Control>
+        <Control Class="MannequinSlotWindow" Name="LegsSlot" WhenEmpty="btn_Armor_LegsNormal" EquipmentSlot="1" Font="Thick" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="329" RAnchorPoint="0" RAnchorOffset="96" BAnchorPoint="0" BAnchorOffset="376" DT_VCENTER="1" DT_CENTER="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreTooltipDelay="1" NewControlDepth="5" HideInEditor="0" Text="" Tooltip="" TooltipId="Character_LegsEmptyTooltip" TooltipColor="ffc0c0c0" TooltipType="OnCursor" TooltipFont="CRB_InterfaceMedium">
+            <Event Name="MouseButtonDown" Function="OnSlotClick"/>
+            <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
+        </Control>
+        <Control Class="MannequinSlotWindow" Name="FeetSlot" WhenEmpty="btn_Armor_FeetNormal" EquipmentSlot="4" Font="Thick" LAnchorPoint="0" LAnchorOffset="52" TAnchorPoint="0" TAnchorOffset="389" RAnchorPoint="0" RAnchorOffset="97" BAnchorPoint="0" BAnchorOffset="435" DT_VCENTER="1" DT_CENTER="1" BGColor="ffffffff

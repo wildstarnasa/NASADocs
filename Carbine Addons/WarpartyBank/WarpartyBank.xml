@@ -95,3 +95,16 @@
         </Control>
     </Form>
 </Forms>
+66" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Name="VendorListItemTitle" TextId="Challenges_NoProgress" BGColor="ffffffff" TextColor="UI_TextHoloBody" DT_VCENTER="0" DT_WORDBREAK="1" TooltipColor=""/>
+            <Event Name="ButtonCheck" Function="OnVendorListItemCheck"/>
+            <Control Class="CashWindow" LAnchorPoint="0" LAnchorOffset="66" TAnchorPoint="1" TAnchorOffset="-24" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="CRB_Header9" Sprite="" Text="" Template="OldMetalControl" Name="VendorListItemCashWindow" BGColor="ffffffff" TextColor="UI_TextHoloBodyCyan" DT_RIGHT="0" Tooltip="" IgnoreMouse="1" Visible="1" SkipZeroes="1" TooltipColor="">
+                <Event Name="GenerateTooltip" Function="OnItemPriceTooltip"/>
+            </Control>
+            <Event Name="ButtonUncheck" Function="OnVendorListItemUncheck"/>
+            <Event Name="MouseButtonDown" Function="OnVendorListItemMouseDown"/>
+            <Event Name="GenerateTooltip" Function="OnVendorListItemGenerateTooltip"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="0" RAnchorOffset="53" BAnchorPoint="1" BAnchorOffset="-13" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" Name="VendorListItemStackCount" BGColor="ffffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="1" Sprite="" TooltipColor="" NewControlDepth="1" TextId="" DT_CENTER="0" DT_RIGHT="1" DT_BOTTOM="1"/>
+        </Control>
+    </Form>
+</Forms>
+_hologram" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_633_14

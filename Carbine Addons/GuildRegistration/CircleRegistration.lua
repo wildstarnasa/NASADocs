@@ -59,6 +59,9 @@ function CircleRegistration:Initialize(wndParent)
 	self.wndCircleRegName 		= self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("GuildNameString")
 	self.wndRegisterCircleBtn 	= self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegisterBtn")
 	self.xmlDoc = nil
+	
+	self.wndCircleRegName:SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName))
+
 
 	-- TODO Refactor below, we can just look up the info when the create button is hit
 	self.tCreate =
@@ -75,11 +78,12 @@ function CircleRegistration:Initialize(wndParent)
 		self.arCircleRegOptions[idx] =
 		{
 			wndOption = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("OptionString_" .. idx),
-			--wndButton = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("LabelRevertBtn_" .. idx)
 		}
 		self.arCircleRegOptions[idx].wndOption:SetData(idx)
-		--self.arCircleRegOptions[idx].wndButton:SetData(idx)
+		self.arCircleRegOptions[idx].wndOption:SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName))
 	end
+
+	self.wndMain:FindChild("CircleRegistrationWnd:RegistrationContent:GuildNameString"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName))
 end
 
 function CircleRegistration:OnEventGeneric_OpenCircleRegistrationPanel(wndParent)
@@ -122,25 +126,26 @@ function CircleRegistration:OnFullRedrawOfRegistration()
 	self:UpdateCircleRegOptions()
 
 	self.wndMain:FindChild("CircleRegistrationWnd"):Show(true)
+	self.wndMain:FindChild("CircleRegistrationWnd:RegistrationContent:Limit"):Show(false)
+	self.wndMain:FindChild("CircleRegistrationWnd:RegistrationContent:InvalidAlert"):Show(false)
 end
 
 function CircleRegistration:OnCircleRegNameChanging(wndHandler, wndControl)
 	local strInput = self.wndCircleRegName:GetText() or ""
-	local wndLimit = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:Limit")
+	local wndRegistrationWnd = self.wndMain:FindChild("CircleRegistrationWnd")
+	local wndLimit = wndRegistrationWnd and wndRegistrationWnd:FindChild("RegistrationContent:Limit")
+	local wndInvalidAlert = wndRegistrationWnd and wndRegistrationWnd:FindChild("RegistrationContent:InvalidAlert")
 	local bIsValid = GameLib.IsTextValid(strInput, GameLib.CodeEnumUserText.GuildName, eProfanityFilter)
 	self.tCreate.strName = strInput
 	self:UpdateCircleRegOptions()
-		
 	if wndLimit ~= nil then
+		wndLimit:Show(true)
+	
 		local nNameLength = string.len(strInput or "")
 
 		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
-
-		if not bIsValid or nNameLength < 3 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
-			wndLimit:SetTextColor(ApolloColor.new("red"))
-		else
-			wndLimit:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
-		end
+		wndLimit:SetTextColor(bIsValid and ApolloColor.new("UI_TextHoloBodyCyan") or ApolloColor.new("red"))
+		wndInvalidAlert:Show(not bIsValid)
 	end
 end
 
@@ -184,37 +189,31 @@ function CircleRegistration:UpdateCircleRegOptions()
 	if strMasterName ~= nil then
 		local nNameLength = string.len(strMasterName or "")
 		local wndLimitMaster = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:LimitMaster")
+		local wndMasterValidAlert = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:MasterValidAlert")
 		wndLimitMaster:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
 
-		if not bHasMaster or nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName) then
-			wndLimitMaster:SetTextColor(ApolloColor.new("red"))
-		else
-			wndLimitMaster:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
-		end
+		wndLimitMaster:SetTextColor(bHasMaster and ApolloColor.new("UI_TextHoloBodyCyan") or ApolloColor.new("red"))
+		wndMasterValidAlert:Show(not bHasMaster)
 	end
 	
 	if strCouncilName ~= nil then
 		local nNameLength = string.len(strCouncilName or "")
 		local wndLimitCouncil = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:LimitCouncil")
+		local wndCouncilValidAlert = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:CouncilValidAlert")
 		wndLimitCouncil:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
 
-		if not bHasCouncil or nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName) then
-			wndLimitCouncil:SetTextColor(ApolloColor.new("red"))
-		else
-			wndLimitCouncil:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
-		end
+		wndLimitCouncil:SetTextColor(bHasCouncil and ApolloColor.new("UI_TextHoloBodyCyan") or ApolloColor.new("red"))
+		wndCouncilValidAlert:Show(not bHasCouncil)
 	end
 	
 	if strMemberName ~= nil then
 		local nNameLength = string.len(strMemberName or "")
 		local wndLimitMember = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:LimitMember")
+		local wndMemberValidAlert = self.wndMain:FindChild("CircleRegistrationWnd"):FindChild("RegistrationContent:MemberValidAlert")
 		wndLimitMember:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
 
-		if not bHasMember or nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName) then
-			wndLimitMember:SetTextColor(ApolloColor.new("red"))
-		else
-			wndLimitMember:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
-		end
+		wndLimitMember:SetTextColor(bHasMember and ApolloColor.new("UI_TextHoloBodyCyan") or ApolloColor.new("red"))
+		wndMemberValidAlert:Show(not bHasMember)
 	end
 	
 	
@@ -254,6 +253,7 @@ function CircleRegistration:OnCircleRegBtn(wndHandler, wndControl)
 	self:HelperClearCircleRegFocus()
 	self.wndRegisterCircleBtn:Enable(false)
 	self.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
+	self.wndMain:FindChild("CircleRegistrationWnd:RegistrationContent:Limit"):SetText(" ")
 	--need to reset info, because next time a circle is created, if the any field isn't updated, it will remain the same it was last circle
 	self.tCreate =
 	{
@@ -304,3 +304,10 @@ end
 -----------------------------------------------------------------------------------------------
 local CircleRegistrationInst = CircleRegistration:new()
 CircleRegistrationInst:Init()
+nchorPoint="1" BAnchorOffset="-53" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AlertBG_MessageBase" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:sprHolo_Alert_Notify_Orange" NewControlDepth="2"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="116" TAnchorPoint="0" TAnchorOffset="104" RAnchorPoint="1" RAnchorOffset="-116" BAnchorPoint="1" BAnchorOffset="-202" RelativeToClient="1" Font="CRB_HeaderLarge" Text="" Template="Default" TooltipType="OnCursor" Name="MessageAlertText" BGColor="white" TextColor="xkcdLightOrange" TooltipColor="" NewControlDepth="6" TextId="Error" DT_VCENTER="0" DT_CENTER="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="110" TAnchorPoint="0" TAnchorOffset="132" RAnchorPoint="1" RAnchorOffset="-110" BAnchorPoint="1" BAnchorOffset="-123" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_TextCallout" TooltipType="OnCursor" Name="MessageBodyText" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" NewControlDepth="6" TextId="" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" Border="1" IgnoreMouse="1" UseTemplateBG="1"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Metal_Primary_NoNav" TooltipType="OnCursor" Name="BGArt_Frame" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" Border="1" UseTemplateBG="1" NewControlDepth="3" HideInEditor="1"/>
+        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-150" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint=".5" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="66" RelativeToClient="1" Font="CRB_HeaderMedium" Template="Default" Name="Title" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" DT_VCENTER="1" DT_CENTER="1" NewControlDepth="2" TextId="GuildDesigner_Title" Text="" TooltipColor="" Sprite="BK3:sprMetal_Framing_Header" Picture="1" IgnoreMouse="1"/>
+        <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-51" TAnchorPoint="0" TAnchorOffset="25" RAnchorPoint="1" RAnchorOffset="-21" BAnchorPoint="0" BAnchorOffset="56" DT_VCENTER="1" DT_CENTER="1" Name="CloseButton" BGColor="white" TextColor="white" NewControlDepth="2" WindowSoundTemplate="CloseWindowPhys" Text="" TextId="" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white">

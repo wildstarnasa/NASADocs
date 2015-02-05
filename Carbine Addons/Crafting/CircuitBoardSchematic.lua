@@ -916,3 +916,5 @@ function CircuitBoardSchematic:HelperBuildItemTooltip(wndArg, itemCurr)
 	local itemEquipped = itemCurr and itemCurr:GetEquippedItemForItemType() or nil
 	Tooltip.GetItemTooltipForm(self, wndArg, itemCurr, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
 end
+ Tooltip="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="1" TAnchorOffset="-80" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-14" RelativeToClient="1" Font="CRB_Interface9" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextMetalBodyHighlight" Template="Default" TooltipType="OnCursor" Name="DyeChannelText" TooltipColor="" DT_RIG

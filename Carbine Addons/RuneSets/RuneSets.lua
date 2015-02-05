@@ -120,3 +120,86 @@ end
 
 local RuneSetsInst = RuneSets:new()
 RuneSetsInst:Init()
+lo.RegisterEventHandler("KeyBindingKeyChanged", "OnKeyBindingUpdated", self)
+		return Apollo.AddonLoadStatus.Loaded
+	end
+	return Apollo.AddonLoadStatus.Loading 
+end
+
+function RewardIcons:OnKeyBindingUpdated(strKeybind)
+	if strKeybind ~= "Path Action" and strKeybind ~= "Cast Objective Ability" then
+		return
+	end
+
+	self.strPathActionKeybind = GameLib.GetKeyBinding("PathAction")
+	self.bPathActionUsesIcon = false
+	if self.strPathActionKeybind == "Unbound" or #self.strPathActionKeybind > 1 then -- Don't show interact
+		self.bPathActionUsesIcon = true
+	end
+
+	self.strQuestActionKeybind = GameLib.GetKeyBinding("CastObjectiveAbility")
+	self.bQuestActionUsesIcon = false
+	if self.strQuestActionKeybind == "Unbound" or #self.strQuestActionKeybind > 1 then -- Don't show interact
+		self.bQuestActionUsesIcon = true
+	end
+end
+
+function RewardIcons:HelperDrawRewardTooltip(tRewardInfo, wndRewardIcon, strBracketText, strUnitName, tRewardString)
+	if not tRewardInfo or not wndRewardIcon then
+		return
+	end
+	tRewardString = tRewardString or ""
+
+	local strMessage = tRewardInfo.strTitle
+	if tRewardInfo.pmMission and tRewardInfo.pmMission:GetName() then
+		local pmMission = tRewardInfo.pmMission
+		if tRewardInfo.bIsActivated and PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then -- todo: see if we can remove this requirement
+			strMessage = String_GetWeaselString(Apollo.GetString("Nameplates_ActivateForMission"), pmMission:GetName())
+		else
+			strMessage = String_GetWeaselString(Apollo.GetString("TargetFrame_MissionProgress"), pmMission:GetName(), pmMission:GetNumCompleted(), pmMission:GetNumNeeded())
+		end
+	end
+
+	local strProgress = ""
+	local nNeeded = tRewardInfo.nNeeded
+	local nCompleted = tRewardInfo.nCompleted
+	local bShowCount = tRewardInfo.bShowCount
+	local bShowPercent = false
+	
+	if tRewardInfo.eType == Unit.CodeEnumRewardInfoType.PublicEvent and tRewardInfo.peoObjective ~= nil then
+		bShowPercent = tRewardInfo.peoObjective:ShowPercent()
+	end
+	
+	if nCompleted ~= nil and nNeeded ~= nil and nNeeded > 0 then
+		if bShowCount then
+			strProgress = String_GetWeaselString(Apollo.GetString("TargetFrame_Progress"), nCompleted, nNeeded)
+		else
+			strProgress = String_GetWeaselString(Apollo.GetString("TargetFrame_ProgressPercent"), nCompleted)
+		end
+	end
+
+	local strNewEntry = ""
+	if wndRewardIcon:IsShown() then -- already have a tooltip
+		strNewEntry = string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", String_GetWeaselString(Apollo.GetString("TargetFrame_RewardProgressTooltip"), strBracketText, strMessage, strProgress))
+		tRewardString = tRewardString .. strNewEntry
+	else
+		strNewEntry = string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"Yellow\">%s</P><P Font=\"CRB_InterfaceMedium\">%s</P>", String_GetWeaselString(Apollo.GetString("TargetFrame_UnitText"), strUnitName, strBracketText), String_GetWeaselString(Apollo.GetString("TargetFrame_ShortProgress"), strMessage, strProgress))
+		tRewardString = tRewardString .. strNewEntry
+		wndRewardIcon:SetTooltip(tRewardString)
+	end
+
+	return tRewardString
+end
+
+function RewardIcons:HelperDrawBasicRewardTooltip(wndRewardIcon, strBracketText, strUnitName, tRewardString)
+	if not wndRewardIcon then
+		return
+	end
+	tRewardString = tRewardString or ""
+
+	return string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", tRewardString, strBracketText)
+end
+
+function RewardIcons:HelperLoadRewardIcon(wndRewardPanel, eType)
+	local wndCurr = wndRewardPanel:FindChild(karRewardIcons[eType].strName)
+	if wndCurr then

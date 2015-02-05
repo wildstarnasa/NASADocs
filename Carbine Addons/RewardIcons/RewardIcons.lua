@@ -15,17 +15,18 @@ RewardIcons = {}
 -----------------------------------------------------------------------------------------------
 local karRewardIcons =
 {
-	["Quest"] 			= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuest", 	strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuestMulti" },
-	["Challenge"] 		= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_Challenge", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ChallengeMulti" },
-	["Explorer"] 		= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathExp", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathExpMulti" },
-	["Scientist"] 		= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSci",			strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciMulti" },
-	["Soldier"] 		= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSol", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSolMulti" },
-	["Settler"] 		= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSet", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSetMulti" },
-	["PublicEvent"] 	= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PublicEvent", 	strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PublicEventMulti" },
-	["Rival"] 			= { strSingle = "ClientSprites:Icon_Windows_UI_CRB_Rival", 							strMulti = "ClientSprites:Icon_Windows_UI_CRB_Rival" },
-	["Friend"] 			= { strSingle = "ClientSprites:Icon_Windows_UI_CRB_Friend", 						strMulti = "ClientSprites:Icon_Windows_UI_CRB_Friend" },
-	["ScientistSpell"]	= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciSpell",	strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciSpell" },
-	["TSpell"]			= { strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuest",		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuestMulti" },
+	[Unit.CodeEnumRewardInfoType.Quest] 			= { strName = "Quest", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuest", 	strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuestMulti" },
+	[Unit.CodeEnumRewardInfoType.Challenge] 		= { strName = "Challenge", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_Challenge", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ChallengeMulti" },
+	[Unit.CodeEnumRewardInfoType.Explorer] 		= { strName = "Explorer", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathExp", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathExpMulti" },
+	[Unit.CodeEnumRewardInfoType.Scientist] 		= { strName = "Scientist", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSci",			strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciMulti" },
+	[Unit.CodeEnumRewardInfoType.Soldier] 		= { strName = "Soldier", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSol", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSolMulti" },
+	[Unit.CodeEnumRewardInfoType.Settler] 		= { strName = "Settler", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSet", 		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSetMulti" },
+	[Unit.CodeEnumRewardInfoType.PublicEvent] 	= { strName = "PublicEvent", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PublicEvent", 	strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PublicEventMulti" },
+	[Unit.CodeEnumRewardInfoType.Rival] 			= { strName = "Rival", strSingle = "ClientSprites:Icon_Windows_UI_CRB_Rival", 							strMulti = "ClientSprites:Icon_Windows_UI_CRB_Rival" },
+	[Unit.CodeEnumRewardInfoType.Friend] 			= { strName = "Friend", strSingle = "ClientSprites:Icon_Windows_UI_CRB_Friend", 						strMulti = "ClientSprites:Icon_Windows_UI_CRB_Friend" },
+	[Unit.CodeEnumRewardInfoType.ScientistSpell]	= { strName = "ScientistSpell", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciSpell",	strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciSpell" },
+	[Unit.CodeEnumRewardInfoType.TSpell]			= { strName = "TSpell", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuest",		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuestMulti" },
+	[Unit.CodeEnumRewardInfoType.Contract]			= { strName = "Contract", strSingle = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_Contract",		strMulti = "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ContractMulti" },
 }
 
 local knDefaultIconWidth = 22
@@ -114,7 +115,7 @@ function RewardIcons:HelperDrawRewardTooltip(tRewardInfo, wndRewardIcon, strBrac
 	local bShowCount = tRewardInfo.bShowCount
 	local bShowPercent = false
 	
-	if tRewardInfo.strType == "PublicEvent" and tRewardInfo.peoObjective ~= nil then
+	if tRewardInfo.eType == Unit.CodeEnumRewardInfoType.PublicEvent and tRewardInfo.peoObjective ~= nil then
 		bShowPercent = tRewardInfo.peoObjective:ShowPercent()
 	end
 	
@@ -148,18 +149,18 @@ function RewardIcons:HelperDrawBasicRewardTooltip(wndRewardIcon, strBracketText,
 	return string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", tRewardString, strBracketText)
 end
 
-function RewardIcons:HelperLoadRewardIcon(wndRewardPanel, strType)
-	local wndCurr = wndRewardPanel:FindChild(strType)
+function RewardIcons:HelperLoadRewardIcon(wndRewardPanel, eType)
+	local wndCurr = wndRewardPanel:FindChild(karRewardIcons[eType].strName)
 	if wndCurr then
 		return wndCurr
 	end
 
 	wndCurr = Apollo.LoadForm(self.xmlDoc, "RewardIcon", wndRewardPanel, self)
-	wndCurr:SetName(strType)
+	wndCurr:SetName(karRewardIcons[eType].strName)
 	wndCurr:Show(false) -- Visibility is important
 
-	wndCurr:FindChild("Single"):SetSprite(karRewardIcons[strType].strSingle)
-	wndCurr:FindChild("Multi"):SetSprite(karRewardIcons[strType].strMulti)
+	wndCurr:FindChild("Single"):SetSprite(karRewardIcons[eType].strSingle)
+	wndCurr:FindChild("Multi"):SetSprite(karRewardIcons[eType].strMulti)
 
 	return wndCurr
 end
@@ -183,13 +184,13 @@ function RewardIcons:HelperDrawRewardIcon(wndRewardIcon)
 	return nResult
 end
 
-function RewardIcons:HelperDrawSpellBind(wndIcon, strType)
+function RewardIcons:HelperDrawSpellBind(wndIcon, eType)
 	wndIcon:FindChild("Single"):Show(false)
 	wndIcon:FindChild("Multi"):Show(false)
 	wndIcon:FindChild("TargetMark"):Show(false)
 	wndIcon:FindChild("Bind"):SetText("")
 	
-	if strType ~= "Quest" then -- paths, not quest
+	if eType ~= Unit.CodeEnumRewardInfoType.Quest and eType ~= Unit.CodeEnumRewardInfoType.Contract then -- paths, not quest or contract
 		if self.bPathActionUsesIcon then
 			wndIcon:FindChild("TargetMark"):Show(true)
 		else
@@ -299,60 +300,83 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 	
 	if nRewardCount > 0 then
 		for idx = 1, nRewardCount do
-			local strType = tRewardInfo[idx].strType
+			local eType = tRewardInfo[idx].eType
 
-			if tRewardString[strType] == nil then
-				tRewardString[strType] = ""
+			if tRewardString[eType] == nil then
+				tRewardString[eType] = ""
 			end
 			
-			if strType == "Quest" and not self:HelperFlagOrDefault(tFlags, "bHideQuests", false) then
-				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
+			if eType == Unit.CodeEnumRewardInfoType.Quest and not self:HelperFlagOrDefault(tFlags, "bHideQuests", false) then
+				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
 				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-				tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CRB_Quest"), unitTarget:GetName(), tRewardString[strType])
-				wndCurr:SetTooltip(tRewardString[strType])
+				tRewardString[eType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CRB_Quest"), unitTarget:GetName(), tRewardString[eType])
+				wndCurr:SetTooltip(tRewardString[eType])
 				wndCurr:ToFront()
 				if tRewardInfo[idx].splObjective then
-					local wndTSpell = self:HelperLoadRewardIcon(wndRewardPanel, "TSpell")
+					local wndTSpell = self:HelperLoadRewardIcon(wndRewardPanel, Unit.CodeEnumRewardInfoType.TSpell)
 					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndTSpell)
-					tRewardString["TSpell"] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CRB_Quest"), unitTarget:GetName(), tRewardString["TSpell"])
-					wndTSpell:SetTooltip(tRewardString["TSpell"])
+					tRewardString[Unit.CodeEnumRewardInfoType.TSpell] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CRB_Quest"), unitTarget:GetName(), tRewardString[Unit.CodeEnumRewardInfoType.TSpell])
+					wndTSpell:SetTooltip(tRewardString[Unit.CodeEnumRewardInfoType.TSpell])
 					wndTSpell:ToFront()
-					self:HelperDrawSpellBind(wndTSpell, strType)
+					self:HelperDrawSpellBind(wndTSpell, eType)
 				end
-			elseif strType == "Challenge" and not self:HelperFlagOrDefault(tFlags, "bHideChallenges", false) then
-				local bActiveChallenge = false
+			elseif eType == Unit.CodeEnumRewardInfoType.Contract and not self:HelperFlagOrDefault(tFlags, "bHideQuests", false) then
+				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
+				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
+				tRewardString[eType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CRB_Contract"), unitTarget:GetName(), tRewardString[eType])
+				wndCurr:SetTooltip(tRewardString[eType])
+				wndCurr:ToFront()
+				if tRewardInfo[idx].splObjective then
+					local wndTSpell = self:HelperLoadRewardIcon(wndRewardPanel, Unit.CodeEnumRewardInfoType.TSpell)
+					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndTSpell)
+					tRewardString[Unit.CodeEnumRewardInfoType.TSpell] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CRB_Contract"), unitTarget:GetName(), tRewardString[Unit.CodeEnumRewardInfoType.TSpell])
+					wndTSpell:SetTooltip(tRewardString[Unit.CodeEnumRewardInfoType.TSpell])
+					wndTSpell:ToFront()
+					self:HelperDrawSpellBind(wndTSpell, eType)
+				end
+			elseif eType == Unit.CodeEnumRewardInfoType.Challenge and not self:HelperFlagOrDefault(tFlags, "bHideChallenges", false) then
+					local clgActive = nil
 
 				local tAllChallenges = ChallengesLib.GetActiveChallengeList()
 				for index, clgCurr in pairs(tAllChallenges) do
 					if tRewardInfo[idx].idChallenge == clgCurr:GetId() and clgCurr:IsActivated() and not clgCurr:IsInCooldown() and not clgCurr:ShouldCollectReward() then
-						bActiveChallenge = true
+						clgActive = clgCurr
 						break
 					end
 				end
 
-				if bActiveChallenge then
-					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
+				if clgActive then
+					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
 					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-					tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CBCrafting_Challenge"), unitTarget:GetName(), tRewardString[strType])
-					wndCurr:SetTooltip(tRewardString[strType])
+					
+					local strTempTitle = ""
+					if clgActive:ShouldDisplayPercentProgress() then
+						strTempTitle = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CBCrafting_Challenge"), unitTarget:GetName(), tRewardString[eType])
+					else
+						strTempTitle = String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), clgActive:GetName(), clgActive:GetCurrentCount(), clgActive:GetTotalCount())
+					end
+					
+					tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], strTempTitle)
+					
+					wndCurr:SetTooltip(tRewardString[eType])
 				end
-			elseif strType == "Soldier" or strType == "Settler" or strType == "Explorer" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
-				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
+			elseif eType == Unit.CodeEnumRewardInfoType.Soldier or eType == Unit.CodeEnumRewardInfoType.Settler or eType == Unit.CodeEnumRewardInfoType.Explorer and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
+				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
 				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-				tRewardString[strType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("Nameplates_Mission"), unitTarget:GetName(), tRewardString[strType])
+				tRewardString[eType] = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("Nameplates_Mission"), unitTarget:GetName(), tRewardString[eType])
 			
 
-				wndCurr:SetTooltip(tRewardString[strType])
+				wndCurr:SetTooltip(tRewardString[eType])
 
 				if tRewardInfo[idx].splReward then
-					self:HelperDrawSpellBind(wndCurr, strType)
+					self:HelperDrawSpellBind(wndCurr, eType)
 				end	
-			elseif strType == "Scientist" and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
+			elseif eType == Unit.CodeEnumRewardInfoType.Scientist and not self:HelperFlagOrDefault(tFlags, "bHideMissions", false) then
 				local pmMission = tRewardInfo[idx].pmMission
 				local splSpell = tRewardInfo[idx].splReward
 
 				if pmMission then
-					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
+					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
 
 					local strMission = ""
 					if pmMission:GetMissionState() >= PathMission.PathMissionState_Unlocked then
@@ -379,25 +403,25 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 					local strUnitName = unitTarget:GetName() -- specific to #7
 					local strBracketText = Apollo.GetString("Nameplates_Missions") -- specific to #7
 					if wndCurr:IsShown() then -- already have a tooltip
-						tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", tRewardString[strType], strMission)
+						tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", tRewardString[eType], strMission)
 
 					else
-						tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"Yellow\">%s</P>"..
-														 "<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[strType], String_GetWeaselString(Apollo.GetString("TargetFrame_HealthShieldText"), strUnitName, strBracketText), strMessage)
+						tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"Yellow\">%s</P>"..
+														 "<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], String_GetWeaselString(Apollo.GetString("TargetFrame_HealthShieldText"), strUnitName, strBracketText), strMessage)
 					end
 
-					wndCurr:SetTooltip(tRewardString[strType])
+					wndCurr:SetTooltip(tRewardString[eType])
 				end
 
 				if splSpell then
-					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, "ScientistSpell")
+					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, Unit.CodeEnumRewardInfoType.ScientistSpell)
 					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
 					if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
 						Tooltip.GetSpellTooltipForm(self, wndCurr, splSpell)
 					end
 				end
-			elseif strType == "PublicEvent" and not self:HelperFlagOrDefault(tFlags, "bHidePublicEvents", false) then
-				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strType)
+			elseif eType == Unit.CodeEnumRewardInfoType.PublicEvent and not self:HelperFlagOrDefault(tFlags, "bHidePublicEvents", false) then
+				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
 
 				local peEvent = tRewardInfo[idx].peoObjective
 				local strTitle = peEvent:GetEvent():GetName()
@@ -417,10 +441,10 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 					strTempTitle = String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), strTitle, nCompleted, nNeeded)
 				end
 
-				tRewardString[strType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[strType], strTempTitle)
+				tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], strTempTitle)
 
 				wndCurr:ToFront()				
-				wndCurr:SetTooltip(tRewardString[strType])
+				wndCurr:SetTooltip(tRewardString[eType])
 			end
 		end
 	end
@@ -429,13 +453,14 @@ function RewardIcons:GenerateUnitRewardIconsForm(wndRewardPanel, unitTarget, tFl
 		or ( bIsFriend and not self:HelperFlagOrDefault(tFlags, "bHideFriends", false) )
 		  or ( bIsAccountFriend and not self:HelperFlagOrDefault(tFlags, "bHideAccountFriends", false) ) then
 
+		local eTempType = bIsRival and Unit.CodeEnumRewardInfoType.Rival or Unit.CodeEnumRewardInfoType.Friend
 		local strTempType = bIsRival and "Rival" or "Friend"
 		local strIsAccount = bIsAccountFriend and "TargetFrame_AccountFriend" or "TargetFrame_" .. strTempType
 
-		local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, strTempType)
+		local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eTempType)
 		nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-		tRewardString[strTempType] = self:HelperDrawBasicRewardTooltip(wndCurr, Apollo.GetString(strIsAccount), unitTarget:GetName(), tRewardString[strTempType])
-		wndCurr:SetTooltip(tRewardString[strTempType])
+		tRewardString[eTempType] = self:HelperDrawBasicRewardTooltip(wndCurr, Apollo.GetString(strIsAccount), unitTarget:GetName(), tRewardString[eTempType])
+		wndCurr:SetTooltip(tRewardString[eTempType])
 	end
 
 	if nActiveRewardCount > 0 then
@@ -465,3 +490,39 @@ end
 -----------------------------------------------------------------------------------------------
 local RewardIconsInst = RewardIcons:new()
 RewardIconsInst:Init()
+AnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="84" DT_VCENTER="1" DT_CENTER="1" Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
+            <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
+        </Control>
+        <Pixie LAnchorPoint="0" LAnchorOffset="100" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-100" BAnchorPoint="0" BAnchorOffset="84" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="ReportPlayer_Title" DT_CENTER="1" DT_VCENTER="1" Line="0"/>
+    </Form>
+</Forms>
+-----------------------
+
+function PathSoldierMain:OnListItemMouseEnter(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemMouseExit(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemHintArrow(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	pmMission:ShowHintArrow()
+end
+
+
+function PathSoldierMain:OnListItemSubscreenBtn(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	if pmMission and pmMission:IsStarted() then
+		local seEvent = pmMission:GetSoldierHoldout()
+		if seEvent then
+			self.wndMain:Enable

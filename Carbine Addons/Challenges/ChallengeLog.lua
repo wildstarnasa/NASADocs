@@ -1047,3 +1047,13 @@ end
 
 local ChallengeLogInst = ChallengeLog:new()
 ChallengeLogInst:Init()
+"Default" Text=""/>
+            <Pixie LAnchorPoint="0" LAnchorOffset="30" TAnchorPoint="0" TAnchorOffset="70" RAnchorPoint="1" RAnchorOffset="-30" BAnchorPoint="0" BAnchorOffset="200" BGColor="white" Font="CRB_InterfaceMedium_B" TextColor="UI_TextHoloBodyHighlight" Text="" TextId="CRB_ClientSideInteraction_Memory" DT_CENTER="1" DT_WORDBREAK="1" Line="0"/>
+        </Control>
+        <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="CRB_InterfaceMedium" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-75" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="1" RAnchorOffset="-48" BAnchorPoint="0" BAnchorOffset="58" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="white" TextColor="white" WindowSoundTemplate="CloseWindowPhys" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TextId="" TooltipColor="" RelativeToClient="1" NewWindowDepth="1">
+            <Event Name="ButtonSignal" Function="OnCancel"/>
+        </Control>
+    </Form>
+</Forms>
+û      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªª÷f     ÿÿÿÿªªªª¢HÂ$I’$ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªªôÉÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªôÀ4X‚&ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª©I„I’$ÿÿÿÿªªªªöI   ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªûû      ÿÿÿÿªªªªöI    
+(ÿÿÿÿªªªª©HÂ$I’$ÿÿÿÿªªªª        ÿÿÿÿªªªª

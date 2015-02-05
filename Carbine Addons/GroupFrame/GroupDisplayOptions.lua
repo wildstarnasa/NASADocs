@@ -352,3 +352,40 @@ end
 
 local GroupDisplayOptionsInst = GroupDisplayOptions:new()
 GroupDisplayOptionsInst:Init()
+-------------
+function GalacticArchive:AddArticleToIndex(artData, wndParent)
+	local wndArticle = self:FactoryCacheProduce(wndParent, "ArchiveIndexItem", artData:GetTitle())
+	wndArticle:SetData(artData)
+	
+	local wndArticleProgress = wndArticle:FindChild("ArticleProgress")
+	local wndArchiveIndexItemTitle = wndArticle:FindChild("ArchiveIndexItemTitle")
+	local wndArticleIcon = wndArticle:FindChild("ArticleDisplayFrame:ArticleIcon")
+	local wndArticlePortrait = wndArticle:FindChild("ArticleDisplayFrame:ArticlePortrait")
+	
+	local bShow = self:HelperShouldShowArticle(artData)
+	if bShow ~= wndArticle:IsShown() then
+		wndArticle:Show(bShow)
+	end
+	
+	local nLockCount = 0
+	local nEntryCount = 1 -- Base article will artificially count
+	for idx, entCurr in ipairs(artData:GetEntries()) do
+		if entCurr:IsUnlocked() then
+			nEntryCount = nEntryCount + 1
+		else
+			nLockCount = nLockCount + 1
+		end
+	end
+	
+	local nMaxCount = nEntryCount + nLockCount
+	local bHasCostume = artData:GetHeaderCreature() and artData:GetHeaderCreature() ~= 0
+	
+	if bHasCostume then
+		wndArticlePortrait:SetCostumeToCreatureId(artData:GetHeaderCreature())
+	elseif string.len(artData:GetHeaderIcon()) > 0 then
+		wndArticleIcon:SetSprite(artData:GetHeaderIcon())
+	else
+		wndArticleIcon:SetSprite("Icon_Mission_Explorer_PowerMap")
+	end
+	
+	if not bHasCostu

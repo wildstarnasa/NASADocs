@@ -22,6 +22,8 @@ local PathFrame = {}
 local knBottomPadding = 48 -- MUST MATCH XML
 local knTopPadding = 48 -- MUST MATCH XML
 local knPathLASIndex = 10
+
+local knSaveVersion = 1
  
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -56,13 +58,14 @@ function PathFrame:OnSave(eType)
 	local tSavedData =
 	{
 		nSelectedPathId = self.nSelectedPathId,
+		nSaveVersion = knSaveVersion,
 	}
 
 	return tSavedData
 end
 
 function PathFrame:OnRestore(eType, tSavedData)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character or not tSavedData or not tSavedData.nSaveVersion or tSavedData.nSaveVersion ~= knSaveVersion then
 		return
 	end
 
@@ -112,11 +115,23 @@ function PathFrame:OnAsyncLoad()
 	
 	--Load Forms
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathFrameForm", "FixedHudStratum", self)
-    --self.wndMain:Show(false)
 	
 	self.wndMenu = Apollo.LoadForm(self.xmlDoc, "PathSelectionMenu", nil, self)
 	self.wndMain:FindChild("PathOptionToggle"):AttachWindow(self.wndMenu)
 	self.wndMenu:Show(false)
+	
+	if self.nSelectedPathId then
+		local tAbilities = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Path)
+		local bIsValidPathId = false
+		
+		for idx, tAbility in pairs(tAbilities) do
+			if tAbility.bIsActive then
+				bIsValidPathId = bIsValidPathId or tAbility.nId == self.nSelectedPathId
+			end
+		end
+		
+		self.nSelectedPathId = bIsValidPathId and self.nSelectedPathId or nil
+	end
 	
 	self:DrawPathAbilityList()
 	return true
@@ -178,11 +193,18 @@ function PathFrame:HelperSetPathAbility(nAbilityId)
 		return false
 	end
 	
-	Event_FireGenericEvent("PathAbilityUpdated", nAbilityId)
 	tActionSet[knPathLASIndex] = nAbilityId
 	local tResult = ActionSetLib.RequestActionSetChanges(tActionSet)
+
+	if tResult.eResult ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
+		return false
+	end
 	
-	return tResult and tResult.eResult == 1
+	
+	Event_FireGenericEvent("PathAbilityUpdated", nAbilityId)
+	self.nSelectedPathId = nAbilityId
+	
+	return true
 end
 
 -----------------------------------------------------------------------------------------------
@@ -240,4 +262,73 @@ end
 -- PathFrame Instance
 -----------------------------------------------------------------------------------------------
 local PathFrameInst = PathFrame:new()
-PathFrameInst:Init()
+PathFrameInst:Init()er = self.wndMain:FindChild("PowerMapActiveContainer")
+
+	-- Completion Counting, if necessary
+	if tPowerMap.nNeeded > 0 then
+		wndPowerMapContainer:FindChild("ProgressText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), tPowerMap.nCompleted, tPowerMap.nNeeded))
+	end
+	wndPowerMapContainer:FindChild("PowerMapProgressC"):Show(tPowerMap.nNeeded > 0)
+
+	-- Wait despawn timer, if necessary
+	if tPowerMap.bIsWaiting then
+		wndPowerMapContainer:FindChild("DespawnText"):SetAML("<P Align=\"Center\">"..self:CalculateMLTimeText(self.nPowerMapDespawnTimer).."</P>")
+		wndPowerMapContainer:FindChild("PowerMapProgressFlash"):Show(tPowerMap.nNeeded ~= tPowerMap.nCompleted and tPowerMap.nNeeded > 0)
+		wndPowerMapContainer:SetSprite("PlayerPathContent_TEMP:spr_PathExpPowerMapRedBG")
+	else
+		wndPowerMapContainer:SetSprite("")
+		wndPowerMapContainer:FindChild("DespawnText"):SetAML("")
+	end
+	wndPowerMapContainer:FindChild("PowerMapDespawnC"):Show(tPowerMap.bIsWaiting)
+	wndPowerMapContainer:FindChild("PowerMapSignalC"):Show(not tPowerMap.bIsWaiting)
+
+
+	-- Range Text and Range Finder on Target
+	self:PositionPowerMapRangeFinder(self.wndPowerMapRangeFinder, self.wndPowerMapRangeFinder:GetData(), tPowerMap.bIsWaiting, tPowerMap.fRatio)
+
+	--wndPowerMapContainer:ArrangeChildrenVert(1)
+end
+
+function PathExplorerMissions:PositionPowerMapRangeFinder(wndPowerMapRangeFinder, unitTarget, bIsWaiting, nRatio)
+	if not unitTarget or not unitTarget:GetPosition() then
+		return
+	end
+	wndPowerMapRangeFinder:Show(not self.bTextBubbleShown)
+	wndPowerMapRangeFinder:SetUnit(unitTarget, 1) -- TODO 1 is EModelAttachment.ModelAttachment_NAME
+
+	-- Range to target
+	posTarget = unitTarget:GetPosition()
+	posPlayer = GameLib.GetPlayerUnit():GetPosition()
+	local nDistance = math.floor(math.sqrt(math.pow((posTarget.x - posPlayer.x), 2) + math.pow((posTarget.y - posPlayer.y), 2) + math.pow((posTarget.z - posPlayer.z), 2)))
+	wndPowerMapRangeFinder:FindChild("RangeFinderText"):SetText(string.format("%s m", nDistance))
+	self.wndMain:FindChild("PowerMapContainer"):FindChild("PowerMapRangeText"):SetText(String_GetWeaselString(Apollo.GetString("ExplorerMissions_DistanceNumber"), nDistance))
+
+	-- Color
+	local nRatioColor = CColor.new(0, 1, 0, 1)
+	local nRatioSprite = "CRB_NameplateSprites:sprNp_HealthBarFriendly"
+	if nRatio and nRatio > 0.66 then
+		nRatioColor = CColor.new(1, 0, 0, 1)
+		nRatioSprite = "CRB_NameplateSprites:sprNp_HealthBarHostile"
+	elseif nRatio and nRatio > 0.33 then
+		nRatioColor = CColor.new(248/255, 185/255, 54/255, 1)
+		nRatioSprite = "CRB_NameplateSprites:sprNp_HealthBarNeutral"
+	end
+	wndPowerMapRangeFinder:FindChild("RangeFinderText"):SetTextColor(nRatioColor)
+	self.wndMain:FindChild("PowerMapContainer"):FindChild("PowerMapRangeText"):SetTextColor(nRatioColor)
+
+	-- Progress Bar
+	wndPowerMapRangeFinder:FindChild("RangeFinderProgress"):Show(not bIsWaiting)
+	wndPowerMapRangeFinder:FindChild("RangeFinderProgress"):SetProgress(nRatio)
+	wndPowerMapRangeFinder:FindChild("RangeFinderProgress"):SetFullSprite(nRatioSprite)
+
+	-- Datachron Progress Bar
+	if not bIsWaiting then
+		self.wndMain:FindChild("PowerMapContainer"):FindChild("DistanceProgressBar"):SetProgress(nRatio)
+		self.wndMain:FindChild("PowerMapContainer"):FindChild("DistanceProgressBar"):SetFullSprite(nRatioSprite)
+	end
+
+	-- Despawn Warning
+	wndPowerMapRangeFinder:FindChild("RangeFinderDespawnWarning"):Show(bIsWaiting)
+end
+
+function PathExplorerMissions:OnExplorerPowerMapWaiting(pmMission, nVictoryDelay

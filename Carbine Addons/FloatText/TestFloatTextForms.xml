@@ -65,3 +65,67 @@
         </Control>
     </Form>
 </Forms>
+rn
+	end
+
+	self.wndFramerate:SetText(math.floor(GameLib.GetFrameRate()*10)*0.1 .. " " .. Apollo.GetString("CRB_FPS"))
+end
+
+function FloatTextPanel:OnHintArrowDistanceUpdate(fDistance)
+	local bShow = Apollo.GetConsoleVariable("ui.showHintArrowDistance") and fDistance ~= -1
+	self.wndHintArrowDistance:Show(bShow, false, bShow and 0.1 or 0.3)
+
+	if bShow then
+		local strMeterAppended = String_GetWeaselString(Apollo.GetString("CRB_Distance"), math.max(1, math.floor(fDistance)))
+		self.wndHintArrowDistance:SetText(fDistance == -1 and "" or strMeterAppended)
+	end
+end
+
+function FloatTextPanel:OnChangeWorld()
+	if self.wndHintArrowDistance and self.wndHintArrowDistance:IsValid() then
+		self.wndHintArrowDistance:Show(false)
+	end
+end
+
+function FloatTextPanel:ClearFieldsMain() --clear everything
+	for i = 1, #self.tMainWindow do
+		self.tMainWindow[i]:FindChild("Text"):SetText("")
+		self.tMainWindow[i]:Show(false)
+	end
+end
+
+function FloatTextPanel:OnRealmBroadcastTierHigh(strMessage)
+	-- We allow multiple windows
+	local wndBroadcast = Apollo.LoadForm("FloatTextPanel.xml", "RealmBroadcastHigh", nil, self)
+	wndBroadcast:FindChild("RealmBroadcastClose"):SetData(wndBroadcast)
+	wndBroadcast:FindChild("RealmBroadcastText"):SetText(strMessage)
+	wndBroadcast:Invoke()
+	Sound.Play(Sound.PlayUIMemoryWin)
+end
+
+function FloatTextPanel:OnRealmBroadcastClose(wndHandler, wndControl)
+	local wndParent = wndHandler:GetData()
+	wndParent:Destroy()
+	wndParent = nil
+end
+
+-----------------------------------------------------------------------------------------------
+-- Secondary FloatTextPanelForm Functions
+-----------------------------------------------------------------------------------------------
+
+function FloatTextPanel:OnQuestNotice(unitTarget, strMessage, questCurr) -- uses a ML window
+	local strWeasel = String_GetWeaselString(Apollo.GetString("FloatText_QuestNotice"), strMessage)
+	local strFormatted = string.format("<P Font=\"%s\" Align=\"Center\" TextColor=\"%s\">%s</P>", kstrSubPanelFont, kcrBodyFontColor, strWeasel)
+
+	local bMatch = false
+	for idx, message in pairs(self.tQueueSub) do
+		if type(message) == "table" then
+			if questCurr ~= nil and message.iType == 1 and message.content ~= nil and questCurr:GetTitle() == message.content:GetTitle() then
+				bMatch = true
+				message.strMessage = strFormatted
+			end
+		end
+	end
+
+	if not bMatch then
+		self:AddToQueueSub(1, s

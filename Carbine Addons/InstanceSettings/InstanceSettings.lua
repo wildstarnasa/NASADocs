@@ -104,11 +104,11 @@ function InstanceSettings:OnShowDialog(tData)
 	self.bNormalIsAllowed = tData.bDifficultyNormal
 	self.bVeteranIsAllowed = tData.bDifficultyVeteran
 	self.bScalingIsAllowed = tData.bFlagsScaling
-
 	self.wndMain = Apollo.LoadForm(self.xmlDoc , "InstanceSettingsForm", nil, self)
 	self.bHidingInterface = false
 	self.wndMain:FindChild("LevelScalingButton"):Enable(true)
 	self.wndMain:FindChild("LevelScalingButton"):Show(true)
+	self.wndMain:FindChild("ContentFrameScaling"):Show(true)
 	self.wndMain:FindChild("ScalingIsForced"):Show(false)
 	-- we never want to show this "error" initially
 	self.wndMain:FindChild("ErrorWindow"):Show(false)
@@ -239,12 +239,19 @@ function InstanceSettings:OnNoExistingInstance()
 	else
 		self.wndMain:SetRadioSel("InstanceSettings_LocalRadioGroup_Difficulty", 0)
 	end
-	
+	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
 	-- scaling settings
-	if 	self.bScalingIsAllowed then
+	if self.bScalingIsAllowed then
 		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 1)
+		self:EnableRally()
+		self.wndMain:FindChild("LevelScalingButton"):Enable(true)
+		self.wndMain:FindChild("LevelScalingButton"):Show(true)
 	else
-		self.wndMain:FindChild("ContentFrame"):SetRadioSel("InstanceSettings_LocalRadioGroup_Rallying", 0)
+		self:DisableRally()
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 295)
+		self.wndMain:FindChild("LevelScalingButton"):Show(false)
+		self.wndMain:FindChild("ContentFrameScaling"):Show(false)
+
 	end
 	
 	self.wndMain:FindChild("EnterButton"):Enable(self.bNormalIsAllowed or self.bVeteranIsAllowed)
@@ -255,29 +262,19 @@ function InstanceSettings:OnNoExistingInstance()
 	self.wndMain:FindChild("TitleBlock"):SetText(Apollo.GetString("InstanceSettings_Title"))
 	self.wndMain:FindChild("ResetInstanceButton"):Show(false)
 	self.wndMain:FindChild("ExistingInstanceSettings"):Show(false)
-	
-	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	-- we always "show" based on flags
-	if self.bScalingIsAllowed == true then
-		self.wndMain:FindChild("LevelScalingButton"):Show(true)
-		self.wndMain:FindChild("ContentFrameScaling"):Show(true)
-		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 343)
-	else
-		self.wndMain:FindChild("LevelScalingButton"):Show(false)
-		self.wndMain:FindChild("ContentFrameScaling"):Show(false)
-		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 295)
-	end
 end
 
 function InstanceSettings:OnOK()
 	local eDifficulty = nil
+	local nRally = self.wndMain:FindChild("ContentFrame"):GetRadioSel("InstanceSettings_LocalRadioGroup_Rallying")
 	if LuaCodeEnumDifficultyTypes.Veteran == self.wndMain:GetRadioSel("InstanceSettings_LocalRadioGroup_Difficulty") then
 		eDifficulty = GroupLib.Difficulty.Veteran
+		nRally = 0
 	else 
 		eDifficulty = GroupLib.Difficulty.Normal
 	end
-	
-	GameLib.SetInstanceSettings(eDifficulty, self.wndMain:FindChild("ContentFrame"):GetRadioSel("InstanceSettings_LocalRadioGroup_Rallying"))
+
+	GameLib.SetInstanceSettings(eDifficulty, nRally)
 	self:DestroyAll()
 end
 
@@ -317,21 +314,105 @@ function InstanceSettings:DestroyAll()
 	end
 end
 
----------------------------------------------------------------------------------------------------
--- InstanceSettingsForm Functions
----------------------------------------------------------------------------------------------------
-
 function InstanceSettings:EnableRally( wndHandler, wndControl, eMouseButton )
-	self.wndMain:FindChild("LevelScalingButton"):Enable(true)
-	self.wndMain:FindChild("LevelScalingButton"):Show(true)
-	self.wndMain:FindChild("ScalingIsForced"):Show(false)
+	if self.bScalingIsAllowed then
+		self.wndMain:FindChild("LevelScalingButton"):Enable(true)
+		self.wndMain:FindChild("LevelScalingButton"):Show(true)
+		self.wndMain:FindChild("ContentFrameScaling"):Show(true)
+		self.wndMain:FindChild("ScalingIsForced"):Show(false)
+		local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 343)
+	end
 end
 
 function InstanceSettings:DisableRally( wndHandler, wndControl, eMouseButton )
-	self.wndMain:FindChild("LevelScalingButton"):Show(false)
-	self.wndMain:FindChild("ScalingIsForced"):Show(true)
+	if self.bScalingIsAllowed then
+		self.wndMain:FindChild("LevelScalingButton"):Show(false)
+		self.wndMain:FindChild("ContentFrameScaling"):Show(true)
+		self.wndMain:FindChild("ScalingIsForced"):Show(true)
+		local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + 343)
+	end
 end
 
 local InstanceSettingsInst = InstanceSettings:new()
 InstanceSettingsInst:Init()
 
+qÿ
+‹ÿ½ÿ|ösÿÿÿ°ÿ<ÿ-ÿÕÿ¶ÿ½ÿÑÿØÿÑÿpÿu
+ÿo	ÿv
+ÿÿÜÿåÿçÿ!åÿ Ëÿ¢ÿƒ
+ÿsÿbÿZÿ[ÿ`ÿmÿ²ÿÜÿãÿİ(ÿ›ÿ ÿ»ÿEÒAÿœé‚ÿÂÿ¢ÿÿÿxÿDÍ/ÿ+– ÿƒÿPÿ=	ÿ1ÿ%ÿÿÿÿÿÿÿ	ÿÿÿÿ ÿ$ÿDÿ	jÿ
+wÿ	oÿ_ÿoÿ—ÿ,Ò,ÿŒö‹ÿŸÿtÿîÿÂÿ»ÿÈÿÑÿÔÿ¿ÿy
+ÿv
+ÿ}
+ÿªÿåÿ ñÿ#Óÿ†ÿ^ÿQÿOÿPÿSÿWÿ[ÿ`ÿ_ÿ}ÿÄÿÑÿ×.ÿÃÿà ÿÜÿ‹êtÿåÿB½3ÿÿÂÿ‡ÿWÿA	ÿ4ÿ*ÿÿÿÿÿÿÿÿÿÿÿÿÿFÿ†ÿ¢	ÿ/×Nÿ%Ê9ÿ
+vÿ`ÿ	~ÿ¹ÿTáWÿ¡ÿ”ÿhÿRÿ:Û4ÿhß\ÿ=Ó/ÿÄÿ›	ÿ™ÿ³ÿ£ÿ´ÿÖÿìÿËÿnÿQÿVÿZÿ[ÿ\ÿ[ÿ_ÿ\ÿgÿjÿ…ÿËÿÍÿ¶ÿ©ÿÏÿqÿRÿ›ê‚ÿPÇ=ÿ—ÿ
+vÿ	fÿ_ÿE	ÿ8ÿ0ÿ#ÿÿÿÿÿÿÿÿÿÿÿÿ?ÿ…ÿ–ÿ4Ü^ÿ>ítÿ=ísÿˆÿSÿiÿ ÿÏ!ÿ|îÿÿÿ±ÿø}ÿ©ÿÿùÿšÿHÿ2ÿ³ÿ‘ÿ{ÿ}
+ÿ‹	ÿ¿	ÿéÿ	ÿTÿ^ÿeÿgÿdÿ`ÿ[ÿ\ÿnÿmÿ”	ÿÆÿ¼ÿ¢	ÿ–
+ÿ­ÿDİ-ÿÖÿ”ÿoÙWÿ›ÿ	xÿ	eÿUÿF	ÿ:ÿLÿ 
+ÿQÿÿÿÿÿÿÿÿÿÿÿ'ÿ	[ÿ	ÿ&¹=ÿ>ìvÿ8äfÿ1İSÿlÿLÿX	ÿ‹ÿÇÿkénÿàÿªÿ¢ÿ…ÿmÿTÿsócÿ¥ÿ‰ÿ«ÿlÿ"Éÿ­	ÿÿqÿ›ÿäÿ¯ÿ`ÿZÿ^ÿ^ÿXÿYÿjÿ{
+ÿÿÁÿÓÿ·ÿ¨
+ÿ±
+ÿ·ÿ,Ìÿ¦ıˆÿøÿ¢ÿ&½ÿ
+~ÿ	gÿVÿH	ÿ9ÿ1ÿ-ÿ„	ÿ	cÿÿÿÿ%ÿ2ÿ
+)ÿÿ!ÿÿÿ0ÿeÿ	ÿ!®2ÿ:älÿ.ÕNÿªÿJÿCÿNÿ
+z
+ÿ(Áÿƒíqÿµÿ‘ÿjÿMÿÁÿÊ!ÿhë\ÿ˜ü†ÿÀÿ„ÿ;ì(ÿ·
+ÿ•	ÿ	ÿÂÿĞÿ¨ÿzÿo
+ÿxÿ†ÿ–ÿ¤ÿÅÿÙÿÎÿ	ºÿ¹ÿ!Çÿ3Ğ&ÿFä/ÿÁÿŠÿøÿ¯ÿ˜ÿiÿƒÿfÿVÿR	ÿPÿ1ÿ(ÿÿÿÿÿÿ"ÿHÿJÿHÿ5
+ÿ ÿÿÿ,ÿ	Vÿ‰ÿ“	ÿ›	ÿ›	ÿ
+_ÿ9ÿ>ÿHÿ	cÿ$£ÿ3Í+ÿ$ÿ!ÿ´ÿœÿŸÿ¹ÿ4Ø2ÿnû\ÿÉÿ‡ÿ|õdÿ>Õ.ÿ½ÿ·ÿ#ğÿ1ù0ÿÂÿ½ÿÃÿÌÿÏÿĞÿÌÿÈÿ(Ë"ÿFØ;ÿqècÿµÿŒÿôÿ—ÿÓÿ‚ÿ§ı|ÿ‘äpÿ†ÿbÿTÿKÿÿ±ÿŒ	ÿ	Vÿÿÿÿÿÿ.ÿKÿMÿKÿG
+ÿÿÿÿÿ;ÿMÿgÿ
+fÿ>ÿ0ÿ7ÿ;ÿ@ÿKÿjÿ
+…ÿ‘ÿ	ˆÿ
+‹ÿ
+ÿ–ÿ§ÿÀÿ?á8ÿùÿ–ÿ—ÿzÿ-Ø'ÿÿÿÿXÿÅÿÿÅÿºÿ½ÿÂÿÇÿ+Í%ÿIÙ=ÿêmÿ­ÿÿÒÿ˜ÿäÿ–ÿ£ÿsÿ^ÚIÿ/°&ÿ‰ÿnÿ]ÿN
+ÿD	ÿ;ÿ€	ÿ±ÿ)ÇBÿÿ
+Pÿÿÿÿÿ
+(ÿKÿLÿLÿJ
+ÿÿÿÿÿÿ%ÿ'ÿÿ$ÿ)ÿ/ÿLÿzÿ]ÿKÿZÿfÿrÿ	~ÿ
+ˆÿ
+ÿÿ™ÿ¯ÿ?å6ÿÅÿ…ÿ¡ÿyÿ€ÿYÿ€îhÿ“ÿrÿÃÿsÿàÿ'Ï%ÿXÜNÿƒé{ÿöŠÿ¶ÿÿÜÿ–ÿ±ÿuÿXñAÿ!Åÿ ÿ
+ˆÿqÿ`
+ÿS
+ÿK	ÿ=ÿ4ÿ+ÿCÿ˜ÿ(¾Aÿ¢"ÿwÿ ÿÿÿÿÿEÿKÿJÿG
+ÿÿÿÿÿÿÿÿÿÿ#ÿ3ÿŸ
+ÿ¹ÿ¬	ÿEÿGÿ3ÿ*
+ÿ2ÿJÿ
+„ÿ
+†ÿ
+‰ÿÿ—ÿ0Ã/ÿÿÿ‹ÿ{òdÿ-À+ÿ8Ë2ÿ•ûÿ¿ÿÿšÿ|ÿŠî{ÿ•ÿtÿÿ`ÿTñ?ÿºÿ§ÿ–ÿ
+ÿ	lÿ\
+ÿS	ÿKÿ>ÿ7ÿ3ÿ&ÿ!ÿÿAÿsÿ}	ÿ	Rÿÿÿÿÿÿÿ;ÿ?ÿ0
+ÿÿÿÿ.ÿQ&ÿÿÿÿÿ ÿ&ÿoÿ£	ÿxÿ7ÿÿ
+ÿÿÿ%ÿ	wÿ	{ÿ
+~ÿ	~ÿ
+€ÿ‚ÿL»Gÿ$³(ÿ•ÿ¥ÿgÒZÿ~Ûmÿ_üFÿ4ú%ÿ¨ÿŒÿ	‚ÿtÿgÿ\ÿR	ÿJÿDÿ=ÿ5ÿ/ÿ	Tÿuÿ+ÿÿÿÿÿ+ÿÿÿÿÿÿ
+ÿ
+ÿ
+ÿÿÿÿÿ1ÿ&Iÿ+Rÿ8ÿÿÿÿÿ ÿ#ÿ5ÿ+ÿÿÿÿ 
+ÿÿÿSÿªÿ	†ÿhÿ	lÿ	nÿ	oÿ	tÿ	|ÿƒÿ„ÿ„ÿ
+~ÿ	tÿiÿ`ÿUÿ:	ÿ ÿÿ+ÿ8ÿ4ÿ/ÿ)ÿHÿ}ÿsÿ,ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ=ÿ(‘Lÿt;ÿÿÿÿÿÿÿÿ"ÿ&ÿÿÿÿ  ÿ  ÿÿ9ÿˆ
+ÿU	ÿJÿKÿTÿUÿWÿLÿ:ÿ5ÿ1ÿ1ÿ@ÿK
+ÿEÿ'ÿÿÿ5ÿ
+ÿ+ÿ(ÿ#ÿ"ÿcÿqÿ
+Wÿÿÿÿÿÿÿÿÿÿ
+ÿ	ÿaÿ	Uÿÿÿÿÿ
+ÿÿ+ÿÿÿÿÿÿÿÿÿÿÿÿ  ÿ  ÿ  ÿÿÿ2ÿ/ÿÿÿÿ+ÿ>ÿ2ÿÿÿÿÿÿÿ3ÿ1ÿÿÿs=ÿ#€Dÿ
+)ÿ$ÿ"ÿÿÿ	Sÿ`ÿ%ÿÿÿÿÿÿÿÿÿ
+ÿÿÿÿÿÿÿÿÿ	ÿ
+ÿ
+ÿÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿ+ÿ-ÿÿÿ
+ÿÿÿ1ÿÿÿÿÿÿÿÿ%ÿÿ	ÿÿ'Jÿj8ÿ!ÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+ÿÿÿÿÿÿÿÿÿÿ%)%ÿÿÿÿÿÿÿÿÿÿ ÿ#ÿ$ÿÿÿÿÿ	ÿ&ÿ1ÿ5ÿÿÿ	ÿ
+ÿ&ÿ1ÿÿÿÿ
+ÿ
+ÿÿ	ÿ
+!
+ÿ
+
+ÿ
+ÿ	ÿb3ÿ(ÿÿ
+
+ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ

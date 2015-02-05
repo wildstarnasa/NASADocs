@@ -26,13 +26,13 @@
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="390" TAnchorPoint="0" TAnchorOffset="309" RAnchorPoint="0" RAnchorOffset="740" BAnchorPoint="0" BAnchorOffset="454" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CustomizeLeftBG" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" NewControlDepth="1" Tooltip="" Border="0" UseTemplateBG="0">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-3" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="CustomizeLeftList" BGColor="white" TextColor="white" TooltipColor="" VScroll="1" IgnoreMouse="1" AutoHideScroll="0" Border="0" UseTemplateBG="0"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="36" RelativeToClient="1" Font="CRB_Header12" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="LeftFlairTitle" TooltipColor="" TextId="MountScreen_SideFlair" DT_VCENTER="1" DT_CENTER="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="36" RelativeToClient="1" Font="CRB_Header12" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="LeftFlairTitle" TooltipColor="" TextId="MountScreen_LeftFlair" DT_VCENTER="1" DT_CENTER="1"/>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="390" TAnchorPoint="0" TAnchorOffset="457" RAnchorPoint="0" RAnchorOffset="740" BAnchorPoint="0" BAnchorOffset="602" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CustomizeRightBG" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" NewControlDepth="1" Tooltip="" UseTemplateBG="0" Border="0">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-3" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="CustomizeRightList" BGColor="white" TextColor="white" TooltipColor="" VScroll="1" IgnoreMouse="1" AutoHideScroll="0" Border="0" UseTemplateBG="0"/>
             <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="9" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_Header12" Text="" TextId="MountScreen_RightFlair" DT_CENTER="1"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="391" TAnchorPoint="0" TAnchorOffset="49" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MountCanCustomizeBlockers" BGColor="white" TextColor="white" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" Visible="0" NewControlDepth="1" HideInEditor="0">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="391" TAnchorPoint="0" TAnchorOffset="49" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MountCanCustomizeBlockers" BGColor="white" TextColor="white" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" Visible="0" NewControlDepth="1" HideInEditor="1">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="108" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MouseBlocker1" BGColor="ef05171c" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="0" Sprite="BasicSprites:WhiteFill" NewControlDepth="1" Tooltip="">
                 <Pixie LAnchorPoint="0.5" LAnchorOffset="-30" TAnchorPoint="0.5" TAnchorOffset="-15" RAnchorPoint="0.5" RAnchorOffset="29" BAnchorPoint="0.5" BAnchorOffset="38" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="ClientSprites:Icon_Windows_UI_CRB_Lock_Holo" Line="0"/>
                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="46" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="String" TooltipColor="" TextId="MountScreen_CantBeCustomized" DT_VCENTER="1" DT_CENTER="1"/>
@@ -73,3 +73,88 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-1" BAnchorPoint="1" BAnchorOffset="0" Sprite="BK3:UI_BK3_Metal_Inset_SharpCorner" BGColor="white" TextColor="black" Rotation="0" Font="Default"/>
     </Form>
 </Forms>
+------------------------------------------------------------------
+function MessageManager:OnHideText() -- for testing
+    self:HideMessage(LuaEnumMessageField.Upper)
+    self:HideMessage(LuaEnumMessageField.Middle)
+    self:HideMessage(LuaEnumMessageField.Alert)
+    self:HideMessage(LuaEnumMessageField.Lower)
+end
+---------------------------------------------------------------------------------------------------
+function MessageManager:OnMessageFinished(oMessage)
+
+    local eField = nil
+    for key, eValue in pairs(LuaEnumMessageField) do
+        if self.tMessagesOnScreen[eValue] ~= nil and self.tMessagesOnScreen[eValue].oMessage == oMessage then
+            -- remove the tMessage from the tMessagesOnScreen list
+            self.tMessagesOnScreen[eValue] = nil
+        end
+    end
+end
+---------------------------------------------------------------------------------------------------
+-- MessageManager instance
+---------------------------------------------------------------------------------------------------
+local MessageManagerInst = MessageManager:new()
+MessageManagerInst:Init()
+loor(math.abs(Time.SecondsElapsed(oExpirationTime))) -- CLuaTime object
+	local nHours = math.floor(nInSeconds / 3600)
+	local nMins = math.floor(nInSeconds / 60 - (nHours * 60))
+
+	if nHours > 0 then
+		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Hours"), nHours)
+	elseif nMins > 0 then
+		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Minutes"), nMins)
+	else
+		strResult = Apollo.GetString("MarketplaceListings_LessThan1m")
+	end
+	return strResult
+end
+
+function MarketplaceListings:FactoryProduce(wndParent, strFormName, tObject) -- Using AuctionObjects
+	local wnd = wndParent:FindChildByUserData(tObject)
+	if not wnd then
+		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
+		wnd:SetData(tObject)
+	end
+	return wnd
+end
+
+local MarketplaceListingsInst = MarketplaceListings:new()
+MarketplaceListingsInst:Init()
+tplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResult)
+	if self.tWindowMap["WaitingScreen"] then
+		local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
+		self.tWindowMap["WaitingScreen"]:Show(false)
+		self.tWindowMap["PostResultNotification"]:Show(true)
+		self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
+		self.tWindowMap["PostResultNotificationLabel"]:SetTextColor(bSuccess and ApolloColor.new("UI_TextHoloTitle") or ApolloColor.new("xkcdLightOrange"))
+
+		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString((ktResultErrorCodeStrings[eResult] or MarketplaceCredd_Error_GenericFail)))
+	end
+
+	Apollo.StartTimer("HidePostResultNotification")
+	self:RefreshBoundCredd()
+end
+
+function MarketplaceCREDD:OnHidePostResultNotification() -- Both Timer and Mouse Click
+	if self.tWindowMap["PostResultNotification"] then
+		self.tWindowMap["PostResultNotification"]:Show(false)
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Log
+-----------------------------------------------------------------------------------------------
+
+function MarketplaceCREDD:OnCREDDOperationHistoryResults(tHistory)
+	if not self.tWindowMap["LogScroll"] or not self.tWindowMap["LogScroll"]:IsValid() or not self.tWindowMap["LogScroll"]:IsVisible() then
+		return
+	end
+
+	-- Sort table
+	table.sort(tHistory, function(a,b) return a.nLogAge < b.nLogAge end)
+
+	self.tWindowMap["LogScroll"]:DestroyChildren()
+	for idx, tEntry in pairs(tHistory) do
+		local wndEntry = Apollo.LoadForm(self.xmlDoc, "LogEntryBasicForm", self.tWindowMap["LogScroll"], self)
+		wndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntr

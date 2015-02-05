@@ -167,3 +167,58 @@
         <Event Name="WindowMove" Function="OnWndMinimizedMove"/>
     </Form>
 </Forms>
+TrackerTabIcon"):SetSprite(self:CalculateIconPath(clgCurrent:GetType(), true))
+
+	return idChallenge
+end
+
+function Challenges:OnTrackTab1Push(wndHandler, wndControl)
+	self:OnTrackerTabPush(wndHandler:GetData(), 1)
+end
+
+function Challenges:OnTrackTab2Push(wndHandler, wndControl)
+	self:OnTrackerTabPush(wndHandler:GetData(), 2)
+end
+
+function Challenges:OnTrackTab3Push(wndHandler, wndControl)
+	self:OnTrackerTabPush(wndHandler:GetData(), 3)
+end
+
+function Challenges:OnTrackTab4Push(wndHandler, wndControl)
+	self:OnTrackerTabPush(wndHandler:GetData(), 4)
+end
+
+function Challenges:OnTrackerTabPush(idTabChallenge, nCurrentTabNumber)
+    if idTabChallenge ~= LuaEnumTabState.Empty and idTabChallenge ~= LuaEnumTabState.Fail and idTabChallenge ~= LuaEnumTabState.Reward and self.idCurrTabSelection ~= nCurrentTabNumber then
+        self:StartTracker(idTabChallenge) -- If you click a timer then promote it
+
+	elseif idTabChallenge == LuaEnumTabState.Fail then
+		self:DrawCompletedMessage(nCurrentTabNumber, LuaEnumTabState.Fail)
+
+	elseif idTabChallenge == LuaEnumTabState.Reward then
+		self:DrawCompletedMessage(nCurrentTabNumber, LuaEnumTabState.Reward)
+    end
+	self.idCurrTabSelection = nCurrentTabNumber -- New selection
+end
+
+function Challenges:AutoPromoteAnActiveTab()
+	local bThereIsAnActiveChallenge = false
+	local bThereIsAFailStateToBeRead = false
+	local bThereIsARewardStateToBeRead = false
+
+	self:GetActiveChallenges()
+	if #self.tActiveChallenges ~= 0 then
+		bThereIsAnActiveChallenge = true
+	end
+
+	for key, wndTrackerTab in pairs(self.tWndTrackerTabs) do
+		if wndTrackerTab:GetData() == LuaEnumTabState.Fail then
+			bThereIsAFailStateToBeRead = true
+		end
+		if wndTrackerTab:GetData() == LuaEnumTabState.Reward then
+			bThereIsARewardStateToBeRead = true
+		end
+	end
+
+	-- If we ONLY have fail states, promote a fail one
+	if not bThereIsAnActiveChallenge and bThereIsAFailStateToBeRead and not self.wndCompletedDisplay:IsShown() the

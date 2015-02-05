@@ -58,8 +58,9 @@ function GuildInfo:Initialize(wndParent)
 	
 	self.wndMain:SetData(guildOwner)
 	
-	self.wndMain:FindChild("EditInfoBtn"):AttachWindow(self.wndMain:FindChild("EditInfoContainer"))
-	self.wndMain:FindChild("EditMessageBtn"):AttachWindow(self.wndMain:FindChild("EditMotDContainer"))
+	self.wndMain:FindChild("EditInfoBtn"):AttachWindow(self.wndMain:FindChild("EditAdditionalInfo"))
+	self.wndMain:FindChild("EditMessageBtn"):AttachWindow(self.wndMain:FindChild("EditMOTD"))
+	self.wndMain:FindChild("NewsPane"):ArrangeChildrenVert(1)
 end
 
 function GuildInfo:OnToggleInfo(wndParent)
@@ -121,13 +122,12 @@ function GuildInfo:PopulateInfoPane()
 	self.wndMain:FindChild("GuildTaxOffBtn"):SetCheck(not tGuildFlags.bTax)
 	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), tGuildFlags.bTax and Apollo.GetString("MatchMaker_FlagOn") or Apollo.GetString("MatchMaker_FlagOff")))
 	self.wndMain:FindChild("GuildTaxBtnContainer"):Show(tMyRankPermissions.bChangeRankPermissions) -- GOTCHA: This is actually guild tax, it uses an existing
-
 	-- More data
 	self.wndMain:FindChild("EditMessageBtn"):Show(tMyRankPermissions.bMessageOfTheDay)
 	self.wndMain:FindChild("EditInfoBtn"):Show(tMyRankPermissions.bMessageOfTheDay)
-	self.wndMain:FindChild("GuildMasterName"):SetText(self.tGuildLeader and self.tGuildLeader.strName or "")
-	self.wndMain:FindChild("GuildCreatedDate"):SetText(self:HelperRelativeTimeToString(guildOwner:GetCreationDate()))
-	self.wndMain:FindChild("GuildMemberCount"):SetText(String_GetWeaselString(Apollo.GetString("Guild_MemberCount"), guildOwner:GetMemberCount(), guildOwner:GetOnlineMemberCount()))
+	self.wndMain:FindChild("GuildMasterName"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ff5f6662\">%s %s</T><T Font=\"CRB_InterfaceSmall_BB\" TextColor=\"UI_TextMetalBodyHighlight\">%s</T>", Apollo.GetString("GuildInfo_LeaderName"), " ", self.tGuildLeader and self.tGuildLeader.strName or ""))
+	self.wndMain:FindChild("GuildCreatedDate"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ff5f6662\">%s %s</T><T Font=\"CRB_InterfaceSmall_BB\" TextColor=\"UI_TextMetalBodyHighlight\">%s</T>", Apollo.GetString("GuildInfo_DateCreated"), " ", self:HelperRelativeTimeToString(guildOwner:GetCreationDate())))
+	self.wndMain:FindChild("GuildMemberCount"):SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"ff5f6662\">%s %s</T><T Font=\"CRB_InterfaceSmall_BB\" TextColor=\"UI_TextMetalBodyHighlight\">%s</T>", Apollo.GetString("GuildInfo_MemberCount"), " ", String_GetWeaselString(Apollo.GetString("Guild_MemberCount"), guildOwner:GetMemberCount(), guildOwner:GetOnlineMemberCount())))
 	self.wndMain:FindChild("GuildMotD"):SetText(guildOwner:GetMessageOfTheDay())
 	self.wndMain:FindChild("GuildInfoText"):SetText(guildOwner:GetInfoMessage())
 	self.wndMain:FindChild("GuildName"):SetText(guildOwner:GetName())
@@ -223,7 +223,7 @@ end
 
 function GuildInfo:OnEditMotDCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("EditMotDEditBox"):SetText("")
-	self.wndMain:FindChild("EditMotDContainer"):Show(false)
+	self.wndMain:FindChild("EditMOTD"):Show(false)
 
 end
 
@@ -284,7 +284,7 @@ end
 
 function GuildInfo:OnEditInfoCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("EditInfoEditBox"):SetText("")
-	self.wndMain:FindChild("EditInfoContainer"):Show(false)
+	self.wndMain:FindChild("EditAdditionalInfo"):Show(false)
 
 end
 
@@ -445,5 +445,52 @@ function GuildInfo:OnGuildName(guildUpdated)
 	end
 end
 
+function GuildInfo:OnNewsExpand()
+	local nLeftMotD, nTopMotD, nRightMotD, nBottomMotD = self.wndMain:FindChild("InfoPaneLabel1"):GetAnchorOffsets()
+	local nLeftInfo, nTopInfo, nRightInfo, nBottomInfo = self.wndMain:FindChild("InfoPaneLabel2"):GetAnchorOffsets()
+	local nLeftNews, nTopNews, nRightNews, nBottomNews = self.wndMain:FindChild("NewsFraming"):GetAnchorOffsets()
+	local nBottomNewsStuckToBottom = nBottomNews --Saving initial bottom anchor before it's changed
+	self.wndMain:FindChild("InfoPaneLabel1"):SetAnchorOffsets(nLeftMotD, nTopMotD, nRightMotD, nTopMotD + 35)
+	self.wndMain:FindChild("InfoPaneLabel2"):SetAnchorOffsets(nLeftInfo, nTopInfo, nRightInfo, nTopInfo + 35)
+	self.wndMain:FindChild("NewsPane"):ArrangeChildrenVert(0)
+	
+	local nLeftNews2, nTopNews2, nRightNews2, nBottomNews2 = self.wndMain:FindChild("NewsFraming"):GetAnchorOffsets() -- This needs to run AFTER ArrangeChildren
+	self.wndMain:FindChild("NewsFraming"):SetAnchorOffsets(nLeftNews2, nTopNews2, nRightNews2, nBottomNewsStuckToBottom)
+end
+
+function GuildInfo:OnNewsCollapse()
+	local nLeftMotD, nTopMotD, nRightMotD, nBottomMotD = self.wndMain:FindChild("InfoPaneLabel1"):GetAnchorOffsets()
+	local nLeftInfo, nTopInfo, nRightInfo, nBottomInfo = self.wndMain:FindChild("InfoPaneLabel2"):GetAnchorOffsets()
+	local nLeftNews, nTopNews, nRightNews, nBottomNews = self.wndMain:FindChild("NewsFraming"):GetAnchorOffsets()
+	local nBottomNewsStuckToBottom = nBottomNews --Saving initial bottom anchor before it's changed
+	self.wndMain:FindChild("InfoPaneLabel1"):SetAnchorOffsets(nLeftMotD, nTopMotD, nRightMotD, nTopMotD + 120)
+	self.wndMain:FindChild("InfoPaneLabel2"):SetAnchorOffsets(nLeftInfo, nTopInfo, nRightInfo, nTopInfo + 120)
+	self.wndMain:FindChild("NewsPane"):ArrangeChildrenVert(0)
+	
+	local nLeftNews2, nTopNews2, nRightNews2, nBottomNews2 = self.wndMain:FindChild("NewsFraming"):GetAnchorOffsets()-- This needs to run AFTER ArrangeChildren
+	self.wndMain:FindChild("NewsFraming"):SetAnchorOffsets(nLeftNews2, nTopNews2, nRightNews2, nBottomNewsStuckToBottom)
+end
+
 local GuildInst = GuildInfo:new()
 GuildInst:Init()
+-----------------------------------------------------------------------------------------
+-- Cash
+-----------------------------------------------------------------------------------------------
+
+function GuildBank:OnBankTabBtnCash()
+	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
+		return
+	end
+
+	self.tWndRefs.wndMain:SetFocus()
+	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_MoneyAppend")))
+
+	local guildOwner = self.tWndRefs.wndMain:GetData()
+	local wndParent = self.tWndRefs.wndMain:FindChild("CashScreenMain")
+
+	local nTransactionAmount = wndParent:FindChild("GuildCashInteractEditCashWindow"):GetAmount()
+	wndParent:FindChild("GuildCashDeposit"):Enable(nTransactionAmount > 0)
+	wndParent:FindChild("GuildCashWithdraw"):Enable(nTransactionAmount > 0)
+	wndParent:FindChild("GuildCashInteractEditHelpText"):Show(nTransactionAmount == 0)
+
+	wndParent:FindChild("GuildCashAmountWindow"):S

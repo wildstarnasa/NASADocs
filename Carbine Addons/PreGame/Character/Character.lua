@@ -4,6 +4,8 @@ require "CharacterScreenLib"
 require "PreGameLib"
 require "Sound"
 
+
+
 ---------------------------------------------------------------------------------------------------
 -- Character module definition
 
@@ -23,39 +25,36 @@ local s_isInSelectButtons = false
 
 local c_arRaceStrings =  --inserting values so we can use direct race numbering. Each holds a table with name, then description
 {
-	[PreGameLib.CodeEnumRace.Human] 		= {"CRB_ExileHuman", 	"CRB_CC_Race_ExileHumans",},
-	[PreGameLib.CodeEnumRace.Mordesh] 		= {"CRB_Mordesh", 		"CRB_CC_Race_Mordesh",},
-	[PreGameLib.CodeEnumRace.Granok] 		= {"CRB_DemoCC_Granok",	"CRB_CC_Race_Granok",},
-	[PreGameLib.CodeEnumRace.Aurin] 		= {"CRB_DemoCC_Aurin",	"CRB_CC_Race_Aurin",},
-	[PreGameLib.CodeEnumRace.Draken] 		= {"RaceDraken",		"CRB_CC_Race_Draken",},
-	[PreGameLib.CodeEnumRace.Mechari] 		= {"RaceMechari",		"CRB_CC_Race_Mechari",},
-	[PreGameLib.CodeEnumRace.Chua] 			= {"RaceChua",			"CRB_CC_Race_Chua",},
-	[k_idCassian] 							= {"CRB_Cassian",		"CRB_CC_Race_DominionHumans",},
+	[PreGameLib.CodeEnumRace.Human] 		= {strName = "CRB_ExileHuman", 		strFaction="CRB_Exiles",		strDescription = "CRB_CC_Race_ExileHumans", 		strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuM_ExNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuF_ExNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Mordesh] 		= {strName = "CRB_Mordesh", 			strFaction="CRB_Exiles", 		strDescription = "CRB_CC_Race_Mordesh", 			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MoMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MoFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Granok] 		= {strName = "CRB_DemoCC_Granok", 	strFaction="CRB_Exiles",		strDescription = "CRB_CC_Race_Granok", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_GrMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_GrFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Aurin] 			= {strName = "CRB_DemoCC_Aurin",	strFaction="CRB_Exiles",		strDescription = "CRB_CC_Race_Aurin", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_AuMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_AuFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Draken] 		= {strName = "RaceDraken",				strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Draken", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_DrMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_DrFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[PreGameLib.CodeEnumRace.Mechari] 		= {strName = "RaceMechari",				strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Mechari",				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MeMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MeFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[PreGameLib.CodeEnumRace.Chua] 			= {strName = "RaceChua",					strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Chua", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_ChuaNormal",		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_ChuaNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[k_idCassian] 										= {strName = "CRB_Cassian",				strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_DominionHumans",	strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuM_DomNormal", strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuF_DomNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
 }
 
 local c_arClassStrings =  --inserting values so we can use direct class numbering. Each holds a table with name, then description
 {
-	[PreGameLib.CodeEnumClass.Warrior] 		= {"ClassWarrior", 		"CRB_CC_Class_Warrior",},
-	[PreGameLib.CodeEnumClass.Engineer] 	= {"ClassEngineer", 	"CRB_CC_Class_Engineer",},
-	[PreGameLib.CodeEnumClass.Esper] 		= {"ClassESPER", 		"CRB_CC_Class_Esper",},
-	[PreGameLib.CodeEnumClass.Medic] 		= {"ClassMedic", 		"CRB_CC_Class_Medic",},
-	[PreGameLib.CodeEnumClass.Stalker] 		= {"ClassStalker", 		"CRB_CC_Class_Stalker",},
-	--{"ClassWeaver", 		"CRB_DemoCC_Corrupted_Desc",}, -- Corrupted
-	[PreGameLib.CodeEnumClass.Spellslinger] = {"ClassSpellslinger", "CRB_CC_Class_Spellslinger",},
-	--{"ClassSorcerer", 		"CRB_DemoCC_DarkWeaver_Desc",}, -- Dark Weaver
-	--{"ClassCharmer", 		"CRB_DemoCC_Charmer_Desc",},
+	[PreGameLib.CodeEnumClass.Warrior] 		= {strName = "ClassWarrior", 			strDescription = "CharacterCreation_Blurb_Warrior",		strIcon="bk3:UI_Icon_CharacterCreate_Class_Warrior",},
+	[PreGameLib.CodeEnumClass.Engineer] 	= {strName = "ClassEngineer", 		strDescription = "CharacterCreation_Blurb_Engineer",		strIcon="bk3:UI_Icon_CharacterCreate_Class_Engineer",},
+	[PreGameLib.CodeEnumClass.Esper] 		= {strName = "ClassESPER", 			strDescription = "CharacterCreation_Blurb_Esper",			strIcon="Ibk3:UI_Icon_CharacterCreate_Class_Esper",},
+	[PreGameLib.CodeEnumClass.Medic] 		= {strName = "ClassMedic", 			strDescription = "CharacterCreation_Blurb_Medic",			strIcon="bk3:UI_Icon_CharacterCreate_Class_Medic",},
+	[PreGameLib.CodeEnumClass.Stalker] 		= {strName = "ClassStalker", 			strDescription = "CharacterCreation_Blurb_Stalker",		strIcon="bk3:UI_Icon_CharacterCreate_Class_Stalker",},
+	[PreGameLib.CodeEnumClass.Spellslinger] = {strName = "ClassSpellslinger", 	strDescription = "CharacterCreation_Blurb_Spellslinger",	strIcon="bk3:UI_Icon_CharacterCreate_Class_Spellslinger",},
 }
 
 local c_arRaceButtons =  --inserting values so we can use direct race numbering. Each holds a table with name, then description
 {
 	[PreGameLib.CodeEnumRace.Human] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Ex", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Ex"},
-	[PreGameLib.CodeEnumRace.Mordesh] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_MoM", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_MoF"},
-	[PreGameLib.CodeEnumRace.Granok] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_GrM", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_GrF"},
-	[PreGameLib.CodeEnumRace.Aurin] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_AuM", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_AuF"},
-	[PreGameLib.CodeEnumRace.Draken] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_DrM", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_DrF"},
-	[PreGameLib.CodeEnumRace.Mechari] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_MeM", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_MeF"},
+	[PreGameLib.CodeEnumRace.Mordesh] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_MoM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_MoF"},
+	[PreGameLib.CodeEnumRace.Granok] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_GrM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_GrF"},
+	[PreGameLib.CodeEnumRace.Aurin] 			= {male = "CRB_CharacterCreateSprites:btnCharC_RG_AuM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_AuF"},
+	[PreGameLib.CodeEnumRace.Draken] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_DrM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_DrF"},
+	[PreGameLib.CodeEnumRace.Mechari] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_MeM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_MeF"},
 	[PreGameLib.CodeEnumRace.Chua] 			= {male = "CRB_CharacterCreateSprites:btnCharC_RG_Chua"}, -- Chua
-	[k_idCassian]	 						= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Dom", female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Dom"},
+	[k_idCassian]	 									= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Dom", female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Dom"},
 }
 
 local c_arFactionStrings =
@@ -89,10 +88,10 @@ local c_arAllowedClass =
 
 local c_arPathStrings =  --paths are sequential but zero-indexed
 {
-	[PreGameLib.CodeEnumPlayerPathType.Soldier] 	= {"CRB_Soldier", 	"CRB_CC_Path_Soldier"},
-	[PreGameLib.CodeEnumPlayerPathType.Settler] 	= {"CRB_Settler", 	"CRB_CC_Path_Settler"},
-	[PreGameLib.CodeEnumPlayerPathType.Scientist] 	= {"CRB_Scientist", "CRB_CC_Path_Scientist"},
-	[PreGameLib.CodeEnumPlayerPathType.Explorer] 	= {"CRB_Explorer", 	"CRB_CC_Path_Explorer"},
+	[PreGameLib.CodeEnumPlayerPathType.Soldier] 		= {strName = "CRB_Soldier", 		strDescription = "CharacterCreation_Blurb_Soldier",		strIcon = "bk3:UI_Icon_CharacterCreate_Path_Soldier"},
+	[PreGameLib.CodeEnumPlayerPathType.Settler] 	= {strName = "CRB_Settler", 		strDescription = "CharacterCreation_Blurb_Settler",	strIcon = "bk3:UI_Icon_CharacterCreate_Path_Settler"},
+	[PreGameLib.CodeEnumPlayerPathType.Scientist] 	= {strName = "CRB_Scientist", 	strDescription = "CharacterCreation_Blurb_Scientist",	strIcon = "bk3:UI_Icon_CharacterCreate_Path_Scientist"},
+	[PreGameLib.CodeEnumPlayerPathType.Explorer] 	= {strName = "CRB_Explorer", 	strDescription = "CharacterCreation_Blurb_Explorer",	strIcon = "bk3:UI_Icon_CharacterCreate_Path_Explorer"},
 }
 
 local c_SceneTime = 6 * 60 * 60 -- seconds from midnight
@@ -702,6 +701,8 @@ function Character:SetCreateForms()
 	g_controls:FindChild("ExitForm"):FindChild("BackBtnLabel"):SetText(Apollo.GetString("CRB_Cancel"))
 	g_controls:FindChild("OptionsContainer"):Show(true)
 
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"))
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("Footer"):SetGlobalRadioSel("PreGameClassPreview", 0)
 	self.wndInfoPane:Show(true)
 	self.wndCustOptionPanel:Show(false)
 
@@ -771,6 +772,8 @@ function Character:OnSelectDefiance()
 	self:EnableButtons()
 
 	self:OnRandomizeBtn()
+	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"))
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -822,7 +825,7 @@ function Character:FillPickerButtons()
 			self.nRaceLeft, self.nRaceTop, self.nRaceRight, self.nRaceBottom = wndRace:FindChild("TitleFieldBacker"):GetAnchorOffsets()
 
 			self.arRaces2[creation.raceId] = { wnd = wndRace, btnIdx = raceIdx }
-			self.arRaces2[creation.raceId].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[creation.raceId][1]))
+			self.arRaces2[creation.raceId].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[creation.raceId].strName))
 			self.arRaces2[creation.raceId].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):SetData(creation.raceId)
 			self.arRaces2[creation.raceId].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):SetData(creation.raceId)
 			self.arRaces2[creation.raceId].wnd:SetData(creation.raceId)
@@ -857,9 +860,6 @@ function Character:FillPickerButtons()
 		self.wndPathPicker:FindChild("PathBtn" .. i):SetData(arPaths[i].path)
 	end
 end
-
-
-
 
 ---------------------------------------------------------------------------------------------------
 function Character:EnableButtons()
@@ -915,6 +915,8 @@ function Character:EnableButtons()
 
 		if classes.wnd:IsEnabled() then
 			classes.wnd:FindChild("Icon"):SetBGColor(CColor.new(1, 1, 1, 1))
+			self.wndRacePicker:FindChild("ClassPrompt_" .. classIdx):SetBGColor(CColor.new(1, 1, 1, 1))
+
 			classes.wnd:SetBGColor(CColor.new(1, 1, 1, 1))
 			if selected.classId == 7 then -- custom handling for the Spellslinger
 				classes.wnd:SetCheck(classes.btnIdx == 6)
@@ -922,22 +924,14 @@ function Character:EnableButtons()
 				classes.wnd:SetCheck(classes.btnIdx == selected.classId)
 			end
 
-			classes.wnd:SetText("           " .. Apollo.GetString(c_arClassStrings[classIdx][1]))
-			classes.wnd:FindChild("IconFrame"):SetSprite("CRB_CharacterCreateSprites:sprCharC_ClassFooterIconBlue")
-
-			self.wndRacePicker:FindChild("ClassIconBlocker" .. classIdx):Show(false)
-
+			classes.wnd:SetText("           " .. Apollo.GetString(c_arClassStrings[classIdx].strName))
+			
 		else
-			classes.wnd:SetText("           " .. Apollo.GetString(c_arClassStrings[classIdx][1]))
+			classes.wnd:SetText("           " .. Apollo.GetString(c_arClassStrings[classIdx].strName))
 			classes.wnd:FindChild("Icon"):SetBGColor(CColor.new(1, 1, 1, .2))
+			self.wndRacePicker:FindChild("ClassPrompt_" .. classIdx):SetBGColor(CColor.new(1, 1, 1, .2))
 			classes.wnd:SetBGColor(CColor.new(.6, .6, .6, .6))
-			classes.wnd:FindChild("IconFrame"):SetSprite("CRB_CharacterCreateSprites:sprCharC_ClassFooterIconDisabled")
 
-			self.wndRacePicker:FindChild("ClassIconBlocker" .. classIdx):Show(true)
-		end
-
-		if classes.wnd:IsChecked() then
-			classes.wnd:FindChild("IconFrame"):SetSprite("CRB_CharacterCreateSprites:sprCharC_ClassFooterIconWhite")
 		end
 	end
 
@@ -954,13 +948,13 @@ function Character:SelectButtons()
 	s_isInSelectButtons = true
 
 	if selected.factionId == PreGameLib.CodeEnumFaction.Dominion then -- Dominion
-		self.arRaces2[1].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[100][1]))
-		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):ChangeArt(c_arRaceButtons[100].male)
-		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):ChangeArt(c_arRaceButtons[100].female)
+		self.arRaces2[1].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[k_idCassian].strName))
+		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):ChangeArt(c_arRaceButtons[k_idCassian].male)
+		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):ChangeArt(c_arRaceButtons[k_idCassian].female)
 	else
-		self.arRaces2[1].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[1][1]))
-		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):ChangeArt(c_arRaceButtons[1].male)
-		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):ChangeArt(c_arRaceButtons[1].female)
+		self.arRaces2[1].wnd:FindChild("TitleEntry"):SetText(Apollo.GetString(c_arRaceStrings[PreGameLib.CodeEnumRace.Human].strName))
+		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionMale"):ChangeArt(c_arRaceButtons[PreGameLib.CodeEnumRace.Human].male)
+		self.arRaces2[1].wnd:FindChild("HorizontalSortContainer"):FindChild("RaceOptionFemale"):ChangeArt(c_arRaceButtons[PreGameLib.CodeEnumRace.Human].female)
 	end
 	
 	local nTextWidth = Apollo.GetTextWidth("CRB_Button", self.arRaces2[1].wnd:FindChild("TitleEntry"):GetText())
@@ -970,15 +964,16 @@ function Character:SelectButtons()
 	else
 		self.arRaces2[1].wnd:FindChild("TitleFieldBacker"):SetAnchorOffsets(self.nRaceLeft, self.nRaceTop, self.nRaceRight, self.nRaceBottom)
 	end
-
-
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):SetText(Apollo.GetString(c_arFactionStrings[selected.factionId]))
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):SetHeightToContentHeight()
+	
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"):FindChild("InfoField"):SetText(Apollo.GetString(c_arFactionStrings[selected.factionId]))
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"):FindChild("InfoField"):SetHeightToContentHeight()
 
 	for idx, race in pairs(self.arRaces2) do
 		race.wnd:FindChild("RaceOptionMale"):SetCheck(false)
 		race.wnd:FindChild("RaceOptionFemale"):SetCheck(false)
 	end
+	
+	local strFormat = "<P Font=\"CRB_HeaderSmall\" TextColor=\"UI_TextHoloTitle\">%s%s<P TextColor=\"White\">%s</P></P>"
 
 	-- Set race buttons and info
 	if self.arRaces2[selected.raceId] ~= nil then  -- race
@@ -990,27 +985,27 @@ function Character:SelectButtons()
 			self.arRaces2[selected.raceId].wnd:FindChild("RaceOptionFemale"):SetCheck(true) -- shouldn't be needed, guarantees the check is shown
 		end
 
-		if selected.raceId == 1 then --humans
-			if selected.factionId == PreGameLib.CodeEnumFaction.Dominion then -- Dominion
-				self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):SetText(Apollo.GetString(c_arRaceStrings[100][2]))
-				self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("RaceSelection"):SetText(Apollo.GetString(c_arRaceStrings[100][1]))
-			else
-				self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):SetText(Apollo.GetString(c_arRaceStrings[selected.raceId][2]))
-				self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("RaceSelection"):SetText(Apollo.GetString(c_arRaceStrings[selected.raceId][1]))
-			end
+		if selected.raceId == PreGameLib.CodeEnumRace.Human and selected.factionId == PreGameLib.CodeEnumFaction.Dominion then -- Human Dominion
+			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"):FindChild("TitleField"):SetAML(string.format(strFormat, Apollo.GetString("Pregame_FactionInfo"), Apollo.GetString("Chat_ColonBreak"), Apollo.GetString(c_arRaceStrings[k_idCassian].strFaction)))
+			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("TitleField"):SetAML(string.format(strFormat, Apollo.GetString("CRB_CC_Info_Race_Information"), Apollo.GetString("Chat_ColonBreak"), Apollo.GetString(c_arRaceStrings[k_idCassian].strName)))
+			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("InfoField"):SetText(Apollo.GetString(c_arRaceStrings[k_idCassian].strDescription))
+			self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("RaceSelection"):SetText(Apollo.GetString(c_arRaceStrings[k_idCassian].strName))
 		else
-			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):SetText(Apollo.GetString(c_arRaceStrings[selected.raceId][2]))
-			self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("RaceSelection"):SetText(Apollo.GetString(c_arRaceStrings[selected.raceId][1]))
+			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"):FindChild("TitleField"):SetAML(string.format(strFormat, Apollo.GetString("Pregame_FactionInfo"), Apollo.GetString("Chat_ColonBreak"), Apollo.GetString(c_arRaceStrings[selected.raceId].strFaction)))
+			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("TitleField"):SetAML(string.format(strFormat, Apollo.GetString("CRB_CC_Info_Race_Information"), Apollo.GetString("Chat_ColonBreak"), Apollo.GetString(c_arRaceStrings[selected.raceId].strName)))
+			self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("InfoField"):SetText(Apollo.GetString(c_arRaceStrings[selected.raceId].strDescription))
+			self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("RaceSelection"):SetText(Apollo.GetString(c_arRaceStrings[selected.raceId].strName))
 		end
 
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):SetHeightToContentHeight()
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("InfoField"):SetHeightToContentHeight()
 	end
 
 	if self.arClasses2[selected.classId] ~= nil then -- classes; this has to update for demo auto-selection...
 		self.wndClassPicker:SetRadioSelButton("ClassSelect", self.arClasses2[selected.classId].wnd)
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField3"):SetText(Apollo.GetString(c_arClassStrings[selected.classId][2]))
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField3"):SetHeightToContentHeight()
-		self.wndControlFrame:FindChild("ClassOptionToggle"):FindChild("ClassSelection"):SetText(Apollo.GetString(c_arClassStrings[selected.classId][1]))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("TitleField"):SetAML(string.format(strFormat, Apollo.GetString("CRB_CC_Info_Class_Information"), Apollo.GetString("Chat_ColonBreak"),  Apollo.GetString(c_arClassStrings[selected.classId].strName)))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("InfoField"):SetText(Apollo.GetString(c_arClassStrings[selected.classId].strDescription))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("InfoField"):SetHeightToContentHeight()
+		self.wndControlFrame:FindChild("ClassOptionToggle"):FindChild("ClassSelection"):SetText(Apollo.GetString(c_arClassStrings[selected.classId].strName))
 	end
 
 	for i = 1,4 do
@@ -1021,42 +1016,123 @@ function Character:SelectButtons()
 
 	
 	if self.iSelectedPath ~= nil then
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetText(Apollo.GetString(c_arPathStrings[self.iSelectedPath][2]))
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetHeightToContentHeight()
-		self.wndControlFrame:FindChild("PathOptionToggle"):FindChild("PathSelection"):SetText(Apollo.GetString(c_arPathStrings[self.iSelectedPath][1]))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("TitleField"):SetAML(string.format(strFormat, Apollo.GetString("CRB_CC_Info_Path_Information"), Apollo.GetString("Chat_ColonBreak"), Apollo.GetString(c_arPathStrings[self.iSelectedPath].strName)))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("InfoField"):SetText(Apollo.GetString(c_arPathStrings[self.iSelectedPath].strDescription))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("InfoField"):SetHeightToContentHeight()
+		self.wndControlFrame:FindChild("PathOptionToggle"):FindChild("PathSelection"):SetText(Apollo.GetString(c_arPathStrings[self.iSelectedPath].strName))
 	else
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetText(Apollo.GetString("CRB_CC_Path_SelectPathPrompt"))
-		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetHeightToContentHeight()
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("InfoField"):SetText(Apollo.GetString("CRB_CC_Path_SelectPathPrompt"))
+		self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("InfoField"):SetHeightToContentHeight()
 	end
 
-	local lInfoFrame1, tInfoFrame1, rInfoFrame1, bInfoFrame1 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):GetAnchorOffsets()
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField1"):SetAnchorOffsets(lInfoFrame1, tInfoFrame1, rInfoFrame1, bInfoFrame1 + 4)
-	local lInfoFrame2, tInfoFrame2, rInfoFrame2, bInfoFrame2 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):GetAnchorOffsets()
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField2"):SetAnchorOffsets(lInfoFrame2, tInfoFrame2, rInfoFrame2, bInfoFrame2 + 4)
-	local lInfoFrame3, tInfoFrame3, rInfoFrame3, bInfoFrame3 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField3"):GetAnchorOffsets()
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField3"):SetAnchorOffsets(lInfoFrame3, tInfoFrame3, rInfoFrame3, bInfoFrame3 + 4)
-	local lInfoFrame4, tInfoFrame4, rInfoFrame4, bInfoFrame4 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):GetAnchorOffsets()
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField4"):SetAnchorOffsets(lInfoFrame4, tInfoFrame4, rInfoFrame4, bInfoFrame4 + 4)
+	local lInfoFrame1, tInfoFrame1, rInfoFrame1, bInfoFrame1 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"):FindChild("InfoField"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"):FindChild("InfoField"):SetAnchorOffsets(lInfoFrame1, tInfoFrame1, rInfoFrame1, bInfoFrame1 + 4)
+	local lInfoFrame2, tInfoFrame2, rInfoFrame2, bInfoFrame2 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("InfoField"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"):FindChild("InfoField"):SetAnchorOffsets(lInfoFrame2, tInfoFrame2, rInfoFrame2, bInfoFrame2 + 4)
+	local lInfoFrame3, tInfoFrame3, rInfoFrame3, bInfoFrame3 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("InfoField"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("InfoField"):SetAnchorOffsets(lInfoFrame3, tInfoFrame3, rInfoFrame3, bInfoFrame3 + 4)
+	local lInfoFrame4, tInfoFrame4, rInfoFrame4, bInfoFrame4 = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("InfoField"):GetAnchorOffsets()
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"):FindChild("InfoField"):SetAnchorOffsets(lInfoFrame4, tInfoFrame4, rInfoFrame4, bInfoFrame4 + 4)
+	
+	self:OnGearPreview()
 	self:FormatInfoPanel()
-
 	s_isInSelectButtons = false
 end
 
 function Character:FormatInfoPanel()
-	local nContentHeight = 0
-	for idx = 1, 4 do
-		local nTitleHeight = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("TitleField" .. idx):GetHeight()
-		local nBodyHeight = self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("InfoField" .. idx):GetHeight()
-		nContentHeight = nContentHeight + nTitleHeight + nBodyHeight
+	local selected = self.arCharacterCreateOptions[self.characterCreateIndex]
+	
+	local nBufferHeight 		= 6
+	local nContentHeight 	= 0
+	local wndContainer		= self.wndInfoPane:FindChild("InfoPane_SortContainer")
+	local wndFaction			= wndContainer:FindChild("Faction")
+	local wndRace 			= wndContainer:FindChild("Race")
+	local wndClass			= wndContainer:FindChild("Class")
+	local wndPath				= wndContainer:FindChild("Path")
+
+	wndFaction:FindChild("InfoField"):SetHeightToContentHeight()
+	wndRace:FindChild("InfoField"):SetHeightToContentHeight()
+	wndClass:FindChild("InfoField"):SetHeightToContentHeight()
+	wndPath:FindChild("InfoField"):SetHeightToContentHeight()
+	
+	if selected.raceId == PreGameLib.CodeEnumRace.Human and selected.factionId == PreGameLib.CodeEnumFaction.Dominion then -- Human Dominion
+		wndFaction:FindChild("Icon"):SetSprite(c_arRaceStrings[k_idCassian].strFactionIcon)	
+		wndRace:FindChild("Icon"):SetSprite(selected.genderId == 0 and c_arRaceStrings[k_idCassian].strMaleIcon or c_arRaceStrings[k_idCassian].strFemaleIcon)
+	else
+		wndFaction:FindChild("Icon"):SetSprite(c_arRaceStrings[selected.raceId].strFactionIcon)	
+		wndRace:FindChild("Icon"):SetSprite(selected.genderId == 0 and c_arRaceStrings[selected.raceId].strMaleIcon or c_arRaceStrings[selected.raceId].strFemaleIcon)
 	end
+	
+	wndClass:FindChild("Icon"):SetSprite(c_arClassStrings[selected.classId].strIcon)
+	wndPath:FindChild("Icon"):SetSprite(c_arPathStrings[self.iSelectedPath].strIcon)
+	
+	--Re-size Faction Container
+	local nLeft, nRight, nTop, nBottom = wndFaction:GetAnchorOffsets()
+	nBottom = wndFaction:FindChild("Button"):IsChecked() and wndFaction:FindChild("Header"):GetHeight() or wndFaction:FindChild("Header"):GetHeight() + wndFaction:FindChild("InfoField"):GetHeight() + wndFaction:FindChild("Footer"):GetHeight()
+	wndFaction:SetAnchorOffsets(nLeft, nTop, nRight, nTop+nBottom+nBufferHeight)
+	nContentHeight = nContentHeight + nBottom + nBufferHeight
+	wndFaction:FindChild("InfoField"):Show(not wndFaction:FindChild("Button"):IsChecked())
+	
+	--Re-size Race Container
+	nBottom = wndRace:FindChild("Button"):IsChecked() and wndRace:FindChild("Header"):GetHeight() or wndRace:FindChild("Header"):GetHeight() + wndRace:FindChild("InfoField"):GetHeight() + wndRace:FindChild("Footer"):GetHeight()
+	wndRace:SetAnchorOffsets(nLeft, nTop, nRight, nTop+nBottom+nBufferHeight)
+	nContentHeight = nContentHeight + nBottom + nBufferHeight
+	wndRace:FindChild("InfoField"):Show(not wndRace:FindChild("Button"):IsChecked())
+	
+	--Re-size Class Container
+	nBottom = wndClass:FindChild("Button"):IsChecked() and wndClass:FindChild("Header"):GetHeight() or wndClass:FindChild("Header"):GetHeight() + wndClass:FindChild("InfoField"):GetHeight() + wndClass:FindChild("Footer"):GetHeight()
+	wndClass:SetAnchorOffsets(nLeft, nTop, nRight, nTop+nBottom+nBufferHeight)
+	nContentHeight = nContentHeight + nBottom + nBufferHeight
+	wndClass:FindChild("InfoField"):Show(not wndClass:FindChild("Button"):IsChecked())
+	
+	--Re-size Path Container
+	nBottom = wndPath:FindChild("Button"):IsChecked() and wndPath:FindChild("Header"):GetHeight() or wndPath:FindChild("Header"):GetHeight() + wndPath:FindChild("InfoField"):GetHeight() + wndPath:FindChild("Footer"):GetHeight()
+	wndPath:SetAnchorOffsets(nLeft, nTop, nRight, nTop+nBottom+nBufferHeight)
+	nContentHeight = nContentHeight + nBottom + nBufferHeight
+	wndPath:FindChild("InfoField"):Show(not wndPath:FindChild("Button"):IsChecked())
+	
+	local nVscroll = wndContainer:GetVScrollPos()
+	wndContainer:ArrangeChildrenVert()
+	wndContainer:RecalculateContentExtents()
+	wndContainer:SetVScrollPos(nVscroll)
+end
 
+function Character:InfoPanelDisplayContainer(wndContainer)
+	local wndFaction	= self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction")
+	local wndRace 	= self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race")
+	local wndClass	= self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class")
+	local wndPath		= self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path")
+	
+	wndFaction:FindChild("Button"):SetCheck(true)
+	wndRace:FindChild("Button"):SetCheck(true)
+	wndClass:FindChild("Button"):SetCheck(true)
+	wndPath:FindChild("Button"):SetCheck(true)
+	wndContainer:FindChild("Button"):SetCheck(false)
+	
+	self:FormatInfoPanel()
+end
 
-	self.wndInfoPane:FindChild("InfoPane_SortContainer"):ArrangeChildrenVert()
-
-	local l, t, r, b = self.wndInfoPane:FindChild("InfoPane_SortContainer"):GetAnchorOffsets()
-	local lFrame, tFrame, rFrame, bFrame = self.wndInfoPane:GetAnchorOffsets()
-	local nTotalHeight = nContentHeight-b+t
-	self.wndInfoPane:SetAnchorOffsets(lFrame, -(nTotalHeight/2), rFrame, nTotalHeight/2)
+function Character:OnGearPreview()
+	if g_arActors.primary == nil then
+		return
+	end
+	
+	local wndClass 	= self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class")
+	local nIndex 		= 0
+	
+	if wndClass:FindChild("GearPreview2"):IsChecked() then
+		nIndex = 1
+	elseif wndClass:FindChild("GearPreview3"):IsChecked() then
+		nIndex = 2
+	else
+		nIndex = 0
+	end
+	
+	self.nGearPreview = nIndex
+	
+	if g_arActors.primary then
+		g_arActors.primary:SetItemsByCreationGearSet(nIndex, self.arCharacterCreateOptions[self.characterCreateIndex].classId)
+	end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1231,6 +1307,7 @@ function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
 	self:EnableButtons()
 
 	self:OnRandomizeBtn()
+	
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1260,6 +1337,7 @@ function Character:OnClassSelect(wndHandler, wndControl)
 			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
 		end
 	end
+	
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1289,6 +1367,7 @@ function Character:OnPathSelect(wndHandler, wndControl)
 	if g_arActors.pathIcon and c_pathIconAnimation[self.iSelectedPath] then
 		g_arActors.pathIcon:Animate(0, c_pathIconAnimation[self.iSelectedPath], 0, true, false)
 	end
+	
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1301,6 +1380,8 @@ function Character:OnRacePanelToggle(wndHandler, wndControl)
 	wndControl:FindChild("AnimOverlay"):Show(wndControl:IsChecked())
 	self.wndControlFrame:FindChild("ClassOptionToggle"):FindChild("AnimOverlay"):Show(false)
 	self.wndControlFrame:FindChild("PathOptionToggle"):FindChild("AnimOverlay"):Show(false)
+	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"))
 end
 
 function Character:OnClassPanelToggle(wndHandler, wndControl)
@@ -1309,6 +1390,8 @@ function Character:OnClassPanelToggle(wndHandler, wndControl)
 	wndControl:FindChild("AnimOverlay"):Show(wndControl:IsChecked())
 	self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("AnimOverlay"):Show(false)
 	self.wndControlFrame:FindChild("PathOptionToggle"):FindChild("AnimOverlay"):Show(false)
+	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"))
 end
 
 function Character:OnPathPanelToggle(wndHandler, wndControl)
@@ -1317,6 +1400,8 @@ function Character:OnPathPanelToggle(wndHandler, wndControl)
 	wndControl:FindChild("AnimOverlay"):Show(wndControl:IsChecked())
 	self.wndControlFrame:FindChild("RaceOptionToggle"):FindChild("AnimOverlay"):Show(false)
 	self.wndControlFrame:FindChild("ClassOptionToggle"):FindChild("AnimOverlay"):Show(false)
+	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"))
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1329,6 +1414,10 @@ function Character:OnCustomizeBtn()
 		self.arCustomizeBoneOptions = g_arActors.primary:GetBones()
 		self.arCustomizeBoneOptionsPrev = g_arActors.primary:GetBones() -- used to restore previous bones if the player cancels customization
 	end
+	
+	--Force the armor previwer back to the first selection to expose the face.
+	self.nGearPreviewForced = self.nGearPreview
+	self:HelperForceGearPreview(0)
 
 	self.wndCustAdvanced:Show(false)
 	g_controls:FindChild("CharacterNameText"):Show(false)
@@ -1341,10 +1430,18 @@ function Character:OnCustomizeBtn()
 	g_arActors.mainScene:AttachCamera(7)
 end
 
+function Character:HelperForceGearPreview(nIndex)
+	self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"):FindChild("Footer"):SetGlobalRadioSel("PreGameClassPreview", nIndex)
+	self:OnGearPreview()
+end
+
 ---------------------------------------------------------------------------------------------------
 function Character:OnRandomizeBtn()
 
-	for idx, entry in pairs(self.wndCustPaginationList:FindChild("Content"):GetChildren()) do
+	local tOptionIdToCategoryIdx = {}
+	local arCategoryHeaders = self.wndCustPaginationList:FindChild("Content"):GetChildren()
+	
+	for idx, entry in pairs(arCategoryHeaders) do
 		if entry:FindChild("CustomizePaginationBtn") ~= nil then
 			entry:FindChild("CustomizePaginationBtn"):SetCheck(false)
 		end
@@ -1361,6 +1458,8 @@ function Character:OnRandomizeBtn()
 			entry:FindChild("AnimOverlayAdvanced"):Show(false)
 			entry:FindChild("SelectedArrowAdvanced"):Show(false)
 		end
+		
+		tOptionIdToCategoryIdx[entry:GetData().sliderId] = idx
 	end
 
 	self.wndCustOptionList:Show(false)
@@ -1372,6 +1471,10 @@ function Character:OnRandomizeBtn()
 
 		for i, option in pairs(self.arCustomizeLookOptions) do
 			option.valueIdx = math.random( 1, option.count );
+			local wndHeader = arCategoryHeaders[tOptionIdToCategoryIdx[option.sliderId]]
+			if wndHeader then
+				wndHeader:SetData(option)
+			end
 			
 			g_arActors.primary:SetLook(option.sliderId, option.values[ option.valueIdx ] )
 			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
@@ -1566,13 +1669,13 @@ function Character:UpdateCodeDisplay(strCode)
 		end
 
 		if c_arRaceStrings[tResults.nRace] ~= nil then
-			if tResults.nRace == 1 then
-				tRace[2] = "CRB_DemoCC_Human"
-			elseif tResults.nRace == 13 then
-				tRace[2] = c_arRaceStrings[tResults.nRace][1]
+			if tResults.nRace == PreGameLib.CodeEnumRace.Human then
+				tRace[2] = "RaceHuman"
+			elseif tResults.nRace == PreGameLib.CodeEnumRace.Chua then
+				tRace[2] = c_arRaceStrings[tResults.nRace].strName
 				tGender[2] = ""
 			else
-				tRace[2] = c_arRaceStrings[tResults.nRace][1]
+				tRace[2] = c_arRaceStrings[tResults.nRace].strName	
 			end
 		end
 
@@ -1920,6 +2023,9 @@ function Character:OnAcceptCustomizeBtn()
 	g_arActors.mainScene:Animate(0, g_cameraAnimation, 0, true, false, 0, g_cameraSlider)
 	
 	g_controls:FindChild("CharacterNameText"):Show(self.strName ~= "")
+	
+	--Force the armor previwer back to the desired selection.
+	self:HelperForceGearPreview(self.nGearPreviewForced)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2139,12 +2245,14 @@ function Character:OnCreateCharacterFailed(nReason)
 
 	if nReason == PreGameLib.CodeEnumCharacterModifyResults.CreateFailed_UniqueName then
 		strReason = Apollo.GetString("Pregame_NameUnavailable")
+		g_controls:FindChild("FirstNameEntryForm:EnterNameEntry"):SetFocus()
 	elseif nReason == PreGameLib.CodeEnumCharacterModifyResults.CreateFailed_CharacterOnline then
 		strReason = Apollo.GetString("PreGame_CreateErrorCharacterOnline")
 	elseif nReason == PreGameLib.CodeEnumCharacterModifyResults.CreateFailed_AccountFull then
 		strReason = Apollo.GetString("Pregame_AccountFull")
 	elseif nReason == PreGameLib.CodeEnumCharacterModifyResults.CreateFailed_InvalidName then
 		strReason = Apollo.GetString("Pregame_InvalidError")
+		g_controls:FindChild("FirstNameEntryForm:EnterNameEntry"):SetFocus()
 	elseif nReason == PreGameLib.CodeEnumCharacterModifyResults.CreateFailed_Faction then
 		strReason = Apollo.GetString("Pregame_OpposingFaction")
 	elseif nReason == PreGameLib.CodeEnumCharacterModifyResults.CreateFailed_Internal  then
@@ -2158,7 +2266,7 @@ function Character:OnCreateCharacterFailed(nReason)
 	Apollo.CreateTimer("CreateFailedTimer", 5.0, false)
 	Apollo.StartTimer("CreateFailedTimer")
 	self.wndCreateFailed:Show(true)
-
+	
 	return true
 end
 
@@ -2361,10 +2469,10 @@ function Character:OnRandomLastName(characterCreateIndex)
 	local nGenderId = self.arCharacterCreateOptions[self.characterCreateIndex].genderId
 			
 	--Pulled from CharacterNames.lua
-	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+	local tName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
 	
-	self.wndLastNameEntry:SetText(tLastName)
-	self.wndFirstNameEntry:SetText(tFirstName)
+	self.wndLastNameEntry:SetText(tName.strLastName)
+	self.wndFirstNameEntry:SetText(tName.strFirstName)
 	
 	self:OnNameChanged()
 end
@@ -2373,4 +2481,9 @@ end
 -- Character instance
 ---------------------------------------------------------------------------------------------------
 local CharacterInst = Character:new()
-CharacterInst:Init()
+CharacterInst:Init()="1" RAnchorOffset="-30" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" Name="BGHeaderText" BGColor="white" TextColor="UI_WindowTitleYellow" TextId="OptionsInterface_InterfaceOptions" DT_CENTER="1" DT_VCENTER="1" TooltipColor="" IgnoreMouse="1" AutoScaleText="1"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="26" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="0" BAnchorOffset="124" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HeaderButtons" TooltipColor="" HideInEditor="0">
+            <Control Class="Button" Base="BK3:btnMetal_TabMainLeft" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="OptionsInterfaceTabGroup" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0.33" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="GeneralBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" RelativeToClient="1" Text="" TooltipColor="" HideInEditor="0" Visible="1" Tooltip="" TestAlpha="1" NewWindowDepth="0" RadioDisallowNonSelection="1" GlobalRadioGroup="" TextId="CombatLogOptions_General">
+                <Event Name="ButtonCheck" Function="OnGeneralOptionsCheck"/>
+                <Event Name="

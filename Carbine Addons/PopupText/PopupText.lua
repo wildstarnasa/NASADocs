@@ -174,3 +174,7 @@ end
 
 local PopupTextInst = PopupText:new()
 PopupTextInst:Init()
+ TextColor="UI_TextHoloBodyHighlight" Text="" TextId="PlayerTicket_SelectCategory" Sprite="CRB_Basekit:kitAccent_Frame_BlueStroke" DT_CENTER="1" DT_VCENTER="1" Line="0"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Metal_Primary_NoNav" TooltipType="OnCursor" Name="MainFrame" TooltipColor="" Picture="0" IgnoreMouse="1" Border="1" UseTemplateBG="1" HideInEditor="1">
+            <Control

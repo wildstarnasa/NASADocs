@@ -53,8 +53,8 @@ function ArenaTeam:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildMemberChange", 				"OnGuildMemberChange", self)  -- General purpose update method
 	Apollo.RegisterEventHandler("GenericEvent_RegisterArenaTeam", 	"OnClose", self)
 	
-	self.timerArenaTeamReload = ApolloTimer.Create(30.0, true, "BuildRosterList", self)
-	self.timerArenaTeamReload:Stop()
+	self.timerArenaTeamUpdate = ApolloTimer.Create(30.0, true, "RequestUpdate", self)
+	self.timerArenaTeamUpdate:Stop()
 
 	-- loading windows
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "ArenaTeamForm", nil, self)
@@ -67,8 +67,14 @@ end
 
 function ArenaTeam:OnClose()
 	self.eCurrentType = nil
-	self.timerArenaTeamReload:Stop()
+	self.timerArenaTeamUpdate:Stop()
 	self.wndMain:Close()
+end
+
+function ArenaTeam:RequestUpdate()
+	if self.wndMain and self.wndMain:IsShown() then
+		self.wndMain:GetData():RequestMembers()
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -100,23 +106,16 @@ function ArenaTeam:OnShowArenaInfo(eTeamType, tPos)
 			end
 			self.wndMain:FindChild("SubHeader"):SetText(String_GetWeaselString(Apollo.GetString("ArenaRoster_SubHeader"), strType ,strRank))
 			self.wndMain:FindChild("Header"):SetText(guildCurr:GetName())
-			--self.wndMain:FindChild("Header"):SetTextColor(ApolloColor.new("ff2f94ac"))
 			self.wndMain:SetData(guildCurr)
 			self:UpdatePvpRating()
 			guildCurr:RequestMembers()		
 
 			-- Sets the roster window's position
 			local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-			if tPos ~= nil then
-				if tPos.bDrawOnLeft == true then
-					--self.wndMain:Move(tPos.nX - (nRight - nLeft), tPos.nY + 6, nRight - nLeft, nBottom - nTop)
-				else
-					--self.wndMain:Move(tPos.nX - 4, tPos.nY + 6, nRight - nLeft, nBottom - nTop)
-				end
-			end				
+			
 			self.wndMain:Show(true)
 			self.wndMain:ToFront()
-			self.timerArenaTeamReload:Start()
+			self.timerArenaTeamUpdate:Start()
 			return
 		end
 	end
@@ -139,8 +138,6 @@ function ArenaTeam:ResetRosterMemberButtons()
 	self.wndMain:FindChild("RemoveMemberContainer"):Close()
 	self.wndMain:FindChild("DisbandContainer"):Close()
 	self.wndMain:FindChild("LeaveContainer"):Close()
-	--wndDisband:SetCheck(false)
-	--wndLeave:SetCheck(false)	
 	
 	-- Defaults
 	wndAdd:Show(false)
@@ -285,15 +282,10 @@ end
 -- Roster Methods -- TODO: Move this into its own addon if it gets too large
 -----------------------------------------------------------------------------------------------
 
-function ArenaTeam:OnGuildRoster(guildData, tRoster)
-	
-	if guildData == self.wndMain:GetData() then 
-		self:BuildRosterList(guildData, tRoster) -- Third argument is the default sorting method
+function ArenaTeam:OnGuildRoster(guildCurr, tRoster)
+	if guildCurr ~= self.wndMain:GetData() and #tRoster == 0 then 
+		return
 	end
-end
-
-function ArenaTeam:BuildRosterList(guildCurr, tRoster)
-	if not guildCurr or #tRoster == 0 then return end
 
 	local tRanks = guildCurr:GetRanks()
 	local wndGrid = self.wndMain:FindChild("RosterGrid")
@@ -530,3 +522,10 @@ end
 -----------------------------------------------------------------------------------------------
 local ArenaTeamInst = ArenaTeam:new()
 ArenaTeamInst:Init()
+rsor" IgnoreTooltipDelay="1" TooltipColor="" ShortHotkeyFontAttribute="CRB_Pixel_O" LongHotkeyFontAttribute="CRB_Pixel_O" CountFontAttribute="CRB_InterfaceSmall_O" CooldownFontAttribute="CRB_HeaderLarge" DrawShortcutBottom="1">
+                        <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
+                    </Control>
+                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="0" RAnchorOffset="54" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Shadow" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:spr_HUD_BottomBar_SlotShadow" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" HideInEditor="0" NewWindowDepth="1"/>
+                </Control>
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="290" TAnchorPoint="0.5" TAnchorOffset="-32" RAnchorPoint="0" RAnchorOffset="348" BAnchorPoint="0.5" BAnchorOffset="34" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ActionBarShortcutContainer6" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:spr_HUD_BottomBar_SlotCover" HideInEditor="0">
+                    <Control Class="ActionBarButton" Name="ActionBarShortcut.6" ContentType="RMSBar" ContentId="5" Base="Button_ActionBarBlank" RelativeToClient="1" IfHoldNoSignal="1" DT_VCENTER="1" DT_CENTER="1" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint

@@ -200,3 +200,39 @@
         <Event Name="WindowClosed" Function="OnLiveEventClose"/>
     </Form>
 </Forms>
+s[MatchingGame.Roles.Healer]:SetCheck(true)
+		self.tRoleCheckRoleButtons[MatchingGame.Roles.Healer]:SetCheck(true)
+	end
+
+	MatchingGame.SelectRole(MatchingGame.Roles.Healer, true)
+
+	local tSelectedRoles = MatchingGame.GetSelectedRoles()
+	self.wndConfirmRole:FindChild("AcceptButton"):Enable(#tSelectedRoles > 0)
+end
+
+function MatchMaker:OnHealerUnchecked(wndHandler, wndControl)
+	if wndHandler == self.tRoleCheckRoleButtons[MatchingGame.Roles.Healer] or wndHandler == self.tGroupFinderRoleButtons[MatchingGame.Roles.Healer] then
+		self.tGroupFinderRoleButtons[MatchingGame.Roles.Healer]:SetCheck(false)
+		self.tRoleCheckRoleButtons[MatchingGame.Roles.Healer]:SetCheck(false)
+	end
+
+	MatchingGame.SelectRole(MatchingGame.Roles.Healer, false)
+
+	local tSelectedRoles = MatchingGame.GetSelectedRoles()
+	self.wndConfirmRole:FindChild("AcceptButton"):Enable(#tSelectedRoles > 0)
+end
+
+function MatchMaker:OnDPSChecked(wndHandler, wndControl)
+	if wndHandler == self.tRoleCheckRoleButtons[MatchingGame.Roles.DPS] or wndHandler == self.tGroupFinderRoleButtons[MatchingGame.Roles.DPS] then
+		self.tGroupFinderRoleButtons[MatchingGame.Roles.DPS]:SetCheck(true)
+		self.tRoleCheckRoleButtons[MatchingGame.Roles.DPS]:SetCheck(true)
+	end
+
+	MatchingGame.SelectRole(MatchingGame.Roles.DPS, true)
+
+	local tSelectedRoles = MatchingGame.GetSelectedRoles()
+	self.wndConfirmRole:FindChild("AcceptButton"):Enable(#tSelectedRoles > 0)
+end
+
+function MatchMaker:OnDPSUnchecked(wndHandler, wndControl)
+	if wndHandler == self.tRoleCheckRoleButtons[MatchingGame.Roles.DPS] or wndHandler == self.tGro

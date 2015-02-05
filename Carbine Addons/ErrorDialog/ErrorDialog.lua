@@ -11,7 +11,7 @@ local ErrorDialog = {}
 -- local constants
 ---------------------------------------------------------------------------------------------------
 local knSaveVerison = 1
-
+local knWindowConstraints = 75
 ---------------------------------------------------------------------------------------------------
 -- ErrorDialog initialization
 ---------------------------------------------------------------------------------------------------
@@ -38,12 +38,10 @@ function ErrorDialog:OnSave(eType)
 	end
 	
 	local locReportBugLoc = self.wndReportBug and self.wndReportBug:GetLocation() or self.locReportBugLoc
-	local locLuaError = self.wndErrorDialog and self.wndErrorDialog:GetLocation() or self.locAddonError
 	
 	local tSave =
 	{
 		tReportBugLoc = locReportBugLoc and locReportBugLoc:ToTable() or nil,
-		tLuaErrorLoc = locLuaError and locLuaError:ToTable() or nil,
 		nSaveVersion = knSaveVersion,
 	}
 	
@@ -54,10 +52,6 @@ function ErrorDialog:OnRestore(eType, tSavedData)
 	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		if tSavedData.tReportBugLoc then
 			self.locReportBugLoc = WindowLocation.new(tSavedData.tReportBugLoc)
-		end
-		
-		if tSavedData.tLuaErrorLoc then
-			self.locAddonError = WindowLocation.new(tSavedData.tLuaErrorLoc)
 		end
 	end			
 end
@@ -85,6 +79,8 @@ function ErrorDialog:OnDocumentReady()
 	Apollo.RegisterEventHandler("GameClickWorld", "OnGameClickWorld", self)
 	Apollo.RegisterEventHandler("LuaError", "OnLuaError", self)
 	Apollo.RegisterEventHandler("TicketToBugDialog", "OnBugOpen", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
+
 
 	-- load our forms
 	self.wndReportBug = Apollo.LoadForm(self.xmlDoc, "ReportBugDialog", nil, self)
@@ -109,9 +105,46 @@ function ErrorDialog:OnDocumentReady()
 	self:FillSubcategories()
 end
 
+function ErrorDialog:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndReportBug, strName = Apollo.GetString("InterfaceMenu_ReportBug")})
+end
+
 function ErrorDialog:OnInterfaceMenuListHasLoaded()
 	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_ReportBug"), {"InterfaceMenu_ToggleReportBug", "", "Icon_Windows32_UI_CRB_InterfaceMenu_ReportBug"})
 end
+
+function ErrorDialog:OnWindowMove()
+	if not self.wndErrorDialog then
+		return
+	end
+
+	local tDisplay = Apollo.GetDisplaySize()
+	if tDisplay and tDisplay.nWidth and tDisplay.nHeight then
+		local nWidth = self.wndErrorDialog:GetWidth()
+		local nHeight = self.wndErrorDialog:GetHeight()
+		local nDeltaX = 0
+		local nDeltaY = 0
+
+	
+		local nCurrentX, nCurrentY = self.wndErrorDialog:GetPos()
+		local nOffsetX = nWidth * knWindowConstraints / 100
+		local nOffsetY = nHeight * knWindowConstraints / 100
+		
+		nDeltaX = (nCurrentX >= -1 * nOffsetX) and 0 or (-1 * nOffsetX - nCurrentX)
+		nDeltaY = (nCurrentY >= -1 * nOffsetY) and 0 or (-1 * nOffsetY - nCurrentY)
+		nDeltaX = (nCurrentX + nWidth > tDisplay.nWidth + nOffsetX) and -1 * (nCurrentX + nWidth - tDisplay.nWidth - nOffsetX) or nDeltaX
+		nDeltaY = (nCurrentY + nHeight > tDisplay.nHeight + nOffsetY) and -1 * (nCurrentY + nHeight - tDisplay.nHeight - nOffsetY) or nDeltaY
+
+		local locCurrent = self.wndErrorDialog:GetLocation()
+		if locCurrent then
+			local tCurrentLoc = locCurrent:ToTable()
+			local nLeft, nTop, nRight, nBottom  = self.wndErrorDialog:GetAnchorOffsets()
+			tCurrentLoc.nOffsets = {nLeft + nDeltaX, nTop + nDeltaY, nRight + nDeltaX, nBottom + nDeltaY}
+			self.wndErrorDialog:MoveToLocation(WindowLocation.new(tCurrentLoc))
+		end
+	end
+end
+
 
 function ErrorDialog:FillSubcategories()
 	local wndCatList = self.wndReportBug:FindChild("Category")
@@ -258,10 +291,6 @@ function ErrorDialog:OnLuaError(tAddon, strError, bCanIgnore)
 	local strPartialError = string.sub(strError, 0, 1000)
 	self.wndErrorDialog:FindChild("ErrorText"):SetText(strPartialError)
 	self.wndErrorDialog:FindChild("CopyToClipboard"):SetActionData(GameLib.CodeEnumConfirmButtonType.CopyToClipboard, strPartialError)
-	
-	if self.locAddonError then
-		self.wndErrorDialog:MoveToLocation(self.locAddonError)
-	end
 
 	self.wndErrorDialog:SetData(tAddon)
 
@@ -275,7 +304,6 @@ end
 function ErrorDialog:OnSuspendAddon(wndHandler, wndControl)
 	local tAddon = self.wndErrorDialog:GetData()
 	Apollo.SuspendAddon(tAddon.strName)
-	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
 	self.wndErrorDialog = nil
 end
@@ -284,25 +312,21 @@ function ErrorDialog:OnDisableAddon(wndHandler, wndControl, eMouseButton)
 	local tAddon = self.wndErrorDialog:GetData()
 	Apollo.SuspendAddon(tAddon.strName)
 	Apollo.DisableAddon(tAddon.strName)
-	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
 	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnIgnoreError(wndHandler, wndControl)
-	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
 	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnCloseBtn(wndHandler, wndControl)
-	self.locAddonError = self.wndErrorDialog:GetLocation()
 	self.wndErrorDialog:Destroy()
 	self.wndErrorDialog = nil
 end
 
 function ErrorDialog:OnCloseErrorWindow(wndHandler, wndControl)
-	self.locAddonError = self.wndErrorDialog:GetLocation()
 	wndHandler:Destroy()
 end
 
@@ -413,3 +437,4 @@ end
 ---------------------------------------------------------------------------------------------------
 local ErrorDialogInst = ErrorDialog:new()
 ErrorDialogInst:Init()
+Zÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ  I$I’$cëZÿÿÿÿøÄI’$cëZÿÿÿÿøpB,‰“$ëZ  @@@@        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿ        cëZÿÿÿÿÙI’$I˜cëZÿÿÿÿø0    ßÿc5ÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªª

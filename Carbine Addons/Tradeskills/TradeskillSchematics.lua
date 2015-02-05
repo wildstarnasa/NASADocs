@@ -467,10 +467,10 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 	local bIsCooking = tSchematicInfo.eTradeskillId == CraftingLib.CodeEnumTradeskill.Cooking
 	wndSchem:Show(true)
 	wndSchem:SetData(tSchematic)
-	wndSchem:FindChild("SchematicIcon"):SetData(tSchematicInfo.itemOutput)
-	wndSchem:FindChild("RightBottomCraftBtn"):SetData(tSchematic.nSchematicId) -- This is updated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
-	wndSchem:FindChild("RightBottomSimpleCraftBtn"):SetData(tSchematic.nSchematicId) -- This is updated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
-	wndSchem:FindChild("RightBottomSimpleCraftBtn"):Enable(bHaveEnoughMats) -- GOTCHA: RightBottomCraftBtn can be enabled with no mats, it just goes to a preview screen
+	wndSchem:FindChild("SchematicIcon"):SetData(tSchematicInfo.itemOutput) -- GOTCHA: RightBottomCraftBtn can be enabled with no mats, it just goes to a preview screen
+	wndSchem:FindChild("RightBottomCraftBtn"):SetData(tSchematic.nSchematicId) -- This is also updated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
+	wndSchem:FindChild("RightBottomSimpleCraftBtn"):SetData(tSchematic.nSchematicId) -- This is also updated on OnTimerCraftingStationCheck based on RightBottomCraftPreview
+	wndSchem:FindChild("RightBottomSimpleCraftBtn"):Enable(bHaveEnoughMats and (tSchematic.bIsKnown or tSchematic.bIsOneUse))
 
 	wndSchem:FindChild("SchematicName"):SetText(tSchematicInfo.strName)
 	wndSchem:FindChild("SchematicIcon"):SetSprite(tSchematicInfo.itemOutput:GetIcon())
@@ -493,14 +493,29 @@ function TradeskillSchematics:DrawSchematic(tSchematic)
 	-- Subrecipes
 	wndSchem:FindChild("RightSubrecipes"):Show(#tSchematicInfo.tSubRecipes > 0)
 	wndSchem:FindChild("SubrecipesListScroll"):DestroyChildren()
+
 	for key, tSubrecipe in pairs(tSchematicInfo.tSubRecipes) do
 		local tSubrecipeInfo = CraftingLib.GetSchematicInfo(tSubrecipe.nSchematicId)
 		local wndSubrecipe = Apollo.LoadForm(self.xmlDoc, "SubrecipesItem", wndSchem:FindChild("SubrecipesListScroll"), self)
+		local wndSubrecipesLeftName = wndSubrecipe:FindChild("SubrecipesLeftName")
 		wndSubrecipe:FindChild("SubrecipesLeftDiscoverableBG"):Show(not tSubrecipe.bIsKnown and tSubrecipe.bIsUndiscovered)
 		wndSubrecipe:FindChild("SubrecipesLeftLockedBG"):Show(not tSubrecipe.bIsKnown and not tSubrecipe.bIsUndiscovered)
 		wndSubrecipe:FindChild("SubrecipesLeftIcon"):SetSprite(tSubrecipe.itemOutput:GetIcon())
 		wndSubrecipe:FindChild("SubrecipesLeftIcon"):SetText(tSubrecipeInfo.nCreateCount <= 1 and "" or tSubrecipeInfo.nCreateCount)
 		wndSubrecipe:FindChild("SubrecipesLeftName"):SetText(tSubrecipe.itemOutput:GetName())
+		wndSubrecipesLeftName:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", tSubrecipe.itemOutput:GetName()))
+		local nLeftRecipe, nTopRecipe, nRightRecipe, nBottomRecipe = wndSubrecipesLeftName:GetAnchorOffsets()
+		wndSubrecipesLeftName:SetHeightToContentHeight()
+
+		if wndSubrecipesLeftName:GetHeight() >= 47 then -- 47 is height of ~2 lines
+			wndSubrecipesLeftName:SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">%s</P>", tSubrecipe.itemOutput:GetName()))
+			wndSubrecipesLeftName:SetAnchorOffsets(nLeftRecipe, nTopRecipe, nRightRecipe, 47)
+		else
+			wndSubrecipesLeftName:SetAML(string.format("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">%s</P>", tSubrecipe.itemOutput:GetName()))
+		end
+
+		wndSubrecipe:FindChild("SubrecipesLeftNameVertContainer"):ArrangeChildrenVert(1)
+
 		self:HelperBuildItemTooltip(wndSubrecipe, tSubrecipe.itemOutput)
 		-- TODO SubrecipesRight for Critical Successes
 	end
@@ -723,3 +738,9 @@ end
 
 local TradeskillSchematicsInst = TradeskillSchematics:new()
 TradeskillSchematicsInst:Init()
+chorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LeftSide" TooltipColor=""/>
+        <Control Class="Window" LAnchorPoint="0.25" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="RightSide" TooltipColor=""/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="24" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-24" BAnchorPoint="0" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ItemTooltip_BasicStatsBox" Border="0" Picture="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="UI_TextMetalBodyHighlight" TooltipColor="" IgnoreMouse="1" Tooltip="" DoNotBlockTooltip="1">
+        <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ItemTooltip_BasicStats_TopLeft" Border="0" Picture="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ff39b5d4" TooltipColor="" IgnoreMouse="1" DoNotBlockTooltip="1"/>
+        <Control Class

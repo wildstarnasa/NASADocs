@@ -228,3 +228,21 @@ end
 -----------------------------------------------------------------------------------------------
 local AdventureWhitevaleInst = AdventureWhitevale:new()
 AdventureWhitevaleInst:Init()
+w()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Macro then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg1)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Spell then
+		Tooltip.GetSpellTooltipForm(self, wndControl, oArg1)
+	elseif eType == Tooltip.TooltipGenerateType_PetCommand then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	end
+end
+
+-----------------------------------------------------------
+local ActionBarShor

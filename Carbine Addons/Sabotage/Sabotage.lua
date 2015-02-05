@@ -309,4 +309,58 @@ function Sabotage:CheckForSabotage()
 end
 
 local SabotageInstance = Sabotage:new()
-SabotageInstance:Init()
+SabotageInstance:Init()trUnitName = unitTarget:GetName() -- specific to #7
+					local strBracketText = Apollo.GetString("Nameplates_Missions") -- specific to #7
+					if wndCurr:IsShown() then -- already have a tooltip
+						tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", tRewardString[eType], strMission)
+
+					else
+						tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"Yellow\">%s</P>"..
+														 "<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], String_GetWeaselString(Apollo.GetString("TargetFrame_HealthShieldText"), strUnitName, strBracketText), strMessage)
+					end
+
+					wndCurr:SetTooltip(tRewardString[eType])
+				end
+
+				if splSpell then
+					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, Unit.CodeEnumRewardInfoType.ScientistSpell)
+					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
+					if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
+						Tooltip.GetSpellTooltipForm(self, wndCurr, splSpell)
+					end
+				end
+			elseif eType == Unit.CodeEnumRewardInfoType.PublicEvent and not self:HelperFlagOrDefault(tFlags, "bHidePublicEvents", false) then
+				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
+
+				local peEvent = tRewardInfo[idx].peoObjective
+				local strTitle = peEvent:GetEvent():GetName()
+				local nCompleted = peEvent:GetCount()
+				local nNeeded = peEvent:GetRequiredCount()
+
+				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
+
+				local strTempTitle = strTitle
+				if peEvent:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_Exterminate then
+					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_NumRemaining"), strTitle, nCompleted)
+				elseif peEvent:ShowPercent() then
+					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_PercentCompleted"), strTitle, nCompleted / nNeeded * 100)
+				elseif peEvent:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_TimedWin then -- Very intentionally placed after the ShowPercent() check
+					strTempTitle = String_GetWeaselString(Apollo.GetString("RewardInfo_PublicEventTimedWin"), strTitle, nCompleted * 1000, nNeeded * 1000)
+				elseif nNeeded > 0 then 
+					strTempTitle = String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), strTitle, nCompleted, nNeeded)
+				end
+
+				tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], strTempTitle)
+
+				wndCurr:ToFront()				
+				wndCurr:SetTooltip(tRewardString[eType])
+			end
+		end
+	end
+
+	if ( bIsRival and not self:HelperFlagOrDefault(tFlags, "bHideRivals", false) )
+		or ( bIsFriend and not self:HelperFlagOrDefault(tFlags, "bHideFriends", false) )
+		  or ( bIsAccountFriend and not self:HelperFlagOrDefault(tFlags, "bHideAccountFriends", false) ) then
+
+		local eTempType = bIsRival and Unit.CodeEnumRewardInfoType.Rival or Unit.CodeEnumRewardInfoType.Friend
+		local strTempType = bIsRival and "Ri

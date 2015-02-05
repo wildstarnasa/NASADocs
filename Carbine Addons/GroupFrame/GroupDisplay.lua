@@ -433,6 +433,7 @@ end
 
 function GroupDisplay:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndGroupHud, strName = Apollo.GetString("Group_CurrentGroup")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndGroupInviteDialog, strName = Apollo.GetString("CRB_Invite_To_Group")})
 end
 
 function GroupDisplay:GroupDisplayOptions_TEMP()
@@ -1218,17 +1219,6 @@ function GroupDisplay:OnGroupMemberFlags(nMemberIndex, bIsFromPromotion, tChange
 		ChatSystemLib.PostOnChannel(self.eChatChannel, strMsg, "")
 	end
 
-	if tChangedFlags.bReady then
-		if tMember.bReady then
-			-- Disabling "is ready message" to lower spam
-			--local str = tMember.characterName .. " is now ready!"
-			--ChatSystemLib.PostOnChannel( self.chatChannel, str, "" )
-		else
-			local strMsg = String_GetWeaselString(Apollo.GetString("Group_NoLongerReady"), tMember.strCharacterName)
-			ChatSystemLib.PostOnChannel( self.eChatChannel, strMsg, "" )
-		end
-	end
-
 	if tChangedFlags.bRoleLocked then
 		-- TODO: To lower spam, just show this message once
 		if bSelf then
@@ -1645,3 +1635,4 @@ end
 ---------------------------------------------------------------------------------------------------
 local GroupFrameInst = GroupDisplay:new()
 GroupDisplay:Init()
+   ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿÿÿªªªªÿÿ      ÿÿºÖ   @ø    (ßÿËZ€`XWøÀƒ'O’$ëZËZPTUU        ËZªRªªªª I’ 	’«Z  PPPP

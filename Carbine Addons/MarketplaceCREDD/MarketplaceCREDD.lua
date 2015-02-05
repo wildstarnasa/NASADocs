@@ -77,7 +77,7 @@ function MarketplaceCREDD:OnDocumentReady()
 end
 
 function MarketplaceCREDD:OnInterfaceMenuListHasLoaded()
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("MarketplaceCredd_Title"), {"ToggleCREDDExchangeWindow", "", "Icon_Windows32_UI_CRB_InterfaceMenu_Credd"})
+	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("MarketplaceCredd_Title"), {"ToggleCREDDExchangeWindow", "", "Icon_Windows32_UI_CRB_InterfaceMenu_CREED"})
 end
 
 function MarketplaceCREDD:Initialize()
@@ -413,12 +413,13 @@ function MarketplaceCREDD:OnCreddTransactionBtn(wndHandler, wndControl, eMouseBu
 	self.tWindowMap["ConfirmationBaseText"]:Show(bBuy)
 	self.tWindowMap["ConfirmationBaseCash"]:Show(bBuy)
 
-	self.tWindowMap["ConfirmationTaxCash"]:SetAmount(nCurrAmount * 0.05)
+	self.tWindowMap["ConfirmationTaxCash"]:SetAmount((nCurrAmount * CREDDExchangeLib.kfCREDDExchangeBuyTaxMultiplier) + CREDDExchangeLib.kCREDDExchangeBuyRake)
 	self.tWindowMap["ConfirmationBaseCash"]:SetAmount(nCurrAmount)
-	self.tWindowMap["ConfirmationBigCash"]:SetAmount(bBuy and (nCurrAmount * 1.05) or nCurrAmount)
+	self.tWindowMap["ConfirmationBigCash"]:SetAmount(bBuy and (nCurrAmount + (nCurrAmount * CREDDExchangeLib.kfCREDDExchangeBuyTaxMultiplier) + CREDDExchangeLib.kCREDDExchangeBuyRake) or nCurrAmount)
 
 	self.tWindowMap["ConfirmationBigText"]:SetText(strBigText)
-	self.tWindowMap["ConfirmationYesBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.CREDDExchangeSubmit, bBuy, wndCurrAmount:GetCurrency(), bNow)
+	self.tWindowMap["ConfirmationYesBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.CREDDExchangeSubmit, bBuy, wndCurrAmount:GetCurrency(), bNow) -- GOTCHA: Expects non-tax as input
+	self.tWindowMap["ConfirmationYesBtn"]:Enable(not bBuy or self.tWindowMap["ConfirmationBigCash"]:GetCurrency():GetAmount() <= GameLib.GetPlayerCurrency():GetAmount())
 end
 
 function MarketplaceCREDD:OnCREDDExchangeOrderSubmitted(wndHandler, wndControl)
@@ -530,3 +531,15 @@ end
 
 local MarketplaceCREDDInst = MarketplaceCREDD:new()
 MarketplaceCREDDInst:Init()
+ LevelUpUnlocks:new()
+LevelUpUnlocksInst:Init()
+î¼æMˆì´²ltè‡Æ‚ÊÖã˜ÇkªÜ®ŸDvO\mãH¾›NÏ¢'³#KÏ/º—ü~k‰¨µĞØ0õæÔOˆø9º
+Ù†¹)ıSA/Ô&DË5b=û¹ú;—‰>ú(áxXoĞ ~zˆÇä¸ÌùWŠ
+´¾¿ú?ÿâe}¾|@È¨›$Ù òÀ~6šè¥¬ÿ¼ w”û›@ı
+³øó¿nÎñŒ¹í¯v&	ãqi’ENa>crH‡è§X÷-—Å†fú!vÑ‰a“"ŠÏOxlõxübıÆvã~áóbÉzAw°?æSf^/Ê†Çßèsò¨n¿lÈ½Rƒõ¾jğYU—ãõf&:”BOş«%lóé4õqß/¬Í‹ò•Óœ_ïjäôÒP]ŠûıõÙd¾)QNÓá”~YæÖœ¢ÿÉ¤]è?000ğWäÈC\?HÈ$,¥ºŒëyıWO¸Ç­ÖCßvn«h}•ü>“ùİ-‹R°høêìˆTé^âÁHgı€1°Şı 3ÇÅ~ İC{
+
+Ä~ ëŸh>ëıŸd²:Æû
+ê.&ÂTTÀUv'ÜÛ„ãKsn(¹ê›-¦<Âú•…N„8¿ú&K‹Õ¯Lî)rú.û¿‹É•8Dş€ÅçÓ/Šw©Cxtzı¤<Úb£AĞk|~¾‚ ¶wkƒÙ>5‡‚çˆ6ğy“æFüW‘p>æ|,ïÂù\b²?€{PH¦Í¤O½R Õpµh÷Ô“MDoSµMÔö7¾œGØÆ”àïÎÕã—‡ªè—ùšG şR¯ßB¿å|>âş¼%øzø|SéÂë‡,|§¿úÇÿ¢{Fïw²²¶]œÑ{)]s7Ëë=3£÷[£‘ÒÍ]J ù"d=èæ0•æÌ¯Šy½×$Ëh9­Ë:ûÊ¼Şwu&É$Tn;¹‰?Ægóyõ{¾ÿŸ€ÿYØßOH´Àÿ¬z–C°Ø=óû;€ÕJNÿÕ¸}ÆT¹:¬7‡4®ŸñUN+»õº„‰hâğï{6ìÏÎ;¿èQïÕ×rª½ªq7ñ;oÌ_óz$ÊWö”§}’e¶ı×L}y5=‰rXğ=£ç²ª.Æ1–ÉÀzSõ}„òÖu.WŸ"zsPº#©©ç­õs©ö‘ç™{w´ª-L½¶ÊÊ~Rñï–óäûaPÄb}¬AùTC+ÏŞ'òG|}‚±ãŸ{‰â]—Ù|àÀ,¹‡ÜHÔÏĞÏA|‹¨?ò˜{ŒïŒ è¿ùò]wıñÿNó£®¦lú•Õ……ç93BÌıq«OÕjSÖ×Ül¿ŸIuÈz±¼´ìÜ´ÆtÈN£"uŞÙYÁX™zl®’vfâkÙşñıÿıTâÙ1`)Ì{¿Şœ«Ó"ïQüq4™aòå¢ş;÷î;;-š!ó+ìl}ì·ùÕ¼ŞÏ_i<§¯7¯ÜŸ€õ^Ë†•=ÆÆŸç˜Ê*[2øó«“XïLKºBNÇ„/Nöë=ãìÂz?Ÿ^œÜ»õÂjõŒŞ‡R¥çV”½±œÜovÒñùşjè×üè¿tN¿Yfn´àşÂTÌÂ&iënòûÜÙÙ=0ŸşÀ¹£¼MìœëfıÀ¸ßDúçZtÆA´ëî¶Á{Şºn›úğŒ¨Ä~@Ú¸‰è™ØØ†˜ ùêœI&Ÿ½X«õì@²ïŒJH<¿~e<Òpú×«ÔXÑµøµ‘¥?òLûÈ|òñ.»ŒşaÄúW}ûãÈ~ü*;‹¶.¥²>~ı¢¥ ÊŠø.–“}–Hõ)²~Qdüùã;*÷Tì‰V×«MV«Õ9=DQh*2ar{ÒÓñï»}2A©T
+<¤ç_ë&GFãôD[Q²3¹E………û+¦Š}]	êzÆHº›²Êµ,O÷¯·8â»¡úNü}GÕ-Zl‹ÿÈWÛDêãZ»h„
+¢-Õ·ï-Ì‡·XYT™‘*}iÑ]¤¾€¶ Hçy"Á¢nş=Ù°7Ÿa}“³Q¡Ğ\Ñ£èıEë}Ö³Én-=AæWR±ŞKØBËÓÏ^Û
+uö^o¶XïI|;OĞûş9­ gâıY½§ós–óşR=A6ÒÉçûÜııP¯øÀ¼şÕK•òÓ¨I×´(OğqkšbZ-DÿYÌrúmç¶ò ùçºc­çfıÀ–¨#öç‰şYöN~~ ûµß˜B&¨aK5Ö»•oŞŸ?è©DÈ:Hg©Y&µvFè¾‹W»gÖk£×7òğBk¶oÚ¿~Œå†^ºø¶³¯|˜@êéMuuÚ„DäoÛÑö{r>ÚZ·]=ïmçºŒ=ä|ŠªLÎ²XŸEÙ§’ı4óuÜ>Ü¶w¸ù¬ÿ¹ìà ãsûhÍY5ƒå?^ˆ‡mnN¨Gd

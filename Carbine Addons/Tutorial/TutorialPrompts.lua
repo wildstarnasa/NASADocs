@@ -44,6 +44,8 @@ local kTutorialComponents =
 	[GameLib.CodeEnumTutorialAnchor.HealthBar]					= {"Health Bar", 			4,   75, -10},
 	[GameLib.CodeEnumTutorialAnchor.ShieldBar]					= {"Shield Bar", 			6,  -75, -10},
 	[GameLib.CodeEnumTutorialAnchor.Recall]						= {"Recall", 				5,    7, -20},
+	[GameLib.CodeEnumTutorialAnchor.InterruptArmor]						= {"Interrupt Armor", 				5,    0, -40},
+	
 }
 
 local kstrDefaultLabel = Apollo.GetString("Tutorials_DefaultLabel")
@@ -887,3 +889,10 @@ end
 -----------------------------------------------------------------------------------------------
 local TutorialPromptsInst = TutorialPrompts:new()
 TutorialPromptsInst:Init()
+"0" TAnchorPoint="1" TAnchorOffset="-60" RAnchorPoint="0.5" RAnchorOffset="150" BAnchorPoint="1" BAnchorOffset="-12" DT_VCENTER="1" DT_CENTER="1" Name="CancelBtn" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="2" WindowSoundTemplate="TogglePhys05" TextId="CRB_Cancel" TooltipColor="" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" RelativeToClient="1" TestAlpha="1">
+                <Event Name="ButtonSignal" Function="OnCancelBtn"/>
+            </Control>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="ConfirmBlocker" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="15" HideInEditor="1" TooltipColor="">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="29" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="-28" BAnchorPoint="1" BAnchorOffset="-93" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="ItemBlocker" BGColor="80000000" TextColor="ffffffff" Sprite="BK3:UI_BK3_Metal_Framing_BlockerFull" Picture="1" NewControlDepth="10" HideInEditor="1" SwallowMouseClicks="1" TooltipColor="" IgnoreMouse="1"/>
+            <

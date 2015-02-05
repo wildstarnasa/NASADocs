@@ -19,3 +19,65 @@
         <Frame Texture="UI\Medic\UI_MedicThirdResource.tga" x0="30" x1="30" x2="30" x3="107" x4="107" x5="107" y0="0" y1="0" y2="0" y3="32" y4="32" y5="32" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
     </Sprite>
 </Sprites>
+iner2"):SetTooltip(strResource)
+	self.wndMain:FindChild("ResourceContainer3"):SetTooltip(strResource)
+	self.wndMain:FindChild("ResourceContainer4"):SetTooltip(strResource)
+
+	self.tCores = {} -- windows
+
+	for idx = 1,4 do
+		self.tCores[idx] =
+		{
+			wndCore = Apollo.LoadForm(self.xmlDoc, "CoreForm",  self.wndMain:FindChild("ResourceContainer" .. idx), self),
+			bFull = false
+		}
+	end
+
+	self.xmlDoc = nil
+end
+
+function Medic:OnFrame()
+	local unitPlayer = GameLib.GetPlayerUnit()
+	if not unitPlayer then
+		return
+	elseif unitPlayer:GetClassId() ~= GameLib.CodeEnumClass.Medic then
+		if self.wndMain then
+			self.wndMain:Destroy()
+		end
+		return
+	end
+
+	if not self.wndMain:IsValid() then
+		return
+	end
+
+	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect() -- legacy code
+	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop - 15, true)
+
+	self:DrawCores(unitPlayer) -- right id, draw core info
+
+	-- Resource 2 (Mana)
+	local nManaMax = unitPlayer:GetMaxMana()
+	local nManaCurrent = unitPlayer:GetMana()
+	self.wndMain:FindChild("ManaProgressBar"):SetMax(nManaMax)
+	self.wndMain:FindChild("ManaProgressBar"):SetProgress(nManaCurrent)
+	if nManaCurrent == nManaMax then
+		self.wndMain:FindChild("ManaProgressText"):SetText(nManaMax)
+	else
+		--self.wndMain:FindChild("ManaProgressText"):SetText(string.format("%.02f/%s", nManaCurrent, nManaMax))
+		self.wndMain:FindChild("ManaProgressText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), math.floor(nManaCurrent), nManaMax))
+	end
+
+	local strMana = String_GetWeaselString(Apollo.GetString("Medic_FocusTooltip"), nManaCurrent, nManaMax)
+	self.wndMain:FindChild("ManaProgressBar"):SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", strMana))
+end
+
+function Medic:DrawCores(unitPlayer)
+
+	local nResourceCurr = unitPlayer:GetResource(1)
+	local nResourceMax = unitPlayer:GetMaxResource(1)
+
+	for idx = 1, #self.tCores do
+		--self.tCores[idx].wndCore:Show(nResourceCurr ~= nil and nResourceMax ~= nil and nResourceMax ~= 0)
+		local bFull = idx <= nResourceCurr
+		self.tCores[idx].wndCore:FindChild("CoreFill"):Sho

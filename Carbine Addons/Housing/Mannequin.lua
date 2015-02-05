@@ -85,6 +85,9 @@ function Mannequin:ShowMannequinWindow()
 	
 	local tPoseList = HousingLib.GetMannequinPoseList()
 	local nPoseId = HousingLib.GetMannequinPose()
+	if nPoseId == 0 or tPoseList == nil or tPoseList == {} then
+	    return
+	end    
 	self.btnPoseSelect:SetText(tPoseList[nPoseId].strPoseName)
 	
     self.wndMannequin:Show(true)
@@ -237,3 +240,7 @@ end
 -----------------------------------------------------------------------------------------------
 local MannequinInst = Mannequin:new()
 MannequinInst:Init()
+="640" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprProperty11" Cycle="1">
+        <Frame Texture="UI\Tex

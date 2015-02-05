@@ -333,19 +333,19 @@ function Character:LoadMilestones(wndUpdate)
 	-- Make an enum for the string keys?
 	local arMilestones =  -- window, then attribute enum for comparison
 	{
-		["strength"] 	= {"", Unit.CodeEnumProperties.Strength, 	1},
-		["dexterity"] 	= {"", Unit.CodeEnumProperties.Dexterity, 	2},
-		["technology"] 	= {"", Unit.CodeEnumProperties.Technology, 	4},
-		["magic"]		= {"", Unit.CodeEnumProperties.Magic, 		3},
-		["wisdom"] 		= {"", Unit.CodeEnumProperties.Wisdom, 		5},
-		["stamina"] 	= {"", Unit.CodeEnumProperties.Stamina, 	6},
+		["strength"] 	= {wndMilestone = "", eMilestoneId = Unit.CodeEnumProperties.Strength, 		nOrder = 1},
+		["dexterity"] 	= {wndMilestone = "", eMilestoneId = Unit.CodeEnumProperties.Dexterity, 	nOrder = 2},
+		["technology"] 	= {wndMilestone = "", eMilestoneId = Unit.CodeEnumProperties.Technology, 	nOrder = 4},
+		["magic"]		= {wndMilestone = "", eMilestoneId = Unit.CodeEnumProperties.Magic, 		nOrder = 3},
+		["wisdom"] 		= {wndMilestone = "", eMilestoneId = Unit.CodeEnumProperties.Wisdom, 		nOrder = 5},
+		["stamina"] 	= {wndMilestone = "", eMilestoneId = Unit.CodeEnumProperties.Stamina, 		nOrder = 6},
 	}
 
 	for iSeq = 1, 6 do
 		for idx, tMilestoneInfo in pairs(arMilestones) do
-			if tMilestoneInfo[3] == iSeq then
+			if tMilestoneInfo.nOrder == iSeq then
 				local wndMilestone = Apollo.LoadForm(self.xmlDoc, "AttributeMilestoneEntry", wndMilestoneContainer, self)
-				tMilestoneInfo[1] = wndMilestone
+				tMilestoneInfo.wndMilestone = wndMilestone
 			end
 		end
 	end
@@ -783,17 +783,17 @@ function Character:DrawAttributes(wndUpdate)
 			},
 			{
 				strName 	= Apollo.GetString("AttributeAssaultPower"),
-				nValue 		= math.floor(unitPlayer:GetAssaultPower() or 0),
+				nValue 		= math.floor(unitPlayer:GetAssaultPower() + .5 or 0),
 				strTooltip 	= Apollo.GetString("Character_AssaultTooltip")
 			},
 			{
 				strName 	= Apollo.GetString("AttributeSupportPower"),
-				nValue 		= math.floor(unitPlayer:GetSupportPower() or 0),
+				nValue 		= math.floor(unitPlayer:GetSupportPower() + .5 or 0),
 				strTooltip 	= Apollo.GetString("Character_SupportTooltip")
 			},
 			{
 				strName 	= Apollo.GetString("CRB_Armor"),
-				nValue 		= math.floor(arProperties and arProperties.Armor and arProperties.Armor.fValue or 0),
+				nValue 		= math.floor(arProperties and arProperties.Armor and (arProperties.Armor.fValue + .5) or 0),
 				strTooltip 	= Apollo.GetString("Character_ArmorTooltip")
 			}
 		}
@@ -954,8 +954,10 @@ function Character:DrawAttributes(wndUpdate)
 	---------- Durability ------------
 	for iSlot, wndSlot in pairs(self.arSlotsWindowsByName) do
 		wndSlot:FindChild("DurabilityMeter"):SetProgress(0)
-		wndSlot:FindChild("DurabilityAlert"):Show(false)
 		wndSlot:FindChild("DurabilityBlocker"):Show(false)
+		if wndSlot:FindChild("DurabilityAlert") then
+			wndSlot:FindChild("DurabilityAlert"):Show(false)
+		end
 	end
 
 	if unitPlayer ~= nil then
@@ -995,7 +997,18 @@ function Character:DrawAttributes(wndUpdate)
 				wndSlot:FindChild("DurabilityMeter"):Show(bHasDurability)
 				wndSlot:FindChild("DurabilityMeter"):SetMax(nDurabilityMax)
 				wndSlot:FindChild("DurabilityMeter"):SetProgress(nDurabilityCurrent)
-				wndSlot:FindChild("DurabilityAlert"):Show(bHasDurability and nDurabilityRation <= .25)
+				if nDurabilityRation <= .100 then
+					wndSlot:FindChild("DurabilityMeter"):SetBarColor("ffaf1212")
+					if wndSlot:FindChild("DurabilityAlert") then
+						wndSlot:FindChild("DurabilityAlert"):Show(true)
+					end
+				elseif nDurabilityRation <= .250 then
+					wndSlot:FindChild("DurabilityMeter"):SetBarColor("ffffba00")
+				elseif nDurabilityRation <= .500 then
+					wndSlot:FindChild("DurabilityMeter"):SetBarColor("ffd7d017")
+				else 
+					wndSlot:FindChild("DurabilityMeter"):SetBarColor("ff129faf")
+				end
 			end
 		end
 	end
@@ -1017,21 +1030,42 @@ end
 
 function Character:UpdateMilestones(wndUpdated)
 	-- TODO: REFACTOR
-	local tInfo = AttributeMilestonesLib.GetAttributeMilestoneInfo()
-	local unitPlayer = wndUpdated and wndUpdated:GetData() or nil
-
-	if tInfo.eResult == AttributeMilestonesLib.CodeEnumAttributeMilestoneResult.InvalidUnit or tInfo.eResult == AttributeMilestonesLib.CodeEnumAttributeMilestoneResult.UnknownClassId or not unitPlayer then
+		local unitPlayer = wndUpdated and wndUpdated:GetData() or nil
+	if not unitPlayer then
 		return
 	end
+	
+	local tInfo = AttributeMilestonesLib.GetAttributeMilestoneInfo(unitPlayer:GetClassId())
 
+	if tInfo.eResult == AttributeMilestonesLib.CodeEnumAttributeMilestoneResult.InvalidUnit or tInfo.eResult == AttributeMilestonesLib.CodeEnumAttributeMilestoneResult.UnknownClassId then
+		return
+	end
+	
+	local tMilestoneMap = {}
+	
+	for strIdx, tEntry in pairs(tInfo.tMilestones) do
+		tMilestoneMap[strIdx] = {}
+		for idx, tMilestone in pairs(tEntry.tAttributeMilestones) do
+			if not tMilestoneMap[strIdx][tMilestone.nRequiredAmount] then
+				tMilestoneMap[strIdx][tMilestone.nRequiredAmount] = {tMajor = nil, tMinis = {}}
+			end
+			
+			if tMilestone.bIsMini then
+				table.insert(tMilestoneMap[strIdx][tMilestone.nRequiredAmount].tMinis, tMilestone)
+			else
+				tMilestoneMap[strIdx][tMilestone.nRequiredAmount].tMajor = tMilestone
+			end
+		end
+	end
+	
 	local arMilestones = wndUpdated:FindChild("MilestoneContainer"):GetData()
 
-	for key, tEntry in pairs(tInfo.tMilestones) do
-		if arMilestones[key] ~= nil then
-			local wndMilestone = arMilestones[key][1]
+	for strKey, tMilestones in pairs(tMilestoneMap) do
+		if arMilestones[strKey] ~= nil then
+			local wndMilestone = arMilestones[strKey].wndMilestone
 
-			local tCurrent = unitPlayer:GetUnitProperty(arMilestones[key][2])
-			if tCurrent == nil then
+			local tCurrent = unitPlayer:GetUnitProperty(arMilestones[strKey].eMilestoneId)
+			if tCurrent == nil or tCurrent == {} then
 				return
 			end
 
@@ -1044,17 +1078,16 @@ function Character:UpdateMilestones(wndUpdated)
 			local bShowGlow = true
 
 			-- This sets up the tiers by finding a spell and its value (each spell marks the end of a tier)
-			for iInterval, tData in pairs(tEntry.tAttributeMilestones) do
-				if not tData.bIsMini and tData.nRequiredAmount ~= nil and tData.nRequiredAmount ~= 0 then
-					local tMilestone = {tData.nRequiredAmount, tData.nSpellId}
-					arRanksAndIds[tData.nTier + 1] = tMilestone
+			for nRequiredAmount, tData in pairs(tMilestones) do
+				if tData.tMajor and nRequiredAmount ~= nil and nRequiredAmount ~= 0 then
+					local tMilestone = {nRequiredAmount, tData.tMajor.nSpellId}
+					arRanksAndIds[tData.tMajor.nTier + 1] = tMilestone
 				end
 			end
 
 			-- note: this will break if a tier is missing (that should never happen)
 			if #arRanksAndIds > 0 and tCurrent.fValue ~= nil then
 				for idx = 1, #arRanksAndIds do  -- important! order matters for finding floor/ceiling
-
 					if arRanksAndIds[idx] ~= nil then
 						if tCurrent.fValue < arRanksAndIds[1][1] then -- rank "0"
 							nRankMax = arRanksAndIds[1][1]
@@ -1113,19 +1146,21 @@ function Character:UpdateMilestones(wndUpdated)
 			wndMilestone:FindChild("MiniMilestoneTicks"):DestroyChildren()
 			local nLeft, nTop, nRight, nBottom = wndMilestone:FindChild("ProgressPoints"):GetAnchorOffsets()
 			local nLength = nRight - nLeft
-			local nSpan = nRankMax - nRankFloor
+			local nSpan = nRankMax - nRankFloor				
 
-			for idxMini, tMilestone in pairs(tEntry.tAttributeMilestones) do
-				if tMilestone.bIsMini == true and tMilestone.nRequiredAmount > nRankFloor and tMilestone.nRequiredAmount <= nRankMax then
-					local nPosition = ((tMilestone.nRequiredAmount - nRankFloor) / (nRankMax - nRankFloor)) * nLength
+			for nRequiredAmount, tMilestone in pairs(tMilestones) do
+				if tMilestone.tMinis[1] and nRequiredAmount > nRankFloor and nRequiredAmount <= nRankMax then
+					table.sort(tMilestone.tMinis, function(a,b) return a.eUnitProperty > b.eUnitProperty end)
+					
+					local nPosition = ((nRequiredAmount - nRankFloor) / (nRankMax - nRankFloor)) * nLength
 					local wndMini = Apollo.LoadForm(self.xmlDoc, "MiniMilestoneEntry", wndMilestone:FindChild("MiniMilestoneTicks"), self)
 					local nLeft2, nTop2, nRight2, nBottom2 = wndMini:GetAnchorOffsets()
 					local nHalf = (nRight2 - nLeft2) / 2
 					local strReqColor = "ffff5555"
-					local strMiniReq = String_GetWeaselString(Apollo.GetString("Character_MiniMileReq"), Apollo.FormatNumber(tMilestone.nRequiredAmount, 0, true), ktAttributeIconsText[tCurrent.idProperty].strName)
+					local strMiniReq = String_GetWeaselString(Apollo.GetString("Character_MiniMileReq"), Apollo.FormatNumber(nRequiredAmount, 0, true), ktAttributeIconsText[tCurrent.idProperty].strName)
 					wndMini:SetAnchorOffsets(nPosition - nHalf, nTop2, nPosition + nHalf, nBottom2)
 
-					if tMilestone.nRequiredAmount <= tCurrent.fValue then
+					if nRequiredAmount <= tCurrent.fValue then
 						wndMini:FindChild("Icon"):SetBGColor(CColor.new(1,1,1,1))
 						--wndMini:FindChild("Backer"):SetBGColor(CColor.new(0,0,0,1))
 						wndMini:FindChild("Backer"):SetBGColor(ApolloColor.new("UI_BtnTextHoloPressedFlyby"))
@@ -1136,30 +1171,45 @@ function Character:UpdateMilestones(wndUpdated)
 						wndMini:FindChild("Backer"):SetBGColor(ApolloColor.new("UI_TextHoloBody"))
 					end
 
-					if ktAttributeIconsText[tMilestone.eUnitProperty] ~= nil then
-						wndMini:FindChild("Icon"):SetSprite(ktAttributeIconsText[tMilestone.eUnitProperty].strIcon)
+					if ktAttributeIconsText[tMilestone.tMinis[1].eUnitProperty] ~= nil then
+						wndMini:FindChild("Icon"):SetSprite(ktAttributeIconsText[tMilestone.tMinis[1].eUnitProperty].strIcon)
 					end
 
-					local strMiniAmount = string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">+%s %s</P>", Apollo.FormatNumber(tMilestone.fModifier, 2, true), ktAttributeIconsText[tMilestone.eUnitProperty].strName)
+					local strMiniAmount = ""
+					
+					for idx, tEntry in pairs(tMilestone.tMinis) do
+						strMiniAmount = strMiniAmount ..string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"ffffffff\">+%s %s</P>", Apollo.FormatNumber(tEntry.fModifier, 2, true), ktAttributeIconsText[tEntry.eUnitProperty].strName)
+					end
 					strMiniReq = string.format("<P><P Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</P></P>", strReqColor, strMiniReq)
 					wndMini:SetTooltip(strMiniAmount .. strMiniReq)
 				end
 
-				if tMilestone.bIsMini == true and tMilestone.nRequiredAmount <= tCurrent.fValue then
-					if tContributions[tMilestone.eUnitProperty] ~= nil then
-						tContributions[tMilestone.eUnitProperty] = tContributions[tMilestone.eUnitProperty] + tMilestone.fModifier
-					else
-						tContributions[tMilestone.eUnitProperty] = tMilestone.fModifier
+				if nRequiredAmount <= tCurrent.fValue then
+					if tMilestone.tMajor and tMilestone.tMajor.eUnitProperty then
+						if tContributions[tMilestone.tMajor.eUnitProperty] ~= nil then
+							tContributions[tMilestone.tMajor.eUnitProperty] = tContributions[tMilestone.tMajor.eUnitProperty] + tMilestone.tMajor.fModifier
+						else
+							tContributions[tMilestone.tMajor.eUnitProperty] = tMilestone.tMajor.fModifier
+						end
+					end
+					
+					for idx, tMiniMilestone in pairs(tMilestone.tMinis) do
+						if tContributions[tMiniMilestone.eUnitProperty] ~= nil then
+							tContributions[tMiniMilestone.eUnitProperty] = tContributions[tMiniMilestone.eUnitProperty] + tMiniMilestone.fModifier
+						else
+							tContributions[tMiniMilestone.eUnitProperty] = tMiniMilestone.fModifier
+						end
 					end
 				end
 			end
 
 			--Give the data we need to the button for the tooltip:
+			
 			local tCarriedData =
 			{
 				id 				= tCurrent.idProperty,
 				tContributions 	= tContributions,
-				tSecondaries 	= tEntry.tSecondaryStats,
+				tSecondaries 	= tInfo.tMilestones[strKey].tSecondaryStats,
 			}
 
 			wndMilestone:FindChild("AttributeNameIcon"):SetData(tCarriedData)
@@ -1355,7 +1405,7 @@ function Character:OnEffectiveLevelChange()
 end
 
 function Character:DrawNames(wndUpdate)
-	if not wndUpdate then
+	if not wndUpdate or not Window.is(wndUpdate) then
 		wndUpdate = self.wndCharacter
 	end
 
@@ -1574,6 +1624,8 @@ function Character:OnInspect(unitTarget, arItems)
 		return
 	end
 
+	self:OnInspectClose()
+
 	self.wndInspect = Apollo.LoadForm(self.xmlDoc, "InspectWindow", nil, self)
 	self.wndInspect:SetData(unitTarget)
 
@@ -1590,7 +1642,7 @@ function Character:OnInspect(unitTarget, arItems)
 	local wndVisibleSlots = self.wndInspect:FindChild("Left:VisibleSlots")
 	local wndSlotInset = self.wndInspect:FindChild("Left:SlotInset")
 
-	local arSlotsWindowsByName = -- each one has the slot name and then the corresponding UI window
+	local arSlotsWindowsById = -- each one has the slot name and then the corresponding UI window
 	{
 		[GameLib.CodeEnumEquippedItems.Head] 				= wndVisibleSlots:FindChild("HeadSlot"), -- TODO: No enum to compare to code
 		[GameLib.CodeEnumEquippedItems.Shoulder] 			= wndVisibleSlots:FindChild("ShoulderSlot"),
@@ -1609,7 +1661,7 @@ function Character:OnInspect(unitTarget, arItems)
 	}
 
 	for idx, itemInspected in pairs(arItems) do
-		local wndItemSlot = arSlotsWindowsByName[itemInspected:GetSlot()]
+		local wndItemSlot = arSlotsWindowsById[itemInspected:GetSlot()]
 		if wndItemSlot then
 			wndItemSlot:GetWindowSubclass():SetItem(itemInspected)
 			wndItemSlot:SetData(itemInspected)
@@ -1654,3 +1706,18 @@ end
 
 local CharacterInstance = Character:new()
 CharacterInstance:Init()
+ªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªªÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ	ÿ	ÿÿÿ0ÿ	4ÿ5ÿ3ÿ	+ÿ1û)Qı%KşE‰ÿFŠÿ>ÿ:zÿ8sÿ3mÿ3iÿ1dÿ-Zÿ ÿÿÿÿÿÿÿÿÿÿÿÿÿ
+ÿ
+ÿÿ
+ÿ
+ÿ
+ÿ	ÿ	ÿ	ÿ	ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ!ÿ	ÿ	ÿ	ş	ı üû#ú$öÏÂR.                                                                                                                                                                                                                        ! .@ Rf 0Ø!7ø 5ø"9ı%Dÿ+Sÿ=€ÿ5oÿ ÿ'ÿ(ÿ%ÿ
+$ÿÿ
+ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ	ÿÿÿÿ.ÿ4ÿ4ÿ/ÿ(ÿ!Cú%Lı5lÿEŒÿ@‚ÿ9wÿ7rÿ4lÿ1gÿ.aÿ-^ÿ@ÿÿÿÿÿÿÿÿÿÿÿÿÿ
+ÿ
+ÿ
+ÿ
+ÿ
+ÿ
+ÿ
+ÿ	ÿ	ÿ	ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ

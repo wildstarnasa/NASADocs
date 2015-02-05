@@ -166,7 +166,7 @@
                 <Event Name="ButtonSignal" Function="OnShareCancel"/>
             </Control>
             <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-167" TAnchorPoint="0" TAnchorOffset="58" RAnchorPoint=".5" RAnchorOffset="167" BAnchorPoint="0" BAnchorOffset="139" RelativeToClient="1" Font="CRB_InterfaceMedium" Template="Holo_TextCallout" Name="NoticeText" BGColor="ffffffff" TextColor="UI_TextHoloBody" DT_CENTER="1" DT_VCENTER="1" DT_WORDBREAK="1" TextId="ZoneCompletion_Current" TooltipColor="" Text="" Border="1" IgnoreMouse="1" UseTemplateBG="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="0" TAnchorOffset="19" RAnchorPoint="1" RAnchorOffset="-50" BAnchorPoint="0" BAnchorOffset="59" RelativeToClient="1" Font="CRB_HeaderMedium" Text="Quest Sharing" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTitleYellow" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" TextId="" DT_VCENTER="1" DT_CENTER="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="0" TAnchorOffset="19" RAnchorPoint="1" RAnchorOffset="-50" BAnchorPoint="0" BAnchorOffset="59" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTitleYellow" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" TextId="QuestLog_QuestSharing" DT_VCENTER="1" DT_CENTER="1"/>
         </Control>
         <Control Class="Button" Base="CRB_UIKitSprites:btn_closeSmall" Font="CRB_InterfaceMedium" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="414" TAnchorPoint="0" TAnchorOffset="-23" RAnchorPoint="0" RAnchorOffset="438" BAnchorPoint="0" BAnchorOffset="2" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="ffffffff" TextColor="ffffffff" NoClip="0" WindowSoundTemplate="CloseWindowPhys" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff">
             <Event Name="ButtonSignal" Function="OnShareCancel"/>
@@ -177,3 +177,26 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="15" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="5" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="CRB_UIKitSprites:spr_progressbarSLIM" Line="0"/>
     </Form>
 </Forms>
+ewardData.nXP, tRewardData.strTradeskill)
+		strSprite = "Icon_ItemMisc_tool_0001"
+		wndReward:SetTooltip(strText)
+	elseif tRewardData.eType == Quest.Quest2RewardType_Money then
+		if tRewardData.eCurrencyType == Money.CodeEnumCurrencyType.Credits then
+			local nInCopper = tRewardData.nAmount
+			if nInCopper >= 1000000 then
+				strText = String_GetWeaselString(Apollo.GetString("CRB_Platinum"), math.floor(nInCopper / 1000000))
+			end
+			if nInCopper >= 10000 then
+				strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Gold"), math.floor(nInCopper % 1000000 / 10000))
+			end
+			if nInCopper >= 100 then
+				strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Silver"), math.floor(nInCopper % 10000 / 100))
+			end
+			strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Copper"), math.floor(nInCopper % 100))
+			strSprite = "ClientSprites:Icon_ItemMisc_bag_0001"
+			wndReward:SetTooltip(strText)
+		else
+			local tDenomInfo = GameLib.GetPlayerCurrency(tRewardData.eCurrencyType or tRewardData.idObject):GetDenomInfo()
+			if tDenomInfo ~= nil then
+				strText = tRewardData.nAmount .. " " .. tDenomInfo[1].strName
+				strSprite = "ClientSprites:Icon_ItemMisc_bag

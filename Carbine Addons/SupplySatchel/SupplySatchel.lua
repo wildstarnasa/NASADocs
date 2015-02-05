@@ -173,13 +173,6 @@ function SupplySatchel:OnShowAll( wndHandler, wndControl, eMouseButton )
 end
 
 function SupplySatchel:OnResize()
-	-- Snap window width to item icons
-	local nExcess = (self.wndCategoryList:GetWidth() - knCategoryScrollbarWidth) % knItemWndWidth
-	if nExcess ~= 0 then
-		local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight - nExcess, nBottom)
-	end
-
 	for key, tCacheCategory in pairs(self.tItemCache) do
 		if tCacheCategory.nVisibleItems > 0 then
 			tCacheCategory.wndCat:Show(true)
@@ -205,11 +198,18 @@ function SupplySatchel:ResizeCategory(tCat)
 	self.wndCategoryList:RecalculateContentExtents()
 end
 
-function SupplySatchel:OnMainWindowMouseButtonUp( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+function SupplySatchel:OnResizeTimer()
 	if self.wndMain:GetWidth() ~= self.nLastWidth then
 		self:OnResize()
 		self.nLastWidth = self.wndMain:GetWidth()
 	end
+end
+
+function SupplySatchel:OnMainWindowMouseResized( wndHandler, wndControl, eMouseButton)
+	if self.timerResize then
+		self.timerResize:Stop()
+	end
+	self.timerResize = ApolloTimer.Create(0.02, false, "OnResizeTimer", self)
 end
 
 function SupplySatchel:OnQueryDragDrop( wndHandler, wndControl, nX, nY, wndSource, strType, nData, eResult )
@@ -362,3 +362,53 @@ end
 -----------------------------------------------------------------------------------------------
 local SupplySatchelInst = SupplySatchel:new()
 SupplySatchelInst:Init()
+fo.strCharacterName)
+	wndMenuEntry:SetData(tInfo)
+	table.insert(self.tResultBtns, wndMenuEntry)
+end
+
+function SuggestedMenu:OnSuggestedMenuEntry(wndHandler, wndControl)
+	if wndHandler ~= wndControl or (self.tWindowMap and not self.tWindowMap["wndTextBox"]) then
+		return
+	end
+
+	self:OnSuggestedMenuHide()
+	Event_FireGenericEvent("SuggestedMenuResult", wndControl:FindChild("SuggestedMenuEntry"):GetData(), self.tWindowMap["wndTextBox"]:GetId())
+end
+-----------------------------------------------------------------------------------------------
+-- SuggestedMenu HelperFunctions
+-----------------------------------------------------------------------------------------------
+function SuggestedMenu:HelperParseName(strText)
+	if not strText then
+		return
+	end
+	local nIndexOfSpace = string.find(strText, "%s")
+	if nIndexOfSpace then --may not have a space
+		return string.sub(strText, nIndexOfSpace + 1, string.len(strText))
+	end
+	--no need to parse return original
+	return strText
+end
+
+function SuggestedMenu:HelperTabThroughSuggestedEntries()
+	if self.tResultBtns and self.tResultBtns[self.nSuggestedResultPos] and self.nEntrySize then 
+		if #self.tResultBtns == 1 then
+			return
+		end
+		self.tResultBtns[self.nSuggestedResultPos]:FindChild("EntryName"):SetTextColor(ApolloColor.new(kstrColorNonSelectedEntry))
+		self.nSuggestedResultPos =  Apollo.IsShiftKeyDown() and self.nSuggestedResultPos - 1 or self.nSuggestedResultPos + 1
+		
+		local nScrollPosition = self.tWindowMap["SuggestedMenuContent"]:GetVScrollPos()
+		if self.nSuggestedResultPos > kMaxShownEntries - 1 then
+			self.tWindowMap["SuggestedMenuContent"]:SetVScrollPos(nScrollPosition + self.nEntrySize)
+		elseif #self.tResultBtns - self.nSuggestedResultPos >= kMaxShownEntries - 1 then
+			self.tWindowMap["SuggestedMenuContent"]:SetVScrollPos(nScrollPosition - self.nEntrySize)
+		end
+
+		if self.nSuggestedResultPos > #self.tResultBtns then 
+			self.nSuggestedResultPos = 1
+			self.tWindowMap["SuggestedMenuContent"]:SetVScrollPos(0)
+		elseif self.nSuggestedResultPos <= 0 then
+			self.nSuggestedResultPos = #self.tResultBtns
+			local nHeight = self.tWindowMap["SuggestedMenuContent"]:GetHeight()
+			nScrollPosition = #self.tResultBtns > kMaxShownEntries and

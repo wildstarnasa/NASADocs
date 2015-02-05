@@ -22,3 +22,54 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-29" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_Interface12_B" Text="" Template="Default" TooltipType="OnCursor" Name="BottomText" BGColor="ffffffff" TextColor="UI_TextHoloTitle" TooltipColor="" TextId="Challenges_NoProgress" UseParentOpacity="1" IgnoreMouse="1" DT_CENTER="1" AutoScaleTextOff="1"/>
     </Form>
 </Forms>
+nchorPoint=".5" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="65" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTitleYellow" Template="Default" TooltipType="OnCursor" Name="Header" TooltipColor="" Sprite="BK3:sprMetal_Framing_Header" Picture="1" IgnoreMouse="1" TextId="InterfaceMenu_ReportBug" DT_CENTER="1" DT_VCENTER="1"/>
+        </Control>
+        <Control Class="Button" Name="CloseBtn" ButtonType="PushButton" Base="CRB_Basekit:kitBtn_Close" Text="" Font="CRB_HeaderMedium" DT_CENTER="1" DT_VCENTER="1" NewControlDepth="1" NoClip="1" LAnchorPoint="1" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="23" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="55" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff">
+            <Event Name="ButtonSignal" Function="OnCancelBtn"/>
+        </Control>
+        <Control Class="Button" Base="CRB_Basekit:kitBtn_Metal_LargeBlue" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-154" TAnchorPoint="1" TAnchorOffset="-79" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="1" BAnchorOffset="-31" DT_VCENTER="1" DT_CENTER="1" Name="ReportBugBtn" BGColor="ffffffff" TextColor="ffffffff" RelativeToClient="1" TextId="PlayerTicket_SubmitTicketBtn" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="">
+            <Event Name="ButtonSignal" Function="OnReportBug"/>
+        </Control>
+    </Form>
+</Forms>
+yChange° ³=åý H H@owMap["PlayerTicketTextEntrySubject"]:SetFocus()
+	self.tWindowMap["PlayerTicketTextEntrySubject"]:SetSel(0, -1)
+
+	self:UpdateSubmitButton()
+end
+
+function PlayerTicketDialog:UpdateSubmitButton()
+	local nCategory = self.tWindowMap["Category"]:GetCellData(self.tWindowMap["Category"]:GetCurrentRow(), 1)
+	local nSubCategory = self.tWindowMap["SubCategory"]:GetCellData(self.tWindowMap["SubCategory"]:GetCurrentRow(), 1)
+	local strText = self.tWindowMap["PlayerTicketTextEntry"]:GetText()
+	local strTextSubject = self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText()
+
+	local bEnable = nCategory ~= nil and nSubCategory ~= nil and strText ~= nil and strText ~= "" and strTextSubject ~= nil and strTextSubject ~= ""
+	self.tWindowMap["OkBtn"]:Enable(bEnable)
+	if bEnable then
+		self.tWindowMap["OkBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.SubmitSupportTicket, nCategory, nSubCategory, strTextSubject, strText)
+	end
+
+	if self.bIsBug ~= not self.tWindowMap["OkBtn"]:IsShown() then
+		self.tWindowMap["OkBtn"]:Show(not self.bIsBug)
+	end
+
+	if self.bIsBug ~= self.tWindowMap["ConvertToBugBtn"]:IsShown() then
+		self.tWindowMap["ConvertToBugBtn"]:Show(self.bIsBug)
+	end
+end
+
+---------------------------------------------------------------------------------------------------
+function PlayerTicketDialog:OnSupportTicketSubmitted(wndHandler, wndControl, eMouseButton)
+	if self.bAddIgnore and self.strTarget then
+		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, self.strTarget) 
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToIgnore"), self.strTarget))
+		self.bAddIgnore = nil
+		self.strTarget = nil
+	end
+	
+	self:UpdateSubmitButton()
+	self.tWindowMap["Main"]:Close()
+end
+
+----------------------------------------------------------------------------

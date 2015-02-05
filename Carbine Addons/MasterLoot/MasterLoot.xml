@@ -42,8 +42,31 @@
     </Form>
     <Form Class="Window" Base="BK3:btnHolo_ListView_Simple" Font="DefaultButton" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="54" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="LooterItemButton" TooltipColor="" Sprite="BK3:btnHolo_ListView_SimpleNormal" Tooltip="" IgnoreMouse="0" GlobalRadioGroup="" RelativeToClient="1" Overlapped="1" NewWindowDepth="1" Picture="1" UseTemplateBG="0">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="7" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="45" BAnchorPoint="0" BAnchorOffset="46" RelativeToClient="0" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ItemIconFrame" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" NewWindowDepth="1" Tooltip=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="11" RAnchorPoint="0" RAnchorOffset="42" BAnchorPoint="0" BAnchorOffset="43" RelativeToClient="0" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ItemIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="IconSprites:Icon_ItemMisc_UI_Item_Bag_001" NewWindowDepth="1" Tooltip=""/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="11" RAnchorPoint="0" RAnchorOffset="42" BAnchorPoint="0" BAnchorOffset="43" RelativeToClient="0" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ItemIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" NewWindowDepth="1" Tooltip="" Subclass="ItemWindowSubclass" WindowTextYMargin="2" WindowTextXMargin="2" DT_RIGHT="1" DT_BOTTOM="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="55" TAnchorPoint=".5" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="-38" BAnchorPoint=".5" BAnchorOffset="20" RelativeToClient="0" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ItemName" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" TextId="Challenges_NoProgress" HideInEditor="0" Tooltip="" DT_VCENTER="1" IgnoreMouse="1" NewWindowDepth="1" DT_WORDBREAK="1" AutoScaleText="1"/>
         <Event Name="MouseButtonUp" Function="OnItemMouseButtonUp"/>
     </Form>
 </Forms>
+vedData)
+	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
+
+		if tSavedData.tWindowMasterLocation then
+			self.locSavedMasterWindowLoc = WindowLocation.new(tSavedData.tWindowMasterLocation)
+		end
+
+		if tSavedData.tWindowLooterLocation then
+			self.locSavedLooterWindowLoc = WindowLocation.new(tSavedData.tWindowLooterLocation )
+		end
+
+		local bShowWindow = #GameLib.GetMasterLoot() > 0
+		if self.wndGroupBag and bShowWindow then
+			self.wndGroupBag:Show(bShowWindow)
+			self:RedrawMasterLootWindow()
+		end
+	end
+end
+
+local MasterLoot_Singleton = MasterLoot:new()
+MasterLoot_Singleton:Init()
+nfirmDelete:FindChild("CancelCREDDListingBtn"):SetData(aucCurrent)
+		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("Market

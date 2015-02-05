@@ -122,9 +122,9 @@ function LoreWindow:Initialize()
 	self.wndColTopDropdownScroll = self.wndMain:FindChild("ColTopDropdownScroll")
 	self.wndColTopZoneProgressContainer = self.wndMain:FindChild("ColTopZoneProgressContainer")
 	self.wndColTopDropdownBtn = self.wndMain:FindChild("ColTopDropdownBtn")
+	self.wndMainArticleContainer = self.wndMain:FindChild("MainArticleContainer")
 
 	local wndMainGAContainer = self.wndMain:FindChild("MainGAContainer")
-
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Lore")})
 
 	self.wndMainNavGA:AttachWindow(wndMainGAContainer)
@@ -186,7 +186,6 @@ function LoreWindow:OnShowLoreWindow(tArticleData)
 	end
 
 	self.wndMain:Invoke()
-	Event_FireGenericEvent("LoreWindowHasBeenToggled")
 	Event_ShowTutorial(GameLib.CodeEnumTutorial.General_Lore)
 	
 	self.wndMain:FindChild("MainColContainer:PvPBlocker"):Show(MatchingGame.IsInPVPGame())
@@ -202,14 +201,11 @@ function LoreWindow:OnToggleLoreWindow(tArticleData)
 	end
 
 	if self.wndMain:IsShown() then
-		self.wndMain:Show(false)
+		self:OnCloseBtn()
 		Event_FireGenericEvent("LoreWindowHasBeenClosed")
 		
 	else
-		self.wndMain:Invoke()
-		self.wndMain:ToFront()
-		self.wndMain:FindChild("MainColContainer:PvPBlocker"):Show(MatchingGame.IsInPVPGame())
-		
+		self:OnShowLoreWindow()
 		Event_FireGenericEvent("LoreWindowHasBeenToggled")
 		Event_ShowTutorial(GameLib.CodeEnumTutorial.General_Lore)
 	end
@@ -305,7 +301,7 @@ function LoreWindow:InitializeCollections()
 				self.wndColTopDropdownBtn:SetText(tCurrZone.strName)
 				self:HelperDrawDropdownZoneProgress(self.wndColTopZoneProgressContainer, tCurrZone.nZoneId, tCurrZone.strName)
 			end
-			
+
 			tDuplicateList[tCurrZone.nZoneId] = true
 		end
 	end
@@ -469,11 +465,8 @@ function LoreWindow:SpawnAndDrawColReader(tArticleData, wndOrigin) -- wndOrigin 
 		nColDisplayLeft = nRight - 8
 	end
 
-	self.wndColDisplay = Apollo.LoadForm(self.xmlDoc, "MainColArticleDisplay", bDockedOption and self.wndMain, self)
+	self.wndColDisplay = Apollo.LoadForm(self.xmlDoc, "MainColArticleDisplay", self.wndMainArticleContainer , self)
 	self.wndColDisplay:SetData(wndOrigin)
-	--self.wndColDisplay:SetSizingMinimum(200, 200)
-	--self.wndColDisplay:SetSizingMaximum(1024, 768)
-	--self.wndColDisplay:SetAnchorOffsets(nColDisplayLeft, nColDisplayTop, nColDisplayLeft + self.wndColDisplay:GetWidth(), nColDisplayTop + self.wndColDisplay:GetHeight())
 	self.wndColDisplay:FindChild("PlayPauseButton"):AttachWindow(self.wndColDisplay:FindChild("NowPlayingIcon"))
 	self.wndColDisplay:FindChild("PlayPauseButton"):SetData(tArticleData)
 	self.wndColDisplay:FindChild("ArticleText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\""..kclrDefault.."\">"..
@@ -643,3 +636,78 @@ end
 
 local LoreWindowInst = LoreWindow:new()
 LoreWindowInst:Init()
+Point="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-21" BAnchorPoint="0" BAnchorOffset="30" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="LevelNumberBtn" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBluePressedFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="Level 1" TextId="">
+        <Event Name="ButtonSignal" Function="OnLevelUpPickerBtn"/>
+    </Form>
+</Forms>
+ainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndIconBtnSortDropDown:SetCheck(false)
+end
+
+function InventoryBag:OnOptionsSortItemsByCategory(wndHandler, wndControl)
+	self.bShouldSortItems = true
+	self.nSortItemType = 2
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndIconBtnSortDropDown:SetCheck(false)
+end
+
+function InventoryBag:OnOptionsSortItemsByQuality(wndHandler, wndControl)
+	self.bShouldSortItems = true
+	self.nSortItemType = 3
+	self.wndMainBagWindow:SetSort(self.bShouldSortItems)
+	self.wndMainBagWindow:SetItemSortComparer(ktSortFunctions[self.nSortItemType])
+	self.wndIconBtnSortDropDown:SetCheck(false)
+end
+
+-----------------------------------------------------------------------------------------------
+-- Delete/Salvage Screen
+-----------------------------------------------------------------------------------------------
+
+function InventoryBag:InvokeDeleteConfirmWindow(iData)
+	local itemData = Item.GetItemFromInventoryLoc(iData)
+	if itemData and not itemData:CanDelete() then
+		return
+	end
+	self.wndDeleteConfirm:SetData(iData)
+	self.wndDeleteConfirm:Show(true)
+	self.wndDeleteConfirm:ToFront()
+	self.wndDeleteConfirm:FindChild("DeleteBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.DeleteItem, iData)
+	self.wndMain:FindChild("DragDropMouseBlocker"):Show(true)
+	Sound.Play(Sound.PlayUI55ErrorVirtual)
+end
+
+function InventoryBag:InvokeSalvageConfirmWindow(iData)
+	self.wndSalvageConfirm:SetData(iData)
+	self.wndSalvageConfirm:Show(true)
+	self.wndSalvageConfirm:ToFront()
+	self.wndSalvageConfirm:FindChild("SalvageBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.SalvageItem, iData)
+	self.wndMain:FindChild("DragDropMouseBlocker"):Show(true)
+	Sound.Play(Sound.PlayUI55ErrorVirtual)
+end
+
+-- TODO SECURITY: These confirmations are entirely a UI concept. Code should have a allow/disallow.
+function InventoryBag:OnDeleteCancel()
+	self.wndDeleteConfirm:SetData(nil)
+	self.wndDeleteConfirm:Close()
+	self.wndMain:FindChild("DragDropMouseBlocker"):Show(false)
+end
+
+function InventoryBag:OnSalvageCancel()
+	self.wndSalvageConfirm:SetData(nil)
+	self.wndSalvageConfirm:Close()
+	self.wndMain:FindChild("DragDropMouseBlocker"):Show(false)
+end
+
+function InventoryBag:OnDeleteConfirm()
+	self:OnDeleteCancel()
+end
+
+function InventoryBag:OnSalvageConfirm()
+	self:OnSalvageCancel()
+end
+
+-----------------------------------------------------------------------------------------------
+-- Stack Splitting
+--------------------------

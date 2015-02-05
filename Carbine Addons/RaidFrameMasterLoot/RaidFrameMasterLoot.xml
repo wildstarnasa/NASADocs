@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <Forms>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="234" TAnchorPoint="0" TAnchorOffset="-16" RAnchorPoint="0" RAnchorOffset="723" BAnchorPoint="0" BAnchorOffset="410" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="RaidFrameMasterLootForm" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Tooltip="" IgnoreMouse="0" Sprite="BK3:UI_BK3_Holo_Framing_3" Sizable="1" TooltipId="">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="234" TAnchorPoint="0" TAnchorOffset="-16" RAnchorPoint="0" RAnchorOffset="723" BAnchorPoint="0" BAnchorOffset="410" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="RaidFrameMasterLootForm" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Tooltip="" IgnoreMouse="0" Sprite="BK3:UI_BK3_Holo_Framing_3" Sizable="0" TooltipId="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="0" TAnchorOffset="67" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="132" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Holo_TextCallout" TooltipType="OnCursor" Name="SetLootUnderThres" BGColor="ffffffff" TextColor="UI_TextHoloTitle" TooltipColor="" TextId="RaidFrame_UnderThresholdLabel" Tooltip="" Border="1" IgnoreMouse="1" UseTemplateBG="1">
             <Control Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="SetLootUnderThres_Raid_RadioGroup" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="1" TAnchorOffset="-38" RAnchorPoint="0" RAnchorOffset="108" BAnchorPoint="1" BAnchorOffset="-8" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="UnderThresMasterBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="ff31fcf6" FlybyTextColor="ff2f94ac" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="Group_MasterLoot" Tooltip="" GlobalRadioGroup="" RadioDisallowNonSelection="1">
                 <Event Name="ButtonCheck" Function="OnSetLootUnderThresCheck"/>
@@ -69,3 +69,18 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="-9" BAnchorPoint="1" BAnchorOffset="0" BGColor="ffffffff" Font="CRB_HeaderTiny" TextColor="UI_WindowTitleYellow" Text="" TextId="RaidFrame_LootManagementTooltip" Line="0"/>
     </Form>
 </Forms>
+rmBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="">
+                <Event Name="ButtonSignal" Function="OnSetRaidLeaderConfirmBtn"/>
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="3" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-3" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SetRaidLeaderConfirmImage" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="Achievements:sprAchievements_Icon_Complete" Picture="1" IgnoreMouse="1" HideInEditor="0" Visible="0"/>
+            </Control>
+            <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" BGColor="ffffffff" Font="CRB_InterfaceSmall" TextColor="UI_WindowTitleYellow" Text="" TextId="RaidFrame_NewLeaderLabel" Line="0" DT_CENTER="1"/>
+        </Control>
+    </Form>
+</Forms>
+ffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Visible="1" Overlapped="0" RelativeToClient="1" NewWindowDepth="1" TooltipColor="" NewControlDepth="10" IgnoreMouse="1">
+            <Event Name="ButtonSignal" Function="OnExitSoldierMissionMain"/>
+        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="28" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="DefendEntry" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="13" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="36" BAnchorPoint="0" BAnchorOffset="27" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="DefendIcon" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="CRB_DatachronSprites:sprDCPP_SolDefObjIcon" HideInEditor="0" TooltipColor="" Visible="1" Tooltip=""/>
+        <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="54" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="1" RAnchorOffset="-15" BAnchorPoint="0" BAnchorOffset="34" AutoSe

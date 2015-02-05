@@ -725,7 +725,7 @@ function CombatLog:HelperDamageColor(nArg)
 end
 
 function CombatLog:HelperPickColor(tEventArgs)
-	if not self.unitPlayer then
+	if not self.unitPlayer or not self.unitPlayer:IsValid() then
 		self.unitPlayer = GameLib.GetControlledUnit()
 	end
 
@@ -883,3 +883,41 @@ end
 local CombatLogInstance = CombatLog:new()
 CombatLog:Init()
 
+tBarContainer"]:Show(bShowIt)
+	self.tWindowMap["PetBtn"]:SetCheck(not bShowIt)
+end
+
+function ClassResources:OnPetBtn(wndHandler, wndControl)
+	self.bShowPet = not self.tWindowMap["PetBarContainer"]:IsShown()
+	
+	self:HelperShowPetBar(self.bShowPet)
+end
+
+function ClassResources:OnShowActionBarShortcut(eWhichBar, bIsVisible, nNumShortcuts)
+	if eWhichBar ~= ActionSetLib.CodeEnumShortcutSet.PrimaryPetBar or not self.wndMain or not self.wndMain:IsValid() then
+		return
+	end
+
+	self.tWindowMap["PetBtn"]:Show(bIsVisible)
+	self.tWindowMap["PetBtn"]:SetCheck(not bIsVisible or not self.bShowPet)
+	self.tWindowMap["PetBarContainer"]:Show(bIsVisible and self.bShowPet)
+end
+
+function ClassResources:OnEngineerPetBtnMouseEnter(wndHandler, wndControl)
+	local strHover = ""
+	local strWindowName = wndHandler:GetName()
+	if strWindowName == "ActionBarShortcut.12" then
+		strHover = Apollo.GetString("ClassResources_Engineer_PetAttack")
+	elseif strWindowName == "ActionBarShortcut.13" then
+		strHover = Apollo.GetString("CRB_Stop")
+	elseif strWindowName == "ActionBarShortcut.15" then
+		strHover = Apollo.GetString("ClassResources_Engineer_GoTo")
+	end
+	self.tWindowMap["PetText"]:SetText(strHover)
+	wndHandler:SetBGColor("white")
+end
+
+function ClassResources:OnEngineerPetBtnMouseExit(wndHandler, wndControl)
+	self.tWindowMap["PetText"]:SetText(self.tWindowMap["PetText"]:GetData() or "")
+	wndHandler:SetBGColor("UI_AlphaPercent50")
+end

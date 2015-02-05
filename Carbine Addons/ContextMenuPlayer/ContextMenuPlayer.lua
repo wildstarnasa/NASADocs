@@ -9,6 +9,7 @@ require "GroupLib"
 require "ChatSystemLib"
 require "FriendshipLib"
 require "MatchingGame"
+require "HousingLib"
 
 local knXCursorOffset = 10
 local knYCursorOffset = 25
@@ -18,26 +19,26 @@ local ktSortOrder =
 {
 	["nil"] 				= 0,
 	["BtnLeaveGroup"] 		= 1,
-	["BtnKick"]				= 1,
 	["BtnInvite"] 			= 1,
-	["BtnWhisper"] 			= 2,
-	["BtnAccountWhisper"] 	= 2,
+	["BtnReportChat"] 		= 2,
+	["BtnReportUnit"] 		= 2,
 	["BtnTrade"] 			= 3,
 	["BtnDuel"] 			= 4,
 	["BtnForfeit"] 			= 4,
-	["BtnReportChat"] 		= 5,
-	["BtnReportUnit"] 		= 5,
-	["BtnUnignore"] 		= 6,
-	["BtnIgnore"] 			= 6,
-	["BtnInspect"]			= 7,
-	["BtnGuildList"] 		= 7,
+	["BtnInspect"]			= 5,
+	["BtnKick"]				= 6,
+	["BtnWhisper"] 			= 7,
+	["BtnAccountWhisper"] 	= 7,
+	["BtnGuildList"] 		= 8,
 	-- Social List: BtnPromoteInGuild	 				
 	-- Social List: BtnDemoteInGuild			
 	-- Social List: BtnKickFromGuild	
-	["BtnSocialList"] 		= 8,
+	["BtnSocialList"] 		= 9,
 		-- Social List: BtnAddFriend 				BtnUnfriend
 		-- Social List: BtnAddRival					BtnUnrival
-		-- Social List: BtnAddNeighbor				BtnUnneighbor		
+		-- Social List: BtnAddNeighbor				BtnUnneighbor
+		-- Social List: BtnIgnore					BtnUnignore
+		-- Social List: BtnVisitPlayer          
 	["BtnGroupList"] 		= 10,
 		-- Group List: BtnMentor,					BtnStopMentor
 		-- Group List: BtnGroupTakeInvite, 			BtnGroupGiveInvite
@@ -47,10 +48,10 @@ local ktSortOrder =
 		-- Group List: BtnVoteToDisband
 		-- Group List: BtnPromote
 		-- Group List: BtnPromote
-		-- Group List: BtnLocate
 	["BtnClearFocus"] 		= 11,
 	["BtnSetFocus"] 		= 11,
-	["BtnAssist"] 			= 12,
+	["BtnLocate"]			= 12,
+	--["BtnAssist"] 		= 13,
 	["BtnMarkerList"]		= 13,
 		-- 8 Markers
 		-- BtnMarkClear
@@ -122,6 +123,15 @@ function ContextMenuPlayer:InitializeFriend(wndParent, nFriendId)
 	local unitPlayer = GameLib.GetPlayerUnit()
 	local nPlayerFaction = unitPlayer:GetFaction()
 	self.tFriend = FriendshipLib.GetById(nFriendId)
+	
+	if not self.tFriend then
+		local tSuggested = FriendshipLib.GetSuggestedById(nFriendId)
+		if tSuggested then
+			self.tFriend = tSuggested
+			self.tFriend.bSuggested = true
+		end
+	end
+
 	if self.tFriend ~= nil then
 		self.strTarget = self.tFriend.strCharacterName
 		self.bCrossFaction = self.tFriend.nFactionId ~= nPlayerFaction
@@ -159,18 +169,25 @@ function ContextMenuPlayer:RedrawAllFriend()
 	local bInGroup = GroupLib.InGroup()
 	local tCharacterData = GameLib.SearchRelationshipStatusByCharacterName(strTarget)
 
-	local btnSocialList = self:FactoryProduce(wndButtonList, "BtnSocialList", "BtnSocialList")
-	local wndSocialListItems = btnSocialList:FindChild("SocialListPopoutItems")
-	btnSocialList:AttachWindow(btnSocialList:FindChild("SocialListPopoutFrame"))
-
-	local bCanWhisper = tFriend ~= nil and tFriend.fLastOnline == 0 and not tFriend.bIgnore and tFriend.nFactionId == unitPlayer:GetFaction()
+	local bCanWhisper = tFriend ~= nil and (tFriend.fLastOnline == 0 and not tFriend.bIgnore and tFriend.nFactionId == unitPlayer:GetFaction() or tFriend.bSuggested)
 	local bCanAccountWisper = tAccountFriend ~= nil and tAccountFriend.arCharacters and tAccountFriend.arCharacters[1] ~= nil
 	local bIsFriend = (tFriend ~= nil and tFriend.bFriend) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bFriend)
 	local bIsRival = (tFriend ~= nil and tFriend.bRival) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tFriend.bRival)
 	local bIsNeighbor = (tFriend ~= nil and tFriend.bNeighbor) or (tCharacterData ~= nil and tCharacterData.tFriend ~= nil and tCharacterData.tNeighbor)
 	--local bIsNeighbor = tCharacterData ~= nil and tCharacterData.tNeighbor and tCharacterData.tFriend
 	local bIsAccountFriend = tAccountFriend ~= nil or (tCharacterData == nil or tCharacterData.tAccountFriend ~= nil)
-
+	
+	local btnSocialList = nil
+	local wndSocialListItems = nil
+		
+	if tFriend and tFriend.bIgnore then
+		--no button when player is ignored
+	else
+		btnSocialList = self:FactoryProduce(wndButtonList, "BtnSocialList", "BtnSocialList")
+		wndSocialListItems = btnSocialList:FindChild("SocialListPopoutItems")
+		btnSocialList:AttachWindow(btnSocialList:FindChild("SocialListPopoutFrame"))
+	end
+	
 	if bCanAccountWisper then
 		bCanWhisper = tAccountFriend.arCharacters[1] ~= nil
 			and tAccountFriend.arCharacters[1].strRealm == GameLib.GetRealmName()
@@ -187,8 +204,10 @@ function ContextMenuPlayer:RedrawAllFriend()
 
 	if tFriend and tFriend.bIgnore then
 		self:HelperBuildRegularButton(wndButtonList, "BtnUnignore", Apollo.GetString("ContextMenu_Unignore"))
+		self:ResizeAndRedraw()
+		return -- early exit if player is ignored
 	elseif tAccountFriend == nil then
-		self:HelperBuildRegularButton(wndButtonList, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
+		self:HelperBuildRegularButton(wndSocialListItems, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
 	end
 
 	if bIsRival then
@@ -209,17 +228,20 @@ function ContextMenuPlayer:RedrawAllFriend()
 		if tAccountFriend == nil then
 			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnfriend", Apollo.GetString("ContextMenu_RemoveFriend"))
 		end
-	elseif (tFriend ~= nil and tFriend.nFactionId == unitPlayer:GetFaction()) or (bCanAccountWisper and bCanWhisper) then
+	elseif (tFriend ~= nil and (tFriend.nFactionId == unitPlayer:GetFaction() or tFriend.bSuggested)) or (bCanAccountWisper and bCanWhisper) then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddFriend", Apollo.GetString("ContextMenu_AddFriend"))
 	end
 
 	if bIsNeighbor then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnUnneighbor", Apollo.GetString("ContextMenu_RemoveNeighbor"))
-	elseif (tFriend ~= nil or bCanAccountWisper) and not bCrossFaction and not bIsRival then
+	elseif ((tFriend ~= nil or bCanAccountWisper) and not bCrossFaction and not bIsRival) or (tFriend and tFriend.bSuggested) then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAddNeighbor", Apollo.GetString("ContextMenu_AddNeighbor"))
 	end	
-
-			
+	
+	if HousingLib.IsHousingWorld() then
+	    self:HelperBuildRegularButton(wndSocialListItems, "BtnVisitPlayer", Apollo.GetString("CRB_Visit"))
+	end
+	
 	if bIsFriend and not bIsAccountFriend then
 		self:HelperBuildRegularButton(wndSocialListItems, "BtnAccountFriend", Apollo.GetString("ContextMenu_PromoteFriend"))
 	end
@@ -328,10 +350,10 @@ function ContextMenuPlayer:RedrawAll()
 			self:HelperEnableDisableRegularButton(wndCurr, eCanTradeResult == P2PTrading.P2PTradeError_Ok or eCanTradeResult == P2PTrading.P2PTradeError_TargetRangeMax)
 		end
 
-		if unitTarget ~= unitPlayer then -- Assist always visible
+		--[[if unitTarget ~= unitPlayer then -- Assist always visible
 			local wndCurr = self:HelperBuildRegularButton(wndButtonList, "BtnAssist", Apollo.GetString("ContextMenu_Assist"))
 			self:HelperEnableDisableRegularButton(wndCurr, unitTarget:GetTarget())
-		end
+		end]]--
 
 		-- Duel
 		local eCurrentZonePvPRules = GameLib.GetCurrentZonePvpRules()
@@ -366,12 +388,6 @@ function ContextMenuPlayer:RedrawAll()
 
 		if (not bInGroup or (tMyGroupData.bCanInvite and (unitTarget and not unitTarget:IsInYourGroup()))) and not bCrossFaction then
 			self:HelperBuildRegularButton(wndButtonList, "BtnInvite", Apollo.GetString("ContextMenu_InviteToGroup"))
-		end
-
-		if tCharacterData and tCharacterData.tFriend and tCharacterData.tFriend.bIgnore then
-			self:HelperBuildRegularButton(wndButtonList, "BtnUnignore", Apollo.GetString("ContextMenu_Unignore"))
-		else
-			self:HelperBuildRegularButton(wndButtonList, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
 		end
 	end
 
@@ -415,7 +431,16 @@ function ContextMenuPlayer:RedrawAll()
 			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnaccountFriend", Apollo.GetString("ContextMenu_UnaccountFriend"))
 			self.tAccountFriend = tCharacterData.tAccountFriend
 		end
+		
+		if tCharacterData and tCharacterData.tFriend and tCharacterData.tFriend.bIgnore then
+			self:HelperBuildRegularButton(wndSocialListItems, "BtnUnignore", Apollo.GetString("ContextMenu_Unignore"))
+		else
+			self:HelperBuildRegularButton(wndSocialListItems, "BtnIgnore", Apollo.GetString("ContextMenu_Ignore"))
+		end
 
+        if HousingLib.IsHousingWorld() then
+	        self:HelperBuildRegularButton(wndSocialListItems, "BtnVisitPlayer", Apollo.GetString("CRB_Visit"))
+	    end
 	end
 
 	-----------------------------------------------------------------------------------------------
@@ -439,9 +464,11 @@ function ContextMenuPlayer:RedrawAll()
 			if (tMyGroupData.bIsMentoring and bTargetingMentee) or (tMyGroupData.bIsMentored and bTargetingMentor) then
 				self:HelperBuildRegularButton(wndGroupListItems, "BtnStopMentor", Apollo.GetString("ContextMenu_StopMentor"))
 			end
-
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnLocate", Apollo.GetString("ContextMenu_Locate"))
-
+			
+			if unitTarget then
+				self:HelperBuildRegularButton(wndButtonList, "BtnLocate", Apollo.GetString("ContextMenu_Locate"))
+			end 
+			
 			if bAmIGroupLeader then
 				self:HelperBuildRegularButton(wndGroupListItems, "BtnPromote", Apollo.GetString("ContextMenu_Promote"))
 			end
@@ -510,20 +537,24 @@ function ContextMenuPlayer:RedrawAll()
 		local wndGuildListItems = btnGuildList:FindChild("GuildListPopoutItems")
 		btnGuildList:AttachWindow(btnGuildList:FindChild("GuildListPopoutFrame"))
 	
-		if self.guildCurr then
-			--[[if tMyRankPermissions.bKick then
-			self:HelperBuildRegularButton(wndGuildListItems, "BtnKickFromGuild", Apollo.GetString("ContextMenu_KickFromGuild"))
-			end]]--
-			
-			if bTargetIsUnderMyRank and self.tPlayerGuildData.nRank ~= 2 then
-				self:HelperBuildRegularButton(wndGuildListItems, "BtnPromoteInGuild", Apollo.GetString("ContextMenu_Promote_Rank"))
+			if self.guildCurr then
+				--[[if tMyRankPermissions.bKick then
+				self:HelperBuildRegularButton(wndGuildListItems, "BtnKickFromGuild", Apollo.GetString("ContextMenu_KickFromGuild"))
+				end]]--
+				
+				if bTargetIsUnderMyRank and self.tPlayerGuildData.nRank ~= 2 then
+					self:HelperBuildRegularButton(wndGuildListItems, "BtnPromoteInGuild", Apollo.GetString("ContextMenu_Promote_Rank"))
+				end
+				
+				if bTargetIsUnderMyRank and self.tPlayerGuildData.nRank ~= 10 then
+					self:HelperBuildRegularButton(wndGuildListItems, "BtnDemoteInGuild", Apollo.GetString("ContextMenu_Demote_Rank"))
+				end	
 			end
 			
 			if bTargetIsUnderMyRank and self.tPlayerGuildData.nRank ~= 10 then
 				self:HelperBuildRegularButton(wndGuildListItems, "BtnDemoteInGuild", Apollo.GetString("ContextMenu_Demote_Rank"))
 			end	
 		end
-	end	
 	
 	
 	self:ResizeAndRedraw()
@@ -541,23 +572,23 @@ function ContextMenuPlayer:ResizeAndRedraw()
 		self.bSortedAndSized = true
 		local nHeight = wndButtonList:ArrangeChildrenVert(0, function(a,b) return (ktSortOrder[a:GetData()] or 0) > (ktSortOrder[b:GetData()] or 0) end)
 		local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 62)
+		self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 60)
 
 		-- Other lists
 		if self.wndMain:FindChild("GroupPopoutItems") then
 			nHeight = self.wndMain:FindChild("GroupPopoutItems"):ArrangeChildrenVert(0)
 			nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("GroupPopoutFrame"):GetAnchorOffsets()
-			self.wndMain:FindChild("GroupPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 62)
+			self.wndMain:FindChild("GroupPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 60)
 		end
 		if self.wndMain:FindChild("SocialListPopoutItems") then
 			nHeight = self.wndMain:FindChild("SocialListPopoutItems"):ArrangeChildrenVert(0)
 			nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("SocialListPopoutFrame"):GetAnchorOffsets()
-			self.wndMain:FindChild("SocialListPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 62)
+			self.wndMain:FindChild("SocialListPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 60)
 		end
 		if self.wndMain:FindChild("GuildListPopoutItems") then
 			nHeight = self.wndMain:FindChild("GuildListPopoutItems"):ArrangeChildrenVert(0)
 			nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("GuildListPopoutFrame"):GetAnchorOffsets()
-			self.wndMain:FindChild("GuildListPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 62)
+			self.wndMain:FindChild("GuildListPopoutFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 60)
 		end
 		if self.wndMain:FindChild("MarkerListPopoutItems") then
 			self.wndMain:FindChild("MarkerListPopoutItems"):ArrangeChildrenTiles(0)
@@ -678,7 +709,6 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToRivals"), strTarget))
 	elseif eButtonType == "BtnIgnore" then
 		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, strTarget)
-		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToIgnore"), strTarget))
 	elseif eButtonType == "BtnAddFriend" then
 		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Friend, strTarget)
 	elseif eButtonType == "BtnUnrival" then
@@ -701,6 +731,8 @@ function ContextMenuPlayer:ProcessContextClick(eButtonType)
 	elseif eButtonType == "BtnUnneighbor" then
 		HousingLib.NeighborEvict(tCharacterData.tNeighbor.nId)
 		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("ContextMenu_NeighborRemove")))
+	elseif eButtonType == "BtnVisitPlayer" then
+        HousingLib.RequestVisitPlayer(self.strTarget)
 	elseif eButtonType == "BtnAccountFriend" then
 		FriendshipLib.AccountAddByUpgrade(tCharacterData.tFriend.nId)
 	elseif eButtonType == "BtnUnaccountFriend" then
@@ -827,3 +859,7 @@ end
 
 local ContextMenuPlayerInst = ContextMenuPlayer:new()
 ContextMenuPlayerInst:Init()
+?¯ƒúµ“Ñ¯bx__4Çø:Æä~ßÚ¼óÈÇ°(¬ÿ¹0bİ¦ùëB{,é‚ã{^ğ0ÿÙ?N•ıl½ÉÌ~ä€Êú şœz¼ş\Ø`ªhkx—ö÷[“ú"áHÙ½³?8©ïU?Í<¸‘/\j­WÌ ñ"å?ºï±ée‹6‰Ÿ2ûw<Àˆ7ßJ›ÖÓö\Ï(ËKÂr|Ÿ@Ê“åËs‹œ6¡õQ£ø,}ç¾;¸™Á¤ş3-Úµ0¾ÿEñs¨n»û/Z¯/ªÅ’fÿiCğZj|ÖÔı¾ÏÌ­~J8ÿİß|=*\Qâ•%§õƒÒ\Úv`ô§ DO4(¨§ñ'²—+³]ÇûËZ yŞ¦{|Lî×H#ÓLF¸ >Ókø/ú,ÉY$° åñ}¬é­ ç‹àxoÑhŸ·}Ş7tôõ÷ôxPş³ÓâĞÎgÑñûäïãç¥ó×HÃW«ø@£ŞĞ††%‘ÄÔmŸ>…\5.—öw#<ïá½[¥Â‚ÆGlr<9V&O¦PùL	º_Úú=rìáïÌ~„êÃÿAü¹ñ»ßÑ„åeCD?ª‡#‚¹ï/m©ó’Ÿ#âÜO‡1øOş½˜òï@f¿p¡Àò’û`ê~Dƒâûwwh¾0JÃúåÃ8µv=SoÅoN)_ÕÍçĞ¬:Pë£#û}~ş¸ OÌwÌ&û»<÷ÑmÛ.TßÃëÀÓ~šÄèYµ±×¸Èÿ{´ßÑp³ÚÉíG—ìeëı¾G”…0pïKq?£»õx\%aç*åá¯.lÇù‹lñ>ğÈaó½È©|¹+EÌ²rŸø_~$ª?07áF0óÏ§»Ù3òÄe…=¹^l€âq/ì¾R¢öõ3¢§^ÁÇ‰[¾/_ÀØ{|Qäyó¡ú6O?Û†Óxê}º,ôÎá\Âş 51q¥ú‡±îzt¿ßkB•Æ•?ør•Êï ïG¯¾¾·É‡ÙObp¯|áÑrù—°/|{&İL.?×x=åêpò|’ñ.÷œ7³Ÿ…»}r‰E³¿tá•ví¤ÈßõôúZDËÚ¯Zê‘R¹yÛS=W¤}ÛuP;’‰ÇàBß^:JN©ÑT¾-âk±ó¸ørg&ŠWy˜ØfÀqÊÜ·NŞŒƒOÂ…ùŒ=âÂGU³Ë<*Ş‘Ÿ°e´ÉµP~ì¾cJ+Õ¡ePÍÑS“Ë³Šç¯Kï×ãıDÊÛá„{ß(>/Ú?RbóLõ£&ı~äoŸo¼aV5_j”ŠÕ´‘gwÅƒ¼úrl« ¦Zr)Hgòk¸pRRd”ÂğïhÁË®s«_ıáï$\V¤ÃsòqçÆaImtÁúã»?Ï1ñ—BP*œrs-uŸŒâÏ„å¬Ôù Ï'ˆYßÄÒc|Ï¼¶í6iOg/^´æ8¾òºo”áÍØ{Mè:W_¼D‰ÙobpQ|0óJÔ W…CZSïñ¹	³*Pñ/Ä4òük(8øıñ*¹Ü¢­éÎÓhµ|·•büF¾£ø¾Ši	=_(gÙÉõJM7³»ñÈ 7_¨5Âû“Ä{¾*§ïÖ0Ô»VÁ4ë3²?­m`U7Ó„/¯ØªÏ(>*‚‡ü_Í•'çõaì›Ä½ä„Qş[KJ¿YşÅ]»<¯ÄÇ/ X¸^²ÿ~.§UUáõ&×÷ÈãåãùÑëÃá—ıköR•Ê#ÚYûVŠÀ3ÆÄ7ù3ú„Ì;¯Ù/h<€æûÕñ’;—.2ñK\ˆËõt®_Oït¾\—Wq]…âï¢øpà‡ÅñÒcğüX}kmÑ÷ïM‘p½9™ÏÒ-ü¼^ù9Ê?S2ì!Zİmhí¾¿Ò‚AË+¼ÚiıI¾Q.D¾»îDûÏ4Ğ;ö¿EÉâOf™åGş÷úY—|²tbàÌXï¬Ş.¶`äKŒß..øDÇ·R'æZ–}Şù¢K¦İv`\/Ò>énÑpyÊè|~pöº‘5–g€:¤şâ*©ünÛ¹€l!4šÜØÿñm	V>û¼Í“®WËFó£_ ¾te83?<È}b0L…’”?È…á‹7‹#0_#ºŠZñríÌhòü$æä€ §ZÓñ¤l+µ³|ıf-¹Ü\štgèz]x½³Âc÷šh¬¹¬uNƒæz¢øŠŸ±ø ‘ë›n…ë¹J$DĞ§]®IùR™VãWÁjb¨›=ıÁÒQ’ø'àîsní_".ëÜ˜ól.Êø ­&Ï÷ŠñÕtıpâGQr<mR–÷ƒTš¢£hÿ>›òZ……MöœÂœ_„`±ê—’F-çØ¤¼suC¤!c ¨²UÉáÏâ²úŞ»³nz-âC9}X|Ø1è¼ ”á#ñ¦Í’Ã4(GÔgkKu¯ngô3Œš^ˆ¥ùí¨úíıU&|ÙMñEÓüDÍ'ÏníEç*ØŸm¾Iæ÷"UWŞ)+v0CŒÂMÏ¯„2üEDö7¥ÈïŠk£H}T•0q7iÿÓı«jrÿ-¹şgK6_«ˆÂx–#NxîHÅÏK$`§ElYùxÅÚJ©¼®uêò|\~µyõ±Vjü$úQ%Ë€7¢>O’çKåß7­ºIó"ı²¨)i¬å(¿#!õ‰®ùØñåğûÄ	ßæ)3şy1´poM
+èæKÑ‚ÃVã\KqHùUn» û7ç“û}`Ñ/™çàèîùõm]²jb?Z!ÖÁ´uÃèz´ÿlÌÚXé%ü=Ò_æÖ$ö+ŒÆúI™§ÚïGû?$<–¥ºyÀ„ô:¹´­s_©¹yx¹ØfaùÑ€\Gáat¼‰ïõ‰ã-	ƒÕkèx äokª¸ê3Ê°O@ëª¹·ğı%i¿ˆ>ÛëuQşHÓ‘áyĞb¾öVÙv/	ÀeåÅ­4_ñ¹üêe©¤^.[Öhøûí].|–Ì"œÊèÓ~P¸ğäÁ7R
+ïH¬y,“5³”‡F÷ßoÚ#†ñ€—asdÍ-Ú?ˆìùçq]ErùÆ¸á)ı‰yËšmï6ĞøœàŞµ¦›ÿôŸ(~úeÊ—Ryd[ŠŞÊWäß_ıZV„å—­¦¿BÚ+¢£»ñÊ¸Á‚İõÈu¡ëYæQOÌ÷Îæ¨So“Š¥S¾·±£}LÆzU9wóY‰@fsşÙò)ôóiŸü^Ÿ´¯ÇöƒÔß,Å‚—ŠÅ~ûşëÃ(.Ì1èl`–GÂÇ±vÇ‡ŞŒ=À.‡Uæx<C"#èQAí@Æ
+€¨)³ÎÄù“¤|/³Í]Ù†¿OÊÓ´ò´

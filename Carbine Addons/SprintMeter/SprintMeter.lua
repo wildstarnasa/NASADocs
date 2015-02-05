@@ -158,14 +158,14 @@ function SprintMeter:OnFrame()
 		if tActiveHazard.eHazardType == HazardsLib.HazardType_Radiation then
 			self.tWindowMap["HazardsRadiationProgBar"]:SetMax(tActiveHazard.fMaxValue)
 			self.tWindowMap["HazardsRadiationProgBar"]:SetProgress(tActiveHazard.fMeterValue)
-			self.tWindowMap["HazardsRadiationText"]:SetText(math.floor(math.min(99, tActiveHazard.fMeterValue / tActiveHazard.fMaxValue * 100)).."%")
+			self.tWindowMap["HazardsRadiationText"]:SetText(math.floor(math.min(100, tActiveHazard.fMeterValue / tActiveHazard.fMaxValue * 100)).."%")
 			self.tWindowMap["HazardsRadiationMain"]:SetTooltip(string.len(tActiveHazard.strTooltip) > 0 and tActiveHazard.strTooltip or HazardsLib.GetHazardDisplayString(tActiveHazard.nId))
 			self.tWindowMap["HazardsRadiationMain"]:Show(true)
 		end
 		if tActiveHazard.eHazardType == HazardsLib.HazardType_Temperature then
 			self.tWindowMap["HazardsTemperatureProgBar"]:SetMax(tActiveHazard.fMaxValue)
 			self.tWindowMap["HazardsTemperatureProgBar"]:SetProgress(tActiveHazard.fMeterValue)
-			self.tWindowMap["HazardsTemperatureText"]:SetText(math.floor(math.min(99, tActiveHazard.fMeterValue / tActiveHazard.fMaxValue * 100)).."%")
+			self.tWindowMap["HazardsTemperatureText"]:SetText(math.floor(math.min(100, tActiveHazard.fMeterValue / tActiveHazard.fMaxValue * 100)).."%")
 			self.tWindowMap["HazardsTemperatureMain"]:SetTooltip(string.len(tActiveHazard.strTooltip) > 0 and tActiveHazard.strTooltip or HazardsLib.GetHazardDisplayString(tActiveHazard.nId))
 			self.tWindowMap["HazardsTemperatureMain"]:Show(true)
 		end
@@ -239,3 +239,11 @@ end
 
 local SprintMeterInst = SprintMeter:new()
 SprintMeterInst:Init()
+Editor="0" TextId="CRB__2" Tooltip="" TooltipId="" TooltipType="OnCursor" TooltipColor="" DT_RIGHT="0" IgnoreMouse="1" IgnoreTooltipDelay="1" DT_BOTTOM="0" DT_WORDBREAK="0" NoClip="1" DT_SINGLELINE="1"/>
+        <Control Class="Window" Name="TimeRemaining" Text="" DT_CENTER="1" DT_VCENTER="1" Font="CRB_InterfaceSmall" RelativeToClient="1" Picture="0" NewControlDepth="1" BGColor="white" TextColor="88ffffff" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="21" HideInEditor="0" TextId="Challenges_NoProgress" Tooltip="" TooltipId="" TooltipType="OnCursor" TooltipColor="" DT_RIGHT="0" IgnoreMouse="1" IgnoreTooltipDelay="1" DT_BOTTOM="0" DT_WORDBREAK="0" NoClip="1" DT_SINGLELINE="1"/>
+    </Form>
+</Forms>
+ Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
+            <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
+        </Control>
+        

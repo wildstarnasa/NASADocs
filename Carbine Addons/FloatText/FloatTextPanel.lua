@@ -743,3 +743,40 @@ end
 
 local FloatTextPanelInst = FloatTextPanel:new()
 FloatTextPanelInst:Init()
+,	fTime = 0.8,	fAlpha = 1.0,},
+			[5] = {					fTime = 0.9,	fAlpha = 0.0,},
+		}
+	end
+
+	-- display the text
+	local strText = (eMissType == GameLib.CodeEnumMissType.Dodge) and Apollo.GetString("CRB_Dodged") or Apollo.GetString("CRB_Blocked")
+	CombatFloater.ShowTextFloater( unitTarget, strText, tTextOption )
+end
+
+---------------------------------------------------------------------------------------------------
+function FloatText:OnDamageOrHealing( unitCaster, unitTarget, eDamageType, nDamage, nShieldDamaged, nAbsorptionAmount, bCritical )
+	if unitTarget == nil or not Apollo.GetConsoleVariable("ui.showCombatFloater") or nDamage == nil then
+		return
+	end
+
+
+	if GameLib.IsControlledUnit(unitTarget) or unitTarget == GameLib.GetPlayerMountUnit() or GameLib.IsControlledUnit(unitTarget:GetUnitOwner()) then
+		self:OnPlayerDamageOrHealing( unitTarget, eDamageType, nDamage, nShieldDamaged, nAbsorptionAmount, bCritical )
+		return
+	end
+
+	-- NOTE: This needs to be changed if we're ever planning to display shield and normal damage in different formats.
+	-- NOTE: Right now, we're just telling the player the amount of damage they did and not the specific type to keep things neat
+	local nTotalDamage = nDamage
+	if type(nShieldDamaged) == "number" and nShieldDamaged > 0 then
+		nTotalDamage = nDamage + nShieldDamaged
+	end
+
+	local tTextOption = self:GetDefaultTextOption()
+	local tTextOptionAbsorb = self:GetDefaultTextOption()
+
+	if type(nAbsorptionAmount) == "number" and nAbsorptionAmount > 0 then --absorption is its own separate type
+		tTextOptionAbsorb.fScale = 1.0
+		tTextOptionAbsorb.fDuration = 2
+		tTextOptionAbsorb.eCollisionMode = CombatFloater.CodeEnumFloaterCollisionMode.IgnoreCollision --Horizontal
+		tTextOptionAbsorb.eLocation = CombatFloater.CodeEnumFloaterLocat

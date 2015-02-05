@@ -12,11 +12,10 @@
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="63" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ListItemProgress" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreMouse="1" TooltipType="OnCursor" IgnoreTooltipDelay="0" Sprite="" TooltipColor="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="9" RAnchorPoint="1" RAnchorOffset="-58" BAnchorPoint="0" BAnchorOffset="29" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="ProgressName" BGColor="ffffffff" TextColor="UI_TextHoloBodyCyan" TextId="CRB_Name_Generator" DT_VCENTER="1" Picture="0" IgnoreMouse="1" Sprite="" DT_CENTER="0" DT_WORDBREAK="0" NoClip="0" TooltipColor="" AutoScaleText="1"/>
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-79" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="CRB_InterfaceSmall_I" Text="" Template="Default" Name="ProgressStatus" BGColor="ffffffff" TextColor="ff9aaea3" TextId="Faction2Disposition_Neutral" DT_VCENTER="1" Picture="0" IgnoreMouse="1" Sprite="" DT_CENTER="0" DT_WORDBREAK="1" NoClip="0" DT_RIGHT="1" Visible="1" HideInEditor="0" TooltipColor="" AutoScaleText="1"/>
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-100" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="CRB_InterfaceSmall_I" Text="" Template="Default" Name="ProgressStatus" BGColor="ffffffff" TextColor="ff9aaea3" TextId="Faction2Disposition_Neutral" DT_VCENTER="1" Picture="0" IgnoreMouse="1" Sprite="" DT_CENTER="0" DT_WORDBREAK="1" NoClip="0" DT_RIGHT="1" Visible="1" HideInEditor="0" TooltipColor="" AutoScaleText="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="22" RAnchorPoint="1" RAnchorOffset="-6" BAnchorPoint="0" BAnchorOffset="62" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ProgressLevelBarBG" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_ProgressBar_BG" TooltipColor="">
             <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="15" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" ProgressFull="BK3:UI_BK3_Holo_ProgressBar_Fill" Name="ProgressLevelBar" BGColor="ffffffff" TextColor="ffffffff" Font="CRB_InterfaceSmall_O" Picture="0" Sprite="" HideInEditor="0" IgnoreTooltipDelay="0" IgnoreMouse="1" TooltipType="OnCursor" NoClip="0" ProgressEdgeGlow="" EdgeGlow="1" NoClipEdgeGlow="1" TooltipColor="" BarColor=""/>
         </Control>
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-187" TAnchorPoint="0" TAnchorOffset="-23" RAnchorPoint="1" RAnchorOffset="-62" BAnchorPoint="0" BAnchorOffset="-3" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="1000/1000" Template="Default" Name="ProgressLevelBarText" BGColor="ffffffff" TextColor="ff9aaea3" TextId="" DT_VCENTER="1" NewControlDepth="1" DT_CENTER="0" TooltipColor="" DT_RIGHT="1" IgnoreMouse="1" AutoScaleText="1" Visible="0"/>
         <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-3" Sprite="BK3:UI_BK3_Holo_InsetSimple" BGColor="white" TextColor="black" Rotation="0" Font="Default"/>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="86" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ListItemTopLevel" BGColor="ffffffff" TextColor="ffffffff" Tooltip="" Visible="1" Picture="1" Overlapped="1" Sprite="" TooltipColor="">
@@ -34,3 +33,68 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="7" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ItemsContainer" BGColor="ffffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="1" Sprite="" NoClip="0" TooltipColor=""/>
     </Form>
 </Forms>
+ue)))
+
+	local strTooltip = String_GetWeaselString(Apollo.GetString("Reputation_ProgressText"), tFaction.strName, tLevelData.strName, Apollo.FormatNumber(tFaction.nCurrent, 0, true), Apollo.FormatNumber(tLevelData.nMax,0,true))
+	return wndCurr
+end
+
+-----------------------------------------------------------------------------------------------
+-- Resize Code
+-----------------------------------------------------------------------------------------------
+
+function Reputation:OnTopLevelToggle(wndHandler, wndControl) -- wndHandler is "ListItemTopLevel's ItemsBtn"
+	self:ResizeItemContainer()
+end
+
+function Reputation:OnMiddleLevelLabelToggle(wndHandler, wndControl) -- wndHandler "ListItemLabel's ItemsBtn"
+	self:ResizeItemContainer()
+end
+
+function Reputation:ResizeItemContainer()
+	for key, wndTopGroup in pairs(self.wndMain:FindChild("FactionList"):GetChildren()) do
+		local wndTopContainer = wndTopGroup:FindChild("ItemsContainer")
+		local wndTopButton = wndTopGroup:FindChild("ItemsBtn")
+		
+		wndTopGroup:Show(#wndTopContainer:GetChildren() > 0)
+		if wndTopGroup:IsShown() then
+			local nTopHeight = self.knHeightTop
+
+			local nMiddleHeight = 0
+			wndTopContainer:Show(wndTopButton:IsChecked())
+			
+			local bEnableTop = false
+			if wndTopButton:IsChecked() then
+				nTopHeight = self.knExpandedHeightTop
+				local bEnableMid = false
+				for idx, wndMiddleGroup in pairs(wndTopContainer:GetChildren()) do
+					local wndMiddleContainer = wndMiddleGroup:FindChild("ItemsContainer")
+					local wndMiddleButton = wndMiddleGroup:FindChild("ItemsBtn")
+					wndMiddleGroup:Show(not wndMiddleContainer or #wndMiddleContainer:GetChildren() > 0)
+
+					if wndMiddleGroup:IsShown() then
+						local nBottomHeight = 0
+						local nHeightToUse = self.knHeightProgress
+						
+
+						-- Special formatting if it has a container (different height, show/hide, and arrange vert)
+						if wndMiddleContainer then
+							nHeightToUse = self.knHeightLabel
+							
+							wndMiddleContainer:Show(wndMiddleButton:IsChecked())
+							
+							if wndMiddleButton:IsChecked() then
+								nBottomHeight = self.knHeightProgress * #wndMiddleContainer:GetChildren()
+								nHeightToUse = self.knExpandedHeightLabel
+							end
+							
+							if #wndMiddleContainer:GetChildren() > 0 and not bEnableMid then
+								bEnableMid = true
+							end
+							
+							wndMiddleContainer:ArrangeChildrenVert(0)
+						end
+						-- End special formatting
+
+						local nLeft, nTop, nRight, nBottom = wndMiddleGroup:GetAnchorOffsets()
+						wndMiddleGr

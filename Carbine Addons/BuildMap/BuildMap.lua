@@ -59,7 +59,7 @@ function BuildMap:OnDocumentReady()
 	Apollo.RegisterEventHandler("SettlerHubUpdated", 			"OnSettlerHubUpdated", self)
 	Apollo.RegisterEventHandler("SettlerBuildStatusUpdate", 	"OnSettlerBuildStatusUpdate", self)
 	Apollo.RegisterEventHandler("ZoneMapPlayerIndicatorUpdated","OnPlayerIndicatorUpdated", self)
-
+		
 	-- TODO
 	--Apollo.RegisterEventHandler("InvokeSoldierBuild", "OnInvokeSoldierBuild", self) -- TODO
 	--Apollo.RegisterEventHandler("UpdateSoldierBuild", "OnUpdateSoldierBuild", self) -- TODO
@@ -77,6 +77,9 @@ function BuildMap:Initialize()
 	if self.locSavedWindowLoc then
 		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
 	end
+	
+	self.wndMain:SetSizingMinimum(620, 450)
+	self.wndMain:SetSizingMaximum(1200, 900)
 	
 	if GameLib.GetCurrentZoneMap() then
 		local wndWorldMap = self.wndMain:FindChild("TopSection:WorldMap")
@@ -365,12 +368,12 @@ function BuildMap:OnSelectionItemShowExtraInfo(wndHandler, wndControl) -- Select
 				self:HelperBuildItemTooltip(wndItemReward, tCurrItemData.itemResource)
 				wndItemReward:FindChild("ItemRewardNoMaterials"):Show(not tCurrItemData.bHasEnough)
 				wndItemReward:FindChild("ItemRewardSprite"):SetSprite(tCurrItemData.itemResource:GetIcon())
-				wndItemReward:FindChild("ItemRewardFrame"):SetText(String_GetWeaselString(Apollo.GetString("CRB_ProgressSimple"),tCurrItemData.itemResource:GetBackpackCount(), tCurrItemData.nCount))
+				wndItemReward:FindChild("ItemRewardBigText"):SetText(String_GetWeaselString(Apollo.GetString("CRB_ProgressSimple"),tCurrItemData.itemResource:GetBackpackCount(), tCurrItemData.nCount))
 				if tCurrItemData.bHasEnough then
-					wndItemReward:FindChild("ItemRewardFrame"):SetTextColor(ApolloColor.new("ffffffff"))
+					wndItemReward:FindChild("ItemRewardBigText"):SetTextColor(ApolloColor.new("ffffffff"))
 				else
 					bHasMatsForAll = false
-					wndItemReward:FindChild("ItemRewardFrame"):SetTextColor(ApolloColor.new("ffb80000"))
+					wndItemReward:FindChild("ItemRewardBigText"):SetTextColor(ApolloColor.new("ffb80000"))
 				end
 			end
 		end
@@ -386,7 +389,7 @@ function BuildMap:OnSelectionItemShowExtraInfo(wndHandler, wndControl) -- Select
 	elseif tCurrTier.bIsActive and setNode:IsInfiniteDuration() then
 		strButtonText = Apollo.GetString("BuildMap_Built")
 	elseif tCurrTier.bIsActive then
-		strButtonText = String_GetWeaselString(Apollo.GetString("BuildMap_AddTime"), self:HelperConvertToTime(setNode:GetRemainingTime()))
+		strButtonText = self:HelperConvertToTime(setNode:GetRemainingTime())
 	elseif tCurrTier.bObsolete then
 		strButtonText = Apollo.GetString("BuildMap_BetterTier")
 		bEnableBuildBtn = false
@@ -473,23 +476,27 @@ end
 
 function BuildMap:HelperConvertToTime(nArg)
 	local nInSeconds = math.floor(nArg / 1000)
-
 	local nHours = math.floor(nInSeconds / 3600)
-	if nHours > 0 then 
-		return String_GetWeaselString(Apollo.GetString("BuildMap_Hours"), nHours) 
-	end
-
 	local nMins = math.floor(nInSeconds / 60 - (nHours * 60))
-	if nMins > 0 then 
-		return String_GetWeaselString(Apollo.GetString("BuildMap_Mins"), nMins) 
+
+	local strTimeUnit = nil
+	local nTime = nil
+	if nHours > 0 then
+		strTimeUnit = Apollo.GetString("CRB_Hour")
+		nTime = nHours
+	elseif nMins > 0 then
+		strTimeUnit = Apollo.GetString("CRB_Min")
+		nTime = nMins
+	elseif nInSeconds > 0 then
+		strTimeUnit = Apollo.GetString("CRB_Secs")
+		nTime = nInSeconds
 	end
 
-	if nInSeconds > 0 then 
-		return String_GetWeaselString(Apollo.GetString("BuildMap_Mins"), 1)
+	if strTimeUnit and nTime then
+		return  String_GetWeaselString(Apollo.GetString("BuildMap_AddTime"), GetPluralizeActor(strTimeUnit, nTime))
+	else
+		return ""
 	end
-	--return math.floor(nInSeconds - (nHours * 3600) - (nMins * 60))
-
-	return ""
 end
 
 function BuildMap:HelperBuildItemTooltip(wndArg, itemCurr)
@@ -521,3 +528,4 @@ end
 
 local BuildMapInst = BuildMap:new()
 BuildMapInst:Init()
+φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ φÿ ›φώ ›φώ ›φύ φϋ χω Άψφ Όύϋ Ζÿώ _λ½  ΨΨiΨRΪ>έ,@@βmmιπΔΔφήήϊττύÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ττύήήϊΔΔφπrrιCCβέ,Ϊ=ΨRΨi  Ψ Kη΄ Γώό Θÿÿ Γώώ Άψω ™φϋ φύ —φώ —φώ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —υÿ —φώ —φώ φύ ™φϋ ›φψ ΅χφ »ύϊ Ζÿώ aλΏ  ΨΨiΨRΪ>έ,@@βmmιπΔΔφήήϊττύÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ττύήήϊΔΔφπrrιCCβ!!έ+Ϊ=ΨRΨi  Ψ Iζ³ Γώό Θÿÿ Γώώ χω –υϋ •υό ”υώ ”υώ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ “υÿ ”υώ ”υώ •υό –υϋ —φψ χυ »όϊ Ζÿώ dμΐ  Ψ‚ΨiΨRΪ>έ,@@βmmιπΔΔφήήϊττύÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ττύήήϊΔΔφπrrιCCβ!!έ+Ϊ=ΨRΨi  Ψ Gζ² Γώό Θÿÿ Γώώ φψ “υϊ ’τό ‘τώ ‘τώ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ τÿ ‘τώ ‘τώ ’τό “υϊ •υχ ›φυ Ήόϊ Ηÿÿ dμΐ  Ψ‚ΨiΨRΪ>έ,@@βmmιπΔΔφήήϊττύÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ττύήήϊΔΔφπrrιCCβ!!έ+Ϊ=ΨRΨi  Ψ Cε± Γώό Θÿÿ Βώώ φψ τϊ τό τώ τώ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ σÿ τώ τώ τό τϊ ‘τχ φτ Ήόω Θÿÿ iμΒ  Ψ‚ΨjΨSΪ>έ,@@βmmιπΔΔφήήϊττύÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ττύήήϊΔΔφπrrιCCβ!!έ+Ϊ=ΨRΨh  Ψ Cε± Βώϋ Θÿÿ Βώώ —υχ σω ‹σό σύ σώ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ ‰σÿ σώ σύ ‹σό σϊ τχ —υσ Έόω Θÿÿ iμΒ  Ψ‚ΨjΨSΪ>έ,@@βmmιπΔΔφήήϊττύÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ÿÿÿ ττύήήϊΔΔφπrrιCCβ!!έ+Ϊ=ΨRΨh  Ψ Aε° Βώϋ Θÿÿ Βώώ ”υχ ‰σω ςό ‡ςύ ‡ςώ †ςÿ †ςÿ †ςÿ †ςÿ

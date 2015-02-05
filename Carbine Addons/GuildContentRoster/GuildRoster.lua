@@ -379,7 +379,6 @@ function GuildRoster:OnAddRankBtnSignal(wndControl, wndHandler)
 	for key, wndPermission in pairs(wndPermissionContainer:GetChildren()) do
 		wndPermission:FindChild("PermissionBtn"):SetCheck(false)
 	end
-
 	self:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
 end
 
@@ -396,7 +395,7 @@ function GuildRoster:OnRemoveRankBtnSignal(wndHandler, wndControl)
 	wndSettings:FindChild("OptionString"):SetText(tRank.tRankInfo.strName)
 	wndSettings:FindChild("RankPopoutOkBtn"):Enable(tMyRankPermissions.bChangeRankPermissions or tMyRankPermissions.bRankRename)
 	wndSettings:FindChild("RankSettingsNameBlocker"):Show(not tMyRankPermissions.bRankRename)
-	wndSettings:FindChild("PermissionContainerBlocker"):Show(not tMyRankPermissions.bChangeRankPermissions)
+	wndSettings:FindChild("PermissionContainerBlocker"):Show(tRank.nRankId == 1 or not tMyRankPermissions.bChangeRankPermissions)
 
 	local wndPermissionContainer = self.tWndRefs.wndMain:FindChild("PermissionContainer")
 	for idx, wndPermission in pairs(wndPermissionContainer:GetChildren()) do
@@ -752,6 +751,10 @@ function GuildRoster:SortRoster(tResult)
 	return tResult
 end
 
+function GuildRoster:OnOptionsCloseClick(wndControl)
+	wndControl:GetParent():Close()
+end
+
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
@@ -819,4 +822,77 @@ function GuildRoster:HelperConvertToTime(fDays)
 end
 
 local GuildRosterInst = GuildRoster:new()
-GuildRosterInst:Init()
+GuildRosterInst:Init()t, nFrameTop, nFrameRight, bFrame = self.wndMoreInfo:GetAnchorOffsets()
+	local nSortLeft, nSortTop, nSortRight, nSortBottom = self.wndMoreInfo:FindChild("LowerSortContainer"):GetAnchorOffsets()
+	local nBaseLeft, nBaseTop, nBaseRight, nBaseBottom = self.wndMoreInfo:FindChild("LowerBound"):GetAnchorOffsets()
+	self.wndMoreInfo:SetAnchorOffsets(nFrameLeft, nFrameTop, nFrameRight, nSortTop + nBaseBottom)
+
+	local nWidth = self.wndMoreInfo:GetWidth()
+	local nHeight = self.wndMoreInfo:GetHeight()
+
+	self.wndMoreInfo:Move(nLeft, nTop, nWidth, nHeight)
+end
+
+-----------------------------------------------------------------------------------------------
+-- GuildPerksForm Functions
+-----------------------------------------------------------------------------------------------
+
+function GuildPerks:OnEntryMouseEnter(wndHandler, wndControl)
+
+	if wndHandler ~= wndControl then
+		return false
+	end
+
+	local wndEntry = wndControl:GetParent()
+	local nId = wndEntry:GetData()
+
+	-- dicey if windows get moved/added
+	local nEntryLeft, nEntryTop, nEntryRight, nEntryBottom = wndEntry:GetRect()
+	local nListLeft, nListTop, nListRight, nListBottom = wndEntry:GetParent():GetRect()
+	local nTierLeft, nTierTop, nTierRight, nTierBottom = wndEntry:GetParent():GetParent():GetRect()
+
+	local nLeft = nEntryLeft + nListLeft + nTierLeft
+	local nTop = nEntryTop + nListTop + nTierTop
+
+	if wndControl:ContainsMouse() and nId ~= nil then
+		self:DrawMoreInfoWindow(nId, nLeft, nTop)
+	end
+end
+
+function GuildPerks:OnEntryMouseExit(wndHandler, wndControl)
+	if wndHandler ~= wndControl or wndControl:ContainsMouse() == true then
+		return
+	end
+
+	local wndEntry = wndControl:GetParent()
+	local nId = wndEntry:GetData()
+
+	if self.wndMoreInfo ~= nil and nId == self.wndMoreInfo:GetData() then
+		self.wndMoreInfo:Destroy()
+		self.wndMoreInfo = nil
+	end
+end
+
+function GuildPerks:OnUnlockBtn(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return false
+	end
+
+	local nId = wndControl:GetData()
+	if nId ~= nil then
+		self:DrawConfirmWindow(wndControl, nId, self.tPerkEntries[nId].strTitle, false)
+	end
+end
+
+function GuildPerks:OnUnlockTierBtn(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return false
+	end
+
+	local nId = wndControl:GetData()
+	if nId ~= nil then
+		self:DrawConfirmWindow(wndControl, nId, self.tTierContainers[nId].strTitle, false)
+	end
+end
+
+function Guil

@@ -380,3 +380,15 @@ end
 -----------------------------------------------------------------------------------------------
 local HousingListInst = HousingList:new()
 HousingListInst:Init()
+="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceSmall_O" Text="" Template="Default" Name="QuestCompleteItemText" BGColor="white" TextColor="UI_TextHoloTitle" TextId="" DT_VCENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" TooltipColor=""/>
+    </Form>
+</Forms>
+indod  diã„ è2@ØS
+
+	end
+end
+
+local FloatTextPanelInst = FloatTextPanel:new()
+FloatTextPanelInst:Init()
+@'j¯V  Vgã„  ÌN8ÎLæu±÷ëKmÅ€Ùñá¥7YF˜ý˜Œ
+±ó;ì<¨)Ø>z¹ÙŽk¨«°gàlæfç8wòl¡µçÖÐP}ÇÁÖìß¾îö×¨íâ@g~æ¾œÙ5¨b/7»q?È_=!ÏŠºÕ3¸˜½²cû‰äSë©«Ù³†ˆÏ¯(?d9ûËR½öèUÒ+RÉ>?“ÏRûÁ3Õ‚ÏTcñ\?äá™jSŸUÇrpCi›Ø\—±‰%åq’Üž=Wbs‹ÒTÃ·ìÿƒÒ÷÷KÅ>ßËýôÏüOž=Èö…Í?X¾Ëò+SååÙƒŸé(óelÎÏâ?Ë9Øqjæ    œÙ 4  49ã„ ð	Hˆ«ƒ 2M÷39ìþÒ}bÇ›ì9ù{FçÄgŸN|Þ¦ì9´lÎÄü³–ÈžC;õy±v4Ï§ý©že«ÏÉï³l§²‘=¯™µUž×üSh®>óYÞŸkþ¿ülty{þÿO¡Ÿk¥Ÿ‹bQ,ŠE±(Å¢XË^þæÍõ)çÓ"  "+ã„ €ws¨üN¥è3{Ög¨b›˜rRl+‹ãln®ôU“ý,É{–-³›É~–í/‘ó(]ï™¸ŽŠm`Ûb­Ø6SîÊóp•÷b±±P…g{ªò3Ÿ]ï¹ÑÊç+íBUXŒnªþlô‰x¾º*7Uª!ðkè·Z‡àÇj`ÜLR7uS7uS7uS7uS·ßpû?—tÍõ}  ã„  Ÿ?@5‰ ÿæŒ¦€Ù   ã„  Ÿ?@5‰    ÿ   ÿ   ÿ   ÿ   ÿ   ÿ   ÿ   ÿ   ÿ   ÿ    œÙ   	ã„  Ÿ?@5‰    ÿ   ÿ

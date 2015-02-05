@@ -116,3 +116,7 @@
         </Control>
     </Form>
 </Forms>
+" Text="" Template="Holo_TextCallout" TooltipType="OnCursor" Name="DeleteBody" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="CharacterSelect_DeleteDesc" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" NewWindowDepth="1" Picture="0" Border="1" UseTemplateBG="1"/>
+        <Control Class="Button" Base="BK3:btnHolo_Red_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-120" TAnchorPoint="1" TAnchorOffset="-95" RAnchorPoint=".5" RAnchorOffset="120" BAnchorPoint="1" BAnchorOffset="-42" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="Delete_ConfirmDeleteBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" Text="" TextId="CRB_Delete" NewWindowDepth="1">
+            <Event Name="ButtonSignal" Function="OnDeleteConfirm"/>
+        </Con

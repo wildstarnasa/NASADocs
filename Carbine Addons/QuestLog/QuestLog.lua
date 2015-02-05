@@ -940,9 +940,11 @@ function QuestLog:OnTopLevelBtnUncheck(wndHandler, wndControl)
 end
 
 function QuestLog:OnMiddleLevelBtnCheck(wndHandler, wndControl)
+	local nScrollPos = self.wndLeftSideScroll:GetVScrollPos()
 	wndHandler:SetCheck(true)
 	self:RedrawLeftTree()
 	self:ResizeTree()
+	self.wndLeftSideScroll:SetVScrollPos(nScrollPos)
 
 	local wndBot = wndHandler:GetParent():FindChild("MiddleLevelItems"):GetChildren()[1]
 	if wndBot then
@@ -1279,3 +1281,18 @@ end
 
 local QuestLogInst = QuestLog:new()
 QuestLogInst:Init()
+tipColor="" DT_VCENTER="1" TextId="PublicEventStats_NoMedal" DT_WORDBREAK="1"/>
+        </Control>
+        <Control Class="Button" Base="BK3:btnHolo_Close" Font="CRB_InterfaceSmall_O" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-70" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-28" BAnchorPoint="0" BAnchorOffset="72" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="AdventureCloseBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ff9aaea3" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" TextId="">
+            <Event Name="ButtonSignal" Function="OnClose"/>
+        </Control>
+        <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-64" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Line="0"/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0" BAnchorOffset="57" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AdventureListItem" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" Tooltip="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="InsetFrame" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="0" RAnchorOffset="51" BAnchorPoint="0" BAnchorOffset="51" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="iconFrame" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="48" BAnchorPoint="0" BAnchorOffset="48" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AdventureListIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="ClientSprites:Icon_SkillMind_UI_espr_moverb" Picture="1" IgnoreMouse="1" HideInEditor="0"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="62" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="52" RelativeToClient="1" Font="CRB_HeaderMedium" Text="#1 in Resources Collected" Template="Default" TooltipType="OnCursor" Name="AdventureListTitle" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" TextId="" DT_WORDBREAK="1" DT_VCENTER="1" HideInEditor="0"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="80" TAnchorPoint="0" TAnchorOffset="50" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="CRB_InterfaceLarge_BO" Text="444 Kills" Template="Default" TooltipType="OnCursor" Name="AdventureListDetails" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" TextId=""/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0.5

@@ -185,46 +185,49 @@ end
 -----------------------------------------------------------------------------------------------
 
 function NeedVsGreed:OnLootRollAllPassed(itemLooted)
-	-- Can be fired without self.wndMain
-	ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Loot, String_GetWeaselString(Apollo.GetString("NeedVsGreed_EveryonePassed"), itemLooted:GetName()))
+	local strResult = String_GetWeaselString(Apollo.GetString("NeedVsGreed_EveryonePassed"), itemLooted:GetChatLinkString())
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", strResult)
 end
 
-function NeedVsGreed:OnLootRollWon(itemLooted, strWinner, bNeed)
-	-- Can be fired without self.wndMain
-	local strNeedOrGreed = Apollo.GetString("NeedVsGreed_GreedRoll")
+function NeedVsGreed:OnLootRollWon(itemLoot, strWinner, bNeed)
+	local strNeedOrGreed = nil
 	if bNeed then
 		strNeedOrGreed = Apollo.GetString("NeedVsGreed_NeedRoll")
+	else
+		strNeedOrGreed = Apollo.GetString("NeedVsGreed_GreedRoll")
 	end
-
-	-- Example Message: Alvin used Greed Roll on Item Name for 45 (LootRoll).
-	Event_FireGenericEvent("GenericEvent_LootChannelMessageNeedVsGreed", String_GetWeaselString(Apollo.GetString("NeedVsGreed_ItemWon"), strWinner, itemLooted:GetName(), strNeedOrGreed), itemLooted)
+	
+	local strResult = String_GetWeaselString(Apollo.GetString("NeedVsGreed_ItemWon"), strWinner, itemLoot:GetChatLinkString(), strNeedOrGreed)
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", strResult)
 end
 
-function NeedVsGreed:OnLootRollSelected(nLootItem, strPlayer, bNeed)
-
-	local strNeedOrGreed = Apollo.GetString("NeedVsGreed_GreedRoll")
+function NeedVsGreed:OnLootRollSelected(itemLoot, strPlayer, bNeed)
+	local strNeedOrGreed = nil
 	if bNeed then
 		strNeedOrGreed = Apollo.GetString("NeedVsGreed_NeedRoll")
+	else
+		strNeedOrGreed = Apollo.GetString("NeedVsGreed_GreedRoll")
 	end
 
-	-- Example Message: strPlayer has selected to bNeed for nLootItem
-	Event_FireGenericEvent("GenericEvent_LootChannelMessage", String_GetWeaselString(Apollo.GetString("NeedVsGreed_LootRollSelected"), strPlayer, strNeedOrGreed, nLootItem:GetName()))
+	local strResult = String_GetWeaselString(Apollo.GetString("NeedVsGreed_LootRollSelected"), strPlayer, strNeedOrGreed, itemLoot:GetChatLinkString())
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", strResult)
 end
 
-function NeedVsGreed:OnLootRollPassed(nLootItem, strPlayer)
-
-	-- Example Message: strPlayer passed on nLootItem
-	Event_FireGenericEvent("GenericEvent_LootChannelMessage", String_GetWeaselString(Apollo.GetString("NeedVsGreed_PlayerPassed"), strPlayer, nLootItem:GetName()))
+function NeedVsGreed:OnLootRollPassed(itemLoot, strPlayer)
+	local strResult = String_GetWeaselString(Apollo.GetString("NeedVsGreed_PlayerPassed"), strPlayer, itemLoot:GetChatLinkString())
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", strResult)
 end
 
-function NeedVsGreed:OnLootRoll(nLootItem, strPlayer, nRoll, bNeed)
-
-	local strNeedOrGreed = Apollo.GetString("NeedVsGreed_GreedRoll")
+function NeedVsGreed:OnLootRoll(itemLoot, strPlayer, nRoll, bNeed)
+	local strNeedOrGreed = nil
 	if bNeed then
 		strNeedOrGreed = Apollo.GetString("NeedVsGreed_NeedRoll")
+	else
+		strNeedOrGreed = Apollo.GetString("NeedVsGreed_GreedRoll")
 	end
-	-- Example String: strPlayer rolled nRoll for nLootItem (bNeed)
-	Event_FireGenericEvent("GenericEvent_LootChannelMessage", String_GetWeaselString(Apollo.GetString("NeedVsGreed_OnLootRoll"), strPlayer, nRoll, nLootItem:GetName(), strNeedOrGreed ))
+	
+	local strResult = String_GetWeaselString(Apollo.GetString("NeedVsGreed_OnLootRoll"), strPlayer, nRoll, itemLoot:GetChatLinkString(), strNeedOrGreed)
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", strResult)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -264,3 +267,42 @@ end
 
 local NeedVsGreedInst = NeedVsGreed:new()
 NeedVsGreedInst:Init()
+ItemClick"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MountItemMouseCatcherArt" BGColor="white" TextColor="white" TooltipColor="" Sprite="BK3:sprMetal_ExpandMenu_MedSmall_Framing" Picture="1" IgnoreMouse="1" Visible="0" NoClip="0"/>
+        </Control>
+        <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-1" BAnchorPoint="1" BAnchorOffset="0" Sprite="BK3:UI_BK3_Metal_Inset_SharpCorner" BGColor="white" TextColor="black" Rotation="0" Font="Default"/>
+    </Form>
+</Forms>
+------Þ Üoæý H X©‰--------------------------------------------
+function MessageManager:OnHideText() -- for testing
+    self:HideMessage(LuaEnumMessageField.Upper)
+    self:HideMessage(LuaEnumMessageField.Middle)
+    self:HideMessage(LuaEnumMessageField.Alert)
+    self:HideMessage(LuaEnumMessageField.Lower)
+end
+---------------------------------------------------------------------------------------------------
+function MessageManager:OnMessageFinished(oMessage)
+
+    local eField = nil
+    for key, eValue in pairs(LuaEnumMessageField) do
+        if self.tMessagesOnScreen[eValue] ~= nil and self.tMessagesOnScreen[eValue].oMessage == oMessage then
+            -- remove the tMessage from the tMessagesOnScreen list
+            self.tMessagesOnScreen[eValue] = nil
+        end
+    end
+end
+---------------------------------------------------------------------------------------------------
+-- MessageManager instance
+---------------------------------------------------------------------------------------------------
+local MessageManagerInst = MessageManager:new()
+MessageManagerInst:Init()
+loor(maR PÛæý H@ {ndsElapsed(oExpirationTime))) -- CLuaTime object
+	local nHours = math.floor(nInSeconds / 3600)
+	local nMins = math.floor(nInSeconds / 60 - (nHours * 60))
+
+	if nHours > 0 then
+		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Hours"), nHours)
+	elseif nMins > 0 then
+		strResult = String_GetWeaselString(Apollo.GetString("MarketplaceListings_Minutes"), nMins)
+	else
+		strResult = Apollo.GetString("Marketplac

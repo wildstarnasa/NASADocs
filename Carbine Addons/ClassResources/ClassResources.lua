@@ -7,6 +7,8 @@ require "Window"
 
 local ClassResources = {}
 
+local knSaveVersion = 1
+
 function ClassResources:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -23,6 +25,28 @@ function ClassResources:OnLoad()
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 
 	Apollo.RegisterEventHandler("ActionBarLoaded", "OnRequiredFlagsChanged", self)
+end
+
+function ClassResources:OnSave(eType)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
+		return
+	end
+
+	local tSave =
+	{
+		bShowPet = self.bShowPet,
+		nSaveVersion = knSaveVersion,
+	}
+
+	return tSave
+end
+
+function ClassResources:OnRestore(eType, tSavedData)
+	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
+		return
+	end
+	
+	self.bShowPet = tSavedData.bShowPet
 end
 
 function ClassResources:OnDocumentReady()
@@ -774,6 +798,8 @@ function ClassResources:OnCreateEngineer()
 	for idx = 1, 5 do
 		self.wndMain:FindChild("Stance"..idx):SetData(idx)
 	end
+	
+	self:HelperShowPetBar(self.bShowPet)
 	self.wndMain:FindChild("StanceMenuOpenerBtn"):AttachWindow(self.wndMain:FindChild("StanceMenuBG"))
 
 	self:OnShowActionBarShortcut(1, IsActionBarSetVisible(1)) -- Show petbar if active from reloadui/load screen
@@ -801,9 +827,11 @@ function ClassResources:OnEngineerUpdateTimer()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	local bInCombat = unitPlayer:IsInCombat()
 	local nResourceCurrent = unitPlayer:GetResource(1)
+	
 	if self.bLastInCombat == bInCombat and self.nLastCurrent == nResourceCurrent then
 		return
 	end
+	
 	self.bLastInCombat = bInCombat
 	self.nLastCurrent = nResourceCurrent
 
@@ -859,13 +887,21 @@ end
 
 function ClassResources:OnStanceBtn(wndHandler, wndControl)
 	Pet_SetStance(0, tonumber(wndHandler:GetData())) -- First arg is for the pet ID, 0 means all engineer pets
+	
 	self.tWindowMap["StanceMenuOpenerBtn"]:SetCheck(false)
 	self.tWindowMap["PetText"]:SetText(self.ktEngineerStanceToShortString[tonumber(wndHandler:GetData())])
 	self.tWindowMap["PetText"]:SetData(self.ktEngineerStanceToShortString[tonumber(wndHandler:GetData())])
 end
 
+function ClassResources:HelperShowPetBar(bShowIt)
+	self.tWindowMap["PetBarContainer"]:Show(bShowIt)
+	self.tWindowMap["PetBtn"]:SetCheck(not bShowIt)
+end
+
 function ClassResources:OnPetBtn(wndHandler, wndControl)
-	self.tWindowMap["PetBarContainer"]:Show(not self.tWindowMap["PetBarContainer"]:IsShown())
+	self.bShowPet = not self.tWindowMap["PetBarContainer"]:IsShown()
+	
+	self:HelperShowPetBar(self.bShowPet)
 end
 
 function ClassResources:OnShowActionBarShortcut(eWhichBar, bIsVisible, nNumShortcuts)
@@ -874,8 +910,8 @@ function ClassResources:OnShowActionBarShortcut(eWhichBar, bIsVisible, nNumShort
 	end
 
 	self.tWindowMap["PetBtn"]:Show(bIsVisible)
-	self.tWindowMap["PetBtn"]:SetCheck(not bIsVisible)
-	self.tWindowMap["PetBarContainer"]:Show(bIsVisible)
+	self.tWindowMap["PetBtn"]:SetCheck(not bIsVisible or not self.bShowPet)
+	self.tWindowMap["PetBarContainer"]:Show(bIsVisible and self.bShowPet)
 end
 
 function ClassResources:OnEngineerPetBtnMouseEnter(wndHandler, wndControl)
@@ -934,3 +970,13 @@ end
 
 local ClassResourcesInst = ClassResources:new()
 ClassResourcesInst:Init()
+ BAnchorPoint="1" BAnchorOffset="-5" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="UndoBtn" TooltipColor="">
+            <Event Name="ButtonSignal" Function="OnOptionUndo"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-60" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextMetalGoldHighlight" Template="Default" TooltipType="OnCursor" Name="ListItemName" TooltipColor="" TextId="HairStyle" DT_VCENTER="1" DT_WORDBREAK="0"/>
+        <Control Class="CashWindow" LAnchorPoint="1" LAnchorOffset="-103" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-29" BAnchorPoint="1" BAnchorOffset="0" TooltipType="OnCursor" RelativeToClient="1" Font="CRB_Header9" Text="" Template="Default" BGColor="ffffffff" TextColor="UI_TextMetalBodyHighlight" DT_RIGHT="1" Name="CashWindow" TooltipColor="" SkipZeroes="1"/>
+        <Pixie LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="1" TAnchorOffset="-1" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="0" Sprite="WhiteFill" BGColor="UI_AlphaPercent5" TextColor="black" Rotation="0" Font="Default"/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="280" BAnchorPoint="0" BAnchorOffset="34" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="ConfirmationLineItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="1" Overlapped="1" TooltipColor="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="0" RAnchorOffset="162" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="ListItemName" TooltipColor="" TextId="CharacterCustomize_Bones" DT_VCENTER="1" DT_WORDBREAK="1"/>
+        <Control Class="CashWindow" LAnchorPoint="0" LAnchorOffset="67" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOf

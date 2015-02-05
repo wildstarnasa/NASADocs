@@ -80,7 +80,7 @@ function Datachron:OnRestore(eType, tSavedData)
 end
 
 function Datachron:OnDocumentReady()
-	if self.xmlDoc == nil then
+	if  self.xmlDoc == nil then
 		return
 	end
 
@@ -689,3 +689,25 @@ end
 
 local DatachronInst = Datachron:new()
 DatachronInst:Init()
+toryFull"))
+	end
+
+	-- Hide if at max
+	local bReadyToCraft = bCurrentCraftStarted and tCurrentCraft.nAdditiveCount == tSchematicInfo.nMaxAdditives
+	self.wndMain:FindChild("AdditiveListBlocker"):Show(bReadyToCraft)
+	self.wndMain:FindChild("HelperText_ReadyToCraft"):Show(bReadyToCraft)
+end
+
+function CraftingGrid:RedrawCash()
+	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsVisible() then
+		return
+	end
+
+	self.wndMain:FindChild("BGPlayerCashWindow"):SetAmount(GameLib.GetPlayerCurrency(), true)
+end
+
+-----------------------------------------------------------------------------------------------
+-- Craft Btn
+-----------------------------------------------------------------------------------------------
+
+function CraftingGrid:OnPreviewStartCraftBtn(wndHandler, wndControl) -- Pre

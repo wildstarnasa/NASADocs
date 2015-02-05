@@ -377,3 +377,65 @@ end
 
 local NonCombatSpellbookInst = NonCombatSpellbook:new()
 NonCombatSpellbookInst:Init()
+urrNeighbor.strCharacterName)
+		return
+	end
+
+	if tCurrNeighbor == nil then
+		return false
+	end
+	self.wndLastSelected = nil
+	self:UpdateControls()
+end
+
+-- Add Sub-Window Functions
+function NeighborsList:OnAddBtn(wndHandler, wndControl)
+	local wndAdd = wndControl:FindChild("AddWindow")
+	wndAdd:FindChild("AddMemberEditBox"):SetText("")
+	wndAdd:FindChild("AddMemberEditBox"):SetFocus()
+	wndAdd:Show(true)
+end
+
+function NeighborsList:OnAddMemberYesClick( wndHandler, wndControl )
+	local wndParent = wndControl:GetParent()
+	local strName = wndParent:FindChild("AddMemberEditBox"):GetText()
+
+	if strName ~= nil and strName ~= "" then
+		HousingLib.NeighborInviteByName(strName)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToNeighbors"), strName))
+	end
+	wndControl:GetParent():Show(false)
+end
+
+-- Modify Sub-Window Functions
+function NeighborsList:OnModifyBtn(wndHandler, wndControl)
+
+	local tCurrNeighbor = wndControl:GetData()
+	if tCurrNeighbor == nil then
+		return
+	end
+	local wndControls = self.wndMain:FindChild("Controls")
+	local wndModify = wndControl:FindChild("ModifyWindow")
+	wndModify:SetData(tCurrNeighbor)
+	-- set the permissions button
+	if tCurrNeighbor.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
+		wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToNormal"))
+	else
+		wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
+	end
+
+	wndModify:Show(true)
+end
+
+function NeighborsList:OnModifyPermissionsBtn(wndHandler, wndControl)
+	local tCurr = wndControl:GetData()
+	
+	if tCurr == nil then
+		return
+	end
+
+	if tCurr ~= nil and tCurr.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
+		HousingLib.NeighborSetPermission(tCurr.nId, HousingLib.NeighborPermissionLevel.Normal)
+		self.wndMain:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
+	else
+		HousingLib.NeighborSetPermission(tCurr.nId, HousingLib.NeighborPermissionL

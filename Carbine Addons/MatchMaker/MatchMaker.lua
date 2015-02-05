@@ -16,28 +16,25 @@ require "GroupLib"
 -----------------------------------------------------------------------------------------------
 local MatchMaker = {}
 
-local kcrActiveColor 			= CColor.new(1, 172/255, 0, 1)
-local kcrInactiveColor 			= CColor.new(47/2551, 148/255, 172/255, 1)
-local kstrConsoleRealmFilter	= "matching.realmOnly"
+local karItemQualityColors =
+{
+	[Item.CodeEnumItemQuality.Inferior] 		= "ItemQuality_Inferior",
+	[Item.CodeEnumItemQuality.Average] 			= "ItemQuality_Average",
+	[Item.CodeEnumItemQuality.Good] 			= "ItemQuality_Good",
+	[Item.CodeEnumItemQuality.Excellent] 		= "ItemQuality_Excellent",
+	[Item.CodeEnumItemQuality.Superb] 			= "ItemQuality_Superb",
+	[Item.CodeEnumItemQuality.Legendary] 		= "ItemQuality_Legendary",
+	[Item.CodeEnumItemQuality.Artifact]		 	= "ItemQuality_Artifact",
+}
+
+local kcrActiveColor				= CColor.new(1, 172/255, 0, 1)
+local kcrInactiveColor				= CColor.new(47/2551, 148/255, 172/255, 1)
+local kstrConsoleRealmFilter		= "matching.realmOnly"
+local kstrConsoleAllowMercFilter	= "matching.mercenaryAllowed"
+local kstrConsoleAllowWarpartyFilter= "matching.warpartyAllowed"
+local kstrConsoleDoNotFindOthers	= "matching.doNotFindOthers"
 local knSaveVersion = 1
 
-local ktEventTypeToMatchType =
-{
-	[PublicEvent.PublicEventType_Dungeon]						= MatchingGame.MatchType.Dungeon,
-	[PublicEvent.PublicEventType_PVP_Arena] 					= MatchingGame.MatchType.Arena,
-	[PublicEvent.PublicEventType_PVP_Warplot] 					= MatchingGame.MatchType.Warplot,
-	[PublicEvent.PublicEventType_PVP_Battleground_Vortex] 		= MatchingGame.MatchType.Battleground,
-	[PublicEvent.PublicEventType_PVP_Battleground_HoldTheLine] 	= MatchingGame.MatchType.Battleground,
-	[PublicEvent.PublicEventType_PVP_Battleground_Cannon]		= MatchingGame.MatchType.Battleground,
-	[PublicEvent.PublicEventType_PVP_Battleground_Sabotage]		= MatchingGame.MatchType.Battleground,
-	[PublicEvent.PublicEventType_Adventure_Malgrave]			= MatchingGame.MatchType.Adventure,
-	[PublicEvent.PublicEventType_Adventure_Hycrest]				= MatchingGame.MatchType.Adventure,
-	[PublicEvent.PublicEventType_Adventure_Skywatch]			= MatchingGame.MatchType.Adventure,
-	[PublicEvent.PublicEventType_Adventure_Whitevale]			= MatchingGame.MatchType.Adventure,
-	[PublicEvent.PublicEventType_Adventure_Galeras]				= MatchingGame.MatchType.Adventure,
-	[PublicEvent.PublicEventType_Adventure_Astrovoid]			= MatchingGame.MatchType.Adventure,
-	[PublicEvent.PublicEventType_Adventure_Farside]				= MatchingGame.MatchType.Adventure,
-}
 -----------------------------------------------------------------------------------------------                 PublicEventType_Adventure_NorthernWilds);
 -- Initialization
 -----------------------------------------------------------------------------------------------
@@ -166,6 +163,11 @@ function MatchMaker:OnDocumentReady()
 	self.wndRole 					= self.wndModeContent:FindChild("RoleFrame")
 	self.wndRealmFilterContainer	= self.wndModeContent:FindChild("RealmFrame")
 	self.wndRealmFilter				= self.wndRealmFilterContainer:FindChild("RealmFilterBtn")
+	self.wndOthersFilterContainer	= self.wndModeContent:FindChild("OthersFrame")
+	self.wndOthersFilter			= self.wndOthersFilterContainer:FindChild("OthersFilterBtn")
+	self.wndMercFilterContainer     = self.wndModeContent:FindChild("MercenaryFrame")
+	self.wndAllowMercFilter   		= self.wndMercFilterContainer:FindChild("AllowMercenaryBtn")
+	self.wndAllowWarpartyFilter		= self.wndMercFilterContainer:FindChild("AllowWarpartyBtn")
 	self.wndArenaTeams 				= self.wndModeContent:FindChild("ArenaTeamFrame")
 
 
@@ -193,6 +195,8 @@ function MatchMaker:OnDocumentReady()
 	self.wndDuelWarning				= Apollo.LoadForm(self.xmlDoc, "DuelWarning", nil, self)
 	self.wndRoleBlocker				= self.wndRole:FindChild("RoleBlocker")
 	self.wndRealmFilterBlocker		= self.wndRealmFilterContainer:FindChild("RealmBlocker")
+	self.wndMercFilterBlocker		= self.wndMercFilterContainer:FindChild("MercenaryBlocker")
+	self.wndOthersFilterBlocker		= self.wndOthersFilterContainer:FindChild("OthersBlocker")
 	
 	self.wndJoinGame 				= Apollo.LoadForm(self.xmlDoc, "JoinGame", nil, self)
 	self.nJoinGameLeft, self.nJoinGameTop, self.nJoinGameRight, self.nJoinGameBottom = self.wndJoinGame:GetAnchorOffsets()
@@ -216,6 +220,8 @@ function MatchMaker:OnDocumentReady()
 	self.wndAllyEnemyConfirm:Show(false, true)
 	self.wndRoleBlocker:Show(false)
 	self.wndRealmFilterBlocker:Show(false)
+	self.wndOthersFilterBlocker:Show(false)
+	self.wndMercFilterBlocker:Show(false)
 	self.bInCombat = false
 	
 	self.wndJoinGame:FindChild("YesButton"):SetActionData(GameLib.CodeEnumConfirmButtonType.MatchingGameRespondToPending, true)
@@ -356,9 +362,9 @@ end
 
 function MatchMaker:ReloadTeams()
 	if self.eSelectedTab == MatchingGame.MatchType.Arena then
-		self:HelperConfigureListAndTeams(self.tArenaTeams)
+		self:HelperConfigureListAndTeams(self.tArenaTeams, false)
 	elseif self.eSelectedTab == MatchingGame.MatchType.Warplot then
-		self:HelperConfigureListAndTeams(self.tWarparty)
+		self:HelperConfigureListAndTeams(self.tWarparty, true)
 	end
 end
 
@@ -369,17 +375,13 @@ function MatchMaker:OnMatchMakerOn()
 
 	-- go to the correct tab
 	if MatchingGame.IsInMatchingGame() then
-		local tActiveEvents = PublicEvent.GetActiveEvents()
-		for idx, peEvent in pairs(tActiveEvents) do
-			local eType = peEvent:GetEventType()
-			if ktEventTypeToMatchType[eType] then
-				self.eSelectedTab = ktEventTypeToMatchType[eType]
-			end
+		local eMatchingGameType = MatchingGame.GetMatchingGameType()
+		if eMatchingGameType ~= nil then
+			self.eSelectedTab = eMatchingGameType
 		end
-		
 		-- Public event types don't know if they're in rated or unrated matches.
 		-- Check GameLib for a rated match and change the selected tab accordingly.
-		if GameLib.InRatedPvpMatch then
+		if GameLib.InRatedPvpMatch() then
 			self.eSelectedTab = MatchingGame.MatchType.Battleground and MatchingGame.MatchType.RatedBattleground or MatchingGame.MatchType.RatedArena
 		end
 	end
@@ -401,7 +403,7 @@ function MatchMaker:OnMatchMakerOn()
 	elseif self.eSelectedTab == MatchingGame.MatchType.Arena then
 		self.wndModeListToggle:SetText(Apollo.GetString("MatchMaker_Arenas"))
 		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("ArenaBtn"))
-		self:HelperConfigureListAndTeams(self.tArenaTeams)
+		self:HelperConfigureListAndTeams(self.tArenaTeams, false)
 		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_AvailableArena")))
 	elseif self.eSelectedTab == MatchingGame.MatchType.Dungeon then
 		local strMode = Apollo.GetString("CRB_Dungeons")
@@ -415,10 +417,16 @@ function MatchMaker:OnMatchMakerOn()
 		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("AdventureBtn"))
 		self:HelperConfigureListAndRole()
 		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_CurrentPrepend"), strMode))
+	elseif self.eSelectedTab == MatchingGame.MatchType.Shiphand then
+		local strMode = Apollo.GetString("MatchMaker_Shiphands")
+		self.wndModeListToggle:SetText(strMode)
+		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("ShiphandBtn"))
+		self:HelperConfigureListAndFindOthers()
+		self.wndListParent:FindChild("HeaderLabel"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_CurrentPrepend"), strMode))
 	elseif self.eSelectedTab == MatchingGame.MatchType.Warplot then
 		self.wndModeListToggle:SetText(Apollo.GetString("MatchMaker_Warplots"))
 		self.wndModeList:SetRadioSelButton("PvpUI_TypeSelection", self.wndModeList:FindChild("WarplotsBtn"))
-		self:HelperConfigureListAndTeams(self.tWarparty)
+		self:HelperConfigureListAndTeams(self.tWarparty, true)
 		self.wndListParent:FindChild("HeaderLabel"):SetText(Apollo.GetString("MatchMaker_AvailableWarplots"))
 	elseif self.eSelectedTab == MatchingGame.MatchType.RatedBattleground then
 		local strMode = Apollo.GetString("CRB_Battlegrounds")
@@ -461,14 +469,33 @@ function MatchMaker:OnMatchMakerOn()
 	local nNumberOfGames = #tGames
 	for idx, matchGame in ipairs(tGames) do
 		local bIsRandom = matchGame:IsRandom()
+		local tRewards = matchGame:GetReward()
+		
 		--random counts as one entry so if greater than 2
 		if not bIsRandom or (bIsRandom and nNumberOfGames > 2) then
-			local wndEntry = Apollo.LoadForm(self.xmlDoc, "GameEntry", self.wndList, self)
+			local strForm = tRewards and "RewardEntry" or "GameEntry"
+			local wndEntry = Apollo.LoadForm(self.xmlDoc, strForm, self.wndList, self)
 			--wndEntry:FindChild("MatchingGameSelectBtn"):SetText("  " .. matchGame:GetName())
 			wndEntry:FindChild("MatchingGameLabel"):SetText(matchGame:GetName())
 			wndEntry:FindChild("MatchingGameSelectBtn"):SetData(matchGame)
 			wndEntry:FindChild("MatchingGameSelectBtn"):SetTooltip(matchGame:GetDescription())
 			wndEntry:FindChild("EntryInfoBtn"):SetData(matchGame:GetDescription())
+			
+			if tRewards then
+				wndEntry:FindChild("MatchingGameSelectBtn"):SetTooltip("")
+				wndEntry:FindChild("Description"):SetText(matchGame:GetDescription())
+				
+				local strQualityColor = tRewards.itemReward and tRewards.itemReward:GetItemQuality() and karItemQualityColors[tRewards.itemReward:GetItemQuality()] or "UI_TextHoloBody"
+				wndEntry:FindChild("RewardLabel"):SetTextColor(strQualityColor)
+				wndEntry:FindChild("RewardLabel"):SetText(tRewards.itemReward:GetName())
+				wndEntry:FindChild("RewardIcon"):GetWindowSubclass():SetItem(tRewards.itemReward)
+				
+				local nXp = tRewards.nXpEarned and tRewards.nXpEarned or 0
+				wndEntry:FindChild("XpLabel"):SetText(tostring(Apollo.FormatNumber(nXp, 0, true)))
+				
+				wndEntry:FindChild("MainCashWindow"):SetMoneySystem(tRewards.monReward:GetMoneyType())
+				wndEntry:FindChild("MainCashWindow"):SetAmount(tRewards.monReward:GetAmount(), true)
+			end
 		end
 		
 	end
@@ -479,21 +506,36 @@ function MatchMaker:OnMatchMakerOn()
 	Event_ShowTutorial(GameLib.CodeEnumTutorial.GroupFinderMenu)
 end
 
+function MatchMaker:OnRandomEntryMouseEnter(wndHandler, wndControl)
+	local wnd = wndControl and wndControl:IsValid() and wndControl:FindChild("Rewards") or nil
+	
+	if not wnd or not wnd:IsValid() then return end
+	
+	wnd:FindChild("Rewards"):Show(true)
+end
+
+function MatchMaker:OnRandomEntryMouseExit(wndHandler, wndControl)
+	local wnd = wndControl and wndControl:IsValid() and wndControl:FindChild("Rewards") or nil
+	
+	if not wnd or not wnd:IsValid() then return end
+	
+	wnd:FindChild("Rewards"):Show(false)
+end
+
 function MatchMaker:HelperConfigureListAndRealmSelect()
 	local nLeft, nTop, nRight, nBottom = self.wndListParent:GetAnchorOffsets()
 	local nLeft2, nTop2, nRight2, nBottom2 = self.wndMyRating:GetAnchorOffsets()
 	local nLeftRealm, nTopRealm, nRightRealm, nBottomRealm = self.wndRealmFilterContainer:GetAnchorOffsets()
 	self.wndListParent:SetAnchorOffsets(nLeft, nBottomRealm, nRight, nTop2)
 
-	local tRating = MatchingGame.GetPvpRating(MatchingGame.RatingType.RatedBattleground)
-	if tRating then
-		self.wndMyRating:FindChild("RatingValue"):SetText(math.floor(GameLib.GetGearScore()) or 0)
-		self.wndMyRating:FindChild("RatingLabel"):SetText(Apollo.GetString("MatchMaker_GearScoreLabel"))
-	end
+	self.wndMyRating:FindChild("RatingValue"):SetText(math.floor(GameLib.GetGearScore()) or 0)
+	self.wndMyRating:FindChild("RatingLabel"):SetText(Apollo.GetString("MatchMaker_GearScoreLabel"))
 
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(false)
 	self.wndRealmFilterContainer:Show(true)
+	self.wndOthersFilterContainer:Show(false)
+	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(true)
 end
 
@@ -503,14 +545,15 @@ function MatchMaker:HelperConfigureListAndRating()
 	self.wndListParent:SetAnchorOffsets(nLeft, 0, nRight, nTop2)
 
 	local tRating = MatchingGame.GetPvpRating(MatchingGame.RatingType.RatedBattleground)
-	if tRating then
-		self.wndMyRating:FindChild("RatingValue"):SetText(tRating.nRating or "0")
-		self.wndMyRating:FindChild("RatingLabel"):SetText(Apollo.GetString("MatchMaker_RatingLabelDefault"))
-	end
+	
+	self.wndMyRating:FindChild("RatingValue"):SetText(tRating and tRating.nRating or Apollo.GetString("Challenges_NoProgress"))
+	self.wndMyRating:FindChild("RatingLabel"):SetText(Apollo.GetString("MatchMaker_RatingLabelDefault"))
 
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(false)
 	self.wndRealmFilterContainer:Show(false)
+	self.wndOthersFilterContainer:Show(false)
+	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(true)
 end
 
@@ -523,17 +566,48 @@ function MatchMaker:HelperConfigureListAndRole() --dungeons & adventures
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(true)
 	self.wndRealmFilterContainer:Show(true)
+	self.wndOthersFilterContainer:Show(false)
+	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(false)
 end
 
-function MatchMaker:HelperConfigureListAndTeams(tTeam)
-	local nLeft, nTop, nRight, nBottom = self.wndListParent:GetAnchorOffsets()
-	local nLeft2, nTop2, nRight2, nBottom2 = self.wndArenaTeams:GetAnchorOffsets()
-	self.wndListParent:SetAnchorOffsets(nLeft, nBottom2, nRight,0)
 
+function MatchMaker:HelperConfigureListAndFindOthers() --shiphands
+	local nLeft, nTop, nRight, nBottom = self.wndListParent:GetAnchorOffsets()
+	local nLeftRealm, nTopRealm, nRightRealm, nBottomRealm = self.wndOthersFilterContainer:GetAnchorOffsets()
+
+	self.wndListParent:SetAnchorOffsets(nLeft, nBottomRealm, nRight, 0)
+
+	self.wndArenaTeams:Show(false)
+	self.wndRole:Show(false)
+	self.wndRealmFilterContainer:Show(false)
+	self.wndOthersFilterContainer:Show(true)
+	self.wndMercFilterContainer:Show(false)
+	self.wndMyRating:Show(false)
+end
+
+function MatchMaker:HelperConfigureListAndTeams(tTeam, bForWarplots)
+	local nLeft, nTop, nRight , nBottom  = self.wndListParent:GetAnchorOffsets()
+	local nLeftMerc, nTopMerc, nRightMerc, nBottomMerc = self.wndMercFilterContainer:GetAnchorOffsets()	
+	local nLeftArena, nTopArena, nRightArena, nBottomArena = self.wndArenaTeams:GetAnchorOffsets()
+
+	local kBaseArenaOffset = 1
+	
+	if bForWarplots then
+		nBottomArena = kBaseArenaOffset + nBottomMerc + nBottomArena - nTopArena
+		nTopArena = kBaseArenaOffset + nBottomMerc
+	else
+		nBottomArena = kBaseArenaOffset + nBottomArena - nTopArena
+		nTopArena = kBaseArenaOffset
+	end
+	self.wndArenaTeams:SetAnchorOffsets(nLeft, nTopArena, nRight, nBottomArena)
+	self.wndListParent:SetAnchorOffsets(nLeft, nBottomArena, nRight, 0)
+
+	self.wndMercFilterContainer:Show(bForWarplots)
 	self.wndArenaTeams:Show(true)
 	self.wndRole:Show(false)
 	self.wndRealmFilterContainer:Show(false)
+	self.wndOthersFilterContainer:Show(false)
 	self.wndMyRating:Show(false)
 	
 	-- teams
@@ -568,7 +642,7 @@ function MatchMaker:HelperConfigureListAndTeams(tTeam)
 		wndEntry:FindChild("ArrowMark"):Show(true)
 
 		local tRating = MatchingGame.GetPvpRating(tTeam[idx].eRatingType)
-		wndEntry:FindChild("MyRatingValue"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_MyRating"), tRating.nRating or 0))
+		wndEntry:FindChild("MyRatingValue"):SetText(String_GetWeaselString(Apollo.GetString("MatchMaker_MyRating"), (tRating and tRating.nRating) or 0))
 
 		if tTeam[idx].bIsLeader == true then -- leader (we can assume has)
 			wndEntry:FindChild("LeaderMark"):Show(true)
@@ -616,13 +690,13 @@ end
 
 function MatchMaker:OnArenaTeamAddedOrDisbanded()
 	if self.wndMain:IsShown() and self.eSelectedTab == MatchingGame.MatchType.Arena then
-		self:HelperConfigureListAndTeams(self.tArenaTeams)
+		self:HelperConfigureListAndTeams(self.tArenaTeams, false)
 	end
 end
 
 function MatchMaker:OnWarpartyAddedOrDisbanded()
 	if self.wndMain:IsShown() and self.eSelectedTab == MatchingGame.MatchType.Warplot then
-		self:HelperConfigureListAndTeams(self.tWarparty)
+		self:HelperConfigureListAndTeams(self.tWarparty, true)
 	end
 end
 
@@ -715,6 +789,9 @@ function MatchMaker:RefreshStatus()
 	self.wndModeListToggle:Enable(true)
 
 	self.wndRealmFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleRealmFilter) or false)
+	self.wndAllowMercFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleAllowMercFilter) or false)
+	self.wndAllowWarpartyFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleAllowWarpartyFilter) or false)
+	self.wndOthersFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleDoNotFindOthers) or false)
 
 	local bWaitingForWarParty = false
 	local bQueuedGuild = false
@@ -782,6 +859,8 @@ function MatchMaker:RefreshStatus()
 		for idx, eRole in ipairs(tSelectedRoles) do
 			self.wndRoleBlocker:Show(bIsQueued)
 			self.wndRealmFilterBlocker:Show(bIsQueued)
+			self.wndOthersFilterBlocker:Show(bIsQueued)
+			self.wndMercFilterBlocker:Show(bIsQueued)
 			--self.tGroupFinderRoleButtons[eRole]:Enable(bIsQueued == false)
 		end
 	end
@@ -838,7 +917,7 @@ function MatchMaker:RefreshStatus()
 			self.wndListBlocker:SetText(Apollo.GetString("MatchMaker_CurrentlyInMatch"))
 
 			self.wndModeListToggle:Enable(false)
-			self.wndVoteDisband:Show(bCanDisband and not bLeader)
+			self.wndVoteDisband:Show(bCanDisband and not bLeader and GroupLib.GetMemberCount() > 1)
 			self.wndVoteDisband:SetText(Apollo.GetString(self.eSelectedTab == MatchingGame.MatchType.Warplot and "MatchMaker_SurrenderMatch" or "MatchMaker_VoteDisband"))
 
 			if not bInInstance then
@@ -858,7 +937,7 @@ function MatchMaker:RefreshStatus()
 				self.wndAltLeaveGame:Show(true)
 				self.wndCancelReplacements:Show(true)
 			else
-				self.wndVoteDisband:Show(bCanDisband)
+				self.wndVoteDisband:Show(bCanDisband and GroupLib.GetMemberCount() > 1)
 				self.wndAltLeaveGame:Show(true)
 			end
 		end
@@ -1356,6 +1435,17 @@ function MatchMaker:OnSelectAdventures(wndHandler, wndControl)
 	self:OnMatchMakerOn()
 end
 
+function MatchMaker:OnSelectShiphands(wndHandler, wndControl)
+	if self.eSelectedTab == MatchingGame.MatchType.Shiphand then
+		return
+	end
+
+	self.matchesSelected = {}
+
+	self.eSelectedTab = MatchingGame.MatchType.Shiphand
+	self:OnMatchMakerOn()
+end
+
 function MatchMaker:OnSelectWarplots(wndHandler, wndControl)
 	if self.eSelectedTab == MatchingGame.MatchType.Warplot then
 		return
@@ -1389,12 +1479,36 @@ function MatchMaker:OnSelectOpenArenas(wndHandler, wndControl)
 	self:OnMatchMakerOn()
 end
 
+function MatchMaker:OnOtherFilterChecked( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable(kstrConsoleDoNotFindOthers, true)
+end
+
+function MatchMaker:OnOtherFilterUnchecked( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable(kstrConsoleDoNotFindOthers, false)
+end
+
 function MatchMaker:OnRealmFilterChecked( wndHandler, wndControl, eMouseButton )
 	Apollo.SetConsoleVariable(kstrConsoleRealmFilter, true)
 end
 
 function MatchMaker:OnRealmFilterUnchecked( wndHandler, wndControl, eMouseButton )
 	Apollo.SetConsoleVariable(kstrConsoleRealmFilter, false)
+end
+
+function MatchMaker:OnAllowMercChecked( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable(kstrConsoleAllowMercFilter, true)
+end
+
+function MatchMaker:OnAllowMercUnchecked( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable(kstrConsoleAllowMercFilter, false)
+end
+
+function MatchMaker:OnAllowWarpartyChecked( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable(kstrConsoleAllowWarpartyFilter, true)
+end
+
+function MatchMaker:OnAllowWarpartyUnchecked( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable(kstrConsoleAllowWarpartyFilter, false)
 end
 
 function MatchMaker:OnTankChecked(wndHandler, wndControl)
@@ -1667,10 +1781,10 @@ function MatchMaker:DisplayPendingInfo()
 	if tPendingInfo.nPendingEnemies and tPendingInfo.nPendingEnemies > 0 then
 		self.wndAllyEnemyConfirm:FindChild("AllyCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), tPendingInfo.nAcceptedAllies, tPendingInfo.nPendingAllies))
 		self.wndAllyEnemyConfirm:FindChild("EnemyCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), tPendingInfo.nAcceptedEnemies, tPendingInfo.nPendingEnemies))
-		self.wndAllyEnemyConfirm:Show(true)
+		self.wndAllyEnemyConfirm:Invoke()
 	elseif tPendingInfo.nPendingAllies and tPendingInfo.nPendingAllies > 0 then
 		self.wndAllyConfirm:FindChild("AllyCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), tPendingInfo.nAcceptedAllies, tPendingInfo.nPendingAllies))
-		self.wndAllyConfirm:Show(true)
+		self.wndAllyConfirm:Invoke()
 	else
 		self.wndAllyConfirm:Show(false)
 		self.wndAllyEnemyConfirm:Show(false)
@@ -1725,3 +1839,9 @@ end
 -----------------------------------------------------------------------------------------------
 local MatchMakerInst = MatchMaker:new()
 MatchMakerInst:Init()
+?Fêá0Æ_ç®¶e*ò¿¯·HõýÇü…r½?æ÷1+ž·ÛòƒçŸýËÞtìJÜ·7E¬§÷å%·#%Å(ú|ðéÉù‹Öä“\Wð9eæx¿ç××¤4&ˆ~Ý›çÊëNsÅ§•MØ³Gò‚’Óú—Äz}ÓsÍ5Ÿœ%ÓÓæ¤Ý6û¿·µ_hªëÜjÜÕþYÓÖè­;%o;|ª÷ü~,ú–•|dM‰6½-ùEÇí·~kêT±û»žù)Û_ù ÿ\n>úÁŠø?¸ÏsàþÝž
+£>Ì¢´¶ÿ—ÓéÔôÛQæc©×ïúÆÆ¶·k<ÐñÅù…ú÷s(ÏÊõ‚C}ÿZþãKcŒot«ëáûãÉk·_^?¹þ¡ÿz,;Cv}~ëó,š×3‚9žqûcŒ‡Ï5®œÄ×Ž.ùþ§'¦¦¦üƒä¶OÝ¶F·[ÄóŽöûJšKþíÉ÷oÙ=¿x}ƒ˜ŸÿUãÇ®Ù³“D?ýdwë“}••’;ËÿÑóÕ—"¿~^NGâÓO_õý	9Í‰ÛS“’ÿÓs‡k{c‚è'°°Õ°B§3ˆùãéÖÊºÛÃKÅù¶—æ.?v^ô÷¿¿*Áµ¶¨ý’Ú¦˜¢'”‰ú„¿æ4ß}÷E—èhØ<Å|téÐûcû‹ÿ'©ê×<–€õrê~÷Þ¿¥Ú×íšz{ý ýùÄÆÒö¾ë…ÙÕ¾þý¡x^ð]¿~’Æ™"¡cLÜ_NÖ“ÄcŒƒrßýÔ"9Ôñ½ÿû}pëí*ûjó!¾¹Þygh|Å~…ƒ‹×õã÷=¿ÌIjË{…ßŒñ•pÏâÅ:ñÓR®¿³­Mî¸ªÞ6m±SÌÇ—••Z‹
+s%O/¸Ýœú›½û%ÏÚr öû•òúzŸ7Ç¾vño"^Ïl]épÓïºÆÃó\Nç%Ùí¥9Î6‘Žß»ý›Ž²Ž5
+G˜&Ê‚Œ§=V}B‚¨?øüêUÙŠxÕ¾í™ùuK/Ÿ|Ð1Å4qf‚"Þº÷že²?JSö?öóôÿë,vÕ|½%L¯™¯ÏÔÆß×ô]]Ý_»½Æ>ý{4¯kûó__ë…ùö‡ÏÐX{?ó3>¯±f|a^ z‘Þû«êýBýy`Œ1Æ×ƒýÄÏŠúÇëõ«¯xÀ{ño_¾„%àõ©òB}¾ãÐy£ª¿h«Ô”úî‚?HþÄõb|ÎŠBO/ˆ4ÍÞ¿Z¬èíøTQÑ’3[Çûõ/l½ÐT³tÈ7¸«åBS~Ï„e’oéuO}]§rû®	]²W¦å/ÿýzÉïVU[Sþ²Dü¾åðsww‘8Ÿ‹õÑöÖx‘?°`Ed|Ã/Î=¥¼Þ°(?é›ø_Ó¿Ç~Å÷cŒ1ÆZWÛ,:ùçúï?w£]/ÆxðŽZ¨SÌ÷V—W¥åÛ+Eýÿûû=ÇÖJ~Äµ2¾{Q¦Ø¿Ôz"qÁ#M?•|KKsÜö9_ÿñÖ›[þÔýr“ìM—/­ñ¾7þ_î¬S:¼gs­rÿ¤Æ.ÑÀÙúYSCí«¢ßÿÂÖRëâEÙYâürJÓN>Y$4ËÛrÓëSÄñŸF9–]<&Ö÷óTÜ›¦w‘ý¢C9ÿúïcŒ1ÆcŒ1Š7ªú£åî[éÈíªùùwz6å¾ðÔM’g½ä¶fg-‘e›“føj¿ˆ§gmiŽ[¶¤m²ä»Zî°ÙôÞ~|7·<ñÐc=’½óùOww‹ü›{ãýÚâÚNyÿMgÖ×ö(””$Æ2[ïl±ÿù—Ê¯Ï5+ÒtgËN$îïúêkÉ‡ÊÎy}qH@XåysÕ’[E½À–²7¬O]|Uô?l©8™61jò·¯üùaŒ1ÆcŒ1Æ×‚KmEü?ë×s‡)”|§çdÆ¿<ò¾ˆ¯§ºæ˜ÏïÛ$úå%¸"MµÇ~œ/ùw‡#L)	n·ä…­ç*u»ÛDGL¯Ÿ=wVòã­ÉîµrÇ[ZbÜºðž6Ùç+uë/¯“÷¯ß¦«½,æç¶¾W9ÎpQŒÜÜ»\íë"ýBS‹5;+KôØSñÆü	ãþQò?ývãªÛÖvl×_5ÍõøÒ-’\]QeýöäÉŠþl¡þ¾0ÆcŒ1Æã¡ØíPÆÿóKJÒvì¨ñõÙ
+Ïü5O=%êã§ºž±îùï»¦Hþè)æ5ÙÙ"^^Õ¸!fbt´˜Ÿ¿i¢{ÑwÇ‰~þ<ŸVöl6Lm¯_lhè‘·qIÔ…Ë¯'»×ïçû™g–ûÈk5;dÛëWëj”v†7ˆ‚Ÿ{žIËÊÊýÆ•D˜gÔ½õœä3uQe†¸ð’;wÿ(çé¬5b<£ºbŠé;“'‹|†Ð_cŒ1ÆcŒñÕ»¥â-Ó+½?’ÏVœÊÈÎÎ^$ù&Çsøf[®äjë‰¸Üœåb~ý±¦±ÑãW‹ãý²ÉjÒ­w
+¿â‰7éjeöN|¼Òï{ŽÅ©¦zýMê×ß{'Ç¤»,û]OºÊ?õÜŸ_(ûÙòRsýL·Eò¡ŠM®ñõ¢Ÿ@t¥¡0gEçùó(5OŽŠŠêç‰1ÆcŒ1ÆE,—œüž˜/ŸQ¸!æµîË]òöwÜZ¦XoJüÕ¬7úN¸Ç¢:ß*s›b½ÃƒåUfƒÓ®x}Ž)*J¯p¨ÏcŒ1Æ×º½k¯aŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1Æx¤í©ÐéœNµuZ‡óÅcŒ1ÆcŒq°>¹ÛSáýƒµw< Ì©/ÓŽèµãzÙcëú1ÆcŒ1ÆãÁÁÆÿWkïx€^;~`ÔŽµãÆ±òyaŒ1ÆcŒ1Æ×¢G;þ‰ñv<zŒ1ÆcŒ1Æ×¼ýÆ³8óŠñq¨ã÷PÛo=ƒžzŒ1ÆcŒ1¾öÜ¯Y4 ^¶0Ÿ<€µñd ‡:þÅW?~`¾žAáPÿûÀcŒ1ÆcÉ}ñŠ]ãâg{pñ²=¸øÙBüŒ¯S®ž!

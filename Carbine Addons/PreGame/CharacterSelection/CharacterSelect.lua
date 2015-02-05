@@ -32,6 +32,8 @@ function CharacterSelection:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("CharacterSelection.xml")
 
 	Apollo.RegisterEventHandler("LoadFromCharacter", "OnLoadFromCharacter", self)
+	Apollo.RegisterEventHandler("ResolutionChanged",	"OnWindowResized", self)
+	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", 	"OnWindowResized", self)
 	Apollo.RegisterEventHandler("CharacterDisabled", "OnCharacterDisabled", self)
 	Apollo.RegisterEventHandler("CharacterDelete", "OnCharacterDeleteResult", self)
 	Apollo.RegisterTimerHandler("DeleteFailedTimer", "OnDeleteFailedTimer", self)
@@ -61,8 +63,15 @@ function CharacterSelection:OnLoad()
 	self.nStartingCharacterRotation = 0
 end
 
+function CharacterSelection:OnWindowResized()
+	if self.wndSelectList and self.wndSelectList:IsValid() and self.wndSelectList:IsShown() then
+		self:OnLoadFromCharacter()
+	end
+end
+
 function CharacterSelection:OnLoadFromCharacter()
 	local wndItem2 = Apollo.LoadForm(self.xmlDoc, "CharacterOption", self.wndSelectList:FindChild("CharacterList"), self) --TODO This shouldn't be here
+	local nDefaultCharacterOptionHeight = wndItem2:GetHeight()
 
 	local btnSel = nil
 	self.nAttemptedDelete = nil
@@ -98,20 +107,22 @@ function CharacterSelection:OnLoadFromCharacter()
 
 	if not self.frameL then
 		self.frameL, self.frameT, self.frameR, self.frameB = self.wndSelectList:GetAnchorOffsets()
+		self.frameH = self.wndSelectList:GetHeight()
 	end
 
-	local listL, listT, listR, listB = self.wndSelectList:FindChild("CharacterList"):GetAnchorOffsets()
+	local nListL, nListT, nListR, nListB = self.wndSelectList:FindChild("CharacterList"):GetAnchorOffsets()
 
 	local wndSel = nil
 	local wndForcedSel = nil
 	local nCharCount = 0
 	local nEntryHeight = 0
 	local nNewHeight = 0
+	local nOnGoingListHeight = 0
 	local fLastLoggedOutDays = nil
 	local bNeedScroll = false
 	
 	if g_arCharacters then 
-		bNeedScroll = ( #g_arCharacters >= g_nMaxNumCharacters and #g_arCharacters     > kiCharacterMax ) or
+		bNeedScroll = ( #g_arCharacters >= g_nMaxNumCharacters and #g_arCharacters > kiCharacterMax ) or
 		( #g_arCharacters <  g_nMaxNumCharacters and #g_arCharacters + 1 > kiCharacterMax )
 	end
 					
@@ -121,16 +132,6 @@ function CharacterSelection:OnLoadFromCharacter()
 		local btnItem = wndItem:FindChild("CharacterOptionFrameBtn")
 		local wndClassIconComplex = wndItem:FindChild("ClassIconComplex")
 		local wndPathIconComplex = wndItem:FindChild("PathIconComplex")
-
-		wndItem:SetStyle("NoClip", not bNeedScroll)
-
-		if not bNeedScroll then
-			if nCharCount == 1 then
-				wndItem:FindChild("CharacterOptionFrameBtn"):ChangeArt("CharacterCreate:btnCharC_SelectTop")
-			elseif nCharCount >= g_nMaxNumCharacters and nCharCount == #g_arCharacters then
-				wndItem:FindChild("CharacterOptionFrameBtn"):ChangeArt("CharacterCreate:btnCharC_SelectBottom")
-			end
-		end
 
 		nEntryHeight = wndItem:GetHeight()
 
@@ -162,10 +163,8 @@ function CharacterSelection:OnLoadFromCharacter()
 		if iAdjustedPath <= kiMaxPathCount then -- prevents breaking from a really bizarre path number
 			wndPathIconComplex:FindChild("PathIcon_" .. iAdjustedPath):Show(true)
 		end
-		
 
 		--Resize name and location and align center vertical
-		
 		wndItem:FindChild("CharacterName"):SetData(tChar.strName or "")
 		wndItem:FindChild("Location"):SetData(tChar.strZone or "")
 		local strCharName = wndItem:FindChild("CharacterName"):GetData()
@@ -207,11 +206,17 @@ function CharacterSelection:OnLoadFromCharacter()
 				wndForcedSel = wndItem
 			end
 		end
+		
+		--resize the item to fit the text.
+		local nAdjustedHeight = 16 + wndItem:FindChild("CharacterName"):GetHeight() + wndItem:FindChild("Location"):GetHeight()
+		local nNewHeight = math.max(nDefaultCharacterOptionHeight, nAdjustedHeight)
+		local nLeft, nTop, nRight, nBottom = wndItem:GetAnchorOffsets()
+		wndItem:SetAnchorOffsets(nLeft, nTop, nRight, nTop+nNewHeight)
+		nOnGoingListHeight = nOnGoingListHeight + wndItem:GetHeight()
 
 		btnItem:SetData(idx)
 		self.arItems[idx] = wndItem
 	end
-
 	
 	if wndForcedSel ~= nil then
 		wndSel = wndForcedSel
@@ -236,16 +241,14 @@ function CharacterSelection:OnLoadFromCharacter()
 		Apollo.CreateTimer("RemoveCountdown", 0.5, true)
 		self.wndSelectList:FindChild("DisabledCountBG"):Show(true)
 	end
-
+	
 	if nCharCount == 0 then
 		local wndPrompt = Apollo.LoadForm(self.xmlDoc, "CreateNewPrompt", self.wndSelectList:FindChild("CharacterList"), self)
 		nNewHeight = wndPrompt:GetHeight()
 		nCharCount = 1
-		nEntryHeight = wndPrompt:GetHeight()
+		nOnGoingListHeight = nOnGoingListHeight + wndPrompt:GetHeight()
 		wndPrompt:FindChild("DisabledBlocker"):Show(g_arCharacterInWorld ~= nil)
-		self.wndCharacterDeleteBtn:Enable(false) -- no Character's means nothing to delete
-
-		wndPrompt:SetStyle("NoClip", not bNeedScroll)
+		self.wndCharacterDeleteBtn:Enable(false)
 
 		local tRealmInfo = CharacterScreenLib.GetRealmInfo()
 		local tRealm = {}
@@ -253,48 +256,30 @@ function CharacterSelection:OnLoadFromCharacter()
 		local nLeft, nTop, nRight, nBottom = wndPrompt:FindChild("RealmLabelCharacter"):GetAnchorOffsets()
 		local strRealmName = tRealmInfo.strName
 		local strRealmType = tRealmInfo.nRealmPVPType == PreGameLib.CodeEnumRealmPVPType.PVP and Apollo.GetString("RealmSelect_PvP") or Apollo.GetString("RealmSelect_PvE")
-
+		
 		wndPrompt:FindChild("RealmLabelCharacter"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelection_RealmNotification"), strRealmName, strRealmType))
 		wndPrompt:FindChild("RealmNoteCharacter"):SetText(tRealmInfo.strRealmNote)
-
+		
 		if string.len(tRealmInfo.strRealmNote or "") > 0 then
 			wndPrompt:FindChild("RealmLabelCharacter"):SetAnchorOffsets(nLeft, 16, nRight, 39)
 		else
 			wndPrompt:FindChild("RealmLabelCharacter"):SetAnchorOffsets(nLeft, 26, nRight, 49)
 		end
-
-
-		-- remove the model if there's none on the list; our remove function is broken, so replace
-		--if g_arActors.primary ~= nil then
-
-		--end
 	end
 
 	if nCharCount < g_nMaxNumCharacters then
 		local wndCreate = Apollo.LoadForm(self.xmlDoc, "CreateNewOption", self.wndSelectList:FindChild("CharacterList"), self)
 		nNewHeight = wndCreate:GetHeight()
+		nOnGoingListHeight = nOnGoingListHeight + wndCreate:GetHeight()
 		wndCreate:FindChild("DisabledBlocker"):Show(g_arCharacterInWorld ~= nil)
-		self.wndCharacterDeleteBtn:Enable(not (g_arCharacterInWorld ~= nil) and not nCharCount == 0)
-		wndCreate:SetStyle("NoClip", not bNeedScroll)
+		self.wndCharacterDeleteBtn:Enable(not (g_arCharacterInWorld ~= nil))
 	end
-	self.wndSelectList:FindChild("BGInset"):SetSprite(bNeedScroll and "sprCharC_ListSharp" or "sprCharC_List")
-
-	local nCharCountSeen = nCharCount
-	if bNeedScroll then
-		if nNewHeight ~= 0 then
-			if nCharCountSeen > kiCharacterMax - 1 then
-				nCharCountSeen = kiCharacterMax - 1
-			end
-		else
-			if nCharCountSeen > kiCharacterMax then
-				nCharCountSeen = kiCharacterMax
-			end
-		end
-	end
-
-	local nTotalHeight = listT - listB + (nEntryHeight*nCharCountSeen) + nNewHeight -- listB is a negative value
-	self.wndSelectList:SetAnchorOffsets(self.frameL, -(nTotalHeight/2), self.frameR + (bNeedScroll and kiCharacterScrollBarWidth or 0), nTotalHeight/2 + 1)
-
+	  
+	nOnGoingListHeight = nOnGoingListHeight + nListT - nListB
+	local nTotalHeight = math.min(nOnGoingListHeight, self.frameH)
+	local nDelta = (self.frameH - nTotalHeight) / 2
+	
+	self.wndSelectList:SetAnchorOffsets(self.frameL, self.frameT + nDelta, self.frameR, self.frameB - nDelta)
 	self.wndSelectList:FindChild("CharacterList"):ArrangeChildrenVert()
 	self.wndSelectList:RecalculateContentExtents()
 
@@ -636,6 +621,8 @@ function CharacterSelection:OnCharacterRenameResult(nRenameResult, strName)
 
 	if nRenameResult == PreGameLib.CodeEnumCharacterModifyResults.RenameOk then
 		local tId = g_controls:FindChild("EnterBtn"):GetData()
+		self.wndRename:FindChild("RenameCharacterFirstNameEntry"):SetText("")
+		self.wndRename:FindChild("RenameCharacterLastNameEntry"):SetText("")
 		if tId ~= nil then
 			g_arCharacters[tId].bRequiresRename = false
 			g_arCharacters[tId].strName = strName
@@ -646,6 +633,7 @@ function CharacterSelection:OnCharacterRenameResult(nRenameResult, strName)
 			end
 
 			self.wndTopPanel:FindChild("CharacterNameBacker"):SetText(strName)
+			self:OnLoadFromCharacter()
 		end
 		return
 	end
@@ -665,7 +653,6 @@ function CharacterSelection:OnCharacterRenameResult(nRenameResult, strName)
 
 	local strTitle = Apollo.GetString("CharacterSelect_RenameErrorTitle")
 	self:PopupError(strResult, strTitle)
-
 end
 
 
@@ -689,6 +676,7 @@ function CharacterSelection:OnDeleteBtn()
 	self.wndDelete:FindChild("Delete_CharacterNameEntry"):SetPrompt(g_arCharacters[g_controls:FindChild("EnterBtn"):GetData()].strName)
 	self.wndDelete:FindChild("DeleteBody"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelect_DeleteDesc"), g_arCharacters[g_controls:FindChild("EnterBtn"):GetData()].strName))
 
+	self.wndDelete:FindChild("Delete_CharacterNameEntry"):Enable(true)
 	self.wndDelete:FindChild("Delete_CharacterNameEntry"):SetFocus()
 	self.wndDelete:FindChild("DeleteBody"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelect_DeleteDesc"), g_arCharacters[g_controls:FindChild("EnterBtn"):GetData()].strName))
 	
@@ -696,6 +684,7 @@ function CharacterSelection:OnDeleteBtn()
 	self.wndDelete:FindChild("Delete_ConfirmDeleteBtn"):SetData(g_controls:FindChild("EnterBtn"):GetData())
 	g_controls:FindChild("ExitForm"):FindChild("BackBtnLabel"):SetText(Apollo.GetString("CRB_Back"))
 	self.wndSelectList:Show(false)
+	
 	
 	PreGameLib.Event_FireGenericEvent("CloseAllOpenAccountWindows")
 	PreGameLib.SetMusic(PreGameLib.CodeEnumMusic.CharacterDelete)
@@ -753,8 +742,10 @@ end
 
 function CharacterSelection:OnDeleteConfirm(wndHandler, wndControl)
 	self.wndDelete:FindChild("Delete_ConfirmDeleteBtn"):Enable(false)
+	self.wndDelete:FindChild("Delete_CharacterNameEntry"):Enable(false)
 	self.nAttemptedDelete = g_controls:FindChild("EnterBtn"):GetData()
 	CharacterScreenLib.DeleteCharacter(g_controls:FindChild("EnterBtn"):GetData())
+	
 end
 
 function CharacterSelection:OnDeleteErrorClose(wndHandler, wndControl)
@@ -762,8 +753,18 @@ function CharacterSelection:OnDeleteErrorClose(wndHandler, wndControl)
 	self.wndDeleteError:Show(false)
 end
 
+function CharacterSelection:OnRenameConfirmRename()
+	self.wndRename:FindChild("BlockerConfirm"):Show(true)
+
+end
+
+function CharacterSelection:OnRenameCancel()
+	self.wndRename:FindChild("BlockerConfirm"):Show(false)
+end
+
 function CharacterSelection:OnRenameConfirm(wndHandler, wndControl)
 	self.wndRename:Show(false)
+	self.wndRename:FindChild("BlockerConfirm"):Show(false)
 	if g_controls:FindChild("EnterBtn"):GetData() ~= nil then
 		-- this can call CharacterRename result, so don't do anything to conflict with it
 		local strFullName = string.format("%s %s", 
@@ -792,6 +793,7 @@ function CharacterSelection:OnRenameNameChanged(wndHandler, wndControl)
 	local strColor = nFirstLength+nLastLength > knMaxCharacterName and "xkcdReddish" or "UI_TextHoloBodyCyan"
 	self.wndRename:FindChild("CharacterLimit"):SetTextColor(ApolloColor.new(strColor))
 	self.wndRename:FindChild("CharacterLimit"):SetText(strCharacterLimit)
+	self.wndRename:FindChild("RenameBodyConfirm"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("CharacterSelection_RenameConfirmBody"), strFullName))
 	
 	local bFirstValid = CharacterScreenLib.IsCharacterNamePartValid(strFirstName)
 	self.wndRename:FindChild("StatusFirstValidAlert"):Show(not bFirstValid and nFirstLength > 0)
@@ -805,6 +807,7 @@ function CharacterSelection:OnRenameNameChanged(wndHandler, wndControl)
 end
 
 function CharacterSelection:OnRenameNameEscape(wndHandler, wndControl)
+	self.wndRename:FindChild("BlockerConfirm"):Show(false)
 	self.wndRename:Show(false)
 end
 
@@ -821,10 +824,10 @@ function CharacterSelection:OnRandomLastName()
 	local nFactionId = tSelected.idFaction
 	local nGenderId = tSelected.idGender
 	
-	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+	local tName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
 	
-	self.wndRename:FindChild("RenameCharacterLastNameEntry"):SetText(tLastName)
-	self.wndRename:FindChild("RenameCharacterFirstNameEntry"):SetText(tFirstName)
+	self.wndRename:FindChild("RenameCharacterLastNameEntry"):SetText(tName.strLastName)
+	self.wndRename:FindChild("RenameCharacterFirstNameEntry"):SetText(tName.strFirstName)
 	
 	self:OnRenameNameChanged()
 end
@@ -835,3 +838,16 @@ end
 ---------------------------------------------------------------------------------------------------
 local CharacterSelectionInst = CharacterSelection:new()
 CharacterSelection:Init()
+LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-8" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="Trusted IPs" TextId="" DT_CENTER="1" Line="0"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="22" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="93" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_TextCallout" TooltipType="OnCursor" Name="TrustedIPFlyoutLabel" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="AccountServices_TrustedIPDescription" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" NewWindowDepth="1" AutoScaleText="0" Border="1" UseTemplateBG="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="128" RAnchorPoint="1" RAnchorOffset="1" BAnchorPoint="0" BAnchorOffset="239" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="TrustedIPContent" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" VScroll="1" Border="1" UseTemplateBG="1"/>
+            <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="65" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="0.5" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="356" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="TrustedIPConfirmBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="AccountServices_ForgetIP" TestAlpha="1" DT_WORDBREAK="1" ButtonTextXMargin="18">
+                <Event Name="ButtonSignal" Function="OnTrustedIPForgetBtn"/>
+            </Control>
+            <Control Class="Button" Base="BK3:btnHolo_Red_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="1" RAnchorOffset="-65" BAnchorPoint="0" BAnchorOffset="356" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="CRB_Back" TestAlpha="1">
+                <Event Name="ButtonSignal" Function="OnTrustedIPFlyoutCloseBtn"/>
+            </Control>
+            <Control Class="Button" Base="BK3:btnHolo_Close" Font="CRB_Header12" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-73" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-31" BAnchorPoint="0" BAnchorOffset="72" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="">
+                <Event Name="ButtonSignal" Function="OnTrustedIPFlyoutCloseBtn"/>
+            </Control>
+            <Pixie LAnchorPoint=

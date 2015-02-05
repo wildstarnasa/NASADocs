@@ -514,3 +514,15 @@ RealmSelect:Init()
 
 
 
+chorOffset="-154" TAnchorPoint="1" TAnchorOffset="-79" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="1" BAnchorOffset="-31" DT_VCENTER="1" DT_CENTER="1" Name="ReportBugBtn" BGColor="ffffffff" TextColor="ffffffff" RelativeToClient="1" TextId="PlayerTicket_SubmitTicketBtn" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="">
+            <Event Name="ButtonSignal" Function="OnReportBug"/>
+        </Control>
+    </Form>
+</Forms>
+ER="1" DT_CENTER="1" Name="SolHoldoutCloseBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Visible="1" Overlapped="0" RelativeToClient="1" NewWindowDepth="1" TooltipColor="" NewControlDepth="10" IgnoreMouse="1">
+            <Event Name="ButtonSignal" Function="OnExitSoldierMissionMain"/>
+        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="28" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="DefendEntry" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="13" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="36" BAnchorPoint="0" BAnchorOffset="27" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="DefendIcon" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="CRB_DatachronSprites:sprDCPP_SolDefObjIcon" HideInEditor="0" TooltipColor="" Visible="1" Tooltip=""/>
+        <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="54" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="1" RAnchorOffset="-15" BAnchorPoint="0" BAnchorOffset="34" AutoSe

@@ -9,3 +9,87 @@
         <Frame Texture="UI\Textures\UI_PlayerBagIcon.tga" x0="158" x1="158" x2="237" x3="237" x4="237" x5="237" y0="0" y1="0" y2="79" y3="79" y4="79" y5="79" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffff" EndColor="ffffffff" />
     </Sprite>
 </Sprites>
+alvageAll", self) -- using this for bag changes
+	Apollo.RegisterSlashCommand("salvageall", "OnSalvageAll", self)
+
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ImprovedSalvageForm", nil, self)
+	self.wndItemDisplay = self.wndMain:FindChild("ItemDisplayWindow")
+	
+	if self.locSavedWindowLoc then
+		self.wndMain:MoveToLocation(self.locSavedWindowLoc)
+	end
+	
+	self.tContents = self.wndMain:FindChild("HiddenBagWindow")
+	self.arItemList = nil
+	self.nItemIndex = nil
+
+	self.wndMain:Show(false, true)
+end
+
+function ImprovedSalvage:OnWindowManagementReady()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("CRB_Salvage")})
+end
+
+--------------------//-----------------------------
+function ImprovedSalvage:OnSalvageAll()
+	self.arItemList = {}
+	self.nItemIndex = 1
+	
+	local tInvItems = GameLib.GetPlayerUnit():GetInventoryItems()
+	for idx, tItem in ipairs(tInvItems) do
+		if tItem and tItem.itemInBag and tItem.itemInBag:CanSalvage() and not tItem.itemInBag:CanAutoSalvage() then
+			table.insert(self.arItemList, tItem.itemInBag)
+		end
+	end
+
+	self:RedrawAll()
+end
+
+function ImprovedSalvage:OnSalvageListItemCheck(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+	
+	self.nItemIndex = wndHandler:GetData().nIdx
+	
+	local itemCurr = self.arItemList[self.nItemIndex]
+	self.wndMain:SetData(itemCurr)
+	self.wndMain:FindChild("SalvageBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.SalvageItem, itemCurr:GetInventoryId())
+end
+
+function ImprovedSalvage:OnSalvageListItemGenerateTooltip(wndControl, wndHandler) -- wndHandler is VendorListItemIcon
+	if wndHandler ~= wndControl then
+		return
+	end
+
+	wndControl:SetTooltipDoc(nil)
+
+	local tListItem = wndHandler:GetData().tItem
+	local tPrimaryTooltipOpts = {}
+
+	tPrimaryTooltipOpts.bPrimary = true
+	tPrimaryTooltipOpts.itemModData = tListItem.itemModData
+	tPrimaryTooltipOpts.strMaker = tListItem.strMaker
+	tPrimaryTooltipOpts.arGlyphIds = tListItem.arGlyphIds
+	tPrimaryTooltipOpts.tGlyphData = tListItem.itemGlyphData
+	tPrimaryTooltipOpts.itemCompare = tListItem:GetEquippedItemForItemType()
+
+	if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
+		Tooltip.GetItemTooltipForm(self, wndControl, tListItem, tPrimaryTooltipOpts, tListItem.nStackSize)
+	end
+end
+
+function ImprovedSalvage:RedrawAll()
+	local itemCurr = self.arItemList[self.nItemIndex]
+	
+	if itemCurr ~= nil then
+		local wndParent = self.wndMain:FindChild("MainScroll")
+		local nScrollPos = wndParent:GetVScrollPos()
+		wndParent:DestroyChildren()
+		
+		for idx, tItem in ipairs(self.arItemList) do
+			local wndCurr = Apollo.LoadForm(self.xmlDoc, "SalvageListItem", wndParent, self)
+			wndCurr:FindChild("SalvageListItemBtn"):SetData({nIdx = idx, tItem=tItem})
+			wndCurr:FindChild("SalvageListItemBtn"):SetCheck(idx == self.nItemIndex)
+			
+			wndCurr:FindChild("SalvageListI

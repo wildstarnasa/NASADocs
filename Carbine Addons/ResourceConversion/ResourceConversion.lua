@@ -36,11 +36,9 @@ function ResourceConversion:OnDocumentReady()
 	Apollo.RegisterEventHandler("UpdateInventory", 			"OnUpdateInventory", self)
 	Apollo.RegisterEventHandler("ResourceConversionClose", 	"OnCloseBtn", self)
 	
-	Apollo.RegisterTimerHandler("ItemIncreaseConversionTimer", "OnItemIncreaseConversionTimer", self)
-	Apollo.RegisterTimerHandler("ItemDecreaseConversionTimer", "OnItemDecreaseConversionTimer", self)
-	
 	self.wndMain = nil
-	self.CurrentHandler = nil
+	
+	self.arConversionWindows = {}
 end
 
 function ResourceConversion:OnCloseBtn() -- Also WindowClosed and "ResourceConversionClose"
@@ -76,9 +74,6 @@ function ResourceConversion:OnResourceConversionOpen(unitVendor)
 	local arVendorConversions = unitVendor:GetResourceConversions()
 	
 	if arVendorConversions then
-		-- sort by availableCount
-		table.sort(arVendorConversions , function(a,b) return a.nAvailableCount < b.nAvailableCount end)
-		
 		for idx, tConversion in ipairs(unitVendor:GetResourceConversions()) do
 			local wndCurr = Apollo.LoadForm(self.xmlDoc, "ConversionItem", self.wndMain:FindChild("ConversionContainer"), self)
 			wndCurr:FindChild("ConversionLeftEditBox"):SetData(wndCurr)
@@ -88,46 +83,40 @@ function ResourceConversion:OnResourceConversionOpen(unitVendor)
 			wndCurr:FindChild("MainSlider"):SetData(wndCurr)
 			wndCurr:SetData(tConversion)
 		
-			-- left item
-			local itemLeft = tConversion.itemSource
-			wndCurr:FindChild("ConversionIconLeft"):SetSprite(itemLeft:GetIcon())
+			-- source item (left)
+			wndCurr:FindChild("ConversionIconLeft"):SetSprite(tConversion.itemSource:GetIcon())
 			wndCurr:FindChild("ConversionIconLeftText"):SetText(tConversion.nSourceCount)
-			self:HelperBuildItemTooltip(wndCurr:FindChild("ConversionIconLeft"), itemLeft)
+			wndCurr:FindChild("AmountPerTurnIn"):SetText(tConversion.nSourceCount)
+			self:HelperBuildItemTooltip(wndCurr:FindChild("ConversionIconLeft"), tConversion.itemSource)
 			
-			-- right item
+			-- target item...
 			local strRightItem = ""
+			-- ...or rep
 			if tConversion.eType == Unit.CodeEnumResourceConversionType.Item2Rep then
 				local idReputation = tConversion.idTtarget
 				strRightItem = String_GetWeaselString(Apollo.GetString("ResourceConversion_ToRep"), tConversion.strName)
 				wndCurr:FindChild("ConversionIconRightText"):SetText(tConversion.nTargetCount)
 				wndCurr:FindChild("ConversionIconRight"):SetTooltip(String_GetWeaselString(Apollo.GetString("ResourceConversion_ToRep"), idReputation))
 			else
-				local itemRight = tConversion.itemTarget
-				strRightItem = itemRight:GetName()
-				wndCurr:FindChild("ConversionIconRight"):SetSprite(itemRight:GetIcon())
-				wndCurr:FindChild("ConversionIconRightText"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_NumInBag"), itemRight:GetBackpackCount()))
-				self:HelperBuildItemTooltip(wndCurr:FindChild("ConversionIconRight"), itemRight)
+				strRightItem = tConversion.itemTarget:GetName()
+				wndCurr:FindChild("ConversionIconRight"):SetSprite(tConversion.itemTarget:GetIcon())
+				wndCurr:FindChild("ConversionIconRightText"):SetText(tConversion.nTargetCount)
+				self:HelperBuildItemTooltip(wndCurr:FindChild("ConversionIconRight"), tConversion.itemTarget)
 			end
 			
-			wndCurr:FindChild("MainSlider"):SetMinMax(0, tConversion.nAvailableCount, tConversion.nSourceCount)
+			wndCurr:FindChild("MainSlider"):SetMinMax(0, tConversion.nAvailableCount / tConversion.nSourceCount, 1)
 			wndCurr:FindChild("MainSlider"):SetValue(0)
 			wndCurr:FindChild("ConversionBtn"):Enable(false)
 			wndCurr:FindChild("ConversionLeftEditBox"):SetText(0)
 			
-			-- count 
-			local nEmptyInInventory = tConversion.nAvailableCount
-			
+			-- count 			
 			if tConversion.nAvailableCount > 0 then
-				wndCurr:FindChild("SliderLeft"):Enable(true)
+				wndCurr:FindChild("SliderLeft"):Enable(false)
 				wndCurr:FindChild("SliderRight"):Enable(true)
 				wndCurr:FindChild("ConversionBlockerBlackFillIconContainer"):Show(false)
 				wndCurr:FindChild("ConversionBlockerBlackFill"):Show(false)
 				
-				local tItemCount =
-				{
-					["name"] = itemLeft:GetName(),
-					["count"] = tConversion.nAvailableCount,
-				}
+				local tItemCount = GetPluralizeActor(tConversion.itemSource:GetName(), tConversion.nAvailableCount)
 				
 				wndCurr:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_AvailToConvert"), tItemCount))
 				wndCurr:FindChild("ConversionItemResult"):SetText("")
@@ -136,9 +125,8 @@ function ResourceConversion:OnResourceConversionOpen(unitVendor)
 				wndCurr:FindChild("SliderRight"):Enable(false)
 				wndCurr:FindChild("ConversionBlockerBlackFillIconContainer"):Show(true)
 				wndCurr:FindChild("ConversionBlockerBlackFill"):Show(true)
-				wndCurr:FindChild("ConversionLeftEditBox"):SetText(0)
 				wndCurr:FindChild("ConversionItemNames"):SetTextColor(ApolloColor.new("ff444444"))
-				wndCurr:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_NotEnough"), itemLeft:GetName()))
+				wndCurr:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_NotEnough"), tConversion.itemSource:GetName()))
 				wndCurr:FindChild("ConversionItemResult"):SetText("")
 			end
 		end
@@ -149,80 +137,16 @@ end
 -----------------------------------------------------------------------------------------------
 -- Conversion Item Increase/Decrease Buttons
 -----------------------------------------------------------------------------------------------
-function ResourceConversion:OnItemIncreaseConversionTimer()
+function ResourceConversion:OnConversionAddBtn(wndHandler, wndControl)
+	local wndConversionContainer = wndHandler:GetData()
 	
-	local wndParent = self.CurrentHandler:GetData()
-	local tConversion = wndParent:GetData()
-	local nNumber = tonumber(wndParent:FindChild("ConversionLeftEditBox"):GetText())
-	
-	local nLeftInterval = 1
-	local nRightInterval = 1
-	local nRate = tConversion.nSourceCount / tConversion.nTargetCount
-	
-	if nRate >= 1 then
-		nLeftInterval = nRate
-	else
-		nRightInterval = 1 / nRate
-	end
-	
-	local nValue = 0
-	
-	if ((nNumber * nLeftInterval) + nLeftInterval) <= tConversion.nAvailableCount then
-		nValue = nNumber * nLeftInterval + nLeftInterval
-	else
-		nValue = tConversion.nAvailableCount * nLeftInterval
-	end
-	
-	self:HelperEditBoxAutoRound(nValue, wndParent)
-	
+	self:UpdateConversionWindow(wndConversionContainer, wndConversionContainer:FindChild("MainSlider"):GetValue() + 1)
 end
 
-function ResourceConversion:OnItemDecreaseConversionTimer()
-
-	local wndParent = self.CurrentHandler:GetData()
-	local tConversion = wndParent:GetData()
-	local nNumber = tonumber(wndParent:FindChild("ConversionLeftEditBox"):GetText())
+function ResourceConversion:OnConversionSubBtn(wndHandler, wndControl)
+	local wndConversionContainer = wndHandler:GetData()
 	
-	local nLeftInterval = 1
-	local nRightInterval = 1
-	local nRate = tConversion.nSourceCount / tConversion.nTargetCount
-	
-	if nRate >= 1 then
-		nLeftInterval = nRate
-	else
-		nRightInterval = 1 / nRate
-	end
-	
-	local nValue = 0
-	
-	if ((nNumber * nLeftInterval) > tConversion.nAvailableCount) then
-		nValue = tConversion.nAvailableCount * nLeftInterval
-	elseif ((nNumber * nLeftInterval) - nLeftInterval) >= 0 then
-		nValue = (nNumber * nLeftInterval) - nLeftInterval
-	end
-	
-	self:HelperEditBoxAutoRound(nValue, wndParent)
-	
-end
-
-function ResourceConversion:OnConversionAddSubBtn(wndHandler, wndControl)
-	wndHandler:SetFocus()
-	self.CurrentHandler = wndHandler
-	if wndHandler:GetName() == "SliderRight" then
-		self:OnItemIncreaseConversionTimer()
-		Apollo.CreateTimer("ItemIncreaseConversionTimer", kTickDuration, true)	
-	elseif wndHandler:GetName() == "SliderLeft" then
-		self:OnItemDecreaseConversionTimer()
-		Apollo.CreateTimer("ItemDecreaseConversionTimer", kTickDuration, true)
-	end
-end
-
-function ResourceConversion:OnConversionAddSubBtnUp(wndHandler, wndControl)
-	if wndHandler:GetName() == "SliderRight" then
-		Apollo.StopTimer("ItemIncreaseConversionTimer")
-	elseif wndHandler:GetName() == "SliderLeft" then
-		Apollo.StopTimer("ItemDecreaseConversionTimer")
-	end
+	self:UpdateConversionWindow(wndConversionContainer, wndConversionContainer:FindChild("MainSlider"):GetValue() - 1)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -230,122 +154,86 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function ResourceConversion:OnConversionLeftEditBoxChanged(wndHandler, wndControl, strNew)
-	self.CurrentHandler = wndHandler
-	self:HelperEditBoxAutoRound(tonumber(strNew), wndHandler:GetData())
-	wndHandler:SetSel(string.len(strNew))
-end
-
-function ResourceConversion:OnConversionLeftEditBoxReturn(wndHandler, wndControl, strNew)
-	self:HelperEditBoxAutoRound(tonumber(strNew), wndHandler:GetData())
-	wndHandler:SetFocus()
-	wndHandler:SetSel(string.len(strNew))
+	local wndConversionContainer = wndHandler:GetData()
+	local nConversions = tonumber(strNew)
+	local tConversionInfo = wndConversionContainer:GetData()
+	self.bEditBoxUpdated = true
+	
+	if nConversions then
+		if nConversions * tConversionInfo.nSourceCount > tConversionInfo.nAvailableCount then
+			nConversions = tConversionInfo.nAvailableCount / tConversionInfo.nSourceCount
+			self.bEditBoxUpdated = false
+		elseif nConversions < 0 then
+			nConversions = 0
+			self.bEditBoxUpdated = false			
+		end	
+	end
+	
+	self:UpdateConversionWindow(wndConversionContainer, nConversions or 0)
 end
 
 ---------------------------------------------------------------------------------------------------
 -- Slider
 ---------------------------------------------------------------------------------------------------
 
-function ResourceConversion:OnMainSliderChanged(wndHandler, wndControl, strNew) -- MainSlider
-	self.CurrentHandler = wndHandler
-	wndHandler:SetFocus()
-	self:HelperEditBoxAutoRound(tonumber(strNew), wndHandler:GetData())
+function ResourceConversion:OnMainSliderChanged(wndHandler, wndControl, fValue) -- MainSlider
+	local wndConversionContainer = wndHandler:GetData()
+	
+	self:UpdateConversionWindow(wndConversionContainer, fValue)
 end
 
 ---------------------------------------------------------------------------------------------------
--- Round Helper
+-- Main Update Function
 ---------------------------------------------------------------------------------------------------
 
-function ResourceConversion:HelperEditBoxAutoRound(nEntryValue, wndParent)
-
-	if nEntryValue == nil or nEntryValue == "" or nEntryValue == 0 then
-		self:DisplayHelper(wndParent, 0)
-		return
-	end
-
-	local tConversion = wndParent:GetData()
-	local nLeftInterval = 1
-	local nRate = tConversion.nSourceCount / tConversion.nTargetCount
-	if nRate >= 1 then
-		nLeftInterval = nRate
-	end
-
-	-- Restrict the entry
-	nEntryValue = math.max(nEntryValue, nLeftInterval)
-	nEntryValue = math.min(nEntryValue, tConversion.nAvailableCount)
-	if nLeftInterval ~= 1 and nEntryValue % nLeftInterval ~= 0 then
-		nEntryValue = nEntryValue - (nEntryValue % nLeftInterval)
-	end
-		
-	self:DisplayHelper(wndParent, nEntryValue)
+function ResourceConversion:UpdateConversionWindow(wndConversionItem, nConversionCount)
+	local wndLeftBtn = wndConversionItem:FindChild("SliderLeft")
+	local wndRightBtn = wndConversionItem:FindChild("SliderRight")
+	local tConversion = wndConversionItem:GetData()
 	
-end
-
----------------------------------------------------------------------------------------------------
--- Value Helper
----------------------------------------------------------------------------------------------------
-
-function ResourceConversion:DisplayHelper(wndParent, nValue)
-
-	local tConversion = wndParent:GetData()
-
-	local itemLeft = tConversion.itemSource
-	local itemRight = tConversion.itemTarget
-	local itemLeftName = itemLeft:GetName()
+	local nResourcesUsed = nConversionCount * tConversion.nSourceCount
 	
-	local nLeftInterval = 1
-	local nRightInterval = 1
-	local nRate = tConversion.nSourceCount / tConversion.nTargetCount
+	wndLeftBtn:Enable(nResourcesUsed > 0)
+	wndRightBtn:Enable(nResourcesUsed < tConversion.nAvailableCount)
+	wndConversionItem:FindChild("ConversionBtn"):Enable(nResourcesUsed > 0)
 	
-	if nRate >= 1 then
-		nLeftInterval = nRate
+	if tonumber(wndConversionItem:FindChild("ConversionLeftEditBox"):GetText()) ~= nConversionCount then
+		wndConversionItem:FindChild("ConversionLeftEditBox"):SetText(nConversionCount)
+	end
+	
+	wndConversionItem:FindChild("MainSlider"):SetValue(nConversionCount)
+	
+	local strSourceName = ""
+	if tConversion.eType == Unit.CodeEnumResourceConversionType.Item2Rep then
+		strSourceName = tConversion.strName
 	else
-		nRightInterval = 1 / nRate
+		strSourceName = tConversion.itemTarget:GetName()
 	end
 	
-	if not nValue or nValue == 0 then
-		wndParent:FindChild("ConversionItemResult"):SetText("")
-		wndParent:FindChild("ConversionBtn"):Enable(false)
+	local tSourceData = GetPluralizeActor(tConversion.itemSource:GetName(), tConversion.nAvailableCount)
+	
+	if nConversionCount == 0 then
 		if tConversion.nAvailableCount > 0 then
-			wndParent:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_AvailToConvert"), tConversion.nAvailableCount, itemLeft:GetName()))
+			wndConversionItem:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_AvailToConvert"), tSourceData))
 		else
-			wndParent:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_NotEnough"), itemLeft:GetName()))
+			wndConversionItem:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_NotEnough"), tConversion.itemSource:GetName()))
 		end
+		wndConversionItem:FindChild("ConversionItemResult"):SetText("")
 	else
-		wndParent:FindChild("ConversionBtn"):Enable(true)
-		
-		local strRightItem = ""
-		
-		if tConversion.eType == Unit.CodeEnumResourceConversionType.Item2Rep then
-			strRightItem = tConversion.strName
-		else
-			strRightItem = itemRight:GetName()
-		end
-		
-		local tItemCount =
-		{
-			["name"] = itemLeft:GetName(),
-			["count"] = nValue,
-		}
-		
-		wndParent:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Converting"), nValue, tConversion.nAvailableCount, tItemCount))
-		wndParent:FindChild("ConversionItemResult"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Result"), Apollo.FormatNumber(nValue * nRightInterval, 0, true), strRightItem))
-		
+		wndConversionItem:FindChild("ConversionItemNames"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Converting"), nResourcesUsed, tConversion.nAvailableCount, tSourceData))
+		wndConversionItem:FindChild("ConversionItemResult"):SetText(String_GetWeaselString(Apollo.GetString("ResourceConversion_Result"), Apollo.FormatNumber(nConversionCount * tConversion.nTargetCount, 0, true), strSourceName))
 	end
-	
-	wndParent:FindChild("MainSlider"):SetValue(nValue)
-	wndParent:FindChild("ConversionLeftEditBox"):SetText(nValue)
-	
 end
-		
+
 ---------------------------------------------------------------------------------------------------
 -- Conversion Button
 ---------------------------------------------------------------------------------------------------
 
 function ResourceConversion:OnConversionBtn(wndHandler, wndControl) -- ConversionBtn
-	local wndParent = wndHandler:GetData()
-	local tConversion = wndParent:GetData()
+	local wndConversionContainer = wndHandler:GetData()
+	local tConversion = wndConversionContainer:GetData()
 	local unitVendor = self.wndMain:GetData()
-	unitVendor:ConvertResource(tConversion.idConversion, wndParent:FindChild("ConversionLeftEditBox"):GetText())
+	unitVendor:ConvertResource(tConversion.idConversion, wndConversionContainer:FindChild("ConversionLeftEditBox"):GetText() * tConversion.nSourceCount)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -363,4 +251,7 @@ function ResourceConversion:HelperBuildItemTooltip(wndArg, itemCurr)
 end
 
 local ResourceConversionInst = ResourceConversion:new()
-ResourceConversionInst:Init()
+ResourceConversionInst:Init()" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-82" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="84" DT_VCENTER="1" DT_CENTER="1" Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
+            <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
+        </Control>
+        <Pixie LAnchorPoint="0" LAnchorOffset="100" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-100" BAnchorPoint="0" BAnchorOffset="84" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="ReportPlayer_Tit

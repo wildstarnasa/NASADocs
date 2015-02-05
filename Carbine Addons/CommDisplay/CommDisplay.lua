@@ -87,7 +87,7 @@ function CommDisplay:OnDocumentReady()
 end
 
 function CommDisplay:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InputAction_Communicator")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InputAction_Communicator"), nSaveVersion=2})
 end
 
 function CommDisplay:OnCloseBtn()
@@ -195,17 +195,25 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 	]]--
 	self.wndMain:FindChild("PortraitContainerLeft"):Show(not tLayout or tLayout.ePortraitPlacement == CommunicatorLib.CommunicatorPortraitPlacement_Left)
 	self.wndMain:FindChild("PortraitContainerRight"):Show(tLayout and tLayout.ePortraitPlacement == CommunicatorLib.CommunicatorPortraitPlacement_Right)
-	--self.wndMain:FindChild("PortraitAccentL"):Show(tLayout and tLayout.eBackground > CommunicatorLib.CommunicatorBackground_Default)
-	--self.wndMain:FindChild("PortraitAccentR"):Show(tLayout and tLayout.eBackground > CommunicatorLib.CommunicatorBackground_Default)
 	self.wndMain:FindChild("HorizontalTopContainer"):ArrangeChildrenHorz(0)
-
 	if tLayout then
+		local wndFramingOrigin = self.wndMain:FindChild("Framing:SpecificFraming")
+		local wndIconOrigin = self.wndMain:FindChild("SpecificIcon")
 		if tLayout.eBackground == CommunicatorLib.CommunicatorBackground_Exiles then
-			--self.wndMain:FindChild("PortraitAccentL"):SetSprite("CRB_Basekit:kitAccent_Corner_Exile")
-			--self.wndMain:FindChild("PortraitAccentR"):SetSprite("CRB_Basekit:kitAccent_Corner_Exile")
+			wndFramingOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_Exile")
+			wndIconOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_ExileIcon")
 		elseif tLayout.eBackground == CommunicatorLib.CommunicatorBackground_Dominion then
-			--self.wndMain:FindChild("PortraitAccentL"):SetSprite("CRB_Basekit:kitAccent_Corner_Dominion")
-			--self.wndMain:FindChild("PortraitAccentR"):SetSprite("CRB_Basekit:kitAccent_Corner_Dominion")
+			wndFramingOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_Dominion")
+			wndIconOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_DominionIcon")
+		elseif tLayout.eBackground == CommunicatorLib.CommunicatorBackground_Drusera then
+			wndFramingOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_Drusera")
+			wndIconOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_DruseraIcon")
+		elseif tLayout.eBackground == CommunicatorLib.CommunicatorBackground_TheEntity then
+			wndFramingOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_Strain")
+			wndIconOrigin:SetSprite("bk3:sprHolo_Alert_COMMAttachment_StrainIcon")
+		else
+			wndFramingOrigin:SetSprite("")
+			wndIconOrigin:SetSprite("")
 		end
 
 		if tLayout.ePortraitPlacement == CommunicatorLib.CommunicatorPortraitPlacement_Right then
@@ -215,8 +223,16 @@ function CommDisplay:DrawText(strMessageText, strSubTitleText, bIsCommCall, tLay
 		end
 	end
 
-	self.wndMain:FindChild("StaticContainerL"):SetSprite("sprComm_StaticComposite")
-	self.wndMain:FindChild("StaticContainerR"):SetSprite("sprComm_StaticComposite")
+	if not tLayout or tLayout.eOverlay == CommunicatorLib.CommunicatorOverlay_Default then
+		self.wndMain:FindChild("StaticContainerL"):SetSprite("")
+		self.wndMain:FindChild("StaticContainerR"):SetSprite("")
+	elseif tLayout.eOverlay == CommunicatorLib.CommunicatorOverlay_LightStatic then
+		self.wndMain:FindChild("StaticContainerL"):SetSprite("sprComm_StaticComposite")
+		self.wndMain:FindChild("StaticContainerR"):SetSprite("sprComm_StaticComposite")
+	elseif tLayout.eOverlay == CommunicatorLib.CommunicatorOverlay_HeavyStatic then
+		self.wndMain:FindChild("StaticContainerL"):SetSprite("sprComm_StaticComposite")
+		self.wndMain:FindChild("StaticContainerR"):SetSprite("sprComm_StaticComposite")
+	end
 
 	-- format the given text to display
 	local strLeftOrRight = "Left"
@@ -439,3 +455,82 @@ end
 
 local CommDisplayInst = CommDisplay:new()
 CommDisplayInst:Init()
+) do
+		if not bDisableOtherPlayers or self.unitPlayer == tHeal.unitHealed then
+			local strVital = Apollo.GetString("CombatLog_UnknownVital")
+			if tHeal.eVitalType then
+				strVital = Unit.GetVitalTable()[tHeal.eVitalType].strName
+			end
+			
+			-- units in caster's group can get healed
+			if tHeal.unitHealed ~= tEventArgs.unitCaster then
+				tCastInfo.strTarget = tCastInfo.strCaster
+				tCastInfo.strCaster = self:HelperGetNameElseUnknown(tHeal.unitHealed)
+			end
+
+			local strAmount = string.format("<T TextColor=\"%s\">%s</T>", self.crVitalModifier, tHeal.nHealAmount)
+			local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_GainVital"), tCastInfo.strCaster, strAmount, strVital, tCastInfo.strTarget)
+
+			if tHeal.nOverheal and tHeal.nOverheal > 0 then
+				local strOverhealString = ""
+				if tHeal.eVitalType == GameLib.CodeEnumVital.ShieldCapacity then
+					strOverhealString = Apollo.GetString("CombatLog_Overshield")
+				else
+					strOverhealString = Apollo.GetString("CombatLog_Overheal")
+				end
+				strAmount = string.format("<T TextColor=\"white\">%s</T>", tHeal.nOverheal)
+				strResult = String_GetWeaselString(strOverhealString, strResult, strAmount)
+			end
+
+			if tEventArgs.eCombatResult == GameLib.CodeEnumCombatResult.Critical then
+				strResult = String_GetWeaselString(Apollo.GetString("CombatLog_Critical"), strResult)
+			end
+
+			-- TODO: Analyze if we can refactor (this has no spell)
+			local strColor = kstrColorCombatLogIncomingGood
+			if tEventArgs.unitCaster ~= self.unitPlayer then
+				strColor = kstrColorCombatLogOutgoing
+			end
+			self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", strColor, strResult))
+		end
+	end
+end
+
+function CombatLog:OnCombatLogInterrupted(tEventArgs)
+	if not tEventArgs or not tEventArgs.unitCaster then
+		return
+	end
+
+	local tCastInfo = self:HelperCasterTargetSpell(tEventArgs, true, true)
+	tCastInfo.strSpellName = string.format("<T Font=\"%s\">%s</T>", kstrFontBold, tCastInfo.strSpellName)
+	local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_TargetInterrupted"), tCastInfo.strTarget, tCastInfo.strSpellName) -- NOTE: strTarget is first, usually strCaster is first
+
+	if tEventArgs.unitCaster ~= tEventArgs.unitTarget then
+		if tEventArgs.splInterruptingSpell and tEventArgs.splInterruptingSpell:GetName() then
+			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSourceCaster"), strResult, tEventArgs.unitCaster:GetName(), tEventArgs.splInterruptingSpell:GetName())
+		else
+			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSource"), strResult, tEventArgs.unitCaster:GetName())
+		end
+	elseif tEventArgs.strCastResult and tEventArgs.strCastResult ~= "" then
+		strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSelf"), strResult, tEventArgs.strCastResult)
+	end
+
+	-- TODO: Analyze if we can refactor (this has a unique spell)
+	local strColor = kstrColorCombatLogIncomingGood
+	if tEventArgs.unitCaster == self.unitPlayer then
+		strColor = kstrColorCombatLogOutgoing
+	end
+	self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", strColor, strResult))
+end
+
+function CombatLog:OnCombatLogKillStreak(tEventArgs)
+	if tEventArgs.nStreakAmount <= 1 then
+		return
+	end
+
+	local strCaster = self:HelperGetNameElseUnknown(tEventArgs.unitCaster)
+	local strResult = Apollo.GetString("CombatLog_Achieves")
+	local strStreakType = ""
+	if tEventArgs.eStatType == CombatFloater.CodeEnumCombatMomentum.Impulse then
+		strStreakType = String_GetWeaselString(Apollo.GetString("CombatLog_ImpulseStreak"), tEventArgs.nStreakAmount)
+	el

@@ -448,3 +448,20 @@ end
 -----------------------------------------------------------
 local ActionBarShortcut_Singleton = ActionBarShortcut:new()
 ActionBarShortcut_Singleton:Init()
+f.wndMountFlyoutFrame:GetAnchorOffsets()
+
+		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+		self:RedrawBarVisibility()
+	else
+		self.wndMountFlyout:Show(false)
+	end
+end
+
+function ActionBarFrame:OnMountBtn(wndHandler, wndControl)
+	self.nSelectedMount = wndControl:GetData():GetId()
+
+	self.wndMountFlyoutFrame:Show(false)
+	self:RedrawSelectedMounts()
+end
+
+function ActionBarFrame:RedrawPotions

@@ -31,6 +31,17 @@ local karStatusText =
 	"CRB_ModuleStatus_RunningOk",
 }
 
+local karSortingConstants = 
+{
+	[OptionsScreen.CodeEnumAddonStatus.ParsingError] 		= "1",
+	[OptionsScreen.CodeEnumAddonStatus.Invalid] 			= "1",
+	[OptionsScreen.CodeEnumAddonStatus.Suspended] 			= "1",
+	[OptionsScreen.CodeEnumAddonStatus.RunningWithError] 	= "2",
+	[OptionsScreen.CodeEnumAddonStatus.NotLoaded] 			= "3",
+	[OptionsScreen.CodeEnumAddonStatus.Loaded] 				= "4",
+	[OptionsScreen.CodeEnumAddonStatus.RunningOk] 			= "5",
+}
+
 local karStatusColors =
 {
 	ApolloColor.new("xkcdReddish"),
@@ -162,7 +173,7 @@ local ktVideoSettingLevels =
 		["fxaa.preset"] = 0,
 		["fxaa.enable"] = false,
 		["world.propScreenHeightPercentMin"] = 12,
-		["particle.envParticleScale"] = 0.0,
+		["particle.envParticleScale"] = 0.1,
 		["spell.visualSuppression"] = 1.0,
 		["spell.visualSuppressedAlpha"] = 0,
 	}
@@ -220,59 +231,6 @@ local ktTelegraphColorOptions =
 				consoleVarColorR = "spell.custom2SelfTelegraphColorR",
 				consoleVarColorG = "spell.custom2SelfTelegraphColorG",
 				consoleVarColorB = "spell.custom2SelfTelegraphColorB",
-			}
-		}
-	},
-	-- enemy
-	{
-		strLabel = "Options_TelegraphColorHarmless",
-		tSets =
-		{
-			[0] =
-			{
-				bReadOnlyColors = true,
-				consoleVarFillOpacity = "spell.fillOpacityDefault_12",
-				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_12",
-				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
-			},
-			[1] =
-			{
-				bReadOnlyColors = true,
-				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_12",
-				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_12",
-				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
-			},
-			[2] =
-			{
-				bReadOnlyColors = true,
-				consoleVarFillOpacity = "spell.fillOpacityProtanopia_12",
-				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_12",
-				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
-			},
-			[3] =
-			{
-				bReadOnlyColors = true,
-				consoleVarFillOpacity = "spell.fillOpacityTritanopia_12",
-				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_12",
-				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
-			},
-			[4] =
-			{
-				bReadOnlyColors = false,
-				consoleVarFillOpacity = "spell.fillOpacityCustom1_12",
-				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_12",
-				consoleVarColorR = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorR",
-				consoleVarColorG = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorG",
-				consoleVarColorB = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorB",
-			},
-			[5] =
-			{
-				bReadOnlyColors = false,
-				consoleVarFillOpacity = "spell.fillOpacityCustom2_12",
-				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_12",
-				consoleVarColorR = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorR",
-				consoleVarColorG = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorG",
-				consoleVarColorB = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorB",
 			}
 		}
 	},
@@ -588,6 +546,58 @@ local ktTelegraphColorOptions =
 			}
 		}
 	},
+	{
+		strLabel = "Options_TelegraphColorHarmless",
+		tSets =
+		{
+			[0] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDefault_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDefault_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[1] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityDeuteranopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityDeuteranopia_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[2] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityProtanopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityProtanopia_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[3] =
+			{
+				bReadOnlyColors = true,
+				consoleVarFillOpacity = "spell.fillOpacityTritanopia_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityTritanopia_12",
+				crColor = ApolloColor.new(168.0/255.0, 128.0/255.0, 128.0/255.0)
+			},
+			[4] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom1_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom1_12",
+				consoleVarColorR = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom1EnemyHarmlessDetrimentalTelegraphColorB",
+			},
+			[5] =
+			{
+				bReadOnlyColors = false,
+				consoleVarFillOpacity = "spell.fillOpacityCustom2_12",
+				consoleVarOutlineOpacity = "spell.outlineOpacityCustom2_12",
+				consoleVarColorR = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorR",
+				consoleVarColorG = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorG",
+				consoleVarColorB = "spell.custom2EnemyHarmlessDetrimentalTelegraphColorB",
+			}
+		}
+	},
 }
 
 function OptionsAddon:new(o)
@@ -640,6 +650,7 @@ function OptionsAddon:OnDocumentReady()
 	self.nSortedBy = 0
 
 	self.OptionsDlg = Apollo.LoadForm(self.xmlDoc, "OptionsMenu", nil, self)
+	self.OptionsDlg:FindChild("ErrorIndicator"):Show(false)
 	self.OptionsDlg:Show(not IsDemo())
 	self.OptionsDlg:SetFocus()
 
@@ -657,6 +668,8 @@ function OptionsAddon:OnDocumentReady()
 
 	self.wndTargeting = Apollo.LoadForm(self.xmlDoc, "TargettingDialog", nil, self)
 	Apollo.LoadForm(self.xmlDoc, "TargettingOptionsControls", self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls"), self)
+	
+	self.wndSearchEditBox = self.wndAddons:FindChild("SearchEditBox")
 
 	self.bAddonsTimerCreated = false
 	self.OptionsDlg:SetRadioSel("OptionsGroup", 0)
@@ -777,6 +790,8 @@ function OptionsAddon:OnDocumentReady()
 
 	self.wndSounds:FindChild("CinematicSubtitles"):SetCheck(Apollo.GetConsoleVariable("draw.subtitles"))
 	self.wndSounds:FindChild("CombatMusicFlair"):SetCheck(Apollo.GetConsoleVariable("sound.intenseBattleMusic"))
+	self.wndSounds:FindChild("PlayInBackground"):SetCheck(Apollo.GetConsoleVariable("sound.playInBackground"))
+	self.wndSounds:FindChild("Mute"):SetCheck(Apollo.GetConsoleVariable("sound.mute"))
 
 	self.wndVideo:FindChild("DropTogglePresetSettings"):AttachWindow(self.wndVideo:FindChild("DropTogglePresetSettings"):FindChild("ChoiceContainer"))
 	self.wndVideo:FindChild("DropTogglePresetSettings"):FindChild("ChoiceContainer"):Show(false)
@@ -824,6 +839,63 @@ end
 -- Functions
 ---------------------------------------------------------------------------------------------------
 
+function OptionsAddon:OnSearchEditBoxChanged(wndHandler, wndControl, strText)
+	if wndHandler ~= wndControl then
+		return
+	end
+
+	wndClearBtn = self.wndAddons:FindChild("SearchClearBtn")
+	wndSearchIcon = self.wndAddons:FindChild("SearchIcon")
+	if wndClearBtn and wndSearchIcon then
+		wndClearBtn:Show(strText ~= "")
+		wndSearchIcon:Show(not strText ~= "")
+	end
+	
+	local wndGrid = self.wndAddons:FindChild("AddonGrid")
+	if wndGrid then
+		wndGrid:DeleteAll()
+	end
+	
+	if strText == "" then
+		self:ResetAddonGrid()
+	else
+		for idx, tAddon in ipairs(self.tAddons) do
+			local strAddonNameSubString = string.sub(tAddon.strName, 1 ,  string.len(strText))
+			if Apollo.StringToLower(strAddonNameSubString) == Apollo.StringToLower(strText) then
+				self:HelperAddToGrid(wndGrid, tAddon)
+			end
+		end
+	end
+end
+
+function OptionsAddon:OnSearchClearBtn(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+
+	self.wndSearchEditBox:SetText("")
+	wndHandler:Show(false)
+	self:ResetAddonGrid()
+end
+
+function OptionsAddon:ResetAddonGrid()
+	local wndGrid = self.wndAddons:FindChild("AddonGrid")
+	if not wndGrid or not self.tAddons then
+		return
+	end
+
+	wndGrid:DeleteAll()
+	for idx, tAddon in ipairs(self.tAddons) do
+		self:HelperAddToGrid(wndGrid, tAddon)
+	end
+end
+
+function OptionsAddon:HelperAddToGrid(wndGrid, tAddon)
+	local nRow = wndGrid:AddRow(tAddon.strName)
+	wndGrid:SetCellLuaData(nRow, EnumAddonColumns.Name, tAddon.strName)
+	self:UpdateAddonGridRow(wndGrid, nRow, tAddon)
+end
+
 function OptionsAddon:OnRefreshOptionsDialog()
 	if self.OptionsDlg:IsShown() then
 		self:OnOptionsCheck()
@@ -850,6 +922,7 @@ function OptionsAddon:OnOptionsCheck()
 		self.wndSounds:SetAnchorOffsets(self.wndSounds:GetAnchorOffsets())
 		self.wndSounds:FindChild("CombatMusicFlair"):SetCheck(Apollo.GetConsoleVariable("sound.intenseBattleMusic"))
 		self.wndSounds:FindChild("CinematicSubtitles"):SetCheck(Apollo.GetConsoleVariable("draw.subtitles"))
+		self.wndSounds:FindChild("PlayInBackground"):SetCheck(Apollo.GetConsoleVariable("sound.playInBackground"))
 	elseif nOptions == 3 then
 		self.wndAddons:SetAnchorOffsets(self.wndAddons:GetAnchorOffsets())
 		self:OnAddonsCheck(true)
@@ -994,7 +1067,7 @@ function OptionsAddon:UpdateAddonGridRow(wndGrid, nRow, tAddon)
 	end
 	wndGrid:SetCellText(nRow, EnumAddonColumns.LoadSetting, strLoad)
 	wndGrid:SetCellText(nRow, EnumAddonColumns.LastModified, tAddon.strLastModified)
-	wndGrid:SetCellSortText(nRow, EnumAddonColumns.LastModified, tAddon.strLastModifiedSort)
+	wndGrid:SetCellSortText(nRow, EnumAddonColumns.Status, karSortingConstants[tAddon.eStatus]..tAddon.strName)
 end
 
 function OptionsAddon:OnAddonsCheck(bReload)
@@ -1020,10 +1093,8 @@ function OptionsAddon:OnAddonsCheck(bReload)
 	local bAscending = wndGrid:IsSortAscending()
 
 	wndGrid:DeleteAll()
-	for idx, tAddon in ipairs(self.tAddons) do
-		local nRow = wndGrid:AddRow(tAddon.strName)
-		wndGrid:SetCellLuaData(nRow, EnumAddonColumns.Name, tAddon.strName)
-		self:UpdateAddonGridRow(wndGrid, nRow, tAddon)
+	for idx, tAddon in pairs(self.tAddons) do
+		self:HelperAddToGrid(wndGrid, tAddon)
 	end
 	wndGrid:SetSortColumn(nSortCol, bAscending)
 	wndGrid:SetVScrollPos(nPos)
@@ -1369,12 +1440,13 @@ function OptionsAddon:InitOptionsControls()
 		end
 	end
 
+	local bMute = Apollo.GetConsoleVariable("sound.mute")
 	for idx, mapping in pairs(self.mapSB2CVs or {}) do
 		if mapping.wnd ~= nil then
 			if type(mapping.consoleVar) == "table" then
 				mapping.wnd:SetValue(Apollo.GetConsoleVariable(mapping.consoleVar[1]))
 			else
-				mapping.wnd:SetValue(Apollo.GetConsoleVariable(mapping.consoleVar))
+				mapping.wnd:SetValue(not bMute and Apollo.GetConsoleVariable(mapping.consoleVar) or 0)
 			end
 
 			mapping.wnd:SetData(mapping)
@@ -1387,8 +1459,15 @@ function OptionsAddon:InitOptionsControls()
 				if type(mapping.consoleVar) == "table" then
 					mapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(mapping.consoleVar[1])))
 				else
-					mapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(mapping.consoleVar)))
+					mapping.buddy:SetText(string.format(strFormat, not bMute and Apollo.GetConsoleVariable(mapping.consoleVar) or 0))
 				end
+			end
+			
+			local wndBlocker = mapping.wnd:GetParent():FindChild("SliderBlocker")
+			if wndBlocker then
+				wndBlocker:Show(bMute)
+				mapping.wnd:Enable(not bMute)
+				self.wndSounds:FindChild("PlayInBackground"):Enable(not bMute)
 			end
 		end
 	end
@@ -1538,6 +1617,26 @@ function OptionsAddon:InitOptionsControls()
 		self.OptionsDlg:FindChild("AddonsBtn"):SetCheck(false)
 		self.wndAddons:Show(false)
 	end
+	
+	self:HelperCheckForErrorIndicator()
+end
+
+function OptionsAddon:HelperCheckForErrorIndicator()
+	local wndErrorIndicator = self.OptionsDlg:FindChild("ErrorIndicator")
+	local wndGrid = self.wndAddons:FindChild("AddonGrid")
+	if wndErrorIndicator and wndGrid then
+		wndErrorIndicator:Show(false)
+		self:GetAddonsList()
+		for idx, tAddon in pairs(self.tAddons) do
+			if tAddon.eStatus == OptionsScreen.CodeEnumAddonStatus.ParsingError or tAddon.eStatus == OptionsScreen.CodeEnumAddonStatus.RunningWithError or tAddon.eStatus == OptionsScreen.CodeEnumAddonStatus.Suspended then
+				wndErrorIndicator:Show(true)
+			end
+		end
+		
+		if wndErrorIndicator:IsShown() then
+			wndGrid:SetSortColumn(EnumAddonColumns.Status, true)--sort descending
+		end
+	end
 end
 
 function OptionsAddon:OnInvokeOptionsScreen(nOption)
@@ -1603,6 +1702,8 @@ end
 function OptionsAddon:OnReloadUI()
 	self:HelperUncheckAllInnerFrame()
 	ReloadUI()
+
+	self:HelperCheckForErrorIndicator()
 end
 
 ------------------------------------------------------------------------------------------
@@ -1749,7 +1850,7 @@ function OptionsAddon:OnParticleScaleRadio(wndHandler, wndControl)
 	elseif ndx == 3 then
 		Apollo.SetConsoleVariable("particle.envParticleScale", 0.25)
 	elseif ndx == 4 then
-		Apollo.SetConsoleVariable("particle.envParticleScale", 0)
+		Apollo.SetConsoleVariable("particle.envParticleScale", 0.1)
 	end
 
 	wndControl:GetParent():GetParent():SetText(wndControl:GetText())
@@ -2042,7 +2143,7 @@ end
 function OptionsAddon:OnRestoreDefaults()
 	for iTable, tTable in pairs({ self.mapCB2CVs, self.mapSB2CVs, self.mapDDParents }) do
 		for idx, tVar in pairs(tTable) do
-			if tVar.wnd:IsVisible() then
+			if tVar.wnd and tVar.wnd:IsVisible() then
 				Apollo.ResetConsoleVariable(tVar.consoleVar)
 			end
 		end
@@ -2059,6 +2160,51 @@ end
 
 function OptionsAddon:OnUncheckCombatMusicFlair( wndHandler, wndControl, eMouseButton )
 	Apollo.SetConsoleVariable("sound.intenseBattleMusic", false)
+end
+
+function OptionsAddon:OnCheckPlaySoundInBackground( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable("sound.playInBackground", true)
+end
+
+function OptionsAddon:OnUncheckPlaySoundInBackground( wndHandler, wndControl, eMouseButton )
+	Apollo.SetConsoleVariable("sound.playInBackground", false)
+end
+
+function OptionsAddon:OnMuteCheck( wndHandler, wndControl)
+	for idx, tAdjustment in pairs(self.mapSB2CVs) do
+		if tAdjustment.wnd and tAdjustment.wnd:IsVisible() and tAdjustment.format then	
+			local wndBlocker = tAdjustment.wnd:GetParent():FindChild("SliderBlocker")
+			if wndBlocker then
+				wndBlocker:Show(true)
+			end
+
+			tAdjustment.wnd:SetValue(0)
+			tAdjustment.buddy:SetText(string.format(tAdjustment.format, 0))
+			tAdjustment.wnd:Enable(false)
+		end
+	end
+
+	self.wndSounds:FindChild("PlayInBackground"):Enable(false)
+	Apollo.SetConsoleVariable("sound.mute", true)
+end
+
+function OptionsAddon:OnMuteUncheck( wndHandler, wndControl)
+		for idx, tAdjustment in pairs(self.mapSB2CVs) do
+			if tAdjustment.wnd and tAdjustment.wnd:IsVisible()  and tAdjustment.format and tAdjustment.consoleVar then	
+				local wndBlocker = tAdjustment.wnd:GetParent():FindChild("SliderBlocker")
+				if wndBlocker then
+					wndBlocker:Show(false)
+				end
+
+				local nValue = Apollo.GetConsoleVariable(tAdjustment.consoleVar)
+				tAdjustment.wnd:SetValue(nValue)
+				tAdjustment.buddy:SetText(string.format(tAdjustment.format, nValue))
+				tAdjustment.wnd:Enable(true)
+			end
+		end
+
+	self.wndSounds:FindChild("PlayInBackground"):Enable(true)
+	Apollo.SetConsoleVariable("sound.mute", false)
 end
 
 function OptionsAddon:OnCheckCinematicSubtitles( wndHandler, wndControl, eMouseButton )
@@ -2138,12 +2284,7 @@ function OptionsAddon:OnFillOpacityChanged(wndHandler, wndControl, fNewValue, fO
 
 	Apollo.SetConsoleVariable(tSet.consoleVarFillOpacity, math.floor(fNewValue))
 
-	wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacityEditBox"):SetText(math.floor(fNewValue))
-
-	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
-	wndColorBtn:FindChild("Color:Inner"):SetBGOpacity(fNewValue/100.0, 0.0)
-
-	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+	self:RefreshAllTelegraphColorOpacityControls()
 end
 
 function OptionsAddon:OnTelegraphFillOpacityTextChanged(wndHandler, wndControl, strText)
@@ -2159,15 +2300,7 @@ function OptionsAddon:OnTelegraphFillOpacityTextChanged(wndHandler, wndControl, 
 
 	Apollo.SetConsoleVariable(tSet.consoleVarFillOpacity, nValue)
 
-	wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacitySliderBar"):SetValue(nValue)
-	local tSelection = wndControl:GetSel()
-	wndControl:SetText(nValue)
-	wndControl:SetSel(tSelection.cpCaret, tSelection.cpCaret)
-
-	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
-	wndColorBtn:FindChild("Color:Inner"):SetBGOpacity(nValue/100.0, 0.0)
-
-	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+	self:RefreshAllTelegraphColorOpacityControls()
 end
 
 function OptionsAddon:OnOutlineOpacityChanged(wndHandler, wndControl, fNewValue, fOldValue)
@@ -2177,12 +2310,7 @@ function OptionsAddon:OnOutlineOpacityChanged(wndHandler, wndControl, fNewValue,
 
 	Apollo.SetConsoleVariable(tSet.consoleVarOutlineOpacity, math.floor(fNewValue))
 
-	wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacityEditBox"):SetText(math.floor(fNewValue))
-
-	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
-	wndColorBtn:FindChild("Color:Outline"):SetBGOpacity(fNewValue/100.0, 0.0)
-
-	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+	self:RefreshAllTelegraphColorOpacityControls()
 end
 
 function OptionsAddon:OnTelegraphOutlineOpacityTextChanged(wndHandler, wndControl, strText)
@@ -2198,15 +2326,7 @@ function OptionsAddon:OnTelegraphOutlineOpacityTextChanged(wndHandler, wndContro
 
 	Apollo.SetConsoleVariable(tSet.consoleVarOutlineOpacity, nValue)
 
-	wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacitySliderBar"):SetValue(nValue)
-	local tSelection = wndControl:GetSel()
-	wndControl:SetText(nValue)
-	wndControl:SetSel(tSelection.cpCaret, tSelection.cpCaret)
-
-	local wndColorBtn = wndTelegraphChoiceContainer:GetParent()
-	wndColorBtn:FindChild("Color:Outline"):SetBGOpacity(nValue/100.0, 0.0)
-
-	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+	self:RefreshAllTelegraphColorOpacityControls()
 end
 
 function OptionsAddon:OnTelegraphColorTextChanged(wndHandler, wndControl, strText)
@@ -2232,11 +2352,37 @@ function OptionsAddon:OnTelegraphColorTextChanged(wndHandler, wndControl, strTex
 	wndColorBtn:FindChild("Color:Inner"):SetBGColor(crNewColor)
 	wndColorBtn:FindChild("Color:Outline"):SetBGColor(crNewColor)
 
-	RefreshCustomTelegraphColors() -- thume says this is a super cheap call
+	RefreshCustomTelegraphColors()
 end
 
 function OptionsAddon:OnTelegraphWindowClosed(wndHandler, wndControl)
-	--RefreshCustomTelegraphColors()
+	RefreshCustomTelegraphColors()
+end
+
+function OptionsAddon:RefreshAllTelegraphColorOpacityControls()
+	local nSet = Apollo.GetConsoleVariable("spell.telegraphColorSet")
+	
+	local wndTelelgraphColors = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColors")
+	for idx, wndTelegraphColor in pairs(wndTelelgraphColors:GetChildren()) do
+		local wndColorBtn = wndTelegraphColor:FindChild("ColorBtn")
+		local wndTelegraphChoiceContainer = wndColorBtn:FindChild("TelegraphChoiceContainer")
+		local tTelegraphColor = wndTelegraphChoiceContainer:GetData()
+		local tSet = tTelegraphColor.tSets[nSet]
+		
+		local nFillOpacity = Apollo.GetConsoleVariable(tSet.consoleVarFillOpacity)
+		local nOutlineOpacity = Apollo.GetConsoleVariable(tSet.consoleVarOutlineOpacity)
+		
+		wndColorBtn:FindChild("Color:Inner"):SetBGOpacity(nFillOpacity/100.0, 0.0)
+		wndColorBtn:FindChild("Color:Outline"):SetBGOpacity(nOutlineOpacity/100.0, 0.0)
+		
+		wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacityEditBox"):SetText(nFillOpacity)
+		wndTelegraphChoiceContainer:FindChild("InsideFillOpacity:InsideFillOpacitySliderBar"):SetValue(nFillOpacity)
+	
+		wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacityEditBox"):SetText(nOutlineOpacity)
+		wndTelegraphChoiceContainer:FindChild("OutlineOpacity:OutsideOpacitySliderBar"):SetValue(nOutlineOpacity)
+	end
+	
+	RefreshCustomTelegraphColors()
 end
 
 function OptionsAddon:EnableTelegraphColorControls()
@@ -2369,3 +2515,4 @@ end
 ---------------------------------------------------------------------------------------------------
 local OptionsInst = OptionsAddon:new()
 OptionsAddon:Init()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 

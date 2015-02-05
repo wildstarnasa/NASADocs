@@ -189,3 +189,31 @@ end
 -----------------------------------------------------------------------------------------------
 local PvPKillBoardInst = PvPKillBoard:new()
 PvPKillBoardInst:Init()
+else
+			wndCurr:Destroy()
+		end
+	end
+
+	if not bResultFound then
+		self.wndMain:FindChild("VoteDescription"):SetText(Apollo.GetString("PublicEventVote_NonePicked"))
+	end
+
+	self.wndMain:Show(true)
+	self.wndMain:FindChild("VoteTitle"):SetText(Apollo.GetString("PublicEventVote_VotingComplete"))
+	self.wndMain:FindChild("VoteFrameScroll"):ArrangeChildrenVert(0)
+	self.wndMain:FindChild("VoteFrameScroll"):RecalculateContentExtents()
+	self.wndMain:FindChild("VoteFrameScroll"):SetVScrollPos(0)
+
+	
+	Apollo.CreateTimer("HideWinnerTimer", 5.0, false)
+	Apollo.StartTimer("HideWinnerTimer")
+	
+	self.nSelectedVote = nil
+	
+	Sound.Play(Sound.PlayUIWindowPublicEventVoteVotingEnd)
+end
+
+function PublicEventVote:OnVoteFrameHideBtn(wndHandler, wndControl)
+	self.wndMain:Destroy()
+	self.wndMain = nil
+	Sound.Play(Sound.PlayUIWindowPublicEven

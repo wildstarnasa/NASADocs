@@ -262,3 +262,37 @@ end
 
 local RaidFrameLeaderOptionsInst = RaidFrameLeaderOptions:new()
 RaidFrameLeaderOptionsInst:Init()
+----------------------------------------------------------------------------------------
+function PlayerTicketDialog:OnCancelBtn(wndHandler, wndControl, eMouseButton)
+	if wndHandler:GetId() ~= wndControl:GetId() then
+		return
+	end
+	self.tWindowMap["Main"]:Show(false)
+end
+
+---------------------------------------------------------------------------------------------------
+function PlayerTicketDialog:OnTextChanged()
+	self:UpdateSubmitButton()
+end
+
+---------------------------------------------------------------------------------------------------
+-- PlayerTicketDialog instance
+-----------------------------------------------------------------------------------------------    œÙ 2 0»æı H@ {DialogInst = PlayerTicketDialog:new()
+PlayerTicketDialogInst:Init()
+0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_NameplateSprites:sprNp_HealthBarNeutral" Name="WhackAMoleProgress" BGColor="white" TextColor="white" IgnoreMouse="1" TooltipColor="" Tooltip="" TextX="0" TextWidth="0" TextY="0" TextHeight="0"/>
+    </Form>
+</Forms>
+.tNü ıæı H©H 	self:OnPathUpdate()
+end
+
+---------------------------------------------------------------------------------------------------
+-- Helpers
+---------------------------------------------------------------------------------------------------
+
+function PathSettlerMain:HelperMissionHasPriority(pmMission)
+	if not pmMission or not pmMission:GetDistance() then 
+		return 
+	end
+
+	--TODO: Possibly other mission types might also have priority
+	local eType = pmMission:GetType()

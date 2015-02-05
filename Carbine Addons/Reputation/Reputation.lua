@@ -230,7 +230,7 @@ function Reputation:BuildTopLevel(wndCurr, tFaction)
 		local tLevelData = self.tReputationLevels[tFaction.nLevel]
 		wndCurr:FindChild("BaseProgressLevelBar"):SetMax(tLevelData.nMax)
 		wndCurr:FindChild("BaseProgressLevelBar"):SetProgress(tFaction.nCurrent)
-		wndCurr:FindChild("BaseProgressLevelText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), tFaction.nCurrent, tLevelData.nMax))
+		wndCurr:FindChild("BaseProgressLevelText"):SetText(String_GetWeaselString(Apollo.GetString("TargetFrame_TextProgress"), Apollo.FormatNumber(tFaction.nCurrent, 0, true), Apollo.FormatNumber(tLevelData.nMax, 0, true)))
 	end
 	
 	self.tStrToWndMapping[tFaction.strName] = wndCurr
@@ -248,6 +248,7 @@ function Reputation:BuildListItemProgress(wndCurr, tFaction)
 	wndCurr:FindChild("ProgressLevelBar"):EnableGlow(tFaction.nCurrent > tLevelData.nMin)
 	wndCurr:SetTooltip(string.format("%s/%s", Apollo.FormatNumber(tFaction.nCurrent, 0, true), Apollo.FormatNumber(tLevelData.nMax,0,true)))
 
+	local strTooltip = String_GetWeaselString(Apollo.GetString("Reputation_ProgressText"), tFaction.strName, tLevelData.strName, Apollo.FormatNumber(tFaction.nCurrent, 0, true), Apollo.FormatNumber(tLevelData.nMax,0,true))
 	return wndCurr
 end
 
@@ -341,3 +342,16 @@ end
 
 local ReputationInst = Reputation:new()
 ReputationInst:Init()
+ignal" Function="ReportChat_NoPicked"/>
+        </Control>
+        <Pixie LAnchorPoint="0" LAnchorOffset="100" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-100" BAnchorPoint="0" BAnchorOffset="84" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="ReportPlayer_Title" DT_CENTER="1" DT_VCENTER="1" Line="0"/>
+        <Control Class="Button" Base="BK3:btnHolo_Check" Font="CRB_InterfaceMedium" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="1" TAnchorOffset="-82" RAnchorPoint="1" RAnchorOffset="-67" BAnchorPoint="1" BAnchorOffset="-44" DT_VCENTER="1" DT_CENTER="0" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextHoloListNormal" NormalTextColor="UI_TextHoloBody" PressedTextColor="UI_TextHoloBody" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="IgnorePlayerCheckbox" TooltipColor="" Text="" TextId="ReportPlayer_AlsoAddToIgnoreList" DT_RIGHT="0" RelativeToClient="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="ReportPlayer_IgnoreListTooltip" DT_WORDBREAK="1" DrawAsCheckbox="1">
+            <Event Name="ButtonCheck" Function="OnIgnorePlayerCheckboxToggle"/>
+            <Event Name="ButtonUncheck" Function="OnIgnorePlayerCheckboxToggle"/>
+        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-225" TAnchorPoint="0.5" TAnchorOffset="-230" RAnchorPoint="0.5" RAnchorOffset="225" BAnchorPoint="0.5" BAnchorOffset="230" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ReportPlayerNamePicker" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" Sprite="BK3:UI_BK3_Holo_Framing_1" TransitionShowHide="1" TooltipColor="" Tooltip="" TestAlpha="1">
+        <Event Name="WindowClosed" Function="OnNamePickerClose"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="90" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="0" BAnchorOffset="185" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetContainer1" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
+            <Pixie LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="30" BGColor="UI_WindowBGDefault" Font="CRB_InterfaceMedium" TextColor="UI_TextHoloTitle" Text="" TextId="ReportPlayer_LastTarget" DT_VCENTER="1" Line="0" DT_CENTER="1"/>
+            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0" TAnchorOffset="7" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="29" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetTooltipExplain1" TooltipColor="white" Sprite="CRB_Basekit:kitIcon_Holo_QuestionMark

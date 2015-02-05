@@ -489,3 +489,5 @@ end
 
 local MasterLoot_Singleton = MasterLoot:new()
 MasterLoot_Singleton:Init()
+nfirmDelete:FindChild("CancelCREDDListingBtn"):SetData(aucCurrent)
+		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("Market

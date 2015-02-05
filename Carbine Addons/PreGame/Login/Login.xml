@@ -9,3 +9,35 @@
         </Control>
     </Form>
 </Forms>
+ strMessage in ipairs(self.arServerMessages or {}) do
+		strAllMessage = strAllMessage .. strMessage .. "\n"
+	end
+	
+	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
+	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
+	self.wndServerMessage:SetHeightToContentHeight()
+	--self.wndServerMessages:Show(true)
+
+
+	--PreGameLib.uScene:SetBackground("UI\\Screens\\UI_CRB_LoginScreen.tex")
+	PreGameLib.SetMusic( PreGameLib.CodeEnumMusic.Login )
+	
+	PreGameLib.uScene:SetMap( 1559 );  -- this designates map.  Dont actually change 1346 map, make a new one and put the map number in here.
+	PreGameLib.uScene:SetCameraFoVNearFar( 50, .1, 512 ) -- field of view, near plane and far plane settings for camera.  Can not set near plane to 0.  Setting a very small near plane causes graphic artifacts.  
+	PreGameLib.uScene:SetMapTimeOfDay(c_SceneTime) -- in seconds from midnight. New band now playing!
+
+	self.wndVersionString:SetText(PreGameLib.GetVersionString())
+	
+	local cameraOffset = Vector3.New( -1.5, -2, 15 )		
+	local up = Vector3.New( 0, 1, 0 )
+	self.tPositionOffset = Vector3.New( -4850.41, -905.66, -6420.76 )
+	
+	PreGameLib.uScene:SetCameraPosition( self.tPositionOffset + cameraOffset, self.tPositionOffset, up )
+	
+	self.tPlanetPosition = Vector3.New( -4369.47, -879.143, -2812.23 )
+
+	self.primary = PreGameLib.uScene:AddActorByFile(1, "Art\\Cinematics\\Zones\\Login\\Camera_Login.m3")
+	if self.primary then
+		self.primary:SetPosition(1, self.tPlanetPosition, Vector3:Zero())
+		self.primary:AttachCamera(6) -- ModelCamera_Cinematic
+		self.primary:Animate( 0, 150, 1, true, false, 1, 0 ) -- last

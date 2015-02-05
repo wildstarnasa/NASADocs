@@ -143,6 +143,7 @@ function CraftingGrid:OnDocumentReady()
 	Apollo.RegisterEventHandler("CraftingUpdateCurrent", 							"OnCraftingUpdateCurrent", self)
 	Apollo.RegisterEventHandler("UpdateInventory", 									"RedrawAll", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 							"RedrawCash", self)
+	Apollo.RegisterEventHandler("CraftingStationClose",								"OnCraftingGrid_CraftBtnTimer", self)
 
 	Apollo.RegisterEventHandler("CraftingInterrupted",								"OnCraftingGrid_CraftBtnTimer", self)
 	Apollo.RegisterEventHandler("P2PTradeInvite", 									"OnP2PTradeExitAndReset", self)
@@ -151,7 +152,7 @@ function CraftingGrid:OnDocumentReady()
 	self.timerBtn = ApolloTimer.Create(3.25, false, "OnCraftingGrid_CraftBtnTimer", self)
 	self.timerBtn:Stop()
 
-	self.timerCraftingSation = ApolloTimer.Create(1.0, true, "OnCraftingGrid_TimerCraftingStationCheck", self)
+	--self.timerCraftingSation = ApolloTimer.Create(1.0, true, "OnCraftingGrid_TimerCraftingStationCheck", self)
 
 	self.wndArrowTutorial = -1 -- This is -1 if not set yet, then 0 after it's been set (and we no longer ever want to show it)
 
@@ -716,7 +717,7 @@ function CraftingGrid:OnCloseBtn(wndHandler, wndControl)
 		return
 	end
 
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() then
+	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
 		self.wndMain = nil
 
@@ -1130,3 +1131,15 @@ end
 
 local CraftingGridInst = CraftingGrid:new()
 CraftingGridInst:Init()
+nchorPoint="0" TAnchorOffset="6" RAnchorPoint="1" RAnchorOffset="-6" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="DyeSwatchArtHack" TooltipColor="">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-150" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="150" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="DyeSwatch" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_DyeRampSprites:sprDyeRamp_1" NewControlDepth="4"/>
+        </Control>
+        <Event Name="ButtonSignal" Function="OnDyeSelect"/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-420" TAnchorPoint="0" TAnchorOffset="50" RAnchorPoint="0.5" RAnchorOffset="420" BAnchorPoint="0" BAnchorOffset="780" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="StylistFrame" TooltipColor="" Moveable="1" Overlapped="1" Sizable="0" Tooltip="" Escapable="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="29" TAnchorPoint="0" TAnchorOffset="140" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="1" BAnchorOffset="-25" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_Background_General" TooltipType="OnCursor" Name="BGArt" TooltipColor="" Border="1" IgnoreMouse="1" UseTemplateBG="1"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="29" TAnchorPoint="0" TAnchorOffset="140" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="1" BAnchorOffset="-25" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="CostumeFrame" TooltipColor="" Visible="0"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="29" TAnchorPoint="0" TAnchorOffset="140" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="1" BAnchorOffset="-25" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="CustomizationFrame" TooltipColor="" Visible="0"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Metal_Primary_Nav" Name="BGArt_OverallFrame" BGColor="white" TextColor="white" Picture="0" IgnoreMouse="1" Sprite="" TooltipColor="" HideInEditor="0" Tooltip="" TooltipId="" Border="1" UseTemplateBG="1" NewControlDepth="10">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="0" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Framing" TooltipColor="" IgnoreMouse="1" HideInEditor="0">
+                <Control Class="Button" Base="bk3:btnMetal_TabMainLeft" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="Radio_Warddrobe" LAnchorPoint="0" LAnchorOffset="26" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint=".5" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="125" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" 

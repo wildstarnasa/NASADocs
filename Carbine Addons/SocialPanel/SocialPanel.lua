@@ -68,6 +68,11 @@ function SocialPanel:OnDocumentReady()
 	Apollo.RegisterEventHandler("EventGeneric_FriendInviteSeen", 		"OnFriendshipInviteChange", self)
 	Apollo.RegisterEventHandler("FriendshipAccountDataUpdate",  		"CalcFriendInvites", self)
 	Apollo.RegisterEventHandler("FriendshipUpdateOnline", 				"CalcFriendInvites", self)
+	Apollo.RegisterEventHandler("FriendshipRemove", 					"OnFriendshipRemove", self)
+	Apollo.RegisterEventHandler("FriendshipAccountFriendRemoved",		"OnFriendshipRemove", self)
+	
+	self.timerRemovedMemberDelay = ApolloTimer.Create(0.2, false, "CalcFriendInvites", self)
+	self.timerRemovedMemberDelay:Stop()
 end
 
 function SocialPanel:OnToggleSocialWindow(strArg) -- 1st Arg may be objects from code and such
@@ -342,5 +347,38 @@ function SocialPanel:CalcFriendInvites()
 	return nUnseenFriendInviteCount
 end
 
+function SocialPanel:OnFriendshipRemove()
+	self.timerRemovedMemberDelay:Start()
+end
+
 local SocialPanelInst = SocialPanel:new()
 SocialPanelInst:Init()
+
+				end
+			elseif eType == Unit.CodeEnumRewardInfoType.Challenge and not self:HelperFlagOrDefault(tFlags, "bHideChallenges", false) then
+					local clgActive = nil
+
+				local tAllChallenges = ChallengesLib.GetActiveChallengeList()
+				for index, clgCurr in pairs(tAllChallenges) do
+					if tRewardInfo[idx].idChallenge == clgCurr:GetId() and clgCurr:IsActivated() and not clgCurr:IsInCooldown() and not clgCurr:ShouldCollectReward() then
+						clgActive = clgCurr
+						break
+					end
+				end
+
+				if clgActive then
+					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
+					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
+					
+					local strTempTitle = ""
+					if clgActive:ShouldDisplayPercentProgress() then
+						strTempTitle = self:HelperDrawRewardTooltip(tRewardInfo[idx], wndCurr, Apollo.GetString("CBCrafting_Challenge"), unitTarget:GetName(), tRewardString[eType])
+					else
+						strTempTitle = String_GetWeaselString(Apollo.GetString("BuildMap_CategoryProgress"), clgActive:GetName(), clgActive:GetCurrentCount(), clgActive:GetTotalCount())
+					end
+					
+					tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], strTempTitle)
+					
+					wndCurr:SetTooltip(tRewardString[eType])
+				end
+			elseif eType == Unit.CodeEnumRewardInfoType.Soldier or eType == Unit.CodeEnumRewardInfoType.Settler or eType == Unit.CodeEnumReward

@@ -97,3 +97,108 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="84" RAnchorPoint="0" RAnchorOffset="192" BAnchorPoint="0" BAnchorOffset="135" RelativeToClient="1" Font="CRB_Interface10_BBO" Text="" Template="Default" TooltipType="OnCursor" Name="CaptureModText" BGColor="ffffffff" TextColor="ff92937d" TooltipColor="" TextId="Challenges_NoProgress" NewControlDepth="1" Tooltip="" DT_VCENTER="1" DT_CENTER="1"/>
     </Form>
 </Forms>
+Show ~= nil then
+		self.tWndRefs.arMatchWnd[nShow]:Show(true)
+	end
+end
+
+function MatchTracker:HelperTimeString(nTimeInSeconds)
+	if nTimeInSeconds == nil or nTimeInSeconds <= 0 then
+		return "--:--"
+	end
+	
+	nTimeInSeconds = math.floor(nTimeInSeconds)
+	local nMinutes = math.floor(nTimeInSeconds / 60)
+	local nSeconds = math.floor(nTimeInSeconds % 60)
+	if nSeconds < 10 then
+		return nMinutes .. ":0" .. nSeconds
+	end
+	return nMinutes .. ":" .. nSeconds
+end
+
+-----------------------------------------------------------------------------------------------
+-- MatchTracker Instance
+-----------------------------------------------------------------------------------------------
+local MatchTrackerInst = MatchTracker:new()
+MatchTrackerInst:Init():Show(false)
+	self.wndQueueInfo:FindChild("LabelWaitTime"):Show(false)
+
+	self.wndJoin:Show(true)
+	self.wndJoinAsGroup:Show(true)
+	self.wndLeaveGame:Show(false)
+	self.wndTeleportIntoGame:Show(false)
+	self.wndFindReplacements:Show(false)
+	self.wndVoteDisband:Show(false)
+	self.wndCancelReplacements:Show(false)
+	self.wndAltLeaveGame:Show(false)
+	self.wndAltTeleportIntoGame:Show(false)
+	self.wndModeListToggle:Enable(true)
+
+	self.wndRealmFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleRealmFilter) or false)
+	self.wndAllowMercFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleAllowMercFilter) or false)
+	self.wndAllowWarpartyFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleAllowWarpartyFilter) or false)
+	self.wndOthersFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleDoNotFindOthers) or false)
+
+	local bWaitingForWarParty = false
+	local bQueuedGuild = false
+
+	if next(self.matchesQueued) == nil and bIsQueued then -- queued, but we don't know what for
+		local tAllTypes =
+		{
+			MatchingGame.MatchType.Battleground,
+			MatchingGame.MatchType.Arena,
+			MatchingGame.MatchType.Dungeon,
+			MatchingGame.MatchType.Adventure,
+			MatchingGame.MatchType.Warplot,
+			MatchingGame.MatchType.RatedBattleground,
+			MatchingGame.MatchType.OpenArena
+		}
+
+		for key, nType in pairs(tAllTypes) do
+			local tGames = MatchingGame.GetAvailableMatchingGames(nType)
+			for key, matchGame in pairs(tGames) do
+				if matchGame:IsQueued() == true then
+					self.matchesQueued[matchGame:GetName()] = matchGame
+
+					if matchGame:GetType() == MatchingGame.MatchType.Warplot then
+						bWaitingForWarParty = not MatchingGame.IsWarpartyQueued()
+						bQueuedGuild = MatchingGame.DoesRequestWarplotInit()
+					end
+				end
+			end
+		end
+	end
+
+	if bIsQueued then
+		self.wndQueueInfo:FindChild("LabelType"):Show(true)
+		self.wndQueueInfo:FindChild("LabelTime"):Show(true)
+		self.wndQueueInfo:FindChild("LabelWaitTime"):Show(true)
+
+		local nAverageWaitTime = MatchingGame.GetAverageWaitTime()
+		local strWaitText = ""
+		if nAverageWaitTime == 0 then
+			strWaitText = Apollo.GetString("MatchMaker_UnknownTimer")
+		else
+			strWaitText = self:GetTimeString(MatchingGame.GetAverageWaitTime())
+		end
+		self.wndAverageWaitTime:SetText(strWaitText)
+		self.fTimeInQueue = MatchingGame.GetTimeInQueue()
+
+		self.wndTimeInQueue:SetText(self:GetTimeString(self.fTimeInQueue))
+		self:StartQueueTimer()
+
+		--See if we have more then one element in the table or just one element in the table
+		local oFirstQueuedKey = next(self.matchesQueued)
+		if oFirstQueuedKey ~= nil and next(self.matchesQueued, oFirstQueuedKey) ~= nil then
+			self.wndQueueInfo:FindChild("QueueType"):SetText(Apollo.GetString("MatchMaker_QueuedForSeveral"))
+		elseif next(self.matchesQueued) ~= nil then
+			self.wndQueueInfo:FindChild("QueueType"):SetText(self.matchesQueued[oFirstQueuedKey]:GetName())
+		end
+
+		self.wndRole:FindChild("RoleHeaderLabel"):SetText(Apollo.GetString("MatchMaker_QueuedAs"))
+	else
+		self.wndRole:FindChild("RoleHeaderLabel"):SetText(Apollo.GetString("MatchMaker_SetRole"))
+	end
+
+	local tSelectedRoles = MatchingGame.GetSelectedRoles()
+	if tSelectedRoles t

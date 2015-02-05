@@ -1,6 +1,6 @@
 <Forms>
     <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-1133" TAnchorPoint="1" TAnchorOffset="-661" RAnchorPoint="1" RAnchorOffset="-748" BAnchorPoint="1" BAnchorOffset="-197" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="SupplySatchelForm" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" Visible="0" IgnoreMouse="0" Sizable="1" Scalable="0" Tooltip="" TooltipId="" TooltipColor="" Sprite="" HideInEditor="0">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="18" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-19" BAnchorPoint="1" BAnchorOffset="-17" RelativeToClient="1" Font="Default" Text="" Template="Holo_Background_General" Name="BGFrame" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="" NoClip="1" TooltipColor="" Tooltip=""/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="18" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-19" BAnchorPoint="1" BAnchorOffset="-17" RelativeToClient="1" Font="Default" Text="" Template="Holo_Background_General" Name="BGFrame" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="" NoClip="1" TooltipColor="" Tooltip="" Sizable="0" HideInEditor="0"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="32" TAnchorPoint="0" TAnchorOffset="132" RAnchorPoint="1" RAnchorOffset="-30" BAnchorPoint="1" BAnchorOffset="-28" RelativeToClient="1" Font="Default" Text="" Template="" Name="BGGridArt" BGColor="ffffffff" TextColor="ffffffff" Tooltip="" TooltipId="" Picture="1" IgnoreMouse="1" Sprite="" TooltipColor="" HideInEditor="0" NewControlDepth="2">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="MainGridContainer" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="" Overlapped="1" HideInEditor="0" TooltipColor="">
                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollList" Name="CategoryList" BGColor="ffffffff" TextColor="ffffffff" VScroll="1" IgnoreMouse="1" TooltipColor="" Border="1" UseTemplateBG="1"/>
@@ -22,19 +22,19 @@
                 <Event Name="ButtonUncheck" Function="OnShowAll"/>
             </Control>
         </Control>
-        <Event Name="MouseButtonUp" Function="OnMainWindowMouseButtonUp"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="DragHandler" BGColor="ffffffff" TextColor="ffffffff" VScroll="0" IgnoreMouse="1" TooltipColor="" NewWindowDepth="1" HideInEditor="1">
             <Event Name="DragDrop" Function="OnDragDrop"/>
             <Event Name="QueryDragDrop" Function="OnQueryDragDrop"/>
         </Control>
         <Event Name="WindowClosed" Function="OnMainWindowClosed"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="1" RAnchorOffset="6" BAnchorPoint="1" BAnchorOffset="6" RelativeToClient="1" Font="Default" Text="" Template="Metal_Primary_NoNav" Name="BGFrame" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="" NoClip="1" TooltipColor="" Border="1" UseTemplateBG="1" HideInEditor="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="1" RAnchorOffset="6" BAnchorPoint="1" BAnchorOffset="6" RelativeToClient="1" Font="Default" Text="" Template="Metal_Primary_NoNav" Name="BGFrame" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="" NoClip="1" TooltipColor="" Border="1" UseTemplateBG="1" HideInEditor="0">
             <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0" TAnchorOffset="23" RAnchorPoint="1" RAnchorOffset="6" BAnchorPoint="0" BAnchorOffset="52" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1" Overlapped="1" NewWindowDepth="1" TooltipColor="" NoClip="1">
                 <Event Name="ButtonSignal" Function="OnToggleVisibility"/>
             </Control>
-            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-29" TAnchorPoint="1" TAnchorOffset="-32" RAnchorPoint="1" RAnchorOffset="24" BAnchorPoint="1" BAnchorOffset="19" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="BottomRightResize" BGColor="white" TextColor="white" Sprite="CRB_Basekit:kitBtn_ExpandNormal" Picture="1" IgnoreMouse="1" TooltipColor="" NoClip="1"/>
+            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-60" TAnchorPoint="1" TAnchorOffset="-59" RAnchorPoint="1" RAnchorOffset="-7" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="0" Font="Default" Text="" Template="Default" Name="BottomRightResize" BGColor="white" TextColor="white" Sprite="CRB_Basekit:kitBtn_ExpandNormal" Picture="1" IgnoreMouse="1" TooltipColor="" NoClip="0"/>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="61" TAnchorPoint="0" TAnchorOffset="23" RAnchorPoint="1" RAnchorOffset="-61" BAnchorPoint="0" BAnchorOffset="60" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" Name="Title" BGColor="white" TextColor="UI_WindowTitleYellow" Picture="1" IgnoreMouse="1" Sprite="BK3:sprMetal_Framing_Header" TextId="SupplySatchel_TradeskillsBag" TooltipColor="" Tooltip="" NewWindowDepth="0" NewControlDepth="4" DT_VCENTER="1" DT_CENTER="1" AutoScaleText="1"/>
+        <Event Name="WindowMove" Function="OnMainWindowMouseResized"/>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0" BAnchorOffset="50" RelativeToClient="1" Font="Default" Text="" Template="CRB_Normal" Name="Category" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ffffffff" TextId="" HScroll="0" UseTemplateBG="0" TooltipColor="" IgnoreMouse="1" Sprite="" Tooltip="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="11" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="CRB_HeaderTiny" Template="Default" Name="CategoryText" BGColor="ffffffff" TextColor="UI_TextHoloTitle" DT_VCENTER="1" TextId="CRB__2" Text="" TooltipColor="" IgnoreMouse="1" AutoScaleText="1" DT_CENTER="1"/>
@@ -44,7 +44,7 @@
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="40" BAnchorPoint="0" BAnchorOffset="40" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="Item" Picture="1" SwallowMouseClicks="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreMouse="0" Sprite="BK3:UI_BK3_Holo_InsetSimple" Tooltip="" TooltipType="OnCursor" IgnoreTooltipDelay="1" TooltipColor="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="Icon" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" IgnoreTooltipDelay="1" TooltipType="OnCursor" TooltipColor="" Sprite="ClientSprites:Icon_ItemMisc_UI_Item_Leaf" Tooltip="" Subclass="ItemWindowSubclass" HideInEditor="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-8" TAnchorPoint="0" TAnchorOffset="-8" RAnchorPoint="1" RAnchorOffset="8" BAnchorPoint="1" BAnchorOffset="8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="HighCountWarnFrame" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitAccent_Frame_OrangeStroke" Visible="0" NoClip="0" HideInEditor="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-6" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" Name="Count" BGColor="ffffffff" TextColor="ffffffff" DT_BOTTOM="0" DT_RIGHT="1" TextId="" Tooltip="" TooltipColor="" DT_WORDBREAK="1" HideInEditor="0"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-7" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" Name="Count" BGColor="ffffffff" TextColor="ffffffff" DT_BOTTOM="1" DT_RIGHT="1" TextId="" Tooltip="" TooltipColor="" DT_WORDBREAK="1" HideInEditor="0"/>
         <Event Name="MouseButtonDown" Function="OnItemMouseButtonDown"/>
         <Event Name="MouseMove" Function="OnItemMouseMove"/>
         <Event Name="MouseButtonUp" Function="OnItemMouseButtonUp"/>
@@ -53,3 +53,85 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="NewSatchelItemRunner" TooltipColor="" Sprite="Anim_Inventory_New:sprInventory_NewItem" Picture="1" IgnoreMouse="1" Visible="0" NewWindowDepth="5"/>
     </Form>
 </Forms>
+el:OnItemMouseMove( wndHandler, wndControl, nLastRelativeMouseX, nLastRelativeMouseY )
+	if wndHandler ~= wndControl then return end
+	if self.wndClickedItem and self.wndClickedItem == wndControl then
+		-- Clicked and dragged
+		Apollo.BeginDragDrop(wndControl, "DDSupplySatchelItem", wndControl:FindChild("Icon"):GetSprite(), wndControl:GetData().idLocation)
+		self.wndClickedItem = nil
+	end
+end
+
+function SupplySatchel:OnItemMouseButtonUp( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	if wndHandler ~= wndControl then return end
+	if self.wndClickedItem and eMouseButton == GameLib.CodeEnumInputMouse.Left then
+		if self.wndClickedItem == wndControl then
+			-- Clicked and released
+			-- Apollo.BeginClickStick(wndControl, "DDSupplySatchelItem", wndControl:FindChild("Icon"):GetSprite(), wndControl:GetData().id)
+			self.wndClickedItem = nil
+		end
+	end
+end
+
+function SupplySatchel:HelperSearchNameMatch(strBase, strInput)
+	-- Find the first character of a word or an exact match from the start
+	strBase = strBase:lower() -- Not case sensitive
+	strInput = strInput:lower()
+	return strBase:find(strInput, 1, true)
+end
+
+-----------------------------------------------------------------------------------------------
+-- SupplySatchel Instance
+-----------------------------------------------------------------------------------------------
+local SupplySatchelInst = SupplySatchel:new()
+SupplySatchelInst:Init()
+fo.strCharacterName)
+	wndMenuEntry:SetData(tInfo)
+	table.insert(self.tResultBtns, wndMenuEntry)
+end
+
+function SuggestedMenu:OnSuggestedMenuEntry(wndHandler, wndControl)
+	if wndHandler ~= wndControl or (self.tWindowMap and not self.tWindowMap["wndTextBox"]) then
+		return
+	end
+
+	self:OnSuggestedMenuHide()
+	Event_FireGenericEvent("SuggestedMenuResult", wndControl:FindChild("SuggestedMenuEntry"):GetData(), self.tWindowMap["wndTextBox"]:GetId())
+end
+-----------------------------------------------------------------------------------------------
+-- SuggestedMenu HelperFunctions
+-----------------------------------------------------------------------------------------------
+function SuggestedMenu:HelperParseName(strText)
+	if not strText then
+		return
+	end
+	local nIndexOfSpace = string.find(strText, "%s")
+	if nIndexOfSpace then --may not have a space
+		return string.sub(strText, nIndexOfSpace + 1, string.len(strText))
+	end
+	--no need to parse return original
+	return strText
+end
+
+function SuggestedMenu:HelperTabThroughSuggestedEntries()
+	if self.tResultBtns and self.tResultBtns[self.nSuggestedResultPos] and self.nEntrySize then 
+		if #self.tResultBtns == 1 then
+			return
+		end
+		self.tResultBtns[self.nSuggestedResultPos]:FindChild("EntryName"):SetTextColor(ApolloColor.new(kstrColorNonSelectedEntry))
+		self.nSuggestedResultPos =  Apollo.IsShiftKeyDown() and self.nSuggestedResultPos - 1 or self.nSuggestedResultPos + 1
+		
+		local nScrollPosition = self.tWindowMap["SuggestedMenuContent"]:GetVScrollPos()
+		if self.nSuggestedResultPos > kMaxShownEntries - 1 then
+			self.tWindowMap["SuggestedMenuContent"]:SetVScrollPos(nScrollPosition + self.nEntrySize)
+		elseif #self.tResultBtns - self.nSuggestedResultPos >= kMaxShownEntries - 1 then
+			self.tWindowMap["SuggestedMenuContent"]:SetVScrollPos(nScrollPosition - self.nEntrySize)
+		end
+
+		if self.nSuggestedResultPos > #self.tResultBtns then 
+			self.nSuggestedResultPos = 1
+			self.tWindowMap["SuggestedMenuContent"]:SetVScrollPos(0)
+		elseif self.nSuggestedResultPos <= 0 then
+			self.nSuggestedResultPos = #self.tResultBtns
+			local nHeight = self.tWindowMap["SuggestedMenuContent"]:GetHeight()
+			nScrollPosition = #self.tResultBtns > kMaxShownEntries and

@@ -515,3 +515,5 @@ end
 
 local RaidFrameTearOffInst = RaidFrameTearOff:new()
 RaidFrameTearOffInst:Init()
+ditor="0" TooltipColor="" Visible="1" Tooltip=""/>
+        <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="54" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="1" RAnchorOffset="-15" BAnchorPoint="0" BAnchorOffset="34" AutoSe

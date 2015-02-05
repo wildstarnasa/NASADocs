@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <Forms>
-    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-249" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint=".5" RAnchorOffset="251" BAnchorPoint="0" BAnchorOffset="173" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="CommDisplayForm" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" TextId="" TransitionShowHide="1" IgnoreMouse="1" Visible="0" Sprite="BK3:sprHolo_Alert_COMM" TooltipColor="" Tooltip="">
+    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-249" TAnchorPoint="0" TAnchorOffset="80" RAnchorPoint=".5" RAnchorOffset="251" BAnchorPoint="0" BAnchorOffset="253" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="CommDisplayForm" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" TextId="" TransitionShowHide="1" IgnoreMouse="1" Visible="0" Sprite="" TooltipColor="" Tooltip="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Framing" TooltipColor="" Sprite="BK3:sprHolo_Alert_COMM" Picture="1" IgnoreMouse="1">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-7" TAnchorPoint="0" TAnchorOffset="-10" RAnchorPoint="1" RAnchorOffset="7" BAnchorPoint="1" BAnchorOffset="11" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="SpecificFraming" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1"/>
+        </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HorizontalTopContainer" BGColor="white" TextColor="white" TextId="" HideInEditor="0" TooltipColor="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="34" RAnchorPoint="0" RAnchorOffset="141" BAnchorPoint="0" BAnchorOffset="139" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="PortraitContainerLeft" BGColor="white" TextColor="white" NewControlDepth="1" HideInEditor="0" IgnoreMouse="1" NewWindowDepth="1" Visible="1" TooltipColor="">
                 <Control Name="CommPortraitLeft" Class="CostumeWindow" LAnchorPoint="1" LAnchorOffset="-95" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="-9" Camera="Datachron" Animated="1" Visible="1" BGColor="white" TextColor="white" Picture="0" Sprite="" NewControlDepth="3" NeverBringToFront="1" HideInEditor="1" TooltipColor="">
@@ -48,6 +51,7 @@
             <Event Name="ButtonSignal" Function="OnCloseBtn"/>
         </Control>
         <Event Name="MouseButtonUp" Function="OnMouseButtonUp"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-54" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="0" RAnchorOffset="115" BAnchorPoint="0" BAnchorOffset="172" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="SpecificIcon" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" NoClip="1" NewWindowDepth="1"/>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="35" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="LootItem" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TextId="" Sprite="" TooltipColor="" TooltipType="OnCursor" TooltipFont="CRB_InterfaceSmall_O" IgnoreTooltipDelay="1" Tooltip="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="Loot Description" Template="Default" Name="LootDescription" BGColor="white" TextColor="UI_AlphaPercent85" TextId="" DT_VCENTER="1" DT_WORDBREAK="1" TooltipColor=""/>
@@ -59,3 +63,71 @@
         <Event Name="MouseButtonUp" Function="OnLootItemMouseUp"/>
     </Form>
 </Forms>
+(tCurrReward.nAmount % 10000 / 100))
+		end
+		strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Copper"), math.floor(tCurrReward.nAmount % 100))
+		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetTooltip(strText)
+	end
+
+	local strIconSprite = ""
+	local wndCurrReward = nil
+	if tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_Item then
+		local itemReward = tCurrReward.itemReward
+		wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndParentArg, self)
+		wndCurrReward:FindChild("LootIconCantUse"):Show(self:HelperPrereqFailed(itemReward))
+		wndCurrReward:FindChild("LootDescription"):SetText(itemReward:GetName())
+		wndCurrReward:FindChild("LootDescription"):SetTextColor(arEvalColors[itemReward:GetItemQuality()])
+		wndCurrReward:SetData(tCurrReward.itemReward)
+		Tooltip.GetItemTooltipForm(self, wndCurrReward, tCurrReward.itemReward, {bPrimary = true, bSelling = false, itemCompare = itemReward:GetEquippedItemForItemType()})
+		strIconSprite = itemReward:GetIcon()
+
+	elseif tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_TradeSkillXp then
+		-- Tradeskill has overloaded fields: objectId is factionId. objectAmount is rep amount.
+		wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndParentArg, self)
+
+		local strText = String_GetWeaselString(Apollo.GetString("CommDisp_TradeXPReward"), tCurrReward.nXP, tCurrReward.strTradeskill)
+		wndCurrReward:FindChild("LootDescription"):SetText(strText)
+		wndCurrReward:SetTooltip(strText)
+		strIconSprite = "ClientSprites:Icon_ItemMisc_tool_0001"
+
+	elseif tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_GrantTradeskill then
+		-- Tradeskill has overloaded fields: objectId is tradeskillId.
+		wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndParentArg, self)
+		wndCurrReward:FindChild("LootDescription"):SetText(tCurrReward.strTradeskill)
+		wndCurrReward:SetTooltip("")
+		strIconSprite = "ClientSprites:Icon_ItemMisc_tool_0001"
+
+	elseif tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_Reputation then
+		wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndParentArg, self)
+		strIconSprite = "Icon_ItemMisc_UI_Item_Parchment"
+		wndCurrReward:FindChild("LootDescription"):SetText(String_GetWeaselString(Apollo.GetString("Dialog_FactionRepReward"), tCurrReward.nAmount, tCurrReward.strFactionName))
+		wndCurrReward:SetTooltip(String_GetWeaselString(Apollo.GetString("Dialog_FactionRepReward"), tCurrReward.nAmount, tCurrReward.strFactionName))
+	end
+
+	if wndCurrReward then
+		wndCurrReward:FindChild("LootIcon"):SetSprite(strIconSprite)
+	end
+end
+
+function CommDisplay:OnLootItemMouseUp(wndHandler, wndControl, eMouseButton)
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndHandler:GetData() then
+		Event_FireGenericEvent("GenericEvent_ContextMenuItem", wndHandler:GetData())
+	end
+end
+
+function CommDisplay:OnGenerateTooltip(wndHandler, wndControl, eType, arg1, arg2)
+	-- For reward icon events from XML
+	local xml = nil
+	if eType == Tooltip.TooltipGenerateType_ItemData then
+		local itemCurr = arg1
+		local itemEquipped = itemCurr:GetEquippedItemForItemType()
+
+		Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = self.bVendorOpen, itemCompare = itemEquipped})
+
+	elseif eType == Tooltip.TooltipGenerateType_Reputation or tType == Tooltip.TooltipGenerateType_TradeSkill then
+		xml = XmlDoc.new()
+		xml:StartTooltip(Tooltip.TooltipWidth)
+		xml:AddLine(arg1)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Money then
+		xml = 

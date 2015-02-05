@@ -24,3 +24,11 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="3" TAnchorPoint="0" TAnchorOffset="3" RAnchorPoint="1" RAnchorOffset="-3" BAnchorPoint="1" BAnchorOffset="-3" RelativeToClient="1" Font="CRB_InterfaceMedium_BO" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="CoordPrevMaterialIcon" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="IconSprites:Icon_ItemMisc_Shredded_Meat" DT_RIGHT="1" DT_BOTTOM="1"/>
     </Form>
 </Forms>
+t_ShowTutorial(GameLib.CodeEnumTutorial.Crafting_UI_Tutorial)
+
+	Sound.Play(Sound.PlayUIWindowCraftingOpen)
+end
+
+function Crafting:OnPreviewStartCraft(wndHandler, wndControl) -- PreviewStartCraftBtn, data is idSchematic
+	local idSchematic = wndHandler:GetData()
+	local tCurrentCraft = 

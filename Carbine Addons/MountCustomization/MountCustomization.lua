@@ -194,10 +194,14 @@ function MountScreen:DrawNewMount(tMountData)
 	-- Costume Preview
 	self.wndMain:FindChild("MountName"):SetText(tMountData.strName)
 	self.wndMain:FindChild("MountPortrait"):SetCostumeToCreatureId(tMountTierData.nPreviewCreatureId)
-	self.wndMain:FindChild("MountPortrait"):SetCamera("Paperdoll")
+	
 	if tMountTierData.bIsHoverboard then
 		self.wndMain:FindChild("MountPortrait"):SetAttachment(PetCustomizationLib.HoverboardAttachmentPoint, tMountTierData.nPreviewHoverboardItemDisplay)
+		self.wndMain:FindChild("MountPortrait"):SetCamera("HoverboardTarget")
+	else
+		self.wndMain:FindChild("MountPortrait"):SetCamera("Paperdoll")
 	end
+	
 	self.wndMain:FindChild("MountPortrait"):SetModelSequence(150)
 	self.wndMain:FindChild("MountCanCustomizeBlockers"):Show(not bCanCustomize)
 
@@ -374,3 +378,88 @@ end
 
 local MountScreenInst = MountScreen:new()
 MountScreenInst:Init()
+ 
+            if ktMessageSettings[eCurrMessageType].bPreemptable or ktMessageSettings[eCurrMessageType].bDestroyable then
+				-- if so, then show the tMessage, 
+				self:ShowMessage(eMessageType, tParams)
+            else
+				-- else add the tMessage to front of queue (behind all the other preempt messages in the queue)
+				local nInsert = 0
+				for key, tValue in pairs(self.tDisplayQueue[eField]:GetItems()) do
+					if not ktMessageSettings[tValue.eMessageType].bPreempt then
+						nInsert = key
+						break
+					end
+				end
+				if nInsert > 0 then
+					self.tDisplayQueue[eField]:InsertAbsolute( nInsert, tParams )
+				else
+					self.tDisplayQueue[eField]:Push( tParams )
+				end
+            end
+        end
+    end
+        
+end
+
+---------------------------------------------------------------------------------------------------
+function MessageManager:ShowMessage(eMessageType, tParams)
+    local eField = ktMessageSettings[eMessageType].eField
+    -- hide the tMessage that is currently being displayed
+    self:HideMessage(eField, true)
+
+    -- display the tMessage according to the tMessage type
+    local oMessage = nil
+    local eDisplayType = tParams.eDisplayType 
+    local bReposition = ktMessageSettings[eMessageType].bReposition
+    tParams.bReposition = bReposition
+
+    if eDisplayType == LuaEnumMessageDisplayType.TextFloater then
+		if bReposition then
+			tParams.tTextOption.bReposition = true
+		end
+        oMessage = CombatFloater.ShowTextFloater(tParams.unitTarget, tParams.strText, tParams.tTextOption)
+        if oMessage == nil then
+			return -- nothing is shown
+		end
+    elseif eDisplayType == LuaEnumMessageDisplayType.Window then
+        oMessage = tParams.wndMessage
+        if bReposition then
+			oMessage:Reposition()
+		end
+        oMessage:Show(true)
+    else 
+        Print(Apollo.GetString("MessageManager_UnknownType"))
+        return -- nothing is shown
+    end
+
+    -- keep track of the ref of the messsage in the tMessagesOnScreen list
+    self.tMessagesOnScreen[eField] = 
+	{
+		eMessageType 	= eMessageType,
+		oMessage 		= oMessage,
+		tParams 		= tParams,
+	}
+    
+end
+---------------------------------------------------------------------------------------------------
+function MessageManager:HideMessage(eField)
+    
+    if self.tMessagesOnScreen[eField] == nil then
+        return
+    end
+    
+    local eMessageType = self.tMessagesOnScreen[eField].eMessageType
+    local oMessage = self.tMessagesOnScreen[eField].oMessage
+    local eDisplayType = self.tMessagesOnScreen[eField].tParams.eDisplayType -- ktMessageSettings[eMessageType].eDisplayType
+    
+    -- hide the tMessage according to the tMessage display type
+    if eDisplayType == LuaEnumMessageDisplayType.TextFloater then
+        CombatFloater.HideTextFloater(oMessage)
+    elseif eDisplayType == LuaEnumMessageDisplayType.Window then
+        oMessage:Show(false)
+    end
+    
+    if  ktMessageSettings[eMessageType].bPreemptable == true then
+       -- add it back into the front of queue
+       self.tDisplayQueue[ eField ]:Insert( 1, self.tMessagesOnScreen[ eFiel

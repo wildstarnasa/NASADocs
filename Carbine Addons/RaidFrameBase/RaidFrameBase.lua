@@ -1210,3 +1210,5 @@ end
 
 local RaidFrameBaseInst = RaidFrameBase:new()
 RaidFrameBaseInst:Init()
+orOffset="349" BAnchorPoint="1" BAnchorOffset="-16" DT_VCENTER="1" DT_CENTER="1" Name="CancelBtn" BGColor="ffffffff" TextColor="ff4dffff" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" WindowSoundTemplate="PushbuttonDigi03" TextId="CRB_Cancel" TooltipColor="" DisabledTextColor="UI_BtnTextRedDisabled">
+                <Event Name="ButtonSignal" Funct

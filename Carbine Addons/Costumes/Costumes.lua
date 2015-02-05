@@ -13,13 +13,13 @@ local knNumCostumes = 10
 
 local karCostumeSlots = -- string name, then id, then button art
 {
-	{strSlot="Primary Weapon", 	 eSlotId=GameLib.CodeEnumItemSlots.Weapon,	 strSprite="CharacterWindowSprites:btn_Armor_HandsNormal",},
-	{strSlot="Head", 	 eSlotId=GameLib.CodeEnumItemSlots.Head, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Head",},
-	{strSlot="Shoulder", eSlotId=GameLib.CodeEnumItemSlots.Shoulder, strSprite="CharacterWindowSprites:btnCh_Armor_Shoulder",},
-	{strSlot="Chest", 	 eSlotId=GameLib.CodeEnumItemSlots.Chest, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Chest",},
-	{strSlot="Hands", 	 eSlotId=GameLib.CodeEnumItemSlots.Hands, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Hands",},
-	{strSlot="Legs", 	 eSlotId=GameLib.CodeEnumItemSlots.Legs, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Legs",},
-	{strSlot="Feet", 	 eSlotId=GameLib.CodeEnumItemSlots.Feet, 	 strSprite="CharacterWindowSprites:btnCh_Armor_Feet",},
+	{strSlot="Primary Weapon", 	eSlotId=GameLib.CodeEnumItemSlots.Weapon,	strSprite="CharacterWindowSprites:btn_Armor_HandsNormal",},
+	{strSlot="Head", 	 		eSlotId=GameLib.CodeEnumItemSlots.Head, 	strSprite="CharacterWindowSprites:btnCh_Armor_Head",},
+	{strSlot="Shoulder", 		eSlotId=GameLib.CodeEnumItemSlots.Shoulder,	strSprite="CharacterWindowSprites:btnCh_Armor_Shoulder",},
+	{strSlot="Chest", 	 		eSlotId=GameLib.CodeEnumItemSlots.Chest, 	strSprite="CharacterWindowSprites:btnCh_Armor_Chest",},
+	{strSlot="Hands", 	 		eSlotId=GameLib.CodeEnumItemSlots.Hands, 	strSprite="CharacterWindowSprites:btnCh_Armor_Hands",},
+	{strSlot="Legs", 	 		eSlotId=GameLib.CodeEnumItemSlots.Legs, 	strSprite="CharacterWindowSprites:btnCh_Armor_Legs",},
+	{strSlot="Feet", 	 		eSlotId=GameLib.CodeEnumItemSlots.Feet, 	strSprite="CharacterWindowSprites:btnCh_Armor_Feet",},
 }
 
 function Costumes:new(o)
@@ -43,16 +43,20 @@ function Costumes:OnDocumentReady()
 		return
 	end
 	
-	Apollo.RegisterEventHandler("WindowManagementReady", 		"OnWindowManagementReady", self)
+	Apollo.RegisterEventHandler("WindowManagementReady", 			"OnWindowManagementReady", self)
+		
+	Apollo.RegisterEventHandler("ShowDye", 							"ShowCostumeWindow", self)
+	Apollo.RegisterEventHandler("HideDye", 							"OnClose", self)
+	Apollo.RegisterEventHandler("CloseStylistWindow",				"OnClose", self)
+	Apollo.RegisterEventHandler("DyeLearned",						"OnDyeLearned", self)
+	Apollo.RegisterEventHandler("AppearanceChanged",				"OnAppearanceChanged", self)
+	Apollo.RegisterEventHandler("UpdateInventory",					"Reset", self)
+	Apollo.RegisterEventHandler("CharacterCreated",					"OnCharacterCreated", self)
 	
-	Apollo.RegisterEventHandler("ShowDye", 						"ShowCostumeWindow", self)
-	Apollo.RegisterEventHandler("HideDye", 						"OnClose", self)
-	Apollo.RegisterEventHandler("DyeLearned",					"OnDyeLearned", self)
-	Apollo.RegisterEventHandler("AppearanceChanged",			"OnAppearanceChanged", self)
-	Apollo.RegisterEventHandler("UpdateInventory",				"Reset", self)
-	
-	self.wndMain 		= Apollo.LoadForm(self.xmlDoc, "CharacterWindow", nil, self)
-	self.wndMain:Show(false, true)
+	self.wndContainer = Apollo.LoadForm(self.xmlDoc, "StylistFrame", nil, self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CharacterWindow", self.wndContainer:FindChild("CostumeFrame"), self)
+	self.wndContainer:Show(false, true)
+	self.wndContainer:FindChild("BGArt_OverallFrame:Framing:CostumeBtn"):SetCheck(true)
 	
 	self.wndDyeList			= self.wndMain:FindChild("Right:DyeListContainer:DyeList")
 	self.wndCostume			= self.wndMain:FindChild("Middle:Costume")
@@ -103,7 +107,7 @@ function Costumes:OnDocumentReady()
 		self.tCostumeSlots[tInfo.eSlotId] = wndCostumeEntry
 	end
 	
-		-- hide the costumes list.
+	-- hide the costumes list.
 	self.wndCostumeSelectionList = self.wndMain:FindChild("Middle:CostumeBtnHolder")
 	self.wndCostumeSelectionList:Show(false)
 	self.wndMain:FindChild("SelectCostumeWindowToggle"):AttachWindow(self.wndCostumeSelectionList)
@@ -111,14 +115,12 @@ function Costumes:OnDocumentReady()
 	self.wndMain:FindChild("CostumeListContainer"):ArrangeChildrenVert(0)
 	
 	self.timerDyeDelayedApply = ApolloTimer.Create(0.1, false, "OnDyeDelayedApplyTimer", self)
+	self.wndContainer:FindChild("CostumeFrame"):Show(true)
+	
 end
 
 function Costumes:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Costumes_Title")})
-end
-
-function Costumes:OnSlashCommand()
-	self:ShowCostumeWindow()
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndContainer, strName = Apollo.GetString("Costumes_Title"), nSaveVersion=2})
 end
 
 function Costumes:OnClose(wndHandler, wndControl)
@@ -126,15 +128,21 @@ function Costumes:OnClose(wndHandler, wndControl)
 		return
 	end
 	
-	local monCost = self:HelperPreviewItems()
-	if monCost > 0 and not self.wndMain:FindChild("ExitConfirm"):IsShown() then
-		self.wndMain:FindChild("ExitConfirm"):Show(true)
-		self.wndMain:Show(true)
+	if self.wndContainer:FindChild("CustomizationFrame"):IsShown() then
+		Event_FireGenericEvent("GenericEvent_CloseCustomization")
+		return
 	else
-		self:HideCostumeWindow()
-		Event_CancelDyeWindow()
-		self.wndMain:FindChild("ExitConfirm"):Show(false)
+		local monCost = self:HelperPreviewItems()
+		if monCost > 0 and not self.wndMain:FindChild("ExitConfirm"):IsShown() then
+			self.wndMain:FindChild("ExitConfirm"):Show(true)
+			self.wndMain:Show(true)
+		else
+			self:HideCostumeWindow()
+			Event_CancelDyeWindow()
+			self.wndMain:FindChild("ExitConfirm"):Show(false)
+		end
 	end
+	Event_FireGenericEvent("Customize_RestoreHelm")
 end
 
 function Costumes:OnConfirmClose(wndHandler, wndControl)
@@ -215,8 +223,8 @@ function Costumes:OnDyeChecked(wndControl, bCheckAll)
 	local bShowBlocker1 = self:OnDyeCheckedHelper(wndControl, 1, bCheckAll)
 	local bShowBlocker2 = self:OnDyeCheckedHelper(wndControl, 2, bCheckAll)
 	local bShowBlocker3 = self:OnDyeCheckedHelper(wndControl, 3, bCheckAll)
-	
-	self.wndMain:FindChild("Right:RightBlocker"):Show(bShowBlocker1 and bShowBlocker2 and bShowBlocker3 or not GameLib.CanDye())
+	local bShow = bShowBlocker1 and bShowBlocker2 and bShowBlocker3 or not GameLib.CanDye()
+	self.wndMain:FindChild("Right:RightBlocker"):Show(bShow, bShow)
 end
 
 function Costumes:OnDyeCheckedHelper(wndControl, nDyeChannel, bCheckAll)
@@ -256,9 +264,10 @@ function Costumes:OnDyeBtnClicked(wndHandler, wndControl)
 			GameLib.DyeItems(tItemGroupDye[4], tItemGroupDye[1], tItemGroupDye[2], tItemGroupDye[3])
 		end
 	end
-
+	--local knRandomEmote = {1626, 1621, 1618, 1631, 1632}
+	--self.wndCostume:SetModelSequence(knRandomEmote[math.ceil(math.random(#knRandomEmote))])
+	self.wndMain:FindChild("Middle:PurchaseConfirmFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
 	self:Reset()
-	self:OnClose()
 end
 
 function Costumes:OnResetBtnClicked(wndHandler, wndControl)
@@ -550,20 +559,29 @@ function Costumes:UpdateCostumeSlotIcons()
 end
 
 function Costumes:HideCostumeWindow()
-	self.wndMain:Close()
+	self.wndContainer:Close()
 end
 
 function Costumes:ShowCostumeWindow()
-	self.wndMain:Invoke()
+	self.wndContainer:Invoke()
+	-- note: will only happen once
+	Event_FireGenericEvent("GenericEvent_InitializeCustomization", self.wndContainer:FindChild("CustomizationFrame"))
 	
 	local unitPlayer = GameLib.GetPlayerUnit()
 	self.nCostumeCount = GameLib.GetCostumeCount()
 	
-	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("CostumeBtnHolder"):GetAnchorOffsets()
-	self.wndMain:FindChild("CostumeBtnHolder"):SetAnchorOffsets(nLeft, nBottom - (75 + 28 * self.nCostumeCount), nRight, nBottom)
+	local wndCostumeBtn = self.wndMain:FindChild("CostumeBtnHolder")
+	local nLeft, nTop, nRight, nBottom = wndCostumeBtn:GetAnchorOffsets()
+	wndCostumeBtn:SetAnchorOffsets(nLeft, nBottom - (75 + 28 * self.nCostumeCount), nRight, nBottom)
 	
 	self.wndCostume:SetCostume(unitPlayer)
 	self.wndCostume:SetSheathed(self.wndMain:FindChild("SetSheatheBtn"):IsChecked())
+	
+	local wndTabContainer = self.wndContainer:FindChild("BGArt_OverallFrame:Framing")
+	wndTabContainer:SetRadioSelButton("Radio_Warddrobe", wndTabContainer:FindChild("CostumeBtn"))
+	self.wndContainer:FindChild("CostumeFrame"):Invoke()
+	self.wndMain:Invoke()
+	self.wndContainer:FindChild("CustomizationFrame"):Show(false)
 	
 	self:Reset()
 end
@@ -724,8 +742,18 @@ function Costumes:OnDyeDelayedApplyTimer()
 				self.wndCostume:SetItemDye(tItemGroupDye[4], tItemGroupDye[1], tItemGroupDye[2], tItemGroupDye[3])
 			end
 		end
-
 	end
+end
+
+function Costumes:OnCostumeTab()
+	self.wndContainer:FindChild("CostumeFrame"):Show(true)
+	self.wndContainer:FindChild("CustomizationFrame"):Show(false)
+end
+
+function Costumes:OnCustomizationTab(wndHandler, wndControl)
+	self.wndContainer:FindChild("CostumeFrame"):Show(false)
+	self.wndContainer:FindChild("CustomizationFrame"):Show(true)
+	Event_FireGenericEvent("Customize_ShowTab")
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -734,3 +762,66 @@ end
 
 local CostumesInstance = Costumes:new()
 CostumesInstance:Init()
+geAccountWhisper", strDisplayName, strTarget, strRealmName)
+		end
+	elseif eButtonType == "BtnInvite" then
+		if tCharacterData.tAccountFriend ~= nil	and tCharacterData.tAccountFriend.arCharacters ~= nil and tCharacterData.tAccountFriend.arCharacters[1] ~= nil then
+			local strDisplayName = tCharacterData.tAccountFriend.arCharacters[1].strCharacterName or ""
+			local strRealmName = tCharacterData.tAccountFriend.arCharacters[1].strRealm or ""
+			GroupLib.Invite(strDisplayName, strRealmName)
+		else
+			GroupLib.Invite(strTarget)
+		end
+	elseif eButtonType == "BtnSetFocus" and unitTarget then
+		unitPlayer:SetAlternateTarget(unitTarget)
+	elseif eButtonType == "BtnClearFocus" then
+		unitPlayer:SetAlternateTarget(nil)
+	elseif eButtonType == "BtnInspect" and unitTarget then
+		unitTarget:Inspect()
+	elseif eButtonType == "BtnAssist" and unitTarget then
+		GameLib.SetTargetUnit(unitTarget:GetTarget())
+	elseif eButtonType == "BtnDuel" and unitTarget then
+		GameLib.InitiateDuel(unitTarget)
+	elseif eButtonType == "BtnForfeit" and unitTarget then
+		GameLib.ForfeitDuel(unitTarget)
+	elseif eButtonType == "BtnLeaveGroup" then
+		GroupLib.LeaveGroup()
+	elseif eButtonType == "BtnKick" then
+		GroupLib.Kick(nGroupMemberId)
+	elseif eButtonType == "BtnPromote" then
+		GroupLib.Promote(nGroupMemberId, "")
+	elseif eButtonType == "BtnGroupGiveMark" then
+		GroupLib.SetCanMark(nGroupMemberId, true)
+	elseif eButtonType == "BtnGroupTakeMark" then
+		GroupLib.SetCanMark(nGroupMemberId, false)
+	elseif eButtonType == "BtnGroupGiveKick" then
+		GroupLib.SetKickPermission(nGroupMemberId, true)
+	elseif eButtonType == "BtnGroupTakeKick" then
+		GroupLib.SetKickPermission(nGroupMemberId, false)
+	elseif eButtonType == "BtnGroupGiveInvite" then
+		GroupLib.SetInvitePermission(nGroupMemberId, true)
+	elseif eButtonType == "BtnGroupTakeInvite" then
+		GroupLib.SetInvitePermission(nGroupMemberId, false)
+	elseif eButtonType == "BtnLocate" and unitTarget then
+		unitTarget:ShowHintArrow()
+	elseif eButtonType == "BtnAddRival" then
+		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Rival, strTarget)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToRivals"), strTarget))
+	elseif eButtonType == "BtnIgnore" then
+		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, strTarget)
+	elseif eButtonType == "BtnAddFriend" then
+		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Friend, strTarget)
+	elseif eButtonType == "BtnUnrival" then
+		FriendshipLib.Remove(tCharacterData.tFriend.nId, FriendshipLib.CharacterFriendshipType_Rival)
+	elseif eButtonType == "BtnPromoteInGuild" then
+		self.guildCurr:Promote(self.strTarget) -- TODO: More error checking	
+	elseif eButtonType == "BtnDemoteInGuild" then
+		self.guildCurr:Demote(self.strTarget)
+	elseif eButtonType == "BtnKickFromGuild" then
+		self.guildCurr:Kick(self.strTarget)
+	elseif eButtonType == "BtnUnfriend" then
+		FriendshipLib.Remove(tCharacterData.tFriend.nId, FriendshipLib.CharacterFriendshipType_Friend)
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_RemovedFromFriends"), strTarget))
+	elseif eButtonType == "BtnUnignore" then
+		FriendshipLib.Remove(tCharacterData.tFriend.nId, FriendshipLib.CharacterFriendshipType_Ignore)
+		Event_FireGenericEv

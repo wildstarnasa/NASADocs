@@ -58,3 +58,43 @@
         <Event Name="WindowShow" Function="OnListShow"/>
     </Form>
 </Forms>
+xit(wndHandler, wndControl) -- Also self.wndMain MouseExit and ButtonList MouseExit
+	wndHandler:SetBGColor("9dffffff")
+end
+
+function InterfaceMenuList:OnOpenFullListCheck(wndHandler, wndControl)
+	self.wndList:FindChild("SearchEditBox"):SetFocus()
+	self:FullListRedraw()
+end
+
+function InterfaceMenuList:LoadByName(strForm, wndParent, strCustomName)
+	local wndNew = wndParent:FindChild(strCustomName)
+	if not wndNew then
+		wndNew = Apollo.LoadForm(self.xmlDoc , strForm, wndParent, self)
+		wndNew:SetName(strCustomName)
+	end
+	return wndNew
+end
+
+function InterfaceMenuList:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+	local arTutorialAnchorMapping =
+	{
+		--[GameLib.CodeEnumTutorialAnchor.Abilities] 			= "LASBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Character] 		= "CharacterBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Mail] 				= "MailBtn",
+		--[GameLib.CodeEnumTutorialAnchor.GalacticArchive] = "LoreBtn",
+		--[GameLib.CodeEnumTutorialAnchor.Social] 			= "SocialBtn",
+		--[GameLib.CodeEnumTutorialAnchor.GroupFinder] 		= "GroupFinderBtn",
+	}
+
+	local strWindowName = "ButtonList" or false
+	if not strWindowName then
+		return
+	end
+
+	local tRect = {}
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:FindChild(strWindowName):GetRect()
+	tRect.r = tRect.r - 26
+	
+	if arTutorialAnchorMapping[eAnchor] then
+		Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupT

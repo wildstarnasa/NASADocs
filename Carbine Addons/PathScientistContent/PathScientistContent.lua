@@ -136,6 +136,7 @@ function PathScientistContent:OnLoadFromDatachron()
 	end
 	
 	self:UpdateUITimer()
+	self:OnSummonBotMouseEnter()
 end
 
 function PathScientistContent:ClearMissionList()
@@ -272,7 +273,7 @@ function PathScientistContent:OnPlayerPathScientistScanBotCooldown(fTime) -- iTi
 	self.wndTopLevel:FindChild("BotCooldownBar"):SetData(0)
 	self.wndTopLevel:FindChild("BotCooldownBar"):SetProgress(0)
 	self.wndTopLevel:FindChild("SciProfileSummonBtn"):Enable(false)
-	self.wndTopLevel:FindChild("SciProfileSummonBtn"):SetText(Apollo.GetString("ScientistMission_Summon"))
+	self.wndTopLevel:FindChild("Action"):SetText(Apollo.GetString("ScientistMission_Summon"))
 end
 
 function PathScientistContent:OnIncrementScanBotCoolDown()
@@ -557,9 +558,9 @@ end
 
 function PathScientistContent:OnSummonBotMouseEnter(wndHandler, wndControl)
 	if PlayerPathLib.ScientistHasScanBot() then
-		wndHandler:SetText(Apollo.GetString("ScientistMission_Dismiss"))
+		self.wndTopLevel:FindChild("Action"):SetText(Apollo.GetString("ScientistMission_Dismiss"))
 	else
-		wndHandler:SetText(Apollo.GetString("ScientistMission_Summon"))
+		self.wndTopLevel:FindChild("Action"):SetText(Apollo.GetString("ScientistMission_Summon"))
 	end
 end
 
@@ -576,7 +577,7 @@ function PathScientistContent:OnSummonBotBtn(wndHandler, wndControl)
 		self.wndTopLevel:FindChild("DatachronScientistBottom"):Show(true)
 		self:UpdateUITimer()
 	end
-	wndHandler:SetText(Apollo.GetString("ScientistMission_Dismiss"))
+	self.wndTopLevel:FindChild("Action"):SetText(Apollo.GetString("ScientistMission_Dismiss"))
 	
 	self.wndTopLevel:FindChild("SciScanBtn"):Enable(not bHasBot)
 	self.wndTopLevel:FindChild("SciLocateBtn"):Enable(not bHasBot)
@@ -728,3 +729,42 @@ end
 
 local PathScientistContentInst = PathScientistContent:new()
 PathScientistContentInst:Init()
+F" or "FFFFFFFF")
+	self.wndInterface:FindChild("FocusUnitFrame"):FindChild("RotateR"):SetBGColor(g_InterfaceOptions.Carbine.bFocusFrameFlipped and "66FFFFFF" or "FFFFFFFF")
+end
+
+
+function OptionsInterface:OnToggleTutorials(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bShowTutorials = wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_ShowTutorials")
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_TutorialsToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
+end
+
+function OptionsInterface:OnToggleQuestTrackerByDistance(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bQuestTrackerByDistance = wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_DistanceSortingToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
+end
+
+function OptionsInterface:OnToggleQuestTrackerAlignTop(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom = not wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
+end
+
+function OptionsInterface:OnToggleQuestTrackerAlignBottom(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom = wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
+end
+
+function OptionsInterface:OnToggleInteractTextOnUnit(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bInteractTextOnUnit = wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_HUDInteract")
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", Apollo.GetString("HUDAlert_InteractTextVisibilityChanged"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False"))
+end
+
+function OptionsInterface:OnToggleInteractQuestZoneFilter(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bQuestZoneFilter = wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_QuestZoneFilter")
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_QuestZoneFilterToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
+end
+

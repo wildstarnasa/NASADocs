@@ -544,3 +544,40 @@ end
 
 local MarketplaceListingsInst = MarketplaceListings:new()
 MarketplaceListingsInst:Init()
+tplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResult)
+	if self.tWindowMap["WaitingScreen"] then
+		local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
+		self.tWindowMap["WaitingScreen"]:Show(false)
+		self.tWindowMap["PostResultNotification"]:Show(true)
+		self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
+		self.tWindowMap["PostResultNotificationLabel"]:SetTextColor(bSuccess and ApolloColor.new("UI_TextHoloTitle") or ApolloColor.new("xkcdLightOrange"))
+
+		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString((ktResultErrorCodeStrings[eResult] or MarketplaceCredd_Error_GenericFail)))
+	end
+
+	Apollo.StartTimer("HidePostResultNotification")
+	self:RefreshBoundCredd()
+end
+
+function MarketplaceCREDD:OnHidePostResultNotification() -- Both Timer and Mouse Click
+	if self.tWindowMap["PostResultNotification"] then
+		self.tWindowMap["PostResultNotification"]:Show(false)
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Log
+-----------------------------------------------------------------------------------------------
+
+function MarketplaceCREDD:OnCREDDOperationHistoryResults(tHistory)
+	if not self.tWindowMap["LogScroll"] or not self.tWindowMap["LogScroll"]:IsValid() or not self.tWindowMap["LogScroll"]:IsVisible() then
+		return
+	end
+
+	-- Sort table
+	table.sort(tHistory, function(a,b) return a.nLogAge < b.nLogAge end)
+
+	self.tWindowMap["LogScroll"]:DestroyChildren()
+	for idx, tEntry in pairs(tHistory) do
+		local wndEntry = Apollo.LoadForm(self.xmlDoc, "LogEntryBasicForm", self.tWindowMap["LogScroll"], self)
+		wndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntr

@@ -160,3 +160,13 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="15" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="-15" BAnchorPoint="1" BAnchorOffset="-62" BGColor="ffffffff" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="RaidFrame_LeaveRaidLabel" DT_CENTER="1" DT_VCENTER="0" DT_WORDBREAK="1" Line="0"/>
     </Form>
 </Forms>
+-- RaidCustomizeSpeedSub
+	self.nUpdateSpeed = self.nUpdateSpeed - 1
+	if self.nUpdateSpeed <= 1 then
+		self.nUpdateSpeed = 1
+		wndHandler:Enable(false)
+	end
+	self.wndRaidCustomizeRowSizeAdd:Enable(true)
+	self.wndRaidCustomizeRowSizeValue:SetText(self.nUpdateSpeed)
+
+	self:HelperUpdateRaidUpda

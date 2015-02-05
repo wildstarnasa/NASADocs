@@ -1,6 +1,6 @@
 -- Client lua script
 require "Window"
-
+require "FriendshipLib"
 ---------------------------------------------------------------------------------------------------
 -- PlayerTicketDialog module definition
 ---------------------------------------------------------------------------------------------------
@@ -15,7 +15,8 @@ local kstrCellSelected = "CRB_Basekit:kitBtn_HoloPressed"
 local kstrCellSelectedFocus = "CRB_Basekit:kitBtn_HoloPressedFlyby"
 
 local kstrEnterTicket = Apollo.GetString("PlayerTicket_ChooseCategory")
-
+local kstrEnterTicketSubject = Apollo.GetString("CRB_Subject_1")
+local kstrEnterTicketBody = Apollo.GetString("CRB_Body")
 ---------------------------------------------------------------------------------------------------
 -- PlayerTicketDialog initialization
 ---------------------------------------------------------------------------------------------------
@@ -62,6 +63,7 @@ function PlayerTicketDialog:OnDocumentReady()
 	{
 		["Main"] = wndMain,
 		["PlayerTicketTextEntry"] = wndMain:FindChild("PlayerTicketTextEntry"),
+		["PlayerTicketTextEntrySubject"] = wndMain:FindChild("PlayerTicketTextEntrySubject"),
 		["Category"] = wndMain:FindChild("Category"),
 		["SubCategory"] = wndMain:FindChild("SubCategory"),
 		["OkBtn"] = wndMain:FindChild("OkBtn"),
@@ -89,7 +91,9 @@ function PlayerTicketDialog:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.tWindowMap["Main"], strName = Apollo.GetString("InterfaceMenu_SubmitTicket")})
 end
 
-function PlayerTicketDialog:OnGenericEvent_OpenReportPlayerTicket(strMessage)
+function PlayerTicketDialog:OnGenericEvent_OpenReportPlayerTicket(strMessage, bAddIgnore, strTarget)
+	self.bAddIgnore = bAddIgnore
+	self.strTarget = strTarget
 	self:PopulateTypePicker()
 	self.tWindowMap["Category"]:SetCurrentRow(2)
 	self.tWindowMap["PlayerTicketTextEntry"]:SetText(strMessage or "")
@@ -109,9 +113,11 @@ function PlayerTicketDialog:PopulateTypePicker()
 	self.tWindowMap["Category"]:DeleteAll()
 	self.tWindowMap["SubCategory"]:DeleteAll()
 	self.tWindowMap["PlayerTicketTextEntry"]:SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.PlayerTicketText))
-	self.tWindowMap["PlayerTicketTextEntry"]:SetText(kstrEnterTicket)
-	self.tWindowMap["PlayerTicketTextEntry"]:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+	self.tWindowMap["PlayerTicketTextEntry"]:SetPrompt(kstrEnterTicket)
 	self.tWindowMap["PlayerTicketTextEntry"]:Enable(false)
+	self.tWindowMap["PlayerTicketTextEntrySubject"]:SetPrompt(kstrEnterTicket)
+	--self.tWindowMap["PlayerTicketTextEntrySubject"]:SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.PlayerTicketTextSubject))
+	self.tWindowMap["PlayerTicketTextEntrySubject"]:Enable(false)
 	self.tWindowMap["OkBtn"]:Enable(false)
 	self.tWindowMap["SubCatBlocker"]:Show(true)
 
@@ -136,21 +142,25 @@ function PlayerTicketDialog:PopulateSubtypeCombo()
 	end
 
 	if nRows > 0 then
-		if self.tWindowMap["PlayerTicketTextEntry"]:GetText() == kstrEnterTicket then
-			self.tWindowMap["PlayerTicketTextEntry"]:SetText("")
-		end
-
+		self.tWindowMap["PlayerTicketTextEntry"]:SetPrompt(kstrEnterTicketBody)
 		self.tWindowMap["SubCategory"]:SetCurrentRow(1)
 		self.tWindowMap["PlayerTicketTextEntry"]:SetTextColor(ApolloColor.new("UI_TextHoloBody"))
 		self.tWindowMap["PlayerTicketTextEntry"]:Enable(true)
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:SetPrompt(kstrEnterTicketSubject)
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:SetTextColor(ApolloColor.new("UI_TextHoloBody"))
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:Enable(true)
 		self.tWindowMap["SubCatBlocker"]:Show(false)
-		self.tWindowMap["OkBtn"]:Enable(self.tWindowMap["PlayerTicketTextEntry"]:GetText() ~= nil and self.tWindowMap["PlayerTicketTextEntry"]:GetText() ~= "")
-		self.tWindowMap["PlayerTicketTextEntry"]:SetFocus()
-		self.tWindowMap["PlayerTicketTextEntry"]:SetSel(0, -1)
+		self.tWindowMap["OkBtn"]:Enable(self.tWindowMap["PlayerTicketTextEntry"]:GetText() ~= nil
+										and self.tWindowMap["PlayerTicketTextEntry"]:GetText() ~= ""
+										and self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText() ~= nil
+										and self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText() ~= "")
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:SetFocus()
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:SetSel(0, -1)
 	else
-		self.tWindowMap["PlayerTicketTextEntry"]:SetText(kstrEnterTicket)
-		self.tWindowMap["PlayerTicketTextEntry"]:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
+		self.tWindowMap["PlayerTicketTextEntry"]:SetPrompt(kstrEnterTicket)
 		self.tWindowMap["PlayerTicketTextEntry"]:Enable(false)
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:SetPrompt(kstrEnterTicket)
+		self.tWindowMap["PlayerTicketTextEntrySubject"]:Enable(false)
 		self.tWindowMap["OkBtn"]:Enable(false)
 		self.tWindowMap["SubCatBlocker"]:Show(true)
 	end
@@ -169,8 +179,8 @@ function PlayerTicketDialog:PopulateSubtypeCombo()
 end
 
 function PlayerTicketDialog:OnSubcategoryChanged()
-	self.tWindowMap["PlayerTicketTextEntry"]:SetFocus()
-	self.tWindowMap["PlayerTicketTextEntry"]:SetSel(0, -1)
+	self.tWindowMap["PlayerTicketTextEntrySubject"]:SetFocus()
+	self.tWindowMap["PlayerTicketTextEntrySubject"]:SetSel(0, -1)
 
 	self:UpdateSubmitButton()
 end
@@ -179,11 +189,12 @@ function PlayerTicketDialog:UpdateSubmitButton()
 	local nCategory = self.tWindowMap["Category"]:GetCellData(self.tWindowMap["Category"]:GetCurrentRow(), 1)
 	local nSubCategory = self.tWindowMap["SubCategory"]:GetCellData(self.tWindowMap["SubCategory"]:GetCurrentRow(), 1)
 	local strText = self.tWindowMap["PlayerTicketTextEntry"]:GetText()
+	local strTextSubject = self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText()
 
-	local bEnable = nCategory ~= nil and nSubCategory ~= nil and strText ~= nil and strText ~= ""
+	local bEnable = nCategory ~= nil and nSubCategory ~= nil and strText ~= nil and strText ~= "" and strTextSubject ~= nil and strTextSubject ~= ""
 	self.tWindowMap["OkBtn"]:Enable(bEnable)
 	if bEnable then
-		self.tWindowMap["OkBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.SubmitSupportTicket, nCategory, nSubCategory, strText)
+		self.tWindowMap["OkBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.SubmitSupportTicket, nCategory, nSubCategory, strTextSubject, strText)
 	end
 
 	if self.bIsBug ~= not self.tWindowMap["OkBtn"]:IsShown() then
@@ -197,6 +208,13 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function PlayerTicketDialog:OnSupportTicketSubmitted(wndHandler, wndControl, eMouseButton)
+	if self.bAddIgnore and self.strTarget then
+		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, self.strTarget) 
+		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToIgnore"), self.strTarget))
+		self.bAddIgnore = nil
+		self.strTarget = nil
+	end
+	
 	self:UpdateSubmitButton()
 	self.tWindowMap["Main"]:Close()
 end
@@ -205,7 +223,8 @@ end
 function PlayerTicketDialog:OnConvertToBugBtn(wndHandler, wndControl, eMouseButton)
 	if self.bIsBug then
 		local strText = self.tWindowMap["PlayerTicketTextEntry"]:GetText()
-		Event_FireGenericEvent("TicketToBugDialog", strText)
+		local strText = self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText()
+		Event_FireGenericEvent("TicketToBugDialog", strText, strTextSubject)
 		self.bIsBug = false
 	end
 
@@ -231,3 +250,32 @@ end
 ---------------------------------------------------------------------------------------------------
 local PlayerTicketDialogInst = PlayerTicketDialog:new()
 PlayerTicketDialogInst:Init()
+0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_NameplateSprites:sprNp_HealthBarNeutral" Name="WhackAMoleProgress" BGColor="white" TextColor="white" IgnoreMouse="1" TooltipColor="" Tooltip="" TextX="0" TextWidth="0" TextY="0" TextHeight="0"/>
+    </Form>
+</Forms>
+.tNü ýæý H©H 	self:OnPathUpdate()
+end
+
+---------------------------------------------------------------------------------------------------
+-- Helpers
+---------------------------------------------------------------------------------------------------
+
+function PathSettlerMain:HelperMissionHasPriority(pmMission)
+	if not pmMission or not pmMission:GetDistance() then 
+		return 
+	end
+
+	--TODO: Possibly other mission types might also have priority
+	local eType = pmMission:GetType()
+	if eType == PathMission.PathMissionType_Settler_Scout then
+		return pmMission:GetSettlerScoutInfo() and pmMission:GetSettlerScoutInfo().fRatio > 0.1
+	end
+
+	return false
+end
+
+function PathSettlerMain:HelperComputeProgressText(eType, pmMission, nCompleted, nTotal)
+	local strResult = ""
+	if pmMission:IsComplete() then
+		strResult = Apollo.GetString("CRB_Complete")
+	elseif eType 

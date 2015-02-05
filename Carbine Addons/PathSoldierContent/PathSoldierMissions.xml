@@ -76,3 +76,61 @@
         <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="0" BAnchorOffset="20" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_NameplateSprites:sprNp_HealthBarNeutral" Name="WhackAMoleProgress" BGColor="white" TextColor="white" IgnoreMouse="1" TooltipColor="" Tooltip="" TextX="0" TextWidth="0" TextY="0" TextHeight="0"/>
     </Form>
 </Forms>
+ath] 			= "CRB_Your_defenses_werent_enough_this_tim",
+			[PathMission.PlayerPathSoldierResult_FailTimeOut] 			= "CRB_Time_has_expired_Remember_haste_make",
+			[PathMission.PlayerPathSoldierResult_FailLeaveArea] 		= "CRB_The_Holdouts_initiator_fled_in_terro",
+			[PathMission.PlayerPathSoldierResult_FailDefenceDeath] 		= "CRB_Your_defenses_werent_enough_this_tim",
+			[PathMission.PlayerPathSoldierResult_FailLostResources] 	= "CRB_Your_defenses_werent_enough_this_tim",
+			[PathMission.PlayerPathSoldierResult_FailNoParticipants] 	= "CRB_The_Holdouts_initiator_fled_in_terro",
+			[PathMission.PlayerPathSoldierResult_FailParticipation]		= "CRB_Holdout_Failed",
+		}
+
+		strReason = Apollo.GetString(tFailReasonStrings[eReason])
+	end
+
+
+	self.wndMain:FindChild("SolResult"):FindChild("ReasonText"):SetText(strReason)
+
+	Apollo.CreateTimer("SoldierResultTimeout", 15.0, false)
+	Apollo.StartTimer("SoldierResultTimeout")
+end
+
+function PathSoldierMain:OnCloseResultScreen()
+	if self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:FindChild("SolResult"):Show(false)
+		self.wndMain:FindChild("MissionList"):DestroyChildren()
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- UI Events/Buttons
+-----------------------------------------------------------------------------------------------
+
+function PathSoldierMain:OnListItemMouseEnter(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemMouseExit(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemHintArrow(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	pmMission:ShowHintArrow()
+end
+
+
+function PathSoldierMain:OnListItemSubscreenBtn(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	if pmMission and pmMission:IsStarted() then
+		local seEvent = pmMission:GetSoldierHoldout()
+		if seEvent then
+			self.wndMain:Enable

@@ -69,6 +69,8 @@ function Crafting:OnDocumentReady()
 
 	self.wndTutorialPopup = self.wndMain:FindChild("TutorialPopup")
 	self.wndTutorialPopup:SetData(0)
+	
+	self.wndTutorialButton = self.wndMain:FindChild("ShowTutorialsBtn")
 
 	self.luaSchematic = nil --Link to CircuitBoardSchematic.lua
 
@@ -195,40 +197,42 @@ end
 function Crafting:OnCraftBtnClicked(wndHandler, wndControl) -- CraftButton, data is idSchematic
 	if self.luaSchematic then
 		local tCurrentCraft = CraftingLib.GetCurrentCraft()
-		local tSchematicInfo = CraftingLib.GetSchematicInfo(tCurrentCraft.nSchematicId)
-		local tMicrochips, tThresholds = self.luaSchematic:HelperGetUserSelection()
-		local tCraftInfo = CraftingLib.GetPreviewInfo(tSchematicInfo.nSchematicId, tMicrochips, tThresholds)
-
-		-- Order is important, must clear first
-		Event_FireGenericEvent("GenericEvent_ClearCraftSummary")
-
-		-- Build summary screen list
-		local strSummaryMsg = Apollo.GetString("CoordCrafting_LastCraftTooltip")
-		for idx, tData in pairs(tSchematicInfo.tMaterials) do
-			local itemCurr = tData.itemMaterial
-			local tPluralName =
-			{
-				["name"] = itemCurr:GetName(),
-				["count"] = tonumber(tData.nAmount)
-			}
-			strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CoordCrafting_SummaryCount"), tPluralName)
-		end
-		Event_FireGenericEvent("GenericEvent_CraftSummaryMsg", strSummaryMsg)
-
-		-- Craft
-		CraftingLib.CompleteCraft(tMicrochips, tThresholds)
-
-		-- Post Craft Effects
-		Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("PostCraftBlocker"):FindChild("CraftingSummaryContainer"), tCraftInfo.itemPreview)
-		self.wndMain:FindChild("PostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(true)
-		self.wndMain:FindChild("PostCraftBlocker"):Show(true)
-		self.timerBtn:Start()
-
-		-- TODO Quick hack to remove tutorial arrows
-		local wndTutorialArrow = self.wndMain:FindChild("SocketsLayer"):FindChild("Tutorial_SmallRightArrow") -- Unoptimized, can be anywhere
-		if wndTutorialArrow then
-			wndTutorialArrow:Destroy()
-		end
+		--if tCurrentCraft and tCurrentCraft.nSchematicId ~= 0 then
+			local tSchematicInfo = CraftingLib.GetSchematicInfo(tCurrentCraft.nSchematicId)
+			local tMicrochips, tThresholds = self.luaSchematic:HelperGetUserSelection()
+			local tCraftInfo = CraftingLib.GetPreviewInfo(tSchematicInfo.nSchematicId, tMicrochips, tThresholds)
+	
+			-- Order is important, must clear first
+			Event_FireGenericEvent("GenericEvent_ClearCraftSummary")
+	
+			-- Build summary screen list
+			local strSummaryMsg = Apollo.GetString("CoordCrafting_LastCraftTooltip")
+			for idx, tData in pairs(tSchematicInfo.tMaterials) do
+				local itemCurr = tData.itemMaterial
+				local tPluralName =
+				{
+					["name"] = itemCurr:GetName(),
+					["count"] = tonumber(tData.nAmount)
+				}
+				strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CoordCrafting_SummaryCount"), tPluralName)
+			end
+			Event_FireGenericEvent("GenericEvent_CraftSummaryMsg", strSummaryMsg)
+	
+			-- Craft
+			CraftingLib.CompleteCraft(tMicrochips, tThresholds)
+	
+			-- Post Craft Effects
+			Event_FireGenericEvent("GenericEvent_StartCraftCastBar", self.wndMain:FindChild("PostCraftBlocker"):FindChild("CraftingSummaryContainer"), tCraftInfo.itemPreview)
+			self.wndMain:FindChild("PostCraftBlocker"):FindChild("MouseBlockerBtn"):Show(true)
+			self.wndMain:FindChild("PostCraftBlocker"):Show(true)
+			self.timerBtn:Start()
+	
+			-- TODO Quick hack to remove tutorial arrows
+			local wndTutorialArrow = self.wndMain:FindChild("SocketsLayer"):FindChild("Tutorial_SmallRightArrow") -- Unoptimized, can be anywhere
+			if wndTutorialArrow then
+				wndTutorialArrow:Destroy()
+			end
+		--end
 	end
 end
 
@@ -267,6 +271,7 @@ function Crafting:ExitAndReset() -- Botch Craft calls this directly
 
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:FindChild("PostCraftBlocker"):Show(false)
+		self.wndTutorialButton:SetCheck(false)
 		self.wndMain:Close() -- Leads to OnCloseBtn
 	end
 
@@ -318,3 +323,84 @@ end
 
 local CraftingInst = Crafting:new()
 CraftingInst:Init()
+l:GetParent():FindChild("DyeColor3Container:DyeSwatchArtHack:DyeSwatch"):SetSprite("")
+			
+			local bShowBlocker1 = self:OnDyeCheckedHelper(wndControl:GetParent():FindChild("DyeColor1Container:DyeColor1"), 1, bCheckAll)
+			local bShowBlocker2 = self:OnDyeCheckedHelper(wndControl:GetParent():FindChild("DyeColor2Container:DyeColor2"), 2, bCheckAll)
+			local bShowBlocker3 = self:OnDyeCheckedHelper(wndControl:GetParent():FindChild("DyeColor3Container:DyeColor3"), 3, bCheckAll)
+			
+			self.wndMain:FindChild("Right:RightBlocker"):Show(bShowBlocker1 and bShowBlocker2 and bShowBlocker3 or not GameLib.CanDye())
+		else
+			
+		end
+	end
+end
+
+function Costumes:OnRemoveSlotBtn(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return false
+	end
+
+	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), -1)
+	self:UpdateCostumeSlotIcons()
+	self:HelperPreviewItems()
+end
+
+function Costumes:OnRotateRight()
+	self.wndCostume:ToggleLeftSpin(true)
+end
+
+function Costumes:OnRotateRightCancel()
+	self.wndCostume:ToggleLeftSpin(false)
+end
+
+function Costumes:OnRotateLeft()
+	self.wndCostume:ToggleRightSpin(true)
+end
+
+function Costumes:OnRotateLeftCancel()
+	self.wndCostume:ToggleRightSpin(false)
+end
+
+function Costumes:UpdateCostumeSlotIcons()
+-- this is our update function; it's used to repopulate the slots on the costume window (when shown) and mark what slots on the character
+-- window are effected by a costume piece (when shown)
+
+	self.nCostumeCount = GameLib.GetCostumeCount()
+	self.nCurrentCostume = GameLib.GetCostumeIndex()
+	
+	local unitPlayer = GameLib.GetPlayerUnit()
+	local wndCostumeHolder = self.wndMain:FindChild("Middle:CostumeBtnHolder")
+	local wndHeaderFrame = self.wndMain:FindChild("Middle:BGArt_HeaderFrame")
+
+	-- update all btns so the UI's move in sync; happens AFTER the costume is set.
+	for idx = 1, knNumCostumes do -- update the costume window to match
+		local wndCostumeBtn = wndCostumeHolder:FindChild("CostumeBtn" .. idx)
+		wndCostumeBtn:SetCheck(false)
+		wndCostumeBtn:SetText(String_GetWeaselString(Apollo.GetString("Character_CostumeNum"), idx)) -- TODO: this will be a real name at some point
+		wndCostumeBtn:Show(idx <= self.nCostumeCount)
+	end
+	
+	
+	self.tEquippedItems = {}
+	local tEquippedItems = unitPlayer and unitPlayer:GetEquippedItems() or {}
+	local tSlotNames = {}
+	
+	for nIdx, tInfo in ipairs(karCostumeSlots) do
+		tSlotNames[tInfo.eSlotId] = tInfo.strSlot
+		
+		local tCostumeItem = nil
+		
+		for nIdx2, tItemInfo in ipairs(tEquippedItems) do
+			if tItemInfo:GetSlotName() == tInfo.strSlot then
+				tCostumeItem = tItemInfo
+				self.tEquippedItems[tInfo.eSlotId] = tItemInfo
+				break
+			end
+		end
+		
+		if tCostumeItem ~= nil then
+			local tDyeChannels = tCostumeItem:GetAvailableDyeChannel()
+			
+			if self.arDyeButtons[1][tInfo.eSlotId] ~= nil then
+				self.arDyeButtons[1][tInfo.eSlotId]:SetData({1, tCostumeItem, self.wndSpacer:FindChild("DyeC

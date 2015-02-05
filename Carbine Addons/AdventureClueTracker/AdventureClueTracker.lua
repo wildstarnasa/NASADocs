@@ -115,3 +115,7 @@ end
 -----------------------------------------------------------------------------------------------
 local ClueTrackerInst = ClueTracker:new()
 ClueTrackerInst:Init()
+olor="white" NewControlDepth="2" WindowSoundTemplate="HoloButtonSmall" Text="" TextId="" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TestAlpha="1">
+                <Event Name="ButtonSignal" Function="OnCancel"/>
+            </Control>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffs

@@ -18,12 +18,12 @@ local knCategorySupportUtilityId 	= 6
 
 local karCategoryToConstantData =
 {
-	[knCategoryUtilityId] 			= {"LightBulbS",	"spr_AMPS_MiddleGlow_S", 	Apollo.GetString("AMP_Utility"),	"LabelUtility",		"UtilityLabel" },
-	[knCategorySupportId]			= {"LightBulbNE",	"spr_AMPS_MiddleGlow_NE",	Apollo.GetString("AMP_Support"), 	"LabelSupport",		"SupportLabel" },
-	[knCategoryDamageId] 			= {"LightBulbNW",	"spr_AMPS_MiddleGlow_NW", 	Apollo.GetString("AMP_Assault"),	"LabelAssault",		"AssaultLabel" },
-	[knCategoryDamageSupportId] 	= {"LightBulbN",	"spr_AMPS_MiddleGlow_N", 	Apollo.GetString("AMP_Hybrid"),		"LabelHybrid",		"AssaultSupportLabel" },
-	[knCategoryDamageUtilitytId] 	= {"LightBulbSE",	"spr_AMPS_MiddleGlow_SW", 	Apollo.GetString("AMP_PvPOffense"),	"LabelPvPOffense",	"AssaultUtilityLabel" },
-	[knCategorySupportUtilityId] 	= {"LightBulbSW",	"spr_AMPS_MiddleGlow_SE", 	Apollo.GetString("AMP_PvPDefense"),	"LabelPvPDefense",	"UtilitySupportLabel" },
+	[knCategoryUtilityId] 			= {strLightBulbName = "LightBulbS",		strLightBulbSprite = "spr_AMPS_MiddleGlow_S", 	strName = Apollo.GetString("AMP_Utility"),		strLabelName = "LabelUtility",		strButtonLabel = "UtilityLabel" },
+	[knCategorySupportId]			= {strLightBulbName = "LightBulbNE",	strLightBulbSprite = "spr_AMPS_MiddleGlow_NE",	strName = Apollo.GetString("AMP_Support"), 		strLabelName = "LabelSupport",		strButtonLabel = "SupportLabel" },
+	[knCategoryDamageId] 			= {strLightBulbName = "LightBulbNW",	strLightBulbSprite = "spr_AMPS_MiddleGlow_NW", 	strName = Apollo.GetString("AMP_Assault"),		strLabelName = "LabelAssault",		strButtonLabel = "AssaultLabel" },
+	[knCategoryDamageSupportId] 	= {strLightBulbName = "LightBulbN",		strLightBulbSprite = "spr_AMPS_MiddleGlow_N", 	strName = Apollo.GetString("AMP_Hybrid"),		strLabelName = "LabelHybrid",		strButtonLabel = "AssaultSupportLabel" },
+	[knCategoryDamageUtilitytId] 	= {strLightBulbName = "LightBulbSE",	strLightBulbSprite = "spr_AMPS_MiddleGlow_SW", 	strName = Apollo.GetString("AMP_PvPOffense"),	strLabelName = "LabelPvPOffense",	strButtonLabel = "AssaultUtilityLabel" },
+	[knCategorySupportUtilityId] 	= {strLightBulbName = "LightBulbSW",	strLightBulbSprite = "spr_AMPS_MiddleGlow_SE", 	strName = Apollo.GetString("AMP_PvPDefense"),	strLabelName = "LabelPvPDefense",	strButtonLabel = "UtilitySupportLabel" },
 }
 
 local karCategoriesInClockwiseOrder =
@@ -189,10 +189,32 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		return
 	end
 
-	self.arUnlockedAugments = {}
+	self.tUnlockedAugments = {}
 	local tEldanAugmentationData = AbilityBook.GetEldanAugmentationData(AbilityBook.GetCurrentSpec())
 	if not tEldanAugmentationData then
 		return
+	end
+	
+	-- Create a map of dependencies and amps for easy access
+	self.tDependencyMap = {}
+	self.tAmpMap = {}
+	self.tCachedAmps = {}
+	for idx, tAmp in pairs(tEldanAugmentationData.tAugments) do
+		if tAmp.nEldanAugmentationIdRequired ~= 0 then
+			self.tDependencyMap[tAmp.nEldanAugmentationIdRequired] = tAmp
+		end
+		
+		if not self.tAmpMap[tAmp.nCategoryId] then
+			self.tAmpMap[tAmp.nCategoryId] = {}
+		end
+		
+		self.tAmpMap[tAmp.nCategoryId][tAmp.nId] = tAmp
+	end
+	
+	-- Categories in tEldanAugmentationData are indexed by the order they were added to the table, not by id.
+	self.tCategoryInfo = {}
+	for idx, tCategory in pairs(tEldanAugmentationData.tCategories) do
+		self.tCategoryInfo[tCategory.nId] = tCategory
 	end
 
 	local wndContainer = self.tWndRefs.wndMain:FindChild("ScrollContainer")
@@ -259,8 +281,6 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		local bIsAnInBetweenCategory = tCategory.nId == 4 or tCategory.nId == 5 or tCategory.nId == 6
 		if tCategory.nHighestTierUnlocked == 1 then
 			tTriangle.strSprite = "spr_AMPS_Triangle_Block2"
-		--elseif tCategory.nHighestTierUnlocked == 1 then
-			--tTriangle.strSprite = "spr_AMPS_Triangle_Block2"
 		elseif tCategory.nHighestTierUnlocked == 2 then
 			tTriangle.strSprite = "spr_AMPS_Triangle_Block1"
 		elseif tCategory.nHighestTierUnlocked == 3 then
@@ -273,14 +293,12 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 			tValidCategories[tCategory.nId] = true -- GOTCHA: Don't use an array as it'll auto shift
 		end
 
-		-- GOTCHA: This needs to be outside the loop since tEldanAugmentationData.tCategories[tUnlockData.nUnlockCategoryId].fPowerInCategory is no go
 		tCategoryPowers[tCategory.nId] = tCategory.fPowerInCategory
 
 		-- Light Bulb
-		local wndLightBulb = self.tWndRefs.wndMiddle:FindChild(karCategoryToConstantData[tCategory.nId][1])
-		wndLightBulb:SetSprite(tCategory.nHighestTierUnlocked > 1 and karCategoryToConstantData[tCategory.nId][2] or "")
+		local wndLightBulb = self.tWndRefs.wndMiddle:FindChild(karCategoryToConstantData[tCategory.nId].strLightBulbName)
+		wndLightBulb:SetSprite(tCategory.nHighestTierUnlocked > 1 and karCategoryToConstantData[tCategory.nId].strLightBulbSprite or "")
 		wndLightBulb:FindChild("LightBulbText"):SetText("")
-		--wndLightBulb:FindChild("LightBulbText"):SetText(nCurrPower == 0 and "" or nCurrPower) -- TODO RESTORE OR DELETE
 	end
 
 	-- Progress Sub Labels
@@ -294,7 +312,7 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		local nProgBarMax = 0
 		local nProgBarCurr = 0
 		for idx2, tUnlockData in pairs(tCategory.tUnlockedCategories or {}) do
-			local strReqCategoryName = karCategoryToConstantData[tUnlockData.nUnlockCategoryId][3] or Apollo.GetString("AMP_NextTier")
+			local strReqCategoryName = karCategoryToConstantData[tUnlockData.nUnlockCategoryId].strName or Apollo.GetString("AMP_NextTier")
 			local nReqCategoryPower = tCategoryPowers[tUnlockData.nUnlockCategoryId] -- GOTCHA: tCategory's fPowerInCategory won't be accurate for inbetweens
 
 			if tCategory.nHighestTierUnlocked == 1 and nReqCategoryPower < tUnlockData.nTier2Amount then
@@ -311,12 +329,20 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 
 		-- TODO: Refactor this code out
 		-- Parent Level
-		local wndLabel = wndFloatingLabels:FindChild(karCategoryToConstantData[tCategory.nId][4])
+		local wndLabel = wndFloatingLabels:FindChild(karCategoryToConstantData[tCategory.nId].strLabelName)
+		local bEnableRespec = tCategoryPowers[tCategory.nId] > 0
+		local monRespecCost = Money.new()
+
+		monRespecCost:SetAmount(AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Section, tCategory.nId))
 		wndLabel:FindChild("LabelProgBar"):SetMax(nProgBarMax)
 		wndLabel:FindChild("LabelProgBar"):SetProgress(nProgBarCurr)
 		wndLabel:SetTooltip(strSubLabel)
+		wndLabel:FindChild("CategoryRespecBtn"):Enable(bEnableRespec)
+		wndLabel:FindChild("CategoryRespecBtn"):SetData(tCategory.nId)
 
-		local wndButtonLabel = self.tWndRefs.wndMain:FindChild("Buttons"):FindChild(karCategoryToConstantData[tCategory.nId][5])
+		wndLabel:FindChild("CategoryRespecBtn"):SetTooltip(bEnableRespec and String_GetWeaselString(Apollo.GetString("AMP_ResetCategoryTooltip"), monRespecCost:GetMoneyString()) or "")
+
+		local wndButtonLabel = self.tWndRefs.wndMain:FindChild("Buttons"):FindChild(karCategoryToConstantData[tCategory.nId].strButtonLabel)
 		wndButtonLabel:FindChild("ButtonProgBar"):SetMax(nProgBarMax)
 		wndButtonLabel:FindChild("ButtonProgBar"):SetProgress(nProgBarCurr)
 		wndButtonLabel:SetTooltip(strSubLabel)
@@ -326,8 +352,13 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 	local nColumns = knColumnsPerCategory * nNumCategories
 	for idx = 1, #tEldanAugmentationData.tAugments do
 		local tAmp = tEldanAugmentationData.tAugments[idx]
+
 		if tAmp.eEldanAvailability == AbilityBook.CodeEnumEldanAvailability.Activated then
-			self.arUnlockedAugments[tAmp.nId] = tAmp.nId
+			if tAmp.bIsCached then
+				self.tCachedAmps[tAmp.nId] = tAmp
+			end
+			
+			self.tUnlockedAugments[tAmp.nId] = tAmp.nId
 		end
 
 		local wndAmpForm = Apollo.LoadForm(self.xmlDoc, "AmpForm", wndAmps, self)
@@ -408,19 +439,18 @@ function AbilityAMPs:RedrawSelections(tEldanAugmentationData)
 		local eEnum = tAmp.eEldanAvailability
 		local strSprite = ""
 
-		if eEnum == AbilityBook.CodeEnumEldanAvailability.Unavailable then -- 0
+		if self.tCachedAmps[tAmp.nId] then
+			strSprite = "kitBtn_Dropdown_HoloPressedFlyby"	
+		elseif eEnum == AbilityBook.CodeEnumEldanAvailability.Unavailable then -- 0
 			strSprite = knAugmentationUnavailableColor -- (tAmp.nItemIdUnlock and tAmp.nItemIdUnlock ~= 0) and knAugmentationInlaidLockColor
-
 		elseif eEnum == AbilityBook.CodeEnumEldanAvailability.Inaccessible then -- 1
 			strSprite = knAugmentationInaccessibleColor
-
 		elseif eEnum == AbilityBook.CodeEnumEldanAvailability.Activated then -- 2
 			strSprite = knAugmentationActivatedColor
-
-		else -- Inactivated, some sort of blue
-			if self.arUnlockedAugments[tAmp.nId] then
+		else -- Inactivated, some sort of blue		
+			if self.tUnlockedAugments[tAmp.nId] then
 				strSprite = knAugmentationActivatedColor
-			elseif not tAmp.nEldanAugmentationIdRequired or tAmp.nEldanAugmentationIdRequired == 0 or self.arUnlockedAugments[tAmp.nEldanAugmentationIdRequired] then
+			elseif not tAmp.nEldanAugmentationIdRequired or tAmp.nEldanAugmentationIdRequired == 0 or self.tUnlockedAugments[tAmp.nEldanAugmentationIdRequired] then
 				strSprite = knAugmentationInactivatedColor
 			else
 				strSprite = knAugmentationAlmostThereColor
@@ -436,14 +466,10 @@ function AbilityAMPs:RedrawSelections(tEldanAugmentationData)
 			wndAmp:FindChild("AmpFormButton"):ChangeArt("")
 		end
 		wndAmp:SetSprite(strSprite)
-
-		-- Hide if 0
-		--if nAvailablePower == 0 then
-		--	wndAmp:SetBGColor(ApolloColor.new("66ffffff"))
-		--end
 	end
 
 	-- Middle Text
+
 	local nTotalPower = AbilityBook.GetTotalPower()
 	local nAvailablePower = AbilityBook.GetAvailablePower()
 	local wndMiddleBG = self.tWndRefs.wndMain:FindChild("ScrollContainer:LightBulbLayer:MiddleBG")
@@ -510,55 +536,213 @@ function AbilityAMPs:OnAugmentationTooltip(wndHandler, wndControl, eToolTipType,
 		self.wndTooltip = nil
 	end
 
-	local strCategory = karCategoryToConstantData[tAugment.nCategoryId][3] or ""
+		local bAmpPurchased = tAugment.eEldanAvailability == AbilityBook.CodeEnumEldanAvailability.Activated
+
+	local strCategory = karCategoryToConstantData[tAugment.nCategoryId].strName or ""
 	self.wndTooltip = wndHandler:LoadTooltipForm("AbilityAMPs.xml", "TooltipForm", self)
 	self.wndTooltip:FindChild("NameLabelWindow"):SetText(tAugment.strTitle or "")
-	self.wndTooltip:FindChild("PowerCostLabelWindow"):SetText(String_GetWeaselString(Apollo.GetString("AMP_PowerCost"), tAugment.nPowerCost or ""))
-	self.wndTooltip:FindChild("TierLabelWindow"):SetText(String_GetWeaselString(Apollo.GetString("AMP_TierLabel"), strCategory, tAugment.nCategoryTier or ""))
-	self.wndTooltip:FindChild("DescriptionLabelWindow"):SetAML("<P TextColor=\"UI_TextHoloBody\" Font=\"CRB_InterfaceSmall\">"..tAugment.strDescription.."</P>")
+	
+	local wndPowerCostLabel = self.wndTooltip:FindChild("PowerCostLabelWindow")
+	local wndTierLabel = self.wndTooltip:FindChild("TierLabelWindow")
+	local wndDescription = self.wndTooltip:FindChild("DescriptionLabelWindow")
+	wndPowerCostLabel:SetText(String_GetWeaselString(Apollo.GetString("AMP_PowerCost"), tAugment.nPowerCost or ""))
+	wndTierLabel:SetText(String_GetWeaselString(Apollo.GetString("AMP_TierLabel"), strCategory, tAugment.nCategoryTier or ""))
+	wndDescription:SetAML("<P TextColor=\"UI_TextHoloBody\" Font=\"CRB_InterfaceSmall\">" .. tAugment.strDescription .. "</P>")
+	
 
-	local nTextWidth, nTextHeight = self.wndTooltip:FindChild("DescriptionLabelWindow"):SetHeightToContentHeight()
-	local nLeft, nTop, nRight, nBottom = self.wndTooltip:GetAnchorOffsets()
-	self.wndTooltip:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 68)
+	local nTextWidth, nTextHeight = wndDescription:SetHeightToContentHeight()
+	
+	if bAmpPurchased then
+		local wndRespecLabel = self.wndTooltip:FindChild("RespecLabel")
+		local wndCashWindow = self.wndTooltip:FindChild("RespecCost")
+		
+		wndRespecLabel:Show(true)
+		wndCashWindow:Show(true)
+		wndCashWindow:SetAmount(AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Single, tAugment.nId), true)
+		
+		local nRespecHeight = wndRespecLabel:GetHeight()
+		
+		nTextHeight = nTextHeight + nRespecHeight
+		local nLeft, nTop, nRight, nBottom = wndTierLabel:GetAnchorOffsets()
+		wndTierLabel:SetAnchorOffsets(nLeft, nTop - nRespecHeight, nRight, nBottom - nRespecHeight)
+		
+		local nPowerLeft, nPowerTop, nPowerRight, nPowerBottom = wndPowerCostLabel:GetAnchorOffsets()
+		wndPowerCostLabel:SetAnchorOffsets(nPowerLeft, nPowerTop - nRespecHeight, nPowerRight, nPowerBottom - nRespecHeight)
+	end
+	
+	local nTooltipLeft, nTooltipTop, nTooltipRight, nTooltipBottom = unpack(self.wndTooltip:GetOriginalLocation():ToTable().nOffsets)
+	self.wndTooltip:SetAnchorOffsets(nTooltipLeft, nTooltipTop, nTooltipRight, nTooltipBottom + nTextHeight)
 end
 
-function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl) -- AmpFormButton
+function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl, eMouseBtn) -- AmpFormButton
 	local tAugment = wndHandler:GetData()
-	if self.arUnlockedAugments[tAugment.nId] then
-		return
-	end
-
-	self.arUnlockedAugments[tAugment.nId] = tAugment.nId
-
-	local nUnlockedAugments = 0
-	for tAugmentId in pairs(self.arUnlockedAugments) do
-		nUnlockedAugments = nUnlockedAugments + 1
-	end
-
-	local eResult = AbilityBook.ValidateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.arUnlockedAugments)
-	if eResult ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
-		local strMessage = ""
-		if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.NotEnoughPower then
-			strMessage = AbilityBook.GetAvailablePower() == 0 and Apollo.GetString("EldanAugmentation_AtMaxPower") or Apollo.GetString("EldanAugmentation_NotEnoughPower")
-		elseif ktAugmentationValidationResult[eResult] then
-			strMessage = ktAugmentationValidationResult[eResult]
-		end
-
-		self:HelperCreateMessage(strMessage, 4.5)
-		self.arUnlockedAugments[tAugment.nId] = nil
-	else
-		local bTryToSave = AbilityBook.UpdateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.arUnlockedAugments)
-		if not bTryToSave then -- Show message if it didn't work
-			if GameLib.GetPlayerUnit():IsInCombat() then
-				self:HelperCreateMessage(Apollo.GetString("AbilityBuilder_BuildsCantBeChangedCombat"), 2)
+	
+	if self.tUnlockedAugments[tAugment.nId] or self.tCachedAmps[tAugment.nId] then
+		local tDependencies = {}
+		local idCategory = tAugment.nCategoryId
+		local nDependencyCount = 0
+		
+		local idCurrentAmp = tAugment.nId
+		local bInactive = false
+		while self.tDependencyMap[idCurrentAmp] and not bInactive do
+			local tDependency = self.tDependencyMap[idCurrentAmp]
+			if tDependency.eEldanAvailability == AbilityBook.CodeEnumEldanAvailability.Activated then
+				idCurrentAmp = tDependency.nId
+				tDependencies[tDependency.nId] = tDependency
+				nDependencyCount = nDependencyCount + 1
 			else
-				self:HelperCreateMessage(String_GetWeaselString(Apollo.GetString("EldanAugmentation_SaveFailed"), nResult), 2)
+				bInactive = true
 			end
 		end
+		
+		local nPowerUsed = {0, 0, 0}
+		local nPowerRequired = {0, 0, 0}
+		
+		if self.tCategoryInfo[idCategory].nHighestTierUnlocked > tAugment.nCategoryTier then
+			-- Determine if this is a valid amp to remove
+			if self.tCategoryInfo[idCategory].nHighestTierUnlocked > 1 then
+				for idAmp, tAmpData in pairs(self.tAmpMap[idCategory]) do
+					if tAmpData.eEldanAvailability == AbilityBook.CodeEnumEldanAvailability.Activated and tAmpData.nId ~= tAugment.nId and not tDependencies[tAmpData.nId] then
+						nPowerUsed[tAmpData.nCategoryTier] = nPowerUsed[tAmpData.nCategoryTier] + tAmpData.nPowerCost
+					end
+				end
+				
+				nPowerRequired[2] = self.tCategoryInfo[idCategory].tUnlockedCategories[1].nTier2Amount
+				nPowerRequired[3] = self.tCategoryInfo[idCategory].tUnlockedCategories[1].nTier3Amount
+			end	
+		end
+		
+		-- Tier 1 will never block a reset.  T2 doesn't block a reset if there is no T2 amp set or the remaining power is still enough to leave T2 unlocked.  T3 has the same requirements as T2, and T2 can't block the reset.
+		local tValidTierReset = {true, false, false}
+		tValidTierReset[2] = nPowerUsed[1] >= nPowerRequired[2] or nPowerUsed[2] == 0
+		tValidTierReset[3] = tValidTierReset[2] and (nPowerUsed[1] + nPowerUsed[2] >= nPowerRequired[3] or nPowerUsed[3] == 0)
+		
+		
+		
+		
+		local wndResetConfirmation = self.tWndRefs.wndMain:FindChild("ResetConfirmation")
+		local wndConfirmationFrame = wndResetConfirmation:FindChild("ConfirmationFrame")
+		local wndResetConfirm = wndConfirmationFrame:FindChild("ResetConfirm")
+		
+		-- Resetting an amp in the top category is always valid. Otherwise, use tValidTierReset to determine if the highest tier unlocked will block the reset or not.
+		local bValidRespec = self.tCategoryInfo[idCategory].nHighestTierUnlocked == tAugment.nCategoryTier or (self.tCategoryInfo[idCategory].nHighestTierUnlocked == 2 and tValidTierReset[2]) or 
+							(self.tCategoryInfo[idCategory].nHighestTierUnlocked == 3 and tValidTierReset[3])
 
-		--self:DestroyAndBuild() -- Event should be called that'll do this
-		Event_FireGenericEvent("AbilityAMPs_ToggleDirtyBit", true) -- Tell parent add-on that close should have a warning now
+		if bValidRespec then
+			local monRespecCost = AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Single, tAugment.nId)
+			if monRespecCost > 0 then
+				-- Show the respec dialog
+				local strRespecList = Apollo.GetString("AMP_ResetSingle") .. "\n" .. tAugment.strTitle
+				
+				local nResize = 10 * nDependencyCount
+				
+				if nDependencyCount > 0 then
+					strRespecList = strRespecList .. "\n\n" .. Apollo.GetString("AMP_ResetDependency")
+					for idAmp, tAmp in pairs(tDependencies) do
+						strRespecList = strRespecList .. "\n" .. tAmp.strTitle
+					end
+				end
+				
+				local nResetLeft, nResetTop, nResetRight, nResetBottom = unpack(wndConfirmationFrame:GetOriginalLocation():ToTable().nOffsets)
+				wndConfirmationFrame:SetAnchorOffsets(nResetLeft, nResetTop, nResetRight, nResetBottom + nResize)
+				
+				wndResetConfirm:FindChild("CashWindow"):SetAmount(monRespecCost, true)
+				wndResetConfirm:FindChild("ResetConfirm"):SetData({eType = AbilityBook.CodeEnumAMPRespecType.Single, nId = tAugment.nId})
+				wndResetConfirm:Enable(true)
+				wndResetConfirmation:FindChild("BodyText"):SetText(strRespecList)
+				
+				wndResetConfirm:FindChild("CashWindow"):Show(true)
+				wndResetConfirm:SetText(Apollo.GetString("Amps_ConfirmReset"))
+				wndResetConfirm:FindChild("DisabledResetLabel"):Show(false)
+				wndResetConfirmation:Show(true)
+			else
+				AbilityBook.RespecEldanAugmentations(AbilityBook.CodeEnumAMPRespecType.Single, tAugment.nId)
+			end
+		else
+			-- Show the error dialog
+			-- Disable the Reset button
+			wndResetConfirm:Enable(false)
+			
+			-- Use the required amount and post-reset amount
+			local nFailedTier = tValidTierReset[2] == false and 2 or 3
+			local strErrorMessage = String_GetWeaselString(Apollo.GetString("AMP_ResetInvalid"), self.tCategoryInfo[idCategory].strName, nFailedTier, nPowerRequired[nFailedTier])
+			wndConfirmationFrame:FindChild("BodyText"):SetText(strErrorMessage)
+			
+			wndResetConfirm:FindChild("CashWindow"):Show(false)
+			wndResetConfirm:SetText("")
+			wndResetConfirm:FindChild("DisabledResetLabel"):Show(true)
+			wndResetConfirmation:Show(true)
+		end
+	else
+		self.tUnlockedAugments[tAugment.nId] = tAugment.nId
+		self.tCachedAmps[tAugment.nId] = tAugment
+
+		local nUnlockedAugments = 0
+		for tAugmentId in pairs(self.tUnlockedAugments) do
+			nUnlockedAugments = nUnlockedAugments + 1
+		end
+
+		local eResult = AbilityBook.ValidateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.tUnlockedAugments)
+		if eResult ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
+			local strMessage = ""
+			if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.NotEnoughPower then
+				strMessage = AbilityBook.GetAvailablePower() == 0 and Apollo.GetString("EldanAugmentation_AtMaxPower") or Apollo.GetString("EldanAugmentation_NotEnoughPower")
+			elseif ktAugmentationValidationResult[eResult] then
+				strMessage = ktAugmentationValidationResult[eResult]
+			end
+
+			self:HelperCreateMessage(strMessage, 4.5)
+			self.tUnlockedAugments[tAugment.nId] = nil
+			self.tCachedAmps[tAugment.nId] = nil
+		else
+			local bTryToSave = AbilityBook.UpdateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.tUnlockedAugments)
+			if not bTryToSave then -- Show message if it didn't work
+				if GameLib.GetPlayerUnit():IsInCombat() then
+					self:HelperCreateMessage(Apollo.GetString("AbilityBuilder_BuildsCantBeChangedCombat"), 2)
+				else
+					self:HelperCreateMessage(String_GetWeaselString(Apollo.GetString("EldanAugmentation_SaveFailed"), nResult), 2)
+				end
+				self.tCachedAmps[tAugment.nId] = nil
+			end
+		end
 	end
+	
+	self:HelperCheckCached()
+end
+
+function AbilityAMPs:OnResetCategoryBtn(wndHandler, wndControl)
+	local idCategory = wndHandler:GetData()
+	local monRespecCost = AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Section, idCategory)
+	
+	if monRespecCost > 0 then
+		local wndResetConfirmation = self.tWndRefs.wndMain:FindChild("ResetConfirmation")
+		local wndConfirmationFrame = wndResetConfirmation:FindChild("ConfirmationFrame")
+		local wndResetConfirm = wndConfirmationFrame:FindChild("ResetConfirm")
+		
+		wndConfirmationFrame:FindChild("BodyText"):SetText(String_GetWeaselString(Apollo.GetString("AMP_ResetCategory"), karCategoryToConstantData[idCategory].strName))
+		wndResetConfirm:FindChild("CashWindow"):SetAmount(monRespecCost)
+		
+		wndResetConfirm:SetData({eType = AbilityBook.CodeEnumAMPRespecType.Section, nId = idCategory})
+		
+		wndResetConfirm:FindChild("DisabledResetLabel"):Show(false)
+		wndResetConfirm:SetText(Apollo.GetString("Amps_ConfirmReset"))
+		wndResetConfirmation:Show(true)
+	else
+		AbilityBook.RespecEldanAugmentations(AbilityBook.CodeEnumAMPRespecType.Section, idCategory)
+		self:HelperCheckCached()
+	end
+end
+
+function AbilityAMPs:OnResetConfirm(wndHandler, wndControl)
+	local tResetInfo = wndHandler:GetData()
+	AbilityBook.RespecEldanAugmentations(tResetInfo.eType, tResetInfo.nId)
+	AbilityBook.ClearCachedEldanAugmentationSpec()
+	self.tWndRefs.wndMain:FindChild("ResetConfirmation"):Show(false)
+	self:DestroyAndBuild()
+end
+
+function AbilityAMPs:OnResetCancel(wndHandler, wndControl)
+	self.tWndRefs.wndMain:FindChild("ResetConfirmation"):Show(false)
 end
 
 function AbilityAMPs:HelperCreateMessage(strMessage, nDuration)
@@ -591,5 +775,44 @@ function AbilityAMPs:OnResetAMPsClose()
 	self.tWndRefs.wndDialogReset:Destroy()
 end	
 
+function AbilityAMPs:HelperCheckCached()
+	local nCachedAmpCount = 0
+	for idAmp, tAmp in pairs(self.tCachedAmps) do
+		nCachedAmpCount = nCachedAmpCount + 1
+	end
+	
+	Event_FireGenericEvent("AbilityAMPs_ToggleDirtyBit", nCachedAmpCount > 0) -- Tell parent add-on that close should have a warning now
+end
+
 local AbilityAMPsInst = AbilityAMPs:new()
 AbilityAMPsInst:Init()
+hen
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetIndexOutOfBounds"))
+	elseif specError == AbilityBook.CodeEnumSpecError.IndexLocked then
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetIndexLocked"))
+	elseif specError == AbilityBook.CodeEnumSpecError.NoChange then
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetIndexNotChanged"))
+	elseif specError == AbilityBook.CodeEnumSpecError.InCombat then
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInCombat"))
+	elseif specError == AbilityBook.CodeEnumSpecError.InvalidPlayer then
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInvalidPlayer"))
+	elseif specError == AbilityBook.CodeEnumSpecError.PvPRestricted then
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInPvP"))
+	elseif specError == AbilityBook.CodeEnumSpecError.InVoid then
+		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInVoid"))
+	elseif specError == AbilityBook.CodeEnumSpecError.Ok then
+		self:RedrawFromScratch()
+		Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.tWndRefs.wndMain:FindChild("BGFrame:AMPBuilderMain"))
+	end
+end
+
+function Abilities:OnActionSetError(eResult)
+	local strMessage = nil
+	if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.InVoid then
+		strMessage = Apollo.GetString("ActionSet_Error_InTheVoid")
+		-- TODO MORE
+	end
+
+	if strMessage then
+		self:BuildWindow() -- This can happen after the set has "successfully" closed, so bring it back up if closed
+		self:Help

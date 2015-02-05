@@ -79,3 +79,7 @@
         </Control>
     </Form>
 </Forms>
+>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-8" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="9" BAnchorPoint="0" BAnchorOffset="50" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="AlertItemTransition" BGColor="white" TextColor="white" IgnoreMouse="1" NewWindowDepth="1" Picture="1" NoClip="1" Sprite="" TooltipColor=""/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="200" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="240" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name=

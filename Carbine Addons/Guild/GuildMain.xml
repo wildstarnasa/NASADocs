@@ -40,3 +40,42 @@
         </Control>
     </Form>
 </Forms>
+----------------------------------------------
+-- Simple UI buttons
+---------------------------------------------------------------------------------------------------
+
+function GroupDisplayOptions:OnLeaveGroup()
+	self.wndMain:Show(false)
+	self:OnGroupFormatClose()
+	Event_FireGenericEvent("GenericEvent_ShowConfirmLeaveDisband", 1)
+end
+
+function GroupDisplayOptions:OnDisbandGroup()
+	self.wndMain:Show(false)
+	self:OnGroupFormatClose()
+	Event_FireGenericEvent("GenericEvent_ShowConfirmLeaveDisband", 0)
+end
+
+function GroupDisplayOptions:OnResetInstances()
+	self.wndMain:Show(false)
+	self:OnGroupFormatClose()
+	Apollo.ParseInput("/resetinstances") -- TODO: Replace with a library call
+end
+
+function GroupDisplayOptions:OnConvertToRaid()
+	if self.wndRaidConfirm and self.wndRaidConfirm:IsValid() then
+		self.wndRaidConfirm:Destroy()
+		self.wndRaidConfirm = nil
+	end
+
+	self.wndMain:Show(false)
+
+	self.wndRaidConfirm = Apollo.LoadForm(self.xmlDoc, "RaidConvertConfirmForm", nil, self)
+	self.wndRaidConfirm:Invoke()
+end
+
+function GroupDisplayOptions:OnGroupFormatClose() -- clean up on close
+	for idx, strMenu in ipairs(ktSubMenus) do
+		if strMenu and self.wndMain:FindChild(strMenu) then
+			self.wndMain:FindChild(strMenu):SetCheck(false)
+			self.wndMain:FindChild(strM

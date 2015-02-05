@@ -79,13 +79,12 @@ function GalacticArchive:Initialize(wndParent, wndMostTopLevel)
 	end
 	
 	self.wndArchiveIndexForm = 	Apollo.LoadForm(self.xmlDoc, "ArchiveIndex", wndParent, self)
-	self.wndArticleDisplay = 	Apollo.LoadForm(self.xmlDoc, "ArticleDisplay", nil, self)
+	self.wndArticleDisplay = 	Apollo.LoadForm(self.xmlDoc, "ArticleDisplay", wndMostTopLevel:FindChild("MainArticleContainer"), self)
 	self.wndHeaderContainer = 	self.wndArchiveIndexForm:FindChild("HeaderContainer")
 	self.wndFilterShowAll = 	self.wndArchiveIndexForm:FindChild("TopRowShowAllFilter")
 	self.wndFilterUpdated = 	self.wndArchiveIndexForm:FindChild("TopRowUpdatedFilter")
 	self.wndSearchFilter =		self.wndArchiveIndexForm:FindChild("SearchFilter")
 	self.wndEmptyLabel =		self.wndArchiveIndexForm:FindChild("EmptyLabel")
-	self.wndBGTitleText =		self.wndArchiveIndexForm:FindChild("BGTitleText")
 
 	self.tArticles = {}
 	self.artDisplayed = nil
@@ -160,6 +159,7 @@ function GalacticArchive:OnFilterShowAllSelect(wndHandler, wndControl)
 	end
 	
 	self.strCurrTypeFilter = Apollo.GetString("Archive_ShowAll")
+	self.wndHeaderContainer:SetVScrollPos(0)
 	self:FilterArchiveIndex()
 end
 
@@ -170,6 +170,7 @@ function GalacticArchive:OnFilterTypeSelect(wndHandler, wndControl)
 	end
 	self.strCurrTypeFilter = strFilter
 	self.wndFilterShowAll:SetCheck(false)
+	self.wndHeaderContainer:SetVScrollPos(0)
 	self:FilterArchiveIndex()
 end
 
@@ -313,13 +314,10 @@ function GalacticArchive:OnPopulateArchiveIndexTimer()
 	
 	-- Empty Label and etc. formatting
 	local bShowEmpty = nHeight == 0
-	if bShowEmpty ~= self.wndEmptyLabel:IsShown() then
-		self.wndEmptyLabel:Show(bShowEmpty)
-		
-		if bShowEmpty then
-			self.wndEmptyLabel:SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
-			self.wndBGTitleText:SetText(String_GetWeaselString(Apollo.GetString("Archive_TitleWithFilter"), self.strCurrTypeFilter))
-		end
+	self.wndEmptyLabel:Show(bShowEmpty)
+	
+	if bShowEmpty then
+		self.wndEmptyLabel:SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
 	end
 
 	self.arArticlesToAdd = nil
@@ -363,13 +361,9 @@ function GalacticArchive:FilterArchiveIndex()
 	
 	-- Empty Label and etc. formatting
 	local bShowEmpty = nHeight == 0
-	if bShowEmpty ~= self.wndEmptyLabel:IsShown() then
-		self.wndEmptyLabel:Show(bShowEmpty)
-		
-		if bShowEmpty then
-			self.wndEmptyLabel:SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
-			self.wndBGTitleText:SetText(String_GetWeaselString(Apollo.GetString("Archive_TitleWithFilter"), self.strCurrTypeFilter))
-		end
+	self.wndEmptyLabel:Show(bShowEmpty)
+	if bShowEmpty then
+		self.wndEmptyLabel:SetText(String_GetWeaselString(Apollo.GetString("Archive_NoEntriesFound"), self.strCurrTypeFilter))
 	end
 end
 
@@ -638,10 +632,21 @@ function GalacticArchive:DisplayArticle(artDisplay)
 	-- End Top
 
 	wndArticle:FindChild("ArticleScientistOnlyIcon"):Show(false)
-	wndArticle:FindChild("ArticleTitle"):SetText(artDisplay:GetTitle())
-	wndArticle:FindChild("ArticleSubtitle"):SetText(strCategories)
+	wndArticle:FindChild("ArticleTitle"):SetAML("<P Font=\"CRB_HeaderMedium\" TextColor=\"UI_TextHoloTitle\">"..artDisplay:GetTitle().."</P>")
+	wndArticle:FindChild("ArticleSubtitle"):SetAML("<P Font=\"CRB_InterfaceSmall\" TextColor=\"white\">"..strCategories.."</P>")
 	wndArticle:FindChild("ArticleText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\""..kclrDefault.."\">"..self:ReplaceLineBreaks(artDisplay:GetText()).."</P>")
 	wndArticle:FindChild("ArticleText"):SetHeightToContentHeight()
+	
+	wndArticle:FindChild("ArticleTitle"):SetHeightToContentHeight()
+	local strTitleHeight = wndArticle:FindChild("ArticleTitle"):GetHeight()
+	if strTitleHeight > 55 then -- 55 is over 2 lines of text
+		wndArticle:FindChild("ArticleTitle"):SetAML("<P Font=\"CRB_HeaderTiny\" TextColor=\"UI_TextHoloTitle\">"..artDisplay:GetTitle().."</P>")
+		wndArticle:FindChild("ArticleTitle"):SetHeightToContentHeight()
+	else
+		wndArticle:FindChild("ArticleTitle"):SetAML("<P Font=\"CRB_HeaderMedium\" TextColor=\"UI_TextHoloTitle\">"..artDisplay:GetTitle().."</P>")
+	end
+	wndArticle:FindChild("ArticleSubtitle"):SetHeightToContentHeight()
+	wndArticle:FindChild("ArticleHeaderTextAligner"):ArrangeChildrenVert(1)	
 
 	local nLockCount = 0
 	local nEntryCount = 0
@@ -784,3 +789,71 @@ end
 
 local GalacticArchiveInst = GalacticArchive:new()
 GalacticArchiveInst:Init()
+&%C5bMM
+úY?=
+.&+:
+8'
+			ý&G+(.*$$	¡  ÿl†P + >  766663267666'&#&&&&&&'&'&&76'32#"'&&''&C		
+$ 5b:L_	"
+1ã
+zM_*+2
+).
+	J7œAþÿþ¾&r6    ÿe; >  6&&'&&666766'&&&&&&'&&'&&'&767676&&	á;%	
+#*
+	
+!		
+t
+	vM-L`	&+2	
+	,Z:O¯S
+
+M3"Î&/\4 
+gb  ÿf;; U  662636''76676632&''7666664&&&'&&&'&&'&'&&'&&'&76G	
+	;	
+
+
+'(07q(0F	&7LFR|pJ
+	75!Ìý)34=5qyO-
+%1
+
+
+Q'785		Œzh3&t  
+ÿv6 H  666&'&&547762676766'&&''&&546764'&''76¶$"5D(	
+#K!J,""0 
+
+)I]f7®y»u0/=•€C 
+($-
+"%
+
+n bDÅ
+h"!?p`  ÿ÷Š× :  6'&&&76766"76676676'&'&&'&#"&Z“Ž0/D_@(FÃ$MM½H-
+»90,L2™
+	>6+D<}YÒ
+!/K'C„9,m4
+/R@-%.k			
+e   
+ÿrÂH  D  &666#"&6766770"&&&'&&76&'&476ZL_6JKfø'v;!
+n$%	C	 '-#
+%Lj_µ+.<Le=)c‰G)v			fx]4$3    	ÿsÙI : F  636'&776&'&67654'&674766666676''3'&'o2)1Þ*dl	f«F$I90`	B}9MMz(	E6Z
+bÔ	0
+E
+|‚m	` I*¤;
+8>
+   
+ÿmdX  D \  636"'&&&'&676&''76676&#''&&'&4766766&&&&&&&'&7676&B	
+%@0+1PZ)
+2%9:2%RI?ÿ	+
+,  BQQ5QJê	>k	 P"#!N[d8!;@K"O]ˆ	"H
+BA7(    
+ÿLÍd _  66632'&&''76'&&666766&&""&&&'&5&76676&&&'&''fJ	Š- #)?6/,n:2@
+ 4&š÷6$I>
+
+1.#2	
+ 	
+õD-
+.M:
+
+NO  
+ÿz= C  7'&&547776654'&&'&#"2'&54676'&'&''76È,+[`	0D)f!"6+(=&;Z{	!O;‘)G--™5$“„ @$	'	.%2<) 1	‚,- W#+J**‚"	:t.Z    ÿþŒÜ B  622'&''76676676654'&&'"&&'&5!ÑZ;S	ˆÄ$A\5b›[l9-+<V‘L9+A+2Q'@	Õ(
+ nÚ(''3		H#!$4j	!
+!/   ÿ|ÚP 5 A  6'&&#"7666666'&54566654'&767532'&'‘+žv ,ZK@-
+%:;

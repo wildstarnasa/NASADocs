@@ -131,7 +131,8 @@ function LootStack:OnLootedItem(itemInstance, nCount)
 		fTimeAdded = GameLib.GetGameTime()
 	}
 	table.insert(self.tQueuedEntryData, tNewEntry)
-	self.fLastTimeAdded = GameLib.GetGameTime()
+	
+	self.timerUpdate:Start()
 end
 
 function LootStack:OnLootStackUpdate(strVar, nValue)
@@ -164,6 +165,10 @@ function LootStack:OnLootStackUpdate(strVar, nValue)
 
 	-- update all the items
 	self:UpdateDisplay()
+	
+	if #self.tEntryData == 0 then
+		self.timerUpdate:Stop()
+	end
 end
 
 function LootStack:AddQueuedItem()
@@ -208,7 +213,6 @@ function LootStack:RemoveItem(idx)
 	end
 
 	-- remove that item and alert inventory
-	local tEntryData = self.tEntryData[idx]
 	table.remove(self.tEntryData, idx)
 	return true
 end
@@ -246,3 +250,20 @@ end
 
 local LootStackInst = LootStack:new()
 LootStackInst:Init()
+eToClient="1" Name="Btn" Overlapped="0" Text="" TextId="" Base="BK3:btnHolo_ListView_Simple" ButtonType="Check" GlobalRadioGroup="Salvage_ListItemRadioGroup" Visible="1" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" TooltipType="OnCursor" RadioGroup="" IgnoreMouse="0" RadioDisallowNonSelection="0" TooltipColor="" IgnoreTooltipDelay="1" HideInEditor="0">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="7" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="0" RAnchorOffset="57" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="IconBG" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" TooltipColor="" NewControlDepth="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="55" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Text="" Name="Icon" Picture="1" IgnoreMouse="1" Sprite="" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="1" DT_BOTTOM="1" Tooltip="" DT_RIGHT="1" Font="CRB_InterfaceMedium_B" TooltipColor="" IgnoreTooltipDelay="1" TooltipType="OnCursor" Subclass="ItemWindowSubclass"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="7" RAnchorPoint="0" RAnchorOffset="28" BAnchorPoint="0" BAnchorOffset="28" RelativeToClient="1" Text="" Name="CantUse" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:Icon_Windows_UI_CRB_Tooltip_Restricted" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="1" DT_BOTTOM="1" Tooltip="" DT_RIGHT="1" Font="CRB_InterfaceMedium_B" TooltipColor="" IgnoreTooltipDelay="1" TooltipType="OnCursor" Visible="0" TooltipFont="CRB_InterfaceSmall_O" TooltipId="Dialog_CantUseTooltip"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="63" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint=".6" BAnchorOffset="12" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Name="Title" TextId="" BGColor="ffffffff" TextColor="UI_TextHoloTitle" DT_VCENTER="0" DT_WORDBREAK="1" TooltipColor=""/>
+            <Event Name="ButtonCheck" Function="OnLootListItemCheck"/>
+            <Event Name="GenerateTooltip" Function="OnLootListItemGenerateTooltip"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="63" TAnchorPoint=".6" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="-1" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Name="Type" TextId="" BGColor="ffffffff" TextColor="UI_TextHoloBody" DT_VCENTER="1" DT_WORDBREAK="1" TooltipColor=""/>
+            <Event Name="MouseEnter" Function="OnLootBtnMouseEnter"/>
+            <Event Name="MouseExit" Function="OnLootBtnMouseExit"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" BGColor="UI_AlphaPercent60" TextColor="UI_TextHoloBodyHighlight" Template="Default" TooltipType="OnCursor" Name="Blocker" TooltipColor="" Visible="0" Picture="1" Sprite="BasicSprites:BlackFill" NewControlDepth="5" IgnoreMouse="0" DoNotBlockTooltip="1" TextId="CRB_Test_Set_name" DT_CENTER="1" DT_VCENTER="1" HideInEditor="0" DT_WORDBREAK="1"/>
+    </Form>
+</Forms>
+ner" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LiveObjectiveItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlappe

@@ -126,3 +126,6 @@
         </Control>
     </Form>
 </Forms>
+nt="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-13" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ClaimLocateButtonShade" BGColor="UI_AlphaPercent60" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:BlackFill" Visible="0" NewControlDepth="2" TooltipColor="" HideInEditor="1"/>
+                </Control>
+                <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoin

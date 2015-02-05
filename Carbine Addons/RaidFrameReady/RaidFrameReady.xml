@@ -21,3 +21,61 @@
         <Event Name="WindowClosed" Function="OnReadyCheckResponse"/>
     </Form>
 </Forms>
+elf.wndReadyResults:FindChild("ReadyCheckResultsNoResponse"):GetWidth()	
+	self.wndReadyResults:SetTooltip(strNoResponseFull)
+	self.wndReadyResults:FindChild("ReadyCheckResultsNoResponse"):SetText(bNeedToShrinkText and string.sub(strNoResponseFull, 0, 30).."..." or strNoResponseFull)
+	self.wndReadyResults:FindChild("ReadyCheckResultsCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), nYesResponses, nGroupMemberCount))
+
+	if self.nNumReadyCheckResponses == nGroupMemberCount then
+		self:DestroyAll() -- Force and pretend the ready check just finished
+	end
+end
+
+function RaidFrameReady:OnRaid_ReadyCheckTimeout() -- You took too long to reply
+	Apollo.StopTimer("Raid_ReadyCheckTimeout")
+	if self.wndReadyCheckPopup and self.wndReadyCheckPopup:IsValid() then
+		self.wndReadyCheckPopup:Destroy()
+		self.wndReadyCheckPopup = nil
+	end
+end
+
+function RaidFrameReady:OnReadyCheckResponse(wndHandler, wndControl) -- ReadyCheckYesBtn, ReadyCheckNoBtn
+	if wndHandler == wndControl then
+		GroupLib.SetReady(wndHandler:GetName() == "ReadyCheckYesBtn") -- TODO Quick Hack
+	end
+
+	if self.wndReadyCheckPopup and self.wndReadyCheckPopup:IsValid() then
+		self.wndReadyCheckPopup:Destroy()
+		self.wndReadyCheckPopup = nil
+	end
+end
+
+function RaidFrameReady:DestroyAll()
+	if self.wndReadyResults and self.wndReadyResults:IsValid() then
+		self.wndReadyResults:Destroy()
+		self.wndReadyResults = nil
+	end
+
+	if self.wndReadyCheckPopup and self.wndReadyCheckPopup:IsValid() then
+		self.wndReadyCheckPopup:Destroy()
+		self.wndReadyCheckPopup = nil
+	end
+
+	-- If it's not already finished, write what we have to chat log
+	if self.nNumReadyCheckResponses >= 0 then
+		local strNotReadyString = self:HelperBuildNotReadyString()
+		local strFinal = strNotReadyString == "" and Apollo.GetString("RaidFrame_ReadyCheckSuccess") or String_GetWeaselString(Apollo.GetString("RaidFrame_ReadyCheckFail"), strNotReadyString)
+		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Party, strFinal, "")
+	end
+
+	self.nNumReadyCheckResponses = -1
+	Apollo.StopTimer("Raid_OneSecTimer")
+	Apollo.StopTimer("Raid_ReadyCheckTimeout")
+	Apollo.StopTimer("Raid_ReadyCheckMaxTime")
+end
+
+function RaidFrameReady:HelperBuildNotReadyString()
+	local strNotReadyList = ""
+	for idx = 1, GroupLib.GetMemberCount() do
+		local tMemberData = GroupLib.GetGroupMember(idx)
+		i

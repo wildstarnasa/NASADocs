@@ -164,6 +164,12 @@ function ProgressLog:ToggleAchievementsWithData(achReceived)
 	self:PLogOptionCheck(nil, nil, false, achReceived)
 end
 
+function ProgressLog:OnLargeTabBtn(wndHandler, wndControl, eMouseButton, bDoubleClick)
+	if wndHandler == wndControl and wndHandler:IsChecked() and not bDoubleClick then
+		self:PLogOptionCheck(wndHandler, wndControl, nil, nil)
+	end
+end
+
 function ProgressLog:PLogOptionCheck(wndHandler, wndControl, bToggledFromCall, tUserData)
 	local nPLogOption = self.wndOptions:GetRadioSel("PLogOptions")
 	if nPLogOption ~= 1 then -- the player's switched to anything but QuestLog (which auto-selects)
@@ -181,7 +187,7 @@ function ProgressLog:PLogOptionCheck(wndHandler, wndControl, bToggledFromCall, t
 	elseif nPLogOption == 3 then
 		Event_FireGenericEvent("PL_ToggleChallengesWindow")
 	elseif nPLogOption == 4 then
-		Event_FireGenericEvent("PL_ToggleAchievementWindow", tUserArg)
+		Event_FireGenericEvent("PL_ToggleAchievementWindow", tUserData)
 	end
 
 	self.nLastSelection = nPLogOption -- Save last selection
@@ -195,3 +201,57 @@ end
 
 local ProgressLogInst = ProgressLog:new()
 ProgressLogInst:Init()
+ tRealm in ipairs(tList) do
+		if tRealm.nRealmPVPType == PreGameLib.CodeEnumRealmPVPType.PVP then
+			table.insert(tFilteredList, tRealm)
+		end
+	end
+
+	self:BuildListWindows(tFilteredList)
+end
+
+function RealmSelect:FilterForMine(tList)
+	local tFilteredList = {}
+
+	for idx, tRealm in ipairs(tList) do
+		if tRealm.nCount > 0 then
+			table.insert(tFilteredList, tRealm)
+		end
+	end
+
+	self:BuildListWindows(tFilteredList)
+end
+
+function RealmSelect:BuildListWindows(tList, tListMine)
+	self.wndRealmList:DestroyChildren()
+	self.wndRealmList:RecalculateContentExtents()
+
+	self.btnSelected = nil
+
+	local arPopulationStrings = {Apollo.GetString("RealmPopulation_Low"),
+								 Apollo.GetString("RealmPopulation_Medium"),
+								 Apollo.GetString("RealmPopulation_High"),
+								 Apollo.GetString("RealmPopulation_Full") }
+
+	for idx, tRealm in ipairs(tList) do
+		self:HelperConfigureRealmEntry(tRealm)
+	end
+
+	self:SortList()
+
+	----
+
+	if self.btnSelected ~= nil then
+		self.wndRealmList:SetRadioSelButton("SelectedRealm", self.btnSelected)
+		self.wndRealmList:EnsureChildVisible(self.btnSelected)
+		self:OnRealmSelect(self.btnSelected, self.btnSelected)
+		self.wndSelectForm:FindChild("SelectBtn"):Enable(true)
+	else
+		self.wndSelectForm:FindChild("SelectBtn"):Enable(false)
+	end
+
+	self.wndSelectForm:SetFocus()
+end
+
+local tSortTypeFieldMap =
+{	-

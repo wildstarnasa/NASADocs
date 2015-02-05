@@ -488,3 +488,5 @@ end
 
 local HUDAlertsInst = HUDAlerts:new()
 HUDAlertsInst:Init()
+G="1"/>
+  

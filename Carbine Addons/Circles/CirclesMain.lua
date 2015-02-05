@@ -73,7 +73,7 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 
 	local wndRosterScreen = self.tWndRefs.wndMain:FindChild("RosterScreen")
 	local wndRosterBottom = wndRosterScreen:FindChild("RosterBottom")
-	local wndRosterEditNotesBtn = wndRosterBottom:FindChild("RosterOptionBtnEditNotes")
+	local wndRosterEditNotesBtn = wndRosterScreen:FindChild("RosterOptionBtnEditNotes")
 	local wndRosterRemoveBtn = wndRosterBottom:FindChild("RosterOptionBtnRemove")
 	local wndRosterAddBtn = wndRosterBottom:FindChild("RosterOptionBtnAdd")
 	wndRosterBottom:ArrangeChildrenHorz(2)
@@ -84,7 +84,7 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 	wndRosterEditNotesBtn:AttachWindow(wndRosterEditNotesBtn:FindChild("EditNotesContainer"))
 	wndRosterEditNotesBtn:Enable(true)
 	wndRosterEditNotesBtn:FindChild("EditNotesContainer:EditNotesEditBoxBG:EditNotesEditbox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildMemberNote))
-	
+	wndRosterScreen:FindChild("RankPopout:RankSettingsEntry:Name:OptionString"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName))
 	local wndAdvancedOptions = self.tWndRefs.wndMain:FindChild("RosterScreen:AdvancedOptionsContainer")
 	self.tWndRefs.wndMain:FindChild("RosterScreen:BGOptionsHolder:OptionsBtn"):AttachWindow(wndAdvancedOptions)
 	wndAdvancedOptions:FindChild("ShowOffline"):SetCheck(self.bShowOffline)
@@ -92,16 +92,20 @@ function Circles:OnGenericEvent_InitializeCircles(wndParent, guildCurr)
 	self.bViewingRemovedGuild = false
 
 	local wndPermissionContainer = wndRosterScreen:FindChild("RankPopout:RankSettingsEntry:Permissions:PermissionContainer")
-	for idx, tPermission in pairs(GuildLib.GetPermissions(GuildLib.GuildType_Circle)) do
-		local wndPermission = Apollo.LoadForm(self.xmlDoc, "PermissionEntry", wndPermissionContainer, self)
-		local wndPermissionBtn = wndPermission:FindChild("PermissionBtn")
-		wndPermissionBtn:SetText("       " .. tPermission.strName)
-		wndPermission:SetData(tPermission)
-		
-		if tPermission.strDescription ~= nil and tPermission.strDescription ~= "" then
-			wndPermission:SetTooltip(tPermission.strDescription)
+	local arPermissionWindows = wndPermissionContainer:GetChildren()
+	if not arPermissionWindows or #arPermissionWindows <= 0 then
+		for idx, tPermission in pairs(GuildLib.GetPermissions(GuildLib.GuildType_Circle)) do
+			local wndPermission = Apollo.LoadForm(self.xmlDoc, "PermissionEntry", wndPermissionContainer, self)
+			local wndPermissionBtn = wndPermission:FindChild("PermissionBtn")
+			wndPermissionBtn:SetText("       " .. tPermission.strName)
+			wndPermission:SetData(tPermission)
+			
+			if tPermission.strDescription ~= nil and tPermission.strDescription ~= "" then
+				wndPermission:SetTooltip(tPermission.strDescription)
+			end
 		end
 	end
+	
 	wndPermissionContainer:ArrangeChildrenVert()
 
 	self.tWndRefs.wndRankPopout = wndRosterScreen:FindChild("RankPopout")
@@ -143,8 +147,6 @@ function Circles:FullRedrawOfRoster()
 	if wndRosterScreen and wndRosterScreen:FindChild("RosterBottom:RosterOptionBtnPromote:PromoteMemberContainer"):IsShown() then
 		self:OnRosterPromoteMemberCloseBtn()
 	end
-
-	self.tWndRefs.wndMain:FindChild("CircleRegistrationWnd"):Show(false)
 	
 	guildCurr:RequestMembers() -- This will send back an event "GuildRoster"
 
@@ -219,7 +221,7 @@ function Circles:BuildRosterList(guildCurr, tRoster)
 				self.strPlayerName = GameLib.GetPlayerUnit():GetName()
 			end
 
-			local wndEditNoteBtn = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterBottom:RosterOptionBtnEditNotes")
+			local wndEditNoteBtn = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterOptionBtnEditNotes")
 			if not wndEditNoteBtn:IsChecked() and self.strPlayerName == tCurr.strName then
 				wndEditNoteBtn:FindChild("EditNotesContainer:EditNotesEditBoxBG:EditNotesEditbox"):SetText(tCurr.strNote)
 			end
@@ -251,8 +253,11 @@ end
 function Circles:OnRosterGridItemClick(wndControl, wndHandler, iRow, iCol, eMouseButton)
 	local wndRosterGrid = self.tWndRefs.wndMain:FindChild("RosterScreen:RosterGrid")
 	local wndData = wndRosterGrid:GetCellData(iRow, 1)
+	
 	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndData and wndData.strName and wndData.strName ~= GameLib.GetPlayerUnit():GetName() then
-		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", self.tWndRefs.wndMain, wndData.strName)
+		local unitTarget = nil
+		local tOptionalCharacterData = { guildCurr = self.tWndRefs.wndMain:GetData(), tPlayerGuildData = wndData }
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", self.tWndRefs.wndMain, wndData.strName, unitTarget, tOptionalCharacterData)
 		return
 	end
 
@@ -357,6 +362,7 @@ function Circles:OnViewRankBtnSignal(wndControl, wndHandler)
 	end
 
 	local bCanDelete = arRanks[eMyRank].bRankCreate and nRankIdx ~= 1 and nRankIdx ~= 2 and nRankIdx ~= 10 and nRankMemberCount == 0
+	wndSettings:FindChild("Permissions:PermissionContainerBlocker"):Show(nRankIdx == 1)
 
 	wndSettings:FindChild("Delete"):Show(bCanDelete)
 	wndSettings:FindChild("MemberCount"):Show(true)
@@ -435,13 +441,8 @@ function Circles:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
 	if wndLimit ~= nil then
 		local nNameLength = string.len(strName or "")
 
-		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
-
-		if nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
-			wndLimit:SetTextColor(crGuildNameLengthError)
-		else
-			wndLimit:SetTextColor(crGuildNameLengthGood)
-		end
+		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildRankName)))
+		wndLimit:SetTextColor(nNameLength < 1 and crGuildNameLengthError or crGuildNameLengthGood)
 	end
 
 	local bNameValid = strName ~= nil and strName ~= "" and GameLib.IsTextValid(strName, GameLib.CodeEnumUserText.GuildRankName, GameLib.CodeEnumUserTextFilterClass.Strict)
@@ -457,6 +458,7 @@ function Circles:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
 	end
 
 	wndSettings:FindChild("RankPopoutOkBtn"):Enable((bNew and bNameValid) or (not bNew and bNameValid and (bNameChanged or bPermissionChanged)))
+	wndSettings:FindChild("StatusValidAlert"):Show(not bNameValid)
 end
 
 function Circles:OnRankSettingsCloseBtn(wndControl, wndHandler)
@@ -664,6 +666,7 @@ function Circles:OnRosterLeaveYesClick(wndHandler, wndControl) -- wndHandler is 
 		guildCurr:Leave()
 	end
 	self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"):Close()
+	self.tWndRefs.wndMain:FindChild("LeaveFlyoutBtnContainer"):Show(false)
 	self.tWndRefs.wndMain:Close()
 end
 
@@ -831,6 +834,11 @@ function Circles:SortRoster(tArg, strLastClicked)
 	return tResult
 end
 
+
+function Circles:OnOptionsCloseClick(wndControl)
+	wndControl:GetParent():Close()
+end
+
 -----------------------------------------------------------------------------------------------
 -- Helpers
 -----------------------------------------------------------------------------------------------
@@ -899,3 +907,9 @@ end
 
 local CirclesInst = Circles:new()
 CirclesInst:Init()
+et="-21" BAnchorPoint="0" BAnchorOffset="35" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="0" DT_VCENTER="0" ProgressEmpty="" ProgressFull="CRB_CharacterCreateSprites:sprCharC_SliderFill" TooltipType="OnCursor" Name="ProgressBar" BGColor="white" TextColor="white" TooltipColor="" BarColor="" NewWindowDepth="1"/>
+            <Control Class="SliderBar" LAnchorPoint="0" LAnchorOffset="-4" TAnchorPoint="0" TAnchorOffset="16" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="0" BAnchorOffset="48" RelativeToClient="1" Font="Default" Text="" BGColor="white" TextColor="white" Template="CRB_Scroll_CCreateSlider" TooltipType="OnCursor" Name="SliderBar" TooltipColor="" Sprite="ClientSprites:WhiteFill" Min="-1.000000" Max="1.000000" TickAmount="0.010000" NewWindowDepth="1">
+                <Event Name="SliderBarChanged" Function="OnBoneChanged"/>
+            </Control>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="7" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="119" BAnchorPoint="0" BAnchorOffset="21" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="SliderTitle" TooltipColor="" TextId="CRB__2" DT_VCENTER="1"/>
+            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-132" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="21" RelativeToClient="1" Font="CRB_Header9" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyCyan" Template="Default" TooltipType="OnCursor" Nam

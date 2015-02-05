@@ -20,3 +20,110 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="-21" BAnchorPoint="1" BAnchorOffset="-67" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Screenshot01" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_DEMO_WrapperSprites:sprDemo_CharCEsper" Picture="1" IgnoreMouse="1" Tooltip="" />
     </Form>
 </Forms>
+Screen:SetSprite("ClientSprites:"..sprite)
+    else
+        self.winScreen:SetSprite("")
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+function PlugPreview:GetItem(id, itemlist)
+  local ix, item
+  for ix = 1, #itemlist do
+    item = itemlist[ix]
+    if item["id"] == id then
+      return item
+    end
+  end
+  return nil
+end
+
+-----------------------------------------------------------------------------------------------
+-- PlugPreview Instance
+-----------------------------------------------------------------------------------------------
+local PlugPreviewInst = PlugPreview:new()
+PlugPreviewInst:Init()
+st()
+	-- make sure the tItemData list is empty to start with
+	self:DestroyPoseList()
+	self.wndPoseList:DestroyChildren()
+
+    -- grab the list of categories
+    local tPoseList = HousingLib.GetMannequinPoseList()
+	
+	-- populate the list
+    if tPoseList ~= nil then
+        for idx = 1, #tPoseList do
+			self:AddPoseEntry(idx, tPoseList[idx])
+        end
+    end
+	
+	-- now all the items are added, call ArrangeChildrenVert to list out the list items vertically
+	self.wndPoseList:ArrangeChildrenVert()
+end
+
+function Mannequin:DestroyPoseList()
+	-- destroy all the wnd inside the list
+	for idx, wndListItem in ipairs(self.tPoseItems) do
+		wndListItem:Destroy()
+	end
+
+	-- clear the list item array
+	self.tPoseItems = {}
+end
+
+-- add a pose into the pose list
+function Mannequin:AddPoseEntry(nIndex, tItemData)
+	-- load the window tItemData for the list tItemData
+	local wndListItem = Apollo.LoadForm(self.xmlDoc, "PoseListItem", self.wndPoseList, self)
+	
+	-- keep track of the window tItemData created
+	self.tPoseItems[nIndex] = wndListItem
+
+	-- give it a piece of data to refer to 
+	local wndItemBtn = wndListItem:FindChild("PoseBtn")
+	if wndItemBtn then -- make sure the text wndListItem exist
+	    local strName = tItemData.strPoseName
+		wndItemBtn:SetText(strName)
+		wndItemBtn:SetData(tItemData)
+	end
+end
+
+function Mannequin:OnPoseSelected(wndHandler, wndControl)
+    local tPoseData = wndControl:GetData()
+    
+    HousingLib.SetMannequinPose(tPoseData.nId)
+    
+    self.btnPoseSelect:SetCheck(false)
+    self.wndPoseFrame:Show(false)
+    self.btnPoseSelect:SetText(tPoseData.strPoseName)
+end
+
+---------------------------------------------------------------------------------------------------
+function Mannequin:OnGenerateTooltip(wndHandler, wndControl, eType, itemCurr, idx)
+	if eType == Tooltip.TooltipGenerateType_ItemInstance then
+		if itemCurr == nil then
+			local strTooltip = ""
+			if wndControl:GetName() then
+				strTooltip = Apollo.GetString(ktSlotWindowNameToTooltip[wndControl:GetName()])
+			end
+			if strTooltip then
+				wndControl:SetTooltip("<P Font=\"CRB_InterfaceSmall_O\">"..strTooltip.."</P>")
+			end
+		else
+			local itemEquipped = nil
+			
+			Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = true, itemCompare = itemEquipped})
+		end
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Mannequin Instance
+-----------------------------------------------------------------------------------------------
+local MannequinInst = Mannequin:new()
+MannequinInst:Init()
+="640" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
+    </Sprite>
+    <Sprite Name="sprProperty11" Cycle="1">
+        <Frame Texture="UI\Tex

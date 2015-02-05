@@ -256,3 +256,92 @@ end
 
 local GuildInst = Guild:new()
 GuildInst:Init()
+yGroupData.bIsMentored
+	local strMentoringStopBtnColor = ApolloColor.new(bCanStopMentoring and "UI_BtnTextHoloListNormal" or "UI_BtnTextHoloListDisabled")
+	wndParent:FindChild("MentoringStopBtn"):Enable(bCanStopMentoring)
+	wndParent:FindChild("MentoringStopBtn"):FindChild("SubOptionsBtnText"):SetTextColor(strMentoringStopBtnColor)
+
+	for idx = 1, 4 do
+		local tTargetGroupData = GroupLib.GetGroupMember(idx + 1) -- GOTCHA: Off by one "Group Member One" text really means idx2
+		local bActivelyMentoringThisPersonAlready = (idx + 1) == tMyGroupData.nMenteeIdx
+		local bCanRallyToThisPerson = tTargetGroupData and tTargetGroupData.nLevel < tMyGroupData.nLevel and idx < nMemberCount and not bCanStopMentoring
+		local wndCurrBtn = wndParent:FindChild("MentoringSpecificBtn"..idx)
+		wndCurrBtn:SetCheck(bActivelyMentoringThisPersonAlready)
+		wndCurrBtn:FindChild("CheckIcon"):Show(bActivelyMentoringThisPersonAlready)
+		wndCurrBtn:FindChild("SubOptionsBtnText"):SetTextColor(ApolloColor.new(bCanRallyToThisPerson and "UI_BtnTextHoloListNormal" or "UI_BtnTextHoloListDisabled"))
+		wndCurrBtn:Enable(bCanRallyToThisPerson)
+
+		-- Button Text
+		if tTargetGroupData and bActivelyMentoringThisPersonAlready then
+			wndCurrBtn:FindChild("SubOptionsBtnText"):SetText(String_GetWeaselString(Apollo.GetString("Group_MentoringPerson"), tTargetGroupData.strCharacterName))
+		elseif tTargetGroupData and tTargetGroupData.strCharacterName then
+			wndCurrBtn:FindChild("SubOptionsBtnText"):SetText(String_GetWeaselString(Apollo.GetString("Group_MentorPerson"), tTargetGroupData.strCharacterName))
+		else
+			wndCurrBtn:FindChild("SubOptionsBtnText"):SetText(Apollo.GetString("Group_RallyMember"..idx))
+		end
+	end
+end
+
+function GroupDisplayOptions:OnMentorSpecificPerson(wndHandler, wndControl)
+	local karRallySpecificBtnToIdx =
+	{
+		["MentoringSpecificBtn1"] = 2,
+		["MentoringSpecificBtn2"] = 3,
+		["MentoringSpecificBtn3"] = 4,
+		["MentoringSpecificBtn4"] = 5,
+	}
+
+	local unitTarget = GroupLib.GetUnitForGroupMember(karRallySpecificBtnToIdx[wndHandler:GetName()] or 0)
+	if unitTarget then
+		GroupLib.AcceptMentoring(unitTarget)
+	end
+
+	self:HelperRedrawMentoring()
+	self:OnGroupFormatClose()
+end
+
+function GroupDisplayOptions:OnStopMentoringBtn(wndHandler, wndControl)
+	GroupLib.CancelMentoring()
+	self:HelperRedrawMentoring()
+	self:OnGroupFormatClose()
+end
+
+---------------------------------------------------------------------------------------------------
+-- Simple UI buttons
+---------------------------------------------------------------------------------------------------
+
+function GroupDisplayOptions:OnLeaveGroup()
+	self.wndMain:Show(false)
+	self:OnGroupFormatClose()
+	Event_FireGenericEvent("GenericEvent_ShowConfirmLeaveDisband", 1)
+end
+
+function GroupDisplayOptions:OnDisbandGroup()
+	self.wndMain:Show(false)
+	self:OnGroupFormatClose()
+	Event_FireGenericEvent("GenericEvent_ShowConfirmLeaveDisband", 0)
+end
+
+function GroupDisplayOptions:OnResetInstances()
+	self.wndMain:Show(false)
+	self:OnGroupFormatClose()
+	Apollo.ParseInput("/resetinstances") -- TODO: Replace with a library call
+end
+
+function GroupDisplayOptions:OnConvertToRaid()
+	if self.wndRaidConfirm and self.wndRaidConfirm:IsValid() then
+		self.wndRaidConfirm:Destroy()
+		self.wndRaidConfirm = nil
+	end
+
+	self.wndMain:Show(false)
+
+	self.wndRaidConfirm = Apollo.LoadForm(self.xmlDoc, "RaidConvertConfirmForm", nil, self)
+	self.wndRaidConfirm:Invoke()
+end
+
+function GroupDisplayOptions:OnGroupFormatClose() -- clean up on close
+	for idx, strMenu in ipairs(ktSubMenus) do
+		if strMenu and self.wndMain:FindChild(strMenu) then
+			self.wndMain:FindChild(strMenu):SetCheck(false)
+			self.wndMain:FindChild(strM

@@ -21,3 +21,67 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="48" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint="1" RAnchorOffset="-48" BAnchorPoint="1" BAnchorOffset="-48" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Content" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" NewControlDepth="14"/>
     </Form>
 </Forms>
+ecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.Warplot)
+		elseif GameLib.GetDefaultRecallCommand() == GameLib.CodeEnumRecallCommand.Illium then
+			bShowRecallBtn = true
+			self.wndMain:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.Illium)
+		elseif GameLib.GetDefaultRecallCommand() == GameLib.CodeEnumRecallCommand.Thayd then
+			bShowRecallBtn = true
+			self.wndMain:FindChild("RecallActionBtn"):SetContentId(GameLib.CodeEnumRecallCommand.Thayd)
+		end
+	else
+		bShowRecallBtn = false
+	end
+	
+	if bShowRecallBtn then
+		--Toggle Visibility based on ui preference
+		local unitPlayer = GameLib.GetPlayerUnit()
+		local nVisibility = Apollo.GetConsoleVariable("hud.SkillsBarDisplay")
+		
+		if nVisibility == 2 then --always off
+			self.wndMain:Show(false)
+		elseif nVisibility == 3 then --on in combat
+			self.wndMain:Show(unitPlayer:IsInCombat())	
+		elseif nVisibility == 4 then --on out of combat
+			self.wndMain:Show(not unitPlayer:IsInCombat())
+		else
+			self.wndMain:Show(true)
+		end
+	else
+		self.wndMain:Show(bShowRecallBtn)
+	end
+end
+
+function RecallFrame:ResetDefaultCommand()
+	local bHasWarplot = false
+	-- Determine if this player is in a WarParty
+	for key, guildCurr in pairs(GuildLib.GetGuilds()) do
+		if guildCurr:GetType() == GuildLib.GuildType_WarParty then
+			bHasWarplot = true
+			break
+		end
+	end
+	
+	local bHasIllium = false
+	local bHasThyad = false
+	for idx, tSpell in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}) do
+		if tSpell.bIsActive and tSpell.nId == GameLib.GetTeleportThaydSpell():GetBaseSpellId() then
+			bHasThyad = true
+		end
+		if tSpell.bIsActive and tSpell.nId == GameLib.GetTeleportIlliumSpell():GetBaseSpellId() then
+			bHasIllium = true
+		end
+	end
+
+	if GameLib.HasBindPoint() then 	
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.BindPoint)
+	elseif HousingLib.IsResidenceOwner() == true then
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.House)	
+	elseif bHasWarplot then
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.Warplot)
+	elseif bHasIllium then
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.Illium)
+	elseif bHasThyad then
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.Thayd)
+	else
+		GameLib.SetDefaultRecallCommand(GameLib.CodeEnumRecallCommand.

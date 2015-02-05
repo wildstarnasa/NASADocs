@@ -73,3 +73,63 @@
         </Control>
     </Form>
 </Forms>
+SoldierResult_ScriptCancel] 			= "CRB_Whoops_Cancelled_by_script",
+			[PathMission.PlayerPathSoldierResult_FailUnknown] 			= "CRB_Whoops_Somethings_gone_wrong_here",
+			[PathMission.PlayerPathSoldierResult_FailDeath] 			= "CRB_Your_defenses_werent_enough_this_tim",
+			[PathMission.PlayerPathSoldierResult_FailTimeOut] 			= "CRB_Time_has_expired_Remember_haste_make",
+			[PathMission.PlayerPathSoldierResult_FailLeaveArea] 		= "CRB_The_Holdouts_initiator_fled_in_terro",
+			[PathMission.PlayerPathSoldierResult_FailDefenceDeath] 		= "CRB_Your_defenses_werent_enough_this_tim",
+			[PathMission.PlayerPathSoldierResult_FailLostResources] 	= "CRB_Your_defenses_werent_enough_this_tim",
+			[PathMission.PlayerPathSoldierResult_FailNoParticipants] 	= "CRB_The_Holdouts_initiator_fled_in_terro",
+			[PathMission.PlayerPathSoldierResult_FailParticipation]		= "CRB_Holdout_Failed",
+		}
+
+		strReason = Apollo.GetString(tFailReasonStrings[eReason])
+	end
+
+
+	self.wndMain:FindChild("SolResult"):FindChild("ReasonText"):SetText(strReason)
+
+	Apollo.CreateTimer("SoldierResultTimeout", 15.0, false)
+	Apollo.StartTimer("SoldierResultTimeout")
+end
+
+function PathSoldierMain:OnCloseResultScreen()
+	if self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:FindChild("SolResult"):Show(false)
+		self.wndMain:FindChild("MissionList"):DestroyChildren()
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- UI Events/Buttons
+-----------------------------------------------------------------------------------------------
+
+function PathSoldierMain:OnListItemMouseEnter(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemMouseExit(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemHintArrow(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	pmMission:ShowHintArrow()
+end
+
+
+function PathSoldierMain:OnListItemSubscreenBtn(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	if pmMission and pmMission:IsStarted() then
+		local seEvent = pmMission:GetSoldierHoldout()
+		if seEvent then
+			self.wndMain:Enable

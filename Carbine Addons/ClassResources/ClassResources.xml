@@ -200,3 +200,7 @@
         <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="132" TAnchorPoint="1" TAnchorOffset="-61" RAnchorPoint="0.5" RAnchorOffset="190" BAnchorPoint="1" BAnchorOffset="-3" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Dot3" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CM_Stalker:spr_CM_Stalker_Dot3" TransitionShowHide="1" TextId="" Visible="0" HideInEditor="1" NewWindowDepth="0" NewControlDepth="1"/>
     </Form>
 </Forms>
+e="ButtonSignal" Function="OnReportCircleInviteSpamBtn"/>
+        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Nam

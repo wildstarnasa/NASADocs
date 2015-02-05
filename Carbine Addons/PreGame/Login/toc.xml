@@ -2,3 +2,42 @@
     <Script Name="Login.lua" />
     <Form Name="Login.xml" />
 </Addon>
+orOffset="0" TAnchorPoint="0" TAnchorOffset="22" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="45" RelativeToClient="0" Font="CRB_InterfaceTiny_BB" Text="" Template="Default" TooltipType="OnCursor" Name="VersionString" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="Challenges_NoProgress" DT_BOTTOM="0" DT_CENTER="0" IgnoreMouse="1" Tooltip="" DT_RIGHT="1"/>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="0" RAnchorOffset="455" BAnchorPoint="0" BAnchorOffset="92" RelativeToClient="0" Font="CRB_Interface10_B" Text="" Template="Default" TooltipType="OnCursor" Name="RealmMessagesContainer" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="UI_BtnTextRedNormal" TooltipColor="" Tooltip="" DT_WORDBREAK="1" TextId="" DT_CENTER="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" DT_VCENTER="1" Visible="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="0" Font="CRB_Interface10_B" Text="" Template="CRB_QuestTracker" TooltipType="OnCursor" Name="RealmMessagesFrame" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="UI_BtnTextRedNormal" TooltipColor="" Tooltip="" DT_WORDBREAK="1" TextId="" DT_CENTER="1" Sprite="" DT_VCENTER="1" NoClip="0" VScroll="1" UseTemplateBG="1" AutoHideScroll="1">
+            <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0" BAnchorOffset="0" RelativeToClient="0" Font="CRB_Interface10_B" Text="" Template="Default" TooltipType="OnCursor" Name="RealmMessage" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="UI_BtnTextRedNormal" TooltipColor="" Tooltip="" DT_WORDBREAK="1" TextId="" DT_CENTER="1" Sprite="" DT_VCENTER="1" NoClip="0"/>
+        </Control>
+    </Form>
+</Forms>
+ strMessage in ipairs(self.arServerMessages or {}) do
+		strAllMessage = strAllMessage .. strMessage .. "\n"
+	end
+	
+	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
+	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
+	self.wndServerMessage:SetHeightToContentHeight()
+	--self.wndServerMessages:Show(true)
+
+
+	--PreGameLib.uScene:SetBackground("UI\\Screens\\UI_CRB_LoginScreen.tex")
+	PreGameLib.SetMusic( PreGameLib.CodeEnumMusic.Login )
+	
+	PreGameLib.uScene:SetMap( 1559 );  -- this designates map.  Dont actually change 1346 map, make a new one and put the map number in here.
+	PreGameLib.uScene:SetCameraFoVNearFar( 50, .1, 512 ) -- field of view, near plane and far plane settings for camera.  Can not set near plane to 0.  Setting a very small near plane causes graphic artifacts.  
+	PreGameLib.uScene:SetMapTimeOfDay(c_SceneTime) -- in seconds from midnight. New band now playing!
+
+	self.wndVersionString:SetText(PreGameLib.GetVersionString())
+	
+	local cameraOffset = Vector3.New( -1.5, -2, 15 )		
+	local up = Vector3.New( 0, 1, 0 )
+	self.tPositionOffset = Vector3.New( -4850.41, -905.66, -6420.76 )
+	
+	PreGameLib.uScene:SetCameraPosition( self.tPositionOffset + cameraOffset, self.tPositionOffset, up )
+	
+	self.tPlanetPosition = Vector3.New( -4369.47, -879.143, -2812.23 )
+
+	self.primary = PreGameLib.uScene:AddActorByFile(1, "Art\\Cinematics\\Zones\\Login\\Camera_Login.m3")
+	if self.primary then
+		self.primary:SetPosition(1, self.tPlanetPosition, Vector3:Zero())
+		self.primary:AttachCamera(6) -- ModelCamera_Cinematic
+		self.primary:Animate( 0, 150, 1, true, false, 1, 0 ) -- last

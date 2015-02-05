@@ -100,6 +100,7 @@ function AccountServices:OnDocumentReady()
 	Apollo.RegisterEventHandler("CloseAllOpenAccountWindows", 		"OnCloseAllOpenAccountWindows", self)
 
 	Apollo.RegisterTimerHandler("Pregame_RedeemCreddDelay",			"OnPregame_RedeemCreddDelay", self)
+	Apollo.RegisterEventHandler("TrustedIPListReady", 				"OnTrustedIPListReady", self)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "AccountServicesForm", "AccountServices", self)
 	self.wndMinimized = Apollo.LoadForm(self.xmlDoc, "MinimizedPicker", "AccountServices", self)
@@ -191,7 +192,7 @@ function AccountServices:RedrawAll()
 				self.wndLapsedPopup = Apollo.LoadForm(self.xmlDoc, "LapsedAccountWithCREDD", "AccountServices", self)
 				self.wndLapsedPopup:Invoke()
 			end
-			
+
 			if self.wndRedeemCreddDelay and self.wndRedeemCreddDelay:IsValid() then -- As this may fire multiple times with invalid data
 				self.wndRedeemCreddDelay:Destroy()
 			end
@@ -203,7 +204,9 @@ function AccountServices:RedrawAll()
 			self.wndLapsedPopup:FindChild("LapsedStartRedeemBtn"):SetData({ nCreddBound = nCreddBound, nCreddEscrow = nCreddEscrow })
 		end
 	end
-
+	
+	AccountItemLib.RequestTrustedIPList()
+	
 	-- Initialize if > 0
 	local bHaveCharacters = g_arCharacters and #g_arCharacters > 0
 	local tMyRealmInfo = CharacterScreenLib.GetRealmInfo()
@@ -239,6 +242,8 @@ function AccountServices:RedrawAll()
 		self.wndMain:Close()
 		self.wndMinimized:Close()
 	end
+	
+	self:OnTrustedIPListReady()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -257,6 +262,7 @@ function AccountServices:OnPregame_CharacterSelected(tData)
 
 	self:OnRenameCloseBtn()
 	self:OnPaidTransferFlyoutCloseBtn()
+	self:OnRevokeCancel()
 end
 
 function AccountServices:OnOpenCharacterCreateBtn() -- Generic Event, not a btn click
@@ -525,17 +531,28 @@ function AccountServices:ShowTransferConfirmation(bPaid, nRealmId, strRealm, tEs
 	if self.wndTransferConfirm and self.wndTransferConfirm:IsValid() then
 		self.wndTransferConfirm:Destroy()
 	end
-
 	local strPayment = bPaid and Apollo.GetString("AccountServices_PaidRealmTransfer") or Apollo.GetString("AccountServices_FreeRealmTransfer")
 	local strExplanation = PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_TransferExplanation"), self.strCharacterSelectedName, strRealm, strPayment)
 	self.wndTransferConfirm = Apollo.LoadForm(self.xmlDoc, "TransferConfirmation", "AccountServices", self)
 	self.wndTransferConfirm:FindChild("PaidTransferYesBtn"):SetData({ nRealmId = nRealmId, nEscrowIndex = tEscrowData and tEscrowData.index })
 	self.wndTransferConfirm:FindChild("FreeTransferYesBtn"):SetData({ nRealmId = nRealmId })
-	self.wndTransferConfirm:FindChild("FreeTransferYesBtn"):Show(not bPaid)
+	self.wndTransferConfirm:FindChild("FreeTransferYesBtn"):Show(not bPaid)	
 	self.wndTransferConfirm:FindChild("PaidTransferYesBtn"):Show(bPaid)
 	self.wndTransferConfirm:FindChild("TransferTitle"):SetText(strPayment)
 	self.wndTransferConfirm:FindChild("TransferExplanation"):SetText(strExplanation)
+	self.wndTransferConfirm:FindChild("TransferNameInput"):SetMaxTextLength(knMaxCharacterName+1) --They type the space in this.
+	self.wndTransferConfirm:FindChild("TransferNameInput"):SetPrompt(self.strCharacterSelectedName)
+	self.wndTransferConfirm:FindChild("FreeTransferYesBtn"):Enable(false)
+	self.wndTransferConfirm:FindChild("PaidTransferYesBtn"):Enable(false)
 	self.wndTransferConfirm:Invoke()
+end
+
+function AccountServices:OnTransferNameChanged()
+	if self.wndTransferConfirm and self.wndTransferConfirm:IsValid() then
+		local strCharName = self.wndTransferConfirm:FindChild("TransferNameInput"):GetText()
+		self.wndTransferConfirm:FindChild("FreeTransferYesBtn"):Enable(Apollo.StringToLower(self.strCharacterSelectedName) == Apollo.StringToLower(strCharName))
+		self.wndTransferConfirm:FindChild("PaidTransferYesBtn"):Enable(Apollo.StringToLower(self.strCharacterSelectedName) == Apollo.StringToLower(strCharName))
+	end
 end
 
 function AccountServices:OnFreeTransferYesBtn(wndHandler, wndControl) -- wndHandler is FreeTransferYesBtn, Data is nRealmId
@@ -685,15 +702,25 @@ function AccountServices:OnTrustedIPFlyoutCloseBtn(wndHandler, wndControl)
 end
 
 function AccountServices:OnTrustedIPForgetBtn( wndHandler, wndControl, eMouseButton )
-
-end
-
-function AccountServices:TrustedIPChecked( wndHandler, wndControl, eMouseButton )
-
-end
-
-function AccountServices:TrustedIPUnchecked( wndHandler, wndControl, eMouseButton )
-
+	local arListOfIPsToForget = {}
+	
+	if not self.wndTrustedIPFlyout then
+		self.wndTrustedIPFlyout = self.wndMain:FindChild("TrustedIPFlyout")
+	end
+	
+	local wndTrustedIPContent = self.wndTrustedIPFlyout:FindChild("TrustedIPContent")
+	for idx, wndIp in pairs(wndTrustedIPContent:GetChildren()) do
+		local wndCheck = wndIp:FindChild("Button")
+		if wndCheck:IsChecked() then
+			arListOfIPsToForget[#arListOfIPsToForget + 1] = wndCheck:GetData().ipAddress
+		end
+	end
+	
+	if #arListOfIPsToForget > 0 then
+		AccountItemLib.RevokeTrustedIP(arListOfIPsToForget)
+	end
+	
+	self.wndTrustedIPFlyout:Close()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -900,24 +927,106 @@ function AccountServices:OnGroupBindNoBtn(wndHandler, wndControl)
 	self.wndGroupBindConfirm:Destroy()
 end
 
-function AccountServices:OnRandomLastName()
+---------------------------------------------------------------------------------------------------
+-- Trusted IPs
+---------------------------------------------------------------------------------------------------
+
+function AccountServices:OnTrustedIPListReady()
+	if not self.wndMain then
+		return
+	end
 	
+	if not self.wndTrustedIPFlyout then
+		self.wndTrustedIPFlyout = self.wndMain:FindChild("TrustedIPFlyout")
+	end
+	
+	local wndTrustedIPConfirmBtn = self.wndTrustedIPFlyout:FindChild("TrustedIPConfirmBtn")
+	
+	local wndTrustedIPContent = self.wndTrustedIPFlyout:FindChild("TrustedIPContent")
+	wndTrustedIPContent:DestroyChildren()
+	
+	local tList = AccountItemLib.GetTrustedIPList()
+	for idx, tIP in pairs(tList) do
+		local wndIpRow = Apollo.LoadForm(self.xmlDoc, "TrustedIPButton", wndTrustedIPContent, self)
+		wndIpRow:SetData({ ["wndTrustedIPConfirmBtn"] = wndTrustedIPConfirmBtn })
+		wndIpRow:FindChild("Button"):SetData({ ["ipAddress"] = tIP.strIPAddress, ["wndTrustedIPConfirmBtn"] = wndTrustedIPConfirmBtn, ["wndTrustedIPContent"] = wndTrustedIPContent } )
+		wndIpRow:FindChild("IPNumber"):SetText(tIP.strIPAddress)
+		wndIpRow:FindChild("IPDateAdded"):SetText(tIP.strRegisterd)
+	end
+	wndTrustedIPContent:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	
+	wndTrustedIPConfirmBtn:Enable(false)
+	
+	self.wndMainPicker:FindChild("TrustedIPBtnSubtitle"):SetText(PreGameLib.String_GetWeaselString(Apollo.GetString("AccountServices_IPAddressSavedCount"), #tList))
+	
+	if #tList > 0 and not self.wndMain:IsShown() and not self.wndMinimized:IsShown() then
+		local bbDefaultMinimized = false
+		self.wndMain:Show(not bDefaultMinimized, true)
+		self.wndMinimized:Show(bDefaultMinimized, true)
+	end
+	self.wndMainPicker:FindChild("TrustedIPBtn"):Show(#tList > 0)
+	self.wndMainPicker:FindChild("AvailableScroll"):ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+end
+
+function AccountServices:OnTrustedIpBtnCheck(wndHandler, wndControl, eMouseButton)
+	local tData = wndControl:GetData()
+	tData.wndTrustedIPConfirmBtn:Enable(true)
+end
+
+function AccountServices:OnTrustedIpBtnUncheck(wndHandler, wndControl, eMouseButton)
+	local tData = wndControl:GetData()
+	
+	for idx, wndEntry in pairs(tData.wndTrustedIPContent:GetChildren()) do
+		if wndEntry:FindChild("Button"):IsChecked() then
+			tData.wndTrustedIPConfirmBtn:Enable(true)
+			return
+		end
+	end
+	
+	tData.wndTrustedIPConfirmBtn:Enable(false)
+end
+
+function AccountServices:OnRevokeIP( wndHandler, wndControl, eMouseButton )
+	local wndGrid = self.wndTrustedIPFlyout:FindChild("IPsGrid")
+	local iRow = wndGrid:GetCurrentRow()
+	if iRow > 0 then
+		AccountItemLib.RevokeTrustedIP(wndGrid:GetCellText(iRow, 1))
+		wndGrid:DeleteRow(iRow)
+	end
+
+	self.RedrawAll()
+end
+
+function AccountServices:OnRevokeCancel(wndHandler, wndControl)
+	if self.wndTrustedIPsFlyout and self.wndTrustedIPsFlyout:IsValid() then
+		self.wndTrustedIPsFlyout:Close()
+	end
+end
+
+---------------------------------------------------------------------------------------------------
+-- RandomLastNames
+---------------------------------------------------------------------------------------------------
+
+function AccountServices:OnRandomLastName()
+
 	local nId = g_controls:FindChild("EnterBtn"):GetData()
 	local tSelected = g_arCharacters[nId]
 	
 	local nRaceId = tSelected.idRace
 	local nFactionId = tSelected.idFaction
 	local nGenderId = tSelected.idGender
-	
-	local tLastName, tFirstName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
 
-		
-	self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText(tLastName)
-	self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetText(tFirstName)
+	local tName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+
 	
+	self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText(tName.strLastName)
+	self.wndRenameFlyout:FindChild("RenameCharacterFirstNameEntry"):SetText(tName.strFirstName)
+
 	self:OnRenameInputBoxChanged()
-	
+
 end
 
 local AccountServicesInst = AccountServices:new()
 AccountServicesInst:Init()
+Name="HuntDescBG" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1" NewControlDepth="1"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="93" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="1" BAnchorOffset="-130" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="HuntDescription" BGColor="white" TextColor="UI_TextHoloBody" TextId="ExplorerMissions_ScavengerHunt" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" TooltipColor="" Pic

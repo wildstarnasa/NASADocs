@@ -32,3 +32,33 @@
         </Control>
     </Form>
 </Forms>
+ring("CRB_ProgressSimple"), nComplete, nGoal))
+		wndCount:FindChild("CountQuestText"):SetText(String_GetWeaselString(Apollo.GetString("ZoneCompletion_TitleCount"), strTitle, strCount))
+		wndCount:FindChild("CountItemIcon"):SetSprite(ktIcons[nIndex])
+	end
+
+	return nComplete, nGoal
+end
+
+function ZoneCompletion:HelperBuildPercentExploredItem(nPercent)
+	local wndCount = Apollo.LoadForm(self.xmlDoc, "CountItem", self.wndMain:FindChild("CountsContainer"), self)
+	local strTitle = string.format("<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ff31fcf6\">%s</P>", Apollo.GetString("ZoneCompletion_Explored"))
+	local strCount = string.format("<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffffffff\">%s</P>", String_GetWeaselString(Apollo.GetString("CRB_Percent"), nPercent))
+	wndCount:FindChild("CountQuestText"):SetText(String_GetWeaselString(Apollo.GetString("ZoneCompletion_TitleCount"), strTitle, strCount))
+	wndCount:FindChild("CountItemIcon"):SetSprite(ktIcons["PercentExplored"])
+end
+
+function ZoneCompletion:HelperBuildPathCountItem(tPathValues)
+	if not tPathValues then
+		return
+	end
+
+	local nTotal = tPathValues.nGoal
+	local nComplete = tPathValues.nComplete
+
+	if nTotal > 0 then
+		local wndPath = Apollo.LoadForm(self.xmlDoc, "CountItem", self.wndMain:FindChild("CountsContainer"), self)
+		wndPath:FindChild("CountItemIcon"):SetSprite(ktPathIcon[self.ePlayerPath] or "")
+		
+		local strTitle = string.format("<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ff31fcf6\">%s</P>", String_GetWeaselString(Apollo.GetString("CRB_Colon"), ktPathString[self.ePlayerPath]))
+		local strCount = string.format("<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffffffff\"

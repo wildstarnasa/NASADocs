@@ -305,7 +305,7 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	elseif eResult == GuildLib.GuildResult_BankTabInvalidPermissions then			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BankTabInvalidPermissions"), tName, strGuildType)
 	elseif eResult == GuildLib.GuildResult_Busy then								strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Busy"), strGuildType)
 	elseif eResult == GuildLib.GuildResult_CannotCreateWhileInQueue then			strResult = Apollo.GetString("GuildResult_CannotCreateWhileInQueue")
-	elseif eResult == GuildLib.GuildResult_RenameNotAvailable then					strResult = Apollo.GetString("GuildResult_RenameNotAvialable")
+	elseif eResult == GuildLib.GuildResult_RenameNotAvailable then					strResult = Apollo.GetString("GuildResult_RenameNotAvailable")
 	end
 
 	return strResult
@@ -316,3 +316,19 @@ end
 -----------------------------------------------------------------------------------------------
 local GuildAlertsInst = GuildAlerts:new()
 GuildAlertsInst:Init()
+xtId="Group_RallyMember3">
+                        <Event Name="MouseEnter" Function="OnOptionsWindowBtnMouseEnter"/>
+                        <Event Name="MouseExit" Function="OnOptionsWindowBtnMouseExit"/>
+                    </Control>
+                </Control>
+                <Control Class="Button" Base="CRB_Basekit:kitBtn_List_Holo" Font="CRB_InterfaceMedium_O" ButtonType="Check" RadioGroup="GroupDisplayOptions_LocalRadioGroup_RallyingSpecific" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="72" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="96" DT_VCENTER="1" DT_CENTER="0" Name="MentoringSpecificBtn4" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Sprite="" Picture="0" Text="" TextId="" Tooltip="" RadioDisallowNonSelection="1" GlobalRadioGroup="" TooltipColor="">
+                    <Event Name="ButtonCheck" Function="OnMentorSpecificPerson"/>
+                    <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="CheckIcon" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:Icon_Windows_UI_CRB_Checkmark" Visible="0" TooltipColor="" Tooltip="" NewControlDepth="1" HideInEditor="1"/>
+                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="SubOptionsBtnText" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" DT_VCENTER="1" TextId="Group_RallyMember4">
+                        <Event Name="MouseEnter" Function="OnOptionsWindowBtnMouseEnter"/>
+                        <Event Name="MouseExit" Function="OnOptionsWindowBtnMouseExit"/>
+                    </Control>
+                </Control>
+                <Control Class="Button" Base="CRB_Basekit:kitBtn_List_Holo" Font="CRB_InterfaceMedium_O" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-24" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="0" Name="MentoringStopBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Sprite="" Picture="0" Text="" TextId="" Tooltip="" RadioDisallowNonSelection="1" GlobalRadioGroup="" TooltipColor="" Visible="1" HideInEditor="0">
+                    <Event Name="ButtonCheck" Function="OnStopMentoringBtn"/>
+                    <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="C

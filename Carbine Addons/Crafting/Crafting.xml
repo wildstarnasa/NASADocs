@@ -106,6 +106,9 @@
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="83" TAnchorPoint="0" TAnchorOffset="419" RAnchorPoint="0" RAnchorOffset="249" BAnchorPoint="0" BAnchorOffset="594" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SocketButton6" BGColor="white" TextColor="white" TooltipColor=""/>
             <Control Class="Window" Base="CRB_DEMO_WrapperSprites:btnDemo_CharInvisible" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="349" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="493" BAnchorPoint="0" BAnchorOffset="152" Name="SocketButton1" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" IgnoreTooltipDelay="1" TooltipType="OnCursor" Sprite="CRB_QuestTrackerSprites:btnQT_ScrollScrollerPressed" Text="" TooltipColor="" IgnoreMouse="1" Tooltip="" RelativeToClient="1"/>
         </Control>
+        <Control Class="Button" Base="btnCircuit_Glass_GreenOrange" Font="CRB_Header20" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="911" TAnchorPoint="0" TAnchorOffset="548" RAnchorPoint="0" RAnchorOffset="1102" BAnchorPoint="0" BAnchorOffset="619" DT_VCENTER="1" DT_CENTER="1" Name="CraftButton" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextGreenNormal" PressedTextColor="UI_BtnTextGreenPressed" FlybyTextColor="UI_BtnTextGreenFlyby" PressedFlybyTextColor="UI_BtnTextGreenPressedFlyby" DisabledTextColor="UI_BtnTextGreenDisabled" TextId="ActivationPrompt_CraftingStation" IgnoreTooltipDelay="0" RelativeToClient="1" Text="" TooltipColor="" Visible="1" HideInEditor="0" TooltipType="OnCursor" TooltipFont="CRB_InterfaceSmall_O" WindowSoundTemplate="MetalButtonLarge" NeverBringToFront="1">
+            <Event Name="ButtonSignal" Function="OnCraftBtnClicked"/>
+        </Control>
         <Event Name="WindowClosed" Function="OnCloseBtn"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="BlockerLayer" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" HideInEditor="0" Tooltip="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PreviewOnlyBlocker" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" TextId="" Visible="0" HideInEditor="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="" NewWindowDepth="1">
@@ -133,7 +136,7 @@
                 <Pixie LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="11" RAnchorPoint="0" RAnchorOffset="883" BAnchorPoint="0" BAnchorOffset="715" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="sprCircuit_LargeBlocker" Line="0"/>
                 <Pixie LAnchorPoint="1" LAnchorOffset="-289" TAnchorPoint="0" TAnchorOffset="548" RAnchorPoint="1" RAnchorOffset="-98" BAnchorPoint="0" BAnchorOffset="619" BGColor="white" Font="CRB_Header20" TextColor="UI_BtnTextGreenDisabled" Text="" TextId="CRB_Locked" Sprite="btnCircuit_Glass_GreenOrangeDisabled" DT_CENTER="1" DT_VCENTER="1" DT_WORDBREAK="1" Line="0"/>
             </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PostCraftBlocker" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" TextId="" Visible="0" HideInEditor="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="" NewWindowDepth="1">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PostCraftBlocker" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" TextId="" Visible="0" HideInEditor="0" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="" NewWindowDepth="1">
                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="75" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="0" RAnchorOffset="855" BAnchorPoint="0" BAnchorOffset="585" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="BlockerLayerMouseBlocker" BGColor="UI_AlphaPercent0" TextColor="white" TooltipColor="" SwallowMouseClicks="1" NewWindowDepth="1" HideInEditor="0" Tooltip=""/>
                 <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-290" TAnchorPoint="1" TAnchorOffset="-195" RAnchorPoint="1" RAnchorOffset="-97" BAnchorPoint="1" BAnchorOffset="-124" RelativeToClient="1" Font="CRB_Header20" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextBlueDisabled" Template="Default" TooltipType="OnCursor" Name="MouseBlockerBtn" TooltipColor="" Sprite="btnCircuit_Glass_GreenOrangeDisabled" Picture="1" IgnoreMouse="0" TextId="DialogResponse_CraftingStation" DT_CENTER="1" DT_VCENTER="1" SwallowMouseClicks="1" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" HideInEditor="0"/>
                 <Pixie LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="11" RAnchorPoint="0" RAnchorOffset="883" BAnchorPoint="0" BAnchorOffset="715" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="sprCircuit_LargeBlocker" Line="0"/>
@@ -144,7 +147,7 @@
             <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-7" TAnchorPoint="0.5" TAnchorOffset="-16" RAnchorPoint="0.5" RAnchorOffset="23" BAnchorPoint="0.5" BAnchorOffset="14" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="FailChargeFrameFlair" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="sprCircuit_CheckIcon"/>
             <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="24" RAnchorPoint="0" RAnchorOffset="129" BAnchorPoint="0" BAnchorOffset="100" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="sprCircuit_Failcharge_ProgBlue" TooltipType="OnCursor" Name="FailChargeBar" BGColor="white" TextColor="white" TooltipColor="" BarColor="" RadialBar="1" RadialMin="238.000000" RadialMax="295.000000" Clockwise="1" IgnoreMouse="1"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="TutorialLayer" BGColor="white" TextColor="white" TooltipColor="" HideInEditor="0" IgnoreMouse="1" NewWindowDepth="1" Tooltip="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="TutorialLayer" BGColor="white" TextColor="white" TooltipColor="" HideInEditor="1" IgnoreMouse="1" NewWindowDepth="1" Tooltip="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="269" BAnchorPoint="0" BAnchorOffset="100" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="TutorialPopup" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitBase_HoloBlue_SmallGreenCorners" NoClip="1" Visible="0" HideInEditor="1" CloseOnExternalClick="1" Overlapped="1" Tooltip="" NewWindowDepth="1">
                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="1" BAnchorOffset="-16" RelativeToClient="1" Font="CRB_InterfaceSmall_O" Text="" Template="Default" TooltipType="OnCursor" Name="TutorialPopupText" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="CRB__2" DT_WORDBREAK="1" DT_CENTER="1" DT_VCENTER="1"/>
                 <Control Class="Button" Base="CRB_ChallengeTrackerSprites:btnChallengeClose" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-22" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-1" BAnchorPoint="0" BAnchorOffset="26" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="TutorialPopupCloseBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white">
@@ -167,9 +170,6 @@
                 <Event Name="ButtonSignal" Function="OnTutorialItemBtn"/>
                 <Pixie LAnchorPoint="0" LAnchorOffset="3" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-3" BAnchorPoint="1" BAnchorOffset="5" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="CRB_Basekit:kitIcon_Holo_QuestionMark" Line="0"/>
             </Control>
-        </Control>
-        <Control Class="Button" Base="btnCircuit_Glass_GreenOrange" Font="CRB_Header20" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="911" TAnchorPoint="0" TAnchorOffset="548" RAnchorPoint="0" RAnchorOffset="1102" BAnchorPoint="0" BAnchorOffset="619" DT_VCENTER="1" DT_CENTER="1" Name="CraftButton" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextGreenNormal" PressedTextColor="UI_BtnTextGreenPressed" FlybyTextColor="UI_BtnTextGreenFlyby" PressedFlybyTextColor="UI_BtnTextGreenPressedFlyby" DisabledTextColor="UI_BtnTextGreenDisabled" TextId="ActivationPrompt_CraftingStation" IgnoreTooltipDelay="0" RelativeToClient="1" Text="" TooltipColor="" Visible="1" HideInEditor="0" TooltipType="OnCursor" TooltipFont="CRB_InterfaceSmall_O" WindowSoundTemplate="MetalButtonLarge" NeverBringToFront="1">
-            <Event Name="ButtonSignal" Function="OnCraftBtnClicked"/>
         </Control>
         <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" LAnchorPoint="1" LAnchorOffset="-72" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="-45" BAnchorPoint="0" BAnchorOffset="44" DT_VCENTER="1" DT_CENTER="1" Name="CloseButton" BGColor="white" TextColor="white" NewControlDepth="2" WindowSoundTemplate="CloseWindowPhys" Text="" TextId="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1" TooltipColor="" TestAlpha="1" NewWindowDepth="1">
             <Event Name="ButtonSignal" Function="OnCloseBtn"/>
@@ -229,9 +229,9 @@
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="364" BAnchorPoint="0" BAnchorOffset="342" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PowerCorePicker" Picture="1" Overlapped="0" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" NoClip="1" Tooltip="" TooltipId="" Sprite="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="44" TAnchorPoint="0" TAnchorOffset="33" RAnchorPoint="0" RAnchorOffset="100" BAnchorPoint="0" BAnchorOffset="89" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CircuitPickerArrowPulse" BGColor="white" TextColor="white" TooltipColor="" Sprite="sprCircuit_GreenPlus_Anim" Picture="1" IgnoreMouse="1">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="189" BAnchorPoint="0" BAnchorOffset="99" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Tutorial_TEMP" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_TutorialSprites:sprTut_ConnectorUL" Picture="1" IgnoreMouse="1" NoClip="1">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="180" BAnchorPoint="0" BAnchorOffset="99" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Tutorial_TEMP" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_TutorialSprites:sprTut_ConnectorUL" Picture="1" IgnoreMouse="1" NoClip="1">
                 <Pixie LAnchorPoint="0" LAnchorOffset="58" TAnchorPoint="0" TAnchorOffset="58" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="CRB_TutorialSprites:sprTut_BackerSmallLit" Line="0"/>
-                <Pixie LAnchorPoint="0" LAnchorOffset="64" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="84" BGColor="white" Font="CRB_Interface9_O" TextColor="UI_TextHoloBodyHighlight" Text="" TextId="CRB_Crafting_AddChipTutorial" Line="0"/>
+                <Pixie LAnchorPoint="0" LAnchorOffset="64" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0" BAnchorOffset="84" BGColor="white" Font="CRB_Interface9_O" TextColor="UI_TextHoloBodyHighlight" Text="Add a Power Core" TextId="" Line="0"/>
             </Control>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="48" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="0" RAnchorOffset="96" BAnchorPoint="0" BAnchorOffset="84" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CircuitPickerIcon" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" NewControlDepth="1" Sprite="ClientSprites:Icon_CraftingUI_Item_Crafting_PowerCore_Green"/>
@@ -239,7 +239,7 @@
         <Control Class="Button" Base="btnCircuit_Circle_Bubble" Font="CRB_HeaderHuge" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="31" TAnchorPoint="0" TAnchorOffset="16" RAnchorPoint="0" RAnchorOffset="112" BAnchorPoint="0" BAnchorOffset="97" TooltipType="OnCursor" Name="PowerCorePickerBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_TextHoloBodyHighlight" PressedTextColor="UI_TextHoloBodyHighlight" FlybyTextColor="UI_TextHoloBodyHighlight" PressedFlybyTextColor="UI_TextHoloBodyHighlight" DisabledTextColor="UI_TextHoloBodyHighlight" RelativeToClient="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="Crafting_TutorialAmps" GlobalRadioGroup="Crafting_CircuitPicker_GlobalRadioGroup" NeverBringToFront="1" Text="" TextId="" DT_CENTER="1" DT_VCENTER="1" WindowSoundTemplate="MetalButtonLarge">
             <Event Name="ButtonSignal" Function="YourFunctionName"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="67" TAnchorPoint="0" TAnchorOffset="60" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="HoloWindowSound" TooltipType="OnCursor" Name="PowerCorePickerPopout" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="sprCircuit_Holo_Flyout" Visible="0" NewWindowDepth="1" CloseOnExternalClick="1" HideInEditor="0">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="67" TAnchorPoint="0" TAnchorOffset="60" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="HoloWindowSound" TooltipType="OnCursor" Name="PowerCorePickerPopout" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="sprCircuit_Holo_Flyout" Visible="0" NewWindowDepth="1" CloseOnExternalClick="1" HideInEditor="1">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="45" TAnchorPoint="0" TAnchorOffset="43" RAnchorPoint="1" RAnchorOffset="-41" BAnchorPoint="1" BAnchorOffset="-37" RelativeToClient="1" Font="CRB_InterfaceSmall_O" Text="" Template="CRB_Scroll_HoloSmall" TooltipType="OnCursor" Name="PowerCorePickerList" BGColor="white" TextColor="UI_TextMetalBodyHighlight" TooltipColor="" VScroll="1" IgnoreMouse="1" Sprite="" Picture="1" DT_CENTER="1" DT_VCENTER="1" DT_WORDBREAK="1" Tooltip="" AutoHideScroll="1"/>
             <Pixie LAnchorPoint="0" LAnchorOffset="39" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-34" BAnchorPoint="1" BAnchorOffset="-31" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="CRB_Basekit:kitBase_HoloBlue_Tiny" Line="0"/>
             <Pixie LAnchorPoint="0" LAnchorOffset="39" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-34" BAnchorPoint="1" BAnchorOffset="-31" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="CRB_Basekit:kitBase_HoloBlue_Tiny" Line="0"/>
@@ -291,3 +291,92 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="64" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="84" BGColor="white" Font="CRB_Interface9_O" TextColor="UI_TextHoloBodyHighlight" Text="" TextId="CRB_Crafting_AdjustChargeTutorial" Line="0"/>
     </Form>
 </Forms>
+SystemLib.ChatChannel_Whisper then
+		if not tMessage.bSelf then
+			self.tLastWhisperer = { strCharacterName = strWhisperName, eChannelType = ChatSystemLib.ChatChannel_Whisper }--record the last incoming whisperer for quick response
+		end
+		Sound.Play(Sound.PlayUISocialWhisper)
+		self:InsertIntoRecent(strWhisperName, false)
+	elseif eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
+
+		local tPreviousWhisperer = self.tLastWhisperer
+
+		self.tLastWhisperer =
+		{
+			strCharacterName = tMessage.strSender,
+			strRealmName = nil,
+			strDisplayName = nil,
+			eChannelType = ChatSystemLib.ChatChannel_AccountWhisper
+		}
+
+		local tAccountFriends = FriendshipLib.GetAccountList()
+		for idx, tAccountFriend in pairs(tAccountFriends) do
+			if tAccountFriend.arCharacters ~= nil then
+				for idx, tCharacter in pairs(tAccountFriend.arCharacters) do
+					if tCharacter.strCharacterName == tMessage.strSender and (tMessage.strRealmName:len() == 0 or tCharacter.strRealm == tMessage.strRealmName) then
+						if not tMessage.bSelf or (tPreviousWhisperer and tPreviousWhisperer.strCharacterName == tMessage.strSender) then
+							self.tLastWhisperer.strDisplayName = tAccountFriend.strCharacterName
+							self.tLastWhisperer.strRealmName = tCharacter.strRealm
+						end
+						strDisplayName = tAccountFriend.strCharacterName
+					end
+				end
+			end
+		end
+		Sound.Play(Sound.PlayUISocialWhisper)
+		self:InsertIntoRecent(strDisplayName, true)
+	end
+
+	-- We build strings backwards, right to left
+	if eChannelType == ChatSystemLib.ChatChannel_AnimatedEmote then -- emote animated channel gets special formatting
+		xml:AddLine(strTime, crChannel, self.strFontOption, "Left")
+
+	elseif eChannelType == ChatSystemLib.ChatChannel_Emote then -- emote channel gets special formatting
+		xml:AddLine(strTime, crChannel, self.strFontOption, "Left")
+		if strDisplayName:len() > 0 then
+			if tMessage.bGM then
+				xml:AppendImage(kstrGMIcon, 16, 16)
+			end
+			local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
+			xml:AppendText(strDisplayName, crPlayerName, self.strFontOption, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId, strCrossFaction = strCross}, "Source")
+		end
+		xml:AppendText(" ")
+	else
+		local strChannel
+		if eChannelType == ChatSystemLib.ChatChannel_Society then
+			strChannel = (string.format("%s ", String_GetWeaselString(Apollo.GetString("ChatLog_GuildCommand"), tQueuedMessage.strChannelName, tQueuedMessage.strChannelCommand))) --String DB removed empty characters at the end of string, so have to hardcode it here.
+		else
+			strChannel = String_GetWeaselString(Apollo.GetString("CRB_Brackets_Space"), tQueuedMessage.strChannelName)
+		end
+
+		if self.bShowChannel ~= true then
+			strChannel = ""
+		end
+
+		xml:AddLine(strTime .. strChannel, crChannel, self.strFontOption, "Left")
+		if strDisplayName:len() > 0 then
+
+			local strWhisperNamePrefix = ""
+			if eChannelType == ChatSystemLib.ChatChannel_Whisper or eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
+				if tMessage.bSelf then
+					strWhisperNamePrefix = Apollo.GetString("ChatLog_To")
+				else
+					strWhisperNamePrefix = Apollo.GetString("ChatLog_From")
+				end
+			end
+
+			xml:AppendText( strWhisperNamePrefix, crText, self.strFontOption)
+
+			if tMessage.bGM then
+				xml:AppendImage(kstrGMIcon, 16, 16)
+			end
+
+			local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
+			xml:AppendText( strDisplayName, crPlayerName, self.strFontOption, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId , strCrossFaction = strCross}, "Source")
+		end
+		xml:AppendText( strPresenceState .. Apollo.GetString("Chat_ColonBreak"), crChannel, self.strFontOption, "Left")
+	end
+
+	local xmlBubble = nil
+	if tMessage.bShowChatBubble then
+		xmlBubble = XmlDoc.new() -- This is the speech bubble fo

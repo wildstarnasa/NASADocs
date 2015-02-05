@@ -52,33 +52,33 @@
             <Event Name="ButtonUncheck" Function="OnIgnorePlayerCheckboxToggle"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-225" TAnchorPoint="0.5" TAnchorOffset="-225" RAnchorPoint="0.5" RAnchorOffset="225" BAnchorPoint="0.5" BAnchorOffset="185" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ReportPlayerNamePicker" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" Sprite="BK3:UI_BK3_Holo_Framing_1" TransitionShowHide="1" TooltipColor="" Tooltip="" TestAlpha="1">
+    <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-225" TAnchorPoint="0.5" TAnchorOffset="-230" RAnchorPoint="0.5" RAnchorOffset="225" BAnchorPoint="0.5" BAnchorOffset="230" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ReportPlayerNamePicker" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" Sprite="BK3:UI_BK3_Holo_Framing_1" TransitionShowHide="1" TooltipColor="" Tooltip="" TestAlpha="1">
         <Event Name="WindowClosed" Function="OnNamePickerClose"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="90" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="0" BAnchorOffset="165" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetContainer1" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="90" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="0" BAnchorOffset="185" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetContainer1" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
             <Pixie LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="30" BGColor="UI_WindowBGDefault" Font="CRB_InterfaceMedium" TextColor="UI_TextHoloTitle" Text="" TextId="ReportPlayer_LastTarget" DT_VCENTER="1" Line="0" DT_CENTER="1"/>
             <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0" TAnchorOffset="7" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="29" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetTooltipExplain1" TooltipColor="white" Sprite="CRB_Basekit:kitIcon_Holo_QuestionMark" Picture="1" IgnoreMouse="1" Tooltip="" TooltipFont="CRB_InterfaceSmall_O" TooltipId="ReportPlayer_LastTargetExplanationTooltip"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="1" RAnchorOffset="-105" BAnchorPoint="0" BAnchorOffset="75" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="LastTargetName1" TooltipColor="" TextId="CRB__2" DT_VCENTER="1" DT_CENTER="0" DT_WORDBREAK="1"/>
-            <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-110" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="6" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="LastTargetBtn1" TooltipColor="" Text="" TextId="ReportPlayer_StartReport" ButtonTextXMargin="10">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="1" RAnchorOffset="-125" BAnchorPoint="0" BAnchorOffset="95" RelativeToClient="1" Font="CRB_HeaderTiny" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="LastTargetName1" TooltipColor="" TextId="" DT_VCENTER="1" DT_CENTER="0" DT_WORDBREAK="1"/>
+            <Control Class="Button" Base="bk3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-124" TAnchorPoint="1" TAnchorOffset="-67" RAnchorPoint="1" RAnchorOffset="1" BAnchorPoint="1" BAnchorOffset="6" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="LastTargetBtn1" TooltipColor="" Text="" TextId="ReportPlayer_StartReport" ButtonTextXMargin="18" DT_WORDBREAK="1">
                 <Event Name="ButtonSignal" Function="OnNameSelectedBtn"/>
             </Control>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="180" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="0" BAnchorOffset="255" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetContainer2" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="200" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="0" BAnchorOffset="295" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetContainer2" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
             <Pixie LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="30" BGColor="UI_WindowBGDefault" Font="CRB_InterfaceMedium" TextColor="UI_TextHoloTitle" Text="" TextId="ReportPlayer_SecondLastTarget" DT_VCENTER="1" Line="0" DT_CENTER="1"/>
             <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0" TAnchorOffset="7" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="29" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LastTargetTooltipExplain2" TooltipColor="white" Sprite="CRB_Basekit:kitIcon_Holo_QuestionMark" Picture="1" IgnoreMouse="1" Tooltip="" TooltipFont="CRB_InterfaceSmall_O" TooltipId="ReportPlayer_LastTargetExplanationTooltip"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="34" RAnchorPoint="1" RAnchorOffset="-105" BAnchorPoint="0" BAnchorOffset="74" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="LastTargetName2" TooltipColor="" TextId="CRB__2" DT_CENTER="0" DT_VCENTER="1" DT_WORDBREAK="1"/>
-            <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-110" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="6" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="LastTargetBtn2" TooltipColor="" Text="" TextId="ReportPlayer_StartReport" ButtonTextXMargin="10">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="1" RAnchorOffset="-125" BAnchorPoint="0" BAnchorOffset="95" RelativeToClient="1" Font="CRB_HeaderTiny" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="LastTargetName2" TooltipColor="" TextId="" DT_CENTER="0" DT_VCENTER="1" DT_WORDBREAK="1"/>
+            <Control Class="Button" Base="bk3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-124" TAnchorPoint="1" TAnchorOffset="-67" RAnchorPoint="1" RAnchorOffset="1" BAnchorPoint="1" BAnchorOffset="6" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="LastTargetBtn2" TooltipColor="" Text="" TextId="ReportPlayer_StartReport" ButtonTextXMargin="18" DT_WORDBREAK="1">
                 <Event Name="ButtonSignal" Function="OnNameSelectedBtn"/>
             </Control>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="269" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="0" BAnchorOffset="345" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="CustomInputContainer" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="1" TAnchorOffset="-147" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="1" BAnchorOffset="-51" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="CustomInputContainer" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin">
             <Pixie LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="30" BGColor="UI_WindowBGDefault" Font="CRB_InterfaceMedium" TextColor="UI_TextHoloTitle" Text="" TextId="CRB_Custom" DT_VCENTER="1" Line="0" DT_CENTER="1"/>
-            <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="46" RAnchorPoint="1" RAnchorOffset="-115" BAnchorPoint="0" BAnchorOffset="66" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" BGColor="ffffffff" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="CustomInputEditBox" TooltipColor="" TextId="" PromptTextId="ReportPlayer_TypeNameHere" Tooltip="" PromptFont="CRB_InterfaceMedium_B" DefaultTarget="1" LoseFocusOnExternalClick="1">
+            <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="17" TAnchorPoint="0" TAnchorOffset="56" RAnchorPoint="1" RAnchorOffset="-130" BAnchorPoint="0" BAnchorOffset="76" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" BGColor="ffffffff" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="CustomInputEditBox" TooltipColor="" TextId="" PromptTextId="ReportPlayer_TypeNameHere" Tooltip="" PromptFont="CRB_InterfaceMedium_B" DefaultTarget="1" LoseFocusOnExternalClick="1">
                 <Event Name="EditBoxChanged" Function="OnCustomInputEditBoxChanged"/>
             </Control>
-            <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-110" TAnchorPoint="1" TAnchorOffset="-48" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="5" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="CustomInputBtn" TooltipColor="" Text="" TextId="ReportPlayer_StartReport" ButtonTextXMargin="10">
+            <Control Class="Button" Base="bk3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-124" TAnchorPoint="1" TAnchorOffset="-68" RAnchorPoint="1" RAnchorOffset="1" BAnchorPoint="1" BAnchorOffset="5" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="CustomInputBtn" TooltipColor="" Text="" TextId="ReportPlayer_StartReport" ButtonTextXMargin="18" DT_WORDBREAK="1">
                 <Event Name="ButtonSignal" Function="OnNameSelectedBtn"/>
             </Control>
-            <Pixie LAnchorPoint="0" LAnchorOffset="3" TAnchorPoint="1" TAnchorOffset="-36" RAnchorPoint="1" RAnchorOffset="-108" BAnchorPoint="1" BAnchorOffset="-5" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="BK3:UI_BK3_Holo_Snippet" Line="0"/>
+            <Pixie LAnchorPoint="0" LAnchorOffset="6" TAnchorPoint="1" TAnchorOffset="-46" RAnchorPoint="1" RAnchorOffset="-123" BAnchorPoint="1" BAnchorOffset="-15" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="BK3:UI_BK3_Holo_Snippet" Line="0"/>
         </Control>
         <Control Class="Button" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-82" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="84" DT_VCENTER="1" DT_CENTER="1" Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
             <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
@@ -86,3 +86,33 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="100" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-100" BAnchorPoint="0" BAnchorOffset="84" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="ReportPlayer_Title" DT_CENTER="1" DT_VCENTER="1" Line="0"/>
     </Form>
 </Forms>
+-----------------------
+
+function PathSoldierMain:OnListItemMouseEnter(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemMouseExit(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemHintArrow(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	pmMission:ShowHintArrow()
+end
+
+
+function PathSoldierMain:OnListItemSubscreenBtn(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	if pmMission and pmMission:IsStarted() then
+		local seEvent = pmMission:GetSoldierHoldout()
+		if seEvent then
+			self.wndMain:Enable

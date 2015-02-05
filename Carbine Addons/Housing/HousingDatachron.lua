@@ -259,3 +259,5 @@ end
 -----------------------------------------------------------------------------------------------
 local HousingDatachronInst = HousingDatachron:new()
 HousingDatachronInst:Init()
+0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="118" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="CallAlert" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" TooltipType="OnCursor" TransitionShowHide="1" NeverBringToFront="1" Visible="0" TooltipColor="">
+            <Control Class="Button" Base="CRB_DEMO_WrapperSprites:btnDemo_CharInvisible" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="-25" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0.5" RAnchorOffset="25" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="CallAlertBtn" BGColor="white" TextColor="white" ProcessRightClick="1" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="" RelativeToClient="1" IgnoreMouse="1" HideInEditor="0" 

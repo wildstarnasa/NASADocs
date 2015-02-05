@@ -1181,4 +1181,4 @@ function PublicEventStats:HelperGridFactoryProduce(wndGrid, tTargetComparison)
 end
 
 local PublicEventStatsInst = PublicEventStats:new()
-PublicEventStatsInst:Init()
+PublicEventStatsInst:Init()CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="HintTextWnd" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="CharacterSelection_PlayingWithFriendsBlurb"

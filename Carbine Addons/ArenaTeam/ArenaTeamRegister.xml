@@ -28,3 +28,17 @@
         </Control>
     </Form>
 </Forms>
+oltipGenerateType_Spell then
+		Tooltip.GetSpellTooltipForm(self, wndControl, oArg1)
+	elseif eType == Tooltip.TooltipGenerateType_PetCommand then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	end
+end
+
+-----------------------------------------------------------
+local ActionBarShor    úŸ ‘  ‘∏Î$ àIò4KarShortcut:new()
+ActionBarShortcut_Singleton:Init()
+–‡À  À±Î$ àIò4K≠çÉ†®™çå
+Ä Ä‡

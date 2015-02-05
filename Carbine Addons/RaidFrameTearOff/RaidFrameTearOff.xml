@@ -3,33 +3,33 @@
     <Form Class="Window" LAnchorPoint="RaidFrameBaseForm_Right" LAnchorOffset="25" TAnchorPoint="RaidFrameBaseForm_Top" TAnchorOffset="0" RAnchorPoint="RaidFrameBaseForm_Right" RAnchorOffset="275" BAnchorPoint="RaidFrameBaseForm_Top" BAnchorOffset="100" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="RaidFrameTearOffForm" Picture="1" Moveable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Tooltip="" IgnoreMouse="1" Sprite="" Sizable="1">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-25" TAnchorPoint="0" TAnchorOffset="-25" RAnchorPoint="1" RAnchorOffset="20" BAnchorPoint="1" BAnchorOffset="25" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HoloFrame" TooltipColor="" Sprite="BK3:UI_BK3_Holo_Framing_3" Picture="1" IgnoreMouse="1" NoClip="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="46" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="-12" RelativeToClient="1" Font="Default" Text="" Template="CRB_Scroll_HoloSmall" TooltipType="OnCursor" Name="RaidTearOffContainer" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Tooltip="" VScroll="0" IgnoreMouse="1" AutoHideScroll="1"/>
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-9" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="218" BAnchorPoint="0" BAnchorOffset="254" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="RaidTearOffOptions" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" NoClip="1" Sprite="CRB_Basekit:kitBase_HoloBlue_PopoutLarge" Picture="1" TextId="" DT_CENTER="1" Visible="0">
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-9" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="261" BAnchorPoint="0" BAnchorOffset="254" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="RaidTearOffOptions" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" NoClip="1" Sprite="CRB_Basekit:kitBase_HoloBlue_PopoutLarge" Picture="1" TextId="" DT_CENTER="1" Visible="0">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="28" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SelfConfigRaidCustomizeOptions" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="RaidFrame_Customize">
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="47" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeLeaderIcons" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowLeaderIcons" ButtonTextXMargin="25">
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="47" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeLeaderIcons" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowLeaderIcons" ButtonTextXMargin="28">
                     <Event Name="ButtonCheck" Function="DestroyAndRedrawAllFromUI"/>
                     <Event Name="ButtonUncheck" Function="DestroyAndRedrawAllFromUI"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="75" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeRoleIcons" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowRoleIcons" ButtonTextXMargin="25">
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="75" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeRoleIcons" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowRoleIcons" ButtonTextXMargin="28">
                     <Event Name="ButtonCheck" Function="DestroyAndRedrawAllFromUI"/>
                     <Event Name="ButtonUncheck" Function="DestroyAndRedrawAllFromUI"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="103" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeDebuffs" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowDebuffs" Tooltip="" ButtonTextXMargin="25">
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="103" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeDebuffs" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowDebuffs" Tooltip="" ButtonTextXMargin="28">
                     <Event Name="ButtonCheck" Function="DestroyAndRedrawAllFromUI"/>
                     <Event Name="ButtonUncheck" Function="DestroyAndRedrawAllFromUI"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="104" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="131" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeBuffs" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowBuffs" ButtonTextXMargin="25">
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="104" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="131" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeBuffs" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowBuffs" ButtonTextXMargin="28">
                     <Event Name="ButtonCheck" Function="DestroyAndRedrawAllFromUI"/>
                     <Event Name="ButtonUncheck" Function="DestroyAndRedrawAllFromUI"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="132" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="159" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeManaBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowManaBar" ButtonTextXMargin="25">
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="132" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="159" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeManaBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowManaBar" ButtonTextXMargin="28">
                     <Event Name="ButtonCheck" Function="DestroyAndRedrawAllFromUI"/>
                     <Event Name="ButtonUncheck" Function="DestroyAndRedrawAllFromUI"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="160" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="187" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeAssistTargets" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowAssistTargets" ButtonTextXMargin="25">
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="160" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="187" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeAssistTargets" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_ShowAssistTargets" ButtonTextXMargin="28">
                     <Event Name="ButtonCheck" Function="DestroyAndRedrawAllFromUI"/>
                     <Event Name="ButtonUncheck" Function="DestroyAndRedrawAllFromUI"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-46" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-19" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeLockInCombat" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_CombatAutoLock" Tooltip="" ButtonTextXMargin="25"/>
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-46" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-19" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="RaidCustomizeLockInCombat" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="RaidFrame_CombatAutoLock" ButtonTextXMargin="28"/>
             </Control>
         </Control>
         <Control Class="Button" Base="CRB_Raid:btnRaid_MinimizeSquare" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-74" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-56" BAnchorPoint="0" BAnchorOffset="26" TooltipType="OnCursor" Name="RaidTearOffCloseBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Visible="1" HideInEditor="0" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="RaidFrame_HideFrame">
@@ -87,3 +87,42 @@
     </Form>
     <Form Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="37" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="44" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="sprRaid_ManaProgBar_Purple" TooltipType="OnCursor" Name="RaidTearManaBar" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" IgnoreMouse="1" Sprite=""/>
 </Forms>
+unction PathSoldierMain:OnCloseResultScreen()
+	if self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:FindChild("SolResult"):Show(false)
+		self.wndMain:FindChild("MissionList"):DestroyChildren()
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- UI Events/Buttons
+-----------------------------------------------------------------------------------------------
+
+function PathSoldierMain:OnListItemMouseEnter(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemMouseExit(wndHandler, wndControl)
+	self:OnMainTimer()
+end
+
+function PathSoldierMain:OnListItemHintArrow(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	pmMission:ShowHintArrow()
+end
+
+
+function PathSoldierMain:OnListItemSubscreenBtn(wndHandler, wndControl)
+	if not wndHandler or not wndHandler:GetData() then
+		return
+	end
+
+	local pmMission = wndHandler:GetData()
+	if pmMission and pmMission:IsStarted() then
+		local seEvent = pmMission:GetSoldierHoldout()
+		if seEvent then
+			self.wndMain:Enable

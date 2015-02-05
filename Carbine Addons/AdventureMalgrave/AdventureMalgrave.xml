@@ -35,3 +35,82 @@
         </Control>
     </Form>
 </Forms>
+FindChild("DockBtn"):SetCheck(not self.bDocked)
+		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
+	end
+	
+	Event_FireGenericEvent("ShowActionBarShortcutDocked", self.bDocked)
+end
+
+function ActionBarShortcut:OnOrientationBtn(wndControl, wndHandler)
+	self.bDocked = false
+	self.bHorz = not self.bHorz
+	
+	for nbar, tActionBar in pairs(self.tActionBars) do
+		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and self.bDocked)
+		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
+		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
+	end
+	
+	for nbar, tActionBar in pairs(self.tActionBarsHorz) do
+		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and self.bHorz)
+		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
+		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
+	end
+	
+	for nbar, tActionBar in pairs(self.tActionBarsVert) do
+		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and not self.bHorz)
+		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
+		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
+	end
+	
+	Event_FireGenericEvent("ShowActionBarShortcutDocked", self.bDocked)
+end
+
+function ActionBarShortcut:OnGenerateTooltip(wndControl, wndHandler, eType, oArg1, oArg2)
+	local xml = nil
+	if eType == Tooltip.TooltipGenerateType_ItemInstance then
+		local itemEquipped = oArg1:GetEquippedItemForItemType()
+		Tooltip.GetItemTooltipForm(self, wndControl, oArg1, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
+		--Tooltip.GetItemTooltipForm(self, wndControl, itemEquipped, {bPrimary = false, bSelling = false, itemCompare = oArg1}) -- OLD
+	elseif eType == Tooltip.TooltipGenerateType_ItemData then
+		local itemEquipped = oArg1:GetEquippedItemForItemType()
+		Tooltip.GetItemTooltipForm(self, wndControl, oArg1, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
+		--Tooltip.GetItemTooltipForm(self, wndControl, itemEquipped, {bPrimary = false, bSelling = false, itemCompare = oArg1}) - OLD
+	elseif eType == Tooltip.TooltipGenerateType_GameCommand then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Macro then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg1)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Spell then
+		Tooltip.GetSpellTooltipForm(self, wndControl, oArg1)
+	elseif eType == Tooltip.TooltipGenerateType_PetCommand then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	end
+end
+
+-----------------------------------------------------------
+local ActionBarShortcut_Singleton = ActionBarShortcut:new()
+ActionBarShortcut_Singleton:Init()
+f.wndMountFlyoutFrame:GetAnchorOffsets()
+
+		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+		self:RedrawBarVisibility()
+	else
+		self.wndMountFlyout:Show(false)
+	end
+end
+
+function ActionBarFrame:OnMountBtn(wndHandler, wndControl)
+	self.nSelectedMount = wndControl:GetData():GetId()
+
+	self.wndMountFlyoutFrame:Show(false)
+	self:RedrawSelectedMounts()
+end
+
+function ActionBarFrame:RedrawPotions

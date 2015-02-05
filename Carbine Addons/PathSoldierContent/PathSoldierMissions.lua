@@ -216,15 +216,17 @@ function PathSoldierMissions:DrawMissionDefense(seEvent)
 		wndDefend:FindChild("TimerLabel"):SetText(Apollo.GetString("SoldierMission_NextWaveLabel"))
 		wndDefend:FindChild("TimerText"):SetText(self:HelperCalcTime(nElapsedTime))
 	end
-
+	
 	if eType == PathMission.PathSoldierEventType_TimedDefend then
-		wndDefend:FindChild("WaveMeter"):SetMax(0)
-		wndDefend:FindChild("WaveMeter"):SetProgress(0)
-		wndDefend:FindChild("WavesElapsed"):SetText("")
+		wndDefend:FindChild("WaveMeter"):Show(false)
+		wndDefend:FindChild("ProgressFrame"):Show(false)
+		wndDefend:FindChild("WavesElapsed"):SetText(String_GetWeaselString(Apollo.GetString("SoldierMission_DefendTarget"), seEvent:GetDefendUnits()[1]:GetName()))
 		wndDefend:FindChild("TimerLabel"):SetText(Apollo.GetString("SoldierMission_DefendLabel"))
 	else
 		local nProgress = seEvent:GetState() == PathMission.PlayerPathSoldierEventMode_Active and seEvent:GetWavesReleased() or 0
 
+		wndDefend:FindChild("WaveMeter"):Show(true)
+		wndDefend:FindChild("ProgressFrame"):Show(true)
 		wndDefend:FindChild("WaveMeter"):SetMax(seEvent:GetWaveCount())
 		wndDefend:FindChild("WaveMeter"):SetProgress(nProgress)
 		wndDefend:FindChild("WavesElapsed"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Waves_Released"), nProgress, seEvent:GetWaveCount()))
@@ -423,3 +425,13 @@ end
 
 local PathSoldierMissionsInst = PathSoldierMissions:new()
 PathSoldierMissionsInst:Init()
+olDepth="1" HideInEditor="1" NoClip="0">
+                <Event Name="GenerateTooltip" Function="OnGenerateSpellTooltip"/>
+            </Control>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="44" BAnchorPoint="0" BAnchorOffset="46" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ListItemHintArrowArt" BGColor="ffffffff" TextColor="ffffffff" Picture="1" Sprite="ClientSprites:Icon_Mission_Explorer_ScavengerHunt" IgnoreMouse="1" NewControlDepth="2" TooltipColor="" Tooltip="" Visible="0">
+                <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="" BGColor="ffffffff" TextColor="black" Rotation="0" Font="Default"/>
+                <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="" BGColor="white" TextColor="black" Rotation="0" Font="Default"/>
+            </Control>
+            <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-51" BAnchorPoint="0" BAnchorOffset="26" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="ListItemName" BGColor="ffffffff" TextColor="UI_TextHoloTitle" DT_VCENTER="0" DT_WORDBREAK="1" TextId="Challenges_NoProgress" IgnoreMouse="1" TooltipColor="" DT_CENTER="0" Tooltip=""/>
+            <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="1" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="-51" BAnchorPoint="1" BAnchorOffset="10" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ListItemSubtitle" BGColor="ffffffff" TextColor="UI_TextHoloBodyCyan" TooltipColor="" DT_VCENTER="0" TextId="Challenges_NoProgress" DT_CENTER="0" IgnoreMouse="1"/>
+            <Control Class="Button" Base="Crafting_CircuitSprites:btnCircuit_Holo_RightArrow" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-51" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="1" RAnchorOffset="-3" BAnchorPoint="0" BAnchorOffset="52" DT_VCENTER="1" DT_CENTER="1" Name="ListItemSubscreenBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFly

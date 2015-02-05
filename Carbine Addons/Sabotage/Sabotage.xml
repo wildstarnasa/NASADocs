@@ -28,3 +28,11 @@
         <Control Class="Window" Name="TimeRemaining" Text="" DT_CENTER="1" DT_VCENTER="1" Font="CRB_InterfaceSmall" RelativeToClient="1" Picture="0" NewControlDepth="1" BGColor="white" TextColor="88ffffff" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="21" HideInEditor="0" TextId="Challenges_NoProgress" Tooltip="" TooltipId="" TooltipType="OnCursor" TooltipColor="" DT_RIGHT="0" IgnoreMouse="1" IgnoreTooltipDelay="1" DT_BOTTOM="0" DT_WORDBREAK="0" NoClip="1" DT_SINGLELINE="1"/>
     </Form>
 </Forms>
+ Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
+            <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
+        </Control>
+        <Pixie LAnchorPoint="0" LAnchorOffset="100" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-100" BAnchorPoint="0" BAnchorOffset="84" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="ReportPlayer_Tit    œÙ [ Zâçý W‹h4fNTER="1" Line="0"/>
+    </Form>
+</Forms>
+llo.S RÚçý W‹h4frogressSimple"), nCompleted, nTotal)
+	e

@@ -22,8 +22,7 @@ local kcrTextDefaultColor 	= CColor.new(0.7, 0.7, 0.7, 1.0)
 local kcrTextWarningColor 	= CColor.new(0.7, 0.7, 0.0, 1.0)
 local kcrTextExpiringColor 	= CColor.new(0.7, 0.0, 0.0, 1.0)
 
-local knMaxOpenMail = 16
-local knMailPageCap = 50
+local knOpenMailThreshold = 5
 
 local knSaveVersion = 1
 
@@ -35,21 +34,18 @@ function Mail:new(o)
 	return o
 end
 
---------------------//-----------------------------
---------------------//-----------------------------
 function Mail:Init()
 	Apollo.RegisterAddon(self, false, "", {"Util"})
 end
 
---------------------//-----------------------------
 function Mail:OnSave(eType)
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
 		return
 	end
 
-	wndMessage = next(self.tOpenMailMessages)
+	strId = next(self.tOpenMailMessages)
 
-	local locMessageWindowLocation = wndMessage and self.tOpenMailMessages[wndMessage].wndMain and self.tOpenMailMessages[wndMessage].wndMain:GetLocation() or self.locSavedMessageWindowLoc
+	local locMessageWindowLocation = strId and self.tOpenMailMessages[strId].wndMain and self.tOpenMailMessages[strId].wndMain:GetLocation() or self.locSavedMessageWindowLoc
 	local tSave =
 	{
 		tMessageLocation = locMessageWindowLocation and locMessageWindowLocation:ToTable() or nil,
@@ -58,7 +54,7 @@ function Mail:OnSave(eType)
 
 	return tSave
 end
---------------------//-----------------------------
+
 function Mail:OnRestore(eType, tSavedData)
 	if tSavedData and tSavedData.nSavedVersion  == knSaveVersion then
 		if tSavedData.tMessageLocation then
@@ -66,8 +62,7 @@ function Mail:OnRestore(eType, tSavedData)
 		end
 	end
 end
---------------------//-----------------------------
---------------------//-----------------------------
+
 function Mail:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("MailForms.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
@@ -86,6 +81,7 @@ function Mail:OnDocumentReady()
 	Apollo.RegisterEventHandler("UnavailableMail", 			"OnUnavailableMail", self)
 	Apollo.RegisterEventHandler("RefreshMail", 				"OnRefreshMail", self)
 	Apollo.RegisterEventHandler("ToggleMailWindow", 		"ToggleWindow", self)
+	Apollo.RegisterEventHandler("MailRead",					"OnMailRead", self)
 	Apollo.RegisterEventHandler("MailBoxActivate", 			"OnMailBoxActivate", self)
 	Apollo.RegisterEventHandler("MailBoxDeactivate", 		"OnMailBoxDeactivate", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 	"OnPlayerCurrencyChanged", self)
@@ -95,22 +91,34 @@ function Mail:OnDocumentReady()
 
 	Apollo.RegisterSlashCommand("ToggleMailWindow", 		"ToggleWindow", self)	--Don't know if we have this in the C
 
-	Apollo.RegisterTimerHandler("OneSecTimer", 				"OnMailWindowTimer", self)
-
 	self.wndMain		= Apollo.LoadForm(self.xmlDoc, "MailForm", nil, self) --Our main form.
 	self.wndMailList 	= self.wndMain:FindChild("MailWindow")  --The window that populates with the mail items
 	self.wndErrorMsg 	= nil
-	self.wndOpenBtn 	= self.wndMain:FindChild("IBOpenBtn")
-	self.wndDeleteBtn 	= self.wndMain:FindChild("IBDeleteBtn")
-
+	self.wndToggleAllBtn = self.wndMain:FindChild("ToggleAllBtn")
+	
+	self.wndActionsBtn = self.wndMain:FindChild("ActionsBtn")
+	self.wndActionPopout = self.wndActionsBtn:FindChild("PopoutFrame")
+	self.wndActionsBtn:AttachWindow(self.wndActionPopout)
+	
+	self.wndDeleteBtn = self.wndActionPopout:FindChild("PopoutList:DeleteBtn")
+	self.wndTakeBtn = self.wndActionPopout:FindChild("PopoutList:TakeBtn")
+	self.wndMarkReadBtn = self.wndActionPopout:FindChild("PopoutList:MarkReadBtn")
+	
+	self.wndConfirmDeleteBlocker = self.wndMain:FindChild("ConfirmDeleteBlocker")
+	self.wndConfirmOpenBlocker = self.wndMain:FindChild("ConfirmOpenBlocker")
+	self.wndConfirmTakeBlocker = self.wndMain:FindChild("ConfirmTakeBlocker")
+	
+	self.wndActionsBtn:Enable(false) -- start disabled as no mail starts checked
+	
 	self.wndMain:Show(false)
-	self.wndOpenBtn:Enable(false)
-	self.wndDeleteBtn:Enable(false)
 	self.tMailItemWnds = {}
 	self.tOpenMailMessages = {}
+	self.arMailToUpdate = {}
+	self.arMailToOpen = {}
 	self.nCascade = 0
 	self.strPendingCOD = ""
-	self.tMailQueue = Queue:new()
+	
+	self.timerMailUpdateDelay = ApolloTimer.Create(0.5, true, "UpdateMailItemsTimer", self)
 
 	self:CalculateMailAlert()
 end
@@ -124,24 +132,6 @@ function Mail:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_Mail")})
 end
 
---------------------//-----------------------------
-
-function Mail:OnMailWindowTimer()
-	if self.luaComposeMail then
-		self.luaComposeMail:OnMailWindowTimer()
-	end
-
-	for idx, luaOpenMail in pairs(self.tOpenMailMessages) do
-		if luaOpenMail then
-			luaOpenMail:OnMailWindowTimer()
-		end
-	end
-
-	if self.wndMain:IsVisible() then
-		self:UpdateAllListItems()
-	end
-end
-
 function Mail:OnPlayerCurrencyChanged()
 	if self.luaComposeMail ~= nil then
 		self.luaComposeMail:OnPlayerCurrencyChanged()
@@ -150,25 +140,47 @@ function Mail:OnPlayerCurrencyChanged()
 	for idx, luaOpenMail in pairs(self.tOpenMailMessages) do
 		luaOpenMail:OnPlayerCurrencyChanged()
 	end
-	self:UpdateAllListItems()
 end
 
+function Mail:OpenMailWindow()
+	if not self.wndMain:IsShown() then
+		self.wndMain:Invoke()
+	end
+	self.wndConfirmDeleteBlocker:Show(false)
+	self.wndMain:ToFront()
+	Sound.Play(Sound.PlayUI68OpenPanelFromKeystrokeVirtual)
+	self:PopulateList()
+	Event_FireGenericEvent("MailWindowHasBeenToggled")
+	Event_ShowTutorial(GameLib.CodeEnumTutorial.MailMenu)
+end
+
+function Mail:CloseMailWindow()
+	self:CalculateMailAlert()
+	self.wndMain:Close()
+	Sound.Play(Sound.PlayUI01ClosePhysical)
+	Event_FireGenericEvent("MailWindowHasBeenClosed")
+	Event_CancelMail()
+end
+
+function Mail:OnMainMailWindowClosed(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+
+	for idx, wndMail in pairs(self.tMailItemWnds) do
+		if wndMail:IsValid() then
+			wndMail:FindChild("SelectMarker"):SetCheck(false)
+		end
+	end
+	self.wndToggleAllBtn:SetCheck(false)
+	self:RefreshActionsButton()
+end
 
 function Mail:ToggleWindow()
-	if self.wndMain:IsVisible() then
-		self:CalculateMailAlert()
-		self.wndMain:Close()
-		Sound.Play(Sound.PlayUI01ClosePhysical)
-		Event_FireGenericEvent("MailWindowHasBeenClosed")
-		Event_CancelMail()
+	if self.wndMain:IsShown() then
+		self:CloseMailWindow()
 	else
-		self.wndMain:Show(true)
-		self.wndMain:FindChild("ConfirmDeleteBlocker"):Show(false)
-		self.wndMain:ToFront()
-		Sound.Play(Sound.PlayUI68OpenPanelFromKeystrokeVirtual)
-		self:PopulateList()
-		Event_FireGenericEvent("MailWindowHasBeenToggled")
-		Event_ShowTutorial(GameLib.CodeEnumTutorial.MailMenu)
+		self:OpenMailWindow()
 	end
 
 	if self.luaComposeMail ~= nil then
@@ -177,7 +189,7 @@ function Mail:ToggleWindow()
 end
 
 function Mail:OnMailBoxActivate()
-	self:ToggleWindow()
+	self:OpenMailWindow()
 end
 
 function Mail:OnMailBoxDeactivate()
@@ -187,11 +199,14 @@ function Mail:OnMailBoxDeactivate()
 end
 
 function Mail:UpdateAllListItems()
-	local bNeedPopulate = false
+	local nScrollPos = self.wndMailList:GetVScrollPos()
+
 	local bItemsSelected = false
 	local bCanDelete = true
 
-	for idx, wndMail in pairs(self.tMailItemWnds) do
+	local tInvalidMail = {}
+	
+	for strId, wndMail in pairs(self.tMailItemWnds) do
 		if wndMail:FindChild("SelectMarker"):IsChecked() then
 			bItemsSelected = true
 		end
@@ -199,38 +214,43 @@ function Mail:UpdateAllListItems()
 		if msgMail then
 			local tMessageInfo = msgMail:GetMessageInfo()
 			if tMessageInfo ~= nil then
-				if (wndMail:FindChild("SelectMarker"):IsChecked()) then
+				if wndMail:FindChild("SelectMarker"):IsChecked() then
 					if (#tMessageInfo.arAttachments > 0) or (tMessageInfo.monGift and tMessageInfo.monGift:GetAmount() > 0) then
 						bCanDelete = false
 					end
 				end
 				self:UpdateListItem(wndMail, msgMail)
 			else
-				bNeedPopulate = true
+				tInvalidMail[strId] = wndMail
 			end
 		else
-			bNeedPopulate = true
+			tInvalidMail[strId] = wndMail
 		end
 	end
-
-	self.wndOpenBtn:Enable(bItemsSelected)
-	self.wndDeleteBtn:Enable(bItemsSelected and bCanDelete)
-
-	if bNeedPopulate then
-		self:PopulateList()
-		return
+	
+	if next(tInvalidMail) ~= nil then
+		for strId, wndMail in pairs(tInvalidMail) do
+			self.tMailItemWnds[strId]:Destroy()
+			self.tMailItemWnds[strId] = nil
+		end
+	
+		self.wndMailList:ArrangeChildrenVert()
+		self.wndMailList:SetVScrollPos(nScrollPos)
+	
+		self:CalculateMailAlert()
 	end
+	tInvalidMail = nil
 
 	local arMessages = MailSystemLib.GetInbox()
 	table.sort(arMessages, Mail.SortMailItems)
-	local nMailCount = 0
 
+	self:RefreshActionsButton()
+	
 	for idx, msgMail in ipairs(arMessages) do
-		if nMailCount < knMailPageCap and self.tMailItemWnds[msgMail:GetIdStr()] == nil then
+		if self.tMailItemWnds[msgMail:GetIdStr()] == nil then
 			self:PopulateList()
 			return
 		end
-		nMailCount = nMailCount + 1
 	end
 end
 
@@ -242,6 +262,18 @@ function Mail:DestroyList()
 end
 
 function Mail.SortMailItems(a, b)
+	local bIsAGm = a:GetSenderType() == MailSystemLib.EmailType_GMMail
+	local bIsBGm = b:GetSenderType() == MailSystemLib.EmailType_GMMail
+	if bIsAGm == bIsBGm then
+		return a:GetExpirationTime() > b:GetExpirationTime()
+	end
+	return bIsAGm
+end
+
+function Mail.SortMailWindows(wndA, wndB)
+	local a = wndA:GetData()
+	local b = wndB:GetData()
+
 	local bIsAGm = a:GetSenderType() == MailSystemLib.EmailType_GMMail
 	local bIsBGm = b:GetSenderType() == MailSystemLib.EmailType_GMMail
 	if bIsAGm == bIsBGm then
@@ -276,55 +308,119 @@ function Mail:CascadeWindow(wndMailItem)
 end
 
 function Mail:PopulateList()
-	local tCheckedItems = {}
-	for idx, wndListItem in pairs(self.tMailItemWnds) do
-		if wndListItem:FindChild("SelectMarker"):IsChecked() then
-			local msgMail = wndListItem:GetData()
-			if msgMail ~= nil and msgMail:GetIdStr() ~= nil then
-				tCheckedItems[msgMail:GetIdStr()] = true
-			end
-		end
-	end
-
-	local nScrollPos = self.wndMailList:GetVScrollPos()
-
-	self:DestroyList()
-
 	local arMessages = MailSystemLib.GetInbox()
-	table.sort(arMessages, Mail.SortMailItems)
 
-	-- Close mail messages that are not available.  dont close MailMessages while cycling through the list of them.
-	local arRemovedMessages = {}
-	for strId, luaOpenMail in pairs(self.tOpenMailMessages) do
-		arRemovedMessages[strId] = luaOpenMail
+	local tCurrentMail = {}
+	for strId, wndMail in pairs(self.tMailItemWnds) do
+		tCurrentMail[strId] = wndMail
 	end
 
 	-- setup new MailItemWnds for primary mail pannel.
-	local nMailCount = 0;
 	for idx, msgMail in pairs(arMessages) do
-		if nMailCount < knMailPageCap then
-			local wndMailItem = Apollo.LoadForm(self.xmlDoc, "MailItem", self.wndMailList, self)
-			self:UpdateListItem(wndMailItem, msgMail)
+		local strId = msgMail:GetIdStr()
+	
+		local wndMailItem = self.tMailItemWnds[strId]
+		if wndMailItem == nil or not wndMailItem:IsValid() then
+			wndMailItem = Apollo.LoadForm(self.xmlDoc, "MailItem", self.wndMailList, self)
+			wndMailItem:Show(false, true)
+			
+			self.wndToggleAllBtn:SetCheck(false)
+		end
+		wndMailItem:SetData(msgMail)
+		
+		self:AddMailToUpdateTime(strId, wndMailItem)
 
-			if tCheckedItems[msgMail:GetIdStr()] then
-				wndMailItem:FindChild("SelectMarker"):SetCheck(true)
-			end
-
-			self.tMailItemWnds[msgMail:GetIdStr()] = wndMailItem
-
-			arRemovedMessages[msgMail:GetIdStr()] = nil
-
-			nMailCount = nMailCount + 1;
+		self.tMailItemWnds[strId] = wndMailItem
+		tCurrentMail[strId] = nil
+	end
+	
+	for strId, wndMail in pairs(tCurrentMail) do
+		self.tMailItemWnds[strId]:Destroy()
+		self.tMailItemWnds[strId] = nil
+		
+		if self.tOpenMailMessages[strId] ~= nil then
+			self.tOpenMailMessages[strId]:Destroy()
+			self.tOpenMailMessages[strId] = nil
 		end
 	end
 
-	for strId, luaRemovedMail in pairs(arRemovedMessages) do
-		luaRemovedMail.wndMain:Close()
+	self.wndMailList:ArrangeChildrenVert(0, Mail.SortMailWindows)
+	self:CalculateMailAlert()
+	
+	self:RefreshActionsButton()
+end
+
+function Mail:AddMailToUpdateTime(strId, wndMail)
+	self.arMailToUpdate[strId] = wndMail
+	self.timerMailUpdateDelay:Start()
+end
+
+function Mail:AddMailToOpenTimer(mail)
+	if mail == nil then
+		return
+	end
+	
+	local strId = mail:GetIdStr()
+	if strId == nil then
+		return
 	end
 
-	self.wndMailList:ArrangeChildrenVert()
-	self:CalculateMailAlert()
-	self.wndMailList:SetVScrollPos(nScrollPos)
+	self.arMailToOpen[strId] = mail
+	self.timerMailUpdateDelay:Start()
+end
+
+function Mail:UpdateMailItemsTimer()
+	local nCurrentTime = GameLib.GetTickCount()
+	
+	if next(self.arMailToUpdate) ~= nil then
+		local tSorted = {}
+		for idx, wndMail in pairs(self.arMailToUpdate) do
+			if wndMail:IsValid() then
+				tSorted[#tSorted + 1] = wndMail:GetData()
+			end
+		end
+		table.sort(tSorted, Mail.SortMailItems)
+		
+		for idx, mail in pairs(tSorted) do
+			local strId = mail:GetIdStr()
+			local wndMail = self.arMailToUpdate[strId]
+			if wndMail:IsValid() then
+				self:UpdateListItem(wndMail, wndMail:GetData())
+				wndMail:Show(true)
+			end
+			
+			self.arMailToUpdate[strId] = nil
+			
+			if GameLib.GetTickCount() - nCurrentTime > 100 then
+				self.wndMailList:ArrangeChildrenVert(0, Mail.SortMailWindows)
+				return
+			end
+		end
+		
+		self.wndMailList:ArrangeChildrenVert(0, Mail.SortMailWindows)
+	end
+	
+	local arMailOpened = {}
+	
+	local idxMailToOpen = next(self.arMailToOpen)
+	while idxMailToOpen ~= nil do
+		local mailToOpen = self.arMailToOpen[idxMailToOpen]
+		self.arMailToOpen[idxMailToOpen] = nil
+		
+		self:OpenReceivedMessage(mailToOpen)
+		arMailOpened[#arMailOpened + 1] = mailToOpen
+		
+		if GameLib.GetTickCount() - nCurrentTime > 100 then
+			MailSystemLib.MarkMultipleMessagesAsRead(arMailOpened)
+			return
+		end
+		idxMailToOpen = next(self.arMailToOpen)
+	end
+	if #arMailOpened > 0 then
+		MailSystemLib.MarkMultipleMessagesAsRead(arMailOpened)
+	end
+	
+	self.timerMailUpdateDelay:Stop()
 end
 
 function Mail:CalculateMailAlert()
@@ -352,29 +448,52 @@ function Mail:OnAvailableMail(arItems, bNewMail)
 	self:PopulateList()
 end
 
-function Mail:OnUnavailableMail(arItemIdStrs)
+function Mail:OnUnavailableMail(arMailIds)
 	-- list of id strings that are no longer available from MailSystemLib.GetInbox()
 	if not self.wndMain:IsVisible() then
 		self:CalculateMailAlert()
 		return
 	end
 
-	self:PopulateList()
+	local nScrollPos = self.wndMailList:GetVScrollPos()
+	
+	local bChangeMade = false
+	for idx, strMailId in pairs(arMailIds) do
+		if self.tMailItemWnds[strMailId] ~= nil then
+			self.tMailItemWnds[strMailId]:Destroy()
+			self.tMailItemWnds[strMailId] = nil
+			bChangeMade = true
+		end
+	end
+	
+	if bChangeMade then
+		self.wndMailList:ArrangeChildrenVert()
+		self.wndMailList:SetVScrollPos(nScrollPos)
+	
+		self:CalculateMailAlert()
+	end
 end
 
 function Mail:OnRefreshMail(strMailId)
-	-- list of id strings that are no longer available from MailSystemLib.GetInbox()
 	if not self.wndMain:IsVisible() then
 		return
 	end
 
-	self:PopulateList()
-
-	if self.tOpenMailMessages[strMailId] then
+	if self.tMailItemWnds[strMailId] ~= nil then
+		self:AddMailToUpdateTime(strMailId, self.tMailItemWnds[strMailId])
+	end
+	
+	if self.tOpenMailMessages[strMailId] ~= nil then
 		self.tOpenMailMessages[strMailId]:UpdateControls()
 	end
 
 	self.strPendingCOD = ""
+end
+
+function Mail:OnMailRead(strMailId)
+	if self.tMailItemWnds[strMailId] ~= nil then
+		self:AddMailToUpdateTime(strMailId, self.tMailItemWnds[strMailId])
+	end
 end
 
 function Mail:OnMailResult(eResult)
@@ -440,26 +559,43 @@ end
 
 
 --------------------/Mail Form Controls/-----------------------------
+function Mail:RefreshActionsButton()
+	local bCanTake = false
+	local bCanDelete = false
+	local bHasSelection = false
+	local bCanMarkRead = false
+	
+	for idx, wndMail in pairs(self.tMailItemWnds) do
+		local mail = wndMail:GetData()
+		local tInfo = mail:GetMessageInfo()
+		if tInfo ~= nil then
+			bHasSelection = bHasSelection or wndMail:FindChild("SelectMarker"):IsChecked()
+			bCanTake = bCanTake or (MailSystemLib.AtMailbox() and (tInfo.monGift:GetAmount() > 0 or #tInfo.arAttachments > 0))
+			bCanDelete = bCanDelete or (tInfo.monGift:GetAmount() == 0 and #tInfo.arAttachments == 0 and tInfo.monCod:GetAmount() == 0)
+			bCanMarkRead = bCanMarkRead or not tInfo.bIsRead
+		end
+	end
+	
+	self.wndActionsBtn:Enable(bHasSelection)
+	self.wndDeleteBtn:Enable(bCanDelete)
+	self.wndTakeBtn:Enable(bCanTake)
+	self.wndMarkReadBtn:Enable(bCanMarkRead)
+end
+
 function Mail:OnSelectAll()
 	for idx, wndMail in pairs(self.tMailItemWnds) do
 		wndMail:FindChild("SelectMarker"):SetCheck(true)
 	end
-	self:UpdateAllListItems()
+	
+	self:RefreshActionsButton()
 end
 
 function Mail:OnDeselectAll()
 	for idx, wndMail in pairs(self.tMailItemWnds) do
 		wndMail:FindChild("SelectMarker"):SetCheck(false)
 	end
-	self:UpdateAllListItems()
-end
-
-function Mail:OnSortCheck()
-	self:UpdateAllListItems()
-end
-
-function Mail:OnSortUncheck()
-	self:UpdateAllListItems()
+	
+	self:RefreshActionsButton()
 end
 
 function Mail:ComposeMail()
@@ -471,49 +607,17 @@ function Mail:ComposeMail()
 	end
 end
 
-
----------------/Item-Related Controls/-----------------------
-function Mail:OnOpenBtn()
-	--Triggers the selected message.
-	for idx, wndMail in pairs(self.tMailItemWnds) do
-		if wndMail:FindChild("SelectMarker"):IsChecked() then
-			self:OpenReceivedMessage(wndMail:GetData())
-		end
-	end
-	self:UpdateAllListItems()
-end
-
-function Mail:OnIBDeleteBtn(wndHandler, wndControl)
-	self.wndMain:FindChild("ConfirmDeleteBlocker"):Show(true)
-end
-
-function Mail:OnIBDeletConfirmeBtn(wndHandler, wndControl)
-	local tMessages = {}
-
-	for idx, wndMail in pairs(self.tMailItemWnds) do
-		if wndMail:FindChild("SelectMarker"):IsChecked() then
-			tMessages[idx] = wndMail:GetData() -- This is an item from MailSystemLib.GetInbox()
-		end
-	end
-
-	MailSystemLib.DeleteMultipleMessages(tMessages)
-	self:UpdateAllListItems()
-	self.wndMain:FindChild("ConfirmDeleteBlocker"):Close()
-	self.wndMain:FindChild("ToggleAllBtn"):SetCheck(false)
-end
-
-function Mail:OnCancelDeleteBtn(wndHandler, wndControl)
-	self.wndMain:FindChild("ConfirmDeleteBlocker"):Close()
-end
 --------------------/Mail List Item Controls/-----------------------------
 function Mail:OnItemCheck()
 	Sound.Play(Sound.PlayUI19SelectStoreItemVirtual)
-	self:UpdateAllListItems()
+	self:RefreshActionsButton()
 end
 
 function Mail:OnItemUncheck()
 	Sound.Play(Sound.PlayUI19SelectStoreItemVirtual)
-	self:UpdateAllListItems()
+	self.wndToggleAllBtn:SetCheck(false)
+	
+	self:RefreshActionsButton()
 end
 
 function Mail:UpdateListItem(wndMailItem, msgMail)
@@ -550,7 +654,6 @@ function Mail:UpdateListItem(wndMailItem, msgMail)
 	else
 		wndMailItem:FindChild("SenderIcon"):SetSprite(kstrPCIcon)
 	end
-
 
 	local strExpires = ""
 	local crText = kcrTextDefaultColor
@@ -597,8 +700,6 @@ function Mail:UpdateListItem(wndMailItem, msgMail)
 			wndListItem:Show(false)
 		end
 	end
-
-	wndMailItem:SetData(msgMail)
 end
 
 function Mail:OnMailItemClick(wndHandler, wndControl)
@@ -610,29 +711,23 @@ function Mail:OnMailItemClick(wndHandler, wndControl)
 
 	tMessageInfo = msgMail:GetMessageInfo()
 	if tMessageInfo ~= nil then
-		self:OpenReceivedMessage(msgMail)
-		self:UpdateListItem(wndItem, msgMail)
+		self:AddMailToOpenTimer(msgMail)
 	end
 end
 
 function Mail:OpenReceivedMessage(msgMail)
 	local strId = msgMail:GetIdStr()
-	msgMail:MarkAsRead()
+	
 	if self.tOpenMailMessages[strId] ~= nil then
-		self.tOpenMailMessages[strId]:WindowToFront()
+		if self.tOpenMailMessages[strId].wndMain:IsValid() then
+			self.tOpenMailMessages[strId]:WindowToFront()
+		else
+			self.tOpenMailMessages[strId] = nil
+		end
 	else
 		self.tOpenMailMessages[strId] = MailReceived:new()
 		self.tOpenMailMessages[strId]:Init(self, msgMail)
-		self.tMailQueue:Push(strId)
-
-		if self.tMailQueue:GetSize() > 16 then
-			local strMailId = self.tMailQueue:Pop()
-			if self.tOpenMailMessages[strMailId] then
-				self.tOpenMailMessages[strMailId].wndMain:Close()
-			end
-		end
 	end
-
 end
 
 function Mail:OnTooltipAttachment( wndHandler, wndControl, eToolTipType, x, y )
@@ -643,6 +738,130 @@ function Mail:OnTooltipAttachment( wndHandler, wndControl, eToolTipType, x, y )
 	local tAttachment = wndControl:GetData()
 	if tAttachment ~= nil and tAttachment.itemAttached ~= nil then
 		Tooltip.GetItemTooltipForm(self, wndControl, tAttachment.itemAttached, { bPrimary = true, bSelling = false, itemModData = tAttachment.itemModData, nStackCount = tAttachment.nStackCount})
+	end
+end
+
+
+function Mail:OnOpenMailBtn(wndHandler, wndControl, eMouseButton)
+	self:OpenSelectedMail(false)
+end
+
+function Mail:OnConfirmOpenBtn(wndHandler, wndControl, eMouseButton)
+	self:OpenSelectedMail(true)
+	self.wndConfirmOpenBlocker:Close()
+end
+
+function Mail:OpenSelectedMail(bConfirmed)
+	local nCount = 0
+	local tSelected = {}
+	for strId, wndMail in pairs(self.tMailItemWnds) do
+		if wndMail:FindChild("SelectMarker"):IsChecked() then
+			tSelected[strId] = wndMail
+			nCount = nCount + 1
+		end
+	end
+	
+	self.wndActionPopout:Close()
+	
+	if not bConfirmed and nCount > knOpenMailThreshold then
+		self.wndConfirmOpenBlocker:FindChild("MessageBody"):SetText(String_GetWeaselString(Apollo.GetString("Mail_ActionConfirmDelete"), tostring(nCount)))
+		self.wndConfirmOpenBlocker:Invoke()
+		return
+	end
+	
+	for strId, wndMail in pairs(tSelected) do
+		local msgMail = wndMail:GetData()
+		tMessageInfo = msgMail:GetMessageInfo()
+		if tMessageInfo ~= nil then
+			self:AddMailToOpenTimer(msgMail)
+		end
+	end
+end
+
+function Mail:OnCancelOpenBtn(wndHandler, wndControl, eMouseButton)
+	self.wndConfirmOpenBlocker:Close()
+end
+
+
+function Mail:OnDeleteMailBtn(wndHandler, wndControl, eMouseButton)
+	self:DeleteSelectedMail(false)
+end
+
+function Mail:OnConfirmDeleteBtn(wndHandler, wndControl, eMouseButton)
+	self:DeleteSelectedMail(true)
+	self.wndConfirmDeleteBlocker:Close()
+end
+
+function Mail:DeleteSelectedMail(bConfirmed)
+	local tSelectedMail = {}
+	for strId, wndMail in pairs(self.tMailItemWnds) do
+		if wndMail:FindChild("SelectMarker"):IsChecked() then
+			tSelectedMail[#tSelectedMail + 1] = wndMail:GetData()
+		end
+	end
+
+	self.wndActionPopout:Close()
+	
+	if not bConfirmed then
+		self.wndConfirmDeleteBlocker:FindChild("MessageBody"):SetText(String_GetWeaselString(Apollo.GetString("Mail_ActionConfirmDelete"), tostring(#tSelectedMail)))
+		self.wndConfirmDeleteBlocker:Invoke()
+		return
+	end
+	
+	MailSystemLib.DeleteMultipleMessages(tSelectedMail)
+end
+
+function Mail:OnCancelDeleteBtn(wndHandler, wndControl, eMouseButton)
+	self.wndConfirmDeleteBlocker:Close()
+end
+
+
+function Mail:OnTakeMailBtn(wndHandler, wndControl, eMouseButton)
+	self:TakeSelectedMail(false)
+end
+
+function Mail:OnConfirmTakeBtn(wndHandler, wndControl, eMouseButton)
+	self:TakeSelectedMail(true)
+	self.wndConfirmTakeBlocker:Close()
+end
+
+function Mail:TakeSelectedMail(bConfirmed)
+	local tSelectedMail = {}
+	for strId, wndMail in pairs(self.tMailItemWnds) do
+		if wndMail:FindChild("SelectMarker"):IsChecked() then
+			tSelectedMail[#tSelectedMail + 1] = wndMail:GetData()
+		end
+	end
+
+	self.wndActionPopout:Close()
+	
+	if not bConfirmed then
+		self.wndConfirmTakeBlocker:FindChild("MessageBody"):SetText(String_GetWeaselString(Apollo.GetString("Mail_ActionConfirmTake"), tostring(#tSelectedMail)))
+		self.wndConfirmTakeBlocker:Invoke()
+		return
+	end
+	
+	MailSystemLib.TakeAllAttachmentsFromMultipleMessages(tSelectedMail)
+end
+
+function Mail:OnCancelTakeBtn(wndHandler, wndControl, eMouseButton)
+	self.wndConfirmTakeBlocker:Close()
+end
+
+
+function Mail:OnMarkReadMailBtn(wndHandler, wndControl, eMouseButton)
+	self.wndActionPopout:Close()
+
+	local tSelectedMail = {}
+	for strId, wndMail in pairs(self.tMailItemWnds) do
+		if wndMail:FindChild("SelectMarker"):IsChecked() then
+			local msgMail = wndMail:GetData()
+			tSelectedMail[#tSelectedMail + 1] = msgMail
+		end
+	end
+	
+	if #tSelectedMail > 0 then
+		MailSystemLib.MarkMultipleMessagesAsRead(tSelectedMail)
 	end
 end
 
@@ -679,6 +898,8 @@ function MailCompose:Init(luaMailSystem)
 	self.tMyBlocks 				= {}
 	self.wndMain 				= Apollo.LoadForm(self.luaMailSystem.xmlDoc, "ComposeMessage", nil, self) --The compose mail form.
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Mail_ComposeLabel")})
+	
+	Apollo.RegisterEventHandler("SuggestedMenuResult",					"OnSuggestedMenuResult", self)
 
 	self.wndNameEntry 			= self.wndMain:FindChild("NameEntryText")  --The player inputs the recipient here
 	self.wndRealmEntry 			= self.wndMain:FindChild("RealmEntryText")  --The player inputs the recipient here
@@ -696,6 +917,15 @@ function MailCompose:Init(luaMailSystem)
 	self.wndInstantDelivery 	= self.wndMain:FindChild("InstantDeliveryBtn")
 	self.wndHourDelivery		= self.wndMain:FindChild("HourDeliveryBtn")
 	self.wndDayDelivery			= self.wndMain:FindChild("DayDeliveryBtn")
+	
+	local luaSubclass = self.wndNameEntry:GetWindowSubclass()
+	if luaSubclass then
+		local eNot 	= luaSubclass:GetEnumNot()
+		local eAccountFriends 	= luaSubclass:GetEnumAccountFriends()
+		if eNot and eAccountFriends then
+			luaSubclass:SetFilters({eOperator = eNot, arRelationFilters = {eAccountFriends}})
+		end
+	end
 
 	self.wndRealmEntry:SetText(GameLib.GetRealmName())
 
@@ -745,7 +975,7 @@ function MailCompose:SetFields(strTo, strRealm, strSubject, strBody)
 
 	if strBody ~= nil then
 		self.wndMessageEntryText:SetText(strBody)
-		MailCompose.LimitTextEntry(self.wndMessageEntryText, MailSystemLib.GetMessageCharacterLimit())
+		MailCompose.LimitTextEntry(self.wndMessageEntryText, MailSystemLib.GetMessageCharacterLimit() - 1)
 	end
 
 end
@@ -754,15 +984,6 @@ function MailCompose:WindowToFront()
 	self.wndMain:Show(true)
 	self.wndMain:ToFront()
 	self.wndNameEntry:SetFocus()
-end
-
-function MailCompose:OnMailWindowTimer()
-	local bAtMailbox = MailSystemLib.AtMailbox()
-    if self.bWasAtMailbox ~= bAtMailbox then
-		self:UpdateControls()
-    end
-
-    self.bWasAtMailbox = bAtMailbox
 end
 
 function MailCompose:OnQueryDragDrop(wndHandler, wndControl, nX, nY, wndSource, strType, nValue)
@@ -910,7 +1131,7 @@ function MailCompose:UpdateControls()
 	MailCompose.LimitTextEntry(self.wndNameEntry, MailSystemLib.GetNameCharacterLimit())
 	MailCompose.LimitTextEntry(self.wndRealmEntry, MailSystemLib.GetRealmCharacterLimit())
 	MailCompose.LimitTextEntry(self.wndSubjectEntry, MailSystemLib.GetSubjectCharacterLimit())
-	MailCompose.LimitTextEntry(self.wndMessageEntryText, MailSystemLib.GetMessageCharacterLimit())
+	MailCompose.LimitTextEntry(self.wndMessageEntryText, MailSystemLib.GetMessageCharacterLimit() - 1)
 
 	self.wndCostWindow:SetAmount(MailSystemLib.GetSendCost(self.nDeliverySpeed, self.arAttachments))
 
@@ -932,10 +1153,16 @@ function MailCompose.LimitTextEntry(wndCompose, nCharacterLimit)
 	end
 end
 
-function MailCompose:OnInfoChanged(wndHandler, wndControl)
+function MailCompose:OnInfoChanged(wndHandler, wndControl, strText)
 	if wndControl ~= wndHandler then
 		return
 	end
+
+	local luaSubclass = wndControl:GetWindowSubclass()
+	if luaSubclass then
+		luaSubclass:OnEditBoxChanged(wndHandler, wndControl, strText)
+	end
+
 	self:UpdateControls()
 end
 
@@ -957,6 +1184,17 @@ function MailCompose:OnClosed(wndHandler)
 	end
 
 	Apollo.UnlinkAddon(self.luaMailSystem, self)
+end
+
+function MailCompose:OnSuggestedMenuResult(tInfo, nTextBoxId)
+	if nTextBoxId ~= self.wndNameEntry:GetId() or not tInfo then
+		return
+	end
+	
+	if tInfo.strCharacterName then
+		self.wndNameEntry:SetText(tInfo.strCharacterName)
+		self.wndSubjectEntry:SetFocus()
+	end
 end
 
 function MailCompose:OnClickAttachment(wndHandler, wndControl)
@@ -1108,7 +1346,6 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 		self.wndMain:MoveToLocation(self.luaMailSystem.locSavedMessageWindowLoc)
 	end
 
-
 	for idx = 1, 10 do
 		local wndItemSlotBack = self.wndMain:FindChild("ItemSlotBack." .. tostring(idx))
 		self.arWndAttachmentIcon[idx] = wndItemSlotBack:FindChild("Icon")
@@ -1123,7 +1360,6 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 	self.wndReceiveReplyBtn 	= self.wndMain:FindChild("ReceiveReplyBtn") -- not active if npc mail
 	self.wndReceiveReturnBtn 	= self.wndMain:FindChild("ReceiveReturnBtn") -- not enabled if ncp mail
 	self.wndReceiveDeleteBtn 	= self.wndMain:FindChild("ReceiveDeleteBtn") -- not enabled if attachments (cant delete mail with attachments.  Take attachment or return to sender.)
-
 
 	self.wndMain:Show(false, true)
 	self.luaMailSystem:CascadeWindow(self.wndMain)
@@ -1147,7 +1383,9 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 	end
 
 	if tMessageInfo.monCod:GetAmount() == 0 then
-		self.wndMain:FindChild("CODFrame"):Show(false)
+		self.wndCODFrame:Show(false)
+		self.wndReceiveReplyBtn:Show(true)
+		self.wndReceiveReturnBtn:Show(true)	
 	end
 
 	self:UpdateControls()
@@ -1174,13 +1412,8 @@ function MailReceived:UpdateControls()
 	for idx, wndIcon in pairs(self.arWndAttachmentIcon) do
 		local tAttachment = tMessageInfo.arAttachments[idx]
 		if tAttachment ~= nil then
-			if tAttachment.itemAttached ~= nil then
-				wndIcon:SetSprite(tAttachment.itemAttached:GetIcon())
-			else
-				wndIcon:SetSprite(kstrInvalidAttachmentIcon)
-			end
 			wndIcon:GetWindowSubclass():SetItem(tAttachment.itemAttached)
-			wndIcon:SetData(tAttachment)
+			wndIcon:SetData(idx)
 			wndIcon:SetText(tostring(tAttachment.nStackCount))
 			wndIcon:GetParent():SetData(tAttachment.nServerIndex) -- parent handles take attachment call, needs to know what server index.
 			wndIcon:GetParent():SetBGColor(CColor.new(1.0, 1.0, 1.0, 1.0))
@@ -1225,6 +1458,8 @@ function MailReceived:UpdateControls()
 	if not tMessageInfo.monCod:IsZero() and nAttachmentCount > 0 then -- is this a COD message
 		local monCash = GameLib.GetPlayerCurrency(tMessageInfo.monCod:GetMoneyType())
 		self.wndCODFrame:Show(true)
+		self.wndReceiveReplyBtn:Show(false)
+		self.wndReceiveReturnBtn:Show(false)
 		self.wndCODCash:SetAmount(tMessageInfo.monCod)
 		self.wndAcceptCODBtn:Enable(monCash:GetAmount() >= tMessageInfo.monCod:GetAmount() and MailSystemLib.AtMailbox())
 		if monCash:GetAmount() >= tMessageInfo.monCod:GetAmount() then
@@ -1236,6 +1471,8 @@ function MailReceived:UpdateControls()
 	else -- NOT a COD message
 		self.wndReceiveTakeCashBtn:Enable(true)
 		self.wndCODFrame:Show(false)
+		self.wndReceiveReplyBtn:Show(true)
+		self.wndReceiveReturnBtn:Show(true)
 	end
 
 	-- format attach frame if needed
@@ -1248,32 +1485,12 @@ function MailReceived:UpdateControls()
 	end
 end
 
-function MailReceived:OnMailWindowTimer()
-	self:UpdateControls()
-end
-
 function MailReceived:OnCloseBtn(wndHandler, wndControl)
 	self.wndMain:Close()
 end
 
 function MailReceived:OnClosed(wndHandler)
 	local strId = self.msgMail:GetIdStr()
-	local nRemovePoint = 0
-	for idx, strCurrId in pairs(self.luaMailSystem.tMailQueue:GetItems()) do
-		if strId == strCurrId then
-			if self.luaMailSystem.tMailQueue:GetSize() == 1 then
-				self.luaMailSystem.locSavedMessageWindowLoc = self.luaMailSystem.tOpenMailMessages[strId].wndMain:GetLocation()
-			end
-			self.luaMailSystem.tMailQueue:Remove(nRemovePoint)
-
-			if self.luaMailSystem.nCascade then
-				self.luaMailSystem.nCascade = self.luaMailSystem.nCascade - 1
-			end
-			break
-		else
-			nRemovePoint = nRemovePoint + 1
-		end
-	end
 	Apollo.UnlinkAddon(self.luaMailSystem, self)
 	self.luaMailSystem.tOpenMailMessages[self.msgMail:GetIdStr()] = nil
 end
@@ -1290,6 +1507,14 @@ function MailReceived:OnClickAttachment(wndHandler, wndControl)
 
 	self.msgMail:TakeAttachment(iServer)
 	-- Timer UpdateControl handles changes to message if it occures
+	
+	local tMessageInfo = self.msgMail:GetMessageInfo()
+	local arAttachmentWindows = self.wndMain:FindChild("BaseArt:ArtContentBack:ArtBG_AttachmentAssets"):GetChildren()
+	for idx, wndAttachment in pairs(arAttachmentWindows) do
+		if wndAttachment:FindChild("Icon") then
+			wndAttachment:FindChild("Icon"):SetTooltipDoc(nil)
+		end
+	end
 
 	self:UpdateControls()
 end
@@ -1298,8 +1523,8 @@ function MailReceived:OnTooltipAttachment( wndHandler, wndControl, eToolTipType,
 	if wndHandler ~= wndControl then
 		return
 	end
-
-	local tAttachment = wndControl:GetData()
+	local tMessageInfo = self.msgMail:GetMessageInfo()
+	local tAttachment = tMessageInfo.arAttachments[wndControl:GetData()]
 	if tAttachment ~= nil and tAttachment.itemAttached ~= nil then
 		Tooltip.GetItemTooltipForm(self, wndControl, tAttachment.itemAttached, { bPrimary = true, bSelling = false, itemModData = tAttachment.itemModData, nStackCount = tAttachment.nStackCount })
 	end
@@ -1408,6 +1633,16 @@ function MailReceived:OnReportSpamBtn(wndHandler, wndControl, eMouseButton)
 	Event_FireGenericEvent("GenericEvent_ReportPlayerMail", self.msgMail)
 end
 
--------------------------------- instance ----------------------------------------------
-local MailInstance = Mail:new()
+
+---------------------------------------------------------------------------------------------------
+-- MailForm Functions
+---------------------------------------------------------------------------------------------------
 Mail:Init()
+local MailInstance = Mail:new()
+
+horOffset="63" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="white" TextColor="white" NoClip="1" NewControlDepth="3" WindowSoundTemplate="CloseWindowPhys" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="">
+            <Event Name="ButtonSignal" Function="OnSalvageCancel"/>
+        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-162" TAnchorPoint=".5" TAnchorOffset="-224" RAnchorPoint=".5" RAnchorOffset="161" BAnchorPoint=".5" BAnchorOffset="-31" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="InventoryDeleteNotice" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" NoClip="0" Visible="0" Sprite="" TooltipColor="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnc

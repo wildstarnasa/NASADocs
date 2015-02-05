@@ -42,3 +42,41 @@
         </Control>
     </Form>
 </Forms>
+uipped, {bPrimary = false, bSelling = false, itemCompare = oArg1}) - OLD
+	elseif eType == Tooltip.TooltipGenerateType_GameCommand then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Macro then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg1)
+		wndControl:SetTooltipDoc(xml)
+	elseif eType == Tooltip.TooltipGenerateType_Spell then
+		Tooltip.GetSpellTooltipForm(self, wndControl, oArg1)
+	elseif eType == Tooltip.TooltipGenerateType_PetCommand then
+		xml = XmlDoc.new()
+		xml:AddLine(oArg2)
+		wndControl:SetTooltipDoc(xml)
+	end
+end
+
+-----------------------------------------------------------
+local ActionBarShortcut_Singleton = ActionBarShortcut:new()
+ActionBarShortcut_Singleton:Init()
+f.wndMountFlyoutFrame:GetAnchorOffsets()
+
+		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+		self:RedrawBarVisibility()
+	else
+		self.wndMountFlyout:Show(false)
+	end
+end
+
+function ActionBarFrame:OnMountBtn(wndHandler, wndControl)
+	self.nSelectedMount = wndControl:GetData():GetId()
+
+	self.wndMountFlyoutFrame:Show(false)
+	self:RedrawSelectedMounts()
+end
+
+function ActionBarFrame:RedrawPotions

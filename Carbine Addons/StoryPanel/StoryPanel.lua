@@ -195,3 +195,8 @@ end
 
 local StoryPanelInst = StoryPanel:new()
 StoryPanelInst:Init()
+leRanged" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_RoleIcons_Temp_143_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="27" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprRoleSummoner" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_RoleIcons_Temp_171_1.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="27" y0="0" y1="0" y2="0" y3="0" y4="0" y5="27" Stretchy="1" HotspotX="0" HotspotY="0" Dura

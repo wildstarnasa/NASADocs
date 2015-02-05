@@ -7,16 +7,16 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-8" TAnchorPoint="0" TAnchorOffset="-8" RAnchorPoint="1" RAnchorOffset="8" BAnchorPoint="1" BAnchorOffset="8" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="BG_Frame" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="sprMetal_Framing" NewControlDepth="20" TooltipColor="" UseTemplateBG="0" Border="0" Tooltip="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="27" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint="1" RAnchorOffset="-28" BAnchorPoint="0" BAnchorOffset="124" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="FilterContainer" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TooltipColor="">
                 <Control Class="Button" Base="btnMetal_TabMainLeft" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="PLogOptions" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint=".25" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="PLogOption1" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="InputAction_QuestLog" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" GlobalRadioGroup="" Text="" RadioDisallowNonSelection="1" TooltipColor="" Tooltip="" RelativeToClient="1" TestAlpha="1">
-                    <Event Name="ButtonCheck" Function="PLogOptionCheck"/>
+                    <Event Name="ButtonCheck" Function="OnLargeTabBtn"/>
                 </Control>
                 <Control Class="Button" Base="btnMetal_TabMainMid" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="PLogOptions" LAnchorPoint=".25" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0.5" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="PLogOption2" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="InterfaceMenu_PathLog" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" GlobalRadioGroup="" Text="" RadioDisallowNonSelection="1" TooltipColor="" TopEdgeControlsAnchor="" RelativeToClient="1" TestAlpha="1">
-                    <Event Name="ButtonCheck" Function="PLogOptionCheck"/>
+                    <Event Name="ButtonCheck" Function="OnLargeTabBtn"/>
                 </Control>
                 <Control Class="Button" Base="btnMetal_TabMainMid" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="PLogOptions" LAnchorPoint=".5" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint=".75" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="PLogOption3" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="InterfaceMenu_ChallengeLog" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" GlobalRadioGroup="" Text="" RadioDisallowNonSelection="1" TooltipColor="" RelativeToClient="1" TestAlpha="1">
-                    <Event Name="ButtonCheck" Function="PLogOptionCheck"/>
+                    <Event Name="ButtonCheck" Function="OnLargeTabBtn"/>
                 </Control>
                 <Control Class="Button" Base="btnMetal_TabMainRight" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="PLogOptions" LAnchorPoint=".75" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="PLogOption4" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="CRB_Achievements" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" GlobalRadioGroup="" Text="" RadioDisallowNonSelection="1" TooltipColor="" RelativeToClient="1" TestAlpha="1">
-                    <Event Name="ButtonCheck" Function="PLogOptionCheck"/>
+                    <Event Name="ButtonCheck" Function="OnLargeTabBtn"/>
                 </Control>
             </Control>
             <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-54" TAnchorPoint="0" TAnchorOffset="24" RAnchorPoint="1" RAnchorOffset="-27" BAnchorPoint="0" BAnchorOffset="53" Name="CloseButton" BGColor="ffffffff" TextColor="ffffffff" WindowSoundTemplate="CloseWindowPhys" Text="" TextId="" RelativeToClient="1" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" TooltipColor="">
@@ -28,3 +28,29 @@
         <Event Name="WindowClosed" Function="OnCancel"/>
     </Form>
 </Forms>
+								 Apollo.GetString("RealmPopulation_Medium"),
+								 Apollo.GetString("RealmPopulation_High"),
+								 Apollo.GetString("RealmPopulation_Full") }
+
+	for idx, tRealm in ipairs(tList) do
+		self:HelperConfigureRealmEntry(tRealm)
+	end
+
+	self:SortList()
+
+	----
+
+	if self.btnSelected ~= nil then
+		self.wndRealmList:SetRadioSelButton("SelectedRealm", self.btnSelected)
+		self.wndRealmList:EnsureChildVisible(self.btnSelected)
+		self:OnRealmSelect(self.btnSelected, self.btnSelected)
+		self.wndSelectForm:FindChild("SelectBtn"):Enable(true)
+	else
+		self.wndSelectForm:FindChild("SelectBtn"):Enable(false)
+	end
+
+	self.wndSelectForm:SetFocus()
+end
+
+local tSortTypeFieldMap =
+{	-

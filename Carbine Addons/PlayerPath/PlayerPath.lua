@@ -705,21 +705,8 @@ end
 function PlayerPath:HelperComputeIconPath(pmMission)
 	local eType = pmMission:GetType()
 	local eSubType = pmMission:GetSubType()
-
-	-- TODO: Hardcoded Sprite Referencing
-	local strIconPath = ""
-
-	if ktPathMissionTypeSprites[self.ePlayerPath][eType] then
-		strIconPath = ktPathMissionTypeSprites[self.ePlayerPath][eType]
-	elseif (eType == PathMission.PathMissionType_Scientist_Scan or
-		eType == PathMission.PathMissionType_Scientist_ScanChecklist or
-		eType == PathMission.PathMissionType_Soldier_Holdout) then
-
-		strIconPath = ktPathMissionSubtypeSprites[self.ePlayerPath][eSubType]
-	else
-		strIconPath = ktPathMissionTypeSprites[self.ePlayerPath]["default"]
-	end
-	return strIconPath
+	
+	return ktPathMissionTypeSprites[self.ePlayerPath][eType] or ktPathMissionSubtypeSprites[self.ePlayerPath][eSubType] or ktPathMissionTypeSprites[self.ePlayerPath]["default"]
 end
 
 function PlayerPath:DrawRewardItem(idx, wndReward, tReward) -- TODO: This is for zone completion, remove it when possible
@@ -795,3 +782,9 @@ end
 ----------------------------------------------------------------------------------------------------------
 local PlayerPathInstance = PlayerPath:new()
 PlayerPathInstance:Init()
+CRB__7" DT_VCENTER="1" DT_CENTER="0" DT_RIGHT="0" DT_BOTTOM="0" TooltipColor=""/>
+                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="24" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="0" RAnchorOffset="51" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_HeaderLarge_O" Text="" Template="Default" Name="LocateLbl2" BGColor="white" TextColor="white" TextId="CRB__7" DT_VCENTER="1" DT_CENTER="0" DT_RIGHT="0" DT_BOTTOM="0" TooltipColor=""/>
+                    <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-32" TAnchorPoint="0" TAnchorOffset="19" RAnchorPoint="1" RAnchorOffset="-15" BAnchorPoint="1" BAnchorOffset="9" RelativeToClient="1" Font="CRB_InterfaceLarge_BO" Text="" Template="Default" Name="LocateLbl3" BGColor="white" TextColor="white" TextId="" Picture="1" IgnoreMouse="1" Sprite="CRB_PlayerPathSprites:sprPP_ExpTargetIcon" NewControlDepth="1" TooltipColor=""/>
+                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="6" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-13" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ClaimLocateButtonShade" BGColor="UI_AlphaPercent60" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:BlackFill" Visible="0" NewControlDepth="2" TooltipColor="" HideInEditor="1"/>
+                </Control>
+                <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoin

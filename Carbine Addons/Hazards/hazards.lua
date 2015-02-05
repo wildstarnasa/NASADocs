@@ -199,3 +199,27 @@ end
 
 local HazardInst = Hazards:new()
 HazardInst:Init()
+-----------------------------------------------------------------------------------------------
+-- Interaction
+-----------------------------------------------------------------------------------------------
+
+function HUDInteract:OnAlertItemMouseEnter(wndHandler, wndControl)
+	local wndParent = wndHandler:GetParent()
+	wndParent:FindChild("AlertItemHover"):Show(true)
+end
+
+function HUDInteract:OnAlertItemMouseExit(wndHandler, wndControl)
+	local wndParent = wndHandler:GetParent()
+	wndParent:FindChild("AlertItemHover"):Show(false)
+end
+
+function HUDInteract:OnToggleInteractPopoutText(bToggle)
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:FindChild("AlertPopout") then
+		self.wndMain:FindChild("AlertPopout"):Show(bToggle, not bToggle)
+		self.wndMain:FindChild("AlertItemKeybind"):SetSprite(bToggle and "sprAlert_Square_Blue" or "sprAlert_Square_Black")
+	end
+end
+
+local HUDInteractInst = HUDInteract:new()
+HUDInteractInst:Init()
+il

@@ -608,3 +608,12 @@ end
 
 local TradeskillTreeInst = TradeskillTree:new()
 TradeskillTreeInst:Init()
+2="0" x3="0" x4="0" x5="32" y0="0" y1="32" y2="32" y3="32" y4="32" y5="32" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btn_collapse_Hologram" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_592_112.tga" x0="0" x1="28" x2="28" x3="28" x4="28" x5="28" y0="0" y1="0" y2="0" y3="0" y4="0" y5="29" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="btn_scroll_HologramBarSide" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_658_151.tga" x0="0" x1="7" x2="13" x3="22" x4="29" x5="35" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_scrollBarSide" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_439_151.tga" x0="0" x1="5" x2="10" x3="22" x4="26" x5="32" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btn_scrollLeft" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_439_169.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_scrollRight" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_515_169.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_scrollHologramLeft" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_504_151.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_scrollHologramRight" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_581_151.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btn_hologram" Texture="UI\Assets\TexPieces\UI_CRB_UIKITButtons_633_14

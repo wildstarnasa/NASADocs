@@ -191,4 +191,32 @@ function Warplots:CheckForWarplot()
 end
 
 local WarplotsInstance = Warplots:new()
-WarplotsInstance:Init()
+WarplotsInstance:Init()TE: Requires a server response to progress
+end
+
+function WarpartyRegister:OnCancel(wndHandler, wndControl)
+	self.wndMain:Show(false) -- hide the window
+	self:HelperClearFocus()
+	self:ResetOptions()
+end
+
+function WarpartyRegister:OnGuildResultInterceptResponse( guildCurr, eGuildType, eResult, wndRegistration, strAlertMessage )
+
+	if eGuildType ~= GuildLib.GuildType_WarParty or wndRegistration ~= self.wndMain then
+		return
+	end
+
+	if eResult == GuildLib.GuildResult_YouCreated or eResult == GuildLib.GuildResult_YouJoined then
+		Event_FireGenericEvent("Event_ShowWarpartyInfo")
+		self:OnCancel()
+	end
+
+	self.wndAlert:FindChild("MessageAlertText"):SetText(Apollo.GetString("Warparty_Whoops"))
+	Apollo.CreateTimer("ErrorMessageTimer", 3.00, false)
+	self.wndAlert:FindChild("MessageBodyText"):SetText(strAlertMessage)
+	self.wndAlert:Show(true)
+end
+
+function WarpartyRegister:OnErrorMessageTimer()
+	self.wndAlert:Show(false)
+	self.wndR

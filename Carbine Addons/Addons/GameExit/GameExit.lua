@@ -106,3 +106,4 @@ end
 
 local GameExitInst = GameExit:new()
 GameExitInst:Init()
+et="66" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="DockBtn" TooltipColor="" TestAlpha="1" DrawAsCheckbox="0"

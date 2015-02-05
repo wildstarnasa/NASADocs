@@ -20,6 +20,7 @@ local kUIYellow = kUIBody
 local kUICyan = "UI_TextHoloBodyCyan"
 local kUILowDurability = "yellow"
 local kUIHugeFontSize = "CRB_HeaderSmall"
+local knMaxLevel = 50
 
 local karSimpleDispositionUnitTypes =
 {
@@ -160,30 +161,32 @@ local ktRankDescriptions =
 
 local ktRewardToIcon =
 {
-	["Quest"] 			= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuest",
-	["Challenge"] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_Challenge",
-	["Explorer"] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathExp",
-	["Scientist"] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSci",
-	["Soldier"] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSol",
-	["Settler"] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSet",
-	["PublicEvent"] 	= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PublicEvent",
-	["Rival"] 			= "ClientSprites:Icon_Windows_UI_CRB_Rival",
-	["Friend"] 			= "ClientSprites:Icon_Windows_UI_CRB_Friend",
-	["ScientistSpell"]	= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciSpell"
+	[Unit.CodeEnumRewardInfoType.Quest] 			= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_ActiveQuest",
+	[Unit.CodeEnumRewardInfoType.Challenge] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_Challenge",
+	[Unit.CodeEnumRewardInfoType.Explorer] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathExp",
+	[Unit.CodeEnumRewardInfoType.Scientist] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSci",
+	[Unit.CodeEnumRewardInfoType.Soldier] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSol",
+	[Unit.CodeEnumRewardInfoType.Settler] 		= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSet",
+	[Unit.CodeEnumRewardInfoType.PublicEvent] 	= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PublicEvent",
+	[Unit.CodeEnumRewardInfoType.Rival] 			= "ClientSprites:Icon_Windows_UI_CRB_Rival",
+	[Unit.CodeEnumRewardInfoType.Friend] 			= "ClientSprites:Icon_Windows_UI_CRB_Friend",
+	[Unit.CodeEnumRewardInfoType.ScientistSpell]	= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSciSpell",
+	[Unit.CodeEnumRewardInfoType.Contract]			= "CRB_TargetFrameRewardPanelSprites:sprTargetFrame_Contract"
 }
 
 local ktRewardToString =
 {
-	["Quest"] 			= Apollo.GetString("Tooltips_Quest"),
-	["Challenge"] 		= Apollo.GetString("Tooltips_Challenge"),
-	["Explorer"] 		= Apollo.GetString("ZoneMap_ExplorerMission"),
-	["Scientist"] 		= Apollo.GetString("ZoneMap_ScientistMission"),
-	["Soldier"] 		= Apollo.GetString("ZoneMap_SoldierMission"),
-	["Settler"] 		= Apollo.GetString("ZoneMap_SettlerMission"),
-	["PublicEvent"] 	= Apollo.GetString("ZoneMap_PublicEvent"),
-	["Rival"] 			= Apollo.GetString("Tooltips_Rival"),
-	["Friend"] 			= Apollo.GetString("Tooltips_Friend"),
-	["ScientistSpell"]	= Apollo.GetString("PlayerPathScientist")
+	[Unit.CodeEnumRewardInfoType.Quest] 			= Apollo.GetString("Tooltips_Quest"),
+	[Unit.CodeEnumRewardInfoType.Challenge] 		= Apollo.GetString("Tooltips_Challenge"),
+	[Unit.CodeEnumRewardInfoType.Explorer] 		= Apollo.GetString("ZoneMap_ExplorerMission"),
+	[Unit.CodeEnumRewardInfoType.Scientist] 		= Apollo.GetString("ZoneMap_ScientistMission"),
+	[Unit.CodeEnumRewardInfoType.Soldier] 		= Apollo.GetString("ZoneMap_SoldierMission"),
+	[Unit.CodeEnumRewardInfoType.Settler] 		= Apollo.GetString("ZoneMap_SettlerMission"),
+	[Unit.CodeEnumRewardInfoType.PublicEvent] 	= Apollo.GetString("ZoneMap_PublicEvent"),
+	[Unit.CodeEnumRewardInfoType.Rival] 			= Apollo.GetString("Tooltips_Rival"),
+	[Unit.CodeEnumRewardInfoType.Friend] 			= Apollo.GetString("Tooltips_Friend"),
+	[Unit.CodeEnumRewardInfoType.ScientistSpell]	= Apollo.GetString("PlayerPathScientist"),
+	[Unit.CodeEnumRewardInfoType.Contract]			= Apollo.GetString("Tooltips_Contract")
 }
 
 local karSigilTypeToIcon =
@@ -369,6 +372,8 @@ function ToolTips:new(o)
 
 	o.timerGeneral = nil
 	o.tTimedWindows = {}
+	
+	o.tRealmNamePendingCallbacks = {}
 
 	return o
 end
@@ -392,6 +397,7 @@ function ToolTips:OnDocumentReady()
 	Apollo.RegisterEventHandler("PlayerChanged", "OnUpdateVitals", self)
 	Apollo.RegisterEventHandler("MatchEntered", "OnUpdateVitals", self)
 	Apollo.RegisterEventHandler("MouseOverUnitChanged", "OnMouseOverUnitChanged", self)
+	Apollo.RegisterEventHandler("PlayerRealmName", "OnPlayerRealmName", self)
 
 	local wndTooltip = Apollo.LoadForm(self.xmlDoc, "ItemTooltip_Base", nil, self)
 	local wndTooltipItem = wndTooltip:FindChild("Items")
@@ -408,6 +414,17 @@ function ToolTips:OnDocumentReady()
 
 	self.wndContainer = Apollo.LoadForm("TooltipsForms.xml", "WorldTooltipContainer", nil, self)
 	GameLib.SetWorldTooltipContainer(self.wndContainer)
+end
+
+function ToolTips:OnPlayerRealmName(unit, strRealmName)
+	local tCallback = self.tRealmNamePendingCallbacks[unit:GetId()]
+	if tCallback == nil then
+		return
+	end
+	
+	tCallback(strRealmName)
+	
+	self.tRealmNamePendingCallbacks[unit:GetId()] = nil
 end
 
 function ToolTips:OnTimer()
@@ -465,10 +482,16 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 		end
 		self.wndPropTooltip:FindChild("NameString"):SetText(strProp)
 
+		local tMouse = Apollo.GetMouse()
+		Apollo.SetNavTextAnchor(tMouse.x + 10, true, tMouse.y + 10, false)
+		
 		wndContainer:SetTooltipForm(self.wndPropTooltip)
 		wndContainer:SetTooltipFormSecondary(nil)
 		return
 	end
+	
+	local nScreenWidth, nScreenHeight = Apollo.GetScreenSize()
+	Apollo.SetNavTextAnchor(10, true, nScreenHeight - 332, false)
 
 	if not self.wndUnitTooltip or not self.wndUnitTooltip:IsValid() then
 		self.wndUnitTooltip = wndContainer:LoadTooltipForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Base", self)
@@ -511,11 +534,11 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 	-- Reward info
 	wndMiddleDataBlockContent:DestroyChildren()
 	for idx, tRewardInfo in pairs(unitSource:GetRewardInfo() or {}) do
-		local strRewardType = tRewardInfo.strType
+		local eRewardType = tRewardInfo.eType
 		local bCanAddReward = true
 
 		-- Only show active challenge rewards
-		if strRewardType == "Challenge" then
+		if eRewardType == Unit.CodeEnumRewardInfoType.Challenge then
 			bCanAddReward = false
 			for index, clgCurr in pairs(ChallengesLib.GetActiveChallengeList()) do
 				if tRewardInfo.idChallenge == clgCurr:GetId() and clgCurr:IsActivated() and not clgCurr:IsInCooldown() and not clgCurr:ShouldCollectReward() then
@@ -525,12 +548,12 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 			end
 		end
 
-		if bCanAddReward and ktRewardToIcon[strRewardType] and ktRewardToString[strRewardType] then
-			if strRewardType == "PublicEvent" then
+		if bCanAddReward and ktRewardToIcon[eRewardType] and ktRewardToString[eRewardType] then
+			if eRewardType == Unit.CodeEnumRewardInfoType.PublicEvent then
 				tRewardInfo.strTitle = tRewardInfo.peoObjective:GetEvent():GetName() or ""
-			elseif strRewardType == "Soldier" or strRewardType == "Explorer" or strRewardType == "Settler" then
+			elseif eRewardType == Unit.CodeEnumRewardInfoType.Soldier or eRewardType == Unit.CodeEnumRewardInfoType.Explorer or eRewardType == Unit.CodeEnumRewardInfoType.Settler then
 				tRewardInfo.strTitle = tRewardInfo.pmMission and tRewardInfo.pmMission:GetName() or ""
-			elseif strRewardType == "Scientist" then
+			elseif eRewardType == Unit.CodeEnumRewardInfoType.Scientist then
 				if tRewardInfo.pmMission then
 					if tRewardInfo.pmMission:GetMissionState() >= PathMission.PathMissionState_Unlocked then
 						tRewardInfo.strTitle = tRewardInfo.pmMission:GetName()
@@ -542,8 +565,8 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 
 			if tRewardInfo.strTitle and tRewardInfo.strTitle ~= "" then
 				local wndReward = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Reward", wndMiddleDataBlockContent, self)
-				wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon[strRewardType])
-				wndReward:FindChild("Label"):SetText(String_GetWeaselString(Apollo.GetString("Tooltip_TitleReward"), tRewardInfo.strTitle, ktRewardToString[strRewardType]))
+				wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon[eRewardType])
+				wndReward:FindChild("Label"):SetText(String_GetWeaselString(Apollo.GetString("Tooltip_TitleReward"), tRewardInfo.strTitle, ktRewardToString[eRewardType]))
 
 				-- Adjust height to fit text
 				wndReward:FindChild("Label"):SetHeightToContentHeight()
@@ -622,17 +645,28 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 		-- Friend or Rival
 		if unitSource:IsFriend() then
 			local wndReward = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Reward", wndMiddleDataBlockContent, self)
-			wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon["Friend"])
-			wndReward:FindChild("Label"):SetText(ktRewardToString["Friend"])
+			wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon[Unit.CodeEnumRewardInfoType.Friend])
+			wndReward:FindChild("Label"):SetText(ktRewardToString[Unit.CodeEnumRewardInfoType.Friend])
 			wndMiddleDataBlockContent:Show(true)
 		end
 
 		if unitSource:IsRival() then
 			local wndReward = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Reward", wndMiddleDataBlockContent, self)
-			wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon["Rival"])
-			wndReward:FindChild("Label"):SetText(ktRewardToString["Rival"])
+			wndReward:FindChild("Icon"):SetSprite(ktRewardToIcon[Unit.CodeEnumRewardInfoType.Rival])
+			wndReward:FindChild("Label"):SetText(ktRewardToString[Unit.CodeEnumRewardInfoType.Rival])
 			wndMiddleDataBlockContent:Show(true)
 		end
+		
+		local wndInfo = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "UnitTooltip_Info", wndMiddleDataBlockContent, self)
+		wndInfo:FindChild("Label"):SetText(Apollo.GetString("Tooltips_RealmUnknown"))
+		self.tRealmNamePendingCallbacks[unitSource:GetId()] = function(strRealmName)
+			if wndInfo:IsValid() then
+				wndInfo:FindChild("Label"):SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RealmFrom"), strRealmName))
+			end
+		end
+		unitSource:RequestRealmName()
+		
+		wndMiddleDataBlockContent:Show(true)
 
 		wndBottomDataBlock:Show(true)
 		wndPathIcon:Show(true)
@@ -643,12 +677,15 @@ function ToolTips:UnitTooltipGen(wndContainer, unitSource, strProp)
 
 	elseif karNPCDispositionUnitTypes[strUnitType] then
 		-- NPC
-
 		local nCon = self:HelperCalculateConValue(unitSource)
 		if nCon == 1 or not unitSource:CanGrantXp() then
 			wndXpAwardString:SetAML("")
 		else
-			local strXPFinal = String_GetWeaselString(Apollo.GetString("Tooltips_XPAwardValue"), Apollo.GetString("Tooltips_XpAward"), karConInfo[nCon][4])
+			if unitPlayer:GetLevel() == knMaxLevel and nCon >= 5 then -- 5 = same level as target
+				strXPFinal = String_GetWeaselString(Apollo.GetString("Tooltips_XPAwardValue"), Apollo.GetString("Tooltips_XpAward"), Apollo.GetString("CRB_Elder_Gems"))
+			else
+				strXPFinal = String_GetWeaselString(Apollo.GetString("Tooltips_XPAwardValue"), Apollo.GetString("Tooltips_XpAward"), karConInfo[nCon][4])
+			end
 			wndXpAwardString:SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\" Align=\"Right\">%s</P>", strXPFinal))
 		end
 		wndBreakdownString:SetText(ktRankDescriptions[unitSource:GetRank()] or "")
@@ -955,8 +992,8 @@ local function ItemTooltipBasicStatsHelper(wndParent, tItemInfo, itemSource)
 	local strBotRight = ""
 
 	-- Item Level
-	local nEffectiveLevel = tItemInfo.nEffectiveLevel and tItemInfo.nEffectiveLevel > 0
-	if nEffectiveLevel then
+	local nEffectiveLevel = tItemInfo.nEffectiveLevel
+	if nEffectiveLevel and nEffectiveLevel > 0 then
 		strTopLeft = string.format("<T TextColor=\"%s\">%s</T>", kUIBody, String_GetWeaselString(Apollo.GetString("Tooltips_ItemLevel"), nEffectiveLevel))
 	end
 
@@ -1067,6 +1104,21 @@ local function ItemTooltipSpellReqHelper(wndParent, tItemInfo)
 				local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndParent)
 
 				wnd:SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</P>", kUIRed, tCur.strFailure))
+				wnd:SetHeightToContentHeight()
+			end
+		end
+	end
+end
+
+-- #############################
+
+local function ItemTooltipSpecialReqHelper(wndParent, tItemInfo)
+	if tItemInfo.arSpecialFailures then
+		for idx, strFailure in pairs(tItemInfo.arSpecialFailures) do
+			if strFailure then
+				local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndParent)
+
+				wnd:SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</P>", kUIRed, strFailure))
 				wnd:SetHeightToContentHeight()
 			end
 		end
@@ -1473,13 +1525,7 @@ local function ItemTooltipSigilHelper(wndParent, tItemInfo, itemSource)
 				if tCur.nValue and tCur.nValue > 0 then
 					-- Measure the size of the rune text
 					local strProposedString = String_GetWeaselString(Apollo.GetString("Tooltips_RuneAttributeBonus"), tCur.nValue, (ktAttributeToText[tCur.eProperty] or ""))
-					wnd:FindChild("ItemTooltip_RuneTextMeasure"):SetAML("<P Font=\"CRB_Interface9\">"..strProposedString.."</P>")
-					local nTextWidth, nTextHeight = wnd:FindChild("ItemTooltip_RuneTextMeasure"):SetHeightToContentHeight()
-
-					-- Now set the rune text
-					wnd:FindChild("ItemTooltip_RuneText"):SetFont(nTextHeight > nHeight and "CRB_Interface7_BB" or "CRB_Interface9")
 					wnd:FindChild("ItemTooltip_RuneText"):SetText(strProposedString)
-					wnd:FindChild("ItemTooltip_RuneTextMeasure"):SetAML("")
 				else
 					wnd:FindChild("ItemTooltip_RuneText"):SetText(itemRune:GetName()) -- Shouldn't happen
 				end
@@ -1640,22 +1686,29 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 	-- Buy Buyback
 	local nStackCount = tItemInfo.tStack and (tItemInfo.tStack.nCount or tFlags.nStackCount) or 1
 	if (tFlags.bBuying or tFlags.bBuyback) and tItemInfo.tCost.arMonBuy then
-		for idx, tCur in pairs(tItemInfo.tCost.arMonBuy) do
-			local monPrice = tCur
+		local wnd = nil
+		local xml = XmlDoc.new()
+		for idx, monPrice in pairs(tItemInfo.tCost.arMonBuy) do
 			if monPrice:GetAmount() ~= 0 then
-				local strSellCaption = Apollo.GetString("CRB_Buy_For")
-				if nStackCount > 1 then
-					monPrice = monPrice:Multiply(nStackCount)
-					strSellCaption = String_GetWeaselString(Apollo.GetString("CRB_Buy_X_For"), nStackCount)
-				end
 
-				local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox:FindChild("RightSide"))
-				xml = XmlDoc.new()
-				xml:AddLine(strSellCaption.."<T TextColor=\"0\">.</T>", kUICyan, "CRB_InterfaceSmall", "Right")
+				if wnd == nil or not wnd:IsValid() then
+					wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox:FindChild("RightSide"))
+					
+					local strSellCaption = Apollo.GetString("CRB_Buy_For")
+					if nStackCount > 1 then
+						monPrice = monPrice:Multiply(nStackCount)
+						strSellCaption = String_GetWeaselString(Apollo.GetString("CRB_Buy_X_For"), nStackCount)
+					end
+					xml:AddLine(strSellCaption.."<T TextColor=\"0\">.</T>", kUICyan, "CRB_InterfaceSmall", "Right")
+				end
+				
 				monPrice:AppendToTooltip(xml)
-				wnd:SetDoc(xml)
-				wnd:SetHeightToContentHeight()
 			end
+		end
+		
+		if wnd ~= nil and wnd:IsValid() then
+			wnd:SetDoc(xml)
+			wnd:SetHeightToContentHeight()
 		end
 	end
 
@@ -1767,7 +1820,11 @@ local function GenerateItemTooltipForm(luaCaller, wndParent, itemSource, tFlags,
 	wndParent:SetTooltipDoc(nil)
 	wndParent:SetTooltipDocSecondary(nil)
 
-	local tSource = { itemSource, tFlags.itemModData, tFlags.tGlyphData, tFlags.arGlyphIds, tFlags.strMaker }
+	if tFlags.bBuyback then
+		tFlags.idVendorUnique = nil
+	end
+	
+	local tSource = { itemSource, tFlags.itemModData, tFlags.tGlyphData, tFlags.arGlyphIds, tFlags.strMaker, tFlags.idVendorUnique }
 	local tItemInfo = tFlags.itemCompare and Item.GetDetailedInfo(tSource, tFlags.itemCompare) or Item.GetDetailedInfo(tSource)
 
 	local wndTooltip = nil
@@ -1804,6 +1861,7 @@ local function GenerateItemTooltipForm(luaCaller, wndParent, itemSource, tFlags,
 		ItemTooltipClassReqHelper(wndItems, itemOne)
 		ItemTooltipFactionReqHelper(wndItems, itemOne)
 		ItemTooltipSpellReqHelper(wndItems, itemOne)
+		ItemTooltipSpecialReqHelper(wndItems, itemOne)
 		ItemTooltipSchematicHelper(wndItems, itemOne)
 		ItemTooltipAdditiveHelper(wndItems, itemOne)
 		--
@@ -1995,36 +2053,38 @@ local function GenerateSpellTooltipForm(luaCaller, wndParent, splSource, tFlags)
 
 	-- Cost
 
-	local strCost = ""
-	local tResource = {}
-    local tCosts = splSource:GetCasterInnateCosts()
+	local strCost = splSource:GetCostInfoString() -- always use the override string if available
+	if not strCost or strCost == "" then
+		local tResource = {}
+		local tCosts = splSource:GetCasterInnateCosts()
 
-	if not tCosts or #tCosts == 0 then
-		tCosts = splSource:GetCasterInnateRequirements()
-	end
-
-	for idx = 1, #tCosts do
-		if strCost ~= "" then
-			strCost = strCost .. Apollo.GetString("Tooltips_And")
+		if not tCosts or #tCosts == 0 then
+			tCosts = splSource:GetCasterInnateRequirements()
 		end
 
-		tResource = tVitals[tCosts[idx].eVital]
-		if not tResource then
-			tResource = {}
-			tResource.strName = String_GetWeaselString(Apollo.GetString("Tooltips_UnknownVital"), tCosts[idx].eVital)
-		end
+		for idx = 1, #tCosts do
+			if strCost ~= "" then
+				strCost = strCost .. Apollo.GetString("Tooltips_And")
+			end
 
-		tResourceData =
-		{
-			["name"]	= tResource.strName,
-			["count"]	= tCosts[idx].nValue,
-		}
-		strCost = String_GetWeaselString(Apollo.GetString("Tooltips_SpellCost"), strCost, tResourceData)
+			tResource = tVitals[tCosts[idx].eVital]
+			if not tResource then
+				tResource = {}
+				tResource.strName = String_GetWeaselString(Apollo.GetString("Tooltips_UnknownVital"), tCosts[idx].eVital)
+			end
 
-		if eCastMethod == Spell.CodeEnumCastMethod.Channeled then
-			strCost = String_GetWeaselString(Apollo.GetString("Tooltips_ChanneledCost"), strCost)
-		elseif eCastMethod == Spell.CodeEnumCastMethod.ChargeRelease then
-			strCost = String_GetWeaselString(Apollo.GetString("Tooltips_Charges"), strCost)
+			tResourceData =
+			{
+				["name"]	= tResource.strName,
+				["count"]	= tCosts[idx].nValue,
+			}
+			strCost = String_GetWeaselString(Apollo.GetString("Tooltips_SpellCost"), strCost, tResourceData)
+
+			if eCastMethod == Spell.CodeEnumCastMethod.Channeled then
+				strCost = String_GetWeaselString(Apollo.GetString("Tooltips_ChanneledCost"), strCost)
+			elseif eCastMethod == Spell.CodeEnumCastMethod.ChargeRelease then
+				strCost = String_GetWeaselString(Apollo.GetString("Tooltips_Charges"), strCost)
+			end
 		end
 	end
 
@@ -2051,25 +2111,29 @@ local function GenerateSpellTooltipForm(luaCaller, wndParent, splSource, tFlags)
     local fCooldownTime = splSource:GetCooldownTime()
     local tCharges = splSource:GetAbilityCharges()
 
-	if fCooldownTime == 0 or tCharges then
-		local nChargeCount = 0
-		if tCharges then
-			fCooldownTime = tCharges.fRechargeTime
-			nChargeCount = tCharges.nRechargeCount
-		end
-
-		if fCooldownTime == 0 then
-			wndCooldown:SetText(Apollo.GetString("Tooltips_NoCooldown"))
-		elseif fCooldownTime < 60 then
-			wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RechargePerSeconds"), nChargeCount, strRound(fCooldownTime, 0)))
-		else
-		    wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RechargePerMin"), nChargeCount, strRound(fCooldownTime / 60, 1)))
-	    end
-	elseif fCooldownTime < 60 then
-		wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_SecondsCooldown"), strRound(fCooldownTime, 0)))
+	if splSource:ShouldHideCooldownInTooltip() then
+		wndCooldown:SetText("")
 	else
-	    wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_MinCooldown"), strRound(fCooldownTime / 60, 1)))
-    end
+		if fCooldownTime == 0 or tCharges then
+			local nChargeCount = 0
+			if tCharges then
+				fCooldownTime = tCharges.fRechargeTime
+				nChargeCount = tCharges.nRechargeCount
+			end
+
+			if fCooldownTime == 0 then
+				wndCooldown:SetText(Apollo.GetString("Tooltips_NoCooldown"))
+			elseif fCooldownTime < 60 then
+				wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RechargePerSeconds"), nChargeCount, strRound(fCooldownTime, 0)))
+			else
+				wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RechargePerMin"), nChargeCount, strRound(fCooldownTime / 60, 1)))
+			end
+		elseif fCooldownTime < 60 then
+			wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_SecondsCooldown"), strRound(fCooldownTime, 0)))
+		else
+			wndCooldown:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_MinCooldown"), strRound(fCooldownTime / 60, 1)))
+		end
+	end
 
 
 	-- Mobility
@@ -2345,3 +2409,5 @@ end
 
 local ToolTipInstance = ToolTips:new()
 ToolTipInstance:Init()
+    ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª I I «Z  PPPP ‘	Ò  åàNn·RÒªªªªœPR.™»RÒªªªªÀmn›ÿRÒªªªª€´‘­í?RÒªªªª€6²­m?RÒªªªª
+€4²µÿ$RÒªªªª@r¶›üRÒªªªªPnn™»RÒªªªªPnv›ÜRÒªªªª °mm›ÿRÒªªªª€¨±lí?RÒªªªª=Ö¬ã'RÒªªªªP«µZ³6RÒªªªª H‚$H‚$1+ dddd  	$Ò  U‘DI’$RÒªªªª’°Mi›$RÒªªªª°m&$RÒªªªª °m¶$RÒªªªª  mM’$RÒªªªª °mI’$RÒªªªªÀm±$RÒªªªª °m¶™$RÒªªªª¶´$RÒªªªª€(1L’$RÒªªªª $I’$%Ò     P H‚$I’$q; ””•• 	 I$Ò  U  I’IÒ      I‰”$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª $IR’$RÒªªªª €$I’$)Ò     @ @$H’$Ò  PPTU        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª

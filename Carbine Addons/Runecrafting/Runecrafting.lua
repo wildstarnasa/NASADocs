@@ -171,7 +171,6 @@ function Runecrafting:Initialize()
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "RunecraftingForm", nil, self)
 
-	self.wndMain:FindChild("BGFrame"):FindChild("ShowTutorialsBtn"):Enable(false)
 	self.wndMain:FindChild("RuneCreationContainer"):FindChild("RuneCreationCraftBtn"):Enable(false)
 	self.wndMain:FindChild("ToggleRuneCreation"):AttachWindow(self.wndMain:FindChild("RuneCreationContainer"))
 	self.wndMain:FindChild("ToggleEquipRunes"):AttachWindow(self.wndMain:FindChild("EquipRunesContainer"))
@@ -198,6 +197,16 @@ function Runecrafting:Initialize()
 	wndMeasure = Apollo.LoadForm(self.xmlDoc, "TypeTierItem", nil, self)
 	self.knDefaultTypeTierItemHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
+
+	-- Tutorial
+	local wndTutorialPopup = self.wndMain:FindChild("BGFrame:ShowTutorialsBtn:ShowTutorialPopup")
+	local wndTutorialPopupText = wndTutorialPopup:FindChild("ShowTutorialPopupText")
+	local strTutorialPopupText = Apollo.GetString("Runecrafting_ShowTutorialPopupText"):gsub("\\n", "<P TextColor=\"0\">.</P>")
+	wndTutorialPopupText:SetAML("<P Font=\"CRB_InterfaceSmall\" TextColor=\"UI_TextHoloBody\">"..strTutorialPopupText.."</P>")
+	local nTextWidth, nTextHeight = wndTutorialPopupText:SetHeightToContentHeight() -- For various languages
+	local nLeft, nTop, nRight, nBottom = wndTutorialPopup:GetAnchorOffsets()
+	wndTutorialPopup:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 30)
+	self.wndMain:FindChild("BGFrame:ShowTutorialsBtn"):AttachWindow(wndTutorialPopup)
 
 	-- Variables
 	self.bAllowClicks = true
@@ -598,12 +607,9 @@ function Runecrafting:OnRuneCreationCraftBtn(wndHandler, wndControl) -- RuneCrea
 	local strSummaryMsg = Apollo.GetString("CoordCrafting_LastCraftTooltip")
 	for idx, tData in pairs(tSchematicInfo.tMaterials) do
 		local itemCurr = tData.itemMaterial
-		local tPluralName =
-		{
-			["name"] = itemCurr:GetName(),
-			["count"] = tonumber(tData.nAmount)
-		}
-		strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CoordCrafting_SummaryCount"), tPluralName)
+		if itemCurr then
+			strSummaryMsg = strSummaryMsg .. "\n" .. String_GetWeaselString(Apollo.GetString("CraftingGrid_CatalystCountAndName"), tData.nAmount, itemCurr:GetName())
+		end
 	end
 	Event_FireGenericEvent("GenericEvent_CraftSummaryMsg", strSummaryMsg)
 
@@ -923,7 +929,7 @@ function Runecrafting:DrawRuneRerollConfirm(wndHandler, itemSource, nSlotIndex)
 	self.wndCurrentConfirmPopup:FindChild("SoulboundWarning"):Show(not itemSource:IsSoulbound())
 	self.wndCurrentConfirmPopup:FindChild("RerollMaterialIcon"):SetSprite(tRerollInfo.itemReagent:GetIcon())
 	self.wndCurrentConfirmPopup:FindChild("RerollMaterialIcon"):SetText(String_GetWeaselString(Apollo.GetString("CRB_NOutOfN"), tRerollInfo.nReagentCount, nReagentCost))
-	self.wndCurrentConfirmPopup:FindChild("RerollMaterialIcon"):SetTextColor(bHaveMats and "white" or "xkcdReddish")
+	self.wndCurrentConfirmPopup:FindChild("RerollMaterialIcon"):SetTextColor(bHaveMats and "white" or "xkcdReddish")	
 	self:HelperBuildItemTooltip(self.wndCurrentConfirmPopup:FindChild("RerollMaterialIcon"), tRerollInfo.itemReagent)
 	self:HelperRepositionConfirmPopup(wndHandler)
 end
@@ -1098,3 +1104,38 @@ end
 
 local RunecraftingInst = Runecrafting:new()
 RunecraftingInst:Init()
+iveProg = self:FactoryCacheProduce(wndObjective, "QuestProgressItem", "QuestProgressItem")
+		local nCompleted = bComplete and tObjective.nNeeded or tObjective.nCompleted
+		local nNeeded = tObjective.nNeeded
+		wndObjectiveProg:FindChild("QuestProgressBar"):SetMax(nNeeded)
+		wndObjectiveProg:FindChild("QuestProgressBar"):SetProgress(nCompleted)
+		wndObjectiveProg:FindChild("QuestProgressBar"):EnableGlow(nCompleted > 0 and nCompleted ~= nNeeded)
+	end
+end
+
+function QuestLog:CheckLeftSideFilters(queQuest)
+	local bCompleteState = queQuest:GetState() == Quest.QuestState_Completed
+	local bResult1 = self.wndLeftFilterActive:IsChecked() and not bCompleteState and not queQuest:IsIgnored()
+	local bResult2 = self.wndLeftFilterFinished:IsChecked() and bCompleteState
+	local bResult3 = self.wndLeftFilterHidden:IsChecked() and queQuest:IsIgnored()
+
+	return bResult1 or bResult2 or bResult3
+end
+
+function QuestLog:HelperPrereqFailed(tCurrItem)
+	return tCurrItem and tCurrItem:IsEquippable() and not tCurrItem:CanEquip()
+end
+
+function QuestLog:HelperPrefixTimeString(fTime, strAppend, strColorOverride)
+	local fSeconds = fTime % 60
+	local fMinutes = fTime / 60
+	local strColor = "fffffc00"
+	if strColorOverride then
+		strColor = strColorOverride
+	elseif fMinutes < 1 and fSeconds <= 30 then
+		strColor = "ffff0000"
+	end
+	return string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">(%d:%.02d) </T>%s", strColor, fMinutes, fSeconds, strAppend)
+end
+
+function QuestLog:FactoryC

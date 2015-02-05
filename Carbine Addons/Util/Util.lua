@@ -19,6 +19,20 @@ function GetUnicodeStringLength(str)
 	return count
 end
 
+--------------------------------------------------------------------------------------------------
+
+function GetPluralizeActor(strSingularPlural, nCount)
+	if strSingularPlural and nCount then
+		local tActor = 
+		{
+			["count"] = nCount, 
+			["name"] = strSingularPlural
+		}
+		return tActor
+	end
+	return {}
+end
+
 ---------------------------------------------------------------------------------------------------
 -- TableUtil:Copy
 ---------------------------------------------------------------------------------------------------
@@ -106,6 +120,7 @@ function Queue:Empty()
 	return self.iFirst > self.iLast
 end
 ---------------------------------------------------------------------------------------------------
+ 
 
 -----------------------------------------------------------------------------------------------
 -- Initialization
@@ -143,3 +158,74 @@ UtilLibInst = nil
 
 
 
+alent.bActive then
+					bPicked = true
+					strIcon = "ClientSprites:Icon_Windows_UI_CRB_Checkmark"
+				elseif string.len(strIcon) == 0 then
+					strIcon = "ClientSprites:Icon_ItemMisc_UI_Item_Gears"
+				end
+				wndTalent:FindChild("TalentItemIcon"):SetSprite(strIcon)
+
+				local strName = Apollo.GetString("Tradeskills_TalentPlaceholder")
+				if string.len(tTalent.strName) > 0 then
+					strName = tTalent.strName
+				end
+				wndTalent:FindChild("TalentItemIcon"):SetTooltip(
+					string.format("<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ff9aaea3\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P>", strName, tTalent.strTooltip))
+			end
+		end
+
+		if bPicked then
+			for idx, wndTalent in pairs(wndTier:FindChild("TalentItemContainer"):GetChildren()) do
+				wndTalent:FindChild("TalentItemBtn"):Enable(false)
+			end
+		end
+		wndTier:FindChild("TalentItemContainer"):ArrangeChildrenHorz(0)
+	end
+	wndParent:FindChild("TierItemContainer"):ArrangeChildrenVert(0)
+
+	-- Points available
+	local strHeaderText = tCurrInfo.strName
+	if tCurrInfo.nTalentPoints > 0 and nNextLevelCost > 0 then
+		strHeaderText = String_GetWeaselString(Apollo.GetString("Tradeskills_ToLevel"), tCurrInfo.strName, tCurrInfo.nTalentPoints, nNextLevelCost, nNextLevelTier)
+	end
+	wndParent:FindChild("HeaderTitle"):SetText(strHeaderText)
+
+	-- Reset Points
+	local monRespecCost = CraftingLib.GetTradeskillTalentRespecCost(tCurrTradeskill.eId)
+	local eMoneyType = monRespecCost:GetMoneyType()
+	local monPlayerCurrencyAmount = GameLib.GetPlayerCurrency(eMoneyType):GetAmount()
+	local bCanAffordReset = monRespecCost:GetAmount() <= monPlayerCurrencyAmount
+	wndParent:FindChild("ResetPoints"):Show(true)
+	wndParent:FindChild("ResetPointsConfirmYes"):SetData(tCurrTradeskill.eId)
+	wndParent:FindChild("ResetPointsConfirmNo"):SetData(wndParent:FindChild("ResetPointsConfirmBubble"))
+	wndParent:FindChild("ResetPointsConfirmYes"):Enable(bCanAffordReset)
+	wndParent:FindChild("ResetPointsCostCashWindow"):SetMoneySystem(eMoneyType)
+	wndParent:FindChild("ResetPointsCostCashWindow"):SetAmount(monRespecCost, true)
+	wndParent:FindChild("ResetPointsHaveCashWindow"):SetMoneySystem(eMoneyType)
+	wndParent:FindChild("ResetPointsHaveCashWindow"):SetAmount(monPlayerCurrencyAmount, true)
+	wndParent:FindChild("ResetPointsBtn"):AttachWindow(wndParent:FindChild("ResetPointsConfirmBubble"))
+	if bCanAffordReset then
+		wndParent:FindChild("ResetPointsCostCashWindow"):SetTextColor(ApolloColor.new("white"))
+	else
+		wndParent:FindChild("ResetPointsCostCashWindow"):SetTextColor(ApolloColor.new("red"))
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Reset Points
+-----------------------------------------------------------------------------------------------
+
+function TradeskillTalents:OnResetPointsConfirmYes(wndHandler, wndControl) -- Parent can be 3 buttons, but data will be tradeskill id
+	if wndHandler ~= wndControl or not wndHandler:GetData() then return end
+	CraftingLib.ResetTradeskillTalents(wndHandler:GetData())
+	Apollo.StartTimer("TradeskillTalents_DelayedRedraw")
+end
+
+function TradeskillTalents:OnResetPointsConfirmNo(wndHandler, wndControl)
+	if wndHandler == wndControl and wndHandler:GetData() then
+		wndHandler:GetData():Show(false)
+	end
+end
+
+----------------------------------------------------------

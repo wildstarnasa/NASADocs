@@ -20,7 +20,10 @@
                     <Event Name="ButtonCheck" Function="OnNeighborSortToggle"/>
                     <Event Name="ButtonUncheck" Function="OnNeighborSortToggle"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_ListView_Top" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="Neighbors_SortRadioGroup" LAnchorPoint="1" LAnchorOffset="-443" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-360" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_TextHoloBody" PressedTextColor="UI_TextHoloBody" FlybyTextColor="UI_TextHoloBody" PressedFlybyTextColor="UI_TextHoloBody" DisabledTextColor="UI_TextHoloBody" TooltipType="OnCursor" Name="Label_Roommate" TooltipColor="" Text="" TextId="Neighbors_Roommate" GlobalRadioGroup="" Tooltip=""/>
+                <Control Class="Button" Base="BK3:btnHolo_ListView_Top" Font="CRB_InterfaceSmall" ButtonType="Check" RadioGroup="Neighbors_SortRadioGroup" LAnchorPoint="1" LAnchorOffset="-443" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-360" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_TextHoloBody" PressedTextColor="UI_TextHoloBody" FlybyTextColor="UI_TextHoloBody" PressedFlybyTextColor="UI_TextHoloBody" DisabledTextColor="UI_TextHoloBody" TooltipType="OnCursor" Name="Label_Roommate" TooltipColor="" Text="" TextId="Neighbors_Roommate" GlobalRadioGroup="" Tooltip="">
+                    <Event Name="ButtonCheck" Function="OnNeighborSortToggle"/>
+                    <Event Name="ButtonUncheck" Function="OnNeighborSortToggle"/>
+                </Control>
                 <Control Class="Button" LAnchorPoint="1" LAnchorOffset="-361" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-313" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="0" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="Label_Level" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" Picture="0" IgnoreMouse="0" Sprite="" DT_VCENTER="1" DT_CENTER="1" TextId="Friends_LevelHeader" NormalTextColor="UI_TextHoloBody" PressedTextColor="UI_TextHoloBody" FlybyTextColor="UI_TextHoloBody" PressedFlybyTextColor="UI_TextHoloBody" DisabledTextColor="UI_TextHoloBody" Base="BK3:btnHolo_ListView_Top" ButtonType="Check" GlobalRadioGroup="" RadioGroup="Neighbors_SortRadioGroup">
                     <Event Name="ButtonCheck" Function="OnNeighborSortToggle"/>
                     <Event Name="ButtonUncheck" Function="OnNeighborSortToggle"/>
@@ -62,7 +65,7 @@
                 <Event Name="ButtonSignal" Function="OnVisitConfirmBtn"/>
             </Control>
             <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-117" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="1" RAnchorOffset="-17" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="VisitDisabledBlocker" BGColor="white" TextColor="white" TooltipColor="white" TooltipFont="CRB_InterfaceSmall" Tooltip="" TooltipId="Neighbors_MustBeOnPlot" IgnoreTooltipDelay="1" Picture="1" IgnoreMouse="0" Sprite="" NewWindowDepth="1" HideInEditor="1" ButtonTextXMargin="15" Visible="1"/>
-            <Control Class="Button" Base="CRB_Basekit:kitBtn_Metal_LargeBlue" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-303" TAnchorPoint="0" TAnchorOffset="13" RAnchorPoint="1" RAnchorOffset="-123" BAnchorPoint="1" BAnchorOffset="-8" DT_VCENTER="1" DT_CENTER="1" Name="ModifyPermissionsBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="" TextId="Neighbors_GiveRoomate" TooltipColor="" Visible="1" TestAlpha="1">
+            <Control Class="Button" Base="CRB_Basekit:kitBtn_Metal_LargeBlue" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-303" TAnchorPoint="0" TAnchorOffset="13" RAnchorPoint="1" RAnchorOffset="-123" BAnchorPoint="1" BAnchorOffset="-8" DT_VCENTER="1" DT_CENTER="1" Name="ModifyPermissionsBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="" TextId="Neighbors_SetToRoommate" TooltipColor="" Visible="1" TestAlpha="1">
                 <Event Name="ButtonSignal" Function="OnModifyPermissionsBtn"/>
             </Control>
         </Control>
@@ -120,3 +123,6 @@
         </Control>
     </Form>
 </Forms>
+et="0" TAnchorPoint="0" TAnchorOffset="9" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="32" BGColor="white" Font="CRB_HeaderSmall" TextColor="white" Text="" TextId="Nameplates_Healthbar" DT_CENTER="1" DT_VCENTER="0" DT_BOTTOM="0" Line="0"/>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="NameplateO_HealthBarFraming_Bottom" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="NameplateO_HealthBarFraming_Bottom" BAnchorOffset="203" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="RewardsFraming" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="" 

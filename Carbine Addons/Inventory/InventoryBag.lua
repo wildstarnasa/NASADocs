@@ -20,6 +20,7 @@ local karCurrency =  	-- Alt currency table; re-indexing the enums so they don't
 {						-- To add a new currency just add an entry to the table; the UI will do the rest. Idx == 1 will be the default one shown
 	{eType = Money.CodeEnumCurrencyType.Renown, 			strTitle = Apollo.GetString("CRB_Renown"), 				strDescription = Apollo.GetString("CRB_Renown_Desc")},
 	{eType = Money.CodeEnumCurrencyType.ElderGems, 			strTitle = Apollo.GetString("CRB_Elder_Gems"), 			strDescription = Apollo.GetString("CRB_Elder_Gems_Desc")},
+	{eType = Money.CodeEnumCurrencyType.Glory, 			strTitle = Apollo.GetString("CRB_Glory"), 			strDescription = Apollo.GetString("CRB_Glory_Desc")},
 	{eType = Money.CodeEnumCurrencyType.Prestige, 			strTitle = Apollo.GetString("CRB_Prestige"), 			strDescription = Apollo.GetString("CRB_Prestige_Desc")},
 	{eType = Money.CodeEnumCurrencyType.CraftingVouchers, 	strTitle = Apollo.GetString("CRB_Crafting_Vouchers"), 	strDescription = Apollo.GetString("CRB_Crafting_Voucher_Desc")}
 }
@@ -320,13 +321,10 @@ function InventoryBag:OnToggleVisibility()
 		Sound.Play(Sound.PlayUIBagClose)
 		Apollo.StopTimer("InventoryUpdateTimer")
 	else
-		self.wndMain:Show(true)
-		self.wndMain:ToFront()
+		self.wndMain:Invoke()
 		Sound.Play(Sound.PlayUIBagOpen)
 		Apollo.StartTimer("InventoryUpdateTimer")
 	end
-	self.wndMain:ToFront()
-
 	if self.bFirstLoad then
 		self.bFirstLoad = false
 	end
@@ -340,10 +338,8 @@ function InventoryBag:OnToggleVisibility()
 end
 
 function InventoryBag:OnToggleVisibilityAlways()
-	self.wndMain:Show(true)
-	self.wndMain:ToFront()
+	self.wndMain:Invoke()
 	Apollo.StartTimer("InventoryUpdateTimer")
-	self.wndMain:ToFront()
 
 	if self.bFirstLoad then
 		self.bFirstLoad = false
@@ -400,10 +396,6 @@ function InventoryBag:UpdateBagSlotItems() -- update our bag display
 			wndCtrl:SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"white\">%s</T>", strEmptyBag))
 			wndCtrl:FindChild("RemoveBagIcon"):Show(false)
 		end
-	end
-
-	if self.nEquippedBagCount ~= nOldBagCount then --flash the config icon
-		self.wndMain:FindChild("OptionsBtnFlash"):SetSprite("CRB_Basekit:kitAccent_Glow_BlueFlash")
 	end
 end
 
@@ -883,3 +875,11 @@ end
 
 local InventoryBagInst = InventoryBag:new()
 InventoryBagInst:Init()
+Ù#÷+-æõå¤ß^2Ÿkhçé…96£}ñÏç§â}yäõY‰ÊïŸ²^r´­£I{¯øú„ˆş$˜ŸÂ½òq~~ˆš“ÚîÉ%ù¸ª´'a^­Ä‰dş^¥¤óíñy}$¨÷4_1ïáõÛíßßÄ¼İíæã²óz¦™fú+ã=ä©„£y{'xï/“Ò÷Ç¼§çñ&yûó©ó{ÄûSŞ¼o›]&ò][áÍ{§µOìÏÂ{Äë4Š÷p_^rLOíÃïÂúÎ×Gõı¹±x¿ØbŞ¹æO?y_¾Ğ¬ÙfÙ‡cÙŞ[ê™¿{;:N˜¿ûäÑØ2¹*4íhB«0wÙÊÉìóRëg]’`ŞøÑ!?ïÇÅûìËJPı;ÔçË-¼Ñ¾ˆÔÏ‹ómİ•¤Ÿo™Ë74-"ı÷¼d÷!G;©Ï3ãİûa~R4¯?¶ŸôbM®†¦p’o‚ŸÈ~[£Ö÷Û†¨y¿ãíïéÉßO¿óXÛ}$OGj~«‹\ôš§WĞù¹ráŸà=ºóE÷ïáyıÄû÷ËÇeši¦¿úkÀûñæï©şÀğ<ÈgÄ{ÄO3à=®ï‰ßñ~Ği%õ½QöÀ¼gI¿=2¼±­ÕïÅ{ÂÄûr_Ş“ç…Ütz¾Ï’ãOÏ/.ÀóÀ¯WÜ¨}yİYÅÈüİ™åù»·Q½ıøW~öñş“¥[vãıwˆğ—+ù-ÇÏœÏó±?ïéå¼Ü]Ãy¹¥¿ÃÁ|…ßç(%ûgŠsÜÎ&o[‰yNêëìd·“îßã¼Ü<°ÏÕû`¿]¬ÑfjÖ“yúÈşDgé„k°Ÿîˆxÿµ2êŞu„oê@Ûš!^Çóvp>÷ïáşå(õ<œ·ğ£û_Dÿş6çí8Ö¿gši¦¿z˜÷R¢Çæı(ü§ü÷ãçéOòŞK½_îç•¯ëÃ{:_O¥¨xsõ;„ÿ˜÷p¾N\1÷ãµÕgçwÜxon{ĞNüøñ8ÿ†œ÷'Ç8hŞãy<¸/'ÎÓµäTŸı~Ìû—îïWUÜ+ìÃé™¿[xŸP&Çù÷ˆ÷òOÅów²&ôèü%ü™‹eîˆOşö>yVĞdÄûÂ%?¾EåÉË]fá¥«@=?Ÿ?óè-Ùœ´ù\‘×ùé®¸ß~n"ß`y¸©±8¯ÎÛõã<]à¿ç¥½Ï€y»Î¿ìÃW÷;á¾]*4æé¨•œßñNÒïTàù9XÏãş|§w=
+xï5owûê'Ø¿pÿí³eši¦¿~ÚÃûÀ{º¾¾Ó¼÷“Òy9ˆ÷Ôç	¼|÷ğ\0?ÓnŞ!öÇ1ïá¾M £¢möŸÀü}Å`pñóµ8_ÿ~’·ãË{Ü_“ƒÏ÷pşşÜºó$?Ç›÷Ù3ç¼Ÿ…óñëÉóF]ÎÇ¿ª~yxşî—yößáù:ìÇÿÛöï	~üİˆ÷“9~é‡+ò…¼\Ì{ìÏ«Z¸Ïzõ³3Fòr—X”s:«@=ŸÿB	-smM O/7Å¶¯y™ËLpê;@æá“blöE§Á¼or,ÏçõîWÀşz£–×ÿ
+Ìã…©İûûì¤ÿ¯	Äy¶¯Ì!¼çï‚y:
+:ïÏÛQş{÷Pß»œÔ¾;™§g ÿ¼ú÷£ğ~bıû‰ï·cù¸L3Íô×QßŞO(oóöïıdşŞ¼§îç§‹xßÒnn ¼?{Ê‹÷Ö³—‘ú^íÅ{yçš0RÿG†ã}6„Ïñô¾:oŞg$Ğóøy©ÕŞ¼/†y¼Åó•µŸ| ¾ÿ§ïµjÏş»íQ–÷j×v¤MÂyy˜÷¯â–º<~|<`bI‘°ÏşZ4âıC…–…Ó^?e·Îˆöã/.pï¿|ıÙo“‹ûİ¯ˆüŸyŸ#^ÏIrwô½DååQót‰‘¨~^HöéÅİ&˜ÇFï¯7hmÆ¾ßşëÔ®­İ•äùC8¯ûô‚•+îÉu|^oy:>ù9rz~ï·ƒ¼¾¹üû‰öïá¼İÄû÷lŞi¦™ş&è/:_×OŠûñ­cò÷Æ{tğ>à÷›[B)Ş·Í.ëŸúñŞFòs£Ã*¨ùûºŸŒóvŞ¥y?o7y¾ÈKïİU{áAñ~Ùsêyßyoİ¸îCñúsÅÂüzhxşî¯e=uy»c¸úY]Sº§H¸åé–¢WSêÆy¹ë‹v
+~üÁa?şb×pl¯Uägq¾°–äáfqÒ-ËI?=/İvÈQEø>7ÑÕáØ[û÷û¥¤ßŸéê8ømÀy:$/BçvB¿@¸Æu¸øõuÁı‡?9‰Úg»üßA.~q‚z£ê{…Üå¤÷İûoH>®ŒŞwwSù÷íßO<//h6oÇ4ÓL#ômçë3xOùíGç=é7øœ4™\WĞŸçÍ{u`˜9ûi¢C‚ë†æÿ’œ×0ïAı-øóß ¼Çówïå0/#Ñ¼Îãå¤V¼9ô
+²>şÀ
+òõŠòñ¼Àdş®ÏßÕáy:ìÇ?WYwE¡
+M«Oèæï.,ãeöòR=¼ÿè¡gŠ=ş¼İ	Éú-–…6Ó	àw/ÌEõ;˜‡›?ûó	ïsRlöJÂãŒDÛ>èÿ'G÷;›VşÇ›p>ñÛG†ñ²¦»ïµIg‹èù9ajwôókU®­}¿%ıú`%×`§÷İPóu8?'Ê;/h¼ï†Úo'£ûÿŸ³¿6è	úïo%/ÍÛ1Í4Óß<}‹ù;À¯?>ï!¯ıdôë½ç§üzmŞ¼/í%ßO

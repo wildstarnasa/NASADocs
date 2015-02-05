@@ -2360,3 +2360,11 @@ function GetWarCoins()
 	end
 	return 0
 end
+efault" TooltipType="OnCursor" Name="ReportFriendInviteSpamBtn" TooltipColor="white" Tooltip="" TooltipId="ContextMenu_ReportSpam" TooltipFont="CRB_InterfaceSmall_O" RelativeToClient="1" TestAlpha="1">
+                <Event Name="ButtonSignal" Function="OnReportFriendInviteSpamBtn"/>
+            </Control>
+        </Control>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="52" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-280" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="Name" BGColor="white" TextColor="UI_TextHoloTitle" TooltipColor="" DT_RIGHT="0" DT_WORDBREAK="0" TextId="Challenges_NoProgress" IgnoreMouse="1" DT_VCENTER="1" NewControlDepth="2" AutoScaleText="1"/>
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-36" TAnchorPoint="0" TAnchorOffset="21" RAnchorPoint="1" RAnchorOffset="-16" BAnchorPoint="0" BAnchorOffset="41" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="NoteIcon" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:Icon_Mission_Scientist_SpecimenSurvey" NewControlDepth="3" IgnoreTooltipDelay="1" TooltipFont="CRB_InterfaceSmall"/>
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-325" TAnchorPoint="0" TAnchorOffset="14" RAnchorPoint="1" RAnchorOffset="-288" BAnchorPoint="0" BAnchorOffset="46" RelativeToClient="1" Font="CRB_HeaderTiny" Text="" Template="Default" TooltipType="OnCursor" Name="Level" BGColor="white" TextColor="white" TooltipColor="" DT_RIGHT="0" DT_WORDBREAK="0" TextId="Challenges_NoProgress" IgnoreMouse="1" DT_VCENTER="1" DT_CENTER="1" NewControlDepth="2"/>
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-273" TAnchorPoint="0" TAnchorOffset="22" RAnchorPoint="1" RAnchorOffset="-253" BAnchorPoint="0" BAnchorOffset="42" Re

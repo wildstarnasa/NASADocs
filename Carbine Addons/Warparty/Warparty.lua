@@ -74,6 +74,7 @@ function Warparty:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildRoster", 						"OnGuildRoster", self)  -- notification that a guild roster was recieved.
 	Apollo.RegisterEventHandler("GuildLoaded",						"OnGuildLoaded", self)  -- notification that your guild or a society has loaded.
 	Apollo.RegisterEventHandler("GuildPvp", 						"OnGuildPvp", self) 	-- notification that the pvp standings of the guild has changed.	
+	Apollo.RegisterEventHandler("GuildFlags", 						"OnGuildFlags", self) 	-- notification that the guild flags have changed.
 	Apollo.RegisterEventHandler("GuildMemberChange", 				"OnGuildMemberChange", self)  -- General purpose update method
 	Apollo.RegisterTimerHandler("ReloadCooldownTimer", 				"OnReloadCooldownTimer", self)
 	Apollo.RegisterEventHandler("GenericEvent_RegisterWarparty", 	"OnClose", self)
@@ -162,12 +163,15 @@ function Warparty:ResetRosterMemberButtons()
 	self.wndMain:FindChild("RemoveMemberContainer"):Show(false)
 	self.wndMain:FindChild("DisbandContainer"):Show(false)
 	self.wndMain:FindChild("LeaveContainer"):Show(false)
+	self.wndMain:FindChild("PublicContainer"):Show(false)
 	self.wndMain:FindChild("RosterOptionBtnDemote"):Show(false)
 	self.wndMain:FindChild("RosterOptionBtnPromote"):Show(false)
+	self.wndMain:FindChild("RosterOptionBtnPublic"):Show(false)
 	self.wndMain:FindChild("RosterDisbandBtn"):SetCheck(false)
 	self.wndMain:FindChild("RosterLeaveBtn"):SetCheck(false)
 	self.wndMain:FindChild("RosterOptionBtnDemote"):SetCheck(false)
 	self.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
+	self.wndMain:FindChild("RosterOptionBtnPublic"):SetCheck(false)
 	
 	-- Defaults
 	self.wndMain:FindChild("RosterOptionBtnAdd"):Show(false)
@@ -184,6 +188,8 @@ function Warparty:ResetRosterMemberButtons()
 		local tMemberInfo 			= self.wndMain:FindChild("RosterGrid"):GetData()
 		local bTargetIsUnderMyRank 	= bSomeRowIsPicked and guildOwner:GetMyRank() < tMemberInfo.nRank
 		local bValidUnit 			= bSomeRowIsPicked and tMemberInfo.fLastOnline == 0 and tMemberInfo.strName ~= GameLib.GetPlayerUnit():GetName()
+		local tFlags				= guildOwner:GetFlags()
+		local bMercenary			= tFlags and tFlags.bMercenary
 		
 		self.wndMain:FindChild("RosterOptionBtnRemove"):Enable(bSomeRowIsPicked and bTargetIsUnderMyRank)
 
@@ -191,9 +197,13 @@ function Warparty:ResetRosterMemberButtons()
 		self.wndMain:FindChild("RosterOptionBtnRemove"):Show(tMyRankPermissions and tMyRankPermissions.bKick)
 
 		self.wndMain:FindChild("RosterOptionBtnPromote"):Enable(bSomeRowIsPicked and bTargetIsUnderMyRank)
+		self.wndMain:FindChild("RosterOptionBtnPromote"):Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
 		self.wndMain:FindChild("RosterOptionBtnDemote"):Enable(bSomeRowIsPicked and bTargetIsUnderMyRank and self.wndMain:FindChild("RosterGrid"):GetData().nRank ~= 10) -- Can't go below 10
 		self.wndMain:FindChild("RosterOptionBtnDemote"):Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
-		self.wndMain:FindChild("RosterOptionBtnPromote"):Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
+
+		self.wndMain:FindChild("RosterOptionBtnPublic"):SetCheck(bMercenary)
+		self.wndMain:FindChild("RosterOptionBtnPublic"):Enable(tMyRankPermissions and tMyRankPermissions.bCanQueueTheWarparty)
+		self.wndMain:FindChild("RosterOptionBtnPublic"):Show(true)
 		
 		self.wndMain:FindChild("RosterDisbandBtn"):Show(guildOwner:GetMyRank() == 1)
 		self.wndMain:FindChild("RosterLeaveBtn"):Show(guildOwner:GetMyRank() ~= 1)
@@ -222,6 +232,21 @@ function Warparty:OnRosterRemoveMemberClick(wndHandler, wndControl)
 	end
 end
 
+function Warparty:OnWarpartyPublicClick(wndHandler, wndControl)
+	if self.wndMain:FindChild("RosterOptionBtnPublic"):IsChecked() then
+		self.wndMain:FindChild("PublicContainer"):Show(true)
+	else
+		self.wndMain:FindChild("PublicContainer"):Show(false)
+		local guildOwner = self.wndMain:FindChild("RosterOptionBtnPublic"):GetData()
+		local tFlags = guildOwner and guildOwner:GetFlags()
+		local bNewFlag = self.wndMain:FindChild("RosterOptionBtnPublic"):IsChecked()
+		if tFlags and tFlags.bMercenary ~= bNewFlag then
+			tFlags.bMercenary = bNewFlag
+			guildOwner:SetFlags(tFlags)
+		end
+	end
+end
+
 -- The Pop Up Bubbles
 function Warparty:OnRosterAddMemberCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("AddMemberEditBox"):SetText("")
@@ -232,6 +257,22 @@ end
 function Warparty:OnRosterRemoveMemberCloseBtn() -- The Window Close Event can also route here
 	self.wndMain:FindChild("RemoveMemberContainer"):Show(false)
 	self.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
+end
+
+function Warparty:OnWarpartyPublicCloseBtn()
+	self.wndMain:FindChild("PublicContainer"):Show(false)
+	self:ResetRosterMemberButtons()
+end
+
+function Warparty:OnWarpartyPublicConfirmBtn(wndHandler, wndControl)
+	local guildOwner = self.wndMain:FindChild("RosterOptionBtnPublic"):GetData()
+	local tFlags = guildOwner and guildOwner:GetFlags()
+	local bNewFlag = self.wndMain:FindChild("RosterOptionBtnPublic"):IsChecked()
+	if tFlags and tFlags.bMercenary ~= bNewFlag then
+		tFlags.bMercenary = bNewFlag
+		guildOwner:SetFlags(tFlags)
+	end
+	self:OnWarpartyPublicCloseBtn()
 end
 
 function Warparty:OnRosterRemoveMemberYesClick(wndHandler, wndControl)
@@ -382,6 +423,7 @@ function Warparty:BuildRosterList(guildOwner, tRoster)
 	
 	self.wndMain:FindChild("AddMemberEditBox"):SetData(guildOwner)
 	self.wndMain:FindChild("RemoveMemberYesBtn"):SetData(guildOwner)
+	self.wndMain:FindChild("RosterOptionBtnPublic"):SetData(guildOwner)
 
 	self.wndMain:FindChild("RosterLeaveBtn"):FindChild("ConfirmLeaveBtn"):SetData(guildOwner)
 	self.wndMain:FindChild("RosterDisbandBtn"):FindChild("ConfirmDisbandBtn"):SetData(guildOwner)
@@ -489,6 +531,16 @@ end
 -----------------------------------------------------------------------------------------------
 -- Feedback Messages
 -----------------------------------------------------------------------------------------------
+
+function Warparty:OnGuildFlags(guildCurrent)
+	if self.bOkayToReload and (guildCurrent:GetType() == GuildLib.GuildType_WarParty) and self.wndMain:IsShown() then
+		self.wndMain:Show(false)
+		self:OnShowWarpartyInfo()
+		self.bOkayToReload = false
+		Apollo.CreateTimer("ReloadCooldownTimer", 1, false)
+		Apollo.StartTimer("ReloadCooldownTimer")
+	end
+end
 
 function Warparty:OnGuildMemberChange(guildCurrent)
 	if self.bOkayToReload and (guildCurrent:GetType() == GuildLib.GuildType_WarParty) and self.wndMain:IsShown() then
@@ -815,3 +867,59 @@ end
 -----------------------------------------------------------------------------------------------
 local WarpartyInst = Warparty:new()
 WarpartyInst:Init()
+--------------------------
+-- Guild
+-----------------------------------------------------------------------------------------------
+
+function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
+	if not self.wndVendor or not self.wndVendor:IsValid() or not self.wndVendor:IsVisible() then
+		return
+	end
+
+	local tMyGuild = nil
+	for idx, tGuild in pairs(GuildLib.GetGuilds()) do
+		if tGuild:GetType() == GuildLib.GuildType_Guild then
+			tMyGuild = tGuild
+			break
+		end
+	end
+
+	local bIsRepairing = self.wndVendor:FindChild(kstrTabRepair):IsChecked()
+
+	-- The following code allows for tMyGuild to be nil
+	local nLeft, nTop, nRight, nBottom = self.wndVendor:FindChild("LeftSideContainer"):GetAnchorOffsets()
+	local nLeft2, nTop2, nRight2, nBottom2 = self.wndVendor:FindChild("BottomContainer"):GetAnchorOffsets()
+	self.wndVendor:FindChild("LeftSideContainer"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -138 or -88) -- TODO HACKY: Hardcoded formatting
+	self.wndVendor:FindChild("VendorFlash"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -138 or -88) -- TODO HACKY: Hardcoded formatting
+	self.wndVendor:FindChild("BottomContainer"):SetAnchorOffsets(nLeft2, (tMyGuild and bIsRepairing) and -138 or -88, nRight2, nBottom2) -- TODO HACKY: Hardcoded formatting
+	self.wndVendor:FindChild("GuildRepairContainer"):Show(tMyGuild and bIsRepairing)
+
+	if tMyGuild then -- If not valid, it won't be shown anyways
+		local tMyRankData = tMyGuild:GetRanks()[tMyGuild:GetMyRank()]
+
+		local nAvailableFunds
+		local nRepairRemainingToday = math.min(knMaxGuildLimit, tMyRankData.monBankRepairLimit:GetAmount()) - tMyGuild:GetBankMoneyRepairToday():GetAmount()
+		if tMyGuild:GetMoney():GetAmount() <= nRepairRemainingToday then
+			nAvailableFunds = tMyGuild:GetMoney():GetAmount()
+		else
+			nAvailableFunds = nRepairRemainingToday
+		end
+
+		self.wndVendor:FindChild("GuildRepairFundsCashWindow"):SetAmount(math.max(0, nAvailableFunds))
+
+		local repairableItems = self.wndVendor:GetData():GetRepairableItems()
+		local bHaveItemsToRepair = #repairableItems > 0
+
+		-- Check if you have enough and text color accordingly
+		local nRepairAllCost = 0
+		for key, tCurrItem in pairs(repairableItems) do
+			local tCurrPrice = math.max(tCurrItem.tPriceInfo.nAmount1, tCurrItem.tPriceInfo.nAmount2) * tCurrItem.nStackSize
+			nRepairAllCost = nRepairAllCost + tCurrPrice
+		end
+		local bSufficientFunds = nRepairAllCost <= nAvailableFunds
+
+		-- Enable / Disable button
+		local tCurrItem = self.wndVendor:FindChild("Buy"):GetData()
+		if tCurrItem and tCurrItem.tPriceInfo then
+			local tCurrPrice = math.max(tCurrItem.tPriceInfo.nAmount1, tCurrItem.tPriceInfo.nAmount2) * tCurrItem.nStackSize
+			bSufficientFun

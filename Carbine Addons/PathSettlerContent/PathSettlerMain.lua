@@ -587,3 +587,4 @@ end
 
 local PathSettlerMainInst = PathSettlerMain:new()
 PathSettlerMainInst:Init()
+="-10" TAnchorPoint="0.5" TAnchorOffset="-11" RAnchorPoint="0.5" RAnchorOffset="22" BAnchorPoint="0.5" BAnchorOffset="21" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CurrentFlairMouseOver" BGColor="ConHard" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_Bas

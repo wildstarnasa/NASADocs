@@ -100,6 +100,9 @@ function Vendor:OnDocumentReady()
 	self.tAltCurrency = nil
 	self.wndVendor:FindChild("AltCurrency"):Show(false, true)
 	self.tDefaultSelectedItem = nil
+	
+	self.wndInteractBlocker = self.wndVendor:FindChild("InteractBlocker")
+	self.wndInteractBlocker:Show(false, true)
 
 	self.tVendorItems = {}
 	self.tItemWndList = {}
@@ -109,7 +112,7 @@ function Vendor:OnDocumentReady()
 end
 
 function Vendor:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndVendor, strName = Apollo.GetString("CRB_Vendor")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndVendor, strName = Apollo.GetString("CRB_Vendor"), nSaveVersion=3})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -137,6 +140,9 @@ function Vendor:OnInvokeVendorWindow(unitArg) -- REFACTOR
 end
 
 function Vendor:OnUpdateInventory()
+	if self.wndVendor and self.wndVendor:FindChild("VendorFlash") then
+		self.wndVendor:FindChild("VendorFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthLargeTemp")
+	end
 	self:Redraw()
 end
 
@@ -255,7 +261,7 @@ function Vendor:HelperTabManagement(tVendorList, bChanged)
 	self.wndVendor:FindChild(kstrTabSell):Enable(tOtherItems and (tOtherItems.tItems and #tOtherItems.tItems ~= 0))
 end
 
-function Vendor:HelperResetToBuyTab(tVendorList, bChanged)
+function Vendor:HelperResetToBuyTab()
 	self.wndItemContainer:DestroyChildren()
 	self:DisableBuyButton()
 	self.wndVendor:FindChild(kstrTabSell):SetCheck(false)
@@ -264,6 +270,13 @@ function Vendor:HelperResetToBuyTab(tVendorList, bChanged)
 	
 	self.wndVendor:FindChild(kstrTabBuy):SetCheck(true)
 	self:Redraw()
+
+	self.timerBlockInteract = ApolloTimer.Create(self.wndItemContainer:ContainsMouse() and 2.0 or 0.2, false, "OnBlockBuyTimer", self)
+	self.wndInteractBlocker:Show(true, true)
+end
+
+function Vendor:OnBlockBuyTimer()
+	self.wndInteractBlocker:Show(false, false)
 end
 
 function Vendor:DrawHeaderAndItems(tVendorList, bChanged)
@@ -315,7 +328,13 @@ function Vendor:DrawListItems(wndParent, tItems)
 			end
 
 			local monPrice = nil
-			if tCurrItem.itemData then
+			local tPrice = nil
+			if tCurrItem.tPriceInfo then
+				tPrice = {}
+				tPrice[1] = tCurrItem.tPriceInfo.monPrice1
+				tPrice[2] = tCurrItem.tPriceInfo.monPrice2
+				monPrice = tPrice[1]
+			elseif tCurrItem.itemData then
 				local itemData = tCurrItem.itemData
 				if self.wndVendor:FindChild(kstrTabSell):IsChecked() or self.wndVendor:FindChild(kstrTabBuyback):IsChecked()then
 					monPrice = itemData:GetSellPrice():Multiply(tCurrItem.nStackSize)
@@ -324,13 +343,6 @@ function Vendor:DrawListItems(wndParent, tItems)
 				elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
 					monPrice = Money.new(Money.CodeEnumCurrencyType.Credits)
 					monPrice:SetAmount(itemData:GetRepairCost())
-				end
-	    	elseif tCurrItem.splData then
-				monPrice = Money.new(tCurrItem.tPriceInfo.eCurrencyType1)
-				monPrice:SetAmount(tCurrItem.tPriceInfo.nAmount1)
-				monPrice:Multiply(tCurrItem.nStackSize)
-				if tCurrItem.tPriceInfo.eAltType1 then
-					monPrice:SetAltType(tCurrItem.tPriceInfo.eAltType1)
 				end
 			end
 
@@ -351,7 +363,9 @@ function Vendor:DrawListItems(wndParent, tItems)
 			end
 
 			local wndCash = wndCurr:FindChild("VendorListItemCashWindow")
-			if monPrice then
+			if tPrice then
+				wndCash:SetAmount(tPrice, true)
+			elseif monPrice then
 				wndCash:SetAmount(monPrice, true)
 			else
 				wndCash:SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
@@ -492,7 +506,12 @@ function Vendor:FocusOnVendorListItem(tVendorItem)
 	end
 
 	if self.wndVendor:FindChild(kstrTabBuy):IsChecked() and nPrice > 0 then
-		local nPlayerAmount = GameLib.GetPlayerCurrency(tVendorItem.tPriceInfo.eCurrencyType1, tVendorItem.tPriceInfo.eAltType1):GetAmount()
+		local nPlayerAmount = 0
+		if tVendorItem.tPriceInfo.eCurrencyType1 ~= nil or tVendorItem.tPriceInfo.eAltType1 ~= nil then
+			nPlayerAmount = GameLib.GetPlayerCurrency(tVendorItem.tPriceInfo.eCurrencyType1, tVendorItem.tPriceInfo.eAltType1):GetAmount()
+		elseif tVendorItem.tPriceInfo.itemExchange1 ~= nil then
+			nPlayerAmount = tVendorItem.tPriceInfo.itemExchange1:GetBackpackCount()
+		end
 		nMostCanBuy = math.min(nMostCanBuy, math.floor(nPlayerAmount / nPrice))
 		if nMostCanBuy == 0 then
 			self:DisableBuyButton(true)
@@ -500,7 +519,12 @@ function Vendor:FocusOnVendorListItem(tVendorItem)
 	end
 
 	if self.wndVendor:FindChild(kstrTabBuyback):IsChecked() or self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
-		local nPlayerAmount = GameLib.GetPlayerCurrency(tVendorItem.tPriceInfo.eCurrencyType1, tVendorItem.tPriceInfo.eAltType1):GetAmount()
+		local nPlayerAmount = 0
+		if tVendorItem.tPriceInfo.eCurrencyType1 ~= nil or tVendorItem.tPriceInfo.eAltType1 ~= nil then
+			nPlayerAmount = GameLib.GetPlayerCurrency(tVendorItem.tPriceInfo.eCurrencyType1, tVendorItem.tPriceInfo.eAltType1):GetAmount()
+		elseif tVendorItem.tPriceInfo.itemExchange1 ~= nil then
+			nPlayerAmount = tVendorItem.tPriceInfo.itemExchange1:GetBackpackCount()
+		end
 		if nPrice > nPlayerAmount then
 			self:DisableBuyButton(true)
 		end
@@ -591,11 +615,10 @@ function Vendor:OnItemDurabilityUpdate(itemCurr, nOldValue)
 end
 
 function Vendor:ShowAlertMessageContainer(strMessage, bFailed)
-	--local strMoney = " ("..self:HelperStringMoneyConvert(self.wndVendor:FindChild("AlertCost"):GetAmount())..")"
 	self.wndVendor:FindChild("AlertMessageText"):SetText(strMessage)
 	self.wndVendor:FindChild("AlertMessageTitleSucceed"):Show(not bFailed)
 	self.wndVendor:FindChild("AlertMessageTitleFail"):Show(bFailed)
-	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", strMessage)
+	Event_FireGenericEvent("GenericEvent_LootChannelMessage", strMessage)
 	self.wndVendor:FindChild("VendorFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthLargeTemp")
 
 	Apollo.StopTimer("AlertMessageTimer")
@@ -615,18 +638,29 @@ function Vendor:ProcessingRestockingFee(tItemData)
 		return false
 	end
 
-	local strMessage = Apollo.GetString("Vendor_RestockAlert")
-	local wndAlertMessageText = self.wndVendor:FindChild("AlertMessageText")
+	local wndAlertMessageContainer = self.wndVendor:FindChild("AlertMessageContainer")
+	if not wndAlertMessageContainer then
+		return false
+	end
 
+	local strMessage = Apollo.GetString("Vendor_RestockAlert")
+	local wndAlertMessageText = wndAlertMessageContainer:FindChild("AlertMessageText")
 	if wndAlertMessageText:GetText() == strMessage and wndAlertMessageText:IsVisible() then
 		return false
 	end
 
+	local monSellInfo = tItemData.itemData:GetSellPrice()
+	local wndAlertCost = wndAlertMessageContainer:FindChild("AlertCost")
+	if monSellInfo and wndAlertCost then
+		wndAlertCost:SetMoneySystem(monSellInfo:GetMoneyType())
+		wndAlertCost:SetAmount(monSellInfo:GetAmount())
+	end
+
 	wndAlertMessageText:SetText(strMessage)
-	self.wndVendor:FindChild("AlertMessageTitleSucceed"):Show(false)
-	self.wndVendor:FindChild("AlertMessageTitleFail"):Show(false)
-	self.wndVendor:FindChild("AlertMessageContainer"):Show(false, true)
-	self.wndVendor:FindChild("AlertMessageContainer"):Show(true)
+	wndAlertMessageContainer:FindChild("AlertMessageTitleSucceed"):Show(false)
+	wndAlertMessageContainer:FindChild("AlertMessageTitleFail"):Show(false)
+	wndAlertMessageContainer:Show(false, true)
+	wndAlertMessageContainer:Show(true)
 	return true
 end
 
@@ -862,8 +896,9 @@ function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
 	-- The following code allows for tMyGuild to be nil
 	local nLeft, nTop, nRight, nBottom = self.wndVendor:FindChild("LeftSideContainer"):GetAnchorOffsets()
 	local nLeft2, nTop2, nRight2, nBottom2 = self.wndVendor:FindChild("BottomContainer"):GetAnchorOffsets()
-	self.wndVendor:FindChild("LeftSideContainer"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -84 or -84) -- TODO HACKY: Hardcoded formatting
-	self.wndVendor:FindChild("BottomContainer"):SetAnchorOffsets(nLeft2, (tMyGuild and bIsRepairing) and -138 or -88, nRight2, nBottom2)
+	self.wndVendor:FindChild("LeftSideContainer"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -138 or -88) -- TODO HACKY: Hardcoded formatting
+	self.wndVendor:FindChild("VendorFlash"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -138 or -88) -- TODO HACKY: Hardcoded formatting
+	self.wndVendor:FindChild("BottomContainer"):SetAnchorOffsets(nLeft2, (tMyGuild and bIsRepairing) and -138 or -88, nRight2, nBottom2) -- TODO HACKY: Hardcoded formatting
 	self.wndVendor:FindChild("GuildRepairContainer"):Show(tMyGuild and bIsRepairing)
 
 	if tMyGuild then -- If not valid, it won't be shown anyways
@@ -997,6 +1032,11 @@ function Vendor:OnTabBtn(wndHandler, wndControl)
 	self.tDefaultSelectedItem = nil
 	self.idOpenedGroup = nil
 	self:DisableBuyButton()
+
+	if self.wndInteractBlocker:IsShown() then
+		self.timerBlockInteract:Stop()
+		self:OnBlockBuyTimer()
+	end
 	self:Redraw()
 end
 
@@ -1114,7 +1154,7 @@ function Vendor:OnVendorListItemGenerateTooltip(wndControl, wndHandler) -- wndHa
 			tPrimaryTooltipOpts.bBuyback = true
 			tPrimaryTooltipOpts.nPrereqVendorId = tListItem.idPrereq
 		end
-
+		
 		tPrimaryTooltipOpts.bPrimary = true
 		tPrimaryTooltipOpts.itemModData = tListItem.itemModData
 		tPrimaryTooltipOpts.strMaker = tListItem.strMaker
@@ -1122,6 +1162,7 @@ function Vendor:OnVendorListItemGenerateTooltip(wndControl, wndHandler) -- wndHa
 		tPrimaryTooltipOpts.tGlyphData = tListItem.itemGlyphData
 		tPrimaryTooltipOpts.itemCompare = itemData:GetEquippedItemForItemType()
 		tPrimaryTooltipOpts.nStackCount = tListItem.nStackSize
+		tPrimaryTooltipOpts.idVendorUnique = tListItem.idUnique
 
 		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
 			Tooltip.GetItemTooltipForm(self, wndControl, itemData, tPrimaryTooltipOpts)
@@ -1130,6 +1171,28 @@ function Vendor:OnVendorListItemGenerateTooltip(wndControl, wndHandler) -- wndHa
 		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
 			Tooltip.GetSpellTooltipForm(self, wndControl, tListItem.splData)
 		end
+	end
+end
+
+function Vendor:OnItemPriceTooltip(wndHandler, wndControl, eToolTipType, monA, monB)
+	if eToolTipType == Tooltip.TooltipGenerateType_Money then
+		local xml = nil
+		
+		if monA:GetAmount() > 0 then
+			if xml == nil then
+				xml = XmlDoc.new()
+			end
+			xml:AddLine("<P>".. monA:GetMoneyString() .."</P>")
+		end
+		
+		if monB:GetAmount() > 0 then
+			if xml == nil then
+				xml = XmlDoc.new()
+			end
+			xml:AddLine("<P>".. monB:GetMoneyString() .."</P>")
+		end
+		
+		wndControl:SetTooltipDoc(xml)
 	end
 end
 
@@ -1288,3 +1351,12 @@ end
 ---------------------------------------------------------------------------------------------------
 local VendorInst = Vendor:new()
 VendorInst:Init()
+ToClient="1" Font="Default" Text="" Template="Holo_TextCallout" Name="BodyFrameBG" BGColor="aaffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="1" NoClip="1" Sprite="" TooltipColor="" Border="1" UseTemplateBG="1"/>
+        </Control>
+        <Control Class="MLWindow" LAnchorPoint="0.5" LAnchorOffset="16" TAnchorPoint="0" TAnchorOffset="388" RAnchorPoint="0.5" RAnchorOffset="269" BAnchorPoint="0" BAnchorOffset="484" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="BodyRight" BGColor="ffffffff" TextColor="ffffffff" IgnoreMouse="1" DT_WORDBREAK="1" AutoScaleText="1" TextId="" DT_CENTER="0" TooltipColor="">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-5" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="1" BAnchorOffset="5" RelativeToClient="1" Font="Default" Text="" Template="Holo_TextCallout" Name="BodyFrameBG" BGColor="aaffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="1" NoClip="1" Sprite="" TooltipColor="" Border="1" UseTemplateBG="1"/>
+        </Control>
+        <Control Class="Button" Base="BK3:btnHolo_Close" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-73" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-30" BAnchorPoint="0" BAnchorOffset="72" Name="btnClose" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" TextId="" RelativeToClient="0" HideInEditor="0" TooltipColor="" Visible="1">
+            <Event Name="ButtonSignal" Function="OnClose"/>
+        </Control>
+        <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-145" TAnchorPoint="1" TAnchorOffset="-101" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="1" BAnchorOffset="-28" DT_VCENTER="1" DT_CENTER="1" Name="btnCloseBig" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" WindowSoundTemplate="ToggleP

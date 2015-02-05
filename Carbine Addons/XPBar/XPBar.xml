@@ -23,7 +23,7 @@
         <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="12" TAnchorPoint="1" TAnchorOffset="-19" RAnchorPoint="0.5" RAnchorOffset="398" BAnchorPoint="1" BAnchorOffset="2" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PathBarContainer" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:spr_HUD_BottomBar_XPBase" Tooltip="" NewControlDepth="1" UseParentOpacity="0" HideInEditor="0">
             <Control Class="ProgressBar" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="386" BAnchorPoint="0" BAnchorOffset="21" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="PathBarFill" BGColor="ffffffff" TextColor="ffffffff" ProgressFull="HUD_BottomBar:spr_HUD_BottomBar_XPFill" TooltipType="OnCursor" Tooltip="" TooltipId="" IgnoreMouse="1" TooltipColor="" ProgressEdgeGlow="" BarColor="" IgnoreTooltipDelay="1" NewControlDepth="1"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="400" TAnchorPoint="1" TAnchorOffset="-17" RAnchorPoint="0.5" RAnchorOffset="418" BAnchorPoint="1" BAnchorOffset="1" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PathIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="ClientSprites:Icon_Windows_UI_CRB_Explorer" Picture="1" IgnoreMouse="1" Tooltip=""/>
+        <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="400" TAnchorPoint="1" TAnchorOffset="-16" RAnchorPoint="0.5" RAnchorOffset="416" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PathIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="HUD_ClassIcons:spr_Icon_HUD_Path_Settler" Picture="1" IgnoreMouse="1" Tooltip=""/>
     </Form>
     <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-50" TAnchorPoint="1" TAnchorOffset="-69" RAnchorPoint="1" RAnchorOffset="9" BAnchorPoint="1" BAnchorOffset="4" RelativeToClient="1" Font="CRB_InterfaceMedium" Sprite="" Text="" Template="Default" Name="InventoryInvokeForm" BGColor="white" TextColor="white" Overlapped="1" LeftEdgeControlsAnchor="InventoryInvoke_Left" TopEdgeControlsAnchor="InventoryInvoke_Top" NewControlDepth="2" NeverBringToFront="1" IgnoreMouse="1" TooltipColor="" Tooltip="" NewWindowDepth="1">
         <Control Class="Button" Base="HUD_BottomBar:btn_HUD_Inventory" Font="CRB_Header9" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-57" TAnchorPoint="1" TAnchorOffset="-54" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="0" DT_CENTER="0" Name="InvokeBtn" BGColor="white" TextColor="white" NeverBringToFront="1" WindowSoundTemplate="Custom" HideInEditor="0" NewControlDepth="2" NormalTextColor="cyan" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="" NoClip="1" TooltipType="OnCursor" Text="" TextId="" ButtonTextXMargin="12" ButtonTextYMargin="8" DT_RIGHT="1">
@@ -35,3 +35,31 @@
         <Control Class="CashWindow" LAnchorPoint="1" LAnchorOffset="-256" TAnchorPoint="1" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="-56" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="CRB_Header9" Sprite="" Text="" Template="OldMetalControl" Name="MainCashWindow" BGColor="white" TextColor="UI_TextHoloBodyCyan" Picture="1" IgnoreMouse="1" DT_VCENTER="0" DT_RIGHT="1" SkipZeroes="1" Visible="1" Tooltip="" TooltipType="OnCursor" TooltipFont="CRB_InterfaceSmall_O" IgnoreTooltipDelay="1" TooltipId="" TooltipColor="" DT_CENTER="0" NoClip="1" DT_BOTTOM="0"/>
     </Form>
 </Forms>
+wndRestXPBarFill:SetProgress(math.min(nEPDailyMax, nCurrentEP + nRestedEP))
+	end
+
+	local bShowRestEPGoal = nRestedEP and nRestedEPPool and nRestedEP > 0 and nRestedEPPool > 0
+	wndRestXPBarGoal:SetMax(nEPDailyMax)
+	wndRestXPBarGoal:Show(bShowRestEPGoal)
+	if bShowRestEPGoal then
+		wndRestXPBarGoal:SetProgress(math.min(nEPDailyMax, nCurrentEP + nRestedEPPool))
+	end
+
+	return nCurrentEP / nEPDailyMax * 100
+end
+
+function XPBar:ConfigureEPTooltip(unitPlayer)
+	local nCurrentEP = GetElderPoints()
+	local nCurrentToDailyMax = GetPeriodicElderPoints()
+	local nEPToAGem = GameLib.ElderPointsPerGem
+	local nEPDailyMax = GameLib.ElderPointsDailyMax
+
+	local nRestedEP = GetRestXp() 							-- amount of rested xp
+	local nRestedEPPool = GetRestXpKillCreaturePool() 		-- amount of rested xp remaining from creature kills
+
+	if not nCurrentEP or not nEPToAGem or not nEPDailyMax then
+		return
+	end
+
+	-- Top String
+	local strTooltip = String_GetWeaselString(Apollo.GetString("BaseBar_Elde

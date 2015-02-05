@@ -22,12 +22,12 @@ local karEvalColors =
 }
 
 local kcrDefaultOptionColor = ApolloColor.new("UI_TextHoloBody")
-local kcrHighlightOptionColor = ApolloColor.new(110/255, 255/255, 72/255, 1.0)
-local kstrRewardColor = "BubbleTextRegular"
-local kstrVendorColor = "BubbleTextRegular"
-local kstrGoodbyeColor = "UI_TextMetalBodyHighlight"
-local kcrMoreInfoColor = ApolloColor.new("UI_TextMetalBodyHighlight")
-local kcrDefaultColor = ApolloColor.new("UI_TextHoloBody")
+local kcrHighlightOptionColor = ApolloColor.new("UI_TextHoloBodyHighlight")
+local kstrRewardColor = "UI_TextHoloTitle "
+local kstrVendorColor = "UI_BtnTextHoloListNormal"
+local kstrGoodbyeColor = "UI_TextHoloBody"
+local kcrMoreInfoColor = "UI_TextHoloBody"
+local kcrDefaultColor = ApolloColor.new("UI_BtnTextHoloListNormal")
 
 local knMaxRewardItemsShown = 4
 function Dialog:new(o)
@@ -443,7 +443,10 @@ end
 function Dialog:DrawNpcBubble(wndArg, eState, idQuest)
 	-- Text
 	local strText = DialogSys.GetNPCText(idQuest)
-	if not strText or string.len(strText) == 0 then return end
+	if not strText or string.len(strText) == 0 then
+		wndArg:Show(false)
+		return
+	end
 	wndArg:FindChild("BubbleText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff7fffb9\">"..strText.."</P>")
 	wndArg:FindChild("BubbleText"):SetHeightToContentHeight()
 
@@ -670,3 +673,13 @@ end
 ---------------------------------------------------------------------------------------------------
 local DialogInst = Dialog:new()
 DialogInst:Init()
+5ÌóÄ´­5{:¿ 9}j•|
+'_NŸºZnz9“y~w@-ÛúÒŞ£ˆ¼ea©-2Kc³ñ+Ñº¸ñáhıŸ4ØÁÇšŠ6è6´Òïot…	²ÁƒRå¿PæúÛr
+¤V}¦‰fIDTYÍä¥“Ã‚Nçæ3ùÕ*å¯…6“Áêì¡Pæ•š#õ“túwBĞz7™izÒ˜¶oy‚yÆ>(Z*Ñ=Ş¯ÑÔ–0ùîœ×‚56Ğ¼TÓ.—Dsô½ÏP­i:ÉØ³&ÂfÏcúç¨ñ[Õ&Ã‘NÇ£@| øk¦ÁüÛó½xÌ¸3üåfÆş9¡¶hdSéÇ(ÿÔ”XIçÑÙR°*§\jÌn`gOVÕZY½wÕ¢!’è†;E1¸¬µÿ¤rifšµ¶»ÌÀ7
+åÿ9¦ôÿ´‡„/9Ì¼¿³AàŠÔ>T<<d(¶å4Ãx0ñà=£"°§ç'æyÿ¢T…Ÿ˜ú:óİÌL“_mÑRÏãz¿¢ã¯µ4¿•1ñ0WO’0ÿ-§÷_âóyv}úK_tíO0Dq÷õËsßzW"š½)L¤™ZïM!ò8WÿqÆÿbêEPÊ?…~[Äa‘ûñ3pİ@ñÿçÃıÓß\o~å“ÔX×ÃæW«ä
+9÷ùäÓ¼æW,²¤¿ò«§”¿–‚ÊL~ó´ò°@Œ¾3U™(4gß¾üjÎ‚ cél~u:òU¹¸¦‡±_e‰ •N¦üEùD”9ò™üb{êV¹áHI5_¡üÆhºùüjì„©’“_½¤i“síÓ4JÍí½L~µ#¦\šşeÿåW›GÁ(®Äw;¿º’¾èÉv¹”h*VóšÖ'	v®ïÛµg#³pf¾îØäÚ×sÙù	ŸÏØ¯æÄ»vXÔW•B`JésQğzÊ¤œÓ‡0z¾ÜV-ÆñõfõÅ]á^×õ(}Ôñ0l//)x>¶MKDÌüÉ)›¿âÔKŒiS¢Æ—qâe×¬YãƒkØüüÛÏ¥Ò³HÒî“@„f—‡·iO÷8z¿LFÙ»–>wy†ıGáÃº·¦Ï·‹|¤¸ºPˆæú…²zºïø£ª…íìûUSfÆ‚2Ö_Íßñ8ÇÿçcjôÎJ`Şõf|B€F7Îd2Àéññİ-ám‰º¥D"vé‹×ã?ŸßóÌ3Ï<ßOû/©@W(£ÿ&–¢Íº÷ØüOò Q²¬äãĞÔÒ¯zë¨£°U9„ÜT ÙC÷7¿:98ßÁæ7¡©«÷ÔE çFù
+·åvM ŞïK£cP¾™nĞ“‹ˆ…;ÃgŸeìÁñUáJØŸ2ë]»
+—7­o¥ò?”-(CûÊ‰ŠÉ7§eHÉ<s“gäIk% óİP˜ïÖJ@ÙÅ…@]_©Aë©g›ä‡^eÆ½Âæ›Xßü}š_,£ò?:wL	à—ÒÇÑzAX!®ëKÁ‚E?¸•?lÆØ}åv¦¿öJ}6¸³&ôlF$T#=±ÀfÒ¥GÇÿ·ëy6z
+˜+æ°öÂ,h<ÀpWÀ†*\ŠòOJO<éj§23mx$[BR¿]È¶G…¬ÅAïaD‚¨Ph_d¶ìõâ•'Ç£çÙ™0ßŒÀŒá³Yû—ÆC¸ÑYéÇ¨şB¡ı/Ó2r«ş/2†Sr½ÆÃ)&”Üxğšqùx ã’×yæ™å›Õ…@W¼×òn Íaºâ¯—>#¦9ÎKwÖ9ßo!Ír ;şî¸[zËßáÃiOPş¢õ¹ibİó_†q8çbˆd:Íc‰99ñUş¢Ï÷ºfE-ñÕò­÷¶YWú ­şÓ½÷õÒÿÕ>º³_«´Œÿã„Ğ…$æúÿ¾ÿŸèó…`Nsüù7»h¾ş£õúhVÀxqÖ]D³’€ñò/hıçK±‡ÏÆWûWsÛí÷q÷õÃ»£/Şl~…úSÒ£?%­w2¿ú5Ê¯Ìl~•xGó«§2ÈõvÀè}¡ûåhÿd¶>¶*a~SFçWa®ü*ëöåWùU¹G~U~Çó«ËÆÃ É¯®W_üÂ›_·Ÿš_×ıü’‚±3÷«³œ*fşßØ™¯ªI'»ŞçØ™´SóCÁü±3_S[63Òç¦,,W´i+Ç‰0\Ëş2/
+8zŸİ'é£è}æc}=£wÏ´Ä$ÁÄ§zæ31h¿d–-;â	ec;•ÿrz±`úaJÕµ©wTİº¿l÷Ñeê~ßÚ¦]=é£ÎoĞ·¨¾GËrú‹<ı»Äÿ³
+›¹z\§Õ˜mZ6ã0¬ïJ=“†„ÍDó-Û{9ñumÿøügyæù~b4Q–Èê‹ô‡Î?´Ø²¢9ùàIñÆÓ‹w¯§¿‡Â|ö2ì»w¾Eù¬¸æ§ HÙØœO’†›Ãªß?Eåw™ğø·ëæÄsò;põ§WÚOï˜íå|ÿoŸï—6mT õÑàõº"ÁXÑ˜Òc(?Æ;¡ıßÂ“ï*}ô|ßkç¤Ö7Áãë½¤{âòØëÆæ«Ù÷ö°¿IğSázn>8¯×-}—²¯Bùù3ğäÖwœ´}‡€…!ÇãÑzKí0¿üFx(ÆÑyNAçÓÑØÂ«ÚÇúÖ¯¡ùYBÛƒµß)š={é»İóaùT¨=H °=P>)FöS ˜>Òe¿,‹$dŞş¯óçÂQı¡öÈÆÛÿ>çÊö¯'8ñ ñˆ‡N<|z‹ñÀë‹<óÌòÍê‹ «ô‰eEOĞÜÜ´ñqmÑãÎüY«©uÌ¸òğÎvÖ½…“¹õO	;?Œ+'g±bŒ$õsàQô¾SèÒ{ÀîwõËŠ†Ò|ò—M—j‹
