@@ -5,7 +5,6 @@
 require "Window"
 require "GameLib"
 require "Apollo"
-require "HazardsLib"
 
 local SprintMeter = {}
 local knDashResource = 7 -- the resource hooked to dodges (TODO replace with enum)
@@ -31,11 +30,6 @@ function SprintMeter:OnDocumentReady()
 		return
 	end
 
-	--Apollo.RegisterEventHandler("HazardEnabled", 			"OnHazardEnable", self)
-	--Apollo.RegisterEventHandler("HazardRemoved", 			"OnHazardRemove", self)
-	--Apollo.RegisterEventHandler("HazardUpdated", 			"OnHazardUpdate", self)
-	Apollo.RegisterEventHandler("BreathChanged",			"OnBreathChanged", self)
-	Apollo.RegisterEventHandler("Breath_FlashEvent",		"OnBreath_FlashEvent", self) -- Drowning
 	Apollo.RegisterEventHandler("ChangeWorld", 				"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("VarChange_FrameCount", 	"OnFrame", self)
 
@@ -60,19 +54,6 @@ function SprintMeter:OnDocumentReady()
 		["DashProg2"]					=	self.wndMain:FindChild("DashBG"):FindChild("DashProg2"),
 		["DashProgFlash1"]				=	self.wndMain:FindChild("DashBG"):FindChild("DashProgFlash1"),
 		["DashProgFlash2"]				=	self.wndMain:FindChild("DashBG"):FindChild("DashProgFlash2"),
-		["HazardsArrangeHorz"]			=	self.wndMain:FindChild("HazardsArrangeHorz"),
-		["HazardsRadiationMain"]		=	self.wndMain:FindChild("HazardsRadiationMain"),
-		["HazardsRadiationProgBar"]		=	self.wndMain:FindChild("HazardsRadiationMain"):FindChild("HazardsProgBar"),
-		["HazardsRadiationProgFlash"]	=	self.wndMain:FindChild("HazardsRadiationMain"):FindChild("HazardsProgFlash"),
-		["HazardsRadiationText"]		=	self.wndMain:FindChild("HazardsRadiationMain"):FindChild("HazardsText"),
-		["HazardsTemperatureMain"]		=	self.wndMain:FindChild("HazardsTemperatureMain"),
-		["HazardsTemperatureProgBar"]	=	self.wndMain:FindChild("HazardsTemperatureMain"):FindChild("HazardsProgBar"),
-		["HazardsTemperatureProgFlash"]	=	self.wndMain:FindChild("HazardsTemperatureMain"):FindChild("HazardsProgFlash"),
-		["HazardsTemperatureText"]		=	self.wndMain:FindChild("HazardsTemperatureMain"):FindChild("HazardsText"),
-		["HazardsBreathMain"]			=	self.wndMain:FindChild("HazardsBreathMain"),
-		["HazardsBreathProgBar"]		=	self.wndMain:FindChild("HazardsBreathMain"):FindChild("HazardsProgBar"),
-		["HazardsBreathProgFlash"]		=	self.wndMain:FindChild("HazardsBreathMain"):FindChild("HazardsProgFlash"),
-		["HazardsBreathText"]			=	self.wndMain:FindChild("HazardsBreathMain"):FindChild("HazardsText"),
 	}
 	self.tWindowMap["DashBG"]:Show(false, true)
 	self.tWindowMap["SprintBG"]:Show(false, true)
@@ -86,7 +67,7 @@ function SprintMeter:OnDocumentReady()
 end
 
 function SprintMeter:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("SprintMeter_SprintMeter"), nSaveVersion = 3 })
+	Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("SprintMeter_SprintMeter"), nSaveVersion = 4 })
 end
 
 function SprintMeter:OnFrame()
@@ -150,31 +131,6 @@ function SprintMeter:OnFrame()
 	local bShowActiveIcon = not bPlayerDead and (nRunCurr < nRunMax or nDashCurr < nDashMax)
 	self.tWindowMap["ActiveIcon"]:Show(bShowActiveIcon or self.bJustFilledSprint or self.bJustFilledDash, not bShowActiveIcon)
 
-	-- Hazards
-	self.tWindowMap["HazardsRadiationMain"]:Show(false)
-	self.tWindowMap["HazardsTemperatureMain"]:Show(false)
-
-	for idx, tActiveHazard in ipairs(HazardsLib.GetHazardActiveList()) do
-		if tActiveHazard.eHazardType == HazardsLib.HazardType_Radiation then
-			self.tWindowMap["HazardsRadiationProgBar"]:SetMax(tActiveHazard.fMaxValue)
-			self.tWindowMap["HazardsRadiationProgBar"]:SetProgress(tActiveHazard.fMeterValue)
-			self.tWindowMap["HazardsRadiationText"]:SetText(math.floor(math.min(100, tActiveHazard.fMeterValue / tActiveHazard.fMaxValue * 100)).."%")
-			self.tWindowMap["HazardsRadiationMain"]:SetTooltip(string.len(tActiveHazard.strTooltip) > 0 and tActiveHazard.strTooltip or HazardsLib.GetHazardDisplayString(tActiveHazard.nId))
-			self.tWindowMap["HazardsRadiationMain"]:Show(true)
-		end
-		if tActiveHazard.eHazardType == HazardsLib.HazardType_Temperature then
-			self.tWindowMap["HazardsTemperatureProgBar"]:SetMax(tActiveHazard.fMaxValue)
-			self.tWindowMap["HazardsTemperatureProgBar"]:SetProgress(tActiveHazard.fMeterValue)
-			self.tWindowMap["HazardsTemperatureText"]:SetText(math.floor(math.min(100, tActiveHazard.fMeterValue / tActiveHazard.fMaxValue * 100)).."%")
-			self.tWindowMap["HazardsTemperatureMain"]:SetTooltip(string.len(tActiveHazard.strTooltip) > 0 and tActiveHazard.strTooltip or HazardsLib.GetHazardDisplayString(tActiveHazard.nId))
-			self.tWindowMap["HazardsTemperatureMain"]:Show(true)
-		end
-	end
-
-	if not bPlayerDead and (self.tWindowMap["HazardsRadiationMain"]:IsShown() or self.tWindowMap["HazardsTemperatureMain"]:IsShown()) then
-		self.tWindowMap["HazardsArrangeHorz"]:ArrangeChildrenHorz(2)
-	end
-
 	-- Window Management
 	local bCanMove = self.wndMain:IsStyleOn("Moveable")
 	if bCanMove ~= self.bIsMoveable then
@@ -182,33 +138,6 @@ function SprintMeter:OnFrame()
 		self.wndMain:SetStyle("IgnoreMouse", not self.bIsMoveable)
 		self.tWindowMap["Backer"]:Show(self.bIsMoveable)
 	end
-end
-
-function SprintMeter:OnBreathChanged(nBreath)
-	local nBreathMax = 100
-	if nBreath == nBreathMax then
-		if self.tWindowMap["HazardsBreathMain"]:IsVisible() then -- So we don't constantly arrange horz needlessly
-			self.tWindowMap["HazardsBreathMain"]:Show(false)
-			self.tWindowMap["HazardsArrangeHorz"]:ArrangeChildrenHorz(2)
-		end
-		self.tWindowMap["HazardsBreathMain"]:Show(false)
-		return
-	end
-
-	self.tWindowMap["HazardsBreathProgBar"]:SetMax(nBreathMax)
-	self.tWindowMap["HazardsBreathText"]:SetText(nBreath.."%")
-
-	if not self.tWindowMap["HazardsBreathMain"]:IsVisible() then
-		self.tWindowMap["HazardsBreathMain"]:Show(true)
-		self.tWindowMap["HazardsBreathProgBar"]:SetProgress(nBreath)
-		self.tWindowMap["HazardsArrangeHorz"]:ArrangeChildrenHorz(2)
-	else
-		self.tWindowMap["HazardsBreathProgBar"]:SetProgress(nBreath, nBreathMax)
-	end
-end
-
-function SprintMeter:OnBreath_FlashEvent()
-	self.tWindowMap["HazardsBreathProgFlash"]:SetSprite("SprintMeter:sprHazards_Flash")
 end
 
 function SprintMeter:OnSprintMeterGracePeriod()
@@ -223,12 +152,6 @@ function SprintMeter:OnDashMeterGracePeriod()
 	self.tWindowMap["DashBG"]:Show(false)
 end
 
-function SprintMeter:OnChangeWorld()
-	self.tWindowMap["HazardsBreathMain"]:Show(false)
-	--self.tWindowMap["HazardsRadiationMain"]:Show(false) -- Shouldn't need this with OnFrame
-	--self.tWindowMap["HazardsTemperatureMain"]:Show(false)
-end
-
 function SprintMeter:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	if eAnchor == GameLib.CodeEnumTutorialAnchor.SprintMeter then
 		local tRect = {}
@@ -239,11 +162,3 @@ end
 
 local SprintMeterInst = SprintMeter:new()
 SprintMeterInst:Init()
-Editor="0" TextId="CRB__2" Tooltip="" TooltipId="" TooltipType="OnCursor" TooltipColor="" DT_RIGHT="0" IgnoreMouse="1" IgnoreTooltipDelay="1" DT_BOTTOM="0" DT_WORDBREAK="0" NoClip="1" DT_SINGLELINE="1"/>
-        <Control Class="Window" Name="TimeRemaining" Text="" DT_CENTER="1" DT_VCENTER="1" Font="CRB_InterfaceSmall" RelativeToClient="1" Picture="0" NewControlDepth="1" BGColor="white" TextColor="88ffffff" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="21" HideInEditor="0" TextId="Challenges_NoProgress" Tooltip="" TooltipId="" TooltipType="OnCursor" TooltipColor="" DT_RIGHT="0" IgnoreMouse="1" IgnoreTooltipDelay="1" DT_BOTTOM="0" DT_WORDBREAK="0" NoClip="1" DT_SINGLELINE="1"/>
-    </Form>
-</Forms>
- Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
-            <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
-        </Control>
-        

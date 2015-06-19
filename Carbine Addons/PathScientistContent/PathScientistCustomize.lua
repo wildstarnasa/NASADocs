@@ -467,22 +467,3 @@ end
 
 local PathScientistCustomizeInst = PathScientistCustomize:new()
 PathScientistCustomizeInst:Init()
-ems[idx]
-		if tScanData and tScanData.nDisplayCount > 3 then
-			table.remove(self.tScannedItems, idx)
-		end
-
-		if tScanData and tScanData.strName == pmDrawing:GetName() then
-			nUpdateCount = nUpdateCount + tScanData.nReceived
-			tScanData.nDisplayCount = tScanData.nDisplayCount + 1
-
-			if tScanData and tScanData.nDisplayCount == 1 then
-				-- Flash for the first display iteration only
-				wndListItem:FindChild("ListItemFlash"):SetSprite("ClientSprites:WhiteFlash")
-			end
-		end
-	end
-
-
-	if nUpdateCount > 0 then
-		wndListItem:FindChild("ListItemPercen

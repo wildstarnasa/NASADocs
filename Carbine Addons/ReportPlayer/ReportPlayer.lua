@@ -322,7 +322,3 @@ end
 
 local ReportPlayerInst = ReportPlayer:new()
 ReportPlayerInst:Init()
-Point="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Raid:sprRaidTear_BigShieldProgBar" TooltipType="OnCursor" Name="CurrShieldBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" Sprite="" IgnoreMouse="1" ProgressEdgeGlow="" EdgeGlow="1" NoClipEdgeGlow="0" Picture="1"/>
-            </Control>
-        </Control>
-        <Control Class="Window" Font="Thick" LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="26" RAnchorPoint="1" RAnchorOffset="12" BAnchorPoint="0" BAnchor

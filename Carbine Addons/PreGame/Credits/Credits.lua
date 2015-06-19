@@ -236,49 +236,3 @@ end
 -----------------------------------------------------------------------------------------------
 local CreditsInst = Credits:new()
 CreditsInst:Init()
-zÒ’˜—IÔ“éœ#n‚›˜h²“&ÁhdrªŒ/4)ä~†kİ	M¯Ûñ¼ïY±UOlkĞ”üD6e7ÔÃòMyI]il*ØU¬W D ìçPg e0í°ØÚ§‹8[LäŞ~â8'¿º×'ßPäÊ)ñ3WÙ<´Àóá4FÎ…¨î@?¡1S=£“`êÏGcY€à¢<wüô´)Èó¢:^‹›`ÁE“û³Ê_OA}3¯ÌÁz]Óg‡x5â`ôEß, CšsôeõbHËàŒ%a[üÁ†Q,FA–İ÷ +ºµ†®„âCu_,á/–pÌx ³m<	GR-3’Òßgà"> ä`ÌÎ”wÒ³.ÉáÅ×kÌ•Á;¯`XB—æú7¦¿_`æª”	Ód"#&=r °.Ùxº
-‡>C‘¿ŒvaHğğDîµ|d¥öğÊr‚Ğ!„.Ë`Ô%<eR(ŞùKb†ZLoDH£@ƒ£
-0·â—Ï¼fPã}O'¿H½päJ»Æ=©\C
-a¤)`ÜÛ[ø[‹Ê¶ÓräÙ[[éŠ Ôk1ÈÏ“ ¿pVé‚O;ÿÜûR17C‰yãÉQckvŠCÓ„_—<Q²S5a6qE—š¼ÚÉJŒòµÂ«H[QàP—äÄ³Föç.™éøçLŠŠ—Ã&ég	ª@\şù~ˆ«º/¡²èÛKeõfš¬U$³(°È,MË ”¡3ú¥ªôPw“é|œIİƒ”èYv2õ1Æ?’Ó{^‘K®>’ù¸È`3P\9tæÚY#9.Š‚ Fæœ¶yWåK.í (f9Sv}Eï
-zª¥6™AJÖcÍP°¾Vu‹\ÃêThª^Ä&:‚¸î´ÌË¸«²Æãïj¥§g]…Ÿ¦0—°y°ºír¸×¡«Kh€P‰÷Àİ	½­u@’Cj×Y]ÔIqõ›Óñ7§ã†¹Ÿj¬4\ø0~`ˆä§	?ºñvz¡İ‹âÃ0å¨'AÁÓFNâwÉ÷xYÇ,Ìò ‰§h…ö!aıl$rÑ İ(™`yÔäğee¤‡Ôş-S7MÈÁ}Œq@ïïˆZ‚õ`æI{Û´ÎLaöe¡$3X*",ÔÃí?Ûçsè®šy–„EÅ {¦£»Ì±¨z-Â|0hzuöëô2ˆ·9$Óô®´.¨‹¶ÙıÛ<z&OnGòÑNùH²ñFf”€jØ¹½vXÏùÿPx‡¢Ã™×£ı|
-²½0&qŒKòM’¾.º=óêÁzLG£0»ìˆ2—"‘t‡¸äÏlİÛşí4
-B}‰#–ŒP˜lJèÕ£U›\–½AìÆJÉ.`lÿ.ØOÿÖùM¾‡m!ñQœ˜‚ŒlÒoiÀ÷‡WXƒ0ÕmğFñÆúÙNå3ÉrZû6‚Ö›6uÚ$ÿÏñˆØ¦k‘MO‡í?£sŒ–³ŸÂQ~Ù7))%¯qšˆŞHØ,Ÿø£c¼ÙH¦ìïc(eÿîàKep3+‘WñE‹Ú!»üH°ßÈ.\Ø.Ğ}ù\ø	yŞkt)PùP«gƒÏÍi‚mù"ëÖuƒÅ÷¿øíúÖÌ£o“Œ°jˆo¤Uq Ê4©á¾æÅEÀJ%.f´NÍ"¸‹ÅÔ©V:ŒlÍÕ;R“õÌÉ¿0th@~}AÃ¾1ô¾FWÜkJ”3ÃŸÅ•—\ø	nÈb“míkübUntÅ8¾ÈXGpRË²M9ğúæó¥º?ˆñ)½DbŠAâV…WqÈVÖÿ|úêª/ +¾äı 0úéH tColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff">
-            <Event Name="ButtonSignal" Function="OnCancelBtn"/>
-        </Control>
-        <Control Class="Button" Base="CRB_Basekit:kitBtn_Metal_LargeBlue" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-154" TAnchorPoint="1" TAnchorOffset="-79" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="1" BAnchorOffset="-31" DT_VCENTER="1" DT_CENTER="1" Name="ReportBugBtn" BGColor="ffffffff" TextColor="ffffffff" RelativeToClient="1" TextId="PlayerTicket_SubmitTicketBtn" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="">
-            <Event Name="ButtonSignal" Function="OnReportBug"/>
-        </Control>
-    </Form>
-</Forms>
-yChange° ³=åı H H@owMap["PlayerTicketTextEntrySubject"]:SetFocus()
-	self.tWindowMap["PlayerTicketTextEntrySubject"]:SetSel(0, -1)
-
-	self:UpdateSubmitButton()
-end
-
-function PlayerTicketDialog:UpdateSubmitButton()
-	local nCategory = self.tWindowMap["Category"]:GetCellData(self.tWindowMap["Category"]:GetCurrentRow(), 1)
-	local nSubCategory = self.tWindowMap["SubCategory"]:GetCellData(self.tWindowMap["SubCategory"]:GetCurrentRow(), 1)
-	local strText = self.tWindowMap["PlayerTicketTextEntry"]:GetText()
-	local strTextSubject = self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText()
-
-	local bEnable = nCategory ~= nil and nSubCategory ~= nil and strText ~= nil and strText ~= "" and strTextSubject ~= nil and strTextSubject ~= ""
-	self.tWindowMap["OkBtn"]:Enable(bEnable)
-	if bEnable then
-		self.tWindowMap["OkBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.SubmitSupportTicket, nCategory, nSubCategory, strTextSubject, strText)
-	end
-
-	if self.bIsBug ~= not self.tWindowMap["OkBtn"]:IsShown() then
-		self.tWindowMap["OkBtn"]:Show(not self.bIsBug)
-	end
-
-	if self.bIsBug ~= self.tWindowMap["ConvertToBugBtn"]:IsShown() then
-		self.tWindowMap["ConvertToBugBtn"]:Show(self.bIsBug)
-	end
-end
-
----------------------------------------------------------------------------------------------------
-function PlayerTicketDialog:OnSupportTicketSubmitted(wndHandler, wndControl, eMouseButton)
-	if self.bAddIgnore and self.strTarget then
-		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, self.strTarget) 
-		Event_FireGenericEvent("GenericEvent_SystemChannel

@@ -328,39 +328,6 @@ local kcrDefaultUnflaggedAllyTextColor 	= karDispositionColors[Unit.CodeEnumDisp
 local kcrAggressiveEnemyTextColor 		= karDispositionColors[Unit.CodeEnumDisposition.Neutral]
 local kcrNeutralEnemyTextColor 			= ApolloColor.new("crayDenim")
 
---[[
-local karEvalType =
-{
-    Apollo.GetString("CRB_Equal"),
-    Apollo.GetString("CRB_Greater"),
-    Apollo.GetString("CRB_Greater_Or_Equal"),
-    Apollo.GetString("CRB_Less"),
-    Apollo.GetString("CRB_Less_Or_Equal"),
-    Apollo.GetString("CRB_Equal"),
-    Apollo.GetString("CRB_Greater"),
-    Apollo.GetString("CRB_Greater_Or_Equal"),
-    Apollo.GetString("CRB_Less"),
-    Apollo.GetString("CRB_Less_Or_Equal")
-}
-]]--
-
---local kstrCast = Apollo.GetString("CRB_Cast_")
---local kstrTier 			= Apollo.GetString("CRB_Tier_")
---local kstrRequires 		= Apollo.GetString("CRB_Requires_")
---local kstrTarget 		= Apollo.GetString("CRB_Target_")
---local kstrCastTime 		= Apollo.GetString("CRB_Cast_Time_")
---local kstrChannelTime 	= Apollo.GetString("CRB_Channel_Time_")
---local kstrCooldown 		= Apollo.GetString("CRB_Cooldown_")
---local kstrInstant 		= Apollo.GetString("CRB_Instant")
---local kstrCost 			= Apollo.GetString("CRB_Cost_Sp")
---local kstrHP 			= Apollo.GetString("CRB_HP")
---local kstrUnique 		= Apollo.GetString("CRB_Unique")
---local kstrArmor 		= Apollo.GetString("CRB_Armor")
---local kstrBag 			= Apollo.GetString("CRB_Bag")
---local kstrConsumable 	= Apollo.GetString("CRB_Consumable")
---local kstrQuestItem 	= Apollo.GetString("CRB_Quest_Item")
---local kstrJunk 			= Apollo.GetString("CRB_Junk")
-
 local tVitals = {}
 
 local knWndHeightBuffer
@@ -968,9 +935,12 @@ local function ItemTooltipHeaderHelper(wndParent, tItemInfo, itemSource, wndTool
 	else
 		wnd:FindChild("ItemTooltip_Header_Types"):SetTextColor(karEvalColors[tItemInfo.eQuality])
 	end
-	wnd:FindChild("ItemTooltip_Header_Types"):SetText(itemSource:GetItemTypeName())
-
+	
+	local eRuneType = tItemInfo.tRuneInfo and tItemInfo.tRuneInfo.eType or 0
+	local strName = eRuneType > 0 and string.format("%s (%s)", itemSource:GetItemTypeName(), String_GetWeaselString(Apollo.GetString("Tooltips_RuneSlot"), karSigilTypeToString[eRuneType])) or itemSource:GetItemTypeName()
+	wnd:FindChild("ItemTooltip_Header_Types"):SetText(strName)
 	wnd:FindChild("ItemTooltip_Header_Name"):SetAML("<P Font=\"CRB_HeaderSmall\" TextColor=\""..karEvalColors[tItemInfo.eQuality].."\">"..tItemInfo.strName.."</P>")
+	
 	local nWidth, nHeight = wnd:FindChild("ItemTooltip_Header_Name"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wnd:GetAnchorOffsets()
 	wnd:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.max(20, nHeight) + 63)
@@ -1021,13 +991,15 @@ local function ItemTooltipBasicStatsHelper(wndParent, tItemInfo, itemSource)
 		strTopLeft = strTopLeft == "" and strStackCount or strTopLeft
 	end
 
-	-- Soulbound
+	-- Binding Messages
 	if tItemInfo.tBind and tItemInfo.tBind.bSoulbound then
 		strTopRight = Apollo.GetString("CRB_Soulbound")
-	elseif tItemInfo.tBind and tItemInfo.tBind.bOnEquip then
-		strTopRight = Apollo.GetString("CRB_Bind_on_equip")
 	elseif tItemInfo.tBind and tItemInfo.tBind.bOnPickup then
 		strTopRight = Apollo.GetString("CRB_Bind_on_pickup")
+	elseif itemSource:IsSalvagedLootSoulbound() then
+		strTopRight = Apollo.GetString("CRB_Bind_on_pickup")
+	elseif tItemInfo.tBind and tItemInfo.tBind.bOnEquip then
+		strTopRight = Apollo.GetString("CRB_Bind_on_equip")
 	end
 
 	-- Unique
@@ -1393,7 +1365,10 @@ local function ItemTooltipSpellEffectHelper(wndParent, tItemInfo)
 			end
 
 			if strResult ~= "" then
-				local strItemSpellEffect = String_GetWeaselString(Apollo.GetString("Tooltips_ItemSpellEffect"), strResult, (tCur.strFlavor or ""))
+				local strItemSpellEffect = strResult
+				if tCur.strFlavor ~= "" then
+					strItemSpellEffect = String_GetWeaselString(Apollo.GetString("Tooltips_ItemSpellEffect"), strResult, tCur.strFlavor)
+				end
 				wnd:SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</P>", kUIBody, strItemSpellEffect))
 				local nWidth, nHeight = wnd:SetHeightToContentHeight()
 				local nLeft, nTop, nRight, nBottom = wnd:GetAnchorOffsets()
@@ -1623,6 +1598,17 @@ end
 
 -- #############################
 
+local function ItemTooltipCostumeHelper(wndParent, tItemInfo)
+	-- We only want to show the costume portion for weapon and armor tooltips.
+	if (tItemInfo.eFamily == Item.CodeEnumItem2Family.Weapon or tItemInfo.eFamily == Item.CodeEnumItem2Family.Armor or tItemInfo.eFamily == Item.CodeEnumItem2Family.Apparel) and tItemInfo.bCanCostumeUnlock and not tItemInfo.bCostumeUnlocked then
+		local wndCostumeInfo = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndParent)
+		wndCostumeInfo:SetAML(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"%s\">%s</T>", kUICyan, Apollo.GetString("Costumes_Unlockable")))
+		wndCostumeInfo:SetHeightToContentHeight()
+	end
+end
+
+-- #############################
+
 local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) -- Sell, Buy, Buy Back, Repair
 	if not tItemInfo.tCost or tFlags.bInvisibleFrame then -- bInvisibleFrame is mainly used for crafting
 		return
@@ -1646,6 +1632,7 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 		if not wndParent:FindChild("ItemTooltip_Flavor") then
 			ItemTooltipSeparatorSmallLineHelper(wndParent) -- The art for Flavor already provides a natural separator if it exists
 		end
+		
 		wndBox = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "ItemTooltip_SalvageAndMoney", wndParent)
 	end
 
@@ -1683,12 +1670,40 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 	end
 
 	-- Right Side
-	-- Buy Buyback
+	-- Buy
 	local nStackCount = tItemInfo.tStack and (tItemInfo.tStack.nCount or tFlags.nStackCount) or 1
-	if (tFlags.bBuying or tFlags.bBuyback) and tItemInfo.tCost.arMonBuy then
+	if tFlags.bBuying and tItemInfo.tCost.arMonBuy then
 		local wnd = nil
 		local xml = XmlDoc.new()
 		for idx, monPrice in pairs(tItemInfo.tCost.arMonBuy) do
+			if monPrice:GetAmount() ~= 0 then
+
+				if wnd == nil or not wnd:IsValid() then
+					wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox:FindChild("RightSide"))
+					
+					local strSellCaption = Apollo.GetString("CRB_Buy_For")
+					if nStackCount > 1 then
+						monPrice = monPrice:Multiply(nStackCount)
+						strSellCaption = String_GetWeaselString(Apollo.GetString("CRB_Buy_X_For"), nStackCount)
+					end
+					xml:AddLine(strSellCaption.."<T TextColor=\"0\">.</T>", kUICyan, "CRB_InterfaceSmall", "Right")
+				end
+				
+				monPrice:AppendToTooltip(xml)
+			end
+		end
+		
+		if wnd ~= nil and wnd:IsValid() then
+			wnd:SetDoc(xml)
+			wnd:SetHeightToContentHeight()
+		end
+	end
+	
+	-- Buyback
+	if not tFlags.bBuying and tFlags.bBuyback and tItemInfo.tCost.arMonSell then
+		local wnd = nil
+		local xml = XmlDoc.new()
+		for idx, monPrice in pairs(tItemInfo.tCost.arMonSell) do
 			if monPrice:GetAmount() ~= 0 then
 
 				if wnd == nil or not wnd:IsValid() then
@@ -1760,13 +1775,32 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 	end
 
 	if bHasSellPrice and tItemInfo.tCost.tReturnTimeLeft then
-		local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox:FindChild("RightSide"))
+		ItemTooltipSeparatorSmallLineHelper(wndParent) -- The art for Flavor already provides a natural separator if it exists			
+		
+		local wndBox2 = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "ItemTooltip_SalvageAndMoney", wndParent)
+		local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox2:FindChild("LeftSide"))
 		local nTimeMinutes = tonumber(tItemInfo.tCost.tReturnTimeLeft.nMin)
 		local tTimeInfo = {["name"] = Apollo.GetString("CRB_Min"), ["count"] = nTimeMinutes}
-		local strTimeRemaining = String_GetWeaselString(Apollo.GetString("CRB_SellToVendorTime"), tTimeInfo)
+		local strSellToVendorBase = tItemInfo.tCost.bHasRestockingFee and Apollo.GetString("CRB_SellToVendorWithFeeTime") or Apollo.GetString("CRB_SellToVendorTime")
+		local strTimeRemaining = String_GetWeaselString(strSellToVendorBase, tTimeInfo)
 
 		xml = XmlDoc.new()
-		xml:AddLine(strTimeRemaining, kUICyan, "CRB_InterfaceSmall", "Right")
+		xml:AddLine(strTimeRemaining, kUICyan, "CRB_InterfaceSmall", "Center")
+		wnd:SetDoc(xml)
+		wnd:SetHeightToContentHeight()
+	end
+	
+	if tItemInfo.tSoulboundTradeWindow  then
+		ItemTooltipSeparatorSmallLineHelper(wndParent) -- The art for Flavor already provides a natural separator if it exists			
+		
+		local wndBox2 = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "ItemTooltip_SalvageAndMoney", wndParent)
+		local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "SimpleRowSmallML", wndBox2:FindChild("LeftSide"))
+		local nTimeMinutes = tonumber(tItemInfo.tSoulboundTradeWindow.nMinutes)
+		local tTimeInfo = {["name"] = Apollo.GetString("CRB_Min"), ["count"] = nTimeMinutes}
+		local strTimeRemaining = String_GetWeaselString(Apollo.GetString("CRB_SoulboundTradingTime"), tTimeInfo)
+
+		xml = XmlDoc.new()
+		xml:AddLine(strTimeRemaining, kUICyan, "CRB_InterfaceSmall", "Center")
 		wnd:SetDoc(xml)
 		wnd:SetHeightToContentHeight()
 	end
@@ -1778,6 +1812,18 @@ local function ItemTooltipMonHelper(wndParent, tItemInfo, itemSource, tFlags) --
 		local nLeft, nTop, nRight, nBottom = wndBox:GetAnchorOffsets()
 		wndBox:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.max(nHeightLeftSide, nHeightRightSide) + 4)
 	end
+end
+
+-- #############################
+
+local function ItemTooltipAppendHelper(wndParent, strAppendText)
+	local wnd = Apollo.LoadForm("ui\\Tooltips\\TooltipsForms.xml", "ItemTooltip_Flavor", wndParent)
+	wnd:FindChild("ItemTooltip_FlavorML"):SetText(strAppendText)
+	
+	local nTextWidth, nTextHeight = wnd:FindChild("ItemTooltip_FlavorML"):SetHeightToContentHeight()
+
+	local nLeft, nTop, nRight, nBottom = wnd:GetAnchorOffsets()
+	wnd:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTextHeight + 30)
 end
 
 -- #############################
@@ -1811,7 +1857,7 @@ local function ItemTooltipPropSortHelper(tItemInfo)
 end
 
 -- Item Tooltip Generate
-
+-- Flags: bBuyBack, idVendorUnique, itemModData, tGlyphData, arGlyphIds, strMaker, itemCompare, bPermanent, bNotEquipped, tCompare, bInvisibleFrame, bShowSimple, strAppend
 local function GenerateItemTooltipForm(luaCaller, wndParent, itemSource, tFlags, nCount)
 	if not itemSource then
 		return
@@ -1881,6 +1927,7 @@ local function GenerateItemTooltipForm(luaCaller, wndParent, itemSource, tFlags,
 		ItemTooltipFlavorHelper(wndItems, itemOne)
 		--
 		ItemTooltipMonHelper(wndItems, itemOne, itemTwo, tFlags)
+		ItemTooltipCostumeHelper(wndItems, itemOne)
 	end
 
 	if tItemInfo.tPrimary and wndTooltip then
@@ -1907,36 +1954,53 @@ local function GenerateItemTooltipForm(luaCaller, wndParent, itemSource, tFlags,
 		end
 	end
 
-	if tItemInfo.tPrimary and wndTooltip and wndTooltip:IsValid() and wndItems and wndItems:IsValid() then
-		if tItemInfo.tPrimary.arInnateProperties then
-			tPrimaryInnateSort = ItemTooltipPropSortHelper(tItemInfo.tPrimary.arInnateProperties)
+	if tFlags.bSimple then
+		ItemTooltipHeaderHelper(wndItems, tItemInfo.tPrimary, itemSource, wndTooltip, tFlags)
+		
+		local nAppendBuffer = 0
+		if tFlags.strAppend then
+			ItemTooltipAppendHelper(wndItems, tFlags.strAppend)
+			nAppendBuffer = 10
 		end
-		if tItemInfo.tPrimary.arBudgetBasedProperties then
-			tPrimaryBudgetBasedSort = ItemTooltipPropSortHelper(tItemInfo.tPrimary.arBudgetBasedProperties)
+			
+		local nLeft, nTop, nRight, nItemsBottom = wndItems:GetAnchorOffsets()
+		wndTooltip:Move(0, 0, kItemTooltipWindowWidth, wndItems:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop) + nItemsBottom + knWndHeightBuffer + nAppendBuffer)
+	else
+		if tItemInfo.tPrimary and wndTooltip and wndTooltip:IsValid() and wndItems and wndItems:IsValid() then
+			if tItemInfo.tPrimary.arInnateProperties then
+				tPrimaryInnateSort = ItemTooltipPropSortHelper(tItemInfo.tPrimary.arInnateProperties)
+			end
+			if tItemInfo.tPrimary.arBudgetBasedProperties then
+				tPrimaryBudgetBasedSort = ItemTooltipPropSortHelper(tItemInfo.tPrimary.arBudgetBasedProperties)
+			end
+
+			CallAllHelpers(wndTooltip, wndItems, tItemInfo.tPrimary, itemSource, tFlags, tPrimaryInnateSort, tPrimaryBudgetBasedSort, true)
+			
+			if tFlags.strAppend then
+				ItemTooltipAppendHelper(wndItems, tFlags.strAppend)
+			end
 		end
 
-		CallAllHelpers(wndTooltip, wndItems, tItemInfo.tPrimary, itemSource, tFlags, tPrimaryInnateSort, tPrimaryBudgetBasedSort, true)
+		--Compare (Equipped)
+		if tItemInfo.tCompare and wndTooltipComp and wndItemsCompare and wndTooltipComp:IsValid() and wndItemsCompare:IsValid() then
+			if tItemInfo.tCompare.arInnateProperties then
+				tCompareInnateSort = ItemTooltipPropSortHelper(tItemInfo.tCompare.arInnateProperties)
+			end
+
+			if tItemInfo.tCompare.arBudgetBasedProperties then
+				tCompareBudgetBasedSort = ItemTooltipPropSortHelper(tItemInfo.tCompare.arBudgetBasedProperties)
+			end
+
+			CallAllHelpers(wndTooltipComp, wndItemsCompare, tItemInfo.tCompare, tFlags.itemCompare, tFlags, tCompareInnateSort, tCompareBudgetBasedSort, false)
+		end
+		
+		-- GOTCHA: There is only one draw pass, so XML must match kItemTooltipWindowWidth, otherwise text calculation may be wrong
+		wndTooltip:Move(0, 0, kItemTooltipWindowWidth, wndItems:ArrangeChildrenVert(0) + nInvisibleFramePadding + knWndHeightBuffer)
+		if tItemInfo.tCompare and wndTooltipComp and wndTooltipComp:IsValid() then
+			wndTooltipComp:Move(0, 0, kItemTooltipWindowWidth, wndItemsCompare:ArrangeChildrenVert(0) + nInvisibleFramePadding + knWndHeightBuffer)
+		end
 	end
-
-	--Compare (Equipped)
-	if tItemInfo.tCompare and wndTooltipComp and wndItemsCompare and wndTooltipComp:IsValid() and wndItemsCompare:IsValid() then
-		if tItemInfo.tCompare.arInnateProperties then
-			tCompareInnateSort = ItemTooltipPropSortHelper(tItemInfo.tCompare.arInnateProperties)
-		end
-
-		if tItemInfo.tCompare.arBudgetBasedProperties then
-			tCompareBudgetBasedSort = ItemTooltipPropSortHelper(tItemInfo.tCompare.arBudgetBasedProperties)
-		end
-
-		CallAllHelpers(wndTooltipComp, wndItemsCompare, tItemInfo.tCompare, tFlags.itemCompare, tFlags, tCompareInnateSort, tCompareBudgetBasedSort, false)
-	end
-
-	-- GOTCHA: There is only one draw pass, so XML must match kItemTooltipWindowWidth, otherwise text calculation may be wrong
-	wndTooltip:Move(0, 0, kItemTooltipWindowWidth, wndItems:ArrangeChildrenVert(0) + nInvisibleFramePadding + knWndHeightBuffer)
-	if tItemInfo.tCompare and wndTooltipComp and wndTooltipComp:IsValid() then
-		wndTooltipComp:Move(0, 0, kItemTooltipWindowWidth, wndItemsCompare:ArrangeChildrenVert(0) + nInvisibleFramePadding + knWndHeightBuffer)
-	end
-
+	
 	return wndTooltip, wndTooltipComp
 end
 
@@ -2409,5 +2473,3 @@ end
 
 local ToolTipInstance = ToolTips:new()
 ToolTipInstance:Init()
-    ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª I I «Z  PPPP ‘	Ò  åàNn·RÒªªªªœPR.™»RÒªªªªÀmn›ÿRÒªªªª€´‘­í?RÒªªªª€6²­m?RÒªªªª
-€4²µÿ$RÒªªªª@r¶›üRÒªªªªPnn™»RÒªªªªPnv›ÜRÒªªªª °mm›ÿRÒªªªª€¨±lí?RÒªªªª=Ö¬ã'RÒªªªªP«µZ³6RÒªªªª H‚$H‚$1+ dddd  	$Ò  U‘DI’$RÒªªªª’°Mi›$RÒªªªª°m&$RÒªªªª °m¶$RÒªªªª  mM’$RÒªªªª °mI’$RÒªªªªÀm±$RÒªªªª °m¶™$RÒªªªª¶´$RÒªªªª€(1L’$RÒªªªª $I’$%Ò     P H‚$I’$q; ””•• 	 I$Ò  U  I’IÒ      I‰”$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª  I$™$RÒªªªª $IR’$RÒªªªª €$I’$)Ò     @ @$H’$Ò  PPTU        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª        ËZªRªªªª

@@ -253,17 +253,4 @@ function LootConfirm:OnClose()
 end
 
 local LootConfirmInst = LootConfirm:new()
-LootConfirmInst:Init()ontrol>
-        <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-80" TAnchorPoint="1" TAnchorOffset="-80" RAnchorPoint="0.5" RAnchorOffset="80" BAnchorPoint="1" BAnchorOffset="-60" RelativeToClient="1" Font="CRB_HeaderTiny" Text="" BGColor="UI_WindowBGDefault" TextColor="ff56b381" Template="Default" TooltipType="OnCursor" Name="LiveEventCashTitle" TooltipColor="" TextId="LiveEvent_YourShadeSilver" Tooltip="" DT_CENTER="1"/>
-        <Event Name="WindowClosed" Function="OnLiveEventClose"/>
-        <Control Class="CashWindow" LAnchorPoint="0.5" LAnchorOffset="-80" TAnchorPoint="1" TAnchorOffset="-72" RAnchorPoint="0.5" RAnchorOffset="80" BAnchorPoint="1" BAnchorOffset="-32" TooltipType="OnCursor" RelativeToClient="1" Font="CRB_HeaderTiny" Text="" Template="Default" BGColor="ffffffff" TextColor="ffffffff" DT_RIGHT="0" Name="LiveEventCashWindow" TooltipColor="" DT_CENTER="1" Tooltip=""/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LiveEventItem" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" TransitionShowHide="0" UseTransitionSprite="0" Picture="1" Sprite="">
-        <Control Class="Button" Base="CRB_UIKitSprites:btn_popOut" Font="CRB_InterfaceMedium" ButtonType="PushButton" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0" TAnchorOffset="7" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="23" Name="LiveEventHintBtn" Visible="0" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1" IgnoreTooltipDelay="1" Text="" Tooltip="" TooltipId="Challenges_HintTooltip" TooltipType="OnCursor" TooltipColor="">
-            <Event Name="ButtonSignal" Function="OnLiveEventHintBtn"/>
-        </Control>
-        <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="35" RelativeToClient="1" Font="CRB_HeaderSmall" Text="" Template="Default" TooltipType="OnCursor" Name="LiveEventTitle" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="" DT_CENTER="0" DT_VCENTER="1" IgnoreMouse="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LiveObjectiveContainer" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LiveObjectiveItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" Sprite="" Tooltip="">
-        <Control Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceMedium" ButtonType="PushButton" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Name="LiveObjectiveHintBtn" Visible="1" BGColor="white" T
+LootConfirmInst:Init()

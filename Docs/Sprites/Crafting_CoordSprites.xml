@@ -220,11 +220,17 @@
     <Sprite Name="sprCoord_AdditiveTargrtBaseSmall" Cycle="1">
         <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_1.tga" x0="912" x1="912" x2="912" x3="912" x4="912" x5="968" y0="598" y1="598" y2="598" y3="598" y4="598" y5="654" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="sprCoord_Robot2BG" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_Robots.tex" x0="335" x1="663" x2="663" x3="663" x4="663" x5="663" y0="27" y1="486" y2="486" y3="486" y4="486" y5="486" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprCoord_GlassStraightBG" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_3.tex" x0="0" x1="0" x2="0" x3="126" x4="127" x5="268" y0="0" y1="201" y2="392" y3="392" y4="392" y5="655" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <Composite Name="sprCoord_DiscoverBG_Teal" Cycle="0">
         <Layer Name="sprCoord_DiscoverBG_TealBase"/>
         <Layer Name="sprCoord_DiscoverBG_TealFlash"/>
     </Composite>
-    <Sprite Name="sprCoord_Robot2BG" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_Robots.tex" x0="335" x1="663" x2="663" x3="663" x4="663" x5="663" y0="27" y1="486" y2="486" y3="486" y4="486" y5="486" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="sprCoord_Robot2BG_Scalable" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_CoordinateCrafting_Robots.tex" x0="335" x1="335" x2="663" x3="663" x4="663" x5="663" y0="27" y1="27" y2="486" y3="486" y4="486" y5="486" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
 </Sprites>

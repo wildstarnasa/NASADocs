@@ -49,22 +49,3 @@
         </Control>
     </Form>
 </Forms>
-ount1 / (1000000))
-					local nRemainder = tPath.tPriceInfo.nAmount1 % (1000000)
-					local nGold = math.floor(nRemainder / (10000))
-					nRemainder = nRemainder % (10000)
-					local nSilver = math.floor(nRemainder / 100)
-					local nCopper = math.floor(nRemainder % 100)		
-					
-					if nPlatinum >= 1 then
-						local strPlatinumLine = string.format("<P Font=\"%s\" TextColor=\"%s\">%s</P>", "CRB_InterfaceSmall", "ffdbd7d2", String_GetWeaselString(Apollo.GetString("CRB_Platinum"), nPlatinum))
-						strTooltipString = strTooltipString .. strPlatinumLine
-					end
-					
-					if nGold >= 1 then
-						local strGoldLine = string.format("<P Font=\"%s\" TextColor=\"%s\">%s</P>", "CRB_InterfaceSmall", "ffffd700", String_GetWeaselString(Apollo.GetString("CRB_Gold"), nGold))
-						strTooltipString = strTooltipString .. strGoldLine
-					end
-					
-					if nSilver >= 1 then
-						local strSilverLine = string.format("<P Font=\"%s

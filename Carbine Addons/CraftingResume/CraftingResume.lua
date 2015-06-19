@@ -193,24 +193,3 @@ end
 
 local CraftingResumeInst = CraftingResume:new()
 CraftingResumeInst:Init()
-w"))
-	elseif not bCurrentCraftStarted then
-		self.wndMain:FindChild("PreviewOnlyBlocker"):Show(true)
-		self.wndMain:FindChild("TopRightText"):SetText(Apollo.GetString("CRB_Preview"))
-	else
-		self.wndMain:FindChild("TopRightText"):SetText(Apollo.GetString("CRB_Craft"))
-	end
-
-	self.luaSchematic = CircuitBoardSchematic:new()
-	self.luaSchematic:Init(self, self.xmlDoc, self.wndMain, idSchematic, bCurrentCraftStarted, bHasMaterials)
-
-	self:DrawTutorials(false)
-	self.wndTutorialPopup:Show(false)
-	Event_ShowTutorial(GameLib.CodeEnumTutorial.Crafting_UI_Tutorial)
-
-	Sound.Play(Sound.PlayUIWindowCraftingOpen)
-end
-
-function Crafting:OnPreviewStartCraft(wndHandler, wndControl) -- PreviewStartCraftBtn, data is idSchematic
-	local idSchematic = wndHandler:GetData()
-	local tCurrentCraft = 

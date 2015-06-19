@@ -42,12 +42,12 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="FilterIcon" BGColor="white" TextColor="white" Sprite="" Picture="1" IgnoreMouse="1" Overlapped="0" TooltipType="OnCursor" NewControlDepth="3" IgnoreTooltipDelay="1" TooltipColor=""/>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="59" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HeaderItem" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" IgnoreMouse="1" TooltipColor="">
-        <Control Class="Button" Base="BK3:btnHolo_ExpandCollapse" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="51" DT_VCENTER="1" DT_CENTER="1" Name="HeaderBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1" TooltipColor="" WindowSoundTemplate="HoloDropdownToggle">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="37" RelativeToClient="1" Font="CRB_ButtonHeader" Text="A" Template="Default" Name="HeaderBtnText" BGColor="white" TextColor="UI_TextHoloTitle" TextId="" DT_VCENTER="1" TooltipColor=""/>
+        <Control Class="Button" Base="BK3:btnHolo_ExpandCollapseSmall" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="51" DT_VCENTER="1" DT_CENTER="1" Name="HeaderBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1" TooltipColor="" WindowSoundTemplate="HoloDropdownToggle">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="-4" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="32" RelativeToClient="1" Font="CRB_ButtonHeader" Text="A" Template="Default" Name="HeaderBtnText" BGColor="white" TextColor="UI_TextHoloTitle" TextId="" DT_VCENTER="1" TooltipColor=""/>
             <Event Name="ButtonUp" Function="OnHeaderBtnItemClick"/>
             <Event Name="MouseEnter" Function="OnHeaderBtnMouseEnter"/>
             <Event Name="MouseExit" Function="OnHeaderBtnMouseExit"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HeaderFlash" BGColor="UI_WindowTitleGray" TextColor="white" Sprite="" HideInEditor="0" Picture="1" IgnoreMouse="1" NewControlDepth="1" TooltipColor=""/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HeaderFlash" BGColor="UI_WindowTitleGray" TextColor="white" Sprite="" HideInEditor="0" Picture="1" IgnoreMouse="1" NewControlDepth="1" TooltipColor=""/>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="1" RAnchorOffset="-11" BAnchorPoint="1" BAnchorOffset="4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HeaderItemContainer" BGColor="white" TextColor="white" TooltipColor=""/>
         <Pixie LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-9" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" BGColor="white" TextColor="black" Rotation="0" Font="Default"/>
@@ -112,41 +112,3 @@
         <Event Name="WindowClosed" Function="OnBack"/>
     </Form>
 </Forms>
-7>9FÚJ"g<o8	
-È	%{	VI?8'á¶8ï2   ˇgák 8 J ]  6762'&''#"&5476654'&77764#&776#"'&76666'62#'&4''sIÊKU5ﬁ8>%67$9KN@:¡><;ñÜ%V	
-	∞
-
-ß		L68[&&*(	/(O
-9>;9$>
-
-.XWW     
-ˇÉC B  032676'&&'&#&'&&546766&&'&&&&&5467632&&546Úz	P?Xûï>~qH.
-!ö1	.cO@$ä?gÖ			 M_BA∂X3
-¨R#NpI%
-Ç	453#ú4)''!,'-8     
-ˇa˜  l  62&'&&7726327666666666677'&&&&&&"1'&'&7677#"77766''&&&5467232'&'&&765	ÇZ@
-^^8§I00	*!?8(ABK%„	rí
-1C˝k(
-7)
-99!)* :<,!cBSP %/%X°0"	    
-ˇN˝P V e  6666667654&'&&76667676&'&&&546&54766'&&'&'&&54674667672#"&'	
-
-*,* 		?K
-
-"xQ!F9 +∏
-„3L
-u1±+%A*21=
-n$/!
-(	<Y7&54ó)15j%&.2=î
-K8     ˇáP ?  632#"&''76632676'&&'&#'&546764'&'&&766ÿÇ7 
-		 "Ma"
-d
-
-PBZõﬂA1≥/ç+1Ñy.ä>
-('$*?2
-Æ
-}%!Æ.
-z5_$!ñ         T   T   T   T    ,       Ï  Ï    $  	  	‹  
-ÿ  º  Ñ  L  ¯  ‡  ∞  ‡    $  @  @    0     ∏  º  –      ‡  Ï  †   ¥  !Ä  "H  #0  $X  %`  &l  '@  (8  )0  *$  *¸  ,$  -<  .L  /`  0Ä  1x  2Ä  38  4@  5  5Ë  6Ã  7∏  8h  9T  :h  ;D  <8  =  >  >ÿ  ?Ã  @ƒ  A‰  C   D  E  F8  F¸  G¸  HÃ  Iº  J|  KP  L,  MX  N8  O,  OÙ  Pÿ  Qÿ  R‰  T  Tƒ  U¨  V¿  W|  Xú  YÄ  ZÃ  [∏  \–  ]Ï  ^Ë  `  `  aƒ  bº  cº  dƒ  e‰  fË  h,  i`  jD  kL  lt  mê  nÄ  od  pd  q0  q¸  s  sÏ  t®  uÑ  vd  wå  x¥  yà  z\  {,  |  }(  }‰  ~‹  Ä  ÄL  Åp  Ç<  Éà  Ñ¿  ÖÑ      ®Ã˘+_<ı 	Ë    Œ¢ÒÈ    ŒŒ;i  ˇ7Û∏         l !    M  §  j n¶ l- mS kâ k™ j≠ ni a§ i« mE nß nX j° nœ mß gô mY k- l  l° n) jê oQ g e. l- f† n… m' l4 iN m’ h= n^ k3 k
- iΩ mœ g' pb k∑ n≠ l© eü j^ k- mŒ lù k3 nì kS j– l? mL i6 n j√ n3 l™ iƒ n◊ o" h` kΩ m´ kü jõ k` k0 m“ h§ m` k; mW n— iB mP i7 k k  m› n- hb k∏ k© kb k0 g5 m√ na ke k° m n¿ k¢ mE iS n+ k∑ l, l† jπ ni j– jÀ m( iŒ mº mõ if lH i. m@ n1 k§ kZ j· h j‡ ma lü m• l1 n† nÔ p^ l≠ iõ j6 mÿ oò je n ke kﬂ m» mœ n’ j  ˇˇ     Æ                          .       - 3        `        v        Ü  	   0 ¢  	  , “  	  
- ˛  	

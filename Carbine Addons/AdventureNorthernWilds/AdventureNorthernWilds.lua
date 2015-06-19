@@ -9,7 +9,7 @@ require "PublicEvent"
 
 local NorthernWildsAdv = {}
 
-local knSaveVersion = 2
+local knSaveVersion = 3
 
 function NorthernWildsAdv:new(o)
     o = o or {}
@@ -317,6 +317,3 @@ end
 -----------------------------------------------------------------------------------------------
 local NorthernWildsAdvInst = NorthernWildsAdv:new()
 NorthernWildsAdvInst:Init()
-" TooltipType="OnCursor" Name="FatigueText" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_CENTER="0" DT_VCENTER="1" IgnoreMouse="1" IgnoreTooltipDelay="1" Tooltip="" TooltipId="MalgraveAdv_FatigueTooltip" TooltipFont="CRB_InterfaceSmall_O" Picture="1" Sprite="IconSprites:Icon_Windows_UI_CRB_Adventure_Malgrave_Fatigue"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="49" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="1" RAnchorOffset="-19" BAnchorPoint="1" BAnchorOffset="-22" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="FatigueBarBG" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_Basekit:kitIProgBar_Holo_Base" Picture="1" IgnoreMouse="1" NewControlDepth="1" Tooltip="" TooltipFont="CRB_InterfaceSmall_O" TooltipId="MalgraveAdv_FatigueTooltip" IgnoreTooltipDelay="1">
-            <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchor

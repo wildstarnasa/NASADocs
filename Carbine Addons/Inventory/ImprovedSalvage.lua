@@ -171,13 +171,3 @@ end
 
 local ImprovedSalvage_Singleton = ImprovedSalvage:new()
 Apollo.RegisterAddon(ImprovedSalvage_Singleton)
-ntrol Class="Button" Base="BK3:btnHolo_Pin_2" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-19" TAnchorPoint="0.5" TAnchorOffset="-9" RAnchorPoint="1" RAnchorOffset="2" BAnchorPoint="0.5" BAnchorOffset="12" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="PinBtn" BGColor="UI_AlphaPercent60" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Sprite="" Tooltip="" RelativeToClient="1" TooltipId="" TestAlpha="0">
-            <Event Name="ButtonCheck" Function="OnPinBtnChecked"/>
-            <Event Name="ButtonUncheck" Function="OnPinBtnChecked"/>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-8" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="0" RAnchorOffset="30" BAnchorPoint="0" BAnchorOffset="33" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="IconContainer" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" NoClip="0" Tooltip="">
-            <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-12" TAnchorPoint="0.5" TAnchorOffset="-12" RAnchorPoint="0.5" RAnchorOffset="12" BAnchorPoint="0.5" BAnchorOffset="12" RelativeToClient="1" Font="CRB_Header10" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextHoloNormal" Template="Default" TooltipType="OnCursor" Name="Icon" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" DT_CENTER="1" DT_VCENTER="1"/>
-        </Control>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="26" BAnchorPoint="0" BAnchorOffset="26" RelativeToClient="0" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="InterfaceMenuButton" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" TooltipColor="" IgnoreMouse="1" NoClip="0" Tooltip="">
-        <Control Class="Button" Base="HUD_BottomBar:btn_HUD_MenuIconBtn" Font="CRB_InterfaceSmall_O" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="0" RAnchorOffset="32" BAnchorPoint="0" BAnchorOffset="32" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCurs

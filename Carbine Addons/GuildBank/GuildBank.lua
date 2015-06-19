@@ -75,7 +75,8 @@ function GuildBank:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildBankerClose", 		"OnCloseBank", self)
 	Apollo.RegisterEventHandler("GuildBankLog", 			"OnGuildBankLog", self) -- When a bank log comes in
 	Apollo.RegisterEventHandler("GuildChange", 				"OnGuildChange", self)
-	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 		"OnPlayerCurrencyChanged", self)
+	Apollo.RegisterEventHandler("PlayerCurrencyChanged", 	"OnPlayerCurrencyChanged", self)
+	Apollo.RegisterEventHandler("GuildBankWithdraw",		"OnGuildBankWithdraw", self)
 
 	self.tTabPerks = {}
 end
@@ -507,7 +508,6 @@ function GuildBank:OnBankTabBtnCash()
 		return
 	end
 
-	self.tWndRefs.wndMain:SetFocus()
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_MoneyAppend")))
 
 	local guildOwner = self.tWndRefs.wndMain:GetData()
@@ -516,7 +516,6 @@ function GuildBank:OnBankTabBtnCash()
 	local nTransactionAmount = wndParent:FindChild("GuildCashInteractEditCashWindow"):GetAmount()
 	wndParent:FindChild("GuildCashDeposit"):Enable(nTransactionAmount > 0)
 	wndParent:FindChild("GuildCashWithdraw"):Enable(nTransactionAmount > 0)
-	wndParent:FindChild("GuildCashInteractEditHelpText"):Show(nTransactionAmount == 0)
 
 	wndParent:FindChild("GuildCashAmountWindow"):SetAmount(guildOwner:GetMoney())
 	wndParent:FindChild("GuildInfluenceAmount"):SetText(String_GetWeaselString(Apollo.GetString("GuildBank_GuildInfluence"), guildOwner:GetInfluence()))
@@ -586,7 +585,6 @@ function GuildBank:OnGuildCashInteractEditCashWindow(wndHandler, wndControl) -- 
 	local wndParent = self.tWndRefs.wndMain:FindChild("CashScreenMain")
 	wndParent:FindChild("GuildCashDeposit"):Enable(nTransactionAmount > 0)
 	wndParent:FindChild("GuildCashWithdraw"):Enable(nTransactionAmount > 0)
-	wndParent:FindChild("GuildCashInteractEditHelpText"):Show(nTransactionAmount == 0)
 end
 
 function GuildBank:OnPlayerCurrencyChanged()
@@ -610,6 +608,48 @@ function GuildBank:OnGuildCashTransSuccessText()
 		return
 	end
 	self.tWndRefs.wndMain:FindChild("GuildCashTransSuccessText"):Show(false)
+end
+
+function GuildBank:OnGuildBankWithdraw(guildOwner)
+	if self.tWndRefs.wndMain == nil or not self.tWndRefs.wndMain:IsValid() then
+		return
+	end
+	
+	local strCheckedTab
+	for idx, wndTab in pairs(self.tWndRefs.wndMain:FindChild("BGTabsContainer"):GetChildren()) do
+		if wndTab:IsChecked() then
+			strCheckedTab = wndTab:GetName()
+			break
+		end
+	end
+
+	if strCheckedTab == "BankTabBtnCash" then
+		String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_MoneyAppend"))
+	elseif strCheckedTab == "BankTabBtnVault" then
+		local nTab = self.tWndRefs.wndMain:FindChild("MainBankScrollbar"):GetData() or 1
+		local tRanksTable = guildOwner:GetRanks()
+		local tMyRankData = tRanksTable[guildOwner:GetMyRank()]
+		
+		local tMyRankDataPermissions = tMyRankData.arBankTab[nTab]
+		if tMyRankDataPermissions ~= nil then
+			-- Withdraw Limit
+			local nWithdrawalAmount = ktWithdrawLimit[tMyRankDataPermissions.idWithdrawLimit]
+		
+			local strHeaderText = String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), guildOwner:GetBankTabName(nTab))
+			if nWithdrawalAmount ~= -1 then
+				local nAmountWithdrawnToday = guildOwner:GetBankTabItemWithdrawnToday(nTab)
+				local tWithdrawalInfo =
+				{
+					["name"] = Apollo.GetString("GuildBank_Withdrawal"),
+					["count"] = math.max(0, nWithdrawalAmount - nAmountWithdrawnToday)
+				}
+		
+				strHeaderText = String_GetWeaselString(Apollo.GetString("GuildBank_LimitedWithdrawalsCounter"), strHeaderText, tWithdrawalInfo)
+			end
+			
+			self:HelperUpdateHeaderText(strHeaderText)
+		end
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -683,7 +723,6 @@ function GuildBank:DrawTabPermissions()
 		return
 	end
 
-	self.tWndRefs.wndMain:SetFocus()
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_PermissionsLabel")))
 
 	local guildOwner = self.tWndRefs.wndMain:GetData()
@@ -935,7 +974,6 @@ function GuildBank:OnBankTabBtnMgmt()
 		return
 	end
 
-	self.tWndRefs.wndMain:SetFocus()
 	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_Management")))
 
 	local guildOwner = self.tWndRefs.wndMain:GetData()
@@ -1164,14 +1202,3 @@ end
 
 local GuildBankInst = GuildBank:new()
 GuildBankInst:Init()
-¡ ∏ˇ˚ ¡ ∆ˇ˚ ¡ ¸ˇÿ ¡  ¡  √ ˇ∞ √ 
-ˇ∞ √ &ˇˆ √ *ˇˆ √ -  √ 2ˇˆ √ 4ˇˆ √ 7ˇà √ 8ˇÒ √ 9ˇ∞ √ :ˇ∞ √ <ˇú √ \ˇ˚ √ âˇˆ √ îˇˆ √ ïˇˆ √ ñˇˆ √ õˇÒ √ úˇÒ √ ÕˇŒ √ Œˇ∞ √ ÛˇŒ √ Ùˇ∞ √ ˆˇŒ √ ˜ˇ∞ √ˇ∞ ƒ I  ƒ V 
- ƒ W  ƒ Y  ƒ Z  ƒ \  ƒ » 
- ƒ  ƒ  ≈ ±  « 7ˇ‚ « <ˇ‚ … ˇt … ˇÿ … ˇt … ˇƒ … ˇƒ … $ˇú … &ˇ‚ … *ˇ‚ … -ˇú … 2ˇ‚ … 4ˇ‚ … 6ˇÏ … Dˇ∞ … Fˇ∞ … Gˇ∞ … Hˇ∞ … Jˇ∞ … LˇÏ … Mˇÿ … Pˇƒ … Qˇƒ … Rˇ∞ … Sˇƒ … Tˇ∞ … Uˇƒ … Vˇ∞ … Xˇƒ … ]ˇƒ … mˇí … oˇÿ … }ˇ¶ … àˇú … ¢ˇ∞ … £ˇ∞ … §ˇ∞ … ¶ˇ∞ … ®ˇ∞ … ©ˇ∞ … ™ˇ∞ … ´ˇ∞ … ¨ˇ∞ … ≠ˇ∞ … Æ 2 … Øˇÿ … ∞  … ± 2 … ≥ˇƒ … ¥ˇ∞ … µˇ∞ … ∂ˇ∞ … ∏ˇ∞ … ªˇƒ … ºˇƒ … Ωˇƒ … æˇƒ … ≈ˇ‚ … ∆ˇ∞ … Òˇÿ … Úˇÿ … ¸ˇt … ˛ˇí … ˇˇ¶   Æ ( Õ $ˇ∫ Õ -ˇ∞ Õ Çˇ∫ Õ Éˇ∫ Õ Ñˇ∫ Õ Öˇ∫ Õ Üˇ∫ Õ áˇ∫ Õ àˇ∫ Œ $ˇ´ Œ -ˇ¶ Œ Çˇ´ Œ Éˇ´ Œ Ñˇ´ Œ Öˇ´ Œ Üˇ´ Œ áˇ´ Œ àˇ´ Ò 7ˇ‚ Ò <ˇÿ Ò üˇÿ Ò …ˇÿ Ú 7ˇ‚ Ú <ˇÿ Ú üˇÿ Ú …ˇÿ Û $ˇ∫ Û -ˇ∞ Û Çˇ∫ Û Éˇ∫ Û Ñˇ∫ Û Öˇ∫ Û Üˇ∫ Û áˇ∫ Û àˇ∫ Ù $ˇ´ Ù -ˇ¶ Ù Çˇ´ Ù Éˇ´ Ù Ñˇ´ Ù Öˇ´ Ù Üˇ´ Ù áˇ´ Ù àˇ´ ı 7ˇí ı 9ˇ∞ ı :ˇ∞ ı <ˇ` ı Yˇ‚ ı Zˇ‚ ı üˇ` ı …ˇ` ˆ $ˇ∫ ˆ -ˇ∞ ˆ Çˇ∫ ˆ Éˇ∫ ˆ Ñˇ∫ ˆ Öˇ∫ ˆ Üˇ∫ ˆ áˇ∫ ˆ àˇ∫ ˜ $ˇ´ ˜ -ˇ¶ ˜ Çˇ´ ˜ Éˇ´ ˜ Ñˇ´ ˜ Öˇ´ ˜ Üˇ´ ˜ áˇ´ ˜ àˇ´ ¯ 7ˇí ¯ 9ˇ∞ ¯ :ˇ∞ ¯ <ˇ` ¯ Yˇ‚ ¯ Zˇ‚ ¯ üˇ` ¯ …ˇ` ˛ $ˇ˚ ˛ 7ˇà ˛ 9ˇŒ ˛ :ˇŒ ˛ <ˇ∞ ˛ Çˇ˚ ˛ Éˇ˚ ˛ Ñˇ˚ ˛ Öˇ˚ ˛ Üˇ˚ ˛ áˇ˚ ˛ àˇ˚ ˛ üˇ∞ ˛ …ˇ∞ ˇ $ˇˆ ˇ 7ˇà ˇ 9ˇƒ ˇ :ˇƒ ˇ <ˇà ˇ Çˇˆ ˇ Éˇˆ ˇ Ñˇˆ ˇ Öˇˆ ˇ Üˇˆ ˇ áˇˆ ˇ àˇˆ ˇ üˇà ˇ …ˇà -ˇ∞   V        ;         	 ;       
- D       % N        s        á        ¶       6 ∏        Ó      	 	 Ò        ˙              )(  	   vQ  	  («  	  Ô  	  J˝  	  (G  	  >o  	  $≠  	  l—  	  =  	 	 C  	  .U  	  .É  	  R±  	    	  2012 Jan Maack published by FSI FontShop International GmbHCube OffcCond LightJan Maack: Cube Offc Cond Light: 2012Cube Offc Cond LightVersion 7.504; 2012; Build 1021CubeOffc-CondLightCube is a trademark of FSI FontShop International GmbHFSIJan Maackhttp://www.fontfont.comhttp://www.fontfont.comhttp://www.fontfont.com/eula/license.html 2 0 1 2   J a n   M a a c k   p u b l i s h e d   b y   F S I   F o n t S h o p   I n t e r n a t i o n a l   G m b H C u b e   O f f c   C o n d   L i g h t R e g u l a r J a n   M a a c k :   C u b e   O f f c   C o n d   L i g h t :   2 0 1 2 C u b e   O f f c   C o n d   L i g h t V e r s i o n   7 . 5 0 4 ;   2 0 1 2 ;   B u i l d   1 0 2 1 C u b e O f f c - C o n d L i g h t C u b e   i s   a   t r a d e m a r k   o f   F S I   F o n t S h o p   I n t e r n a t i o n a l   G m b H F S I J a n   M a a c k h t t p : / / w w w . f o n t f o n t . c o m h t t p : / / w w w . f o n t f o n t . c o m h t t p : / / w w w . f o n t f o n t . c o m / e u l a / l i c e n s e . h t m l C u b e   O f f c C o n d   L i g h t        ˇˆ +                              	 
-                        ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _ ` a £ Ñ Ö Ω ñ Ë Ü é ã ù © § ä É ì Ú Û ç ó à ﬁ Ò û ™ ı Ù ˆ ¢ ≠ … « Æ b c ê d À e »   œ Ã Õ Œ È f ” – — Ø g  ë ÷ ‘ ’ h Î Ì â j i k m l n † o q p r s u t v w Í x z y { } | ∏ °  ~ Ä Å Ï Ó ∫ ◊ ‚ „ ∞ ± ‰ Â ª Ê Á ¶ ÿ · € ‹ › ‡ Ÿ ﬂ	
- õ ! ≤ ≥ ∂ ∑ ƒ ¥ µ ≈ Ç ¬ á ´ ∆ æ ø º"# å ü ò$ ö ô Ô% • í ú ß è î ï& π'( ¿ ¡)*+,-./.nulluni00A0uni00ADmacronperiodcentereduni02BB	afii57929	gravecomb	acutecombuni0302	tildecombuni0304uni0306uni0307uni0308uni030Auni030Buni030Cuni0312uni0313uni0326uni0327uni0328uni0335uni0336uni0394uni03A9uni03BCuni2007uni2008uni200BuniFEFFEuro	afii61352Deltauni2219dotmathuni2723uni2766gravecomb.caseacutecomb.caseuni0302.casetildecomb.caseuni0308.caseuni030A.caseuni030C.case      
-   ` ˇˇ 
-          ï         ç0Çâ	*ÜHÜ˜†Çz0Çv10	+ 0a
-+Ç7†S0Q0,
-+Ç7¢Ä < < < O b s o l e t e > > >0!0	+ vÊiÎºHeÍ©8Ï§<çeØO/†Çî0Çü0Çá†

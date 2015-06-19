@@ -7,10 +7,10 @@
             <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="392" RAnchorPoint="1" RAnchorOffset="-25" BAnchorPoint="0" BAnchorOffset="417" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="GuildMemberCount" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" TextId="GuildInfo_MemberCount" DT_VCENTER="1" DT_CENTER="1" Tooltip=""/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="406" RAnchorPoint="1" RAnchorOffset="-180" BAnchorPoint="0" BAnchorOffset="436" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="GuildMemberGuildTaxLabel" BGColor="ffffffff" TextColor="ff5f6662" TooltipColor="white" TextId="GuildInfo_GuildTax" DT_VCENTER="1" DT_CENTER="0" Tooltip="" TooltipId="GuildInfo_GuildTaxTooltip" TooltipFont="CRB_InterfaceSmall"/>
             <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-11" TAnchorPoint="0" TAnchorOffset="409" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="433" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="GuildTaxBtnContainer" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="white" Sprite="" Picture="1" IgnoreMouse="1" NewControlDepth="1" Tooltip="" TooltipId="GuildInfo_Tax_Tooltip" TooltipFont="CRB_InterfaceSmall">
-                <Control Class="Button" Base="BK3:btnHolo_Radio_Small" Font="CRB_InterfaceTiny_BB" ButtonType="Check" RadioGroup="GuildInfoGuildTax_RadioGroup" LAnchorPoint="0" LAnchorOffset="59" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="162" BAnchorPoint="0" BAnchorOffset="24" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="GuildTaxOnBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextHoloListNormal" PressedTextColor="UI_BtnTextHoloListPressed" FlybyTextColor="UI_BtnTextHoloListFlyby" PressedFlybyTextColor="UI_BtnTextHoloListPressedFlyby" DisabledTextColor="UI_BtnTextHoloListDisabled" GlobalRadioGroup="" Text="" TextId="GuildInfo_5PercentTax" RadioDisallowNonSelection="1" DrawAsCheckbox="1" CheckboxRight="0" ButtonTextXMargin="2">
+                <Control Class="Button" Base="BK3:btnHolo_Radio_Small" Font="CRB_InterfaceTiny_BB" ButtonType="Check" RadioGroup="GuildInfoGuildTax_RadioGroup" LAnchorPoint="0" LAnchorOffset="59" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="162" BAnchorPoint="0" BAnchorOffset="23" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="GuildTaxOnBtn" BGColor="ffffffff" TextColor="UI_BtnTextGoldListNormal" TooltipColor="" NormalTextColor="UI_BtnTextHoloListNormal" PressedTextColor="UI_BtnTextHoloListPressed" FlybyTextColor="UI_BtnTextHoloListFlyby" PressedFlybyTextColor="UI_BtnTextHoloListPressedFlyby" DisabledTextColor="UI_BtnTextHoloListDisabled" GlobalRadioGroup="" Text="" TextId="GuildInfo_5PercentTax" RadioDisallowNonSelection="1" DrawAsCheckbox="1" CheckboxRight="0" ButtonTextXMargin="2">
                     <Event Name="ButtonCheck" Function="OnGuildTaxOn"/>
                 </Control>
-                <Control Class="Button" Base="BK3:btnHolo_Radio_Small" Font="CRB_InterfaceTiny_BB" ButtonType="Check" RadioGroup="GuildInfoGuildTax_RadioGroup" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="65" BAnchorPoint="0" BAnchorOffset="24" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="GuildTaxOffBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextHoloListNormal" PressedTextColor="UI_BtnTextHoloListPressed" FlybyTextColor="UI_BtnTextHoloListFlyby" PressedFlybyTextColor="UI_BtnTextHoloListPressedFlyby" DisabledTextColor="UI_BtnTextHoloListDisabled" GlobalRadioGroup="" Text="" TextId="GuildInfo_TaxNone" RadioDisallowNonSelection="1" DrawAsCheckbox="1" ButtonTextXMargin="2">
+                <Control Class="Button" Base="BK3:btnHolo_Radio_Small" Font="CRB_InterfaceTiny_BB" ButtonType="Check" RadioGroup="GuildInfoGuildTax_RadioGroup" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="65" BAnchorPoint="0" BAnchorOffset="23" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="GuildTaxOffBtn" BGColor="ffffffff" TextColor="UI_BtnTextGoldListNormal" TooltipColor="" NormalTextColor="UI_BtnTextHoloListNormal" PressedTextColor="UI_BtnTextHoloListPressed" FlybyTextColor="UI_BtnTextHoloListFlyby" PressedFlybyTextColor="UI_BtnTextHoloListPressedFlyby" DisabledTextColor="UI_BtnTextHoloListDisabled" GlobalRadioGroup="" Text="" TextId="GuildInfo_TaxNone" RadioDisallowNonSelection="1" DrawAsCheckbox="1" ButtonTextXMargin="2">
                     <Event Name="ButtonCheck" Function="OnGuildTaxOff"/>
                 </Control>
             </Control>
@@ -21,7 +21,7 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="342" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Holo_Background_General" TooltipType="OnCursor" Name="NewsPane" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="0" RAnchorOffset="55" BAnchorPoint="0" BAnchorOffset="15" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Padding" TooltipColor=""/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="0" BAnchorOffset="128" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" TooltipType="OnCursor" Name="InfoPaneLabel1" BGColor="ffffffff" TextColor="UI_TextHoloTitle" TooltipColor="" TextId="" DT_VCENTER="0" DT_CENTER="1" Tooltip="" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" Picture="1" IgnoreMouse="1" NoClip="1">
-                <Pixie LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="50" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_HeaderTiny" Text="" TextId="GuildInfo_MessageOfTheDay" DT_CENTER="1"/>
+                <Pixie LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="50" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_HeaderTiny" Text="" TextId="GuildInfo_MessageOfTheDay" DT_CENTER="0"/>
                 <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="6" TAnchorPoint="0" TAnchorOffset="38" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="CRB_Scroll_HoloSmall" TooltipType="OnCursor" Name="GuildMotD" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_VCENTER="0" DT_CENTER="1" Tooltip="" DT_WORDBREAK="1" VScroll="1" IgnoreMouse="1" AutoHideScroll="1" ReadOnly="1" MultiLine="1"/>
                 <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-49" TAnchorPoint="0" TAnchorOffset="-13" RAnchorPoint="1" RAnchorOffset="295" BAnchorPoint="0" BAnchorOffset="228" RelativeToClient="1" Font="Default" Text="" Template="HoloWindowSound" Name="EditMOTD" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" NoClip="1" Sprite="" Visible="0" TooltipColor="" HideInEditor="0" CloseOnExternalClick="1" TestAlpha="1">
                     <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-294" TAnchorPoint="0" TAnchorOffset="-14" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Backplate" TooltipColor="" Sprite="bk3:sprHolo_Alert_Flyout2" Picture="1" IgnoreMouse="1" CloseOnExternalClick="0"/>
@@ -30,13 +30,15 @@
                     <Control Class="Button" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-78" TAnchorPoint="0" TAnchorOffset="21" RAnchorPoint="1" RAnchorOffset="-36" BAnchorPoint="0" BAnchorOffset="66" DT_VCENTER="1" DT_CENTER="1" Name="OptionsCloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="" Visible="1" HideInEditor="0">
                         <Event Name="ButtonSignal" Function="OnEditMotDCloseBtn"/>
                     </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="87" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="1" BAnchorOffset="-81" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="InputFraming" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="bk3:UI_BK3_Holo_Snippet"/>
-                    <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="94" TAnchorPoint="0" TAnchorOffset="68" RAnchorPoint="1" RAnchorOffset="-47" BAnchorPoint="1" BAnchorOffset="-85" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_ScrollListSmall" Name="EditMotDEditBox" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" Picture="0" DT_VCENTER="0" IgnoreMouse="1" TooltipColor="" MultiLine="1" DT_WORDBREAK="1" VScroll="1" AutoHideScroll="1" UseTemplateBG="0" Border="0" NewControlDepth="3">
-                        <Event Name="EditBoxReturn" Function="OnEditInfoEditBoxReturn"/>
-                        <Event Name="EditBoxChanged" Function="OnEditInfoEditBoxChanged"/>
+                    <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="87" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="1" BAnchorOffset="-82" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_InputBox" Name="EditMotDEditBox" BGColor="ffffffff" TextColor="UI_TextHoloBody" Picture="0" DT_VCENTER="0" IgnoreMouse="1" TooltipColor="" MultiLine="1" DT_WORDBREAK="1" VScroll="1" AutoHideScroll="1" UseTemplateBG="1" Border="1" NewControlDepth="3">
+                        <Event Name="EditBoxReturn" Function="OnEditMotDEditBoxReturn"/>
+                        <Event Name="EditBoxChanged" Function="OnEditMotDEditBoxChanged"/>
                     </Control>
-                    <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-47" TAnchorPoint="1" TAnchorOffset="-88" RAnchorPoint=".5" RAnchorOffset="96" BAnchorPoint="1" BAnchorOffset="-35" DT_VCENTER="1" DT_CENTER="1" Name="EditInfoConfirmBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyBy" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyBy" DisabledTextColor="UI_BtnTextHoloDisabled" Text="" TextId="CRB_Save" TooltipColor="" NeverBringToFront="1">
+                    <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-47" TAnchorPoint="1" TAnchorOffset="-88" RAnchorPoint=".5" RAnchorOffset="96" BAnchorPoint="1" BAnchorOffset="-35" DT_VCENTER="1" DT_CENTER="1" Name="EditMotDConfirmBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyBy" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyBy" DisabledTextColor="UI_BtnTextHoloDisabled" Text="" TextId="CRB_Save" TooltipColor="" NeverBringToFront="1">
                         <Event Name="ButtonSignal" Function="OnEditMotDConfirmBtn"/>
+                    </Control>
+                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="87" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="160" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MotDValidAlert" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_Snippet_Alert" Tooltip="" Visible="0" TooltipFont="CRB_InterfaceSmall" TooltipId="" NewControlDepth="1" TextId="" HideInEditor="0" TransitionShowHide="1">
+                        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="1" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="14" BAnchorPoint="1" BAnchorOffset="7" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Symbol" TooltipColor="" Sprite="BK3:UI_BK3_StoryPanelAlert_Icon" Picture="1" IgnoreMouse="1" NoClip="1" Tooltip="" TooltipId="MatchMaker_InvalidName"/>
                     </Control>
                 </Control>
                 <Control Class="Button" Base="bk3:btnMetal_GearExpanderOptions" Font="CRB_InterfaceMedium_B" ButtonType="Check" RadioGroup="InfoOptionsRadioGroup" LAnchorPoint="1" LAnchorOffset="-30" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="31" DT_VCENTER="1" DT_CENTER="1" Name="EditMessageBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_TextHoloBody" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="9d666666" Text="" TextId="" Visible="1" GlobalRadioGroup="" LeftEdgeControlsAnchor="" RelativeToClient="1" TooltipColor="" HideInEditor="0" DT_WORDBREAK="1" NewControlDepth="5" NewWindowDepth="0" Template="Default" Sprite="" NoClip="0">
@@ -46,7 +48,7 @@
             </Control>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="0" RAnchorOffset="50" BAnchorPoint="0" BAnchorOffset="15" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Padding" TooltipColor=""/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="131" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="0" BAnchorOffset="251" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" TooltipType="OnCursor" Name="InfoPaneLabel2" BGColor="ffffffff" TextColor="UI_TextHoloTitle" TooltipColor="" TextId="" DT_VCENTER="0" DT_CENTER="1" Tooltip="" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" Picture="1" IgnoreMouse="1" NoClip="1" BottomEdgeControlsAnchor="InfoBottom">
-                <Pixie LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="50" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_HeaderTiny" Text="" TextId="Guild_InfoLabel" DT_CENTER="1"/>
+                <Pixie LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="50" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_HeaderTiny" Text="" TextId="Guild_InfoLabel" DT_CENTER="0"/>
                 <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="6" TAnchorPoint="0" TAnchorOffset="38" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="CRB_Scroll_HoloSmall" TooltipType="OnCursor" Name="GuildInfoText" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_VCENTER="0" DT_CENTER="1" Tooltip="" DT_WORDBREAK="1" VScroll="1" IgnoreMouse="1" AutoHideScroll="1" ReadOnly="1" MultiLine="1" NewWindowDepth="1"/>
                 <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-49" TAnchorPoint="0" TAnchorOffset="-13" RAnchorPoint="1" RAnchorOffset="295" BAnchorPoint="0" BAnchorOffset="228" RelativeToClient="1" Font="Default" Text="" Template="HoloWindowSound" Name="EditAdditionalInfo" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" NoClip="1" Sprite="" Visible="0" TooltipColor="" HideInEditor="0" CloseOnExternalClick="1" NewWindowDepth="0" NewControlDepth="5" TestAlpha="1">
                     <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-294" TAnchorPoint="0" TAnchorOffset="-14" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Backplate" TooltipColor="" Sprite="bk3:sprHolo_Alert_Flyout2" Picture="1" IgnoreMouse="1"/>
@@ -55,13 +57,15 @@
                     <Control Class="Button" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-78" TAnchorPoint="0" TAnchorOffset="21" RAnchorPoint="1" RAnchorOffset="-36" BAnchorPoint="0" BAnchorOffset="66" DT_VCENTER="1" DT_CENTER="1" Name="OptionsCloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="" Visible="1" HideInEditor="0">
                         <Event Name="ButtonSignal" Function="OnEditInfoCloseBtn"/>
                     </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="87" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="1" BAnchorOffset="-81" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="InputFraming" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="bk3:UI_BK3_Holo_Snippet"/>
-                    <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="94" TAnchorPoint="0" TAnchorOffset="69" RAnchorPoint="1" RAnchorOffset="-47" BAnchorPoint="1" BAnchorOffset="-85" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_ScrollListSmall" Name="EditInfoEditBox" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" Picture="0" DT_VCENTER="0" IgnoreMouse="1" TooltipColor="" MultiLine="1" DT_WORDBREAK="1" VScroll="1" AutoHideScroll="1" UseTemplateBG="0" Border="0" NewControlDepth="3">
+                    <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="87" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="1" BAnchorOffset="-82" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_InputBox" Name="EditInfoEditBox" BGColor="ffffffff" TextColor="UI_TextHoloBody" Picture="0" DT_VCENTER="0" IgnoreMouse="1" TooltipColor="" MultiLine="1" DT_WORDBREAK="1" VScroll="1" AutoHideScroll="1" UseTemplateBG="1" Border="1" NewControlDepth="3">
                         <Event Name="EditBoxReturn" Function="OnEditInfoEditBoxReturn"/>
                         <Event Name="EditBoxChanged" Function="OnEditInfoEditBoxChanged"/>
                     </Control>
                     <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-47" TAnchorPoint="1" TAnchorOffset="-88" RAnchorPoint=".5" RAnchorOffset="96" BAnchorPoint="1" BAnchorOffset="-35" DT_VCENTER="1" DT_CENTER="1" Name="EditInfoConfirmBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyBy" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyBy" DisabledTextColor="UI_BtnTextHoloDisabled" Text="" TextId="CRB_Save" TooltipColor="">
                         <Event Name="ButtonSignal" Function="OnEditInfoConfirmBtn"/>
+                    </Control>
+                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="87" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="160" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ValidAlert" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_Snippet_Alert" Tooltip="" Visible="0" TooltipFont="CRB_InterfaceSmall" TooltipId="" NewControlDepth="1" TextId="" HideInEditor="0" TransitionShowHide="1">
+                        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="1" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="14" BAnchorPoint="1" BAnchorOffset="7" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Symbol" TooltipColor="" Sprite="BK3:UI_BK3_StoryPanelAlert_Icon" Picture="1" IgnoreMouse="1" NoClip="1" Tooltip="" TooltipId="MatchMaker_InvalidName"/>
                     </Control>
                 </Control>
                 <Control Class="Button" Base="bk3:btnMetal_GearExpanderOptions" Font="CRB_InterfaceMedium_B" ButtonType="Check" RadioGroup="InfoOptionsRadioGroup" LAnchorPoint="1" LAnchorOffset="-30" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="31" DT_VCENTER="1" DT_CENTER="1" Name="EditInfoBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_TextHoloBody" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="9d666666" Text="" TextId="" Visible="1" GlobalRadioGroup="" LeftEdgeControlsAnchor="" RelativeToClient="1" TooltipColor="" HideInEditor="0" Template="Default" NewWindowDepth="0" NewControlDepth="2">
@@ -69,10 +73,15 @@
                     <Event Name="ButtonUncheck" Function="OnInfoEditClick"/>
                 </Control>
             </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="253" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="1" BAnchorOffset="-9" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="NewsFraming" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="">
-                <Pixie LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="1" RAnchorOffset="-50" BAnchorPoint="0" BAnchorOffset="100" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_HeaderSmall" Text="" TextId="GuildInfo_NewsAndAnnouncements" DT_CENTER="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="253" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="1" BAnchorOffset="-19" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="NewsFraming" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="">
+                <Pixie LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="1" RAnchorOffset="-50" BAnchorPoint="0" BAnchorOffset="100" Sprite="" BGColor="white" TextColor="UI_TextHoloTitle" Rotation="0" Font="CRB_HeaderSmall" Text="" TextId="GuildInfo_NewsAndAnnouncements" DT_CENTER="0"/>
                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Framing" TooltipColor="" Sprite="bk3:UI_BK3_Holo_InsetHeaderThin" Picture="1" IgnoreMouse="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="56" RAnchorPoint="1" RAnchorOffset="-3" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="NewsPaneList" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" VScroll="1" IgnoreMouse="1" Picture="0" Moveable="0" Border="0" UseTemplateBG="0"/>
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="57" RAnchorPoint="1" RAnchorOffset="-3" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="NewsPaneList" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" VScroll="0" IgnoreMouse="1" Picture="0" Moveable="0" Border="0" UseTemplateBG="0">
+                    <Control Class="Grid" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="NewsGrid" TooltipColor="" CellBGNormalColor="" CellBGSelectedColor="" CellBGNormalFocusColor="" CellBGSelectedFocusColor="" TextNormalColor="" TextSelectedColor="" TextNormalFocusColor="" TextSelectedFocusColor="" HeaderRow="0" SelectWholeRow="1" MultiColumn="1" RowHeight="35" CellBGBase="BK3:btnHolo_ListView_Mid" FocusOnMouseOver="1" VScroll="1" FocusOnClick="0">
+                        <Column Name="" Width="32" TextColor="White" Image="" MinWidth="42" MaxWidth="42" MergeLeft="0" SimpleSort="1" DT_VCENTER="1" DT_CENTER="1"/>
+                        <Column Name="" Width="1071" TextColor="White" Image="" MinWidth="10" MaxWidth="2048" MergeLeft="0" SimpleSort="1" DT_VCENTER="1"/>
+                    </Control>
+                </Control>
                 <Control Class="Button" Base="bk3:btnHolo_ExpandCollapseSmall" Font="DefaultButton" ButtonType="Check" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-33" TAnchorPoint="0" TAnchorOffset="25" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="0" BAnchorOffset="53" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="Button" TooltipColor="">
                     <Event Name="ButtonCheck" Function="OnNewsExpand"/>
                     <Event Name="ButtonUncheck" Function="OnNewsCollapse"/>
@@ -85,67 +94,7 @@
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="35" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="GuildNewsListItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ffffffff" TextId="" HScroll="0" UseTemplateBG="0" TooltipColor="" Tooltip="" IgnoreMouse="1">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="0" RAnchorOffset="35" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="0" Font="Default" Text="" Template="Default" Name="GuildNewsItemIcon" BGColor="ffffffff" TextColor="ffffffff" Sprite="CRB_Basekit:kitIcon_Gold_Exclamation" Picture="1" IgnoreMouse="1" NoClip="0" Visible="1" HideInEditor="0" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="0" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="GuildNewsItemText" BGColor="ffffffff" TextColor="WindowTitleColor" TooltipColor="" TextId="Challenges_NoProgress" DT_VCENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" Overlapped="0" NeverBringToFront="0"/>
-        <Pixie LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="1" TAnchorOffset="-1" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="0" Sprite="WhiteFill" BGColor="UI_AlphaPercent5" TextColor="black" Rotation="0" Font="Default"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="0" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="GuildNewsItemText" BGColor="ffffffff" TextColor="UI_TextHoloBodyCyan" TooltipColor="" TextId="Challenges_NoProgress" DT_VCENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" Overlapped="0" NeverBringToFront="0"/>
+        <Pixie LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="1" TAnchorOffset="-1" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="0" Sprite="WhiteFill" BGColor="UI_AlphaPercent5" TextColor="black" Rotation="0" Font="Default" Text=""/>
     </Form>
 </Forms>
- == 0 then
-		wndHandler:GetParent():SetText(Apollo.GetString("GuildBank_CantWithdrawMoney")) -- PermissionsMoneyBG
-	else
-		wndHandler:GetParent():SetText("") -- PermissionsMoneyBG
-	end
-end
-
-function GuildBank:OnPermissionsRepairCashWindow(wndHandler, wndControl) -- PermissionsRepairCashWindow
-	self.tWndRefs.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
-	if not wndHandler:GetAmount() or wndHandler:GetAmount() == 0 then
-		wndHandler:GetParent():SetText(Apollo.GetString("GuildBank_NoRepairAllowed")) -- PermissionsRepairBG
-	else
-		wndHandler:GetParent():SetText("") -- PermissionsRepairBG
-	end
-end
-
-function GuildBank:OnPermissionsCurrentBtnLeftRight(wndHandler, wndControl)
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
-		return
-	end
-
-	local guildOwner = self.tWndRefs.wndMain:GetData()
-	local tRankTable = guildOwner:GetRanks()
-	local nPreviousRank = self.tWndRefs.wndMain:FindChild("PermissionsMain"):GetData()
-
-	if wndHandler:GetName() == "PermissionsCurrentRightBtn" then
-		for iRank, tRankData in pairs(tRankTable) do
-			if iRank > nPreviousRank and tRankData.bValid then
-				self.tWndRefs.wndMain:FindChild("PermissionsMain"):SetData(iRank)
-				break
-			end
-		end
-	else
-		for iRank = #tRankTable, 1, -1 do
-			local tRankData = tRankTable[iRank]
-			if iRank < nPreviousRank and tRankData.bValid then
-				self.tWndRefs.wndMain:FindChild("PermissionsMain"):SetData(iRank)
-				break
-			end
-		end
-	end
-
-	self:DrawTabPermissions()
-end
-
-function GuildBank:DrawTabPermissions()
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
-		return
-	end
-
-	self.tWndRefs.wndMain:SetFocus()
-	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_PermissionsLabel")))
-
-	local guildOwner = self.tWndRefs.wndMain:GetData()
-	local wndParent = self.tWndRefs.wndMain:FindChild("PermissionsMain")
-	local nGuildRank = self.tWndRefs.wndMain:FindChild("PermissionsMain"):GetData()
-	local tRanksTable = guildOwner:GetRanks()
-	local nTabCount = guildOwner:GetBankTabCount()
-	local tCurrRankData = tRanksTable[nGuildRank]
-	local bCanEditRanks = tRanksTable[guildOwner:GetMyRank()].

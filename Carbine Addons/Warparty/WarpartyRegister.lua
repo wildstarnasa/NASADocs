@@ -28,8 +28,8 @@ local ktResultString =
 	[GuildLib.GuildResult_NotHighEnoughLevel] 	= Apollo.GetString("Warparty_InsufficientLevel"),
 }
 
-local crGuildNameLengthError = ApolloColor.new("red")
-local crGuildNameLengthGood = ApolloColor.new("ffffffff")
+local crGuildNameLengthError = ApolloColor.new("AlertOrangeYellow")
+local crGuildNameLengthGood = ApolloColor.new("UI_TextHoloBodyCyan")
 local kstrAlreadyInGuild = Apollo.GetString("Warparty_AlreadyInWarparty")
 
 -----------------------------------------------------------------------------------------------
@@ -123,6 +123,8 @@ function WarpartyRegister:Validate()
 	local bValid = self:HelperCheckForEmptyString(self.tCreate.strName) and bIsTextValid
 
 	self.wndRegister:Enable(bValid)
+	self.wndMain:FindChild("ValidAlert"):Show(not bValid)
+	
 
 	local nNameLength = string.len(self.tCreate.strName or "")
 	if nNameLength < 3 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
@@ -201,16 +203,3 @@ end
 -----------------------------------------------------------------------------------------------
 local WarpartyRegisterInst = WarpartyRegister:new()
 WarpartyRegisterInst:Init()
-                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0.5" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LblHealth" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-                        <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LblTier" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-                    </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="210" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="280" BAnchorPoint="0" BAnchorOffset="100" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="WndPlug5" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_Basekit:kitBase_HoloBlue_IconBaseStretch" Picture="1" IgnoreMouse="1">
-                        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="0.5" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LblHealth" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-                        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0.5" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LblTier" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-                    </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="210" TAnchorPoint="0" TAnchorOffset="105" RAnchorPoint="0" RAnchorOffset="310" BAnchorPoint="0" BAnchorOffset="225" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="WndPlug6" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_Basekit:kitBase_HoloBlue_IconBaseStretch" Picture="1" IgnoreMouse="1">
-                        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="0.5" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LblHealth" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-                        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0.5" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LblTier" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-                    </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="105" TAnchorPoint="0" TAnchorOffset="185" RAnchorPoint="0" RAnchorOffset="205" BAnchorPoint="0" BAnchorOffset="245" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="WndPlug7" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_Basekit:kitBase_HoloBlue_IconBaseStretch" Picture="1" IgnoreMouse="1">
-                        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0.5" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="

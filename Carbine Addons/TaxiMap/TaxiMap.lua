@@ -308,7 +308,12 @@ function TaxiMap:OnGenerateTooltip(wndHandler, wndControl, eType, nX, nY)
 		for key, tObject in pairs(tObjects) do
 			local tTaxi = self.tTaxiObjects[tObject.id]
 			
-			strTooltipString = string.format("<P Font=\"%s\" TextColor=\"%s\">" .. tObject.strName .. "</P>", "CRB_InterfaceMedium", "ffffffff")
+			local strName = tTaxi.strName
+			if tTaxi.nRecommendedMinLevel and tTaxi.nRecommendedMaxLevel then
+				strName = String_GetWeaselString(Apollo.GetString("TaxiMap_LocationNameTooltip"), tTaxi.strName, tTaxi.nRecommendedMinLevel, tTaxi.nRecommendedMaxLevel)
+			end
+			
+			strTooltipString = string.format("<P Font=\"%s\" TextColor=\"%s\">" .. strName .. "</P>", "CRB_InterfaceMedium", "ffffffff")
 			
 			if tTaxi.bUnlocked then
 				local tPath = self.tTaxiRoutes[tTaxi.idNode]
@@ -383,5 +388,3 @@ end
 -----------------------------------------------------------------------------------------------
 local TaxiMapInst = TaxiMap:new()
 TaxiMapInst:Init()
-ªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª	 	‘	 bªªªªù2  B¢				ÿõ ` ¦9e1[[[[ôh‚&h‚&D)bTTTT H‚(I”(b  PPPP        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªªK! 	‘Dßÿ  P`À€NL’$IŠI    ªªªª¤NI$I’$A  UUUúR€/(A8ÆAÕUU\OÂ$H"&mk‚WTTQ        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªªŒ)‘É›Ä4¥ASeuUúR 0 BA%5•ÿÿ      B$)ÕÕWTÿÿ      e1$)  Uÿÿ      …1$)>–Õø
-`9€€…1‚T\P` I’$M‚'bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª ÉœlÉbªªªªù+ p B¢			ÿøp  Æ9e1[YiIôh‚&h‚&$)‚TTVw I$	’b  PPPP        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª I$I’$ÿÿÿÿªªªªK   \ç  WT\PNL H$D    ªªªªúR1É‘¤a  5•øtÛP †1  ñUWÿøIbÛ¶ a   ÿU øIbß¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIrÛ¶ a   ÿU øIbß¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIrÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIâÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIrÛ¶ a   ÿU øIbß¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIrÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU øIbÛ¶ a   ÿU úR9I Ã  5••?ÿÿ      B$)\[U¿ÿÿ      ¦9!UW]`ÿÿ      $)ã *º«­ÿê     …1Â@‚+øN²'h<E)bUUWT	 Iò$xB=‚aªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª        bªªªª%É›¤É—¢bUUÕúS @ hR¢õ-	ÿÿ      hRe1uª øø`‚%P$'Jbxxz I	’ b  PPPP        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªª        ÿÿÿÿªªªªK9IÄßÿ‚p@€ NMI’$I$s  UUUTML          ªªªªúRÄI’$a  ÕUUúR `ÛI’$b   ÿUUúQ `ÛI’$b   ÿUUúQ `ÛI’$b   ÿUUúR `ÛI’$b   ÿUUúQ `ÛI’$b   ÿUUúQ `ÛI’$b   ÿUU

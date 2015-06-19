@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_ObjectiveTracker_IconTask" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="70" x1="70" x2="70" x3="70" x4="70" x5="93" y0="103" y1="103" y2="103" y3="103" y4="103" y5="127" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconZone" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="46" x1="46" x2="46" x3="46" x4="46" x5="70" y0="103" y1="103" y2="103" y3="103" y4="103" y5="127" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconWorld" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="22" x1="22" x2="22" x3="22" x4="22" x5="45" y0="103" y1="103" y2="103" y3="103" y4="103" y5="127" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconPinned" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="94" x1="94" x2="94" x3="94" x4="94" x5="117" y0="103" y1="103" y2="103" y3="103" y4="103" y5="127" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconImbument" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="118" x1="118" x2="118" x3="118" x4="118" x5="141" y0="103" y1="103" y2="103" y3="103" y4="103" y5="127" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconContract" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="22" x1="22" x2="22" x3="22" x4="22" x5="45" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconNearbyPlayers" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="46" x1="46" x2="46" x3="46" x4="46" x5="70" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconChallenge" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="70" x1="70" x2="70" x3="70" x4="70" x5="93" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconQuest" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="94" x1="94" x2="94" x3="94" x4="94" x5="117" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconPathSettler" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="118" x1="118" x2="118" x3="118" x4="118" x5="141" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconPathScientist" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="142" x1="142" x2="142" x3="142" x4="142" x5="165" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconPathExplorer" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="166" x1="166" x2="166" x3="166" x4="166" x5="189" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_IconPathSoldier" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="190" x1="190" x2="190" x3="190" x4="190" x5="213" y0="78" y1="102" y2="102" y3="102" y4="102" y5="102" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_BG" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="0" x1="4" x2="5" x3="19" x4="20" x5="21" y0="0" y1="1" y2="2" y3="155" y4="156" y5="158" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_ObjectiveTracker_Buttons" Cycle="1">
+        <Frame Texture="ui\assets\textures\ObjectiveTracker.tga" x0="23" x1="84" x2="84" x3="84" x4="85" x5="86" y0="128" y1="128" y2="129" y3="158" y4="158" y5="158" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="SettingsButton" Texture="ui\assets\textures\ObjectiveTracker.tga" x0="22" x1="22" x2="22" x3="22" x4="22" x5="84" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" StateBits="15" Direction="Across"/>
+    <AutoButton Name="TrackerButton" Texture="ui\assets\textures\ObjectiveTracker.tga" x0="22" x1="22" x2="22" x3="22" x4="22" x5="73" y0="39" y1="39" y2="39" y3="39" y4="39" y5="77" StateBits="15" Direction="Across"/>
+</Sprites>

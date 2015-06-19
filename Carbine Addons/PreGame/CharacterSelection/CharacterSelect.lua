@@ -6,6 +6,7 @@
 require "Apollo"
 require "Window"
 require "CharacterScreenLib"
+require "PreGameLib"
 
 local CharacterSelection = {}
 
@@ -434,7 +435,7 @@ end
 function CharacterSelection:SetCharacterCreateModel(nId)
 	--Set the actor if we don't have one or update to match race/gender
 	local tSelected = g_arCharacters[nId]
-	g_arActors.primary = g_scene:AddActorByRaceGender(1, tSelected.idRace, tSelected.idGender)
+	g_arActors.primary = g_scene:AddActorByRaceGenderClass(1, tSelected.idRace, tSelected.idGender, tSelected.idClass)
 
 	PreGameLib.Event_FireGenericEvent(
 		"Select_SetModel",
@@ -824,7 +825,7 @@ function CharacterSelection:OnRandomLastName()
 	local nFactionId = tSelected.idFaction
 	local nGenderId = tSelected.idGender
 	
-	local tName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+	local tName = PreGameLib.GetRandomName(nRaceId, nGenderId, nFactionId)
 	
 	self.wndRename:FindChild("RenameCharacterLastNameEntry"):SetText(tName.strLastName)
 	self.wndRename:FindChild("RenameCharacterFirstNameEntry"):SetText(tName.strFirstName)
@@ -838,16 +839,3 @@ end
 ---------------------------------------------------------------------------------------------------
 local CharacterSelectionInst = CharacterSelection:new()
 CharacterSelection:Init()
-LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-8" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="Trusted IPs" TextId="" DT_CENTER="1" Line="0"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="22" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="93" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_TextCallout" TooltipType="OnCursor" Name="TrustedIPFlyoutLabel" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="AccountServices_TrustedIPDescription" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" NewWindowDepth="1" AutoScaleText="0" Border="1" UseTemplateBG="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="128" RAnchorPoint="1" RAnchorOffset="1" BAnchorPoint="0" BAnchorOffset="239" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="TrustedIPContent" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" VScroll="1" Border="1" UseTemplateBG="1"/>
-            <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="65" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="0.5" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="356" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="TrustedIPConfirmBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="AccountServices_ForgetIP" TestAlpha="1" DT_WORDBREAK="1" ButtonTextXMargin="18">
-                <Event Name="ButtonSignal" Function="OnTrustedIPForgetBtn"/>
-            </Control>
-            <Control Class="Button" Base="BK3:btnHolo_Red_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="1" RAnchorOffset="-65" BAnchorPoint="0" BAnchorOffset="356" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="CRB_Back" TestAlpha="1">
-                <Event Name="ButtonSignal" Function="OnTrustedIPFlyoutCloseBtn"/>
-            </Control>
-            <Control Class="Button" Base="BK3:btnHolo_Close" Font="CRB_Header12" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-73" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-31" BAnchorPoint="0" BAnchorOffset="72" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="">
-                <Event Name="ButtonSignal" Function="OnTrustedIPFlyoutCloseBtn"/>
-            </Control>
-            <Pixie LAnchorPoint=

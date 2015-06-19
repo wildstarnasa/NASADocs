@@ -198,4 +198,3 @@ end
 
 local HUDInteractInst = HUDInteract:new()
 HUDInteractInst:Init()
-en

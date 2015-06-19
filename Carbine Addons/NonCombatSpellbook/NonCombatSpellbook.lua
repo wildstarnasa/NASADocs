@@ -20,14 +20,12 @@ local NonCombatSpellbook = {}
 
 local karTabTypes =
 {
-	Mount = 1,
 	Misc = 2,
 	Cmd = 3
 }
 
 local karTabDragDropType =
 {
-	[karTabTypes.Mount] = "DDNonCombat",
 	[karTabTypes.Misc] = "DDNonCombat",
 	[karTabTypes.Cmd] = "DDGameCommand"
 }
@@ -62,7 +60,6 @@ function NonCombatSpellbook:new(o)
 
 	o.arLists =
 	{
-		[karTabTypes.Mount] = {},
 		[karTabTypes.Misc] = {},
 		[karTabTypes.Cmd] = {}
 	}
@@ -100,10 +97,8 @@ function NonCombatSpellbook:OnDocumentReady()
 	self.wndMain:Show(false)
 	
 	self.wndEntryContainer = self.wndMain:FindChild("EntriesContainer")
-	self.wndEntryContainerMounts = self.wndMain:FindChild("EntriesContainerMounts")
 	self.wndEntryContainerMisc = self.wndMain:FindChild("EntriesContainerMisc")
 	self.wndTabsContainer = self.wndMain:FindChild("TabsContainer")
-	self.wndTabsContainer:FindChild("BankTabBtnMounts"):SetData(karTabTypes.Mount)
 	self.wndTabsContainer:FindChild("BankTabBtnMisc"):SetData(karTabTypes.Misc)
 	self.wndTabsContainer:FindChild("BankTabBtnCmd"):SetData(karTabTypes.Cmd)
 end
@@ -146,7 +141,6 @@ function NonCombatSpellbook:Redraw()
 		return
 	end
 	
-	self.arLists[karTabTypes.Mount] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
 	self.arLists[karTabTypes.Misc] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}
 	self.arLists[karTabTypes.Cmd] = {}
 
@@ -168,17 +162,13 @@ end
 
 function NonCombatSpellbook:ShowTab()
 	self.wndEntryContainer:DestroyChildren()
-	self.wndEntryContainerMounts:DestroyChildren()
 	self.wndEntryContainerMisc:DestroyChildren()
 			
 	self.wndEntryContainer:Show(self.nSelectedTab == karTabTypes.Cmd)
 	self.wndEntryContainerMisc:Show(self.nSelectedTab == karTabTypes.Misc)
-	self.wndEntryContainerMounts:Show(self.nSelectedTab == karTabTypes.Mount)
 
 	for idx, tData in pairs(self.arLists[self.nSelectedTab]) do
-		if self.nSelectedTab == karTabTypes.Mount and tData.bIsActive then
-			self:HelperCreateMountEntry(tData)
-		elseif self.nSelectedTab == karTabTypes.Misc and tData.bIsActive then
+		if self.nSelectedTab == karTabTypes.Misc and tData.bIsActive then
 			self:HelperCreateMiscEntry(tData)
 		elseif self.nSelectedTab == karTabTypes.Cmd then
 			self:HelperCreateGameCmdEntry(tData)
@@ -195,30 +185,13 @@ function NonCombatSpellbook:ShowTab()
 	end
 
 	self.wndEntryContainer:ArrangeChildrenVert(0, SortFunction(a,b))
-	self.wndEntryContainerMounts:ArrangeChildrenVert(0, SortFunction(a,b))
 	self.wndEntryContainerMisc:ArrangeChildrenVert(0, SortFunction(a,b))
 	self.wndEntryContainer:SetText(#self.wndEntryContainer:GetChildren() == 0 and Apollo.GetString("NCSpellbook_NoResultsAvailable") or "")
-	self.wndEntryContainerMounts:SetText(#self.wndEntryContainerMounts:GetChildren() == 0 and Apollo.GetString("NCSpellbook_NoResultsAvailable") or "")
 	self.wndEntryContainerMisc:SetText(#self.wndEntryContainerMisc:GetChildren() == 0 and Apollo.GetString("NCSpellbook_NoResultsAvailable") or "")
 
 	
 	for idx, wndTab in pairs(self.wndTabsContainer:GetChildren()) do
 		wndTab:SetCheck(self.nSelectedTab == wndTab:GetData())
-	end
-end
-
-function NonCombatSpellbook:HelperCreateMountEntry(tData)
-	local wndEntry = Apollo.LoadForm(self.xmlDoc, "MountEntry", self.wndEntryContainerMounts, self)
-	wndEntry:SetData(tData)
-
-	wndEntry:FindChild("Title"):SetText(tData.strName)
-	wndEntry:FindChild("ActionBarButton"):SetContentId(tData.nId)
-	wndEntry:FindChild("ActionBarButton"):SetData(tData.nId)
-	wndEntry:FindChild("ActionBarButton"):SetSprite(tData.tTiers[tData.nCurrentTier].splObject:GetIcon())
-	wndEntry:FindChild("MountPreviewBtn"):SetData(tData)
-
-	if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
-		Tooltip.GetSpellTooltipForm(self, wndEntry, tData.tTiers[tData.nCurrentTier].splObject)
 	end
 end
 
@@ -250,7 +223,6 @@ end
 
 function NonCombatSpellbook:OnTabBtnCheck(wndHandler, wndControl, eMouseButton)
 	self.nSelectedTab = wndControl:GetData()
-	self:OnCloseMountPreview()
 	self:ShowTab()
 end
 
@@ -326,116 +298,5 @@ function NonCombatSpellbook:OnGenerateGameCmdTooltip(wndControl, wndHandler, eTy
 	end
 end
 
----------------------------------------------------------------------------------------------------
--- Mount Functions
----------------------------------------------------------------------------------------------------
-
-function NonCombatSpellbook:OnMountPreviewCheck(wndHandler, wndControl)
-	local tMountData = wndHandler:GetData()
-	if not tMountData then
-		return
-	end
-	
-	local tMountTierData = tMountData.tTiers[tMountData.nCurrentTier]
-	if tMountTierData and tMountTierData.nPreviewCreatureId then
-		self.wndMain:FindChild("MountPortrait"):SetCostumeToCreatureId(tMountTierData.nPreviewCreatureId)
-		self.wndMain:FindChild("MountPortrait"):SetCamera("Paperdoll")
-		if tMountTierData.bIsHoverboard then
-			self.wndMain:FindChild("MountPortrait"):SetAttachment(PetCustomizationLib.HoverboardAttachmentPoint, tMountTierData.nPreviewHoverboardItemDisplay)
-		end
-		self.wndMain:FindChild("MountPortrait"):SetModelSequence(150)
-		self.wndMain:FindChild("MountPreview"):Show(true)
-	end
-end
-
-function NonCombatSpellbook:OnCloseMountPreview(wndHandler, wndControl) -- Also from Lua
-	if self.nSelectedTab == karTabTypes.Mount then
-		for idx, wndCurr in pairs(self.wndEntryContainerMounts:GetChildren()) do
-			if wndCurr:FindChild("MountPreviewBtn") then
-				wndCurr:FindChild("MountPreviewBtn"):SetCheck(false)
-			end
-		end
-	end
-	self.wndMain:FindChild("MountPreview"):Show(false)
-end
-
-function NonCombatSpellbook:OnRotateRight()
-	self.wndMain:FindChild("MountPortrait"):ToggleLeftSpin(true)
-end
-
-function NonCombatSpellbook:OnRotateRightCancel()
-	self.wndMain:FindChild("MountPortrait"):ToggleLeftSpin(false)
-end
-
-function NonCombatSpellbook:OnRotateLeft()
-	self.wndMain:FindChild("MountPortrait"):ToggleRightSpin(true)
-end
-
-function NonCombatSpellbook:OnRotateLeftCancel()
-	self.wndMain:FindChild("MountPortrait"):ToggleRightSpin(false)
-end
-
 local NonCombatSpellbookInst = NonCombatSpellbook:new()
 NonCombatSpellbookInst:Init()
-urrNeighbor.strCharacterName)
-		return
-	end
-
-	if tCurrNeighbor == nil then
-		return false
-	end
-	self.wndLastSelected = nil
-	self:UpdateControls()
-end
-
--- Add Sub-Window Functions
-function NeighborsList:OnAddBtn(wndHandler, wndControl)
-	local wndAdd = wndControl:FindChild("AddWindow")
-	wndAdd:FindChild("AddMemberEditBox"):SetText("")
-	wndAdd:FindChild("AddMemberEditBox"):SetFocus()
-	wndAdd:Show(true)
-end
-
-function NeighborsList:OnAddMemberYesClick( wndHandler, wndControl )
-	local wndParent = wndControl:GetParent()
-	local strName = wndParent:FindChild("AddMemberEditBox"):GetText()
-
-	if strName ~= nil and strName ~= "" then
-		HousingLib.NeighborInviteByName(strName)
-		Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("Social_AddedToNeighbors"), strName))
-	end
-	wndControl:GetParent():Show(false)
-end
-
--- Modify Sub-Window Functions
-function NeighborsList:OnModifyBtn(wndHandler, wndControl)
-
-	local tCurrNeighbor = wndControl:GetData()
-	if tCurrNeighbor == nil then
-		return
-	end
-	local wndControls = self.wndMain:FindChild("Controls")
-	local wndModify = wndControl:FindChild("ModifyWindow")
-	wndModify:SetData(tCurrNeighbor)
-	-- set the permissions button
-	if tCurrNeighbor.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
-		wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToNormal"))
-	else
-		wndControls:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
-	end
-
-	wndModify:Show(true)
-end
-
-function NeighborsList:OnModifyPermissionsBtn(wndHandler, wndControl)
-	local tCurr = wndControl:GetData()
-	
-	if tCurr == nil then
-		return
-	end
-
-	if tCurr ~= nil and tCurr.ePermissionNeighbor == HousingLib.NeighborPermissionLevel.Roommate then
-		HousingLib.NeighborSetPermission(tCurr.nId, HousingLib.NeighborPermissionLevel.Normal)
-		self.wndMain:FindChild("ModifyPermissionsBtn"):SetText(Apollo.GetString("Neighbors_SetToRoommate"))
-	else
-		HousingLib.NeighborSetPermission(tCurr.nId, HousingLib.NeighborPermissionL

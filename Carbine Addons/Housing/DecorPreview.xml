@@ -23,39 +23,3 @@
         </Control>
     </Form>
 </Forms>
-Font="Default" Text="" Template="Default" Name="NumberBacker" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitAccent_Glow_FadedBlue" TooltipColor=""/>
-        <Control Class="ProgressBar" Name="HazardProgress" ProgressFull="CRB_Basekit:kitIProgBar_HoloFrame_FillBlue" ProgressEdgeGlow="CRB_Basekit:kitIProgBar_HoloFrame_CapArrowR" EdgeGlowOn="1" AutoSetText="0" DrawTicks="1" TickOn="" TickOff="" BGColor="white" TextColor="white" Sprite="" Picture="0" LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="278" BAnchorPoint="0" BAnchorOffset="33" LeftEdgeControlsAnchor="" TopEdgeControlsAnchor="" RightEdgeControlsAnchor="" BottomEdgeControlsAnchor="" Text="" TextId="" NewControlDepth="5" EdgeGlow="1" NoClipEdgeGlow="1" TooltipColor="" BarColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="324" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="3" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceLarge_O" Text="" Template="Default" Name="Label" BGColor="white" TextColor="white" TextId="CRB_Breath_" DT_VCENTER="1" DT_CENTER="0" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="34" BAnchorPoint="0" BAnchorOffset="34" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="Icon" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitIcon_Gold_HazardGeneral" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="287" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="319" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceLarge_O" Text="55" Template="Default" Name="NumberText" BGColor="white" TextColor="UI_TextHoloBodyHighlight" NewControlDepth="5" TextId="" DT_VCENTER="1" DT_CENTER="1" TooltipColor=""/>
-    </Form>
-</Forms>
-rite(tSprites.strEdgeColor)
-end
-
-local HazardInst = Hazards:new()
-HazardInst:Init()
------------------------------------------------------------------------------------------------
--- Interaction
------------------------------------------------------------------------------------------------
-
-function HUDInteract:OnAlertItemMouseEnter(wndHandler, wndControl)
-	local wndParent = wndHandler:GetParent()
-	wndParent:FindChild("AlertItemHover"):Show(true)
-end
-
-function HUDInteract:OnAlertItemMouseExit(wndHandler, wndControl)
-	local wndParent = wndHandler:GetParent()
-	wndParent:FindChild("AlertItemHover"):Show(false)
-end
-
-function HUDInteract:OnToggleInteractPopoutText(bToggle)
-	if self.wndMain and self.wndMain:IsValid() and self.wndMain:FindChild("AlertPopout") then
-		self.wndMain:FindChild("AlertPopout"):Show(bToggle, not bToggle)
-		self.wndMain:FindChild("AlertItemKeybind"):SetSprite(bToggle and "sprAlert_Square_Blue" or "sprAlert_Square_Black")
-	end
-end
-
-local HUDInteractInst = HUDInteract:new()
-HUDInteractInst:Init()
-il

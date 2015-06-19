@@ -112,6 +112,7 @@ end
 function TutorialMenu:OnTutorialMenuOn()
 	self:UpdateVisibilityFlags()
 	self.wndResetBlocker:Show(false)
+	self.wndMain:FindChild("ShowTutorialsBtn"):SetCheck(g_InterfaceOptions.Carbine.bShowTutorials)
 	self.wndMain:Show(true) -- show the window
 	self.wndMain:ToFront()
 end
@@ -370,8 +371,10 @@ function TutorialMenu:OnEnableAllBtn(wndHandler, wndControl)
 	--self:UpdateVisibilityFlags()
 end
 
-function TutorialMenu:OnHideAllBtn(wndHandler, wndControl)
-	Event_FireGenericEvent("HideAllTutorials")
+function TutorialMenu:OnToggleTutorials(wndHandler, wndControl)
+	g_InterfaceOptions.Carbine.bShowTutorials = wndHandler:IsChecked()
+	Event_FireGenericEvent("OptionsUpdated_ShowTutorials")
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_TutorialsToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
 end
 
 function TutorialMenu:OnHideAllTutorials()
@@ -467,8 +470,3 @@ end
 -----------------------------------------------------------------------------------------------
 local TutorialMenuInst = TutorialMenu:new()
 TutorialMenuInst:Init()
-ype="OnCursor" Name="OriginPieceDropdownHeaderText" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" Picture="1" IgnoreMouse="0" Sprite="" TextId="CRB__2" DT_VCENTER="1" DT_WORDBREAK="1" DT_BOTTOM="0" DT_CENTER="0" AutoScaleText="1"/>
-    </Form>
-    <Form Class="Window" Base="kitBtn_List_Holo" Font="CRB_InterfaceMedium_B" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="40" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="OriginPieceDropdownListItem" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ff2f94ac" PressedTextColor="ff31fcf6" FlybyTextColor="ff2f94ac" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="" Tooltip="" RelativeToClient="1" Overlapped="1">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0.5" TAnchorOffset="-11" RAnchorPoint="0" RAnchorOffset="30" BAnchorPoint="0.5" BAnchorOffset="11" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="OriginPieceDropdownListLockIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitIcon_Holo_Lock" NoClip="0" Tooltip="" TooltipFont="CRB_InterfaceSmall_O" TooltipId="Tradeskills_LockedTier"/>
-        <Control Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceMedium_B" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" TooltipType=

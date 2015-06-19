@@ -48,7 +48,7 @@
             <Event Name="ButtonCheck" Function="OnQuestListToggle"/>
             <Event Name="ButtonUncheck" Function="OnQuestListToggle"/>
         </Control>
-        <Control Class="EditBox" Name="Description" ReadOnly="0" MultiLine="1" Template="Holo_ScrollListSmall" VScroll="1" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="1" TAnchorOffset="-364" RAnchorPoint="1" RAnchorOffset="-53" BAnchorPoint="1" BAnchorOffset="-190" BGColor="black" TextColor="UI_TextHoloBody" Focus="True" Border="1" UseTemplateBG="1" RelativeToClient="1" TextId="" TooltipColor="" Text="" WantReturn="1" DT_WORDBREAK="1" Font="CRB_Interface10" NewControlDepth="1">
+        <Control Class="EditBox" Name="Description" ReadOnly="0" MultiLine="1" Template="Holo_InputBox" VScroll="1" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="1" TAnchorOffset="-364" RAnchorPoint="1" RAnchorOffset="-53" BAnchorPoint="1" BAnchorOffset="-190" BGColor="black" TextColor="UI_TextHoloBody" Focus="True" Border="1" UseTemplateBG="1" RelativeToClient="1" TextId="" TooltipColor="" Text="" WantReturn="1" DT_WORDBREAK="1" Font="CRB_Interface10" NewControlDepth="1">
             <Event Name="EditBoxReturn" Function="OnOkBtn"/>
             <Event Name="EditBoxChanged" Function="OnDescriptionChanged"/>
         </Control>
@@ -64,7 +64,7 @@
         <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-250" TAnchorPoint="1" TAnchorOffset="-151" RAnchorPoint="1" RAnchorOffset="-38" BAnchorPoint="1" BAnchorOffset="-98" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="InsertPosition" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TextId="ErrorDialog_InsertPosition" WindowSoundTemplate="HoloButtonLarge">
             <Event Name="ButtonSignal" Function="OnInsertPosition"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Metal_Primary_NoNav" TooltipType="OnCursor" Name="MainFrame" TooltipColor="" Picture="0" IgnoreMouse="1" Border="1" UseTemplateBG="1" HideInEditor="0" NewControlDepth="2">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Metal_Primary_NoNav" TooltipType="OnCursor" Name="MainFrame" TooltipColor="" Picture="0" IgnoreMouse="1" Border="1" UseTemplateBG="1" HideInEditor="1" NewControlDepth="2">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-2" TAnchorPoint="0" TAnchorOffset="637" RAnchorPoint="1" RAnchorOffset="4" BAnchorPoint="0" BAnchorOffset="707" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="MetalFooter" TooltipColor="" Sprite="BK3:UI_BK3_Metal_Footer_Large" Picture="1" IgnoreMouse="1"/>
             <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-150" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint=".5" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="65" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTitleYellow" Template="Default" TooltipType="OnCursor" Name="Header" TooltipColor="" Sprite="BK3:sprMetal_Framing_Header" Picture="1" IgnoreMouse="1" TextId="InterfaceMenu_ReportBug" DT_CENTER="1" DT_VCENTER="1"/>
         </Control>
@@ -85,5 +85,3 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="45" TAnchorPoint="0" TAnchorOffset="589" RAnchorPoint="0" RAnchorOffset="289" BAnchorPoint="0" BAnchorOffset="625" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="String3" TooltipColor="" TextId="ErrorDialog_WorldPosition" DT_VCENTER="1" DT_WORDBREAK="1"/>
     </Form>
 </Forms>
-¿:ÑŒÑ:€KñŒ¤ý½$'¦8í‡	Ü‹NDöãÑx’õ×„ÓX”†¿_ðÜ?€Giô{¹;>µpÖØ¶ïÖó=ûQ¼®Öa0êb£Æqk'@þ[-ÝÝL°®bN
-Cl³¬Vôü®dn§â÷%Béðû¶KŒ4æò<AÞ×UŽùVÔœ,†`wôþU~yó>¸÷ºõsøÃWv\U›Ú”!—vþ(ñ¦àP_P²éýŠ ò3÷-7Q}G{“8Oˆ1}ÿžòÿÿ/ýýw\Bûïv=ÿ¯ò÷…Àñ=À÷;·ÏÎ{B9Ñ­q°4ÂîßMêÏÇ"ÿÞì7pšâ=ß>-EP?n[¼Ž‹¹ò~æNh/8â‘Š¼*Ô_)¸ñM4gHâà&‘’,šµsZ<Ñ¢îv[óÊG÷/o›ï#—x%.Ê)‘ÿ{¼Ñ®-öø"­íù5fœMw“(ÞWµìß–¿'wðpèßÏBþýòïŸe7Rýâ=åßKŒ>¬Än¿± ¾Ï,ò¾÷oœûqEu·ƒ÷·6œ•AÜ;Æ3äšE¦ÜLùà«H¹GÅjÂõúß¥›Cãò¢_ïhæiæìÉ'ˆg±Ü3‚Dôÿãþžÿÿ°†þG‘‚U¸ÓixhqØß,ïÑÃÜc¾ø.ñ ENab¥à&‚	*[;öy2¼;\)Ñýœo:{’Åp®·×Áû™ƒø¼Â;[*wü`Ý+gÆW/¾Ö°!¶òdÖ.ä}"~õ9;ï‰PŽ“÷#åÿQ¼!Ý¬Åoü÷8¡A¯o‡íoYÅ„Ráð‡&.§¹ðº=ñ¹EåªÑú¢–D(ˆÝÑ}åÌáL>ùK5ýÅ‚™¾*æŽzÀ¶D#6M‹¿¿ïS¤¦ÐûËm|/±ÈòŒzÙwâ;×ßRÏçeß¦˜·óhmXüiSŒyüË¾ðùMÄA %åR|¥µ8ÁVßDù#ágŽdx|ü?çá/Ù×yúÿüƒ”DQœjÉ<

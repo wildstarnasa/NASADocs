@@ -41,6 +41,7 @@ function ProgressLog:OnDocumentReady()
 	Apollo.RegisterEventHandler("FloatTextPanel_ToggleAchievementWindow", "ToggleAchievementsWithData", self)
 	Apollo.RegisterEventHandler("PlayerPathShow", "TogglePlayerPath", self)
 	Apollo.RegisterEventHandler("PlayerPathShow_NoHide", "ShowPlayerPath", self )
+	Apollo.RegisterEventHandler("ChallengesShow_NoHide", "ShowChallenges", self )
 
     g_wndProgressLog = Apollo.LoadForm(self.xmlDoc, "ProgressLogForm", nil, self)
 	g_wndProgressLog:Show(false, true)
@@ -145,6 +146,13 @@ function ProgressLog:ToggleChallenges()
 	end
 end
 
+function ProgressLog:ShowChallenges(clgReceived)
+	g_wndProgressLog:Show(true)
+	g_wndProgressLog:ToFront()
+	self.wndOptions:SetRadioSel("PLogOptions", 3)
+	self:PLogOptionCheck(nil, nil, false, clgReceived)
+end
+
 function ProgressLog:ToggleAchievements()
 	if g_wndProgressLog:IsShown() and self.nLastSelection == 4 then
 		g_wndProgressLog:Show(false)
@@ -172,9 +180,7 @@ end
 
 function ProgressLog:PLogOptionCheck(wndHandler, wndControl, bToggledFromCall, tUserData)
 	local nPLogOption = self.wndOptions:GetRadioSel("PLogOptions")
-	if nPLogOption ~= 1 then -- the player's switched to anything but QuestLog (which auto-selects)
-		Event_FireGenericEvent("PL_TabChanged") -- stops anything going on in the window
-	end
+	Event_FireGenericEvent("PL_TabChanged") -- stops anything going on in the window
 
 	for idx = 1, 4 do
 		self.tContent[idx]:Show(false)
@@ -185,7 +191,7 @@ function ProgressLog:PLogOptionCheck(wndHandler, wndControl, bToggledFromCall, t
 	elseif nPLogOption == 2 then
 		Event_FireGenericEvent("PL_TogglePlayerPath", tUserData)
 	elseif nPLogOption == 3 then
-		Event_FireGenericEvent("PL_ToggleChallengesWindow")
+		Event_FireGenericEvent("PL_ToggleChallengesWindow", tUserData)
 	elseif nPLogOption == 4 then
 		Event_FireGenericEvent("PL_ToggleAchievementWindow", tUserData)
 	end
@@ -201,57 +207,3 @@ end
 
 local ProgressLogInst = ProgressLog:new()
 ProgressLogInst:Init()
- tRealm in ipairs(tList) do
-		if tRealm.nRealmPVPType == PreGameLib.CodeEnumRealmPVPType.PVP then
-			table.insert(tFilteredList, tRealm)
-		end
-	end
-
-	self:BuildListWindows(tFilteredList)
-end
-
-function RealmSelect:FilterForMine(tList)
-	local tFilteredList = {}
-
-	for idx, tRealm in ipairs(tList) do
-		if tRealm.nCount > 0 then
-			table.insert(tFilteredList, tRealm)
-		end
-	end
-
-	self:BuildListWindows(tFilteredList)
-end
-
-function RealmSelect:BuildListWindows(tList, tListMine)
-	self.wndRealmList:DestroyChildren()
-	self.wndRealmList:RecalculateContentExtents()
-
-	self.btnSelected = nil
-
-	local arPopulationStrings = {Apollo.GetString("RealmPopulation_Low"),
-								 Apollo.GetString("RealmPopulation_Medium"),
-								 Apollo.GetString("RealmPopulation_High"),
-								 Apollo.GetString("RealmPopulation_Full") }
-
-	for idx, tRealm in ipairs(tList) do
-		self:HelperConfigureRealmEntry(tRealm)
-	end
-
-	self:SortList()
-
-	----
-
-	if self.btnSelected ~= nil then
-		self.wndRealmList:SetRadioSelButton("SelectedRealm", self.btnSelected)
-		self.wndRealmList:EnsureChildVisible(self.btnSelected)
-		self:OnRealmSelect(self.btnSelected, self.btnSelected)
-		self.wndSelectForm:FindChild("SelectBtn"):Enable(true)
-	else
-		self.wndSelectForm:FindChild("SelectBtn"):Enable(false)
-	end
-
-	self.wndSelectForm:SetFocus()
-end
-
-local tSortTypeFieldMap =
-{	-

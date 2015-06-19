@@ -29,6 +29,7 @@ function InterfaceMenuList:OnSave(eType)
 	local tSavedData = {
 		nVersion = knVersion,
 		tPinnedAddons = self.tPinnedAddons,
+		bLiveEventSeen = self.bLiveEventSeen,
 	}
 	
 	return tSavedData
@@ -46,6 +47,8 @@ function InterfaceMenuList:OnRestore(eType, tSavedData)
 	if tSavedData.tPinnedAddons then
 		self.tPinnedAddons = tSavedData.tPinnedAddons
 	end
+	
+	self.bLiveEventSeen = tSavedData.bLiveEventSeen
 	
 	self.tSavedData = tSavedData
 end
@@ -69,6 +72,7 @@ function InterfaceMenuList:OnDocumentReady()
 	Apollo.RegisterTimerHandler("QueueRedrawTimer", 					"OnQueuedRedraw", self)
 	Apollo.RegisterEventHandler("ApplicationWindowSizeChanged", 		"ButtonListRedraw", self)
 	Apollo.RegisterEventHandler("OptionsUpdated_HUDPreferences", 		"OnUpdateTimer", self)
+	Apollo.RegisterEventHandler("LiveEvent_WindowClosed", 				"OnLiveEventClosed", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc , "InterfaceMenuListForm", "FixedHudStratumHigh", self)
 	self.wndList = Apollo.LoadForm(self.xmlDoc , "FullListFrame", nil, self)
@@ -118,6 +122,48 @@ function InterfaceMenuList:OnUpdateTimer()
 		Event_FireGenericEvent("InterfaceMenuListHasLoaded")
 		self.wndMain:FindChild("OpenFullListBtn"):Enable(true)
 		self.bHasLoaded = true
+	end
+	
+	if self.bHasLoaded and not self.bLiveEventLoaded and GameLib.IsCharacterLoaded() then
+		-- PublicEventStart will catch it if this loads too early
+		local bLiveEventActive = false
+		for idx, peEvent in pairs(PublicEvent.GetActiveEvents() or {}) do
+			if peEvent:GetEventType() == PublicEvent.PublicEventType_LiveEvent then
+				bLiveEventActive = true
+				break
+			end
+		end
+		
+		--reset bLiveEventSeen if it was previously active and now isn't.
+		if not bLiveEventActive then
+			self.bLiveEventSeen = false
+		end
+		
+		if bLiveEventActive then
+			local wndLiveEvent = self.wndMain:FindChild("LiveEvent")
+			wndLiveEvent:Show(true)
+			
+			local btnLiveEvent = wndLiveEvent:FindChild("EventMoreInfoBtn")
+			btnLiveEvent:SetTooltip(string.format(
+				"%s%s%s", 
+				Apollo.GetString("Event_WorldEventTitle"), 
+				Apollo.GetString("Chat_ColonBreak"), 
+				Apollo.GetString("Event_ShadesEveTitle")
+			))
+			
+			local wndButtons = self.wndMain:FindChild("ButtonList")
+			local nLeft, nTop, nRight, nBottom = wndButtons:GetAnchorOffsets()
+			
+			wndButtons:SetAnchorOffsets(nLeft + wndLiveEvent:GetWidth(), nTop, nRight, nBottom)
+			
+			if not self.bLiveEventSeen then
+				Event_FireGenericEvent("LiveEvent_ToggleWindow")
+				self.bLiveEventSeen = true
+				wndLiveEvent:FindChild("EventAlert"):Show(true)
+			end
+			
+			self.bLiveEventLoaded = true
+		end
 	end
 
 	--Toggle Visibility based on ui preference
@@ -365,6 +411,10 @@ function InterfaceMenuList:OnDrawAlert(strWindowName, tParams)
 	end
 end
 
+function InterfaceMenuList:OnLiveEventClosed()
+	self.wndMain:FindChild("EventAlert"):Show(false)
+end
+
 -----------------------------------------------------------------------------------------------
 -- Helpers and Errata
 -----------------------------------------------------------------------------------------------
@@ -399,7 +449,7 @@ end
 
 function InterfaceMenuList:OnListBtnClick(wndHandler, wndControl) -- These are the five always on icons on the top
 	if wndHandler ~= wndControl then return end
-	local strMappingResult = self.tMenuData[wndHandler:GetData()][1] or ""
+	local strMappingResult = wndHandler:GetData() and self.tMenuData[wndHandler:GetData()][1] or ""
 	
 	if string.len(strMappingResult) > 0 then
 		Event_FireGenericEvent(strMappingResult)
@@ -422,6 +472,10 @@ end
 function InterfaceMenuList:OnOpenFullListCheck(wndHandler, wndControl)
 	self.wndList:FindChild("SearchEditBox"):SetFocus()
 	self:FullListRedraw()
+end
+
+function InterfaceMenuList:OnEventMoreInfoBtn(wndHandler, wndControl)
+	Event_FireGenericEvent("LiveEvent_ToggleWindow")
 end
 
 function InterfaceMenuList:LoadByName(strForm, wndParent, strCustomName)
@@ -459,26 +513,4 @@ function InterfaceMenuList:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPo
 end
 
 local InterfaceMenuListInst = InterfaceMenuList:new()
-InterfaceMenuListInst:Init()þê 2ObÿdiËZèAU_ê %Iòÿ$@ªRÇ9Uÿª &Iòß$) ªRÇ9Uÿª 5IþÛ%9ËZBUõ« OÉ}·%7	Mk(Bõ¿«z&¹}—åÄ	ï{ËZõ½+¶S¹{—æÄ	²”Žsõ½+
-Øqç0 óœQŒ-‚ ÚÔÄ9ªYóœ²”,€ÙŸ  €€4óœ’” ¸îkµP-Ö«O?²”mkàèz~]-ö«Ã>ŽsiJèxz^ à3'|â$IJç9x\^W        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ%1‘wÉ™ÄŠRç9--µÕd¥àRw—›ŽsiJ
-+­½±P¥àN7—›’”mk
-+­½×–@&SóœqŒ ƒÚÔæÔPª+ÐóœÓœZj©¥ÙŸª¬  óœ’”pŠ*¨Õq~ÂúlÓœï{_ú  ¦N~ÒÚ	h’”mkWþª€ˆ<ORÛ#	I0„,cUÿª z6IRÛÛ „cUÿª z8IbÛÜ „cUÿª ;Éo·$'	0„,cU¿ª ¨QÉm·ä&	’”mkÕ¿ªÔq¹m—å4óœï{õ¯
- Ù¡1U  ¥’”-ëøÿÚÔÅŠéóœ²”>€Ú§   
-4óœ’”àø¾kÓb+Ö¬_?²”®s€àø~x$­Õ«_?Ï{ªRàèz~0X/:ôÓ'ËZBx\^W H’$I’$èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ I$I’$ç9ç9    /îs¹™ÜËZèA-¥µÕnàNw™»Ï{ªR/½õ±Qœ`Nw—»²”Mk
-+¯½ØŒ@î—óœQŒ(¢-ÚÏ¤ ‘ óœ²”€/üÚÎ " ¤ móœÓœ5Wj«Ù­u   óœ²”ø¿èÙ˜OÂ¶ óœqŒW  ªØÒÖÒ óœQŒUê Ø‘Iâ¶“ óœQŒUª  Ù˜ÉÝ–’  ¥qŒÕ«€ÿÙ±‰¹	   ¥²”½â_ýÚÎ  ÀÆM¥²”x÷¿«ÛÕj’¸é4Hóœ²” ÀøÚ›  @À,>ÓœqŒ (Š`Ôa;Ö¬_?²”®s€àø~€(+Ö¬_?0„ËZèú~_>+ö¬_?,cBèz^W hÂ$I’$(BÇ9üþÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ É‘äI’$(BÇ9¿ÿÿÿ1æps¹›ÜËZB+½ÕUeœàRw™»ŽsiJ
-+¯õŸAœPNw™»qŒMk
-+½ÕÖpPNw™ßÓœï{ 
-¯õÙš   ¥»ÓœqŒ
-¨‚-ÚÆÚH Ióœ²” 
-ÿèÚÔœäØÀ*	óœ²”¨ ÿÚÔ8u²&óœ²”ÿ  
-ÚÓ pÛ¹{_óœ²”ÿ   ÚÕ‚–$æ óœ²”«  ÿÛÕNbwDÖóœ²”  ú¿Ù¥    ¸>óœ’” ú¯zØ} ±¬í?Óœ0„
-€ø_¬KÐ¨±¬_?’”mk è~_t Ð(Ö¬_?Ï{ªR èþ_=+Ö¬ï?cBèz^W `Â$I’$(BÇ9øþÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ I$I’$ç9ç9    $î—É$ªRç9+½ÕULœàrw™ÜMk(B
-«½õv&œPnw›Üï{ËZ
-«½ÕœD“Pnv›ßqŒMk«½Õ¾gPrw™»²”Ï{ *¿õÔ˜PN/SÓœqŒ 
-	ÖÒÂmÝV­óœÓœ©«ª«ØÔItI•TóœÓœêªªªÙœ€¤±b/:ÓœqŒ
- èxÈo€¶±¬o?²”ï{  ú_¥L¶±¬ï'’”mk êÿW‚.Ð6²­ï'„ëZ êþWXÐ(¶¬ï?nsiJ úW,»úõó$ËZèAè~WU	 `ò$I’$BÇ9üÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ ñ¤I’$(BÇ9/¿ÿÿ'œà–¹$ªRç9
-¯õUJ
-œàRw—˜Mk(B
-¯½µ€@¦ðñ„,c+/--Ø–1éóœqŒ-©‰ÙÓ¬#ÇbºóœÓœ«©©©ÙÓ±çTIÕóœóœ    Ø•˜ƒ5P4ÓœqŒzzbb?‹ÕZ/:„,càèxxPÐ¨µ¬_'Mk(B èþ^.Ð8Ööó$ËZèA úWU X_'I’$IJç9è_UU        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ(1y•WªRèA%%55{1ïð1•w„ëZ/--½Øz&`
-/™»óœ0„‹-õÙž   m›$Óœ’”ÿ UÙž   m›$ÓœqŒ ª ×q Õ¤_?²”Ï{€ààzu(X/ö¢³>ï{ëZxxx^$à£>sB'ŠRç9xX\^        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ y‘xÉ›äIJç9-5µÕW¥àRw™»Mk(B
-+¯õ~1Pnv›ü„ëZ«ÿÕA °m¶$0„,c ªÿU‚@ °m¶$0„,c ªÿU|,€¸±­ÿ'ï{ëZ€èþWK	-ö¬S?Mk(Bèø~_ `2'N’$(Bç9øüÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ        èAç9ÿÿÿÿ
+InterfaceMenuListInst:Init()

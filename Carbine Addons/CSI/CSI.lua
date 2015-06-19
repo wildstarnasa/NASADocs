@@ -236,7 +236,7 @@ function CSI:BuildPressAndHold(tActiveCSI, strBodyText)
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_Progress", nil, self)
 	wndCurr:Show(true) -- to get the animation
 	wndCurr:FindChild("BodyText"):SetText(strBodyText)
-	wndCurr:FindChild("ProgressButton"):SetText(GameLib.GetKeyBinding("Interact"))
+	wndCurr:FindChild("ProgressButton:KeyText"):SetText(GameLib.GetKeyBinding("Interact"))
 	wndCurr:FindChild("HoldButtonDecoration"):Show(true)
 	
 	if self.wndProgress and self.wndProgress:IsValid() then
@@ -248,7 +248,7 @@ end
 function CSI:BuildRapidTap(tActiveCSI)
 	local wndCurr = Apollo.LoadForm(self.xmlDoc, "CSI_Progress", nil, self)
 	wndCurr:Show(true) -- to get the animation
-	wndCurr:FindChild("ProgressButton"):SetText(GameLib.GetKeyBinding("Interact"))
+	wndCurr:FindChild("ProgressButton:KeyText"):SetText(GameLib.GetKeyBinding("Interact"))
 	
 	if self.wndProgress and self.wndProgress:IsValid() then
 		self.wndProgress:Destroy()
@@ -915,4 +915,3 @@ end
 
 local CSIInst = CSI:new()
 CSIInst:Init()
-L|=à¶%Åv.Ãéèz|= 1İŸò^ñ'ŸõÏVíºN«HgŒ°ÔLË›«@}òà×Cº¡äø^)z&«‡áûW¾K³u¨

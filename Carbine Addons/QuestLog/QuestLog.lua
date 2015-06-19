@@ -121,7 +121,6 @@ function QuestLog:Initialize()
 	-- Default states
 	self.wndLeftFilterActive:SetCheck(true)
 	self.wndMain:FindChild("QuestAbandonPopoutBtn"):AttachWindow(self.wndMain:FindChild("QuestAbandonConfirm"))
-	self.wndMain:FindChild("QuestInfoMoreInfoToggleBtn"):AttachWindow(self.wndMain:FindChild("QuestInfoMoreInfoText"))
 	self.wndMain:FindChild("EpisodeSummaryExpandBtn"):AttachWindow(self.wndMain:FindChild("EpisodeSummaryPopoutTextBG"))
 
 	-- Measure Windows
@@ -301,7 +300,7 @@ function QuestLog:RedrawLeftTree()
 
 	local strActiveQuests = string.format("<T TextColor=\"%s\">%s</T>", strColor, nQuestCount)
 	strActiveQuests = String_GetWeaselString(Apollo.GetString("QuestLog_ActiveQuests"), strActiveQuests, self.nQuestCountMax)
-	self.wndMain:FindChild("QuestLogCountText"):SetAML(string.format("<P Font=\"CRB_InterfaceTiny_BB\" Align=\"Left\" TextColor=\"ffffffff\">%s</P>", strActiveQuests))
+	self.wndMain:FindChild("QuestLogCountText"):SetAML(string.format("<P Font=\"CRB_InterfaceTiny_BB\" Align=\"Left\" TextColor=\"UI_BtnTextGoldListNormal\">%s</P>", strActiveQuests))
 
 	local tCategoryEpisodeHaveQuestsCache = {}
 	local tCategoryHaveQuestsCache = {}
@@ -481,14 +480,14 @@ function QuestLog:RedrawLeftTree()
 	if bWorldStoryHasData then
 		local strCategoryKey = "CWorldStory"
 		local wndTop = self:FactoryCacheProduce(self.wndLeftSideScroll, "TopLevelItem", strCategoryKey)
-		wndTop:FindChild("TopLevelBtnText"):SetText(Apollo.GetString("QuestLog_WorldStory"))
+		wndTop:FindChild("TopLevelBtn"):SetText(Apollo.GetString("QuestLog_WorldStory"))
 		fnBuildCategoryEpisodes(strCategoryKey, wndTop)
 	end
 
 	for idx1, qcCategory in pairs(arCategories) do
 		local strCategoryKey = "C"..qcCategory:GetId()
 		local wndTop = self:FactoryCacheProduce(self.wndLeftSideScroll, "TopLevelItem", strCategoryKey)
-		wndTop:FindChild("TopLevelBtnText"):SetText(qcCategory:GetTitle())
+		wndTop:FindChild("TopLevelBtn"):SetText(qcCategory:GetTitle())
 		fnBuildCategoryEpisodes(strCategoryKey, wndTop)
 	end
 end
@@ -517,8 +516,8 @@ function QuestLog:HelperSetupBottomLevelWindow(wndBot, queQuest)
 
 	local bOptionalQuest = queQuest:IsOptionalForEpisode(queQuest:GetEpisode():GetId())
 	wndBottomLevelBtn:SetData(queQuest)
-	wndBottomLevelBtnText:SetTextColor(wndBottomLevelBtn:IsChecked() and ApolloColor.new("UI_BtnTextGoldListPressed") or ApolloColor.new("UI_BtnTextGoldListNormal"))
 	wndBottomLevelBtnText:SetText(bOptionalQuest and String_GetWeaselString(Apollo.GetString("QuestLog_OptionalAppend"), queQuest:GetTitle()) or queQuest:GetTitle())
+	wndBottomLevelBtn:SetText(bOptionalQuest and String_GetWeaselString(Apollo.GetString("QuestLog_OptionalAppend"), queQuest:GetTitle()) or queQuest:GetTitle())
 
 	local strBottomLevelIconSprite = ""
 	local bHasCall = queQuest:GetContactInfo()
@@ -588,7 +587,7 @@ function QuestLog:ResizeTree()
 
 		local nItemHeights = wndTopLevelItems:ArrangeChildrenVert(0, function(a,b) return a:GetData() > b:GetData() end) -- Tasks to bottom
 		if nItemHeights > 0 then
-			nItemHeights = nItemHeights + 6
+			nItemHeights = nItemHeights + 12
 		end
 
 		local nTopLeft, nTopTop, nTopRight, nTopBottom = wndTop:GetAnchorOffsets()
@@ -617,29 +616,29 @@ function QuestLog:ResizeRight()
 	-- Objectives Frame
 	nHeight = self.wndMain:FindChild("QuestInfoObjectivesList"):ArrangeChildrenVert(0)
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoObjectivesFrame"):GetAnchorOffsets()
-	self.wndMain:FindChild("QuestInfoObjectivesFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 55)
+	self.wndMain:FindChild("QuestInfoObjectivesFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + 40)
 	self.wndMain:FindChild("QuestInfoObjectivesFrame"):Show(#self.wndMain:FindChild("QuestInfoObjectivesList"):GetChildren() > 0)
+	self.wndMain:FindChild("PaddingObjective"):Show(#self.wndMain:FindChild("QuestInfoObjectivesList"):GetChildren() > 0)
 
 	-- Rewards Recevived
 	nHeight = self.wndMain:FindChild("QuestInfoRewardRecList"):ArrangeChildrenVert(0)
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoRewardRecFrame"):GetAnchorOffsets()
 	self.wndMain:FindChild("QuestInfoRewardRecFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nRewardRecListHeight + 15) -- TODO: Hardcoded footer padding
 	self.wndMain:FindChild("QuestInfoRewardRecFrame"):Show(#self.wndMain:FindChild("QuestInfoRewardRecList"):GetChildren() > 0)
+	self.wndMain:FindChild("PaddingReward"):Show(#self.wndMain:FindChild("QuestInfoRewardRecList"):GetChildren() > 0)
 
 	-- Rewards to Choose
 	nHeight = self.wndMain:FindChild("QuestInfoRewardChoList"):ArrangeChildrenVert(0, function(a,b) return b:FindChild("RewardItemCantUse"):IsShown() end)
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoRewardChoFrame"):GetAnchorOffsets()
 	self.wndMain:FindChild("QuestInfoRewardChoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nRewardChoListHeight + 15) -- TODO: Hardcoded footer padding
 	self.wndMain:FindChild("QuestInfoRewardChoFrame"):Show(#self.wndMain:FindChild("QuestInfoRewardChoList"):GetChildren() > 0)
+	self.wndMain:FindChild("PaddingRewardChoice"):Show(#self.wndMain:FindChild("QuestInfoRewardChoList"):GetChildren() > 0)
 
 	-- More Info
-	nHeight = 0
-	if self.wndMain:FindChild("QuestInfoMoreInfoToggleBtn"):IsChecked() then
-		nWidth, nHeight = self.wndMain:FindChild("QuestInfoMoreInfoText"):SetHeightToContentHeight()
-		nHeight = nHeight + 10
-	end
+	nWidth, nHeight = self.wndMain:FindChild("QuestInfoMoreInfoText"):SetHeightToContentHeight()
+	nHeight = nHeight + 10
 	nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("QuestInfoMoreInfoFrame"):GetAnchorOffsets()
-	self.wndMain:FindChild("QuestInfoMoreInfoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nMoreInfoHeight)
+	self.wndMain:FindChild("QuestInfoMoreInfoFrame"):SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight + self.nMoreInfoHeight + 3)
 
 	-- Episode title
 	nHeight = self.wndMain:FindChild("EpisodeSummaryTitle"):GetHeight()
@@ -738,22 +737,20 @@ function QuestLog:DrawRightSide(queSelected)
 	-- More Info
 	local strMoreInfo = ""
 	local tMoreInfoText = queSelected:GetMoreInfoText()
-	if #tMoreInfoText > 0 and self.wndMain:FindChild("QuestInfoMoreInfoToggleBtn"):IsChecked() then
+	if #tMoreInfoText > 0 then
 		for idx, tValues in pairs(tMoreInfoText) do
 			if string.len(tValues.strSay) > 0 or string.len(tValues.strResponse) > 0 then
-				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium_I\" TextColor=\"UI_TextHoloBody\">"..tValues.strSay.."</P>"
-				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium_I\" TextColor=\"UI_TextHoloBodyCyan\">"..tValues.strResponse.."</P>"
+				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">"..tValues.strSay.."</P>"
+				strMoreInfo = strMoreInfo .. "<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBodyCyan\">"..tValues.strResponse.."</P>"
 				if idx ~= #tMoreInfoText then
 					strMoreInfo = strMoreInfo .. "<P TextColor=\"0\">.</P>"
 				end
 			end
 		end
-	else
-		wndRight:FindChild("QuestInfoMoreInfoToggleBtn"):SetCheck(false)
 	end
 	wndRight:FindChild("QuestInfoMoreInfoText"):SetAML(strMoreInfo)
 	wndRight:FindChild("QuestInfoMoreInfoFrame"):Show(#tMoreInfoText > 0)
-
+	wndRight:FindChild("PaddingInfo"):Show(#tMoreInfoText > 0)
 	-- Objectives
 	wndRight:FindChild("QuestInfoObjectivesList"):DestroyChildren()
 	if eQuestState == Quest.QuestState_Achieved then
@@ -847,21 +844,42 @@ function QuestLog:OnGroupUpdate()
 end
 
 function QuestLog:DrawUnknownRightSide(queSelected)
+	if not queSelected then
+		return
+	end
+
 	local wndRight = self.wndRightSide
 	local eQuestState = queSelected:GetState()
 
 	-- Episode Summary
 	local epiParent = queSelected:GetEpisode()
-	local bIsTasks = epiParent:GetId() == 1
+	local bIsTasks = true
 	local strEpisodeDesc = ""
-	if not bIsTasks then
-		strEpisodeDesc = epiParent:GetState() == Episode.EpisodeState_Complete and epiParent:GetSummary() or epiParent:GetDesc()
+	if epiParent then
+		bIsTasks = epiParent:GetId() == 1
+		if not bIsTasks then
+			strEpisodeDesc = epiParent:GetState() == Episode.EpisodeState_Complete and epiParent:GetSummary() or epiParent:GetDesc()
+		end
+	else
+		strEpisodeDesc = Apollo.GetString("QuestLog_UnknownQuest")
 	end
 
-	local tEpisodeProgress = epiParent:GetProgress()
-	wndRight:FindChild("EpisodeSummaryTitle"):SetText(epiParent:GetTitle())
+	
+	local strTitle = Apollo.GetString("QuestLog_UnknownQuest")
+	local nCompleted = 0
+	local nTotal = 0
+	if epiParent then
+		local tEpisodeProgress = epiParent:GetProgress()
+		if tEpisodeProgress then
+			nCompleted = tEpisodeProgress.nCompleted
+			nTotal = tEpisodeProgress.nTotal
+		end
+		
+		strTitle = epiParent:GetTitle()
+	end
+	wndRight:FindChild("EpisodeSummaryTitle"):SetText(strTitle)
 	wndRight:FindChild("EpisodeSummaryProgText"):SetAML(string.format("<P Font=\"CRB_HeaderTiny\" Align=\"Center\">"..
-	"(<T Font=\"CRB_HeaderTiny\" Align=\"Center\">%s</T>/%s)</P>", tEpisodeProgress.nCompleted, tEpisodeProgress.nTotal))
+	"(<T Font=\"CRB_HeaderTiny\" Align=\"Center\">%s</T>/%s)</P>", nCompleted, nTotal))
 	wndRight:FindChild("EpisodeSummaryPopoutText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"ff2f94ac\">"..strEpisodeDesc.."</P>")
 	wndRight:FindChild("EpisodeSummaryPopoutText"):SetHeightToContentHeight()
 	wndRight:FindChild("EpisodeSummaryExpandBtn"):Enable(false)
@@ -881,7 +899,7 @@ function QuestLog:DrawUnknownRightSide(queSelected)
 	wndRight:FindChild("QuestInfoDifficultyPic"):SetTooltip(String_GetWeaselString(Apollo.GetString("QuestLog_IntendedLevel"), queSelected:GetTitle(), queSelected:GetConLevel()))
 	wndRight:FindChild("QuestInfoDifficultyText"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloBodyHighlight\">"..strDifficulty.."</P>")
 
-	local bOptionalQuest = queSelected:IsOptionalForEpisode(epiParent:GetId())
+	local bOptionalQuest = epiParent and queSelected:IsOptionalForEpisode(epiParent:GetId()) or false
 	wndRight:FindChild("QuestInfoTitle"):SetTextColor(ApolloColor.new("white"))
 	local strTitle = bOptionalQuest and String_GetWeaselString(Apollo.GetString("QuestLog_OptionalAppend"), queSelected:GetTitle()) or queSelected:GetTitle()
 	wndRight:FindChild("QuestInfoTitle"):SetText(strTitle)
@@ -893,7 +911,6 @@ function QuestLog:DrawUnknownRightSide(queSelected)
 	wndRight:FindChild("QuestInfoDescriptionText"):SetHeightToContentHeight()
 
 	-- More Info
-	wndRight:FindChild("QuestInfoMoreInfoToggleBtn"):SetCheck(false)
 	wndRight:FindChild("QuestInfoMoreInfoText"):SetAML("")
 	wndRight:FindChild("QuestInfoMoreInfoFrame"):Show(false)
 
@@ -958,11 +975,6 @@ function QuestLog:OnMiddleLevelBtnUncheck(wndHandler, wndControl)
 end
 
 function QuestLog:OnBottomLevelBtnCheck(wndHandler, wndControl) -- From Button or OnQuestObjectiveUpdated
-	if self.wndLastBottomLevelBtnSelection and self.wndLastBottomLevelBtnSelection:IsValid() then
-		self.wndLastBottomLevelBtnSelection:FindChild("BottomLevelBtn:BottomLevelBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
-	end
-
-	wndHandler:FindChild("BottomLevelBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 	self.wndLastBottomLevelBtnSelection = wndHandler
 
 	self.wndRightSide:Show(true)
@@ -973,7 +985,6 @@ function QuestLog:OnBottomLevelBtnCheck(wndHandler, wndControl) -- From Button o
 end
 
 function QuestLog:OnBottomLevelBtnUncheck(wndHandler, wndControl)
-	wndHandler:FindChild("BottomLevelBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 	self.wndQuestInfoControls:Show(false)
 	self.wndRightSide:Show(false)
 end
@@ -1281,18 +1292,3 @@ end
 
 local QuestLogInst = QuestLog:new()
 QuestLogInst:Init()
-tipColor="" DT_VCENTER="1" TextId="PublicEventStats_NoMedal" DT_WORDBREAK="1"/>
-        </Control>
-        <Control Class="Button" Base="BK3:btnHolo_Close" Font="CRB_InterfaceSmall_O" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-70" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-28" BAnchorPoint="0" BAnchorOffset="72" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="AdventureCloseBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ff9aaea3" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" TextId="">
-            <Event Name="ButtonSignal" Function="OnClose"/>
-        </Control>
-        <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-64" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Line="0"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0" BAnchorOffset="57" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AdventureListItem" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="InsetFrame" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="0" RAnchorOffset="51" BAnchorPoint="0" BAnchorOffset="51" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="iconFrame" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="48" BAnchorPoint="0" BAnchorOffset="48" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AdventureListIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="ClientSprites:Icon_SkillMind_UI_espr_moverb" Picture="1" IgnoreMouse="1" HideInEditor="0"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="62" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="52" RelativeToClient="1" Font="CRB_HeaderMedium" Text="#1 in Resources Collected" Template="Default" TooltipType="OnCursor" Name="AdventureListTitle" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" TextId="" DT_WORDBREAK="1" DT_VCENTER="1" HideInEditor="0"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="80" TAnchorPoint="0" TAnchorOffset="50" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="CRB_InterfaceLarge_BO" Text="444 Kills" Template="Default" TooltipType="OnCursor" Name="AdventureListDetails" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" TextId=""/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0.5

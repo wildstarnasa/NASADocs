@@ -372,7 +372,7 @@ function ActionBarFrame:RedrawStances()
 
 	local nHeight = wndStancePopout:ArrangeChildrenVert(0)
 	local nLeft, nTop, nRight, nBottom = self.wndStancePopoutFrame:GetAnchorOffsets()
-	self.wndStancePopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+	self.wndStancePopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 72, nRight, nBottom)
 	self.wndMain:FindChild("StancePopoutBtn"):Show(#wndStancePopout:GetChildren() > 0)
 end
 
@@ -389,32 +389,34 @@ function ActionBarFrame:RedrawMounts()
 	local wndMountPopout = self.wndMountFlyoutFrame:FindChild("MountPopoutList")
 	wndMountPopout:DestroyChildren()
 
-	local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
-	local tSelectedSpellObj = nil
+	local tMountList = GameLib.GetMountList()
+	local splSelected = nil
 
 	for idx, tMountData  in pairs(tMountList) do
-		local tSpellObject = tMountData.tTiers[1].splObject
+		if tMountData.bIsKnown then
+			local splMount = tMountData.splObject
+			
+			if not splSelected then
+				splSelected = splMount
+			end
 
-		if tSpellObject:GetId() == self.nSelectedMount then
-			tSelectedSpellObj = tSpellObject
-		end
+			if splMount:GetId() == self.nSelectedMount then
+				splSelected = splMount
+			end
 
-		local wndCurr = Apollo.LoadForm(self.xmlDoc, "MountBtn", wndMountPopout, self)
-		wndCurr:FindChild("MountBtnIcon"):SetSprite(tSpellObject:GetIcon())
-		wndCurr:SetData(tSpellObject)
+			local wndCurr = Apollo.LoadForm(self.xmlDoc, "MountBtn", wndMountPopout, self)
+			wndCurr:FindChild("MountBtnIcon"):SetSprite(splMount:GetIcon())
+			wndCurr:SetData(splMount)
 
-		if Tooltip and Tooltip.GetSpellTooltipForm then
-			wndCurr:SetTooltipDoc(nil)
-			Tooltip.GetSpellTooltipForm(self, wndCurr, tSpellObject, {})
+			if Tooltip and Tooltip.GetSpellTooltipForm then
+				wndCurr:SetTooltipDoc(nil)
+				Tooltip.GetSpellTooltipForm(self, wndCurr, splMount, {})
+			end
 		end
 	end
 
-	if tSelectedSpellObj == nil and #tMountList > 0 then
-		tSelectedSpellObj = tMountList[1].tTiers[1].splObject
-	end
-
-	if tSelectedSpellObj ~= nil then
-		GameLib.SetShortcutMount(tSelectedSpellObj:GetId())
+	if splSelected then
+		GameLib.SetShortcutMount(splSelected:GetId())
 	end
 
 	local nCount = #wndMountPopout:GetChildren()
@@ -427,7 +429,7 @@ function ActionBarFrame:RedrawMounts()
 
 		local nLeft, nTop, nRight, nBottom = self.wndMountFlyoutFrame:GetAnchorOffsets()
 
-		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 74, nRight, nBottom)
 		self:RedrawBarVisibility()
 	else
 		self.wndMountFlyout:Show(false)
@@ -506,7 +508,7 @@ function ActionBarFrame:RedrawPotions()
 
 		local nLeft, nTop, nRight, nBottom = self.wndPotionPopoutFrame:GetAnchorOffsets()
 
-		self.wndPotionPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+		self.wndPotionPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 74, nRight, nBottom)
 	end
 
 	self.wndPotionFlyout:Show(nCount > 0)
@@ -689,16 +691,3 @@ end
 
 local ActionBarFrameInst = ActionBarFrame:new()
 ActionBarFrameInst:Init()
-ffffffff" TextColor="ffffffff" IgnoreMouse="1" TooltipColor="">
-        <Control Class="Button" Base="BK3:btnMetal_ExpandMenu_Small" Font="CRB_InterfaceMedium_B" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="BottomItemBtn" BGColor="ffffffff" TextColor="UI_BtnTextGoldListNormal" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" Text="" TextId="" GlobalRadioGroup="" RadioDisallowNonSelection="0" TooltipColor="" WindowSoundTemplate="MetalButtonLarge">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="GroupTitle" BGColor="ffffffff" TextColor="UI_BtnTextGoldListNormal" TextId="Challenges_NoProgress" DT_VCENTER="1" TooltipColor=""/>
-            <Event Name="ButtonCheck" Function="OnBottomItemSelect"/>
-            <Event Name="ButtonUncheck" Function="OnBottomItemSelect"/>
-        </Control>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="429" BAnchorPoint="0" BAnchorOffset="131" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="AchievementSimple" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" IgnoreMouse="1" Sprite="" TooltipType="OnCursor" IgnoreTooltipDelay="1" TooltipColor="" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="7" TAnchorPoint="0" TAnchorOffset="42" RAnchorPoint="0" RAnchorOffset="47" BAnchorPoint="0" BAnchorOffset="82" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="AchievementIcon" BGColor="ffffffff" TextColor="ffffffff" Sprite="IconSprites:Icon_Achievement_Achievement_Adventures" Picture="1" IgnoreMouse="1" TooltipType="OnCursor" IgnoreTooltipDelay="1" NewControlDepth="1" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="38" RAnchorPoint="0" RAnchorOffset="26" BAnchorPoint="0" BAnchorOffset="63" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="AchievementCheck" BGColor="ffffffff" TextColor="ffffffff" Sprite="Achievements:sprAchievements_Icon_Complete" Picture="1" IgnoreMouse="1" Visible="0" NewControlDepth="1" HideInEditor="0" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="55" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-64" BAnchorPoint="0" BAnchorOffset="33" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="TitleText" BGColor="ffffffff" TextColor="UI_TextHoloBodyCyan" TextId="Challenges_NoProgress" TooltipColor="" Tooltip="" IgnoreMouse="1" AutoScaleText="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="0" RAnchorOffset="48" BAnchorPoint="0" BAnchorOffset="33" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" Name="PointsText" BGColor="ffffffff" TextColor="UI_BtnTextGoldListNormal" TextId="Challenges_NoProgress" DT_RIGHT="0" TooltipColor="" DT_CENTER="1" DT_VCENTER="1"/>
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-161" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-34" BAnchorPoint="0" BAnchorOffset="34" RelativeToClient="1" Font="CRB_InterfaceMedium" Tex

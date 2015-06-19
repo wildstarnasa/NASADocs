@@ -239,7 +239,7 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 			local bHaveMaterials, bValidOneUse = self:HelperHaveEnoughMaterials(tSchematic)
 			if bValidOneUse and (bHaveMaterials or not bFilterMaterials) then
 				local wndMiddle = self:LoadByName("MiddleLevel", wndTop:FindChild("TopLevelItems"), "M"..tSchematic.eItemType) -- So we don't run into ID collisions
-				wndMiddle:FindChild("MiddleLevelBtnText"):SetText(tSchematic.strItemTypeName)
+				wndMiddle:FindChild("MiddleLevelBtn"):SetText(tSchematic.strItemTypeName)
 
 				if wndMiddle:FindChild("MiddleLevelBtn"):IsChecked() then
 					-- If we only draw the matching itemType then a filter updates needs a full redraw
@@ -248,7 +248,7 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 					local bOneTime = not bShowLock and bHaveMaterials and tSchematic.bIsOneUse
 					local wndBottomItem = self:LoadByName("BottomItem", wndMiddle:FindChild("MiddleLevelItems"), "B"..tSchematic.nSchematicId)
 					wndBottomItem:FindChild("BottomItemBtn"):SetData(tSchematic)
-					wndBottomItem:FindChild("BottomItemBtnText"):SetText(tSchematic.strName)
+					wndBottomItem:FindChild("BottomItemBtn"):SetText(tSchematic.strName)
 					wndBottomItem:FindChild("BottomItemLockIcon"):Show(bShowLock)
 					wndBottomItem:FindChild("BottomItemOneTimeIcon"):Show(bOneTime)
 					wndBottomItem:FindChild("BottomItemMatsWarningIcon"):Show(bShowMatsWarning)
@@ -268,14 +268,21 @@ function TradeskillSchematics:FullRedraw(nSchematicIdToOpen)
 end
 
 function TradeskillSchematics:ResizeTree()
-	for key, wndTop in pairs(self.wndMain:FindChild("LeftSideScroll"):GetChildren()) do
+	local wndLeftSideScroll = self.wndMain:FindChild("LeftSideScroll")
+	if not wndLeftSideScroll then
+		return
+	end
+
+	local bFoundSelected = false
+	local nScrollPos = 0
+	for key, wndTop in pairs(wndLeftSideScroll:GetChildren()) do
 		local nTopHeight = 6
 		if wndTop:FindChild("TopLevelBtn"):IsChecked() then
 			for key2, wndMiddle in pairs(wndTop:FindChild("TopLevelItems"):GetChildren()) do
 				if wndMiddle:FindChild("MiddleLevelBtn"):IsChecked() then
 					for key3, wndBot in pairs(wndMiddle:FindChild("MiddleLevelItems"):GetChildren()) do
-						local wndBottomLevelBtnText = wndBot:FindChild("BottomItemBtn:BottomItemBtnText")
-						if Apollo.GetTextWidth("CRB_InterfaceMedium_B", wndBottomLevelBtnText:GetText()) > wndBottomLevelBtnText:GetWidth() then -- TODO QUICK HACK
+						local wndBottomLevelBtn = wndBot:FindChild("BottomItemBtn")
+						if Apollo.GetTextWidth("CRB_InterfaceMedium_B", wndBottomLevelBtn:GetText()) > wndBottomLevelBtn:GetWidth() then -- TODO QUICK HACK
 							local nBottomLeft, nBottomTop, nBottomRight, nBottomBottom = wndBot:GetAnchorOffsets()
 							wndBot:SetAnchorOffsets(nBottomLeft, nBottomTop, nBottomRight, nBottomTop + (self.knBottomLevelHeight * 1.5))
 						end
@@ -283,7 +290,6 @@ function TradeskillSchematics:ResizeTree()
 				else
 					wndMiddle:FindChild("MiddleLevelItems"):DestroyChildren()
 				end
-
 				local nMiddleHeight = wndMiddle:FindChild("MiddleLevelItems"):ArrangeChildrenVert(0)
 				if nMiddleHeight > 0 then
 					nMiddleHeight = nMiddleHeight + 6
@@ -292,8 +298,9 @@ function TradeskillSchematics:ResizeTree()
 				local nLeft, nTop, nRight, nBottom = wndMiddle:GetAnchorOffsets()
 				wndMiddle:SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.knMiddleLevelHeight + nMiddleHeight)
 				wndMiddle:FindChild("MiddleLevelItems"):ArrangeChildrenVert(0)
-				nTopHeight = nTopHeight + nMiddleHeight
+				nTopHeight = nTopHeight + nMiddleHeight + 1
 			end
+			bFoundSelected = true
 		else
 			wndTop:FindChild("TopLevelItems"):DestroyChildren()
 			nTopHeight = 0
@@ -303,10 +310,14 @@ function TradeskillSchematics:ResizeTree()
 		local nLeft, nTop, nRight, nBottom = wndTop:GetAnchorOffsets()
 		wndTop:SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.knTopLevelHeight + nMiddleHeight + nTopHeight)
 		wndTop:FindChild("TopLevelItems"):ArrangeChildrenVert(0)
+		if not bFoundSelected then
+			nScrollPos = nScrollPos + wndTop:GetHeight()
+		end
 	end
 
-	self.wndMain:FindChild("LeftSideScroll"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("LeftSideScroll"):RecalculateContentExtents()
+	wndLeftSideScroll:ArrangeChildrenVert(0)
+	wndLeftSideScroll:RecalculateContentExtents()
+	wndLeftSideScroll:SetVScrollPos(bFoundSelected and nScrollPos or 0)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -354,11 +365,6 @@ function TradeskillSchematics:OnBottomItemCheck(wndHandler, wndControl) -- Botto
 	-- Search and View All both use this UI button
 	if self.wndLastBottomItemBtnBlue then -- TODO HACK
 		self.wndLastBottomItemBtnBlue:SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
-	end
-
-	if wndHandler:FindChild("BottomItemBtnText") then
-		self.wndLastBottomItemBtnBlue = wndHandler:FindChild("BottomItemBtnText")
-		wndHandler:FindChild("BottomItemBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 	end
 
 	local tSchematicInfo = CraftingLib.GetSchematicInfo(wndHandler:GetData().nSchematicId)
@@ -678,8 +684,8 @@ function TradeskillSchematics:HelperSearchBuildResult(tSchematic, tSubSchem) -- 
 		wndBottomItem:FindChild("BottomItemLockIcon"):Show(bShowLock)
 		wndBottomItem:FindChild("BottomItemOneTimeIcon"):Show(bOneTime)
 		wndBottomItem:FindChild("BottomItemMatsWarningIcon"):Show(bShowMatsWarning)
-		wndBottomItem:FindChild("BottomItemBtnText"):SetText(tSubSchem and String_GetWeaselString(Apollo.GetString("Tradeskills_SubAbrev"), tSubSchem.strName) or tSchematic.strName)
-		if Apollo.GetTextWidth("CRB_InterfaceMedium_B", wndBottomItem:FindChild("BottomItemBtnText"):GetText()) > wndBottomItem:FindChild("BottomItemBtnText"):GetWidth() then -- TODO QUICK HACK
+		wndBottomItem:FindChild("BottomItemBtn"):SetText(tSubSchem and String_GetWeaselString(Apollo.GetString("Tradeskills_SubAbrev"), tSubSchem.strName) or tSchematic.strName)
+		if Apollo.GetTextWidth("CRB_InterfaceMedium_B", wndBottomItem:FindChild("BottomItemBtn"):GetText()) > wndBottomItem:FindChild("BottomItemBtn"):GetWidth() then -- TODO QUICK HACK
 			local nBottomLeft, nBottomTop, nBottomRight, nBottomBottom = wndBottomItem:GetAnchorOffsets()
 			wndBottomItem:SetAnchorOffsets(nBottomLeft, nBottomTop, nBottomRight, nBottomTop + (self.knBottomLevelHeight * 1.5))
 		end
@@ -738,9 +744,3 @@ end
 
 local TradeskillSchematicsInst = TradeskillSchematics:new()
 TradeskillSchematicsInst:Init()
-chorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LeftSide" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0.25" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="RightSide" TooltipColor=""/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="24" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-24" BAnchorPoint="0" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ItemTooltip_BasicStatsBox" Border="0" Picture="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="UI_TextMetalBodyHighlight" TooltipColor="" IgnoreMouse="1" Tooltip="" DoNotBlockTooltip="1">
-        <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ItemTooltip_BasicStats_TopLeft" Border="0" Picture="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ff39b5d4" TooltipColor="" IgnoreMouse="1" DoNotBlockTooltip="1"/>
-        <Control Class

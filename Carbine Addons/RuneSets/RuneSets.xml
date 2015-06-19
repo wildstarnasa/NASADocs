@@ -14,25 +14,3 @@
         <Event Name="WindowClosed" Function="OnSetsClose"/>
     </Form>
 </Forms>
-s:GetFlavor() or ""))
-
-		end
-
-		strFullText = strFullText .. kstrLineBreak .. strLocalSetText
-	end
-
-	self.wndMain:FindChild("SetsListNormalText"):SetAML(strFullText)
-	self.wndMain:FindChild("SetsListNormalText"):SetHeightToContentHeight()
-	self.wndMain:FindChild("SetsListContainer"):RecalculateContentExtents()
-	self.wndMain:FindChild("SetsListContainer"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("SetsListEmptyText"):Show(strFullText == "")
-end
-
-function RuneSets:OnSetsClose(wndHandler, wndControl)
-	if self.wndMain and self.wndMain:IsValid() then
-		self.locSavedWindowLoc = self.wndMain:GetLocation()
-		self.wndMain:Destroy()
-	end
-end
-
-function RuneS

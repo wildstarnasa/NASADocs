@@ -65,7 +65,9 @@ function Login:OnLoad()
 	
 	self.wndServerMessage:SetAML(string.format("<T Font=\"CRB_Interface10_B\" TextColor=\"xkcdBurntYellow\">%s</T>", strAllMessage))
 	self.wndServerMessagesContainer:Show(string.len(strAllMessage or "") > 0)
-	self.wndServerMessage:SetHeightToContentHeight()
+	local nWidth, nHeight = self.wndServerMessage:SetHeightToContentHeight()
+	local nLeft, nTop, nRight, nBottom = self.wndServerMessagesContainer:GetAnchorOffsets()
+	self.wndServerMessagesContainer:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.min(75, nHeight + 5))
 	--self.wndServerMessages:Show(true)
 
 
@@ -128,10 +130,3 @@ LoginInst:Init()
 
 
 		
-="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="107" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="147" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Title5" TooltipColor="" DT_RIGHT="1" DT_WORDBREAK="0" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="132" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="172" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Title6" TooltipColor="" DT_RIGHT="1" DT_WORDBREAK="0" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="157" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="197" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Title7" TooltipColor="" DT_RIGHT="1" DT_WORDBREAK="0" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="182" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="222" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Title8" TooltipColor="" DT_RIGHT="1" DT_WORDBREAK="0" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="207" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="247" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Title9" TooltipColor="" DT_RIGHT="1" DT_WORDBREAK="0" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="232" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="272" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Title10" TooltipColor="" DT_RIGHT="1" DT_WORDBREAK="0" TextId="" IgnoreMouse="1" AutoScaleText="1"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="0" TAnchorOffset="257" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="297" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" 

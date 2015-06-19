@@ -114,6 +114,7 @@ local ktUnlockActions =
 	{ strField = "nId", 	eValue = GameLib.LevelUpUnlock.Character_GearSlot_Shoulders,		 		strEvent = "LevelUpUnlock_Character_GearSlot_Shoulders" },
 	{ strField = "nId", 	eValue = GameLib.LevelUpUnlock.Character_GearSlot_SupportSystem,		 	strEvent = "LevelUpUnlock_Character_GearSlot_SupportSystem" },
 	{ strField = "nId", 	eValue = GameLib.LevelUpUnlock.Character_GearSlot_WeaponAttachment,			strEvent = "LevelUpUnlock_Character_GearSlot_WeaponAttachment" },
+	{ strField = "nId",	eValue = GameLib.LevelUpUnlock.Contracts, 											strEvent = "LevelUpUnlock_PvE_Contracts" },
 	{ strField = "nType",	eValue = GameLib.LevelUpUnlockType.Class_Attribute, 						strEvent = "LevelUpUnlock_Class_Attribute" },
 	{ strField = "nType",	eValue = GameLib.LevelUpUnlockType.Class_Ability, 							strEvent = "LevelUpUnlock_Class_Ability" }, --TODO
 	{ strField = "nType",	eValue = GameLib.LevelUpUnlockType.Path_Item, 								strEvent = "LevelUpUnlock_Path_Item" },
@@ -429,13 +430,3 @@ end
 
 local LevelUpUnlocksInst = LevelUpUnlocks:new()
 LevelUpUnlocksInst:Init()
-î¼æMˆì´²ltè‡Æ‚ÊÖã˜ÇkªÜ®ŸDvO\mãH¾›NÏ¢'³#KÏ/º—ü~k‰¨µÐØ0õæÔOˆø9º
-Ù†¹)ýSA/Ô&DË5b=û¹ú;—‰>úŽ(áxXoÐ ~zˆÇä¸ÌùWŠ
-´¾¿ú?ÿâe}¾|@È¨›$Ù òÀ~6šè¥¬ÿ¼ w”û›@ý
-³øó¿nÎñŒ¹í¯v&	ãqi’ENa>crH‡è§X÷ž-—Å†fú!vÑ‰a“"ŠÏOxlõxübýÆvã~áóbÉzAw°?æSf^/Ê†Çßèsò¨n¿lÈ½Rƒõ¾jðYU—ãõf&:”BOþ«%lóéŽ4õqß/Ž¬Í‹ò•Óœ_ïjäôÒP]ŠûýõÙd¾)QNÓá”~YæÖœ¢ÿÉ¤]è?000ðWäÈC\?HÈ$,¥ºŒëyýWO¸Ç­ÖCßvn«h}•ü>“ùÝ-‹R°høêìˆTé^âÁHgý€1°ÞŽý 3ÇÅ~ ÝC{
-
-Ä~ ëŸh>ëýŸd²:Æû
-ê.&ÂTTÀUv'ÜÛ„ãKsn(Ž¹ê›-¦<Âú•…N„8¿ú&K‹žÕ¯Lî)rú.û¿‹É•8Dþ€ÅçÓ/Šw©Cxtzý¤<Úb£AÐk|~¾‚ ¶wkƒÙ>5‡‚Žçˆ6ðy“æFüW‘p>æ|,ïÂù\b²?€{ŽPH¦Í¤O½R Õpµh÷Ô“MDoSµMÔö7¾œGØÆ”àïÎÕã—‡ªè—ùšG þR¯ßB¿å|>âþ¼%øzø|SéÂë‡,|§¿úÇÿ¢{Fïw²²¶]œÑ{)]s7Ëë=3£÷[£‘ÒÍ]J ù"d=èæ0•æÌ¯Šy½×$Ëh9­Ë:ûÊ¼Þwu&É$Tn;¹‰?Ægóyõ{¾ÿŸ€ÿYØßOH´Àÿ¬z–C°Ø=óû;€ÕJNÿÕ¸}ÆT¹:¬7‡4®ŸñUN+»õº„‰hâðï{6ìÏÎ;¿èQïÕ×ržª½ªq7ñ;oÌ_óz$ÊWö”§}’e¶ý×L}y5=‰rXð=£ç²ª.Æ1–ÉÀzSõ}„òÖu.WŸ"zsPº#©©ç­õs©ö‘ç™{w´Žª-L½¶ÊÊ~Rñï–óäûaPÄb}¬AùTC+ÏÞ'òG|}‚±ãŽŸ{Ž‰â]—Ù|àÀ,¹‡ÜHÔÏÐÏA|‹¨?ò˜{ŒïŒ è¿ùò]wýñÿNó£®¦lú•Õ……ç93BÌýq«OÕjSÖ×Ül¿ŸIuÈz±¼´ìÜ´ÆtÈN£"uÞÙYÁX™zl®’vfâkÙþñýÿýTâÙ1`)Ì{¿Þœ«Ó"ïQüq4™aòå¢þ;÷î;;-š!ó+ìl}ì·ùÕ¼ÞÏ_i<§¯7¯ÜŸ€õ^Ë†•=žÆÆŸç˜Ê*[2øó«“XïLKºBNÇ„/Nöë=ãìÂz?Ÿ^œÜ»õÂjõŒÞ‡R¥çV”½±œÜovÒñùþjè×üè¿tN¿Yfn´àþÂTÌÂ&iënòûÜÙÙ=0ŸþÀ¹£¼MìœëfýÀ¸ßDúçZtÆA´ëî¶Á{Þºn›úðŒ¨Ä~@Ú¸‰è™ØØ†˜ ùêœI&Ÿ½X«õì@²ïŒJH<¿~e<Òpú×«ÔXÑµŽžøµ‘¥?òLûÈ|òñ.»ŒþaÄúW}ûãÈ~ü*;‹¶.¥²>~ý¢¥ ÊŠžø.–“}–Hõ)²~Qdüùã;*÷Tì‰V×«MV«Õ9=DQh*2ar{ÒÓñï»}2A©T
-<¤ç_žë&GFãôD[Q²3¹E………û+¦Š}ž]	êzÆHº›²Êµ,O÷¯·8â»¡úNü}GÕ-Zl‹ÿÈWÛDêãZ»h„
-¢-Õ·ï-Ì‡·XYT™‘*}iÑ]¤¾€¶ Hçy"Á¢nþ=Ù°7Ÿa}“³Q¡Ð\Ñ£èýEë}Ö³Én-=AæWR±ÞKØBËÓÏ^Û
-uö^o¶XïI|;OÐûþ9­ gâýY½§ós–óþR=A6ÒÉçûÜýýP¯øÀ¼þÕK•òÓ¨I×´(OðqkšbZ-DÿYÌrúmç¶ò ùçºc­çfýÀ–¨#öç‰þYöN~~ ûµß˜B&¨aK5Ö»•oÞŸ?è©DÈ:Hg©Y&µvFè¾‹W»gÖk£×7òðBk¶oÚ¿~Œå†^ºø¶³¯|˜@êéMuuÚ„DäoÛÑö{r>ÚZ·]=ïmçºŒ=ä|ŠªLÎ²XŸEÙ§’ý4óuÜ>Ü¶w¸ù¬ÿ¹ìà ãsûhÍY5ƒå?^ˆ‡mnN¨Gd

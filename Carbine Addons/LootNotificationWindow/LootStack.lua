@@ -75,24 +75,42 @@ function LootStack:OnDocumentReady()
 	self.xmlDoc = nil
 	self.wndCashDisplay = self.wndLootStack:FindChild("LootFloaters:CashComplex:CashDisplay")
 	self.wndCashComplex = self.wndLootStack:FindChild("LootFloaters:CashComplex")
-	self.wndCashComplex:Show(false)
 	
 	-- This will be updated the first time we go through LootStackUpdate
 	self.bIsMoveable = nil
 
 	for idx = 1, knMaxEntryData do
-		local wndEntry = self.wndLootStack:FindChild("LootFloaters:LootedItem_"..idx)
-		wndEntry:Show(false, true)
-		self.arEntries[idx] = wndEntry
+		self.arEntries[idx] = self.wndLootStack:FindChild("LootFloaters:LootedItem_"..idx)
 	end
-	local wndEntry = self.wndLootStack:FindChild("LootFloaters:LootedItem_4")
-	wndEntry:Show(false, true)
 
 	self:UpdateDisplay()
 end
 
 function LootStack:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndLootStack, strName = Apollo.GetString("HUDAlert_VacuumLoot"), nSaveVersion=2})
+end
+
+function LootStack:OnGenerateTooltip(wndHandler, wndControl)
+	if not wndControl or not wndControl:IsValid() or not wndControl:GetData() then
+		return
+	end
+	
+	itemCurr = wndHandler:GetData()
+	
+	wndControl:SetTooltipDoc(nil)
+	if itemCurr ~= nil then
+		Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = false, itemCompare = itemCurr:GetEquippedItemForItemType()})
+	end
+end
+
+function LootStack:OnMouseEnter(wndHandler, wndControl)
+	self.bPause = true
+	self.timerUpdate:Stop()
+end
+
+function LootStack:OnMouseExit(wndHandler, wndControl)
+	self.bPause = false
+	self.timerUpdate:Start()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -132,7 +150,9 @@ function LootStack:OnLootedItem(itemInstance, nCount)
 	}
 	table.insert(self.tQueuedEntryData, tNewEntry)
 	
-	self.timerUpdate:Start()
+	if not self.bPause then
+		self.timerUpdate:Start()
+	end
 end
 
 function LootStack:OnLootStackUpdate(strVar, nValue)
@@ -201,9 +221,6 @@ function LootStack:AddQueuedItem()
 	self.tEntryData[nBtnIdx].fTimeAdded = fCurrTime -- adds a delay for vaccuum looting by switching logged to "shown" time
 
 	self.fLastTimeAdded = fCurrTime
-
-	-- animate the entry down
-	--self.arEntries[btnIdx]:PlayAnim(0)
 end
 
 function LootStack:RemoveItem(idx)
@@ -221,26 +238,29 @@ function LootStack:UpdateDisplay()
 	-- iterate over our entry data updating all the buttons
 	for idx, wndEntry in ipairs(self.arEntries) do
 		local tCurrEntryData = self.tEntryData[idx]
-		local tCurrItem = tCurrEntryData and tCurrEntryData.itemInstance or false
+		local itemCurr = tCurrEntryData and tCurrEntryData.itemInstance or false
 
 		if tCurrEntryData then
 			wndEntry:Invoke()
 		else
-			wndEntry:Close()
+			wndEntry:Show(false, true)
 		end
 		
-		if tCurrEntryData and tCurrItem and tCurrEntryData.nButton ~= idx then
-			local bGivenQuest = tCurrItem:GetGivenQuest()
-			local eItemQuality = tCurrItem and tCurrItem:GetItemQuality() or 1
+		if tCurrEntryData and itemCurr and tCurrEntryData.nButton ~= idx then
+			local bGivenQuest = itemCurr:GetGivenQuest()
+			local eItemQuality = itemCurr and itemCurr:GetItemQuality() or 1
+			wndEntry:SetData(itemCurr)
+			wndEntry:SetTooltipDoc(nil)
 			wndEntry:FindChild("Text"):SetTextColor(bGivenQuest and "white" or karEvalColors[eItemQuality])
-			wndEntry:FindChild("LootIcon"):SetSprite(bGivenQuest and "sprMM_QuestGiver" or tCurrItem:GetIcon())
+			wndEntry:FindChild("LootIcon"):SetSprite(bGivenQuest and "sprMM_QuestGiver" or itemCurr:GetIcon())
 			wndEntry:FindChild("RarityBracket"):SetSprite(bGivenQuest and "sprTooltip_Header_White" or karQualitySquareSprite[eItemQuality])
 
 			if tCurrEntryData.nCount == 1 then
-				wndEntry:FindChild("Text"):SetText(tCurrItem:GetName())
+				wndEntry:FindChild("Text"):SetText(itemCurr:GetName())
 			else
-				wndEntry:FindChild("Text"):SetText(String_GetWeaselString(Apollo.GetString("CombatLog_MultiItem"), tCurrEntryData.nCount, tCurrItem:GetName()))
+				wndEntry:FindChild("Text"):SetText(String_GetWeaselString(Apollo.GetString("CombatLog_MultiItem"), tCurrEntryData.nCount, itemCurr:GetName()))
 			end
+			
 			tCurrEntryData.nButton = idx
 		end
 	end
@@ -250,20 +270,3 @@ end
 
 local LootStackInst = LootStack:new()
 LootStackInst:Init()
-eToClient="1" Name="Btn" Overlapped="0" Text="" TextId="" Base="BK3:btnHolo_ListView_Simple" ButtonType="Check" GlobalRadioGroup="Salvage_ListItemRadioGroup" Visible="1" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" TooltipType="OnCursor" RadioGroup="" IgnoreMouse="0" RadioDisallowNonSelection="0" TooltipColor="" IgnoreTooltipDelay="1" HideInEditor="0">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="7" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="0" RAnchorOffset="57" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="IconBG" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" TooltipColor="" NewControlDepth="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="55" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Text="" Name="Icon" Picture="1" IgnoreMouse="1" Sprite="" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="1" DT_BOTTOM="1" Tooltip="" DT_RIGHT="1" Font="CRB_InterfaceMedium_B" TooltipColor="" IgnoreTooltipDelay="1" TooltipType="OnCursor" Subclass="ItemWindowSubclass"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="7" RAnchorPoint="0" RAnchorOffset="28" BAnchorPoint="0" BAnchorOffset="28" RelativeToClient="1" Text="" Name="CantUse" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:Icon_Windows_UI_CRB_Tooltip_Restricted" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="1" DT_BOTTOM="1" Tooltip="" DT_RIGHT="1" Font="CRB_InterfaceMedium_B" TooltipColor="" IgnoreTooltipDelay="1" TooltipType="OnCursor" Visible="0" TooltipFont="CRB_InterfaceSmall_O" TooltipId="Dialog_CantUseTooltip"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="63" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint=".6" BAnchorOffset="12" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Name="Title" TextId="" BGColor="ffffffff" TextColor="UI_TextHoloTitle" DT_VCENTER="0" DT_WORDBREAK="1" TooltipColor=""/>
-            <Event Name="ButtonCheck" Function="OnLootListItemCheck"/>
-            <Event Name="GenerateTooltip" Function="OnLootListItemGenerateTooltip"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="63" TAnchorPoint=".6" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="-1" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Name="Type" TextId="" BGColor="ffffffff" TextColor="UI_TextHoloBody" DT_VCENTER="1" DT_WORDBREAK="1" TooltipColor=""/>
-            <Event Name="MouseEnter" Function="OnLootBtnMouseEnter"/>
-            <Event Name="MouseExit" Function="OnLootBtnMouseExit"/>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" BGColor="UI_AlphaPercent60" TextColor="UI_TextHoloBodyHighlight" Template="Default" TooltipType="OnCursor" Name="Blocker" TooltipColor="" Visible="0" Picture="1" Sprite="BasicSprites:BlackFill" NewControlDepth="5" IgnoreMouse="0" DoNotBlockTooltip="1" TextId="CRB_Test_Set_name" DT_CENTER="1" DT_VCENTER="1" HideInEditor="0" DT_WORDBREAK="1"/>
-    </Form>
-</Forms>
-ner" BGColor="ffffffff" TextColor="ffffffff" TooltipColor=""/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LiveObjectiveItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlappe

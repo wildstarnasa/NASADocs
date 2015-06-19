@@ -9,6 +9,142 @@ require "GuildLib"
 require "GuildTypeLib"
 require "ChatChannelLib"
 
+local knTypeString = 1
+local knTypeFunction = 2
+
+local ktResultMap = {
+	[GuildLib.GuildResult_Success] = { nType = knTypString, value = Apollo.GetString("GuildResult_Success"), arParameters = { } },
+	[GuildLib.GuildResult_AtMaxGuildCount] = { nType = knTypeString, value = Apollo.GetString("GuldResult_AtMaxCount"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_MaxWarPartyCount] = { nType = knTypeString, value = Apollo.GetString("GuldResult_AtMaxCount"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_AtMaxCircleCount] = { nType = knTypeString, value = Apollo.GetString("GuldResult_AtMaxCount"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_MaxArenaTeamCount] = { nType = knTypeString, value = Apollo.GetString("GuildResult_MaxArenaTeamForSize"), arParameters = { } },
+	[GuildLib.GuildResult_CannotModifyResidenceWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), arParameters = { "strResidence" } },
+	[GuildLib.GuildResult_GenericActiveGameFailure] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CannotChangeRanksWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CannotChangePermissionsWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CannotEditBankWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_InvalidGuildName] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidGuildName"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_NotInThatGuild] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotInThatGuild"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_UnknownCharacter] = { nType = knTypeString, value = Apollo.GetString("GuildResult_UnknownCharacter"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_CharacterCannotJoinMoreGuilds] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CharacterMaxGuilds"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_CharacterAlreadyHasAGuildInvite] = { nType = knTypeString, value = Apollo.GetString("GuildResult_AlreadyHasInvite"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_CharacterInvited] = { nType = knTypeString, value = Apollo.GetString("GuildResult_AlreadyInvited"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_GuildmasterCannotLeaveGuild] = { nType = knTypeString, value = Apollo.GetString("GuildResult_GuildmasterCannotLeave"), arParameters = { "strGuildMaster", "strGuildType" } },
+	[GuildLib.GuildResult_CharacterNotInYourGuild] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotInYourGuild"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_CannotKickHigherOrEqualRankedMember] = { nType = knTypeString, value = Apollo.GetString("GuildResult_UnableToKick"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_KickedMember] = { nType = knTypeString, value = Apollo.GetString("GuildResult_HasBeenKicked"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_NoPendingInvites] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NoPendingInvites"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_PendingInviteExpired] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InviteExpired"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_CannotPromoteMemberAboveYourRank] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotPromote"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_PromotedToGuildMaster] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PromotedToLeader"), arParameters = { "tName", "strGuildMaster" } },
+	[GuildLib.GuildResult_PromotedMember] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PlayerPromoted"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_CanOnlyDemoteLowerRankedMembers] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotDemote"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_MemberIsAlreadyLowestRank] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotDemoteLowestRank"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_DemotedMember] = { nType = knTypeString, value = Apollo.GetString("GuildResult_MemberDemoted"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_InvalidRank] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidRank"), arParameters = { "tRank" } },
+	[GuildLib.GuildResult_InvalidRankName] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidRankName"), arParameters = { "strGuildType", "tName" } },
+	[GuildLib.GuildResult_CanOnlyDeleteEmptyRanks] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CanOnlyDeleteEmptyRank"), arParameters = { } },
+	[GuildLib.GuildResult_VoteAlreadyInProgress] = { nType = knTypeString, value = Apollo.GetString("GuildResult_VoteInProgress"), arParameters = { } },
+	[GuildLib.GuildResult_AlreadyCastAVote] = { nType = knTypeString, value = Apollo.GetString("GuildResult_AlreadyVoted"), arParameters = { } },
+	[GuildLib.GuildResult_InvalidElection] = { nType = knTypeString, value = Apollo.GetString("GuildResult_VoteInvalidated"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_VoteFailedToPass] = { nType = knTypeString, value = Apollo.GetString("GuildResult_VoteFailed"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_NoVoteInProgress] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NoVoteInProgress"), arParameters = { } },
+	[GuildLib.GuildResult_MemberAlreadyGuildMaster] = { nType = knTypeString, value = Apollo.GetString("GuildResult_AlreadyLeader"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_VoteStarted] = { nType = knTypeString, value = Apollo.GetString("GuildResult_VoteStarted"), arParameters = { "strGuildType", "tName" } },
+	[GuildLib.GuildResult_InviteAccepted] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PlayerJoined"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_InviteDeclined] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InviteDeclined"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_GuildNameUnavailable] = { nType = knTypeString, value = Apollo.GetString("GuildRegistration_NameUnavailable"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_GuildDisbanded] = { nType = knTypeString, value = Apollo.GetString("GuildResult_Disbanded"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_RankModified] = { nType = knTypeString, value = Apollo.GetString("GuildResult_RankModified"), arParameters = { "tRank", "tName" } },
+	[GuildLib.GuildResult_RankCreated] = { nType = knTypeString, value = Apollo.GetString("GuildResult_RankCreated"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_RankDeleted] = { nType = knTypeString, value = Apollo.GetString("GuildResult_RankDeleted"), arParameters = { "tRank", "tName" } },
+	[GuildLib.GuildResult_UnableToProcess] = { nType = knTypeString, value = Apollo.GetString("GuildResult_UnableToProcess"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_MemberQuit] = { nType = knTypeString, value = Apollo.GetString("GuildResult_MemberQuit"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_Voted] = { nType = knTypeString, value = Apollo.GetString("GuildResult_Voted"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_VotePassed] = { nType = knTypeString, value = Apollo.GetString("GuildResult_VotePassed"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_GuildLoading] = { nType = knTypeString, value = Apollo.GetString("GuildResult_Loading"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_KickedYou] = { nType = knTypeString, value = Apollo.GetString("GuildResult_YouHaveBeenKicked"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CanOnlyModifyRanksBelowYours] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CanOnlyModifyLowerRanks"), arParameters = { } },
+	[GuildLib.GuildResult_YouQuit] = { nType = knTypeString, value = Apollo.GetString("GuildResult_YouLeft"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_YouJoined] = { nType = knTypeString, value = Apollo.GetString("GuildResult_YouJoined"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_RankRenamed] = { nType = knTypeString, value = Apollo.GetString("GuildResult_RankRenamed"), arParameters = { "tRank", "tName" } },
+	[GuildLib.GuildResult_MemberOnline] = { nType = knTypeString, value = Apollo.GetString("GuildResult_MemberOnline"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_MemberOffline] = { nType = knTypeString, value = Apollo.GetString("GuildResult_MemberOffline"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_CannotInviteGuildFull] = { nType = knTypeString, value = Apollo.GetString("GuildResult_GuildFull"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_VoteTooRecentToHaveAnother] = { nType = knTypeString, value = Apollo.GetString("GuildResult_TooSoonToVote"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_NotInAGuild] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotInAGuild"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_InvalidFlags] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidFlags"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_StandardChanged] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BannerChanged"),	arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_NotAGuild] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotAGuild"), arParameters = { } },
+	[GuildLib.GuildResult_InvalidStandard] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidBanner"),	arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_YouCreated] = { nType = knTypeString, value = Apollo.GetString("GuildResult_GuildCreated"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_VendorOutOfRange] = { nType = knTypeString, value = Apollo.GetString("GuildDesigner_OutOfRange"), arParameters = { } },
+	[GuildLib.GuildResult_NotABankTab] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotABankTab"), arParameters = { } },
+	[GuildLib.GuildResult_BankerOutOfRange] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankerOutOfRange"), arParameters = { } },
+	[GuildLib.GuildResult_NoBank] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NoBank"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabAlreadyLoaded] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabAlreadyLoaded"), arParameters = { } },
+	[GuildLib.GuildResult_NoBankItemSelected ] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NoBankItemSelected"), arParameters = { } },
+	[GuildLib.GuildResult_BankItemMoved] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankItemMoved"), arParameters = { } },
+	[GuildLib.GuildResult_RankLacksRankRenamePermission] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NoRenamePermission"), arParameters = { } },
+	[GuildLib.GuildResult_InvalidBankTabName] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidBankTabName"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_CannotWithdrawBankItem] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CanNotWithdrawBankItem"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabNotLoaded] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabNotLoaded"), arParameters = { "tRank" } },
+	[GuildLib.GuildResult_CannotDepositBankItem] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotDepositItem"), arParameters = { } },
+	[GuildLib.GuildResult_AlreadyAMember] = { nType = knTypeString, value = Apollo.GetString("GuildResult_AlreadyAMember"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_BankTabWithdrawsExceeded] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankWithdrawsExceeded"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabNotVisible] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabNotVisible"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabDoesNotAcceptDeposits] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabDoesNotAcceptDeposits"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabRequiresAuthenticator] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabRequiresAuthenticator"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabCannotWithdraw] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabCannotWithdraw"), arParameters = { } },
+	[GuildLib.GuildResult_InsufficientInfluence] = { nType = knTypeString, value = Apollo.GetString("GuildDesigner_NotEnoughInfluence"), arParameters = { } },
+	[GuildLib.GuildResult_RequiresPrereq] = { nType = knTypeString, value = Apollo.GetString("GuildResult_RequiresPrereq"), arParameters = { } },
+	[GuildLib.GuildResult_BankTabBought] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabBought"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_ExceededMoneyWithdrawLimitToday] = { nType = knTypeString, value = Apollo.GetString("GuildResult_WithdrawLimitExceeded"), arParameters = { } },
+	[GuildLib.GuildResult_InsufficientMoneyInGuild] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotEnoughMoneyInGuild"), arParameters = { } },
+	[GuildLib.GuildResult_InsufficientMoneyOnCharacter] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotEnoughMoneyOnCharacter"), arParameters = { } },
+	[GuildLib.GuildResult_NotEnoughRenown] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotEnoughRenown"), arParameters = { } },
+	[GuildLib.GuildResult_CannotDisbandTeamWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotDisbandWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CannotLeaveTeamWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotLeaveTeamWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CannotRemoveFromTeamWithActiveGame] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotKickWithActiveGame"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_InsufficientWarCoins] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InsufficientWarCoins"), arParameters = { } },
+	[GuildLib.GuildResult_PerkDoesNotExist] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PerkDoesNotExist"), arParameters = { } },
+	[GuildLib.GuildResult_PerkIsAlreadyUnlocked] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PerkAlreadyUnlocked"), arParameters = { } },
+	[GuildLib.GuildResult_PerkIsAlreadyActive] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PerkIsAlreadyActive"), arParameters = { } },
+	[GuildLib.GuildResult_RequiresPerkPurchase] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PerkPrereqNotMet"), arParameters = { } },
+	[GuildLib.GuildResult_PerkNotActivateable] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PerkCanNotActivate"), arParameters = { } },
+	[GuildLib.GuildResult_PrivilegeRestricted] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PrivilegeRestricted"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_InvalidMessageOfTheDay] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidMotD"), arParameters = { } },
+	[GuildLib.GuildResult_InvalidMemberNote] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidNote"), arParameters = { } },
+	[GuildLib.GuildResult_InsufficentMembers] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InsufficientMembers"), arParameters = { } },
+	[GuildLib.GuildResult_NotAWarParty] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotAWarParty"), arParameters = { } },
+	[GuildLib.GuildResult_RequiresAchievement] = { nType = knTypeString, value = Apollo.GetString("GuildResult_PerkRequiresAchievement"), arParameters = { } },
+	[GuildLib.GuildResult_NotAValidWarPartyItem] = { nType = knTypeString, value = Apollo.GetString("GuildResult_NotAValidWarPartyItem"), arParameters = { } },
+	[GuildLib.GuildResult_InvalidGuildInfo] = { nType = knTypeString, value = Apollo.GetString("GuildResult_InvalidGuildInfo"), arParameters = { } },
+	[GuildLib.GuildResult_NotEnoughCredits] = { nType = knTypeString, value = Apollo.GetString("GuildRegistration_NeedMoreCredit"), arParameters = { } },
+	[GuildLib.GuildResult_CannotDeleteDefaultRanks] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotDeleteDefaultRanks"), arParameters = { "tRank" } },
+	[GuildLib.GuildResult_DuplicateRankName] = { nType = knTypeString, value = Apollo.GetString("GuildResult_DuplicateRankName"), arParameters = { "tName" } },
+	[GuildLib.GuildResult_InviteSent] = { nType = knTypeString, value = Apollo.GetString("Guild_InviteSent"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_BankTabInvalidPermissions] = { nType = knTypeString, value = Apollo.GetString("GuildResult_BankTabInvalidPermissions"), arParameters = { "tName", "strGuildType" } },
+	[GuildLib.GuildResult_Busy] = { nType = knTypeString, value = Apollo.GetString("GuildResult_Busy"), arParameters = { "strGuildType" } },
+	[GuildLib.GuildResult_CannotCreateWhileInQueue] = { nType = knTypeString, value = Apollo.GetString("GuildResult_CannotCreateWhileInQueue"), arParameters = { } },
+	[GuildLib.GuildResult_RenameNotAvailable] = { nType = knTypeString, value = Apollo.GetString("GuildResult_RenameNotAvailable"), arParameters = { } },
+	[GuildLib.GuildResult_RankLacksSufficientPermissions] = { nType = knTypeFunction, value = function(bIntercepted) return bIntercepted and Apollo.GetString("GuildDesigner_NoPermissions") or Apollo.GetString("GuildResult_InsufficientPermissions") end, arParameters = { "bIntercepted" } },
+	[GuildLib.GuildResult_NotHighEnoughLevel] = { nType = knTypeFunction, value = function(eGuildType, strGuildType)
+		local strResult
+		if eGuildType and (eGuildType == GuildLib.GuildType_ArenaTeam_2v2 or eGuildType == GuildLib.GuildType_ArenaTeam_3v3 or eGuildType == GuildLib.GuildType_ArenaTeam_5v5) then
+			strResult = Apollo.GetString("ArenaTeamRegistration_NotHighEnoughLevel")
+		elseif eGuildType and (eGuildType == GuildLib.GuildType_Guild) then
+			strResult = String_GetWeaselString(Apollo.GetString("GuildRegistration_NotHighEnoughLevel"), strGuildType, GuildLib.GetMinimumLevel(eGuildType))
+		elseif eGuildType and (eGuildType == GuildLib.GuildType_WarParty) then
+			strResult = String_GetWeaselString(Apollo.GetString("Warparty_NotHighEnoughLevel"), Apollo.GetString("Guild_GuildTypeWarparty"), GuildLib.GetMinimumLevel(eGuildType))
+		else
+			strResult = Apollo.GetString("CRB_LevelRequirementsNotMet")
+		end
+		return strResult
+	end, arParameters = { "eGuildType", "strGuildType" } },
+}
+
+
 local GuildAlerts = {}
 
 function GuildAlerts:new(o)
@@ -144,170 +280,36 @@ function GuildAlerts:GenerateAlert(guildSender, strName, nRank, eResult )
 	end
 
 	strName = tostring(strName) -- just in case.
+
+	local tAllParameters =
+	{
+		["tName"] = { ["strLiteral"] = strName },
+		["tRank"] = { ["strLiteral"] = strRank },
+		["strGuildType"] = strGuildType,
+		["strGuildMaster"] = strGuildMaster,
+		["strResidence"] = strResidence,
+		["bIntercepted"] = bIntercepted,
+		["eGuildType"] = eGuildType
+	}
 	
-	local tName = {["strLiteral"] = strName}
-	local tRank = {["strLiteral"] = strRank}
-
---[[
-	-- TODO remove these strings
-
-	ArenaRegister_ResultBusy
-	GuildRegistration_GuildBusy
-	GuildRegistration_YouJoinedGuild
-	GuildRegistration_NeedMoreRenown
-	GuildResult_VendorOutOfRange
-	GuildRegistration_GuildCreated
-	GuildDesigner_InvalidStandard
-	GuildDesigner_SystemError
-	ArenaRegister_ResultNameUnavailable
-	GuildDesigner_NameUnavailable
-	GuildResult_NameUnavailable
-	GuildDesigner_InvalidRankName
-	GuildDesigner_InvalidRank
-	GuildRegistration_InvalidName
-	GuildDesigner_InvalidGuildName
-	ArenaRegister_ResultInvaidName
-	GuildRegistration_CannotCreate
-	ArenaRegister_ResultMaxCount
-	GuildResult_MaxGuilds
-	GuildResult_MaxCircles
-]]--
-
-
-	if eResult == GuildLib.GuildResult_Success then									strResult = Apollo.GetString("GuildResult_Success")
-
-	elseif eResult == GuildLib.GuildResult_AtMaxGuildCount then 					strResult = String_GetWeaselString(Apollo.GetString("GuldResult_AtMaxCount"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_MaxWarPartyCount then 					strResult = String_GetWeaselString(Apollo.GetString("GuldResult_AtMaxCount"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_AtMaxCircleCount then 					strResult = String_GetWeaselString(Apollo.GetString("GuldResult_AtMaxCount"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_MaxArenaTeamCount then 					strResult = Apollo.GetString("GuildResult_MaxArenaTeamForSize")
-
-    elseif eResult == GuildLib.GuildResult_CannotModifyResidenceWithActiveGame then strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), strResidence)
-	elseif eResult == GuildLib.GuildResult_GenericActiveGameFailure then 			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotChangeRanksWithActiveGame then 	strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotChangePermissionsWithActiveGame then strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotEditBankWithActiveGame then 		strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotModifyWithActiveGame"), strGuildType)
-
-	elseif eResult == GuildLib.GuildResult_InvalidGuildName then					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InvalidGuildName"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_NotInThatGuild then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_NotInThatGuild"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_RankLacksSufficientPermissions then 		strResult = bIntercepted and Apollo.GetString("GuildDesigner_NoPermissions") or Apollo.GetString("GuildResult_InsufficientPermissions")
-	elseif eResult == GuildLib.GuildResult_UnknownCharacter then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_UnknownCharacter"), tName)
-	elseif eResult == GuildLib.GuildResult_CharacterCannotJoinMoreGuilds then 		strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CharacterMaxGuilds"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_CharacterAlreadyHasAGuildInvite then		strResult = String_GetWeaselString(Apollo.GetString("GuildResult_AlreadyHasInvite"), tName)
-	elseif eResult == GuildLib.GuildResult_CharacterInvited then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_AlreadyInvited"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_GuildmasterCannotLeaveGuild then 		strResult = String_GetWeaselString(Apollo.GetString("GuildResult_GuildmasterCannotLeave"), strGuildMaster, strGuildType)
-	elseif eResult == GuildLib.GuildResult_CharacterNotInYourGuild then				strResult = String_GetWeaselString(Apollo.GetString("GuildResult_NotInYourGuild"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotKickHigherOrEqualRankedMember then	strResult = String_GetWeaselString(Apollo.GetString("GuildResult_UnableToKick"), tName)
-	elseif eResult == GuildLib.GuildResult_KickedMember then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_HasBeenKicked"), tName)
-	elseif eResult == GuildLib.GuildResult_NoPendingInvites then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_NoPendingInvites"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_PendingInviteExpired then 				strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InviteExpired"), tName)
-	elseif eResult == GuildLib.GuildResult_CannotPromoteMemberAboveYourRank then 	strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotPromote"),	tName)
-	elseif eResult == GuildLib.GuildResult_PromotedToGuildMaster then 				strResult = String_GetWeaselString(Apollo.GetString("GuildResult_PromotedToLeader"), tName, strGuildMaster)
-	elseif eResult == GuildLib.GuildResult_PromotedMember then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_PlayerPromoted"), tName)
-	elseif eResult == GuildLib.GuildResult_CanOnlyDemoteLowerRankedMembers then 	strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotDemote"), tName)
-	elseif eResult == GuildLib.GuildResult_MemberIsAlreadyLowestRank then 			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotDemoteLowestRank"), tName)
-	elseif eResult == GuildLib.GuildResult_DemotedMember then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_MemberDemoted"), tName)
-	elseif eResult == GuildLib.GuildResult_InvalidRank then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InvalidRank"), tRank)
-	elseif eResult == GuildLib.GuildResult_InvalidRankName then						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InvalidRankName"), strGuildType, tName)
-	elseif eResult == GuildLib.GuildResult_CanOnlyDeleteEmptyRanks then				strResult = Apollo.GetString("GuildResult_CanOnlyDeleteEmptyRank")
-	elseif eResult == GuildLib.GuildResult_VoteAlreadyInProgress then 				strResult = Apollo.GetString("GuildResult_VoteInProgress")
-	elseif eResult == GuildLib.GuildResult_AlreadyCastAVote then 					strResult = Apollo.GetString("GuildResult_AlreadyVoted")
-	elseif eResult == GuildLib.GuildResult_InvalidElection then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_VoteInvalidated"), tName)
-	elseif eResult == GuildLib.GuildResult_VoteFailedToPass then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_VoteFailed"), tName)
-	elseif eResult == GuildLib.GuildResult_NoVoteInProgress then 					strResult = Apollo.GetString("GuildResult_NoVoteInProgress")
-	elseif eResult == GuildLib.GuildResult_MemberAlreadyGuildMaster then 			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_AlreadyLeader"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_VoteStarted then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_VoteStarted"), strGuildType, tName)
-	elseif eResult == GuildLib.GuildResult_InviteAccepted then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_PlayerJoined"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_InviteDeclined then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InviteDeclined"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_GuildNameUnavailable then  				strResult = String_GetWeaselString(Apollo.GetString("GuildRegistration_NameUnavailable"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_GuildDisbanded then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Disbanded"), tName)
-	elseif eResult == GuildLib.GuildResult_RankModified then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_RankModified"), tRank, tName)
-	elseif eResult == GuildLib.GuildResult_RankCreated then							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_RankCreated"), tName)
-	elseif eResult == GuildLib.GuildResult_RankDeleted then							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_RankDeleted"), tRank, tName)
-	elseif eResult == GuildLib.GuildResult_UnableToProcess then						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_UnableToProcess"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_MemberQuit then 							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_MemberQuit"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_Voted then 								strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Voted"), tName)
-	elseif eResult == GuildLib.GuildResult_VotePassed then 							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_VotePassed"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_GuildLoading then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Loading"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_KickedYou then 							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_YouHaveBeenKicked"),	strGuildType)
-	elseif eResult == GuildLib.GuildResult_CanOnlyModifyRanksBelowYours then 		strResult = Apollo.GetString("GuildResult_CanOnlyModifyLowerRanks")
-	elseif eResult == GuildLib.GuildResult_YouQuit then 							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_YouLeft"), tName)
-	elseif eResult == GuildLib.GuildResult_YouJoined then 							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_YouJoined"),	tName)
-	elseif eResult == GuildLib.GuildResult_RankRenamed then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_RankRenamed"), tRank, tName)
-	elseif eResult == GuildLib.GuildResult_MemberOnline then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_MemberOnline"), tName)
-	elseif eResult == GuildLib.GuildResult_MemberOffline then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_MemberOffline"),	tName)
-	elseif eResult == GuildLib.GuildResult_CannotInviteGuildFull then 				strResult = String_GetWeaselString(Apollo.GetString("GuildResult_GuildFull"),	tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_VoteTooRecentToHaveAnother then 			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_TooSoonToVote"),	strGuildType)
-	elseif eResult == GuildLib.GuildResult_NotInAGuild then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_NotInAGuild"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_InvalidFlags then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InvalidFlags"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_StandardChanged then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BannerChanged"),	strGuildType)
-	elseif eResult == GuildLib.GuildResult_NotAGuild then 							strResult = Apollo.GetString("GuildResult_NotAGuild")
-	elseif eResult == GuildLib.GuildResult_InvalidStandard then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InvalidBanner"),	strGuildType)
-	elseif eResult == GuildLib.GuildResult_YouCreated then 							strResult = String_GetWeaselString(Apollo.GetString("GuildResult_GuildCreated"), tName)
-	elseif eResult == GuildLib.GuildResult_VendorOutOfRange then 					strResult = Apollo.GetString("GuildDesigner_OutOfRange")
-	elseif eResult == GuildLib.GuildResult_NotABankTab then 						strResult = Apollo.GetString("GuildResult_NotABankTab")
-	elseif eResult == GuildLib.GuildResult_BankerOutOfRange then 					strResult = Apollo.GetString("GuildResult_BankerOutOfRange")
-	elseif eResult == GuildLib.GuildResult_NoBank then 								strResult = Apollo.GetString("GuildResult_NoBank")
-	elseif eResult == GuildLib.GuildResult_BankTabAlreadyLoaded then 				strResult = Apollo.GetString("GuildResult_BankTabAlreadyLoaded")
-	elseif eResult == GuildLib.GuildResult_NoBankItemSelected  then 				strResult = Apollo.GetString("GuildResult_NoBankItemSelected")
-	elseif eResult == GuildLib.GuildResult_BankItemMoved then 						strResult = Apollo.GetString("GuildResult_BankItemMoved")
-	elseif eResult == GuildLib.GuildResult_RankLacksRankRenamePermission then 		strResult = Apollo.GetString("GuildResult_NoRenamePermission")
-	elseif eResult == GuildLib.GuildResult_InvalidBankTabName then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_InvalidBankTabName"), tName)
-	elseif eResult == GuildLib.GuildResult_CannotWithdrawBankItem then 				strResult = Apollo.GetString("GuildResult_CanNotWithdrawBankItem")
-	elseif eResult == GuildLib.GuildResult_BankTabNotLoaded then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BankTabNotLoaded"), tRank)
-	elseif eResult == GuildLib.GuildResult_CannotDepositBankItem then 				strResult = Apollo.GetString("GuildResult_CannotDepositItem")
-	elseif eResult == GuildLib.GuildResult_AlreadyAMember and (eGuildType == GuildLib.GuildType_ArenaTeam_2v2 or eGuildType == GuildLib.GuildType_ArenaTeam_3v3 or eGuildType == GuildLib.GuildType_ArenaTeam_5v5) then strResult = String_GetWeaselString(Apollo.GetString("TeamResult_AlreadyAMember"), tName)
-	elseif eResult == GuildLib.GuildResult_AlreadyAMember then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_AlreadyAMember"), tName)
-	elseif eResult == GuildLib.GuildResult_BankTabWithdrawsExceeded then 			strResult = Apollo.GetString("GuildResult_BankWithdrawsExceeded")
-	elseif eResult == GuildLib.GuildResult_BankTabNotVisible then 					strResult = Apollo.GetString("GuildResult_BankTabNotVisible")
-	elseif eResult == GuildLib.GuildResult_BankTabDoesNotAcceptDeposits then 		strResult = Apollo.GetString("GuildResult_BankTabDoesNotAcceptDeposits")
-	elseif eResult == GuildLib.GuildResult_BankTabRequiresAuthenticator then 		strResult = Apollo.GetString("GuildResult_BankTabRequiresAuthenticator")
-	elseif eResult == GuildLib.GuildResult_BankTabCannotWithdraw then 				strResult = Apollo.GetString("GuildResult_BankTabCannotWithdraw")
-	elseif eResult == GuildLib.GuildResult_InsufficientInfluence then				strResult = Apollo.GetString("GuildDesigner_NotEnoughInfluence")
-	elseif eResult == GuildLib.GuildResult_RequiresPrereq then 						strResult = Apollo.GetString("GuildResult_RequiresPrereq")
-	elseif eResult == GuildLib.GuildResult_BankTabBought then 						strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BankTabBought"), tName)
-	elseif eResult == GuildLib.GuildResult_ExceededMoneyWithdrawLimitToday then 	strResult = Apollo.GetString("GuildResult_WithdrawLimitExceeded")
-	elseif eResult == GuildLib.GuildResult_InsufficientMoneyInGuild then 			strResult = Apollo.GetString("GuildResult_NotEnoughMoneyInGuild")
-	elseif eResult == GuildLib.GuildResult_InsufficientMoneyOnCharacter then 		strResult = Apollo.GetString("GuildResult_NotEnoughMoneyOnCharacter")
-	elseif eResult == GuildLib.GuildResult_NotEnoughRenown then                     strResult = Apollo.GetString("GuildResult_NotEnoughRenown")
-	elseif eResult == GuildLib.GuildResult_CannotDisbandTeamWithActiveGame then 	strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotDisbandWithActiveGame"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotLeaveTeamWithActiveGame then 		strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotLeaveTeamWithActiveGame"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotRemoveFromTeamWithActiveGame then 	strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotKickWithActiveGame"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_InsufficientWarCoins then 				strResult = Apollo.GetString("GuildResult_InsufficientWarCoins")
-	elseif eResult == GuildLib.GuildResult_PerkDoesNotExist then 					strResult = Apollo.GetString("GuildResult_PerkDoesNotExist")
-	elseif eResult == GuildLib.GuildResult_PerkIsAlreadyUnlocked then 				strResult = Apollo.GetString("GuildResult_PerkAlreadyUnlocked")
-	elseif eResult == GuildLib.GuildResult_PerkIsAlreadyActive then 				strResult = Apollo.GetString("GuildResult_PerkIsAlreadyActive")
-	elseif eResult == GuildLib.GuildResult_RequiresPerkPurchase then 				strResult = Apollo.GetString("GuildResult_PerkPrereqNotMet")
-	elseif eResult == GuildLib.GuildResult_PerkNotActivateable then 				strResult = Apollo.GetString("GuildResult_PerkCanNotActivate")
-	elseif eResult == GuildLib.GuildResult_PrivilegeRestricted then 				strResult = String_GetWeaselString(Apollo.GetString("GuildResult_PrivilegeRestricted"), strGuildType)
-	
-	--The only way we can get this result and have eGuildType to be nil is if we're invited to a warparty
-	elseif eResult == GuildLib.GuildResult_NotHighEnoughLevel then					if eGuildType and (eGuildType == GuildLib.GuildType_ArenaTeam_2v2 or eGuildType == GuildLib.GuildType_ArenaTeam_3v3 or eGuildType == GuildLib.GuildType_ArenaTeam_5v5) then
-																						strResult = Apollo.GetString("ArenaTeamRegistration_NotHighEnoughLevel")
-																					elseif eGuildType and (eGuildType == GuildLib.GuildType_Guild) then
-																						strResult = String_GetWeaselString(Apollo.GetString("GuildRegistration_NotHighEnoughLevel"), strGuildType, GuildLib.GetMinimumLevel(eGuildType))
-																					elseif eGuildType and (eGuildType == GuildLib.GuildType_WarParty) then
-																						strResult = String_GetWeaselString(Apollo.GetString("Warparty_NotHighEnoughLevel"), Apollo.GetString("Guild_GuildTypeWarparty"), GuildLib.GetMinimumLevel(GuildLib.GuildType_WarParty))
-																					else 
-																						strResult = Apollo.GetString("CRB_LevelRequirementsNotMet")
-																					end																					
-																					
-	elseif eResult == GuildLib.GuildResult_InvalidMessageOfTheDay then 				strResult = Apollo.GetString("GuildResult_InvalidMotD")
-	elseif eResult == GuildLib.GuildResult_InvalidMemberNote then 					strResult = Apollo.GetString("GuildResult_InvalidNote")
-	elseif eResult == GuildLib.GuildResult_InsufficentMembers then 					strResult = Apollo.GetString("GuildResult_InsufficientMembers")
-	elseif eResult == GuildLib.GuildResult_NotAWarParty then 						strResult = Apollo.GetString("GuildResult_NotAWarParty")
-	elseif eResult == GuildLib.GuildResult_RequiresAchievement then 				strResult = Apollo.GetString("GuildResult_PerkRequiresAchievement")
-	elseif eResult == GuildLib.GuildResult_NotAValidWarPartyItem then				strResult = Apollo.GetString("GuildResult_NotAValidWarPartyItem")
-	elseif eResult == GuildLib.GuildResult_InvalidGuildInfo then 					strResult = Apollo.GetString("GuildResult_InvalidGuildInfo")
-	elseif eResult == GuildLib.GuildResult_NotEnoughCredits then					strResult = Apollo.GetString("GuildRegistration_NeedMoreCredit")
-	elseif eResult == GuildLib.GuildResult_CannotDeleteDefaultRanks then 			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_CannotDeleteDefaultRanks"), tRank)
-	elseif eResult == GuildLib.GuildResult_DuplicateRankName then 					strResult = String_GetWeaselString(Apollo.GetString("GuildResult_DuplicateRankName"), tName)
-	elseif eResult == GuildLib.GuildResult_InviteSent then 							strResult = String_GetWeaselString(Apollo.GetString("Guild_InviteSent"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_BankTabInvalidPermissions then			strResult = String_GetWeaselString(Apollo.GetString("GuildResult_BankTabInvalidPermissions"), tName, strGuildType)
-	elseif eResult == GuildLib.GuildResult_Busy then								strResult = String_GetWeaselString(Apollo.GetString("GuildResult_Busy"), strGuildType)
-	elseif eResult == GuildLib.GuildResult_CannotCreateWhileInQueue then			strResult = Apollo.GetString("GuildResult_CannotCreateWhileInQueue")
-	elseif eResult == GuildLib.GuildResult_RenameNotAvailable then					strResult = Apollo.GetString("GuildResult_RenameNotAvailable")
+	local tEntry = ktResultMap[eResult]
+	if tEntry ~= nil then
+		local arParameters = {}
+		for idx, strParameter in pairs(tEntry.arParameters) do
+			arParameters[#arParameters + 1] = tAllParameters[strParameter]
+		end
+		
+		if tEntry.nType == knTypeString then
+			if #arParameters == 0 then
+				strResult = tEntry.value
+			else
+				strResult = String_GetWeaselString(tEntry.value, unpack(arParameters))
+			end
+		elseif tEntry.nType == knTypeFunction then
+			strResult = tEntry.value(unpack(arParameters))
+		end
 	end
-
+	
 	return strResult
 end
 
@@ -316,19 +318,3 @@ end
 -----------------------------------------------------------------------------------------------
 local GuildAlertsInst = GuildAlerts:new()
 GuildAlertsInst:Init()
-xtId="Group_RallyMember3">
-                        <Event Name="MouseEnter" Function="OnOptionsWindowBtnMouseEnter"/>
-                        <Event Name="MouseExit" Function="OnOptionsWindowBtnMouseExit"/>
-                    </Control>
-                </Control>
-                <Control Class="Button" Base="CRB_Basekit:kitBtn_List_Holo" Font="CRB_InterfaceMedium_O" ButtonType="Check" RadioGroup="GroupDisplayOptions_LocalRadioGroup_RallyingSpecific" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="72" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="96" DT_VCENTER="1" DT_CENTER="0" Name="MentoringSpecificBtn4" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Sprite="" Picture="0" Text="" TextId="" Tooltip="" RadioDisallowNonSelection="1" GlobalRadioGroup="" TooltipColor="">
-                    <Event Name="ButtonCheck" Function="OnMentorSpecificPerson"/>
-                    <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="CheckIcon" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:Icon_Windows_UI_CRB_Checkmark" Visible="0" TooltipColor="" Tooltip="" NewControlDepth="1" HideInEditor="1"/>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="SubOptionsBtnText" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" DT_VCENTER="1" TextId="Group_RallyMember4">
-                        <Event Name="MouseEnter" Function="OnOptionsWindowBtnMouseEnter"/>
-                        <Event Name="MouseExit" Function="OnOptionsWindowBtnMouseExit"/>
-                    </Control>
-                </Control>
-                <Control Class="Button" Base="CRB_Basekit:kitBtn_List_Holo" Font="CRB_InterfaceMedium_O" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-24" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="0" Name="MentoringStopBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Sprite="" Picture="0" Text="" TextId="" Tooltip="" RadioDisallowNonSelection="1" GlobalRadioGroup="" TooltipColor="" Visible="1" HideInEditor="0">
-                    <Event Name="ButtonCheck" Function="OnStopMentoringBtn"/>
-                    <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="C

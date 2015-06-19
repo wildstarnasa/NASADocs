@@ -12,7 +12,7 @@ require "ChatChannelLib"
 
 local Circles = {}
 local knMaxNumberOfCircles = 5
-local crGuildNameLengthError = ApolloColor.new("red")
+local crGuildNameLengthError = ApolloColor.new("AlertOrangeYellow")
 local crGuildNameLengthGood = ApolloColor.new("UI_TextHoloBodyCyan")
 
 function Circles:new(o)
@@ -907,9 +907,3 @@ end
 
 local CirclesInst = Circles:new()
 CirclesInst:Init()
-et="-21" BAnchorPoint="0" BAnchorOffset="35" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="0" DT_VCENTER="0" ProgressEmpty="" ProgressFull="CRB_CharacterCreateSprites:sprCharC_SliderFill" TooltipType="OnCursor" Name="ProgressBar" BGColor="white" TextColor="white" TooltipColor="" BarColor="" NewWindowDepth="1"/>
-            <Control Class="SliderBar" LAnchorPoint="0" LAnchorOffset="-4" TAnchorPoint="0" TAnchorOffset="16" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="0" BAnchorOffset="48" RelativeToClient="1" Font="Default" Text="" BGColor="white" TextColor="white" Template="CRB_Scroll_CCreateSlider" TooltipType="OnCursor" Name="SliderBar" TooltipColor="" Sprite="ClientSprites:WhiteFill" Min="-1.000000" Max="1.000000" TickAmount="0.010000" NewWindowDepth="1">
-                <Event Name="SliderBarChanged" Function="OnBoneChanged"/>
-            </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="7" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="0" RAnchorOffset="119" BAnchorPoint="0" BAnchorOffset="21" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="SliderTitle" TooltipColor="" TextId="CRB__2" DT_VCENTER="1"/>
-            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-132" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="21" RelativeToClient="1" Font="CRB_Header9" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyCyan" Template="Default" TooltipType="OnCursor" Nam

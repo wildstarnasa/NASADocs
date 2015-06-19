@@ -970,13 +970,3 @@ end
 
 local ClassResourcesInst = ClassResources:new()
 ClassResourcesInst:Init()
- BAnchorPoint="1" BAnchorOffset="-5" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="UndoBtn" TooltipColor="">
-            <Event Name="ButtonSignal" Function="OnOptionUndo"/>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-60" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextMetalGoldHighlight" Template="Default" TooltipType="OnCursor" Name="ListItemName" TooltipColor="" TextId="HairStyle" DT_VCENTER="1" DT_WORDBREAK="0"/>
-        <Control Class="CashWindow" LAnchorPoint="1" LAnchorOffset="-103" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-29" BAnchorPoint="1" BAnchorOffset="0" TooltipType="OnCursor" RelativeToClient="1" Font="CRB_Header9" Text="" Template="Default" BGColor="ffffffff" TextColor="UI_TextMetalBodyHighlight" DT_RIGHT="1" Name="CashWindow" TooltipColor="" SkipZeroes="1"/>
-        <Pixie LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="1" TAnchorOffset="-1" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="0" Sprite="WhiteFill" BGColor="UI_AlphaPercent5" TextColor="black" Rotation="0" Font="Default"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="280" BAnchorPoint="0" BAnchorOffset="34" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="ConfirmationLineItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="1" Overlapped="1" TooltipColor="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="9" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="0" RAnchorOffset="162" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="ListItemName" TooltipColor="" TextId="CharacterCustomize_Bones" DT_VCENTER="1" DT_WORDBREAK="1"/>
-        <Control Class="CashWindow" LAnchorPoint="0" LAnchorOffset="67" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOf

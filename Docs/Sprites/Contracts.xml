@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="sprContracts_HoloHeader" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="509" x1="670" x2="821" x3="821" x4="821" x5="982" y0="0" y1="81" y2="181" y3="181" y4="181" y5="236" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarBackground" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="509" x1="924" x2="924" x3="924" x4="924" x5="924" y0="236" y1="280" y2="280" y3="280" y4="280" y5="280" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Inset_Folder" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="0" x1="72" x2="97" x3="419" x4="443" x5="509" y0="0" y1="83" y2="218" y3="338" y4="338" y5="338" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarReal" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="471" x1="471" x2="471" x3="471" x4="471" x5="531" y0="405" y1="405" y2="405" y3="405" y4="405" y5="834" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarRealCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="545" x1="545" x2="545" x3="545" x4="545" x5="616" y0="105" y1="105" y2="105" y3="105" y4="105" y5="120" Stretchy="1" HotspotX="36" HotspotY="-6" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_SlottedComplete" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="576" x1="746" x2="746" x3="746" x4="746" x5="746" y0="487" y1="487" y2="487" y3="487" y4="487" y5="679" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="0.100" StartColor="UI_AlphaPercent0" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="576" x1="746" x2="746" x3="746" x4="746" x5="746" y0="487" y1="487" y2="487" y3="487" y4="487" y5="679" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.200" StartColor="white" EndColor="UI_AlphaPercent0"/>
+    </Sprite>
+    <Sprite Name="sprContracts_SlottedBackground" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="470" y0="337" y1="337" y2="337" y3="337" y4="337" y5="560" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_VertProgBarBackground" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="281" x1="281" x2="281" x3="281" x4="281" x5="399" y0="396" y1="396" y2="396" y3="396" y4="396" y5="998" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ExpanderBackground" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="280" y0="426" y1="426" y2="426" y3="426" y4="426" y5="1015" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_HorizontalBreak" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="185" x1="192" x2="246" x3="246" x4="246" x5="253" y0="396" y1="396" y2="396" y3="396" y4="396" y5="399" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarExpected" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="401" x1="401" x2="401" x3="401" x4="401" x5="461" y0="396" y1="396" y2="396" y3="396" y4="396" y5="825" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarExpectedCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="545" x1="545" x2="545" x3="545" x4="545" x5="616" y0="88" y1="88" y2="88" y3="88" y4="88" y5="103" Stretchy="1" HotspotX="36" HotspotY="-6" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty01" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="672" x1="672" x2="672" x3="672" x4="672" x5="698" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty02" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="618" x1="618" x2="618" x3="618" x4="618" x5="644" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty03" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="645" x1="645" x2="645" x3="645" x4="645" x5="671" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type01" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="543" x1="543" x2="543" x3="543" x4="543" x5="637" y0="264" y1="264" y2="264" y3="264" y4="264" y5="358" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type02" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="543" x1="543" x2="543" x3="543" x4="543" x5="637" y0="359" y1="359" y2="359" y3="359" y4="359" y5="453" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type03" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="543" x1="543" x2="543" x3="543" x4="543" x5="637" y0="454" y1="454" y2="454" y3="454" y4="454" y5="548" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type04" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="543" x1="543" x2="543" x3="543" x4="543" x5="637" y0="549" y1="549" y2="549" y3="549" y4="549" y5="643" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_PvP" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="543" x1="543" x2="543" x3="543" x4="543" x5="637" y0="645" y1="645" y2="645" y3="645" y4="645" y5="739" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_PvE" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="543" x1="543" x2="543" x3="543" x4="543" x5="637" y0="737" y1="737" y2="737" y3="737" y4="737" y5="831" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ExpanderSingle" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="644" x1="648" x2="753" x3="753" x4="753" x5="756" y0="218" y1="222" y2="300" y3="300" y4="300" y5="303" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ExpanderSelected" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="644" x1="658" x2="741" x3="741" x4="741" x5="756" y0="120" y1="133" y2="191" y3="191" y4="191" y5="205" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Protostar" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Protostar.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="216" y0="0" y1="0" y2="0" y3="0" y4="0" y5="228" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_MilestoneFinalCapPvE" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="797" x1="797" x2="797" x3="797" x4="797" x5="890" y0="13" y1="13" y2="13" y3="13" y4="13" y5="142" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarContract" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="517" x1="898" x2="898" x3="898" x4="898" x5="898" y0="284" y1="303" y2="303" y3="303" y4="303" y5="303" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ProgBarContractCap" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="909" x1="928" x2="928" x3="928" x4="928" x5="928" y0="284" y1="303" y2="303" y3="303" y4="303" y5="303" Stretchy="1" HotspotX="10" HotspotY="9" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type01_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="658" x1="658" x2="658" x3="658" x4="658" x5="752" y0="554" y1="554" y2="554" y3="554" y4="554" y5="648" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type02_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="658" x1="658" x2="658" x3="658" x4="658" x5="752" y0="648" y1="648" y2="648" y3="648" y4="648" y5="742" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type03_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="658" x1="658" x2="658" x3="658" x4="658" x5="752" y0="743" y1="743" y2="743" y3="743" y4="743" y5="837" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Type04_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="658" x1="658" x2="658" x3="658" x4="658" x5="752" y0="839" y1="839" y2="839" y3="839" y4="839" y5="933" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty01_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="755" x1="755" x2="755" x3="755" x4="755" x5="781" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty02_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="727" x1="727" x2="727" x3="727" x4="727" x5="753" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty03_Locked" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="700" x1="700" x2="700" x3="700" x4="700" x5="726" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty01_Slotted" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="674" x1="674" x2="674" x3="674" x4="674" x5="699" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty02_Slotted" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="619" x1="619" x2="619" x3="619" x4="619" x5="645" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_Difficulty03_Slotted" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="646" x1="646" x2="646" x3="646" x4="646" x5="673" y0="87" y1="87" y2="87" y3="87" y4="87" y5="113" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_SlottedAnim" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="0" x1="104" x2="104" x3="104" x4="104" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="104" x1="208" x2="208" x3="208" x4="208" x5="208" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="208" x1="312" x2="312" x3="312" x4="312" x5="312" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="312" x1="416" x2="416" x3="416" x4="416" x5="416" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="416" x1="416" x2="416" x3="416" x4="416" x5="520" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="520" x1="624" x2="624" x3="624" x4="624" x5="624" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="624" x1="728" x2="728" x3="728" x4="728" x5="728" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="728" x1="832" x2="832" x3="832" x4="832" x5="832" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="832" x1="936" x2="936" x3="936" x4="936" x5="936" y0="0" y1="119" y2="119" y3="119" y4="119" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="0" x1="104" x2="104" x3="104" x4="104" x5="104" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="104" x1="208" x2="208" x3="208" x4="208" x5="208" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="208" x1="312" x2="312" x3="312" x4="312" x5="312" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="312" x1="416" x2="416" x3="416" x4="416" x5="416" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="416" x1="520" x2="520" x3="520" x4="520" x5="520" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="520" x1="624" x2="624" x3="624" x4="624" x5="624" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="624" x1="728" x2="728" x3="728" x4="728" x5="728" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="728" x1="832" x2="832" x3="832" x4="832" x5="832" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="832" x1="936" x2="936" x3="936" x4="936" x5="936" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="0" x1="104" x2="104" x3="104" x4="104" x5="104" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="104" x1="208" x2="208" x3="208" x4="208" x5="208" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="208" x1="312" x2="312" x3="312" x4="312" x5="312" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="312" x1="416" x2="416" x3="416" x4="416" x5="416" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="416" x1="520" x2="520" x3="520" x4="520" x5="520" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="520" x1="624" x2="624" x3="624" x4="624" x5="624" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="624" x1="728" x2="728" x3="728" x4="728" x5="728" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="728" x1="832" x2="832" x3="832" x4="832" x5="832" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="832" x1="936" x2="936" x3="936" x4="936" x5="936" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.200" StartColor="white" EndColor="UI_AlphaPercent0"/>
+    </Sprite>
+    <Sprite Name="sprContracts_SlottedReverse" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="832" x1="936" x2="936" x3="936" x4="936" x5="936" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="728" x1="832" x2="832" x3="832" x4="832" x5="832" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="624" x1="728" x2="728" x3="728" x4="728" x5="728" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="520" x1="624" x2="624" x3="624" x4="624" x5="624" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="416" x1="520" x2="520" x3="520" x4="520" x5="520" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="312" x1="416" x2="416" x3="416" x4="416" x5="416" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="208" x1="312" x2="312" x3="312" x4="312" x5="312" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="104" x1="208" x2="208" x3="208" x4="208" x5="208" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="0" x1="104" x2="104" x3="104" x4="104" x5="104" y0="238" y1="238" y2="238" y3="238" y4="238" y5="357" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="832" x1="936" x2="936" x3="936" x4="936" x5="936" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="728" x1="832" x2="832" x3="832" x4="832" x5="832" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="624" x1="728" x2="728" x3="728" x4="728" x5="728" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="520" x1="624" x2="624" x3="624" x4="624" x5="624" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="416" x1="520" x2="520" x3="520" x4="520" x5="520" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="312" x1="416" x2="416" x3="416" x4="416" x5="416" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="208" x1="312" x2="312" x3="312" x4="312" x5="312" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="104" x1="208" x2="208" x3="208" x4="208" x5="208" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="0" x1="104" x2="104" x3="104" x4="104" x5="104" y0="119" y1="119" y2="119" y3="119" y4="119" y5="238" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="832" x1="936" x2="936" x3="936" x4="936" x5="936" y0="0" y1="119" y2="119" y3="119" y4="119" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="728" x1="832" x2="832" x3="832" x4="832" x5="832" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="624" x1="728" x2="728" x3="728" x4="728" x5="728" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="520" x1="624" x2="624" x3="624" x4="624" x5="624" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="416" x1="416" x2="416" x3="416" x4="416" x5="520" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="312" x1="416" x2="416" x3="416" x4="416" x5="416" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="208" x1="312" x2="312" x3="312" x4="312" x5="312" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="104" x1="208" x2="208" x3="208" x4="208" x5="208" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.030" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts_Slotted_anim.tex" x0="0" x1="104" x2="104" x3="104" x4="104" x5="104" y0="0" y1="0" y2="0" y3="0" y4="0" y5="119" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="white" EndColor="UI_AlphaPercent0"/>
+    </Sprite>
+    <Sprite Name="sprContracts_MilestoneFinalCapPvP" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="891" x1="891" x2="891" x3="891" x4="891" x5="984" y0="13" y1="13" y2="13" y3="13" y4="13" y5="142" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_MilestoneFinalCapPvPFlash" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="891" x1="891" x2="891" x3="891" x4="891" x5="984" y0="164" y1="164" y2="164" y3="164" y4="164" y5="293" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.500" StartColor="white" EndColor="UI_AlphaPercent0"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="891" x1="891" x2="891" x3="891" x4="891" x5="984" y0="164" y1="164" y2="164" y3="164" y4="164" y5="293" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="0.400" StartColor="UI_AlphaPercent0" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_MilestoneFinalCapPvEFlash" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="797" x1="797" x2="797" x3="797" x4="797" x5="890" y0="164" y1="164" y2="164" y3="164" y4="164" y5="293" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.500" StartColor="white" EndColor="UI_AlphaPercent0"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="797" x1="797" x2="797" x3="797" x4="797" x5="890" y0="164" y1="164" y2="164" y3="164" y4="164" y5="293" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="0.400" StartColor="UI_AlphaPercent0" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_SlottedTurnIn" Cycle="0">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="491" x1="887" x2="887" x3="887" x4="887" x5="887" y0="679" y1="679" y2="679" y3="679" y4="679" y5="872" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="0.100" StartColor="UI_AlphaPercent0" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="491" x1="887" x2="887" x3="887" x4="887" x5="887" y0="679" y1="679" y2="679" y3="679" y4="679" y5="872" Stretchy="1" HotspotX="-363" HotspotY="-99" Duration="1.500" StartColor="white" EndColor="UI_AlphaPercent0"/>
+    </Sprite>
+    <Sprite Name="sprContracts_ToastBG" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="746" x1="767" x2="837" x3="837" x4="837" x5="847" y0="511" y1="533" y2="607" y3="607" y4="607" y5="632" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprContracts_MilestoneMarkerReadyAnim" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="648" x1="648" x2="648" x3="648" x4="648" x5="746" y0="927" y1="927" y2="927" y3="927" y4="927" y5="991" HotspotX="0" HotspotY="0" Duration="0.300" StartColor="UI_AlphaPercent0" EndColor="UI_AlphaPercent60"/>
+        <Frame Texture="UI\Assets\Textures\UI_Contracts.tex" x0="648" x1="648" x2="648" x3="648" x4="648" x5="746" y0="927" y1="927" y2="927" y3="927" y4="927" y5="991" HotspotX="0" HotspotY="0" Duration="0.800" StartColor="UI_AlphaPercent60" EndColor="UI_AlphaPercent0"/>
+    </Sprite>
+    <AutoButton Name="btnContracts_TurnIn" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="185" x1="185" x2="185" x3="185" x4="185" x5="363" y0="0" y1="0" y2="0" y3="0" y4="0" y5="79" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnContracts_MilestoneClaimed" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="363" x1="363" x2="363" x3="363" x4="363" x5="411" y0="300" y1="300" y2="300" y3="300" y4="300" y5="350" Stretchy="1" StateBits="5" Direction="Across"/>
+    <AutoButton Name="btnContracts_MilestoneMarker" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="747" x1="747" x2="747" x3="747" x4="747" x5="847" y0="465" y1="465" y2="465" y3="465" y4="465" y5="505" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnContracts_Abandon" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="2" x1="2" x2="2" x3="2" x4="2" x5="180" y0="0" y1="0" y2="0" y3="0" y4="0" y5="79" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnContracts_Accept" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="367" x1="367" x2="367" x3="367" x4="367" x5="545" y0="0" y1="0" y2="0" y3="0" y4="0" y5="79" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnContracts_Slotted" Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="470" x1="470" x2="470" x3="470" x4="470" x5="580" y0="337" y1="337" y2="337" y3="337" y4="337" y5="466" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_MilestoneMarkerReward" Texture="UI\Assets\Textures\UI_Contracts3.tex" x0="105" x1="105" x2="105" x3="105" x4="105" x5="171" y0="0" y1="0" y2="0" y3="0" y4="0" y5="76" Stretchy="1" StateBits="31" Direction="Down"/>
+    <AutoButton Name="btnContracts_ExpanderBtn" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="542" x1="542" x2="542" x3="542" x4="542" x5="576" y0="2" y1="2" y2="2" y3="2" y4="2" y5="86" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_MilestoneMarkerFinal" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="643" x1="643" x2="643" x3="643" x4="643" x5="690" y0="316" y1="316" y2="316" y3="316" y4="316" y5="387" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_MilestoneMarkerReady" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="490" x1="490" x2="490" x3="490" x4="490" x5="560" y0="844" y1="844" y2="844" y3="844" y4="844" y5="890" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnContracts_MilestoneMarkerStart" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="405" x1="405" x2="405" x3="405" x4="405" x5="475" y0="844" y1="844" y2="844" y3="844" y4="844" y5="890" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnContracts_MilestoneMarkerComplete" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="574" x1="574" x2="574" x3="574" x4="574" x5="644" y0="844" y1="844" y2="844" y3="844" y4="844" y5="890" Stretchy="1" StateBits="7" Direction="Down"/>
+    <AutoButton Name="btnContracts_RewardSelection" Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="744" x1="744" x2="744" x3="744" x4="744" x5="784" y0="471" y1="471" y2="471" y3="471" y4="471" y5="511" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_CheckBoxSlotted" Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="100" y0="682" y1="682" y2="682" y3="682" y4="682" y5="801" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_CheckBox" Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="100" y0="561" y1="561" y2="561" y3="561" y4="561" y5="679" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_CheckBoxLocked" Texture="UI\Assets\Textures\UI_Contracts2.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="100" y0="804" y1="804" y2="804" y3="804" y4="804" y5="922" Stretchy="1" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnContracts_MilestoneMarkerFinalReady" Texture="UI\Assets\Textures\UI_Contracts.tex" x0="643" x1="643" x2="643" x3="643" x4="643" x5="690" y0="392" y1="392" y2="392" y3="392" y4="392" y5="463" Stretchy="1" StateBits="31" Direction="Across"/>
+</Sprites>

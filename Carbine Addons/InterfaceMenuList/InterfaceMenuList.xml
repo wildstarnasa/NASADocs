@@ -2,12 +2,6 @@
 <Forms>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-63" RAnchorPoint="0.5" RAnchorOffset="-415" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="InterfaceMenuListForm" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TextId="" TooltipColor="" Tooltip="" IgnoreMouse="1">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="85" TAnchorPoint="1" TAnchorOffset="-26" RAnchorPoint="1" RAnchorOffset="-60" BAnchorPoint="1" BAnchorOffset="12" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ButtonList" BGColor="white" TextColor="white" TooltipColor="" Tooltip="" RightEdgeControlsAnchor="">
-            <Control Class="Button" Base="HUD_BottomBar:btn_HUD_MenuIconBtn" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="156" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="192" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="MailBtn" BGColor="UI_AlphaPercent60" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Sprite="" RelativeToClient="1" Tooltip="" TooltipId="CRB_Mail" TestAlpha="0">
-                <Event Name="MouseEnter" Function="OnListBtnMouseEnter"/>
-                <Event Name="MouseExit" Function="OnListBtnMouseExit"/>
-                <Event Name="ButtonSignal" Function="OnListBtnClick"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-12" TAnchorPoint="0.5" TAnchorOffset="-12" RAnchorPoint="0.5" RAnchorOffset="12" BAnchorPoint="0.5" BAnchorOffset="12" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:spr_HUD_MenuIcons_Mail" Tooltip="" TooltipId="InterfaceMenu_Mail"/>
-            </Control>
             <Event Name="MouseExit" Function="OnListBtnMouseExit"/>
         </Control>
         <Control Class="Button" Base="HUD_BottomBar:btn_HUD_Menu" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="-14" TAnchorPoint="1" TAnchorOffset="-57" RAnchorPoint="0" RAnchorOffset="54" BAnchorPoint="1" BAnchorOffset="14" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="OpenFullListBtn" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Visible="1" HideInEditor="0" Tooltip="" BGColor="ffffffff" RelativeToClient="1" TestAlpha="1">
@@ -15,18 +9,29 @@
         </Control>
         <Event Name="MouseExit" Function="OnListBtnMouseExit"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="48" TAnchorPoint="1" TAnchorOffset="-20" RAnchorPoint="0" RAnchorOffset="87" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_Header9" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyCyan" Template="Default" TooltipType="OnCursor" Name="Time" TooltipColor="" TextId="Challenges_NoProgress" DT_VCENTER="0" DT_BOTTOM="0" DT_RIGHT="0" DT_CENTER="0"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="80" TAnchorPoint="1" TAnchorOffset="-29" RAnchorPoint="0" RAnchorOffset="114" BAnchorPoint="1" BAnchorOffset="3" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LiveEvent" TooltipColor="" Visible="0">
+            <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-20" TAnchorPoint="0.5" TAnchorOffset="-19" RAnchorPoint="0.5" RAnchorOffset="18" BAnchorPoint="0.5" BAnchorOffset="19" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="EventAlert" BGColor="UI_AlphaPercent80" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:btn_HUD_MenuIconBtnPressed" NoClip="1" Overlapped="1" Visible="0"/>
+            <Control Class="Button" Base="Event_ShadesEve:btnEvent_Shade_Pumpkin" Font="DefaultButton" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="32" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="EventMoreInfoBtn" TooltipColor="" RelativeToClient="1" TestAlpha="1" NeverBringToFront="1" IgnoreMouse="0" HideInEditor="0">
+                <Event Name="ButtonSignal" Function="OnEventMoreInfoBtn"/>
+                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-20" TAnchorPoint="0.5" TAnchorOffset="-20" RAnchorPoint="0.5" RAnchorOffset="20" BAnchorPoint="0.5" BAnchorOffset="20" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="EventSmallerHitZone" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" NewControlDepth="1">
+                    <Event Name="MouseEnter" Function="OnEventMoreInfoMouseEnter"/>
+                    <Event Name="MouseExit" Function="OnEventMoreInfoMouseExit"/>
+                </Control>
+            </Control>
+            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-2" TAnchorPoint="0.5" TAnchorOffset="-9" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0.5" BAnchorOffset="9" RelativeToClient="1" Font="Default" Text="" BGColor="42428c80" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" Sprite="BasicSprites:WhiteFill" Picture="1" IgnoreMouse="1" NoClip="0"/>
+        </Control>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AlertIndicator" BGColor="UI_AlphaPercent80" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:btn_HUD_MenuIconBtnPressed" NoClip="0" Overlapped="1"/>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="MenuListItem" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" TooltipColor="" Tooltip="">
-        <Control Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceSmall" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="25" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-18" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="MenuListItemBtn" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" RelativeToClient="1" Tooltip="" ButtonTextXMargin="8">
+        <Control Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceSmall" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="25" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-19" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="0" TooltipType="OnCursor" Name="MenuListItemBtn" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" RelativeToClient="1" Tooltip="" ButtonTextXMargin="8">
             <Event Name="ButtonSignal" Function="OnMenuListItemClick"/>
             <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-110" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="-3" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="MenuListItemKeybind" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" DT_VCENTER="1" TextId="" DT_RIGHT="1" DT_WORDBREAK="0"/>
         </Control>
-        <Control Class="Button" Base="BK3:btnHolo_Pin_2" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-19" TAnchorPoint="0.5" TAnchorOffset="-9" RAnchorPoint="1" RAnchorOffset="2" BAnchorPoint="0.5" BAnchorOffset="12" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="PinBtn" BGColor="UI_AlphaPercent60" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Sprite="" Tooltip="" RelativeToClient="1" TooltipId="" TestAlpha="0">
+        <Control Class="Button" Base="BK3:btnHolo_Pin_2" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-21" TAnchorPoint="0.5" TAnchorOffset="-10" RAnchorPoint="1" RAnchorOffset="3" BAnchorPoint="0.5" BAnchorOffset="14" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="PinBtn" BGColor="UI_AlphaPercent60" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Sprite="" Tooltip="" RelativeToClient="1" TooltipId="" TestAlpha="0">
             <Event Name="ButtonCheck" Function="OnPinBtnChecked"/>
             <Event Name="ButtonUncheck" Function="OnPinBtnChecked"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-8" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="0" RAnchorOffset="30" BAnchorPoint="0" BAnchorOffset="33" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="IconContainer" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" NoClip="0" Tooltip="">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-7" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="0" RAnchorOffset="31" BAnchorPoint="0" BAnchorOffset="33" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="IconContainer" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" NoClip="0" Tooltip="">
             <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-12" TAnchorPoint="0.5" TAnchorOffset="-12" RAnchorPoint="0.5" RAnchorOffset="12" BAnchorPoint="0.5" BAnchorOffset="12" RelativeToClient="1" Font="CRB_Header10" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextHoloNormal" Template="Default" TooltipType="OnCursor" Name="Icon" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" DT_CENTER="1" DT_VCENTER="1"/>
         </Control>
     </Form>
@@ -40,61 +45,19 @@
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0.5" TAnchorOffset="-1" RAnchorPoint="0.5" RAnchorOffset="11" BAnchorPoint="0.5" BAnchorOffset="15" RelativeToClient="1" Font="CRB_Header9_O" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="Number" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" DT_VCENTER="1" DT_CENTER="0" DoNotBlockTooltip="1" NewControlDepth="2" TextId="Challenges_NoProgress" NoClip="0" Visible="0" HideInEditor="0" AutoScaleTextOff="1" DT_RIGHT="1"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-23" TAnchorPoint="1" TAnchorOffset="-719" RAnchorPoint="0" RAnchorOffset="357" BAnchorPoint="1" BAnchorOffset="-20" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="FullListFrame" BGColor="white" TextColor="white" TooltipColor="" Sprite="BK3:sprHolo_Alert_Flyout" Picture="1" IgnoreMouse="0" Visible="0" CloseOnExternalClick="1" Tooltip="" HideInEditor="0" NoClip="1" Escapable="1" NewWindowDepth="0" Overlapped="1" TestAlpha="0">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="-42" BAnchorPoint="1" BAnchorOffset="-88" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" Sprite="UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1" Tooltip=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="45" TAnchorPoint="0" TAnchorOffset="79" RAnchorPoint="1" RAnchorOffset="-45" BAnchorPoint="1" BAnchorOffset="-90" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollList" TooltipType="OnCursor" Name="FullListScroll" BGColor="white" TextColor="white" TooltipColor="" VScroll="1" IgnoreMouse="1" HideInEditor="0"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="1" TAnchorOffset="-79" RAnchorPoint="1" RAnchorOffset="-39" BAnchorPoint="1" BAnchorOffset="-46" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SearchBGPixie" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_Snippet" HideInEditor="0"/>
-        <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="1" TAnchorOffset="-74" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="1" BAnchorOffset="-49" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SearchEditBox" BGColor="white" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" DT_VCENTER="1" TextId="" PromptTextId="CRB_Search" PromptFont="CRB_InterfaceMedium" PromptColor="UI_TextHoloBody">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-12" TAnchorPoint="0.33" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="351" BAnchorPoint="1" BAnchorOffset="-26" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="FullListFrame" BGColor="white" TextColor="white" TooltipColor="" Sprite="BK3:sprHolo_Alert_Flyout_Thin" Picture="1" IgnoreMouse="1" Visible="0" CloseOnExternalClick="1" Tooltip="" HideInEditor="0" NoClip="1" Escapable="1" NewWindowDepth="0" Overlapped="1" TestAlpha="0">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="30" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="1" RAnchorOffset="-33" BAnchorPoint="1" BAnchorOffset="-88" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" Sprite="UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1" Tooltip=""/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="33" TAnchorPoint="0" TAnchorOffset="37" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="1" BAnchorOffset="-90" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollList" TooltipType="OnCursor" Name="FullListScroll" BGColor="white" TextColor="white" TooltipColor="" VScroll="1" IgnoreMouse="1" HideInEditor="0"/>
+        <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="35" TAnchorPoint="1" TAnchorOffset="-79" RAnchorPoint="1" RAnchorOffset="-37" BAnchorPoint="1" BAnchorOffset="-42" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_InputBox" TooltipType="OnCursor" Name="SearchEditBox" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" DT_VCENTER="1" TextId="" PromptTextId="CRB_Search" PromptFont="CRB_InterfaceMedium" PromptColor="UI_TextHoloBody" Border="1" UseTemplateBG="1">
             <Event Name="EditBoxChanged" Function="OnSearchEditBoxChanged"/>
         </Control>
-        <Control Class="Button" Base="BK3:btnHolo_Search" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-69" TAnchorPoint="1" TAnchorOffset="-75" RAnchorPoint="1" RAnchorOffset="-43" BAnchorPoint="1" BAnchorOffset="-50" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="SearchCommitBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1">
+        <Control Class="Button" Base="BK3:btnHolo_Search" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-68" TAnchorPoint="1" TAnchorOffset="-73" RAnchorPoint="1" RAnchorOffset="-42" BAnchorPoint="1" BAnchorOffset="-48" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="SearchCommitBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RelativeToClient="1">
             <Event Name="ButtonSignal" Function="OnSearchCommitBtn"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="-42" BAnchorPoint="1" BAnchorOffset="-88" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SearchFlash" BGColor="UI_TextHoloBody" TextColor="white" TooltipColor="" Sprite="CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp" Picture="1" IgnoreMouse="1" RightEdgeControlsAnchor="" NewControlDepth="1" HideInEditor="0"/>
-        <Control Class="Button" Base="BK3:btnHolo_Clear" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-69" TAnchorPoint="1" TAnchorOffset="-75" RAnchorPoint="1" RAnchorOffset="-44" BAnchorPoint="1" BAnchorOffset="-49" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="SearchClearBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Visible="0" RelativeToClient="1" TransitionShowHide="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="30" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="-54" BAnchorPoint="1" BAnchorOffset="-88" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SearchFlash" BGColor="UI_TextHoloBody" TextColor="white" TooltipColor="" Sprite="CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp" Picture="1" IgnoreMouse="1" RightEdgeControlsAnchor="" NewControlDepth="1" HideInEditor="1"/>
+        <Control Class="Button" Base="BK3:btnHolo_Clear" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-68" TAnchorPoint="1" TAnchorOffset="-73" RAnchorPoint="1" RAnchorOffset="-43" BAnchorPoint="1" BAnchorOffset="-47" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="SearchClearBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Visible="0" RelativeToClient="1" TransitionShowHide="1" HideInEditor="0">
             <Event Name="ButtonSignal" Function="OnSearchClearBtn"/>
         </Control>
-        <Control Class="Window" Name="Title" Font="CRB_HeaderLarge" DT_VCENTER="1" TextColor="UI_WindowTitleYellow" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-42" BAnchorPoint="0" BAnchorOffset="77" BGColor="ffffffff" TextId="InterfaceMenu_Interface" TooltipColor="" DT_CENTER="1" Text=""/>
         <Event Name="WindowShow" Function="OnListShow"/>
     </Form>
 </Forms>
-xit(wndHandler, wndControl) -- Also self.wndMain MouseExit and ButtonList MouseExit
-	wndHandler:SetBGColor("9dffffff")
-end
-
-function InterfaceMenuList:OnOpenFullListCheck(wndHandler, wndControl)
-	self.wndList:FindChild("SearchEditBox"):SetFocus()
-	self:FullListRedraw()
-end
-
-function InterfaceMenuList:LoadByName(strForm, wndParent, strCustomName)
-	local wndNew = wndParent:FindChild(strCustomName)
-	if not wndNew then
-		wndNew = Apollo.LoadForm(self.xmlDoc , strForm, wndParent, self)
-		wndNew:SetName(strCustomName)
-	end
-	return wndNew
-end
-
-function InterfaceMenuList:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
-	local arTutorialAnchorMapping =
-	{
-		--[GameLib.CodeEnumTutorialAnchor.Abilities] 			= "LASBtn",
-		--[GameLib.CodeEnumTutorialAnchor.Character] 		= "CharacterBtn",
-		--[GameLib.CodeEnumTutorialAnchor.Mail] 				= "MailBtn",
-		--[GameLib.CodeEnumTutorialAnchor.GalacticArchive] = "LoreBtn",
-		--[GameLib.CodeEnumTutorialAnchor.Social] 			= "SocialBtn",
-		--[GameLib.CodeEnumTutorialAnchor.GroupFinder] 		= "GroupFinderBtn",
-	}
-
-	local strWindowName = "ButtonList" or false
-	if not strWindowName then
-		return
-	end
-
-	local tRect = {}
-	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:FindChild(strWindowName):GetRect()
-	tRect.r = tRect.r - 26
-	
-	if arTutorialAnchorMapping[eAnchor] then
-		Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupT

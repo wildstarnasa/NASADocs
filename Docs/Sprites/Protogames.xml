@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_Protogames_Frame" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Frame.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="695" y0="0" y1="0" y2="0" y3="0" y4="0" y5="34" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Cell_Active" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Cell_Active.tga" x0="0" x1="14" x2="15" x3="81" x4="82" x5="96" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Cell_Complete" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Cell_Complete.tga" x0="0" x1="14" x2="15" x3="81" x4="82" x5="96" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Cell_Incomplete" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Cell_Incomplete.tga" x0="0" x1="14" x2="15" x3="81" x4="82" x5="96" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Icon_BossActive" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Icon_BossActive.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Icon_BossInactive" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Icon_BossInactive.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Icon_MedalBronze" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Icon_MedalBronze.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Icon_MedalGold" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Icon_MedalGold.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Icon_MedalSilver" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_Protogames_Icon_MedalSilver.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Icon_MedalFailed" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Protogames_Icon_MedalFailed.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="47" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Protogames_Cell_Fill" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Protogames_Cell_Fill.tga" x0="0" x1="14" x2="15" x3="61" x4="62" x5="76" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

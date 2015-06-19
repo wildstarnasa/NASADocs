@@ -47,6 +47,7 @@ function FloatText:OnLoad()
 	Apollo.RegisterEventHandler("FactionFloater", 							"OnFactionFloater", self)
 	Apollo.RegisterEventHandler("CombatLogTransference", 					"OnCombatLogTransference", self)
 	Apollo.RegisterEventHandler("CombatLogCCState", 						"OnCombatLogCCState", self)
+	Apollo.RegisterEventHandler("CombatLogImmunity", 						"OnCombatLogImmunity", self)
 	Apollo.RegisterEventHandler("ActionBarNonSpellShortcutAddFailed", 		"OnActionBarNonSpellShortcutAddFailed", self)
 	Apollo.RegisterEventHandler("GenericEvent_GenericError",				"OnGenericError", self)
 
@@ -588,6 +589,7 @@ function FloatText:OnLootedMoney(monLooted) -- karCurrencyTypeToString filters t
 		[Money.CodeEnumCurrencyType.ElderGems] 			= "CRB_Elder_Gems",
 		[Money.CodeEnumCurrencyType.Prestige] 			= "CRB_Prestige",
 		[Money.CodeEnumCurrencyType.CraftingVouchers]	= "CRB_Crafting_Vouchers",
+		[Money.CodeEnumCurrencyType.Glory]				= "CRB_Glory",
 	}
 
 	local strCurrencyType = arCurrencyTypeToString[monLooted:GetMoneyType()] or ""
@@ -621,6 +623,7 @@ function FloatText:OnLootedMoney(monLooted) -- karCurrencyTypeToString filters t
 	local tContent =
 	{
 		eType = LuaEnumMessageType.AlternateCurrency,
+		eCurrencyType = monLooted:GetMoneyType(),
 		nAmount = monLooted:GetAmount(),
 	}
 
@@ -933,19 +936,50 @@ function FloatText:OnPlayerDamageOrHealing(unitPlayer, eDamageType, nDamage, nSh
 end
 
 ------------------------------------------------------------------
-function FloatText:OnCombatLogCCState(tEventArgs)
+function FloatText:GetDefaultCCStateTextOption()
+	local tTextOption = self:GetDefaultTextOption()
+	tTextOption.fScale = 1.0
+	tTextOption.fDuration = 2
+	tTextOption.eCollisionMode = CombatFloater.CodeEnumFloaterCollisionMode.Vertical --IgnoreCollision --Horizontal
+	tTextOption.eLocation = CombatFloater.CodeEnumFloaterLocation.Chest
+	tTextOption.fOffset = -0.8
+	tTextOption.fOffsetDirection = 0
+	tTextOption.arFrames={}
+	tTextOption.nColor = 0xb0b0b0
+
+	tTextOption.arFrames =
+	{
+		[1] = {fScale = 1.0,	fTime = 0,		fAlpha = 0.0},
+		[2] = {fScale = 0.7,	fTime = 0.1,	fAlpha = 0.8},
+		[3] = {fScale = 0.7,	fTime = 0.9,	fAlpha = 0.8,	fVelocityDirection = 0},
+		[4] = {fScale = 1.0,	fTime = 1.0,	fAlpha = 0.0,	fVelocityDirection = 0},
+	}
+	return tTextOption
+end
+
+------------------------------------------------------------------
+function FloatText:ShouldDisplayCCStateFloater( tEventArgs )
 	if not Apollo.GetConsoleVariable("ui.showCombatFloater") then
-		return
+		return false
 	end
 
 	-- removal of a CC state does not display floater text
 	if tEventArgs.bRemoved or tEventArgs.bHideFloater then
-		return
+		return false
 	end
 
-	local nOffsetState = tEventArgs.eState
-	if tEventArgs.eResult == nil then
+	return true
+
+end
+------------------------------------------------------------------
+function FloatText:OnCombatLogCCState(tEventArgs)
+
+	if not self:ShouldDisplayCCStateFloater( tEventArgs ) then
 		return
+	end
+	
+	if tEventArgs.eResult == nil then
+		return false
 	end -- totally invalid
 
 	if GameLib.IsControlledUnit( tEventArgs.unitTarget ) then
@@ -953,6 +987,8 @@ function FloatText:OnCombatLogCCState(tEventArgs)
 		self:OnCombatLogCCStatePlayer(tEventArgs)
 		return
 	end
+	
+	local nOffsetState = tEventArgs.eState
 
 	local arCCFormat =  --Removing an entry from this table means no floater is shown for that state.
 	{
@@ -981,16 +1017,8 @@ function FloatText:OnCombatLogCCState(tEventArgs)
 		[Unit.CodeEnumCCState.Subdue] 			= 0xffe691,
 	}
 
-	local tTextOption = self:GetDefaultTextOption()
+	local tTextOption = self:GetDefaultCCStateTextOption()
 	local strMessage = ""
-
-	tTextOption.fScale = 1.0
-	tTextOption.fDuration = 2
-	tTextOption.eCollisionMode = CombatFloater.CodeEnumFloaterCollisionMode.Vertical --IgnoreCollision --Horizontal
-	tTextOption.eLocation = CombatFloater.CodeEnumFloaterLocation.Chest
-	tTextOption.fOffset = -0.8
-	tTextOption.fOffsetDirection = 0
-	tTextOption.arFrames={}
 
 	local bUseCCFormat = false -- use CC formatting vs. message formatting
 
@@ -1013,17 +1041,7 @@ function FloatText:OnCombatLogCCState(tEventArgs)
 		return
 	end
 
-	if not bUseCCFormat then -- CC didn't take
-		tTextOption.nColor = 0xb0b0b0
-
-		tTextOption.arFrames =
-		{
-			[1] = {fScale = 1.0,	fTime = 0,		fAlpha = 0.0},
-			[2] = {fScale = 0.7,	fTime = 0.1,	fAlpha = 0.8},
-			[3] = {fScale = 0.7,	fTime = 0.9,	fAlpha = 0.8,	fVelocityDirection = 0},
-			[4] = {fScale = 1.0,	fTime = 1.0,	fAlpha = 0.0,	fVelocityDirection = 0},
-		}
-	else -- CC applied
+	if bUseCCFormat then -- CC applied
 		tTextOption.arFrames =
 		{
 			[1] = {fScale = 2.0,	fTime = 0,		fAlpha = 1.0,	nColor = 0xFFFFFF,},
@@ -1036,7 +1054,18 @@ function FloatText:OnCombatLogCCState(tEventArgs)
 
 	CombatFloater.ShowTextFloater( tEventArgs.unitTarget, strMessage, tTextOption )
 end
+------------------------------------------------------------------
+function FloatText:OnCombatLogImmunity(tEventArgs)
 
+	if not self:ShouldDisplayCCStateFloater( tEventArgs ) then
+		return
+	end
+	
+	local tTextOption = self:GetDefaultCCStateTextOption()
+	local strMessage = Apollo.GetString("FloatText_Immune")
+	CombatFloater.ShowTextFloater( tEventArgs.unitTarget, strMessage, tTextOption )
+	
+end
 ------------------------------------------------------------------
 function FloatText:OnCombatLogCCStatePlayer(tEventArgs)
 	if not Apollo.GetConsoleVariable("ui.showCombatFloater") then
@@ -1180,4 +1209,3 @@ end
 
 local FloatTextInst = FloatText:new()
 FloatTextInst:Init()
-‚-ÕÿëO" ðÿ¯FW  _ÿëI  ðÿ¯FU  UÿëI  ðÿ¯FU  UÿëI  ðÿ¯&U  UÿëI  ðÿ¯%U  UÿëÉ  ðÿ¯FU  UÿìI  ä¯FU  UÿìI  ð'¯FU  UÿìI  $¯FU  UÿìI  $¯FU  UÿíI  $¯fU  UÿíI  $¯gU  UÿíI  $¯gU  UÿíI  $¯gU  UÿíI  $¯ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯&ÿ  UÿíI  $¯fÕ  UÿîI  $¯&ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯%ÿ  UÿîI  $¯&ÿ  UÿîI  $¯Fÿ  UÿîI  $¯fÿ  Uÿîy  $¯fÿ  UÿîÉ  $¯fÿ  UÿîI  $¯fÿ  UÿîI  $¯fÿ  UÿîI  $¯Fÿ  UÿîI  $¯Fÿ  UÿîI  $¯&ÿ  UÿîI  $¯&ÿ  UÿîI  $¯&ÿ  UÿîI  $¯&ÿ  UÿîI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿíI  $¯%ÿ  UÿìI  ðÿ¯fU  UÿìI  ðÿ¯FU  UÿëI  ðÿ¯FU  UÿêI  ðÿ¯U  UÿêI  ðÿ¯U  UÿêI  ðÿ¯U  UÿëI  ðÿ¯%U  UÿëIH ðÿ¯FU  Uýæ.I Ø>F-€UõU€Hª5b x\WUð³?}ò$A   x|^W ˆ‚DŠ”D         ‰DI’$    ªªªªE‘¿ÉŸ$!   µÕUUÔðrù$b   +¿õUÝ  °m¶$‚    ªÿUÞ# °m¶$‚    ªÿUà" °m¶$‚    ªÿUà" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß! °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUß" °m¶$‚    ªÿUÝ# °m¶$‚    ªÿUÜ% °m¶$‚    ªÿUÛ& °m¶$‚    ªÿUÚ( °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ* °m¶$‚    ªÿUÚ) °m¶$‚    ªÿUÛ' °m¶$‚    ªÿUØ °¶Ÿ$b   €êÿU°XO?’$A   ø~_U èC'N’$         I$I                     ªªªª ‰$I’$    ªªªª ¦ðÛI’$    ªªªª `ÛùŸ$          `ÛÿŸ$          `ÛÿŸ$          `ÛÿŸ$          `ÛÿŸ$        

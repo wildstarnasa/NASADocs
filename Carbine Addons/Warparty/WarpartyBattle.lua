@@ -318,11 +318,3 @@ end
 local WarpartyBattleInst = WarpartyBattle:new()
 WarpartyBattleInst:Init()
 
-xtColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="" TextId="CRB_Confirm">
-                    <Event Name="ButtonSignal" Function="OnConfirmResetBtn"/>
-                </Control>
-                <Control Class="Button" Base="BK3:btnHolo_Red_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-1" TAnchorPoint="1" TAnchorOffset="-88" RAnchorPoint="1" RAnchorOffset="-101" BAnchorPoint="1" BAnchorOffset="-15" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="CancelResetBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" Text="" TextId="CRB_Cancel">
-                    <Event Name="ButtonSignal" Function="OnCancelResetBtn"/>
-                </Control>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="49" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTitleYellow" Template="Default" TooltipType="OnCursor" Name="Title" TooltipColor="" TextId="Tutorials_ResetAllConfirm" DT_CENTER="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="65" TAnchorPoint="0" TAnchorOffset="58" RAnchorPo

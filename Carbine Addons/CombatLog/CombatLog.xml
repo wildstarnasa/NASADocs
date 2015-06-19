@@ -85,13 +85,3 @@
         </Control>
     </Form>
 </Forms>
-s\">%s</T>", self:HelperPickColor(tEventArgs), strResult))
-end
-
-function CombatLog:OnCombatLogTransference(tEventArgs)
-	if not self.unitPlayer then
-		self.unitPlayer = GameLib.GetControlledUnit()
-	end
-
-	local bDisableOtherPlayers = Apollo.GetConsoleVariable("cmbtlog.disableOtherPlayers")
-	

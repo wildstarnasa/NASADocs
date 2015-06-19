@@ -175,8 +175,8 @@ end
 function MiniMap:BuildCustomMarkerInfo()
 	self.tMinimapMarkerInfo =
 	{
-		PvPExileCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCarry",	bFixedSizeMedium = true	},
-		PvPDominionCarry		= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCarry",	bFixedSizeMedium = true	},
+		PvPBlueCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCarry",	bFixedSizeMedium = true	},
+		PvPRedCarry				= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCarry",	bFixedSizeMedium = true	},
 		PvPNeutralCarry			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_NeutralCarry",	bFixedSizeMedium = true	},
 		PvPExileCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_ExileCap",		bFixedSizeMedium = true	},
 		PvPDominionCap1			= { nOrder = 100,	objectType = self.eObjectPvPMarkers,			strIcon = "IconSprites:Icon_MapNode_Map_PvP_DominionCap",	bFixedSizeMedium = true	},
@@ -303,7 +303,7 @@ function MiniMap:BuildCustomMarkerInfo()
 		CREDDExchange			= { nOrder = 55,	objectType = self.eObjectTypeCREDDExchange,		strIcon = "IconSprites:Icon_MapNode_Map_CREED",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		Neutral					= { nOrder = 151,	objectType = self.eObjectTypeNeutral, 			strIcon = "ClientSprites:MiniMapMarkerTiny", 	bNeverShowOnEdge = true, bShown = false, crObject = ApolloColor.new("xkcdBrightYellow") },
 		Hostile					= { nOrder = 150,	objectType = self.eObjectTypeHostile, 			strIcon = "ClientSprites:MiniMapMarkerTiny", 	bNeverShowOnEdge = true, bShown = false, crObject = ApolloColor.new("xkcdBrightRed") },
-		GroupMember				= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", bFixedSizeLarge = true, strIconEdge = "CRB_MinimapSprites:sprMM_PartyMemberArrow", crEdge = CColor.new(1, 1, 1, 1), bAboveOverlay = true, bNeverShowOnEdge = false },
+		GroupMember				= { nOrder = 1,		objectType = self.eObjectTypeGroupMember, 		strIcon = "IconSprites:Icon_MapNode_Map_GroupMember", bFixedSizeLarge = true, strIconEdge = "CRB_MinimapSprites:sprMM_PartyMemberArrow", crEdge = CColor.new(1, 1, 1, 1), bNeverShowOnEdge = false },
 		Bank					= { nOrder = 55,	objectType = self.eObjectTypeBank, 				strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, bHideIfHostile = true },
 		GuildBank				= { nOrder = 57,	objectType = self.eObjectTypeGuildBank, 		strIcon = "IconSprites:Icon_MapNode_Map_Bank", 	bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow"), bHideIfHostile = true },
 		GuildRegistrar			= { nOrder = 56,	objectType = self.eObjectTypeGuildRegistrar, 	strIcon = "CRB_MinimapSprites:sprMM_Group", bNeverShowOnEdge = true, bFixedSizeLarge = true, crObject = ApolloColor.new("yellow"), bHideIfHostile = true },
@@ -321,6 +321,7 @@ function MiniMap:BuildCustomMarkerInfo()
 		VendorPvPArena			= { nOrder = 39,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Arena",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		VendorPvPBattlegrounds	= { nOrder = 39,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Battlegrounds",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		VendorPvPWarplots		= { nOrder = 39,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Warplot",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		ContractBoard			= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Contracts", 	bNeverShowOnEdge = true, bHideIfHostile = true },
 	}
 end
 
@@ -437,7 +438,6 @@ function MiniMap:OnDocumentReady()
 		self.wndMiniMap:SetZoomLevel( self.fSavedZoomLevel)
 	end
 
-	self.wndMain:FindChild("EventContainer"):Show(false, true)
 	self.wndMain:FindChild("MapMenuButton"):AttachWindow(self.wndMinimapOptions)
 	self.wndMain:SetSizingMinimum(150, 150)
 	self.wndMain:SetSizingMaximum(400, 400)
@@ -1707,7 +1707,7 @@ function MiniMap:OnMiniMapMouseEnter(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
 		return
 	end
-	self.wndMain:FindChild("EventContainer"):Show(self.bLiveEventActive)
+	
 	self.wndMain:FindChild("ZoomInButton"):Show(true)
 	self.wndMain:FindChild("ZoomOutButton"):Show(true)
 	self.wndMain:FindChild("MapToggleBtn"):Show(true)
@@ -1719,34 +1719,12 @@ function MiniMap:OnMiniMapMouseExit(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
 		return
 	end
-	self.wndMain:FindChild("EventContainer"):Show(false)
+	
 	self.wndMain:FindChild("ZoomInButton"):Show(false)
 	self.wndMain:FindChild("ZoomOutButton"):Show(false)
 	self.wndMain:FindChild("MapToggleBtn"):Show(false)
 	self.wndMain:FindChild("MapMenuButton"):Show(false)
 	self.wndMain:FindChild("MiniMapResizeArtForPixie"):Show(false)
-end
-
-function MiniMap:OnEventMoreInfoMouseEnter(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return
-	end
-	self.wndMain:FindChild("EventContainer:EventTitle"):Show(true)
-	self.wndMain:FindChild("EventContainer:EventSubtitle"):Show(true)
-end
-
-function MiniMap:OnEventMoreInfoMouseExit(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return
-	end
-	self.wndMain:FindChild("EventContainer:EventTitle"):Show(false, false, 3)
-	self.wndMain:FindChild("EventContainer:EventSubtitle"):Show(false, false, 3)
-end
-
-function MiniMap:OnEventMoreInfoBtn(wndHandler, wndControl)
-	Event_FireGenericEvent("LiveEvent_ToggleWindow")
-	self.wndMain:FindChild("EventContainer:EventTitle"):Show(false, false, 3)
-	self.wndMain:FindChild("EventContainer:EventSubtitle"):Show(false, false, 3)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1823,8 +1801,3 @@ end
 ---------------------------------------------------------------------------------------------------
 local MiniMapInst = MiniMap:new()
 MiniMapInst:Init()
-        È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ         È ¸ÿÿÿÿ        ş7Ş7ÿÿÿÿ        ş7Ş7ÿÿÿÿ¥Eüßİ.§A,ãœVÓ<ãpöºÔÍÅÆRM–¸^^C3½òñø–Öl$y–%ÿÍfr¡…$·×Ôæ”–n`ÁrÍé¬´!Ç¯BšuÜ³±9û¸Q›guyˆÑtOM”ú¤†[6WaY±Íé¶ĞÆ [‹ğÙÀ´@YÖ£)ÇLLm€óANƒeúÍ·ŒÇğù¤%–oaÄ^§<×Ûºq şW…µÈ¹=YÅ–™ãÛTeboY=‡ëÉŠm}HlÏ“Ì”_6Ö¦; s»8Rs¡‰aš³€æ”9Jğ•uÌs2/Ğ¨W¥¬¾gQõWÑ±Íê±RqD™ÆÜgÉé4Ü^¬ŒñÜrM5›ò­¤9„Ş›¶ãupßì²	&™+˜Ó^øpf›D«ïhëI‰w?«Z-\üœt6£vHsb·4ğ=û›¤6ØÛÿr;˜¶ÉìTÖJmfŸ46]•æø~0íÛk ®yë¤Ñ]¾-@»í–Úøq	î¼%ıCàÔì<Ïqè¾û­~Û©ùÿîgÅßñ,xvMjäÚ,}ÒWÀµÏƒkïK°ó×%:÷¯Åÿè‘pßWììïÓVk-›¸Zøp®NmYYÖW½¶n-‚ag”käÙ@¹†sú˜¬Qİv&ãšòÌ0ÇÀí™Oø³¸cë|É£Ê%ú”zŞ:!í±ëR¾÷}½û¤tê¤òúÿ”Ú­?"µÒiÔÀı¶A³e\[Ôş©DãjgS{nFn–3%×øÿ«‘k¶gJótq’íkI[Çæ´™­i‹;·y{½ñ=³>P§ÉRÿ2íÇJR™:Ûa¶¹ÛH/Ë8çtÙ¨áëöÑ«Nsì›÷SÆ™Y½™¹ù•™N³ñ4‹³/İ¿à¸hû²”[q¶s0w+¦LË±-6šÒåoÛxÎñ¸å)Ó’ÄğÌğÍ˜Ók7£.-Ãìõ=eš‡ÿ'øs¸ŞËY—ññÈZh ”Î%·³|¡“87¤­u¾j6ÏöpåùåúµÂ³A¦ÓÒ¼ÁØP|-´9/2{R•mxÎÔ'…OÜÒıï¦&­Qã.*[¯QtıTÆ”_ÃµRaĞnÕ¢^§,#Ãx¹ZJyF¶TµºGæ_™;hE]­TŸ™¯yb­îg6I4w—DëwK²ó¦Ä{_’ğè;âïz¾ä˜¶¾#wğmV®U[ÔT·%ø|®Ç÷Õğêni­[’ÖøÒìïÖ}.ÜOE¶Õ=cœ÷Q;(åp„;—äÁ×¤28.õ‰S&‡:8¨{¯Ú›“î¶[8¿ ¦=
-¶=_~éÂ§¤ÍÖŞöKíûøúké>óC	'Ñ¸¾ÑUËvgòrmËÖï\¿‡?¡lS–YŞ©)×Î¥µnÊ2W›²ÍX ®÷]×÷?¦»£ü¶á›»Ün’ÊÔM)løEü¹÷ÿßRyúHù¾+µòE©–K³J½vP:”o~ìïœ’°câgœK¶EÖ7u³¿³üé9)1Fë‡Z#ÊÏÿ£urÍj¶B§ñ´QOs~©óIGtfx ÷ÓøÙ–Ïâî%Mì(W‡¥L[©ÛòæØ—ú–œw©±xÇ8«Ò‚ë­²1³ÑTƒå4›«	qµ®V#­‹ó³½[V#f;UÓ¬N‹-oWœ;¦ÕÁ?ìà»±¶As%.æ–¬àYŞ¬Ï©:<Ä1‚ùŒ9Á:êo™8R‡—#_{Ì>»¯¹İĞ[‹¯]¬-Óü©õ3m|j=[s›Ëy¦şi¿Ÿ›;bëÙXÓ«±´PûCÉ²ôÈz\ÏÔ®Ñm5«33Lµf|Qê­R­¤z¬T²\+®•ÈµªÓk8Ò/ÕûfÌœ³Ş£N–­ÑÕÙäïg­—pö‰ÖÜ+ñíøìì~N¢ƒŸàğOIkòiôfÁµ{Áœ»Á±m&–ÚF±Õh=è¸‰{¤½á‚´¦J«¿'ëeg„³†MksÁBÆÕ’]’<ğ¢4çN‹÷I}pÔğmúœ´6\“ö´Úøih¶«à´ÍØ¶Öh¶úÆ/Š×·%<şÒyó'„fc>Qõ•©Cc>!
-–ÍnøÈø–=e¹„û'õò Î¸f4ô-p³íîNßî&V®Æs/Šûøş’øÜMJë «Ş
-˜ïl= 2tmõ>©„Oƒ¿##ıŸÈÈÜ?ÈÈôOÀ¢_–Zå´T‹‡¤Q9,íúƒàÛCšU¶µOšw°¬çüÑ4§À×ÈŞs}%Œ¤ÆÚßÌ:sî=R>õ$)×Üå|^Tóöü6—7ˆ]ß“Ëd¾¥‹ıkœ?r,°uiÿß¬[°L+æ8á¸Áz0—/0õaæ÷0š+cXÆµ0ë#²ØYÑê5§æZ–Ÿ(Äaêºø™‹ù9¥—­Vÿ“ù8úB°l›‚f£œË3-Š>s¾f¤ş¦'<¶K”iN£A9¹8Rh.×Ø¡L³{²ì±NıÂ^5Î®ôÕWdÎ!HL/©îxiÉïÜ\$ÍÕôtO</3Ú	|Ë³P{íçØÿŞ¡V×:¼–:gã¦æ¸Fß“1´2o'¯x;¸F¦•_«æ|ĞšÕkµ\|­öU-Áº2{N[5­¡cÄgë8üĞé-S‹¶ãs¿ûC’ìù°D'Ş•Î½7¥MCw­_¹Ãê5Ëµ>™İ–lT½f|Ó-RŸ¼[YÔ9­\kÑ,×8Mm‹Ñl°’·şèE	ïº.•ànÍŸÖ9ÿbò´4f—¥±öa©úÔy¯Ëš¶ÚüÑMï@·}NÚ[~A¢½¿-İıGñŸÿKI¦nåbbdÚY£ú¦GÊä6Áø«½ğ”j6²Êè¶3ÛWßûg‡ØñXÓ}Å‹Ê5Ï;e¸æ›£Ön@wµkøN(C×–ï€.; …ö[Ğlÿ‡ŒŒı_22ş÷øŒÿµ”›ïƒ}'à“â÷¯@ß5˜G8ªæ+ßğ¼mj·Ó¶ï}qE¾Ôğ­}VT„ğGİ,É Í‹’'®ç`Tù–Íöuşg4ìƒŞÆ>gK²WâÎ©—ÅÅ
-vÎ¸Ód.w1ÚËx–¿Í]§9Æ Ç4{¹”òj…f~©ëQXÉ²b˜iºTÏå~nÁÆÖJ.G‡)«‹q8ä–ì~¯2uµxÖÚâuëÒZ2µU»õ•o&G F=>ù~¿£çAÈëŒy¡ášg~§Ñg^êÖÙÏ1÷ıÿÉš°|pæZxeş^m²Më1|¢sBò15Í%Ä¶Æ7¶\Ëß+M\-²Lóm}‡©ñĞwšv8·›3n9[¨˜1­lckd[ÅñËr:¾h¥Æœu\¦ÕJd_uØU–ÕK)y™½£-¿«z5¡Îõ¾WkÔâ]ÏJoÏ‹’ÜÿºÇ~|¹‚Vë¯•æØ¼ÆÓ4O@¦ì‘z­g˜FµÇ´×]”öÜUi

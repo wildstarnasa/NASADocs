@@ -15,7 +15,10 @@ require "PlayerPathLib"
 require "AbilityBook"
 
 local PathExplorerMain = {}
-local knNewMissionRunnerTimeout = 30 --the number of pulses of the above timer before the "New" runner clears by itself
+local kstrLightGrey = "ffb4b4b4"
+local kstrPathQuesttMarker = "90PathContent"
+local kstrTrackerAddonName = "CRB_Explorer"
+local knNewMissionRunnerTimeout = 1 --the number of pulses of the above timer before the "New" runner clears by itself
 local knRate = 1
 
 local ktExplorerMissionTypeIcons =
@@ -51,6 +54,17 @@ function PathExplorerMain:new(o)
 	self.__index = self
 
 	o.bAlreadySent = false
+	
+	o.wndMain = nil
+	o.tNewMissions = {}
+	o.nLastActiveMissionCount = 0
+	
+	o.bShowOutOfZone = true
+	o.bFilterLimit = true
+	o.bFilterDistance = true
+	o.bShowPathMissions = true
+	o.nMaxMissionDistance = 300
+	o.nMaxMissionLimit = 3
 
 	return o
 end
@@ -62,6 +76,22 @@ end
 function PathExplorerMain:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("PathExplorerMain.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+
+	Apollo.RegisterEventHandler("SetPlayerPath", "OnSetPlayerPath", self)
+end
+
+function PathExplorerMain:OnSetPlayerPath()
+	if PlayerPathLib.GetPlayerPathType() == PlayerPathLib.PlayerPathType_Explorer then
+		self:OnPathLoaded()
+	elseif self.wndMain and self.wndMain:IsValid() then
+		self.wndMain:Destroy()
+		
+		local tData = {
+			["strAddon"] = Apollo.GetString(kstrTrackerAddonName),
+		}
+
+		Event_FireGenericEvent("ObjectiveTracker_RemoveAddOn", tData)
+	end
 end
 
 function PathExplorerMain:OnSave(eType)
@@ -71,8 +101,17 @@ function PathExplorerMain:OnSave(eType)
 
 	local tSave =
 	{
-		bSent = self.bAlreadySent,
 		nSaveVersion = knSaveVersion,
+		bSent = self.bAlreadySent,
+		bMinimized = self.bMinimized,
+		bMinimizedActive = self.bMinimizedActive,
+		bMinimizedAvailable = self.bMinimizedAvailable,
+		bShowPathMissions = self.bShowPathMissions,
+		nMaxMissionDistance = self.nMaxMissionDistance,
+		nMaxMissionLimit = self.nMaxMissionLimit,
+		bShowOutOfZone = self.bShowOutOfZone,
+		bFilterLimit = self.bFilterLimit,
+		bFilterDistance = self.bFilterDistance,
 	}
 
 	return tSave
@@ -81,96 +120,108 @@ end
 function PathExplorerMain:OnRestore(eType, tSavedData)
 	if eType == GameLib.CodeEnumAddonSaveLevel.Character and tSavedData and tSavedData.nSaveVersion == knSaveVersion then
 		self.bAlreadySent = tSavedData.bSent
+		self.bMinimized = tSavedData.bMinimized
+		self.bMinimizedActive = tSavedData.bMinimizedActive
+		self.bMinimizedAvailable = tSavedData.bMinimizedAvailable
+		
+		if tSavedData.bShowPathMissions ~= nil then
+			self.bShowPathMissions = tSavedData.bShowPathMissions
+		end
+		
+		if tSavedData.nMaxMissionDistance ~= nil then
+			self.nMaxMissionDistance = tSavedData.nMaxMissionDistance
+		end
+		
+		if tSavedData.nMaxMissionLimit ~= nil then
+			self.nMaxMissionLimit = tSavedData.nMaxMissionLimit
+		end
+		
+		if tSavedData.bShowOutOfZone ~= nil then
+			self.bShowOutOfZone = tSavedData.bShowOutOfZone
+		end
+		
+		if tSavedData.bFilterLimit ~= nil then
+			self.bFilterLimit = tSavedData.bFilterLimit
+		end
+		
+		if tSavedData.bFilterDistance ~= nil then
+			self.bFilterDistance = tSavedData.bFilterDistance
+		end
 	end
 end
 
 function PathExplorerMain:OnDocumentReady()
-	if  self.xmlDoc == nil then
-		return
-	end
-	Apollo.RegisterEventHandler("Datachron_LoadPathExplorerContent", "OnLoadFromDatachron", self)
+	if self.xmlDoc == nil then return end
+	
+	self:OnPathLoaded()
 end
 
-function PathExplorerMain:OnLoadFromDatachron()
-	if self.wndMain then -- stops double-loading
-		return
-	end
-
-	-- The parent is the globally defined datachron
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "ExplorerMain", g_wndDatachron:FindChild("PathContainer"), self)
-
-
-	Apollo.RegisterEventHandler("ChangeWorld", 			"HelperResetUI", self)
-	Apollo.RegisterEventHandler("PlayerResurrected", 	"HelperResetUI", self)
-	Apollo.RegisterEventHandler("ShowResurrectDialog", 	"HelperResetUI", self)
-	Apollo.RegisterEventHandler("SubZoneChanged", 		"HelperResetUI", self)
-	Apollo.RegisterEventHandler("CharacterCreated", 	"ValidatePath", self)
-
-
-	--Notification Handlers
-	Apollo.RegisterTimerHandler("NotificationShowTimer", 		"OnNotificationShowTimer", self)
-	Apollo.RegisterTimerHandler("NotificationHideTimer", 		"OnNotificationHideTimer", self)
-	Apollo.RegisterEventHandler("PlayerPathMissionUnlocked", 	"OnPlayerPathMissionUnlocked", self)
-	Apollo.RegisterEventHandler("PlayerPath_NotificationSent", 	"MissionNotificationRecieved", self)
-
-
-	self.tNewMissions = {}
-	self.nLastActiveMissionCount = 0
-
-	self:HelperResetUI()
-
-	if GameLib.GetPlayerUnit() then
-		self:ValidatePath()
-	end
+function PathExplorerMain:OnPathLoaded()
+	if self.bPathLoaded then return end
+	if self.xmlDoc == nil then return end
+	if PlayerPathLib.GetPlayerPathType() == nil then return end	
+	if PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then return end
+	
+	Apollo.RegisterEventHandler("PlayerPathMissionUnlocked", 		"OnPlayerPathMissionUnlocked", self)
+	Apollo.RegisterEventHandler("PlayerPathMissionDeactivate", 	"OnPlayerPathMissionDeactivate", self)
+	
+	Apollo.RegisterEventHandler("ToggleShowPathMissions", 			"OnToggleShowPathMissions", self)
+	Apollo.RegisterEventHandler("ToggleShowPathOptions", 			"DrawContextMenu", self)
+	
+	Apollo.RegisterEventHandler("ObjectiveTrackerLoaded", 			"OnObjectiveTrackerLoaded", self)
+	
+	Event_FireGenericEvent("ObjectiveTracker_RequestParent")
+	
+	self.bPathLoaded = true
 end
 
-function PathExplorerMain:HelperResetUI()
-	-- Note: This gets called from a variety of sources
+function PathExplorerMain:OnObjectiveTrackerLoaded(wndForm)
+	if not wndForm or not wndForm:IsValid() then return end
+	
 	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:FindChild("MissionList"):DestroyChildren() -- Full Redraw
-		self:OnPathUpdate()
-	end
-end
-
-function PathExplorerMain:ValidatePath()
-	if not PlayerPathLib or not self.wndMain or not self.wndMain:IsValid() then
-		return
-	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then
-		if self.wndMain then
-			self.wndMain:Destroy()
-			self.wndMain = nil
-		end
+		Apollo.RemoveEventHandler("ObjectiveTrackerLoaded", self)
 		return
 	end
-
-	Apollo.RegisterTimerHandler("OneSecTimer", 				"OnMainTimer", self) -- TODO: Refactor: Merge into PathUpdate
-	Apollo.RegisterTimerHandler("Explorer_PathUpdateTimer",	"OnPathUpdate", self)
-	Apollo.CreateTimer("Explorer_PathUpdateTimer", 1, false)
+	
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MissionList", wndForm, self)	
+	self.wndMain:SetData(kstrPathQuesttMarker) --QuestTracker sort index
+	
+	local tData = {
+		["strAddon"]				= Apollo.GetString(kstrTrackerAddonName),
+		["strEventMouseLeft"]	= "ToggleShowPathMissions", 
+		["strEventMouseRight"]	= "ToggleShowPathOptions",
+		["strIcon"]					= "spr_ObjectiveTracker_IconPathExplorer",
+		["strDefaultSort"]			= kstrPathQuesttMarker,
+	}
+	
+	Apollo.RegisterEventHandler("ObjectiveTrackerUpdated", "OnPathUpdate", self)
+	Event_FireGenericEvent("ObjectiveTracker_NewAddOn", tData)
+	self:OnPathUpdate()
 end
 
 ---------------------------------------------------------------------------------------------------
 -- Main Draw Method
 ---------------------------------------------------------------------------------------------------
 
-function PathExplorerMain:BuildListItem(pmCurrMission)
+function PathExplorerMain:BuildListItem(pmCurrMission, wndParent)
 	if not pmCurrMission then
-		return
+		return 0
 	end
 
-	local wndListItem = self:FactoryProduce(self.wndMain:FindChild("MissionList"), "ExplorerListItem", pmCurrMission)
+	local wndListItem = self:FactoryProduce(wndParent, "ListItem", pmCurrMission)
+	wndListItem:SetData(pmCurrMission)
 	wndListItem:FindChild("ListItemMeter"):SetMax(1)
-	wndListItem:FindChild("RightCompleteBtn"):SetData(pmCurrMission)
+	wndListItem:FindChild("ListItemCompleteBtn"):SetData(pmCurrMission)
 	wndListItem:FindChild("ListItemBigBtn"):SetData(pmCurrMission)
 	wndListItem:FindChild("ListItemCodexBtn"):SetData(pmCurrMission)
 	wndListItem:FindChild("ListItemSubscreenBtn"):SetData(pmCurrMission)
+	wndListItem:FindChild("ListItemMouseCatcher"):SetData(pmCurrMission)
 
 	local eMissionType = pmCurrMission:GetType()
-	local nColonPosition = string.find(pmCurrMission:GetName(), ": ") -- TODO HACK!
-	local strMissionType = karMissionTypeToFormattedString[nColonPosition and string.sub(pmCurrMission:GetName(), 0, nColonPosition) or ""] or ""
-	local strListItemName = string.len(strMissionType) > 0 and string.sub(pmCurrMission:GetName(), nColonPosition + 2) or pmCurrMission:GetName()
+	local strMissionType, strMissionName = unpack(self:HelperGetMissionName(pmCurrMission:GetName()))
 	wndListItem:FindChild("ListItemBigBtn"):SetTooltip(pmCurrMission:GetSummary() or "")
 	wndListItem:FindChild("ListItemIcon"):SetSprite(ktExplorerMissionTypeIcons[eMissionType])
-	wndListItem:FindChild("ListItemName"):SetAML(string.format("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\"UI_TextHoloTitle\">%s</P>", strListItemName))
+	wndListItem:FindChild("ListItemName"):SetAML("<P Font=\"CRB_InterfaceMedium_B\" TextColor=\""..kstrLightGrey.."\">"..strMissionName.."</P>")
 
 	-- Has Mouse
 	local bHasMouse = wndListItem:FindChild("ListItemMouseCatcher"):ContainsMouse()
@@ -189,18 +240,12 @@ function PathExplorerMain:BuildListItem(pmCurrMission)
 
 	elseif eType == PathMission.PathMissionType_Explorer_Area and pmCurrMission:GetExplorerNodeInfo() then
 		bShowSubscreenBtn = true
-		nProgressBar = pmCurrMission:GetExplorerNodeInfo().fRatio
-		wndListItem:FindChild("ListItemMeterBG"):Show(true)
 
 	elseif eType == PathMission.PathMissionType_Explorer_Vista and pmCurrMission:GetExplorerNodeInfo() then
 		bShowSubscreenBtn = true
-		nProgressBar = pmCurrMission:GetExplorerNodeInfo().fRatio
-		wndListItem:FindChild("ListItemMeterBG"):Show(true)
 
 	elseif eType == PathMission.PathMissionType_Explorer_ScavengerHunt then
 		bShowSubscreenBtn = pmCurrMission:IsStarted()
-		wndListItem:FindChild("ListItemMeterBG"):Show(bShowSubscreenBtn)
-		wndListItem:FindChild("ListItemSubscreenBtn"):Show(bShowSubscreenBtn)
 
 		if bShowSubscreenBtn then
 			for idx = 0, pmCurrMission:GetNumNeeded() - 1 do
@@ -210,12 +255,14 @@ function PathExplorerMain:BuildListItem(pmCurrMission)
 			end
 		end
 	end
-
-	wndListItem:FindChild("ListItemMeter"):SetProgress(nProgressBar, knRate)
+	
+	nProgressBar = pmCurrMission and pmCurrMission:GetExplorerNodeInfo() and pmCurrMission:GetExplorerNodeInfo().fRatio or 0
+	wndListItem:FindChild("ListItemMeterBG"):Show(nProgressBar > 0)
+	--wndListItem:FindChild("ListItemMeter"):SetProgress(nProgressBar, knRate)
+	wndListItem:FindChild("ListItemMeter"):SetProgress(nProgressBar)
 	wndListItem:FindChild("ListItemMeter"):EnableGlow(nProgressBar > 0)
-	wndListItem:FindChild("RightCompleteBtn"):Show(nProgressBar >= 1) -- If done
+	wndListItem:FindChild("ListItemCompleteBtn"):Show(nProgressBar >= 1) -- If done
 	wndListItem:FindChild("ListItemIcon"):SetSprite(ktExplorerMissionTypeIcons[eType])
-	wndListItem:FindChild("ListItemSubscreenBtn"):Show(bShowSubscreenBtn and not wndListItem:FindChild("RightCompleteBtn"):IsShown()) -- Hide if complete is shown
 
 	-- Subtitle
 	local strPercent = self:HelperComputeProgressText(eType, pmCurrMission) or ""
@@ -223,21 +270,73 @@ function PathExplorerMain:BuildListItem(pmCurrMission)
 		strMissionType = String_GetWeaselString(Apollo.GetString("ExplorerMissions_PercentSubtitle"),  strPercent, strMissionType)
 	end
 
-	wndListItem:FindChild("ListItemSubtitle"):SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ff2f94ac\">%s</P>", strMissionType))
-
+	wndListItem:FindChild("ListItemSubtitle"):SetAML(string.format("<P Font=\"CRB_InterfaceSmall\" TextColor=\"ffffffff\">%s</P>", strMissionType))
 
 	-- Resize
 	local nWidth, nHeight = wndListItem:FindChild("ListItemName"):SetHeightToContentHeight()
 	local nLeft, nTop, nRight, nBottom = wndListItem:GetAnchorOffsets()
-	wndListItem:SetAnchorOffsets(nLeft, nTop, nRight, math.max(56, nTop + nHeight + 37))
+	local nBottomOffset = nProgressBar > 0 and 56 or 32
+	wndListItem:SetAnchorOffsets(nLeft, nTop, nRight, math.max(nTop, nTop + nHeight + nBottomOffset))
+	
+	return 1
 end
 
 function PathExplorerMain:OnListItemMouseEnter(wndHandler, wndControl)
-	self:OnPathUpdate()
+	-- Has Mouse
+	local bHasMouse = wndControl:GetParent():FindChild("ListItemMouseCatcher"):ContainsMouse()
+	wndControl:GetParent():FindChild("ListItemCodexBtn"):Show(bHasMouse)
+	wndControl:GetParent():FindChild("ListItemHintArrowArt"):Show(bHasMouse)
+	
+	local pmCurrMission = wndControl:GetData()
+	local bShowSubscreenBtn =
+		(pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_PowerMap 
+			and self:HelperMissionHasPriority(pmCurrMission))
+		or
+			pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_Area and pmCurrMission:GetExplorerNodeInfo()
+		or
+			pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_Vista and pmCurrMission:GetExplorerNodeInfo()
+		or
+			(pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_ScavengerHunt
+				and pmCurrMission:IsStarted())
+	
+	wndControl:GetParent():FindChild("ListItemSubscreenBtn"):Show(
+		bHasMouse 
+		and bShowSubscreenBtn 
+		and not wndControl:GetParent():FindChild("ListItemCompleteBtn"):IsShown()
+	) -- Hide if complete is shown
+	
+	if bHasMouse then
+		Apollo.RemoveEventHandler("ObjectiveTrackerUpdated", self)
+	end
 end
 
 function PathExplorerMain:OnListItemMouseExit(wndHandler, wndControl)
-	self:OnPathUpdate()
+	-- Has Mouse
+	local bHasMouse = wndControl:GetParent():FindChild("ListItemMouseCatcher"):ContainsMouse()
+	wndControl:GetParent():FindChild("ListItemCodexBtn"):Show(bHasMouse)
+	wndControl:GetParent():FindChild("ListItemHintArrowArt"):Show(bHasMouse)
+	
+	local pmCurrMission = wndControl:GetData()
+	local bShowSubscreenBtn =
+		(pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_PowerMap 
+			and self:HelperMissionHasPriority(pmCurrMission))
+		or
+			pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_Area and pmCurrMission:GetExplorerNodeInfo()
+		or
+			pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_Vista and pmCurrMission:GetExplorerNodeInfo()
+		or
+			(pmCurrMission:GetType() == PathMission.PathMissionType_Explorer_ScavengerHunt
+				and pmCurrMission:IsStarted())
+	
+	wndControl:GetParent():FindChild("ListItemSubscreenBtn"):Show(
+		bHasMouse 
+		and bShowSubscreenBtn 
+		and not wndControl:GetParent():FindChild("ListItemCompleteBtn"):IsShown()
+	) -- Hide if complete is shown
+	
+	if not bHasMouse then
+		Apollo.RegisterEventHandler("ObjectiveTrackerUpdated", "OnPathUpdate", self)
+	end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -245,176 +344,165 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function PathExplorerMain:OnPathUpdate()
-	if not PlayerPathLib or not self.wndMain or not self.wndMain:IsValid() then
-		return
-	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then
-		if self.wndMain then
-			self.wndMain:Destroy()
-			self.wndMain = nil
-		end
-		return
-	end
-
-	Apollo.CreateTimer("Explorer_PathUpdateTimer", 1, false)
-
-	local pepCurrent = PlayerPathLib.GetCurrentEpisode()
-	if not pepCurrent or GameLib.GetPlayerUnit():IsDead() then
-		self.wndMain:FindChild("EmptyLabel"):Show(true)
-		self.wndMain:FindChild("MissionList"):DestroyChildren()
-		self.wndMain:FindChild("MissionList"):RecalculateContentExtents()
-		return
-	end
-
-	local tFullMissionList = pepCurrent:GetMissions()
-	if not tFullMissionList or #tFullMissionList == 0 then
-		self.wndMain:FindChild("EmptyLabel"):Show(true)
-		self.wndMain:FindChild("CompletedScreen"):Show(false)
-		self.wndMain:FindChild("MissionList"):Show(false)
-		self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
-		self.wndMain:FindChild("MissionList"):DestroyChildren()
-		self.wndMain:FindChild("MissionList"):RecalculateContentExtents()
-		-- TODO: Hide mission windows
-		return
-	end
-
-	self.wndMain:FindChild("EmptyLabel"):Show(false)
-
-	-- Check for episode completion before building the lists; we'll have to move this to beneath the builder stuff if relics stay (to show their panel)
-	if pepCurrent:IsComplete() then
-		self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
-		-- TODO: Hide mission windows
-
-		local wndComplete = self.wndMain:FindChild("CompletedScreen")
-		wndComplete:Show(true)
-		wndComplete:FindChild("EpNameString"):SetText(pepCurrent:GetWorldZone())
+	if not self.wndMain or not self.wndMain:IsValid() then
+		Event_FireGenericEvent("ObjectiveTracker_RequestParent")
 		return
 	end
 
 	-- Inline Sort Method
-	local function SortMissionItems(pepData1, pepData2) -- GOTCHA: This needs to be declared before it's used
-		if self:HelperMissionHasPriority(pepData1) and self:HelperMissionHasPriority(pepData2) then
-			return pepData1:GetDistance() < pepData2:GetDistance()
-		elseif self:HelperMissionHasPriority(pepData1) then
+	local function SortMissionItems(pmData1, pmData2) -- GOTCHA: This needs to be declared before it's used
+		local bQuestTrackerByDistance = g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance
+		
+		if self:HelperMissionHasPriority(pmData1) and self:HelperMissionHasPriority(pmData2) then
+			if bQuestTrackerByDistance then
+				return pmData1:GetDistance() < pmData2:GetDistance()
+			else
+				local aMissionType, aMissionName = unpack(self:HelperGetMissionName(pmData1:GetName()))
+				local bMissionType, bMissionName = unpack(self:HelperGetMissionName(pmData2:GetName()))
+		
+				return aMissionName < bMissionName 
+			end
+		elseif self:HelperMissionHasPriority(pmData1) then
 			return true
-		elseif self:HelperMissionHasPriority(pepData2) then
+		elseif self:HelperMissionHasPriority(pmData2) then
 			return false
+		elseif bQuestTrackerByDistance then
+			return pmData1:GetDistance() < pmData2:GetDistance()
 		else
-			return pepData1:GetDistance() < pepData2:GetDistance()
+			local aMissionType, aMissionName = unpack(self:HelperGetMissionName(pmData1:GetName()))
+			local bMissionType, bMissionName = unpack(self:HelperGetMissionName(pmData2:GetName()))
+		
+			return aMissionName < bMissionName 
 		end
 	end
+	
+	local pepEpisode = PlayerPathLib.GetCurrentEpisode()
+	local tFullMissionList = {}
+	for _, pepAll in ipairs(PlayerPathLib.GetEpisodes()) do
+		local tMissionList = pepAll and pepAll:GetMissions() or {}
+		
+		if pepAll:GetName() ~= "" then
+			for _, pepCurrent in ipairs(tMissionList) do
+				if not self.bShowOutOfZone and pepAll ~= pepEpisode then
+					--Ignore out of zone missions.
+				elseif pepCurrent:GetType() == PathMission.PathMissionType_Settler_Infrastructure and pepCurrent:IsComplete() and pepAll ~= pepEpisode then
+					--Ignore out of zone Infrastructure missions.
+				elseif pepCurrent:GetMissionState() == PathMission.PathMissionState_NoMission and pepAll ~= pepEpisode then
+					--Ignore out of zone undiscovered missions.
+				else
+					table.insert(tFullMissionList, pepCurrent)
+				end
+			end
+		end
+	end
+	
 	table.sort(tFullMissionList, SortMissionItems)
 
 	local bThereIsAMission = false
 	local nActiveMissionCount = 0
-	local iRemainingMissions = 0
-	self:FactoryProduce(self.wndMain:FindChild("MissionList"), "ActiveMissionsHeader", "ActiveMissionsHeader")
-
+	local nRemainingMissions = 0
+	local nAvailableMissionCount = 0
+	
+	self.wndMain:DestroyChildren()
+	self.wndContainer 			= self:FactoryProduce(self.wndMain, "Container", "Container")
+	self.wndContainer:FindChild("MinimizeBtn"):SetCheck(self.bMinimized)
+	self.wndContainer:FindChild("MinimizeBtn"):Show(self.bMinimized)
+	
+	self.wndActiveHeader   	= self:FactoryProduce(self.wndContainer:FindChild("Content"), "Category", "ActiveMissionsHeader")
+	self.wndAvailableHeader	= self:FactoryProduce(self.wndContainer:FindChild("Content"), "Category", "AvailableMissionsHeader")
+	
+	local nFilteredMissions = 0
 	for _, pmMission in ipairs(tFullMissionList) do
 		if pmMission:GetMissionState() == PathMission.PathMissionState_NoMission then
-			iRemainingMissions = iRemainingMissions + 1
-		elseif not pmMission:IsComplete() then
+			nRemainingMissions = nRemainingMissions + 1
+		elseif not pmMission:IsComplete() and (not self.bFilterLimit or nFilteredMissions < self.nMaxMissionLimit) and (not self.bFilterDistance or pmMission:GetDistance() < self.nMaxMissionDistance) then
 			-- Stick a header in if not active
 			if self:HelperMissionHasPriority(pmMission) then
-				nActiveMissionCount = nActiveMissionCount + 1
+				local nCount = self:BuildListItem(pmMission, self.wndActiveHeader:FindChild("Content"))
+				nActiveMissionCount = nActiveMissionCount + nCount
+				nFilteredMissions = nFilteredMissions + nCount
 			else
-				self:FactoryProduce(self.wndMain:FindChild("MissionList"), "AvailableMissionsHeader", "AvailableMissionsHeader")
+				local nCount = self:BuildListItem(pmMission, self.wndAvailableHeader:FindChild("Content"))
+				nAvailableMissionCount = nAvailableMissionCount + nCount
+				nFilteredMissions = nFilteredMissions + nCount
 			end
-
-			self:BuildListItem(pmMission)
-			bThereIsAMission = true
+			
+			bThereIsAMission = nActiveMissionCount + nAvailableMissionCount > 0
 		end
 	end
-
-	if nActiveMissionCount == 0 then
-		self.wndMain:FindChild("MissionList"):FindChildByUserData("ActiveMissionsHeader"):Destroy()
+	
+	-- Resize Containers
+	local strTitle = nRemainingMissions > 0 and string.format("%s [%s %s]", Apollo.GetString("ZoneCompletion_Explorer"), nRemainingMissions, Apollo.GetString("PlayerPath_Undiscovered")) or Apollo.GetString("ZoneCompletion_Explorer")
+	self.wndContainer:FindChild("Title"):SetText(strTitle)
+	if not bThereIsAMission then
+		self.wndContainer:FindChild("MinimizeBtn"):SetAnchorOffsets(0,0,0,0)
 	end
-	self.wndMain:FindChild("MissionList"):Show(bThereIsAMission)
-	self.wndMain:FindChild("MissionList"):ArrangeChildrenVert(0)
-
-	-- Other Screens
-	if bThereIsAMission then
-		self.wndMain:FindChild("MissionList"):Show(true)
-		self.wndMain:FindChild("CompletedScreen"):Show(false)
-		self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
-
-		if not self.bAlreadySent then
-			Event_FireGenericEvent("GenericEvent_RestoreDatachron")
-			self.bAlreadySent = true
-		end
-	else -- no missions
-		self.wndMain:FindChild("MissionList"):Show(false)
-		self.wndMain:FindChild("CompletedScreen"):Show(false)
-		-- TODO: hide other missions?
-
-		if iRemainingMissions > 0 then
-			self.wndMain:FindChild("MissionsRemainingScreen"):Show(true)
-			self.wndMain:FindChild("MissionsRemainingScreen"):FindChild("MissionsRemainingCount"):SetText(iRemainingMissions)
-			self.wndMain:FindChild("MissionsRemainingScreen"):FindChild("EpNameString"):SetText(pepCurrent:GetWorldZone())
-		else
-			self.wndMain:FindChild("MissionsRemainingScreen"):Show(false)
-		end
-	end
+	
+	strTitle = nActiveMissionCount ~= 1 and string.format("%s [%s]", Apollo.GetString("ExplorerMissions_ActiveMissions"), nActiveMissionCount) or Apollo.GetString("ExplorerMissions_ActiveMissions")
+	self.wndActiveHeader:Show(nActiveMissionCount > 0)
+	self.wndActiveHeader:FindChild("Title"):SetText(strTitle)
+	self.wndActiveHeader:FindChild("MinimizeBtn"):SetCheck(self.bMinimizedActive)
+	self.wndActiveHeader:FindChild("MinimizeBtn"):Show(self.bMinimizedActive)
+	self:OnResizeContainer(self.wndActiveHeader)
+	
+	strTitle = nAvailableMissionCount ~= 1 and string.format("%s [%s]", Apollo.GetString("ExplorerMissions_AvailableMissions"), nAvailableMissionCount) or Apollo.GetString("ExplorerMissions_AvailableMissions")
+	self.wndAvailableHeader:Show(nAvailableMissionCount > 0)
+	self.wndAvailableHeader:FindChild("Title"):SetText(strTitle)
+	self.wndAvailableHeader:FindChild("MinimizeBtn"):SetCheck(self.bMinimizedAvailable)
+	self.wndAvailableHeader:FindChild("MinimizeBtn"):Show(self.bMinimizedAvailable)
+	self:OnResizeContainer(self.wndAvailableHeader)
+	
+	--Display the container if there are missions or undiscovered missions and you're out of the Arkship.
+	local nContainerHeight = (bThereIsAMission or (nRemainingMissions > 0 and GameLib.GetPlayerUnit():GetLevel() > 2)) and self:OnResizeContainer(self.wndContainer) or 0
+	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nContainerHeight)
+	self.wndMain:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	self.wndMain:RecalculateContentExtents()
 
 	-- TEMP HACK
 	if self.nLastActiveMissionCount ~= nActiveMissionCount then
 		self.nLastActiveMissionCount = nActiveMissionCount
-		self.wndMain:FindChild("MissionList"):DestroyChildren()
+		self.wndMain:DestroyChildren()
 		self:OnPathUpdate()
 	end
+	
+	local tData = {
+		["strAddon"]	= Apollo.GetString(kstrTrackerAddonName),
+		["strText"]		= nActiveMissionCount + nAvailableMissionCount,
+		["bChecked"]	= self.bShowPathMissions,
+	}
+
+	Event_FireGenericEvent("ObjectiveTracker_UpdateAddOn", tData)
+end
+
+function PathExplorerMain:OnResizeContainer(wndContainer)
+	if not self.bShowPathMissions or not wndContainer or not wndContainer:IsValid() then
+		return 0
+	end
+	
+	local nOngoingGroupHeight = wndContainer:GetHeight()
+	local wndContent = wndContainer:FindChild("Content")
+	local wndMinimize = wndContainer:FindChild("MinimizeBtn")
+	
+	if wndMinimize and not wndMinimize:IsChecked() then
+		for idx, wndChild in pairs(wndContent:GetChildren()) do
+			if wndChild:IsShown() then
+				nOngoingGroupHeight = nOngoingGroupHeight + wndChild:GetHeight()
+			end
+		end
+	end
+	
+	local nLeft, nTop, nRight, nBottom = wndContainer:GetAnchorOffsets()
+	wndContainer:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nOngoingGroupHeight)
+	wndContent:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	wndContent:RecalculateContentExtents()
+	
+	return nOngoingGroupHeight
 end
 
 ---------------------------------------------------------------------------------------------------
 -- Mission Notifications (Unlocked, completed, episode completed)
 ---------------------------------------------------------------------------------------------------
-
-function PathExplorerMain:MissionNotificationRecieved(nType, strName)
-	if not self.wndMain or not self.wndMain:IsValid() then
-		return
-	end
-
-	local wndNotification = self.wndMain:FindChild("MissionNotification")
-	if nType ~= 2 and (not wndNotification
-	or wndNotification:FindChild("NewMissionContent"):IsShown()
-	or wndNotification:FindChild("FailedMissionContent"):IsShown()
-	or wndNotification:FindChild("CompletedMissionContent"):IsShown()) then
-		return
-	end
-
-	if nType == 1 then -- Unlock notice
-		wndNotification:FindChild("NewMissionContent"):FindChild("MissionName"):SetText("- " .. strName .. " -")
-		wndNotification:FindChild("NewMissionContent"):Show(true)
-	elseif nType == 2 then -- Completion notice
-		self.wndMain:FindChild("MissionList"):DestroyChildren() -- Full Redraw -- TODO: Move this somewhere more appropriate
-		-- TODO: We also need to re-sort when a mission goes active
-		wndNotification:FindChild("CompletedMissionContent"):FindChild("NewMissionText"):SetText(Apollo.GetString("Nameplates_Mission"))
-		wndNotification:FindChild("CompletedMissionContent"):FindChild("MissionName"):SetText("- " .. strName .. " -")
-		wndNotification:FindChild("CompletedMissionContent"):Show(true)
-	elseif nType == 3 then -- Objective completion notice
-		wndNotification:FindChild("CompletedMissionContent"):FindChild("NewMissionText"):SetText(Apollo.GetString("CRB_Objective"))
-		wndNotification:FindChild("CompletedMissionContent"):FindChild("MissionName"):SetText("- " .. strName .. " -")
-		wndNotification:FindChild("CompletedMissionContent"):Show(true)
-	elseif nType == 4 then -- Mission failed notice
-		wndNotification:FindChild("FailedMissionContent"):FindChild("MissionName"):SetText("- " .. strName .. " -")
-		wndNotification:FindChild("FailedMissionContent"):Show(true)
-	end
-
-	--wndNotification:Show(true)
-	Apollo.CreateTimer("NotificationShowTimer", 1.800, false)
-end
-
-function PathExplorerMain:OnNotificationShowTimer()
-	if not self.wndMain or not self.wndMain:IsValid() then return end
-	self.wndMain:FindChild("MissionNotification"):Show(false)
-	Apollo.CreateTimer("NotificationHideTimer", 0.300, false)
-end
-
-function PathExplorerMain:OnNotificationHideTimer()
-	if not self.wndMain or not self.wndMain:IsValid() then return end
-	local wndNotification = self.wndMain:FindChild("MissionNotification")
-	wndNotification:FindChild("NewMissionContent"):Show(false)
-	wndNotification:FindChild("FailedMissionContent"):Show(false)
-	wndNotification:FindChild("CompletedMissionContent"):Show(false)
-end
 
 function PathExplorerMain:OnPlayerPathMissionUnlocked(pmMission) -- new mission, so we want to add a runner
 	local t = {}
@@ -425,40 +513,11 @@ function PathExplorerMain:OnPlayerPathMissionUnlocked(pmMission) -- new mission,
 	self:OnPathUpdate()
 end
 
-function PathExplorerMain:OnMainTimer() -- slower timer that updates the mission pulse
-	-- Runner
-	if not PlayerPathLib or not self.wndMain or not self.wndMain:IsValid() then
-		return
-	elseif PlayerPathLib.GetPlayerPathType() ~= PlayerPathLib.PlayerPathType_Explorer then
-		if self.wndMain then
-			self.wndMain:Destroy()
-			self.wndMain = nil
-		end
-		return
-	end
-
-	for idx, tMissionInfo in pairs(self.tNewMissions) do -- run our "new mission" table
-		tMissionInfo.nCount = tMissionInfo.nCount + 1 -- iterate the count on all
-		if tMissionInfo.nCount >= knNewMissionRunnerTimeout then -- if beyond max pulse count, remove; Explorer needs Nil gating for the zone-wide territory mission
-			local wnd = self.wndMain:FindChild("MissionList"):FindChildByUserData(tMissionInfo.pmMission)
-			if wnd ~= nil then
-				wnd:FindChild("ListItemNewRunner"):Show(false) -- redundant hide to ensure it's gone
-			end
-			table.remove(self.tNewMissions, idx)
-		else -- show runner
-			local wnd = self.wndMain:FindChild("MissionList"):FindChildByUserData(tMissionInfo.pmMission)
-			if wnd ~= nil then
-				wnd:FindChild("ListItemNewRunner"):Show(true)
-			end
-		end
-	end
-end
-
 ---------------------------------------------------------------------------------------------------
 -- UI Interactions
 ---------------------------------------------------------------------------------------------------
 
-function PathExplorerMain:OnListItemRightArrowClick(wndHandler, wndControl) -- wndHandler is "RightSubscreenBtn" and its data is the mission object
+function PathExplorerMain:OnListItemSubscreenBtn(wndHandler, wndControl) -- wndHandler is "RightSubscreenBtn" and its data is the mission object
 	if wndHandler ~= wndControl or not wndHandler:GetData() then
 		return
 	end
@@ -518,13 +577,42 @@ function PathExplorerMain:OnListItemOpenCodex(wndHandler, wndControl) -- ListIte
 		return
 	end
 
-	local pmMission = wndHandler:GetData()
-	Event_FireGenericEvent("DatachronPanel_PlayerPathShow", pmMission)
+	Event_FireGenericEvent("DatachronPanel_PlayerPathShow", wndHandler:GetData())
+end
+
+function PathExplorerMain:OnControlBackerMouseEnter(wndHandler, wndControl)
+	if wndHandler == wndControl then
+		wndHandler:FindChild("MinimizeBtn"):Show(true)
+	end
+end
+
+function PathExplorerMain:OnControlBackerMouseExit(wndHandler, wndControl)
+	if wndHandler == wndControl then
+		local wndBtn = wndHandler:FindChild("MinimizeBtn")
+		wndBtn:Show(wndBtn:IsChecked())
+	end
+end
+
+function PathExplorerMain:OnMinimizedBtnChecked(wndHandler, wndControl, eMouseButton)
+	self.bMinimized 			= self.wndContainer:FindChild("MinimizeBtn"):IsChecked()
+	self.bMinimizedActive 	= self.wndActiveHeader:FindChild("MinimizeBtn"):IsChecked()
+	self.bMinimizedAvailable = self.wndAvailableHeader:FindChild("MinimizeBtn"):IsChecked()
+	
+	self:OnPathUpdate()
 end
 
 ---------------------------------------------------------------------------------------------------
 -- Helpers
 ---------------------------------------------------------------------------------------------------
+function PathExplorerMain:HelperGetMissionName(strName)
+	local nColonPosition = string.find(strName, ": ") -- TODO HACK!
+	local strMissionType = karMissionTypeToFormattedString[nColonPosition and string.sub(strName, 0, nColonPosition) or ""] or ""
+	
+	return {
+		strMissionType,
+		string.len(strMissionType) > 0 and string.sub(strName, nColonPosition + 2) or strName
+	}
+end
 
 function PathExplorerMain:HelperMissionHasPriority(pmMission)
 	if not pmMission or not pmMission:GetDistance() then return end
@@ -567,7 +655,7 @@ function PathExplorerMain:HelperComputeProgressText(eType, pmMission)
 end
 
 function PathExplorerMain:FactoryProduce(wndParent, strFormName, tObject)
-	local wnd = wndParent:FindChildByUserData(tObject)
+	local wnd = wndParent and wndParent:FindChildByUserData(tObject)
 	if not wnd then
 		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
 		wnd:SetData(tObject)
@@ -575,9 +663,116 @@ function PathExplorerMain:FactoryProduce(wndParent, strFormName, tObject)
 	return wnd
 end
 
+-----------------------------------------------------------------------------------------------
+-- Right Click
+-----------------------------------------------------------------------------------------------
+function PathExplorerMain:CloseContextMenu() -- From a variety of source
+	if self.wndContextMenu and self.wndContextMenu:IsValid() then
+		self.wndContextMenu:Destroy()
+		self.wndContextMenu = nil
+		
+		return true
+	end
+	
+	return false
+end
+
+function PathExplorerMain:DrawContextMenu()
+	local nXCursorOffset = -36
+	local nYCursorOffset = 5
+
+	if self:CloseContextMenu() then
+		return
+	end
+
+	self.wndContextMenu = Apollo.LoadForm(self.xmlDoc, "ContextMenu", nil, self)
+	self:DrawContextMenuSubOptions()
+			
+	local tCursor = Apollo.GetMouse()
+	local nWidth = self.wndContextMenu:GetWidth()
+	local nHeight = self.wndContextMenu:GetHeight()
+	
+	self.wndContextMenu:Move(
+		tCursor.x - nWidth - nXCursorOffset,
+		tCursor.y - nHeight - nYCursorOffset,
+		nWidth,
+		nHeight
+	)
+end
+
+function PathExplorerMain:DrawContextMenuSubOptions(wndIgnore)
+	if not self.wndContextMenu or not self.wndContextMenu:IsValid() then
+		return
+	end
+	
+	self.wndContextMenu:FindChild("ToggleOnPathMissions"):SetCheck(self.bShowPathMissions)
+	self.wndContextMenu:FindChild("ToggleFilterZone"):SetCheck(self.bShowOutOfZone)
+	self.wndContextMenu:FindChild("ToggleFilterLimit"):SetCheck(self.bFilterLimit)
+	self.wndContextMenu:FindChild("ToggleFilterDistance"):SetCheck(self.bFilterDistance)
+	
+	local wndMissionLimitEditBox = self.wndContextMenu:FindChild("MissionLimitEditBox")
+	local wndMissionDistanceEditBox = self.wndContextMenu:FindChild("MissionDistanceEditBox")
+	
+	if not wndIgnore or wndIgnore and wndIgnore ~= wndMissionLimitEditBox then
+		wndMissionLimitEditBox:SetText(self.bFilterLimit and self.nMaxMissionLimit or 0)
+	end
+	
+	if not wndIgnore or wndIgnore and wndIgnore ~= wndMissionDistanceEditBox then
+		wndMissionDistanceEditBox:SetText(self.bFilterDistance and self.nMaxMissionDistance or 0)
+	end
+end
+
+function PathExplorerMain:OnToggleShowPathMissions()
+	self.bShowPathMissions = not self.bShowPathMissions
+	
+	if self.wndContextMenu and self.wndContextMenu:IsValid() then
+		self.wndContextMenu:FindChild("ToggleOnPathMissions"):SetCheck(self.bShowPathMissions)
+	end
+end
+
+function PathExplorerMain:OnToggleFilterZone()
+	self.bShowOutOfZone = not self.bShowOutOfZone
+	
+	self:DrawContextMenuSubOptions()
+	self:OnPathUpdate()
+end
+
+function PathExplorerMain:OnToggleFilterLimit()
+	self.bFilterLimit = not self.bFilterLimit
+	
+	self:DrawContextMenuSubOptions()
+	self:OnPathUpdate()
+end
+
+function PathExplorerMain:OnToggleFilterDistance()
+	self.bFilterDistance = not self.bFilterDistance
+	
+	self:DrawContextMenuSubOptions()
+	self:OnPathUpdate()
+end
+
+function PathExplorerMain:OnMissionLimitEditBoxChanged(wndHandler, wndControl)
+	if wndHandler ~= wndControl then return end
+	
+	self.nMaxMissionLimit = tonumber(wndControl:GetText()) or 0
+	self.bFilterLimit = self.nMaxMissionLimit > 0
+	
+	self:DrawContextMenuSubOptions(wndControl)
+	self:OnPathUpdate()
+end
+
+function PathExplorerMain:OnMissionDistanceEditBoxChanged(wndHandler, wndControl)
+	if wndHandler ~= wndControl then return end
+	
+	self.nMaxMissionDistance = tonumber(wndControl:GetText()) or 0
+	self.bFilterDistance = self.nMaxMissionDistance > 0
+	
+	self:DrawContextMenuSubOptions(wndControl)
+	self:OnPathUpdate()
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Path Explorer instance
 ---------------------------------------------------------------------------------------------------
 local PathExplorerMainInst = PathExplorerMain:new()
 PathExplorerMainInst:Init()
-ndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntr

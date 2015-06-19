@@ -9,23 +9,11 @@ require "Spell"
 require "Item"
 require "CharacterTitle"
 require "AttributeMilestonesLib"
+require "CostumesLib"
 
 local Character = {}
 
 local knNumCostumes = 10
-
---Really need an enum for these
---Numbers come from EItemSlot
-local karCostumeSlotNames = -- string name, then id, then button art
-{
-	{"Weapon", 		GameLib.CodeEnumItemSlots.Weapon, 			"CharacterWindowSprites:btn_Armor_HandsNormal", },
-	{"Head", 		GameLib.CodeEnumItemSlots.Head, 			"CharacterWindowSprites:btnCh_Armor_Head", 	},
-	{"Shoulder", 	GameLib.CodeEnumItemSlots.Shoulder, 		"CharacterWindowSprites:btnCh_Armor_Shoulder", 	},
-	{"Chest", 		GameLib.CodeEnumItemSlots.Chest, 			"CharacterWindowSprites:btnCh_Armor_Chest", },
-	{"Hands", 		GameLib.CodeEnumItemSlots.Hands, 			"CharacterWindowSprites:btnCh_Armor_Hands", },
-	{"Legs", 		GameLib.CodeEnumItemSlots.Legs, 			"CharacterWindowSprites:btnCh_Armor_Legs", 	},
-	{"Feet", 		GameLib.CodeEnumItemSlots.Feet, 			"CharacterWindowSprites:btnCh_Armor_Feet", 	},
-}
 
 local ktSlotWindowNameToTooltip =
 {
@@ -144,26 +132,9 @@ end
 function Character:Init()
 	local bHasConfigureFunction = false
 	local strConfigureButtonText = ""
-	local tDependencies =
-	{
-		"MountCustomization",
-		"Reputation"
-	}
+	local tDependencies = {}
 
     Apollo.RegisterAddon(self, bHasConfigureFunction, strConfigureButtonText, tDependencies)
-end
-
-function Character:OnDependencyError(strDep, strError)
-	-- if you don't care about this dependency, return true.
-	-- if you return false, or don't define this function
-	-- any Addons/Packages that list you as a dependency
-	-- will also receive a dependency error
-
-	if strDep == "MountCustomization" or strDep == "Reputation" then
-	   return true
-	end
-
-	return false
 end
 
 function Character:OnLoad()
@@ -191,15 +162,11 @@ function Character:OnDocumentReady()
 	Apollo.RegisterEventHandler("GuildChange", 										"OnGuildChange", self)
 	Apollo.RegisterEventHandler("ItemConfirmSoulboundOnEquip",						"OnItemConfirmSoulboundOnEquip", self)
 	Apollo.RegisterEventHandler("ItemDurabilityUpdate",								"OnItemDurabilityUpdate", self)
+	Apollo.RegisterEventHandler("CostumeSet",										"OnCostumeSet", self)
 	Apollo.RegisterEventHandler("ChangeWorld",										"OnClose", self)
-	--Apollo.RegisterEventHandler("ShowItemInDressingRoom", 						"OnShowItemInDressingRoom", self)
 
 	-- Open Tab UIs
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleSets", 						"OnInterfaceMenu_ToggleSets", self)
-	Apollo.RegisterEventHandler("LevelUpUnlock_Customization_Mount",				"OpenMountCustomize", self)
-	Apollo.RegisterEventHandler("MountUnlocked",									"OpenMountCustomize", self)
-	Apollo.RegisterEventHandler("PetFlairUnlocked", 								"OnPetFlairUnlocked", self) -- Eventually routes to OpenMountCustomize
-	Apollo.RegisterEventHandler("GenericEvent_ToggleMountCustomize", 				"OnGenericEvent_ToggleMountCustomize", self) -- Eventually routes to OpenMountCustomize
 	Apollo.RegisterEventHandler("GenericEvent_ToggleReputation", 					"OnToggleReputation", self)
 	Apollo.RegisterEventHandler("ToggleReputationInterface", 						"OnToggleReputation", self)
 
@@ -236,12 +203,12 @@ function Character:OnDocumentReady()
 	self.wndCharacterMounts			= self.wndCharacter:FindChild("CharacterMounts")
 	self.wndCharacterReputation		= self.wndCharacter:FindChild("CharacterReputation")
 	self.wndCharacterReputationList	= self.wndCharacter:FindChild("CharacterReputationList")
+	self.wndCostumeSelectionList 	= self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtnHolder")
 
 	self.wndCharacter:FindChild("CharacterTitleBtn"):AttachWindow(self.wndCharacterTitles)
-	self.wndCharacter:FindChild("SelectCostumeWindowToggle"):AttachWindow(self.wndCharacter:FindChild("CostumeBtnHolder"))
+	self.wndCharacter:FindChild("SelectCostumeWindowToggle"):AttachWindow(self.wndCostumeSelectionList)
 	self.wndCharacter:FindChild("BonusTab"):AttachWindow(self.wndBonusFrame)
 	self.wndCharacter:FindChild("CharacterStatsBtn"):AttachWindow(self.wndCharacterStats)
-	self.wndCharacter:FindChild("CharacterMountsBtn"):AttachWindow(self.wndCharacterMounts)
 	self.wndCharacter:FindChild("CharacterReputationBtn"):AttachWindow(self.wndCharacterReputation)
 	self.wndCharacter:FindChild("TitleSelectionBtn"):AttachWindow(self.wndCharacter:FindChild("NameEditTitleContainer"))
 	self.wndCharacter:FindChild("ClassTitleGuild"):AttachWindow(self.wndCharacter:FindChild("NameEditGuildTagContainer"))
@@ -256,7 +223,6 @@ function Character:OnDocumentReady()
 	self.tOffensiveStats 	= {}
 	self.tDefensiveStats 	= {}
 	self.wCostumeCheckBtn = self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame:SelectCostumeWindowToggle")
-	self.wndCostumeSelectionList = self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtnHolder")
 	self.wndCostumeSelectionList:Show(false)
 
 	local wndVisibleSlots = self.wndCharacter:FindChild("VisibleSlots")
@@ -272,39 +238,17 @@ function Character:OnDocumentReady()
 	}
 
 	-- Costumes
-	self.wndCostumeFrame = self.wndCharacter:FindChild("CostumeEditFrame")
-	self.wndCostumeFrame:Show(false)
+	self.nCostumeCount = CostumesLib.GetCostumeCount()
 
-	self.tCostumeBtns = {}
-	self.nCostumeCount = GameLib.GetCostumeCount()
-
+	self.wndCostumeSelectionList:FindChild("ClearCostumeBtn"):SetData(0)
+	
 	for idx = 1, knNumCostumes do
-		self.tCostumeBtns[idx] = self.wndCostumeSelectionList:FindChild("CostumeBtn"..idx)
-		self.tCostumeBtns[idx]:SetData(idx)
-		self.tCostumeBtns[idx]:Show( idx <= self.nCostumeCount)
+		local wndCostumeBtn = self.wndCostumeSelectionList:FindChild("CostumeBtn"..idx)
+		wndCostumeBtn:SetData(idx)
+		wndCostumeBtn:Show(idx <= self.nCostumeCount)
 	end
 
 	self.nCurrentCostume = nil
-	self.arCostumeSlots = {}
-
-	for idx, tInfo in ipairs(karCostumeSlotNames) do
-		local wndCostumeEntry = Apollo.LoadForm(self.xmlDoc, "CostumeEntryForm", self.wndCostumeFrame:FindChild("CostumeListContainer"), self)
-		wndCostumeEntry:FindChild("CostumeSlot"):ChangeArt(tInfo[3])
-
-		wndCostumeEntry:FindChild("CostumeSlot"):SetData(tInfo[2])
-		if tInfo[2] == GameLib.CodeEnumItemSlots.Weapon then
-			wndCostumeEntry:FindChild("VisibleBtn"):Enable(false)
-			wndCostumeEntry:FindChild("VisibleBtn:VisibleBtnIcon"):SetBGColor(ApolloColor.new("UI_BtnTextHoloDisabled"))
-		else
-			wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo[2])
-		end
-		wndCostumeEntry:FindChild("VisibleBtn"):SetData(tInfo[2])
-		wndCostumeEntry:FindChild("ImprintCurrent"):SetData(tInfo[2])
-		wndCostumeEntry:FindChild("RemoveSlotBtn"):SetData(tInfo[2])
-		self.arCostumeSlots[tInfo[2]] = wndCostumeEntry
-	end
-
-	self.wndCostumeFrame:FindChild("CostumeListContainer"):ArrangeChildrenVert()
 
 	self.wndCharacter:FindChild("PrimaryAttributeTab"):SetCheck(true)
 	self.wndCharacter:FindChild("SecondaryAttributeFrame"):Show(false)
@@ -378,37 +322,6 @@ function Character:OnToggleCharacterWindow()
 	end
 end
 
-function Character:OnGenericEvent_ToggleMountCustomize()
-	if self.wndCharacterMounts:IsVisible() then
-		self.wndCharacter:Close()
-	else
-		self:OpenMountCustomize()
-	end
-end
-
-function Character:OnPetFlairUnlocked(petFlair)
-	local eFlairType = petFlair:GetFlairType()
-	if eFlairType == PetCustomizationLib.PetFlairType_GroundMountFront or eFlairType == PetCustomizationLib.PetFlairType_GroundMountBack
-		or eFlairType == PetCustomizationLib.PetFlairType_GroundMountSide or eFlairType == PetCustomizationLib.PetFlairType_HoverMountFront
-		or eFlairType == PetCustomizationLib.PetFlairType_HoverMountBack or eFlairType == PetCustomizationLib.PetFlairType_HoverMountSide then
-		self:OpenMountCustomize()
-	end
-end
-
-function Character:OpenMountCustomize(idMount)
-	self:ShowCharacterWindow()
-
-	if not self.wndCharacterReputation:IsShown() then
-		Event_FireGenericEvent("GenericEvent_InitializeMountsCustomization", self.wndCharacterMounts, idMount)
-	end
-
-	self.wndCharacterTitles:Show(false)
-	self.wndCharacterStats:Show(false)
-	self.wndCharacterMounts:Show(true)
-	self.wndCharacterReputation:Show(false)
-	Event_FireGenericEvent("GenericEvent_DestroyReputation")
-end
-
 function Character:OnToggleReputation()
 	if self.wndCharacterReputation:IsVisible() then
 		self.wndCharacter:Close()
@@ -462,11 +375,13 @@ function Character:ShowCharacterWindow()
 
 	self.wndCharacter:Show(true)
 
-	self.nCostumeCount = GameLib.GetCostumeCount()
+	self.nCostumeCount = CostumesLib.GetCostumeCount()
+
 	for idx = 1, knNumCostumes do
-		self.wndCharacter:FindChild("CostumeBtn" .. idx):SetCheck(false)
-		self.wndCharacter:FindChild("CostumeBtn" .. idx):SetText(String_GetWeaselString(Apollo.GetString("Character_CostumeNum"), idx)) -- TODO: this will be a real name at some point
-		self.wndCharacter:FindChild("CostumeBtn" .. idx):Show(idx <= self.nCostumeCount)
+		local wndCostume = self.wndCharacter:FindChild("CostumeBtn" .. idx)
+		wndCostume:SetCheck(false)
+		wndCostume:SetText(String_GetWeaselString(Apollo.GetString("Character_CostumeNum"), idx))
+		wndCostume:Show(idx <= self.nCostumeCount)
 	end
 
 	local nLeft, nTop, nRight, nBottom = self.wndCharacter:FindChild("CostumeBtnHolder"):GetAnchorOffsets()
@@ -477,9 +392,7 @@ function Character:ShowCharacterWindow()
 	self.wndCharacterTitles:Show(false)
 	self.wndCharacterReputation:Show(false)
 	self.wndCharacterMounts:Show(false)
-	self.wndCostumeFrame:Show(false)
 	self.wndCharacter:ToFront()
-	self:UpdateCostumeSlotIcons()
 	self:UpdateMilestones(self.wndCharacter)
 	self:DrawAttributes(self.wndCharacter)
 	self:DrawNames(self.wndCharacter)
@@ -499,85 +412,31 @@ function Character:OnCostumeBtnToggle(wndHandler, wndCtrl)
 
 	self.nCurrentCostume = nil
 
-local wndCostumeHolder = self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtnHolder")
-	for idx = 1, knNumCostumes do
-		if wndCostumeHolder:FindChild("CostumeBtn"..idx):IsChecked() then
-			self.nCurrentCostume = idx
-		end
-	end
+	local wndCostumeHolder = self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtnHolder")
+	
+	self.nCurrentCostume = CostumesLib.GetCostumeIndex()
 
 	self.wCostumeCheckBtn:SetCheck(false)
 	self.wndCostumeSelectionList:Show(false)
-	GameLib.SetCostumeIndex(self.nCurrentCostume)
-	self:UpdateCostumeSlotIcons()
-	Event_FireGenericEvent("CharacterPanel_CostumeUpdated")
-
+	
+	local idCostume = wndHandler:GetData()
+	CostumesLib.SetCostumeIndex(wndHandler:GetData())
+	
+	Event_FireGenericEvent("CostumeSet", idCostume)
 	return true
-end
-
-function Character:OnEditCostumeBtnToggle(wndHandler, wndCtrl) -- keeping these separate as we may make you not have to wear the costume to update it in the future
-	self.nCurrentCostume = nil
-
-	self.wndCostumeEditList:Show(false)
-
-	if self.nCurrentCostume ~= nil then
-		GameLib.SetCostumeIndex(self.nCurrentCostume)
-	end
-
-	self:UpdateCostumeSlotIcons()
 end
 
 function Character:OnNoCostumeBtn()
 	self.wCostumeCheckBtn:SetCheck(false)
 	self.wndCostumeSelectionList:Show(false)
-	self.wndCostumeFrame:Show(false)
 	self.nCurrentCostume = nil
-	GameLib.SetCostumeIndex(self.nCurrentCostume)
-	self:UpdateCostumeSlotIcons()
-	Event_FireGenericEvent("CharacterPanel_CostumeUpdated")
+	
+	CostumesLib.SetCostumeIndex(0)
 end
 
-function Character:OnCloseCostumeBtn()
-	self.wndCostumeSelectionList:Show(false)
-	self.wCostumeCheckBtn:SetCheck(false)
-	self.nCurrentCostume = nil
-end
-
-function Character:OnVisibleBtnCheck(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	local bVisible = wndControl:IsChecked()
-	local iSlot = wndControl:GetData()
-
-	if self.nCurrentCostume ~= nil and self.nCurrentCostume ~= 0 then
-		GameLib.SetCostumeSlotVisible(self.nCurrentCostume, iSlot, bVisible)
-
-	end
-
-	self:UpdateCostumeSlotIcons()
-end
-
-function Character:OnImprintCurrent(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	if uItemToImprint ~= nil then
-		GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), uItemToImprint:GetInventoryId())
-	end
-
-	self:UpdateCostumeSlotIcons()
-end
-
-function Character:OnRemoveSlotBtn(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), -1)
-	self:UpdateCostumeSlotIcons()
+function Character:OnOpenCostumes()
+	Event_FireGenericEvent("GenericEvent_OpenCostumes")
+	self:OnClose()
 end
 
 function Character:OnItemDurabilityUpdate(itemUpdated, nPreviousDurability)
@@ -585,143 +444,21 @@ function Character:OnItemDurabilityUpdate(itemUpdated, nPreviousDurability)
 	wndUpdate:FindChild("DurabilityMeter"):SetProgress(itemUpdated:GetDurability())
 end
 
-function Character:UpdateCostumeSlotIcons()
-	-- this is our update function; it's used to repopulate the slots on the costume window (when shown) and mark what slots on the character
-	-- window are effected by a costume piece (when shown)
-
-	self.nCostumeCount = GameLib.GetCostumeCount()
-	self.nCurrentCostume = GameLib.GetCostumeIndex()
-
-	local wndCostumeHolder = self.wndCharacter:FindChild("CharFrame_BGArt:CostumeBtnHolder")
-	local wndHeaderFrame = self.wndCharacter:FindChild("CharFrame_BGArt:BGArt_HeaderFrame")
-
-	-- update all btns so the UI's move in sync; happens AFTER the costume is set.
-	for idx = 1, knNumCostumes do -- update the costume window to match
-		local wndCostumeBtn = wndCostumeHolder:FindChild("CostumeBtn" .. idx)
-		wndCostumeBtn:SetCheck(false)
-		wndCostumeBtn:Show( idx <= self.nCostumeCount )
-	end
-
-	if self.nCurrentCostume ~= nil and self.nCurrentCostume > 0 then
-		local unitPlayer = GameLib.GetPlayerUnit()
-		local tEquipped = {}
-		for key, itemEquipped in pairs(unitPlayer:GetEquippedItems()) do
-			if itemEquipped ~= nil then
-				tEquipped[itemEquipped:GetSlot()] = itemEquipped
-			end
-		end
-
-		local wndCurrentCostume = wndCostumeHolder:FindChild("CostumeBtn" .. self.nCurrentCostume)
-
-		wndCurrentCostume:SetCheck(true)
-		wndCostumeHolder:FindChild("ClearCostumeBtn"):SetCheck(false)
-
-		local strName = wndCurrentCostume:GetText()
-
-		--wndHeaderFrame:FindChild("SelectCostumeWindowToggle"):SetText(strName)
-		wndHeaderFrame:FindChild("EditCostumeToggle"):Show(true)
-
-		for idx, wndSlot in pairs(self.arCostumeSlots) do
-			local strIcon = GameLib.GetCostumeItemIcon(self.nCurrentCostume, idx) or ""
-			local bShown = GameLib.IsCostumeSlotVisible(self.nCurrentCostume, idx)
-			local wndCostumeIcon = wndSlot:FindChild("CostumeSlot:CostumeIcon")
-
-			wndSlot:FindChild("VisibleBtn"):SetCheck(bShown)
-			wndSlot:FindChild("HiddenBlocker"):Show(not bShown)
-			wndSlot:FindChild("RemoveSlotBtn"):Enable(strIcon ~= "")
-			wndCostumeIcon:SetSprite(strIcon)
-
-			local wndCostumeIconCurrent = self.arCostumeSlots[idx]:FindChild("BGArt:BG_IconFrameCurrent:CostumeIconCurrent")
-			if tEquipped[idx - 1] ~= nil then
-				wndSlot:FindChild("ImprintCurrent"):Enable(true)
-			else
-				wndSlot:FindChild("ImprintCurrent"):Enable(false)
-
-			end
-
-			if self.wndCostumeFrame:IsShown() then
-				self.wndCostumeFrame:FindChild("CostumeListLabel"):SetText(String_GetWeaselString(Apollo.GetString("Character_EditingCostume", self.nCurrentCostume)))
-
-				if bShown == false then
-					wndCostumeIcon:SetSprite("ClientSprites:LootCloseBox")
-				end
-			end
-		end
-	else
-		--wndHeaderFrame:FindChild("SelectCostumeWindowToggle"):SetText(Apollo.GetString("Character_NoCostume"))
-		wndHeaderFrame:FindChild("EditCostumeToggle"):Show(false)
-		self.wndCharacter:FindChild("ClearCostumeBtn"):SetCheck(true)
-	end
-
-	wndHeaderFrame:FindChild("EditCostumeToggle"):SetCheck(self.wndCostumeFrame:IsShown())
-end
-
-function Character:OnCostumeSlotQueryDragDrop(wndHandler, wndControl, nX, nY, wndSource, strType, nValue)
-	if wndHandler ~= wndControl then
-		return Apollo.DragDropQueryResult.PassOn
-	end
-	if strType == "DDBagItem" then
-		return Apollo.DragDropQueryResult.Accept
-	end
-	return Apollo.DragDropQueryResult.Ignore
-end
-
-function Character:OnCostumeSlotDragDrop(wndHandler, wndControl, nX, nY, wndSource, strType, nValue)
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetData(), nValue)
-	self:UpdateCostumeSlotIcons()
-end
-
-function Character:OnRemoveItemBtn(wndHandler, wndControl)
-	--TODO: Need a method for removing items
-
-	--[[if wndHandler ~= wndControl then
-		return false
-	end
-
-	GameLib.SetCostumeItem(self.nCurrentCostume, wndControl:GetParent():GetData(), nil)
-	self:UpdateCostumeSlotIcons()--]]
-end
-
-function Character:OnEditCostumeCheck(wndHandler, wndControl)
-	if wndControl:IsChecked() then
-		self.nCurrentCostume = GameLib.GetCostumeIndex()
-		if self.nCurrentCostume == nil then
-			return false
-		end
-
-		local unitPlayer = GameLib.GetPlayerUnit()
-		self.wndCostumeFrame:Show(true)
-	else
-		self.wndCostumeFrame:Show(false)
-	end
-	self:UpdateCostumeSlotIcons()  -- sets the toggle for us
-end
-
 function Character:OnPersonaUpdateCharacterStats()
 	if self.wndCharacter:IsShown() then
 		self:DrawAttributes(self.wndCharacter)
 		self:UpdateMilestones(self.wndCharacter)
-		if self.nCurrentCostume > 0 then
-			self:UpdateCostumeSlotIcons()
-		end
 	end
+end
 
-	--Needs to check if it's a weapon. If so, play weapon sound.
-	--self:OnOffenseDefenseTab()
+function Character:OnCostumeSet(idCostume)
+	local wndButtonHolder = self.wndCharacter:FindChild("CostumeBtnHolder")
+	wndButtonHolder:FindChildByUserData(idCostume):SetCheck(true)
 end
 
 function Character:OnClose()
 	self.wndCharacter:Show(false)
 	Event_FireGenericEvent("CharacterWindowHasBeenClosed")
-end
-
-function Character:OnCostumeClose()
-	self.wndCostumeFrame:Show(false)
-	self:UpdateCostumeSlotIcons()
 end
 
 function Character:OnPrimaryAttributeTabBtn(wndHander, wndControl)
@@ -750,11 +487,11 @@ function Character:OnBonusTabBtn(wndHandler, wndControl)
 	local wndBonusFrame = wndParent:FindChild("BonusFrame")
 	wndParent:FindChild("MilestoneContainer"):Show(false)
 	wndParent:FindChild("SecondaryAttributeFrame"):Show(false)
+	
 	if wndBonusFrame then
 		wndBonusFrame:Show(true)
 		Event_FireGenericEvent("InterfaceMenu_ToggleSets", wndParent:FindChild("BonusFrame"))
 	end
-
 end
 
 function Character:DrawAttributes(wndUpdate)
@@ -1590,7 +1327,6 @@ function Character:OnLevelUpUnlock_Character_Generic(nExtraData, eValue)
 	self:ShowCharacterWindow()
 	if eValue and eValue == GameLib.LevelUpUnlockType.Path_Title then
 		self.wndCharacter:FindChild("CharacterReputationBtn"):SetCheck(false)
-		self.wndCharacter:FindChild("CharacterMountsBtn"):SetCheck(false)
 		self.wndCharacter:FindChild("CharacterStatsBtn"):SetCheck(false)
 		self.wndCharacter:FindChild("CharacterTitleBtn"):SetCheck(true)
 		self:OnDrawEditNamePopout()
@@ -1706,18 +1442,3 @@ end
 
 local CharacterInstance = Character:new()
 CharacterInstance:Init()
-ªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªª    ªªªªÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ	ÿ	ÿÿÿ0ÿ	4ÿ5ÿ3ÿ	+ÿ1û)Qı%KşE‰ÿFŠÿ>ÿ:zÿ8sÿ3mÿ3iÿ1dÿ-Zÿ ÿÿÿÿÿÿÿÿÿÿÿÿÿ
-ÿ
-ÿÿ
-ÿ
-ÿ
-ÿ	ÿ	ÿ	ÿ	ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ!ÿ	ÿ	ÿ	ş	ı üû#ú$öÏÂR.                                                                                                                                                                                                                        ! .@ Rf 0Ø!7ø 5ø"9ı%Dÿ+Sÿ=€ÿ5oÿ ÿ'ÿ(ÿ%ÿ
-$ÿÿ
-ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ	ÿÿÿÿ.ÿ4ÿ4ÿ/ÿ(ÿ!Cú%Lı5lÿEŒÿ@‚ÿ9wÿ7rÿ4lÿ1gÿ.aÿ-^ÿ@ÿÿÿÿÿÿÿÿÿÿÿÿÿ
-ÿ
-ÿ
-ÿ
-ÿ
-ÿ
-ÿ
-ÿ	ÿ	ÿ	ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ

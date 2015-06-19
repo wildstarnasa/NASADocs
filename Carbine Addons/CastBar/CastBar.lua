@@ -99,15 +99,19 @@ function CastBar:OnUpdate()
 	--Toggle Visibility based on ui preference (Hide simple cast bar if my unit frame is visible.)
 	local unitPlayer = GameLib.GetPlayerUnit()
 	local nVisibility = Apollo.GetConsoleVariable("hud.myUnitFrameDisplay")
+	local nCurrEffHP = unitPlayer:GetHealth() + unitPlayer:GetShieldCapacity()
+	local nMaxEffHP = unitPlayer:GetMaxHealth() + unitPlayer:GetShieldCapacityMax()
 	
-	if nVisibility == 1 or nVisibility == 0  then --always on/unspecified
-		bShowSimpleCast = false
-	elseif nVisibility == 2 then --always off
+	if nVisibility == 2 then --always off
 		bShowSimpleCast = true
 	elseif nVisibility == 3 then --on in combat
 		bShowSimpleCast = not unitPlayer:IsInCombat()
 	elseif nVisibility == 4 then --on out of combat
 		bShowSimpleCast = unitPlayer:IsInCombat()
+	elseif nVisibility == 5 then --on with a target (unit frame symmetry)
+		bShowSimpleCast = not (unitPlayer:GetTarget()  and unitPlayer:GetTarget():GetHealth() ~= nil or nCurrEffHP < nMaxEffHP)
+	else --always on/unspecified
+		bShowSimpleCast = false
 	end
 	
 	-- Casting Bar Update
@@ -121,28 +125,26 @@ function CastBar:OnUpdate()
 	local nElapsed = 0
 	local eType = Unit.CodeEnumCastBarType.None
 
-	if unitPlayer:ShouldShowCastBar() then
-		if bShowSimpleCast then
-			self.bIsShown = true
-			eType = unitPlayer:GetCastBarType()
-			
-			if eType == Unit.CodeEnumCastBarType.Normal then
-				self.wndCastFrame:FindChild("CastingProgress"):SetFullSprite("SpellChargeFull")
+	if unitPlayer:ShouldShowCastBar() and bShowSimpleCast then
+		self.bIsShown = true
+		eType = unitPlayer:GetCastBarType()
+		
+		if eType == Unit.CodeEnumCastBarType.Normal then
+			self.wndCastFrame:FindChild("CastingProgress"):SetFullSprite("SpellChargeFull")
 
-				bShowCasting = true
-				bEnableGlow = true
-				nZone = 0
-				nMaxZone = 1
-				fDuration = unitPlayer:GetCastDuration()
-				fElapsed = unitPlayer:GetCastElapsed()
+			bShowCasting = true
+			bEnableGlow = true
+			nZone = 0
+			nMaxZone = 1
+			fDuration = unitPlayer:GetCastDuration()
+			fElapsed = unitPlayer:GetCastElapsed()
 
-				self.wndCastFrame:FindChild("CastingProgress"):SetTickLocations(0, 100, 200, 300)
+			self.wndCastFrame:FindChild("CastingProgress"):SetTickLocations(0, 100, 200, 300)
 
-				strSpellName = unitPlayer:GetCastName()
-			end
-			
-			Apollo.SetGlobalAnchor("CenterTextBottom", 0.0, nRectTop, true)
+			strSpellName = unitPlayer:GetCastName()
 		end
+		
+		Apollo.SetGlobalAnchor("CenterTextBottom", 0.0, nRectTop, true)
 	else
 		self.bIsShown = false
 		self.wndCastFrame:Show(false)
@@ -312,14 +314,3 @@ end
 
 local CastBarInstance = CastBar:new()
 CastBarInstance:Init()
-Offset="0" BAnchorPoint="0" BAnchorOffset="51" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CategoryFilterItem" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" Overlapped="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="">
-        <Control Class="Button" Base="BK3:btnMetal_ExpandMenu_Small" Font="CRB_InterfaceMedium_B" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="CategoryFilterBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_TextHoloBody" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Text="" TextId="" GlobalRadioGroup="BuilderMap_CategoryFilterBtn_GlobalRadioGroup" RadioDisallowNonSelection="0" RelativeToClient="1" IgnoreMouse="1" WindowSoundTemplate="MetalButtonLarge">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="32" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" TooltipType="OnCursor" Name="CategoryFilterName" BGColor="white" TextColor="UI_BtnTextGoldListNormal" TooltipColor="" TextId="SettlerAvenueType_Security" DT_CENTER="0" DT_VCENTER="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="1" TAnchorOffset="-18" RAnchorPoint="1" RAnchorOffset="-38" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CategoryFilterBarBG" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_Basekit:kitIProgBar_Inlay_Base" Picture="1" IgnoreMouse="1" NewControlDepth="1"/>
-            <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="1" TAnchorOffset="-19" RAnchorPoint="1" RAnchorOffset="-42" BAnchorPoint="1" BAnchorOffset="0" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Basekit:kitIProgBar_Simple_Fill" TooltipType="OnCursor" Name="CategoryFilterBar" BGColor="white" TextColor="white" TooltipColor="" BarColor="" Sprite="CRB_Basekit:kitIProgBar_Simple_Fill" Picture="0" IgnoreMouse="1" TooltipFont="CRB_InterfaceSmall_O"/>
-            <Event Name="ButtonCheck" Function="OnCategoryFilterBtnCheck"/>
-            <Event Name="ButtonUncheck" Function="OnCategoryFilterBtnUncheck"/>
-        </Control>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="60" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SelectionItem" BGColor="white" TextColor="white" TooltipColor="" HideInEditor="0" IgnoreMouse="1" Overlapped="1" TooltipFont="CRB_InterfaceSmall" Tooltip="">
-        <Control Class="Button" Base="CRB_Basekit:kitBtn_List_MetalBorder" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="SelectionItemBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Picture="1" Sprite="" RelativeToClient="1" TestAlpha="1" GlobalRadioGroup="BuilderMap_SelectionItemBtn_GlobalRadioGroup" Text="" Tooltip="" TooltipF

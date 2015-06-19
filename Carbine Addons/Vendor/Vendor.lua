@@ -18,13 +18,12 @@ local kstrTabSell    	= "VendorTab1"
 local kstrTabBuyback 	= "VendorTab2"
 local kstrTabRepair  	= "VendorTab3"
 local knMaxGuildLimit 	= 2000000000 -- 2000 plat
+local knMaxSpinnerValue = 99
 
 local knHeaderContainerMinHeight = 8
 
 local ktVendorRespondEvent =
 {
-	-- Stackable items send the StackSplit reason when they are being sold
-	[Item.CodeEnumItemUpdateReason.StackSplit]	= Apollo.GetString("Vendor_Bought"),
 	[Item.CodeEnumItemUpdateReason.Vendor] 		= Apollo.GetString("Vendor_Bought"),
 	[Item.CodeEnumItemUpdateReason.Buyback] 	= Apollo.GetString("Vendor_BoughtBack"),
 }
@@ -103,6 +102,7 @@ function Vendor:OnDocumentReady()
 	
 	self.wndInteractBlocker = self.wndVendor:FindChild("InteractBlocker")
 	self.wndInteractBlocker:Show(false, true)
+	self.wndVendor:FindChild("AmountValue"):SetMinMax(0, 0)
 
 	self.tVendorItems = {}
 	self.tItemWndList = {}
@@ -183,6 +183,7 @@ function Vendor:RedrawFully()
 
 	self.wndItemContainer:SetVScrollPos(nVScrollPos)
 	self:OnPlayerCurrencyChanged()
+	self:DisableAmountValue() 
 
 	if not self.tDefaultSelectedItem then
 		return
@@ -269,6 +270,7 @@ function Vendor:HelperResetToBuyTab()
 	self.wndVendor:FindChild(kstrTabRepair):SetCheck(false)
 	
 	self.wndVendor:FindChild(kstrTabBuy):SetCheck(true)
+	self:DisableAmountValue()
 	self:Redraw()
 
 	self.timerBlockInteract = ApolloTimer.Create(self.wndItemContainer:ContainsMouse() and 2.0 or 0.2, false, "OnBlockBuyTimer", self)
@@ -318,67 +320,7 @@ function Vendor:DrawListItems(wndParent, tItems)
 	for key, tCurrItem in pairs(tItems) do
 		if not tCurrItem.bFutureStock then
 			local wndCurr = self:FactoryCacheProduce(wndParent, "VendorListItem", "I"..tCurrItem.idUnique)
-			wndCurr:FindChild("VendorListItemBtn"):SetData(tCurrItem)
-			wndCurr:FindChild("VendorListItemCantUse"):Show(self:HelperPrereqFailed(tCurrItem))
-
-			if tCurrItem.eType ~= Item.CodeEnumLootItemType.AdventureSpell or tCurrItem.eType ~= Item.CodeEnumLootItemType.Cash then
-				wndCurr:FindChild("VendorListItemIcon"):GetWindowSubclass():SetItem(tCurrItem.itemData)
-			else
-				wndCurr:FindChild("VendorListItemIcon"):SetSprite(tCurrItem.strIcon)
-			end
-
-			local monPrice = nil
-			local tPrice = nil
-			if tCurrItem.tPriceInfo then
-				tPrice = {}
-				tPrice[1] = tCurrItem.tPriceInfo.monPrice1
-				tPrice[2] = tCurrItem.tPriceInfo.monPrice2
-				monPrice = tPrice[1]
-			elseif tCurrItem.itemData then
-				local itemData = tCurrItem.itemData
-				if self.wndVendor:FindChild(kstrTabSell):IsChecked() or self.wndVendor:FindChild(kstrTabBuyback):IsChecked()then
-					monPrice = itemData:GetSellPrice():Multiply(tCurrItem.nStackSize)
-				elseif self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
-					monPrice = itemData:GetBuyPrice():Multiply(tCurrItem.nStackSize)
-				elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
-					monPrice = Money.new(Money.CodeEnumCurrencyType.Credits)
-					monPrice:SetAmount(itemData:GetRepairCost())
-				end
-			end
-
-			local strItemTitle = tCurrItem.strName
-			if tCurrItem.nStackSize > 1 then
-				wndCurr:FindChild("VendorListItemStackCount"):SetText(tCurrItem.nStackSize)
-			elseif tCurrItem.nStockCount > 0 and self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
-				wndCurr:FindChild("VendorListItemStackCount"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCount"), tCurrItem.nStockCount))
-				strItemTitle = String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCountTitle"), strItemTitle, tCurrItem.nStockCount)
-			end
-			wndCurr:FindChild("VendorListItemTitle"):SetText(strItemTitle)
-
-			-- Costs
-			if monPrice and monPrice:GetMoneyType() ~= Money.CodeEnumCurrencyType.Credits then
-				self.tAltCurrency = {}
-				self.tAltCurrency.eMoneyType = monPrice:GetMoneyType()
-				self.tAltCurrency.eAltType = monPrice:GetAltType()
-			end
-
-			local wndCash = wndCurr:FindChild("VendorListItemCashWindow")
-			if tPrice then
-				wndCash:SetAmount(tPrice, true)
-			elseif monPrice then
-				wndCash:SetAmount(monPrice, true)
-			else
-				wndCash:SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
-				wndCash:SetAmount(0, true)
-			end
-
-			if self:HelperRecipeAlreadyKnown(tCurrItem) then
-				wndCurr:FindChild("VendorListItemTitle"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_KnownRecipe"), wndCurr:FindChild("VendorListItemTitle"):GetText()))
-			end
-
-			local strQualityColor = tCurrItem.itemData and tCurrItem.itemData:GetItemQuality() and karEvalColors[tCurrItem.itemData:GetItemQuality()] or "UI_TextHoloBody"
-			wndCurr:FindChild("VendorListItemTitle"):SetTextColor(self:HelperPrereqBuyFailed(tCurrItem) and "xkcdReddish" or strQualityColor)
-			wndCurr:FindChild("VendorListItemCashWindow"):SetTextColor(self:HelperIsTooExpensive(tCurrItem) and "xkcdReddish" or "white")
+			self:DrawListItem(wndCurr, tCurrItem)
 		end
 	end
 
@@ -398,10 +340,103 @@ function Vendor:DrawListItems(wndParent, tItems)
 	return nHeight
 end
 
+function Vendor:DrawListItem(wndCurr, tCurrItem)
+	wndCurr:FindChild("VendorListItemBtn"):SetData(tCurrItem)
+	wndCurr:FindChild("VendorListItemCantUse"):Show(self:HelperPrereqFailed(tCurrItem))
+
+	if tCurrItem.eType ~= Item.CodeEnumLootItemType.AdventureSpell or tCurrItem.eType ~= Item.CodeEnumLootItemType.Cash then
+		wndCurr:FindChild("VendorListItemIcon"):GetWindowSubclass():SetItem(tCurrItem.itemData)
+	else
+		wndCurr:FindChild("VendorListItemIcon"):SetSprite(tCurrItem.strIcon)
+	end
+
+	local monPrice = nil
+	local tPrice = nil
+	if tCurrItem.tPriceInfo then
+		-- If the first price value is a token, use the 2nd to determine what to show as the player's cash.
+		local bIsToken = tCurrItem.tPriceInfo.monPrice1:GetMoneyType() == Money.CodeEnumCurrencyType.GroupCurrency and tCurrItem.tPriceInfo.monPrice1:GetAltType() == Money.CodeEnumGroupCurrencyType.None
+		
+		tPrice = {}
+		tPrice[1] = tCurrItem.tPriceInfo.monPrice1
+		tPrice[2] = tCurrItem.tPriceInfo.monPrice2
+		monPrice = bIsToken and tPrice[2] or tPrice[1]
+	elseif tCurrItem.itemData then
+		local itemData = tCurrItem.itemData
+		if self.wndVendor:FindChild(kstrTabSell):IsChecked() or self.wndVendor:FindChild(kstrTabBuyback):IsChecked()then
+			monPrice = itemData:GetSellPrice()
+		elseif self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
+			monPrice = itemData:GetBuyPrice()
+		elseif self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
+			monPrice = Money.new(Money.CodeEnumCurrencyType.Credits)
+			monPrice:SetAmount(itemData:GetRepairCost())
+		end
+	end
+	
+	local strItemTitle = tCurrItem.strName
+	local nSpinnerValue = self.wndVendor:FindChild("AmountValue"):GetValue()
+	
+	if not self.wndVendor:FindChild(kstrTabBuyback):IsChecked() and (tCurrItem.nStackSize > 1 or nSpinnerValue > 1) then
+		if tCurrItem.nStackSize > 1 then
+			wndCurr:FindChild("VendorListItemStackCount"):SetText(tCurrItem.nStackSize)
+		end
+		
+		local nStackSize = tCurrItem.nStackSize
+		if nSpinnerValue > 1 then
+			nStackSize = nSpinnerValue
+		end
+		
+		if tPrice then
+			tPrice[1] = tPrice[1]:Multiply(nStackSize)
+			tPrice[2] = tPrice[2]:Multiply(nStackSize)
+		elseif monPrice then
+			monPrice = monPrice:Multiply(nStackSize)
+		end
+	end
+	
+	if tCurrItem.nStockCount > 0 and self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
+		wndCurr:FindChild("VendorListItemStackCount"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCount"), tCurrItem.nStockCount))
+		strItemTitle = String_GetWeaselString(Apollo.GetString("Vendor_LimitedItemCountTitle"), strItemTitle, tCurrItem.nStockCount)
+	end
+	wndCurr:FindChild("VendorListItemTitle"):SetText(strItemTitle)
+
+	-- Costs
+	local eCurrencyType = monPrice and monPrice:GetMoneyType() or 0
+	
+	if eCurrencyType ~= Money.CodeEnumCurrencyType.Credits and eCurrencyType ~= 0 then
+		self.tAltCurrency = {}
+		self.tAltCurrency.eMoneyType = eCurrencyType
+		self.tAltCurrency.eAltType = monPrice:GetAltType()
+	else
+		self.tAltCurrency = nil
+	end
+	
+	local wndCash = wndCurr:FindChild("VendorListItemCashWindow")
+	if tPrice then
+		wndCash:SetAmount(tPrice, true)
+	elseif monPrice then
+		wndCash:SetAmount(monPrice, true)
+	else
+		wndCash:SetMoneySystem(Money.CodeEnumCurrencyType.Credits)
+		wndCash:SetAmount(0, true)
+	end
+
+	if self:HelperRecipeAlreadyKnown(tCurrItem) then
+		wndCurr:FindChild("VendorListItemTitle"):SetText(String_GetWeaselString(Apollo.GetString("Vendor_KnownRecipe"), wndCurr:FindChild("VendorListItemTitle"):GetText()))
+	end
+
+	local strQualityColor = tCurrItem.itemData and tCurrItem.itemData:GetItemQuality() and karEvalColors[tCurrItem.itemData:GetItemQuality()] or "UI_TextHoloBody"
+	wndCurr:FindChild("VendorListItemTitle"):SetTextColor(self:HelperPrereqBuyFailed(tCurrItem) and "xkcdReddish" or strQualityColor)
+	wndCurr:FindChild("VendorListItemCashWindow"):SetTextColor(self:HelperIsTooExpensive(tCurrItem) and "xkcdReddish" or "white")
+end
+
 function Vendor:EnableBuyButton(tData)
 	self:HideRestockingFee()
 	self.wndVendor:FindChild("Buy"):Enable(true)
 	self.wndVendor:FindChild("Buy"):SetData(tData)
+	--BuyBack will apply to entire sold instance, and can't repair quantities.
+	if not self.wndVendor:FindChild(kstrTabBuyback):IsChecked() and not self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
+		self:EnableAmountValue(tData)
+	end
 end
 
 function Vendor:DisableBuyButton(bDontClear)
@@ -419,6 +454,54 @@ function Vendor:DisableBuyButton(bDontClear)
 	end
 
 	self:SetBuyButtonText()
+	self:DisableAmountValue()
+end
+
+function Vendor:DisableAmountValue()
+	local wndAmountValue = self.wndVendor:FindChild("AmountValue")
+	local wndAmountFrame = self.wndVendor:FindChild("AmountFrame")
+	local wndAmountBlocker = self.wndVendor:FindChild("AmountBlocker")
+	if wndAmountValue and wndAmountFrame and wndAmountBlocker then
+		--Only  show disabled Amount if in the sell or buy tab.
+		local bIsSellOrBuyTab = self.wndVendor:FindChild(kstrTabSell):IsChecked() or self.wndVendor:FindChild(kstrTabBuy):IsChecked()
+		wndAmountValue:Show(bIsSellOrBuyTab)
+		wndAmountFrame:Show(bIsSellOrBuyTab)
+		wndAmountBlocker:Show(bIsSellOrBuyTab)
+		wndAmountValue:Enable(false)
+		wndAmountValue:SetMinMax(0, 0)
+		wndAmountValue:SetValue(0)
+	end
+end
+
+function Vendor:EnableAmountValue(tItemData)
+	local wndAmountValue = self.wndVendor:FindChild("AmountValue")
+	local wndAmountFrame= self.wndVendor:FindChild("AmountFrame")
+	local wndAmountBlocker= self.wndVendor:FindChild("AmountBlocker")
+	local bSelling = self.wndVendor:FindChild(kstrTabSell):IsChecked()
+
+	if wndAmountValue and tItemData and wndAmountFrame and wndAmountBlocker then
+		wndAmountValue:SetData(tItemData)
+		--Only  show disabled Amount if in the sell or buy tab.
+		local bIsSellOrBuyTab = self.wndVendor:FindChild(kstrTabSell):IsChecked() or self.wndVendor:FindChild(kstrTabBuy):IsChecked()
+		wndAmountValue:Show(bIsSellOrBuyTab)
+		wndAmountFrame:Show(bIsSellOrBuyTab)
+		wndAmountBlocker:Show(false)
+		wndAmountValue:Enable(true)
+		
+		local nSetAmount = bSelling and tItemData.nStackSize or 1
+		wndAmountValue:SetMinMax(1 , self.nSpinnerMaxAmount)
+		wndAmountValue:SetValue(nSetAmount)
+	end
+end
+
+function Vendor:OnSpinnerChanged(wndHandler, wndControl)
+	if wndHandler ~= wndControl then
+		return
+	end
+	
+	local wndSelectedItem = wndHandler:GetData()
+	local tItemData  = wndSelectedItem and wndSelectedItem:GetData()
+	self:DrawListItem(wndSelectedItem, tItemData)
 end
 
 function Vendor:OnVendorListItemCheck(wndHandler, wndControl) -- TODO REFACTOR
@@ -426,9 +509,22 @@ function Vendor:OnVendorListItemCheck(wndHandler, wndControl) -- TODO REFACTOR
 		return
 	end
 
-	local tItemData = wndHandler:GetData()
-	self.tDefaultSelectedItem = nil -- Erase the default selection now
-	self:FocusOnVendorListItem(tItemData)
+	local wndAmountValue = self.wndVendor:FindChild("AmountValue")
+	if wndAmountValue then
+		local wndPreviousSelected = wndAmountValue:GetData() 
+		local tItemData = wndHandler:GetData()
+		self.tDefaultSelectedItem = nil -- Erase the default selection now
+		self:FocusOnVendorListItem(tItemData)
+		
+		--If the user has unchecked, then checked the same item without clicking a different item, remember the amount.
+		--Necessary for processing the double click buy.
+		if wndPreviousSelected == wndHandler and self.nPreviousValue then
+			wndAmountValue:SetValue(self.nPreviousValue)
+		else
+			self.nPreviousValue = nil
+		end
+		wndAmountValue:SetData(wndHandler)--saving the listitem containing the item information.
+	end
 end
 
 function Vendor:OnVendorListItemUncheck(wndHandler, wndControl) -- TODO REFACTOR
@@ -439,6 +535,10 @@ function Vendor:OnVendorListItemUncheck(wndHandler, wndControl) -- TODO REFACTOR
 	self.tDefaultSelectedItem = nil -- Erase the default selection now
 	self:DisableBuyButton()
 	self:OnGuildChange()
+	self:DisableAmountValue()
+	
+	local tItemData = wndHandler:GetData()
+	self:DrawListItem(wndHandler:GetParent(), tItemData)
 end
 
 function Vendor:OnVendorListItemMouseDown(wndHandler, wndControl, eMouseButton, nPosX, nPosY, bDoubleClick)
@@ -451,6 +551,10 @@ function Vendor:OnVendorListItemMouseDown(wndHandler, wndControl, eMouseButton, 
 		if self.wndVendor:FindChild("Buy"):IsEnabled() then
 			self:OnBuy(self.wndVendor:FindChild("Buy"), self.wndVendor:FindChild("Buy")) -- hackish, simulate a buy button click
 			self.tDefaultSelectedItem = nil
+			--Currently, when buying with a double click, the item is deselected as desired by the designers. So make sure to disable amount value.
+			if eMouseButton == GameLib.CodeEnumInputMouse.Left and bDoubleClick then
+				self:DisableAmountValue()
+			end
 		end
 		return true
 	end
@@ -490,32 +594,23 @@ function Vendor:SelectNextItemInLine(tItem)
 end
 
 function Vendor:FocusOnVendorListItem(tVendorItem)
-	local nMostCanBuy = 100
-	if tVendorItem.nStackSize == 1 then
-		nMostCanBuy = 1
-	elseif tVendorItem.nStockCount ~= 0 then
+	local nMostCanBuy = knMaxSpinnerValue
+	if tVendorItem.nStockCount ~= 0 then
 		nMostCanBuy = tVendorItem.nStockCount
 	end
-
-	self:EnableBuyButton(tVendorItem)
+	local bDisableBuy = false
 
 	-- TODO: Take second currency into account
 	local nPrice = 0
 	if tVendorItem.tPriceInfo then
 		nPrice = tVendorItem.tPriceInfo.nAmount1
+		if not self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
+			nPrice = nPrice * tVendorItem.nStackSize
+		end
 	end
-
+	
 	if self.wndVendor:FindChild(kstrTabBuy):IsChecked() and nPrice > 0 then
-		local nPlayerAmount = 0
-		if tVendorItem.tPriceInfo.eCurrencyType1 ~= nil or tVendorItem.tPriceInfo.eAltType1 ~= nil then
-			nPlayerAmount = GameLib.GetPlayerCurrency(tVendorItem.tPriceInfo.eCurrencyType1, tVendorItem.tPriceInfo.eAltType1):GetAmount()
-		elseif tVendorItem.tPriceInfo.itemExchange1 ~= nil then
-			nPlayerAmount = tVendorItem.tPriceInfo.itemExchange1:GetBackpackCount()
-		end
-		nMostCanBuy = math.min(nMostCanBuy, math.floor(nPlayerAmount / nPrice))
-		if nMostCanBuy == 0 then
-			self:DisableBuyButton(true)
-		end
+		bDisableBuy = self:HelperIsTooExpensive(tVendorItem)
 	end
 
 	if self.wndVendor:FindChild(kstrTabBuyback):IsChecked() or self.wndVendor:FindChild(kstrTabRepair):IsChecked() then
@@ -526,11 +621,22 @@ function Vendor:FocusOnVendorListItem(tVendorItem)
 			nPlayerAmount = tVendorItem.tPriceInfo.itemExchange1:GetBackpackCount()
 		end
 		if nPrice > nPlayerAmount then
-			self:DisableBuyButton(true)
+			bDisableBuy = true
 		end
 	elseif tVendorItem.bFutureStock or not tVendorItem.bMeetsPreq then
-		self:DisableBuyButton(true)
+		bDisableBuy = true
 	end
+	
+	if self.wndVendor:FindChild(kstrTabSell):IsChecked() then
+		self.nSpinnerMaxAmount = tVendorItem.nStackSize
+	end
+	
+	--EnableBuyButton calls EnableAmountValue, which needs information calculated for the min and max to buy/sell.
+	if bDisableBuy then
+		self:DisableBuyButton(true)
+	else
+		self:EnableBuyButton(tVendorItem)
+	end	
 
 	self:SetBuyButtonText()
 end
@@ -971,10 +1077,17 @@ function Vendor:OnBuy(wndHandler, wndControl)
 end
 
 function Vendor:FinalizeBuy(tItemData)
+	local nAmount = 0
+	local wndAmountValue = self.wndVendor:FindChild("AmountValue")
+	if wndAmountValue then
+		nAmount = wndAmountValue:GetValue()
+		wndAmountValue:SetValue(wndAmountValue:GetMin())
+	end
+
 	if tItemData then
 		local idItem = tItemData.idUnique
 		if self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
-			BuyItemFromVendor(idItem, 1) -- TODO: quantity chooser
+			BuyItemFromVendor(idItem, nAmount)
 			self.tDefaultSelectedItem = tItemData
 
 			if tItemData.itemData then
@@ -982,7 +1095,7 @@ function Vendor:FinalizeBuy(tItemData)
 				self.wndVendor:FindChild("AlertCost"):SetAmount(monBuyPrice)
 			end
 		elseif self.wndVendor:FindChild(kstrTabSell):IsChecked() then
-			SellItemToVendorById(idItem, tItemData.nStackSize)
+			SellItemToVendorById(idItem, nAmount)
 			self:SelectNextItemInLine(tItemData)
 			self:Redraw()
 
@@ -1037,6 +1150,7 @@ function Vendor:OnTabBtn(wndHandler, wndControl)
 		self.timerBlockInteract:Stop()
 		self:OnBlockBuyTimer()
 	end
+	self:DisableAmountValue()
 	self:Redraw()
 end
 
@@ -1150,19 +1264,24 @@ function Vendor:OnVendorListItemGenerateTooltip(wndControl, wndHandler) -- wndHa
 		elseif self.wndVendor:FindChild(kstrTabBuy):IsChecked() then
 			tPrimaryTooltipOpts.bBuying = true
 			tPrimaryTooltipOpts.nPrereqVendorId = tListItem.idPrereq
+			tPrimaryTooltipOpts.itemModData = tListItem.itemModData
+			tPrimaryTooltipOpts.strMaker = tListItem.strMaker
+			tPrimaryTooltipOpts.arGlyphIds = tListItem.arGlyphIds
+			tPrimaryTooltipOpts.tGlyphData = tListItem.itemGlyphData
+			tPrimaryTooltipOpts.nStackCount = tListItem.nStackSize
+			tPrimaryTooltipOpts.idVendorUnique = tListItem.idUnique
 		elseif self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
 			tPrimaryTooltipOpts.bBuyback = true
-			tPrimaryTooltipOpts.nPrereqVendorId = tListItem.idPrereq
+			tPrimaryTooltipOpts.nPrereqVendorId = tListItem.idPrereq			
+			tPrimaryTooltipOpts.itemModData = tListItem.itemModData
+			tPrimaryTooltipOpts.strMaker = tListItem.strMaker
+			tPrimaryTooltipOpts.arGlyphIds = tListItem.arGlyphIds
+			tPrimaryTooltipOpts.tGlyphData = tListItem.itemGlyphData
+			tPrimaryTooltipOpts.nStackCount = tListItem.nStackSize
+			tPrimaryTooltipOpts.idVendorUnique = tListItem.idUnique
 		end
-		
-		tPrimaryTooltipOpts.bPrimary = true
-		tPrimaryTooltipOpts.itemModData = tListItem.itemModData
-		tPrimaryTooltipOpts.strMaker = tListItem.strMaker
-		tPrimaryTooltipOpts.arGlyphIds = tListItem.arGlyphIds
-		tPrimaryTooltipOpts.tGlyphData = tListItem.itemGlyphData
+
 		tPrimaryTooltipOpts.itemCompare = itemData:GetEquippedItemForItemType()
-		tPrimaryTooltipOpts.nStackCount = tListItem.nStackSize
-		tPrimaryTooltipOpts.idVendorUnique = tListItem.idUnique
 
 		if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
 			Tooltip.GetItemTooltipForm(self, wndControl, itemData, tPrimaryTooltipOpts)
@@ -1249,12 +1368,22 @@ function Vendor:HelperIsTooExpensive(tCurrItem)
 	end
 
 	local bTooExpensive = false
-
-	if tCurrItem.tPriceInfo.nAmount1 > 0 then
-		bTooExpensive = (tCurrItem.tPriceInfo.nAmount1) > GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType1, tCurrItem.tPriceInfo.eAltType1):GetAmount()
+	local nPlayerAmount = 0
+	if tCurrItem.tPriceInfo.eCurrencyType1 ~= nil or tCurrItem.tPriceInfo.eAltType1 ~= nil then
+		nPlayerAmount = GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType1, tCurrItem.tPriceInfo.eAltType1):GetAmount()
+	elseif tCurrItem.tPriceInfo.itemExchange1 ~= nil then
+		nPlayerAmount = tCurrItem.tPriceInfo.itemExchange1:GetBackpackCount()
 	end
-	if tCurrItem.tPriceInfo.nAmount2 > 0 then
-		bTooExpensive = (tCurrItem.tPriceInfo.nAmount2) > GameLib.GetPlayerCurrency(tCurrItem.tPriceInfo.eCurrencyType2, tCurrItem.tPriceInfo.eAltType2):GetAmount()
+	
+	local nAmount = tCurrItem.tPriceInfo.monPrice1 and tCurrItem.tPriceInfo.monPrice1:GetAmount() or tCurrItem.tPriceInfo.monPrice2 and tCurrItem.tPriceInfo.monPrice2:GetAmount()
+	if not self.wndVendor:FindChild(kstrTabBuyback):IsChecked() then
+		nAmount = nAmount * tCurrItem.nStackSize
+	end
+	nMostCanBuy = knMaxSpinnerValue
+	nMostCanBuy = math.min(nMostCanBuy, math.floor(nPlayerAmount / nAmount))
+	self.nSpinnerMaxAmount = nMostCanBuy
+	if nMostCanBuy == 0 then
+		bTooExpensive = true
 	end
 
 	return bTooExpensive
@@ -1351,12 +1480,3 @@ end
 ---------------------------------------------------------------------------------------------------
 local VendorInst = Vendor:new()
 VendorInst:Init()
-ToClient="1" Font="Default" Text="" Template="Holo_TextCallout" Name="BodyFrameBG" BGColor="aaffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="1" NoClip="1" Sprite="" TooltipColor="" Border="1" UseTemplateBG="1"/>
-        </Control>
-        <Control Class="MLWindow" LAnchorPoint="0.5" LAnchorOffset="16" TAnchorPoint="0" TAnchorOffset="388" RAnchorPoint="0.5" RAnchorOffset="269" BAnchorPoint="0" BAnchorOffset="484" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="BodyRight" BGColor="ffffffff" TextColor="ffffffff" IgnoreMouse="1" DT_WORDBREAK="1" AutoScaleText="1" TextId="" DT_CENTER="0" TooltipColor="">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-5" TAnchorPoint="0" TAnchorOffset="-5" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="1" BAnchorOffset="5" RelativeToClient="1" Font="Default" Text="" Template="Holo_TextCallout" Name="BodyFrameBG" BGColor="aaffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="1" NoClip="1" Sprite="" TooltipColor="" Border="1" UseTemplateBG="1"/>
-        </Control>
-        <Control Class="Button" Base="BK3:btnHolo_Close" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-73" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-30" BAnchorPoint="0" BAnchorOffset="72" Name="btnClose" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" TextId="" RelativeToClient="0" HideInEditor="0" TooltipColor="" Visible="1">
-            <Event Name="ButtonSignal" Function="OnClose"/>
-        </Control>
-        <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-145" TAnchorPoint="1" TAnchorOffset="-101" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="1" BAnchorOffset="-28" DT_VCENTER="1" DT_CENTER="1" Name="btnCloseBig" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" WindowSoundTemplate="ToggleP

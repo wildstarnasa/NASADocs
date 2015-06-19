@@ -56,16 +56,3 @@
         <Event Name="MouseExit" Function="OnHoverGlowMouseExit"/>
     </Form>
 </Forms>
-)
-		wndSubrecipe:FindChild("VariantItemIcon"):SetSprite(itemRecipe:GetIcon())
-		wndSubrecipe:FindChild("VariantItemIcon"):SetTooltip("")
-		self:HelperBuildItemTooltip(wndSubrecipe:FindChild("VariantItemIcon"), itemRecipe)
-	end
-
-	-- Determine direction, if not the base
-	if tSchem then
-		wndSubrecipe:FindChild("VariantItemIcon"):SetData(self:HelperDetermineAdditiveDirection(tSchem)) -- For OnVariantItemIconClick, to auto open the correct recipe category
-	end
-end
-
-function Cra

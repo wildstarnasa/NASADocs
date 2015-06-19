@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Sprites>
     <Sprite Name="sprHolo_Speech_NPC" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\BK3_SpeechBubble.tga" x0="7" x1="50" x2="53" x3="53" x4="53" x5="122" y0="25" y1="46" y2="72" y3="72" y4="72" y5="102" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\Textures\BK3_SpeechBubble.tga" x0="0" x1="28" x2="54" x3="54" x4="54" x5="128" y0="18" y1="46" y2="72" y3="72" y4="72" y5="108" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="sprHolo_Speech_Player" Cycle="1">
         <Frame Texture="UI\Assets\Textures\BK3_SpeechBubblePlayer.tex" x0="55" x1="93" x2="171" x3="203" x4="203" x5="203" y0="2" y1="47" y2="77" y3="125" y4="125" y5="125" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
@@ -9,5 +9,11 @@
     <Sprite Name="sprHolo_Speech_Item" Cycle="1">
         <Frame Texture="UI\Assets\Textures\BK3_SpeechBubbleItem.tga" x0="72" x1="104" x2="150" x3="185" x4="185" x5="185" y0="2" y1="47" y2="77" y3="125" y4="125" y5="125" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="sprHolo_Speech_NPC_Minimal" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_NPC_SpeechBubble.tex" x0="0" x1="43" x2="46" x3="46" x4="46" x5="116" y0="0" y1="25" y2="66" y3="66" y4="66" y5="88" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <AutoButton Name="btnHolo_Speech_PlayerItemChoice" Texture="UI\Assets\Textures\UI_BK3_Holo_Btn_Dialog.tex" x0="0" x1="36" x2="323" x3="364" x4="364" x5="364" y0="0" y1="44" y2="44" y3="44" y4="44" y5="44" Stretchy="1" StateBits="31" Direction="Down"/>
+    <Sprite Name="sprHolo_Speech_NPC_Left" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\BK3_SpeechBubble.tga" x0="0" x1="83" x2="101" x3="101" x4="101" x5="128" y0="18" y1="46" y2="72" y3="72" y4="72" y5="108" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
 </Sprites>

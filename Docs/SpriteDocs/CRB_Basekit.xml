@@ -577,10 +577,10 @@
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_4_0_1169.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="175" y0="18" y1="18" y2="18" y3="18" y4="18" y5="51" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="kitIcon_Holo_Exclamation" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_4_285_242.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="34" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_4_285_242.tga" x0="0" x1="0" x2="34" x3="34" x4="34" x5="34" y0="0" y1="0" y2="34" y3="34" y4="34" y5="34" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="kitIcon_Holo_Checkbox" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_4_285_277.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="34" y0="0" y1="0" y2="0" y3="0" y4="0" y5="34" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_4_285_277.tga" x0="0" x1="0" x2="34" x3="34" x4="34" x5="34" y0="0" y1="0" y2="34" y3="34" y4="34" y5="34" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="kitIcon_Gold_Exclamation" Cycle="1">
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_Basekit_4_181_422.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="49" y0="0" y1="0" y2="0" y3="0" y4="0" y5="49" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
@@ -767,4 +767,5 @@
     <AutoButton Name="kitBtn_ListHuge" Texture="UI\Assets\TexPieces\UI_CRB_Basekit_3_b_0_271.tga" x0="0" x1="0" x2="0" x3="13" x4="326" x5="334" y0="0" y1="0" y2="0" y3="30" y4="97" y5="123" Stretchy="1" StateBits="7" Direction="Down"/>
     <AutoButton Name="kitBtn_Holo_Red" Texture="UI\Assets\TexPieces\UI_CRB_Basekit_3_205_1443.tga" x0="0" x1="18" x2="34" x3="34" x4="34" x5="52" y0="0" y1="0" y2="0" y3="7" y4="19" y5="26" Stretchy="1" StateBits="31" Direction="Across"/>
     <AutoButton Name="kitBtn_Holo_RadioRound" Texture="UI\Assets\TexPieces\UI_CRB_Basekit_3_352_773.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="30" y0="0" y1="0" y2="0" y3="0" y4="0" y5="28" Stretchy="1" StateBits="15" Direction="Across"/>
+    <AutoButton Name="kitBtn_Dropup_TextBaseHolo" Texture="UI\Assets\TexPieces\UI_CRB_Basekit_3_0_709_2.tex" x0="0" x1="9" x2="84" x3="84" x4="84" x5="112" y0="0" y1="7" y2="13" y3="23" y4="29" y5="36" Stretchy="1" StateBits="31" Direction="Across"/>
 </Sprites>

@@ -1,0 +1,4 @@
+<Addon Name="ObjectiveTracker" Version="1">
+    <Script Name="ObjectiveTracker.lua" />
+    <Form Name="ObjectiveTracker.xml" />
+</Addon>

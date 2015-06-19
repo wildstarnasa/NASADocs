@@ -233,9 +233,7 @@ function MarketplaceCREDD:OnCREDDExchangeInfoResults(arMarketStats, arOrders) --
 	self.tWindowMap["CreateBuyOrderBtn"]:Show(bBuyTabChecked)
 	self.tWindowMap["CreateBuyNowBtn"]:Show(bBuyTabChecked)
 	self.tWindowMap["ActNowPrice"]:SetAmount(bBuyTabChecked and tSellOrderData.monPrice or tBuyOrderData.monPrice)
-	self.tWindowMap["ActNowPrice"]:SetTextColor(bBuyTabChecked and ApolloColor.new("ffc2e57f") or ApolloColor.new("UI_TextHoloBody"))
 	self.tWindowMap["ActLaterPrice"]:SetAmount(0)
-	self.tWindowMap["ActLaterPrice"]:SetTextColor(bBuyTabChecked and ApolloColor.new("ffc2e57f") or ApolloColor.new("UI_TextHoloBody"))
 
 	-- Price Stats
 	self.tWindowMap["MainBuyContainer"]:DestroyChildren()
@@ -306,11 +304,13 @@ function MarketplaceCREDD:RefreshBoundCredd()
 		local nNowAmount = self.tWindowMap["ActNowPrice"]:GetAmount()
 		self.tWindowMap["ActNowNoCashIcon"]:Show(bBuyTabChecked and nNowAmount > nPlayerCash)
 		self.tWindowMap["CreateBuyNowBtn"]:Enable(bBuyTabChecked and nNowAmount <= nPlayerCash and nNowAmount > 0)
+		self.tWindowMap["CreateBuyNowBtn"]:SetBGColor((bBuyTabChecked and nNowAmount <= nPlayerCash and nNowAmount > 0) and ApolloColor.new("green") or ApolloColor.new("white"))
 		self.tWindowMap["CreateSellNowBtn"]:Enable(nNowAmount > 0 and nNumBound > 0)
 
 		local nLaterAmount = self.tWindowMap["ActLaterPrice"]:GetAmount()
 		self.tWindowMap["ActLaterNoCashIcon"]:Show(bBuyTabChecked and nLaterAmount > nPlayerCash)
 		self.tWindowMap["CreateBuyOrderBtn"]:Enable(bBuyTabChecked and nLaterAmount <= nPlayerCash and nLaterAmount > 0)
+		self.tWindowMap["CreateBuyOrderBtn"]:SetBGColor((bBuyTabChecked and nLaterAmount <= nPlayerCash and nLaterAmount > 0) and ApolloColor.new("green") or ApolloColor.new("white"))
 		self.tWindowMap["CreateSellOrderBtn"]:Enable(nLaterAmount > 0 and nNumBound > 0)
 	end
 end
@@ -531,15 +531,3 @@ end
 
 local MarketplaceCREDDInst = MarketplaceCREDD:new()
 MarketplaceCREDDInst:Init()
- LevelUpUnlocks:new()
-LevelUpUnlocksInst:Init()
-î¼æMˆì´²ltè‡Æ‚ÊÖã˜ÇkªÜ®ŸDvO\mãH¾›NÏ¢'³#KÏ/º—ü~k‰¨µĞØ0õæÔOˆø9º
-Ù†¹)ıSA/Ô&DË5b=û¹ú;—‰>ú(áxXoĞ ~zˆÇä¸ÌùWŠ
-´¾¿ú?ÿâe}¾|@È¨›$Ù òÀ~6šè¥¬ÿ¼ w”û›@ı
-³øó¿nÎñŒ¹í¯v&	ãqi’ENa>crH‡è§X÷-—Å†fú!vÑ‰a“"ŠÏOxlõxübıÆvã~áóbÉzAw°?æSf^/Ê†Çßèsò¨n¿lÈ½Rƒõ¾jğYU—ãõf&:”BOş«%lóé4õqß/¬Í‹ò•Óœ_ïjäôÒP]ŠûıõÙd¾)QNÓá”~YæÖœ¢ÿÉ¤]è?000ğWäÈC\?HÈ$,¥ºŒëyıWO¸Ç­ÖCßvn«h}•ü>“ùİ-‹R°høêìˆTé^âÁHgı€1°Şı 3ÇÅ~ İC{
-
-Ä~ ëŸh>ëıŸd²:Æû
-ê.&ÂTTÀUv'ÜÛ„ãKsn(¹ê›-¦<Âú•…N„8¿ú&K‹Õ¯Lî)rú.û¿‹É•8Dş€ÅçÓ/Šw©Cxtzı¤<Úb£AĞk|~¾‚ ¶wkƒÙ>5‡‚çˆ6ğy“æFüW‘p>æ|,ïÂù\b²?€{PH¦Í¤O½R Õpµh÷Ô“MDoSµMÔö7¾œGØÆ”àïÎÕã—‡ªè—ùšG şR¯ßB¿å|>âş¼%øzø|SéÂë‡,|§¿úÇÿ¢{Fïw²²¶]œÑ{)]s7Ëë=3£÷[£‘ÒÍ]J ù"d=èæ0•æÌ¯Šy½×$Ëh9­Ë:ûÊ¼Şwu&É$Tn;¹‰?Ægóyõ{¾ÿŸ€ÿYØßOH´Àÿ¬z–C°Ø=óû;€ÕJNÿÕ¸}ÆT¹:¬7‡4®ŸñUN+»õº„‰hâğï{6ìÏÎ;¿èQïÕ×rª½ªq7ñ;oÌ_óz$ÊWö”§}’e¶ı×L}y5=‰rXğ=£ç²ª.Æ1–ÉÀzSõ}„òÖu.WŸ"zsPº#©©ç­õs©ö‘ç™{w´ª-L½¶ÊÊ~Rñï–óäûaPÄb}¬AùTC+ÏŞ'òG|}‚±ãŸ{‰â]—Ù|àÀ,¹‡ÜHÔÏĞÏA|‹¨?ò˜{ŒïŒ è¿ùò]wıñÿNó£®¦lú•Õ……ç93BÌıq«OÕjSÖ×Ül¿ŸIuÈz±¼´ìÜ´ÆtÈN£"uŞÙYÁX™zl®’vfâkÙşñıÿıTâÙ1`)Ì{¿Şœ«Ó"ïQüq4™aòå¢ş;÷î;;-š!ó+ìl}ì·ùÕ¼ŞÏ_i<§¯7¯ÜŸ€õ^Ë†•=ÆÆŸç˜Ê*[2øó«“XïLKºBNÇ„/Nöë=ãìÂz?Ÿ^œÜ»õÂjõŒŞ‡R¥çV”½±œÜovÒñùşjè×üè¿tN¿Yfn´àşÂTÌÂ&iënòûÜÙÙ=0ŸşÀ¹£¼MìœëfıÀ¸ßDúçZtÆA´ëî¶Á{Şºn›úğŒ¨Ä~@Ú¸‰è™ØØ†˜ ùêœI&Ÿ½X«õì@²ïŒJH<¿~e<Òpú×«ÔXÑµøµ‘¥?òLûÈ|òñ.»ŒşaÄúW}ûãÈ~ü*;‹¶.¥²>~ı¢¥ ÊŠø.–“}–Hõ)²~Qdüùã;*÷Tì‰V×«MV«Õ9=DQh*2ar{ÒÓñï»}2A©T
-<¤ç_ë&GFãôD[Q²3¹E………û+¦Š}]	êzÆHº›²Êµ,O÷¯·8â»¡úNü}GÕ-Zl‹ÿÈWÛDêãZ»h„
-¢-Õ·ï-Ì‡·XYT™‘*}iÑ]¤¾€¶ Hçy"Á¢nş=Ù°7Ÿa}“³Q¡Ğ\Ñ£èıEë}Ö³Én-=AæWR±ŞKØBËÓÏ^Û
-uö^o¶XïI|;OĞûş9­ gâıY½§ós–óşR=A6ÒÉçûÜııP¯øÀ¼şÕK•òÓ¨I×´(OğqkšbZ-DÿYÌrúmç¶ò ùçºc­çfıÀ–¨#öç‰şYöN~~ ûµß˜B&¨aK5Ö»•oŞŸ?è©DÈ:Hg©Y&µvFè¾‹W»gÖk£×7òğBk¶oÚ¿~Œå†^ºø¶³¯|˜@êéMuuÚ„DäoÛÑö{r>ÚZ·]=ïmçºŒ=ä|ŠªLÎ²XŸEÙ§’ı4óuÜ>Ü¶w¸ù¬ÿ¹ìà ãsûhÍY5ƒå?^ˆ‡mnN¨Gd

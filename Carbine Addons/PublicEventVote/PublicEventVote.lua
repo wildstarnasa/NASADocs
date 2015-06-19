@@ -231,33 +231,3 @@ end
 
 local PublicEventVoteInst = PublicEventVote:new()
 PublicEventVoteInst:Init()
-orOffset="73" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="Warplots:spr_WarPlots_CP2_BlueFill" TooltipType="OnCursor" Name="Bonus" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" ProgressFill="" BRtoLT="1" Picture="1" Sprite="Warplots:spr_WarPlots_CP2_Empty" Font="CRB_Header9" UsePercent="0" TooltipFont="CRB_InterfaceSmall" VerticallyAligned="1" NewWindowDepth="0" TextId="" DT_SINGLELINE="1"/>
-        <Control Class="ProgressBar" Text="" LAnchorPoint="0.5" LAnchorOffset="41" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="0.5" RAnchorOffset="121" BAnchorPoint="0" BAnchorOffset="73" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="Warplots:spr_WarPlots_CP4_BlueFill" TooltipType="OnCursor" Name="Total" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" ProgressFill="" BRtoLT="1" Picture="1" Sprite="Warplots:spr_WarPlots_CP4_Empty" Font="CRB_Header9" UsePercent="0" TooltipFont="CRB_InterfaceSmall" VerticallyAligned="1" TextId="" DT_SINGLELINE="1"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="150" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0.75" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="ProtogamesTallyContainer" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" TooltipColor="" Visible="0" IgnoreMouse="1"/>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="36" RelativeToClient="1" Font="CRB_HeaderHuge_O" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="ProtogamesTallyMessage" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" TooltipColor="" TextId="Challenges_NoProgress" DT_VCENTER="1" DT_CENTER="1" DT_SINGLELINE="1" Visible="1" TransitionShowHide="1" IgnoreMouse="1"/>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="80" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="120" RelativeToClient="1" Font="CRB_HeaderGigantic_O" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloTitle" Template="Default" TooltipType="OnCursor" Name="ProtogamesPlusPoints" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" TooltipColor="" TextId="Challenges_NoProgress" DT_VCENTER="1" DT_CENTER="1" DT_SINGLELINE="1" Visible="0" TransitionShowHide="1" IgnoreMouse="1" Tooltip=""/>
-</Forms>
-ketTextEntry"]:GetText()
-	local strTextSubject = self.tWindowMap["PlayerTicketTextEntrySubject"]:GetText()
-
-	local bEnable = nCategory ~= nil and nSubCategory ~= nil and strText ~= nil and strText ~= "" and strTextSubject ~= nil and strTextSubject ~= ""
-	self.tWindowMap["OkBtn"]:Enable(bEnable)
-	if bEnable then
-		self.tWindowMap["OkBtn"]:SetActionData(GameLib.CodeEnumConfirmButtonType.SubmitSupportTicket, nCategory, nSubCategory, strTextSubject, strText)
-	end
-
-	if self.bIsBug ~= not self.tWindowMap["OkBtn"]:IsShown() then
-		self.tWindowMap["OkBtn"]:Show(not self.bIsBug)
-	end
-
-	if self.bIsBug ~= self.tWindowMap["ConvertToBugBtn"]:IsShown() then
-		self.tWindowMap["ConvertToBugBtn"]:Show(self.bIsBug)
-	end
-end
-
----------------------------------------------------------------------------------------------------
-function PlayerTicketDialog:OnSupportTicketSubmitted(wndHandler, wndControl, eMouseButton)
-	if self.bAddIgnore and self.strTarget then
-		FriendshipLib.AddByName(FriendshipLib.CharacterFriendshipType_Ignore, self.strTarget) 
-		Event_FireGenericEvent("GenericEvent_SystemChannel    œÙ ç åvæý 

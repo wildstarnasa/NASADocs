@@ -7,6 +7,7 @@ require "Apollo"
 require "Window"
 require "CharacterScreenLib"
 require "AccountItemLib"
+require "PreGameLib"
 
 local AccountServices = {}
 local keFireOnPaidTransfer = "Transfer" -- Random Enum (GOTCHA: Free doesn't need to worry about this)
@@ -1016,7 +1017,7 @@ function AccountServices:OnRandomLastName()
 	local nFactionId = tSelected.idFaction
 	local nGenderId = tSelected.idGender
 
-	local tName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+	local tName = PreGameLib.GetRandomName(nRaceId, nGenderId, nFactionId)
 
 	
 	self.wndRenameFlyout:FindChild("RenameCharacterLastNameEntry"):SetText(tName.strLastName)
@@ -1028,5 +1029,3 @@ end
 
 local AccountServicesInst = AccountServices:new()
 AccountServicesInst:Init()
-Name="HuntDescBG" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1" NewControlDepth="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="93" RAnchorPoint="1" RAnchorOffset="-70" BAnchorPoint="1" BAnchorOffset="-130" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="HuntDescription" BGColor="white" TextColor="UI_TextHoloBody" TextId="ExplorerMissions_ScavengerHunt" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" TooltipColor="" Pic

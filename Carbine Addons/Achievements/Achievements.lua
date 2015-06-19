@@ -11,6 +11,8 @@ require "PlayerPathLib"
 
 local Achievements = {}
 local knWindowOffset = 10
+local knDesignerPadding = 4 -- To offset ProgressBar in achievement view
+local knChecklistPadding = 25 -- To pad between achievement description and bullet points
 
 local kaRomanNumeralNumbers = { 1, 5, 10, 50, 100, 500, 1000 }
 local kaRomanNumeralChars = { "I", "V", "X", "L", "C", "D", "M" }
@@ -224,6 +226,7 @@ local ktAchievementIconsText =
 	[277]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
 	[278]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
 	[279]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[285]		= "IconSprites:Icon_Achievement_Achievement_PvP",
 	[286]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_WeaponCrafting",
 	[287]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Armorer",
 	[288]		= "IconSprites:Icon_Achievement_Achievement_Tradeskill_Outfitter",
@@ -258,7 +261,10 @@ local ktAchievementIconsText =
 	[323]		= "IconSprites:Icon_Achievement_Achievement_Challenges", --Challeneges The Defile
 	[325]		= "IconSprites:Icon_Achievement_Achievement_Raid", --Augmentors Raid
 	[326]		= "IconSprites:Icon_Achievement_Achievement_Raid", -- Datascape 40
-
+	[329]		= "IconSprites:Icon_Achievement_Achievement_Shiphand",
+	[331]		= "IconSprites:Icon_Achievement_Achievement_Contract",
+	[332]		= "IconSprites:Icon_Achievement_Achievement_Contract",
+	[333]		= "IconSprites:Icon_Achievement_Achievement_Contract",
 }
 
 function Achievements:new(o)
@@ -324,7 +330,7 @@ function Achievements:UpdateAchievementEntry(achUpdated)
 	if wndAchievement then
 		if achUpdated:IsChecklist() then
 			self:UpdateChecklistAchievement(achUpdated, wndAchievement)
-		elseif achUpdated:GetChildTier() or achUpdated:GetParentTier() then
+		elseif achUpdated:GetParentTier() then
 			if wndAchievement:GetName() == "TierItem" then
 				wndAchievement = wndAchievement:FindChild("TierItemBtn"):GetData()
 			end
@@ -393,7 +399,7 @@ function Achievements:BuildCategoryTree()
 	local wndLeftScroll = self.wndMain:FindChild("BGLeft:LeftScroll")
 	self.wndSummaryGroup = self:LoadByName("TopGroup", wndLeftScroll, "TopSummaryGroup")
 	self.wndSummaryGroup:FindChild("TopGroupBtn"):ChangeArt("btnMetal_ExpandMenu_LargeArrow")
-	self.wndSummaryGroup:FindChild("TopGroupBtn"):FindChild("GroupTitle"):SetText(Apollo.GetString("Achievements_SummaryBtn"))
+	self.wndSummaryGroup:FindChild("TopGroupBtn"):SetText(Apollo.GetString("Achievements_SummaryBtn"))
 
 	-- All resizing we'll do on the collapse/expand methods
 	for key, tTopLevel in pairs(tCategoryTree) do
@@ -410,13 +416,13 @@ function Achievements:BuildCategoryTree()
 
 				local wndBottomItemBtn = wndBottomItem:FindChild("BottomItemBtn")
 				wndBottomItemBtn:SetData({wndTopGroup, tLowLevel.nSubGroupId, wndMiddleGroup}) -- To ensure top level is always checked
-				wndBottomItemBtn:FindChild("GroupTitle"):SetText(tLowLevel.strSubGroupName)
+				wndBottomItemBtn:SetText(tLowLevel.strSubGroupName)
 			end
 
 			local bMiddleGroupHasChildren = #wndMidContents:GetChildren() > 0
 			local wndMiddleGroupBtn = wndMiddleGroup:FindChild("MiddleGroupBtn")
 			wndMiddleGroupBtn:SetData({wndTopGroup, tMiddleLevel.nGroupId}) -- To ensure top level is always checked
-			wndMiddleGroupBtn:FindChild("GroupTitle"):SetText(tMiddleLevel.strGroupName)
+			wndMiddleGroupBtn:SetText(tMiddleLevel.strGroupName)
 			wndMiddleGroupBtn:ChangeArt(bMiddleGroupHasChildren and "BK3:btnMetal_ExpandMenu_Med" or "BK3:btnMetal_ExpandMenu_MedClean")
 
 			wndMiddleGroup:SetData(tMiddleLevel.nGroupId)
@@ -428,7 +434,7 @@ function Achievements:BuildCategoryTree()
 		local bTopGroupHasChildren = #wndTopContents:GetChildren() > 0
 		local wndTopGroupBtn = wndTopGroup:FindChild("TopGroupBtn")
 		wndTopGroupBtn:SetData({wndTopGroup, tTopLevel.nCategoryId})
-		wndTopGroupBtn:FindChild("GroupTitle"):SetText(tTopLevel.strCategoryName)
+		wndTopGroupBtn:SetText(tTopLevel.strCategoryName)
 		wndTopGroupBtn:ChangeArt(bTopGroupHasChildren and "BK3:btnMetal_ExpandMenu_Large" or "BK3:btnMetal_ExpandMenu_LargeClean")
 
 		wndTopGroup:SetData(tTopLevel.nCategoryId)
@@ -471,7 +477,7 @@ function Achievements:ResizeTree()
 			end
 
 			if nMiddleHeight > 0 then
-				nMiddleHeight = nMiddleHeight + 6
+				nMiddleHeight = nMiddleHeight + 12
 			end
 		end
 
@@ -489,16 +495,13 @@ function Achievements:UnselectAll() -- TODO: REFACTOR, this mostly simulates a g
 		local wndTopGroupBtn = wndTop:FindChild("TopGroupBtn")
 		wndTop:FindChild("GroupContents"):Show(false)
 		wndTopGroupBtn:SetCheck(false)
-		wndTopGroupBtn:FindChild("GroupTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 		for key2, wndMid in pairs(wndTop:FindChild("GroupContents"):GetChildren()) do
 			local wndMidGroupBtn = wndMid:FindChild("MiddleGroupBtn")
 			wndMidGroupBtn:SetCheck(false)
 			wndMid:FindChild("MiddleExpandBtn"):SetCheck(false)
-			wndMidGroupBtn:FindChild("GroupTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 			for key3, wndBot in pairs(wndMid:FindChild("GroupContents"):GetChildren()) do
 				local wndBotItemBtn = wndBot:FindChild("BottomItemBtn")
 				wndBotItemBtn:SetCheck(false)
-				wndBotItemBtn:FindChild("GroupTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 			end
 		end
 	end
@@ -572,7 +575,6 @@ function Achievements:LoadRightScreenFromLeftScreen(wndCurr)
 		wndMiddleGroup:FindChild("MiddleExpandBtn"):SetCheck(true)
 		wndMiddleGroup:FindChild("MiddleGroupBtn"):SetCheck(true)
 	end
-	wndCurr:FindChild("GroupTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 
 	-- Update window visibilities
 	wndTopGroup:FindChild("GroupContents"):Show(true)
@@ -603,7 +605,6 @@ function Achievements:LoadSummaryScreen() -- TODO: Figure out why this is being 
 		wndTopGroupBtn:SetCheck(true)
 	end
 
-	wndTopGroupBtn:FindChild("GroupTitle"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 	self.wndMain:FindChild("RightSummaryScreen"):Show(true)
 
 	local wndHeader = self.wndMain:FindChild("BGHeader")
@@ -902,11 +903,9 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 		wndProgressBarContainer:FindChild("NeededCompletedCash"):Show(false)
 		wndProgressBarContainer:FindChild("NeededCompletedText"):SetText(String_GetWeaselString(Apollo.GetString("Achievements_ProgressBarProgress"), nNumCompleted, nNumNeeded))
 	end
-
-	if not bShowProgressBar then
-		local nLeft, nTop, nRight, nBottom = wndContainer:GetAnchorOffsets()
-		wndContainer:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - wndProgressBarContainer:GetHeight() + 10)
-	end
+	
+	local tOffsets = wndProgressBarContainer:GetOriginalLocation():ToTable().nOffsets
+	wndProgressBarContainer:SetAnchorOffsets(tOffsets[1], tOffsets[2] - knDesignerPadding, tOffsets[3], tOffsets[4] - knDesignerPadding)
 
 	local wndProgressBar = wndContainer:FindChild("NeededCompletedProgressBar")
 	wndProgressBar:SetMax(nNumNeeded)
@@ -923,6 +922,9 @@ function Achievements:BuildSimpleAchievement(wndContainer, achData)
 		wndReward:FindChild("LootIconPicture"):SetTooltip(String_GetWeaselString(Apollo.GetString("Achievements_RewardTitle"), tRewards.strTitle:GetTitle()))
 	end
 	wndContainer:FindChild("RewardsContainer"):ArrangeChildrenHorz(2)
+	
+	wndContainer:SetData(achData)
+	self:ResizeHelper(wndContainer)
 end
 
 function Achievements:BuildChecklistAchievement(achData)
@@ -971,9 +973,6 @@ function Achievements:BuildTieredAchievement(achData)
 	wndContainer:SetData(achData)
 
 	wndContainer:FindChild("AchievementExpanderBtn"):Show(true)
-	wndContainer:FindChild("AchievementExpanderBtn"):SetData(wndContainer)
-
-	Achievements:ResizeHelper(wndContainer, knWindowOffset)
 	
 	return wndTierBox
 end
@@ -1008,12 +1007,12 @@ function Achievements:UpdateTierItem(achData, wndTierItem)
 		local strCompleteDate = String_GetWeaselString(Apollo.GetString("Achievements_CompletedDate"), achData:GetDateCompleted())
 		wndTierItem:FindChild("TierItemNeeded"):SetTextColor(ApolloColor.new("ff5f6662"))
 		wndTierItem:FindChild("TierItemCash"):SetTextColor(ApolloColor.new("ff5f6662"))
-		wndTierBtn:FindChild("TierItemIcon"):SetTooltip(string.format("<T Font=\"CRB_InterfaceMedium\">%s</T>", strCompleteDate))
+		wndTierBtn:FindChild("TierItemIcon"):SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", strCompleteDate))
 	else
 		wndTierBtn:FindChild("TierItemIconCheck"):Show(false)
 		wndTierItem:FindChild("TierItemNeeded"):SetTextColor(ApolloColor.new("ff2f94ac"))
 		wndTierItem:FindChild("TierItemCash"):SetTextColor(ApolloColor.new("ff2f94ac"))
-		wndTierBtn:FindChild("TierItemIcon"):SetTooltip(string.format("<T Font=\"CRB_InterfaceMedium\">%s</T>", achData:GetName()))
+		wndTierBtn:FindChild("TierItemIcon"):SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", achData:GetName()))
 	end
 end
 
@@ -1162,25 +1161,48 @@ function Achievements:LoadByName(strForm, wndParent, strCustomName)
 	return wndNew
 end
 
-function Achievements:ResizeHelper(wndContainer, nOffset)
+function Achievements:ResizeHelper(wndContainer)
+	local wndDescText = wndContainer:FindChild("DescriptionText")
 	-- Resize based on description height
-	local nDescHeight = wndContainer:FindChild("DescriptionText"):GetHeight()
-	wndContainer:FindChild("DescriptionText"):SetHeightToContentHeight()
+	local nDescHeight = wndDescText:GetHeight()
+	local nOldLeft, nOldTop, nOldRight, nOldBottom = wndContainer:GetAnchorOffsets()
+	wndDescText:SetHeightToContentHeight()
 	
-	--Always set the new content location
-    local nOffset = wndContainer:FindChild("DescriptionText"):GetHeight() - nDescHeight + nOffset
+	--Always calculate offset for new content location
+	local nOffset = wndDescText:GetHeight() - nDescHeight
 	
 	local nLeft, nTop, nRight, nBottom = wndContainer:GetAnchorOffsets()
-	wndContainer:SetAnchorOffsets(nLeft, nTop, nRight, nBottom + nOffset)
-	nLeft, nTop, nRight, nBottom = wndContainer:FindChild("AchievementExtraContainer"):GetAnchorOffsets()
-	wndContainer:FindChild("AchievementExtraContainer"):SetAnchorOffsets(nLeft, nTop + nOffset, nRight, nBottom)
+	local nNewBottom = nOldBottom
+	--Box is already at smallest size so only allow growing
+	if nOffset > 0 then
+		nNewBottom = nBottom + nOffset
+	end
+
+	local wndAchExtraContainer = wndContainer:FindChild("AchievementExtraContainer")
+	local nChecklistGridHeight = 0
+	local achData = wndContainer:GetData()
+	--Not all achievements have a checklist
+	if achData:GetChecklistItems() ~= nil then
+		nChecklistGridHeight = #achData:GetChecklistItems() * 20
+	end
+	local bHasTier = achData:GetChildTier() or achData:GetParentTier()
+	local nTierBoxHeight = 0
+	if bHasTier then
+		local wndTierBox = wndAchExtraContainer:FindChild("TierBox")
+		if wndTierBox then
+			nTierBoxHeight = wndTierBox:GetHeight()
+		end
+	end	
+	local bShowProgressBar = achData:IsChecklist() or bHasTier or (achData:GetNumNeeded() > 1 and not achData:IsComplete())
+	if bShowProgressBar then
+		if nOffset > 0 then
+			nNewBottom = nNewBottom + wndAchExtraContainer:GetHeight()
+		end
+		local tAchExraOffsets = wndAchExtraContainer:GetOriginalLocation():ToTable().nOffsets
+		wndAchExtraContainer:SetAnchorOffsets(tAchExraOffsets[1], tAchExraOffsets[2] - nTierBoxHeight - nChecklistGridHeight - knWindowOffset - knDesignerPadding, tAchExraOffsets[3], tAchExraOffsets[4])
+	end
+	wndContainer:SetAnchorOffsets(nLeft, nTop, nRight, nNewBottom)
 end
 
 local AchievementsInst = Achievements:new()
 AchievementsInst:Init()
-˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ        @˜!ÿÿÿÿ 	•	•@˜!ÿÿÿÿH H€@˜!ÿÿÿÿ‰I‘@˜!ÿÿÿÿ!•„  @˜!ÿÿÿÿ	€    @˜!ÿÿÿÿ’$IR$ @˜!ÿÿÿÿR$    @˜!ÿÿÿÿ$#)’$@˜!ÿÿÿÿI$I’ @˜!ÿÿÿÿ	’EI’$@˜!ÿÿÿÿ
-@I¤J@˜!ÿÿÿÿ	 	‘H@˜!ÿÿÿÿ ‰”@˜!ÿÿÿÿ 	 @˜!ÿÿÿÿ
-‘R@˜!ÿÿÿÿNé–v@˜!ÿÿÿÿÄ	6åL@˜!ÿÿÿÿİÔ±–r@˜!ÿÿÿÿ#¥P.—v@˜!ÿÿÿÿ) å`’o·@˜!ÿÿÿÿ,%ãÄ.w@˜!ÿÿÿÿ2*Ûöî@˜!ÿÿÿÿ50&´É@˜!ÿÿÿÿ=6?™7g{@˜!ÿÿÿÿA:I{Vôf@˜!ÿÿÿÿE?q[´Gn@˜!ÿÿÿÿK@5S”Ä	@˜!ÿÿÿÿOF~æNoA@˜!ÿÿÿÿTKÿS-D@˜!ÿÿÿÿWMdJm# A@˜!ÿÿÿÿ\Q±o“"D@@˜!ÿÿÿÿcVIìÚm§@˜!ÿÿÿÿcX~V,Q	@˜!ÿÿÿÿ0+’=‘P¼‘@˜!ÿÿÿÿ.(lCÒ ½±@˜!ÿÿÿÿ(%€$’ E@˜!ÿÿÿÿ&!Ú(Ø¢Ù@˜!ÿÿÿÿ"À
-uÒ‚%@˜!ÿÿÿÿ)Ñ=2@˜!ÿÿÿÿĞ*­Ø²6@˜!ÿÿÿÿĞ
-­Úª6@˜!ÿÿÿÿ€%"£$@˜!ÿÿÿÿØ2µk²6@˜!ÿÿÿÿ
-(1 )2@˜!ÿÿÿÿ	‰ I2@˜!ÿÿÿÿ		%¢È$@˜!ÿÿÿÿÀ¢­Z»5@˜!ÿÿÿÿ@$$B @˜!ÿÿÿÿI%‚  @˜!ÿÿÿÿ

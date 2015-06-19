@@ -5,6 +5,7 @@
 
 require "Window"
 require "GameLib"
+require "PlayerPathLib"
 
 -- Settings are saved in a g_InterfaceOptions table. This allows 3rd party add-ons to carry over settings instantly if they reimplement an add-on.
 
@@ -35,10 +36,9 @@ function OptionsInterface:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
 	-- Set up defaults
 	g_InterfaceOptions.Carbine.bSpellErrorMessages 			= true
 	g_InterfaceOptions.Carbine.bShowTutorials				= true
-	g_InterfaceOptions.Carbine.bQuestTrackerByDistance		= true
-	g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom		= true
 	g_InterfaceOptions.Carbine.bInteractTextOnUnit			= false
 	g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible	= true
+	g_InterfaceOptions.Carbine.bAreSettlerStructureCalloutsVisible = true
 	g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests		= false
 	g_InterfaceOptions.Carbine.eShareChallengePreference	= GameLib.SharedChallengePreference.AutoAccept
 	g_InterfaceOptions.Carbine.bQuestZoneFilter				= true
@@ -140,6 +140,10 @@ function OptionsInterface:OnDocumentReady()
 	if g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible ~= GameLib.AreQuestUnitCalloutsVisible() then
 		GameLib.ToggleQuestUnitCallouts()
 	end
+	
+	if g_InterfaceOptions.Carbine.bAreSettlerStructureCalloutsVisible ~= GameLib.AreSettlerStructureCalloutsVisible() then
+		GameLib.ToggleSettlerStructureCallouts()
+	end
 
 	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
 	Event_FireGenericEvent("OptionsUpdated_HUDInteract")
@@ -237,7 +241,7 @@ function OptionsInterface:OnWindowOptionsCheck(wndHandler, wndControl)
 	self.wndInterface:FindChild("Content:WindowContent"):Show(true)
 end
 
-function OptionsInterface:OnClose()
+function OptionsInterface:OnCloseWindow()
 	self.wndInterface:Close()
 end
 
@@ -256,21 +260,15 @@ function OptionsInterface:OnConfigure() -- From ESC -> Options
 
 	self.wndInterface:FindChild("IgnoreDuelRequests"):SetCheck(g_InterfaceOptions.Carbine.bIsIgnoringDuelRequests)
 	self.wndInterface:FindChild("ToggleQuestMarkers"):SetCheck(g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible)
+	self.wndInterface:FindChild("ToggleSettlerStructureMarkers"):Enable(self.wndInterface:FindChild("ToggleQuestMarkers"):IsChecked() and PlayerPathLib.GetPlayerPathType() == PlayerPathLib.PlayerPathType_Settler)
+	self.wndInterface:FindChild("ToggleSettlerStructureMarkers"):SetCheck(g_InterfaceOptions.Carbine.bAreSettlerStructureCalloutsVisible)
 	self.wndInterface:FindChild("SpellErrorMessages"):SetCheck(g_InterfaceOptions.Carbine.bSpellErrorMessages)
 	self.wndInterface:FindChild("ChallengeSharePreference"):SetCheck(g_InterfaceOptions.Carbine.eShareChallengePreference == GameLib.SharedChallengePreference.Prompt)
-	self.wndInterface:FindChild("QuestTrackerByDistance"):SetCheck(g_InterfaceOptions.Carbine.bQuestTrackerByDistance)
-	self.wndInterface:FindChild("QuestAlignTop"):SetCheck(not g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom)
-	self.wndInterface:FindChild("QuestAlignBottom"):SetCheck(g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom)
-	self.wndInterface:FindChild("QuestTrackerHideOtherZone"):SetCheck(g_InterfaceOptions.Carbine.bQuestZoneFilter)
-
 	self.wndInterface:FindChild("InteractTextOnUnit"):SetCheck(g_InterfaceOptions.Carbine.bInteractTextOnUnit)
-	self.wndInterface:FindChild("ShowTutorials"):SetCheck(g_InterfaceOptions.Carbine.bShowTutorials)
-	
 	self.wndInterface:FindChild("DropToggleTargetFrame"):Enable(false)
 	self.wndInterface:FindChild("TargetUnitFrame"):SetRadioSel("TargetFrameFilpped", g_InterfaceOptions.Carbine.bTargetFrameFlipped and 1 or 2)
 	self.wndInterface:FindChild("MyUnitFrame"):SetRadioSel("MyUnitFrameFlipped", g_InterfaceOptions.Carbine.bMyUnitFrameFlipped and 1 or 2)
 	self.wndInterface:FindChild("FocusUnitFrame"):SetRadioSel("FocusFrameFlipped", g_InterfaceOptions.Carbine.bFocusFrameFlipped and 1 or 2)
-	self:HelperUnitFrameButtons()
 end
 
 function OptionsInterface:HelperSetUpGlobalIfNil()
@@ -384,6 +382,17 @@ function OptionsInterface:OnWindowManagementAdd(tSettings)
 				end
 
 				tSettings.wnd:SetStyle("RequireMetaKeyToMove", tSettings.bRequireMetaKeyToMove)
+				
+				if not tSettings.wnd:IsStyleOn("Sizable") then
+					if tSettings.tCurrentLoc.fPoints[1] == tSettings.tCurrentLoc.fPoints[3] then
+						tSettings.tCurrentLoc.nOffsets[3] = tSettings.tCurrentLoc.nOffsets[1] + tSettings.wnd:GetWidth()
+					end
+					
+					if tSettings.tCurrentLoc.fPoints[2] == tSettings.tCurrentLoc.fPoints[4] then
+						tSettings.tCurrentLoc.nOffsets[4] = tSettings.tCurrentLoc.nOffsets[2] + tSettings.wnd:GetHeight()
+					end
+				end
+				
 				tSettings.wnd:MoveToLocation(WindowLocation.new(tSettings.tCurrentLoc))
 			end
 		end
@@ -621,7 +630,20 @@ end
 function OptionsInterface:OnMappedOptionsQuestCallouts(wndHandler, wndControl)
 	GameLib.ToggleQuestUnitCallouts()
 	g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible = GameLib.AreQuestUnitCalloutsVisible()
+	g_InterfaceOptions.Carbine.bAreSettlerStructureCalloutsVisible = g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible
+	self.wndInterface:FindChild("ToggleSettlerStructureMarkers"):SetCheck(g_InterfaceOptions.Carbine.bAreSettlerStructureCalloutsVisible)
 	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_QuestCalloutsToggle"), wndControl:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
+	if g_InterfaceOptions.Carbine.bAreQuestUnitCalloutsVisible and PlayerPathLib.GetPlayerPathType() == PlayerPathLib.PlayerPathType_Settler then
+		self.wndInterface:FindChild("ToggleSettlerStructureMarkers"):Enable(true)
+	else
+		self.wndInterface:FindChild("ToggleSettlerStructureMarkers"):Enable(false)
+	end
+end
+
+function OptionsInterface:OnMappedOptionsSettlerStructureCallouts(wndHandler, wndControl)
+	GameLib.ToggleSettlerStructureCallouts()
+	g_InterfaceOptions.Carbine.bAreSettlerStructureCalloutsVisible = GameLib.AreSettlerStructureCalloutsVisible()
+	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_SettlerStructureCalloutsToggle"), wndControl:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
 end
 
 function OptionsInterface:OnMappedOptionsSetIgnoreDuels(wndHandler, wndControl)
@@ -685,42 +707,7 @@ function OptionsInterface:OnUnitFrameRotateClicked(wndHandler, wndControl)
 	g_InterfaceOptions.Carbine.bTargetFrameFlipped 	= self.wndInterface:FindChild("TargetUnitFrame"):GetRadioSel("TargetFrameFilpped") == 1
 	g_InterfaceOptions.Carbine.bFocusFrameFlipped 	= self.wndInterface:FindChild("FocusUnitFrame"):GetRadioSel("FocusFrameFlipped") == 1
 	
-	self:HelperUnitFrameButtons()
 	Event_FireGenericEvent("OptionsUpdated_UnitFramesUpdated")
-end
-
-function OptionsInterface:HelperUnitFrameButtons()
-	self.wndInterface:FindChild("MyUnitFrame"):FindChild("RotateL"):SetBGColor(not g_InterfaceOptions.Carbine.bMyUnitFrameFlipped and "66FFFFFF" or "FFFFFFFF")
-	self.wndInterface:FindChild("MyUnitFrame"):FindChild("RotateR"):SetBGColor(g_InterfaceOptions.Carbine.bMyUnitFrameFlipped and "66FFFFFF" or "FFFFFFFF")
-	
-	self.wndInterface:FindChild("TargetUnitFrame"):FindChild("RotateL"):SetBGColor(not g_InterfaceOptions.Carbine.bTargetFrameFlipped and "66FFFFFF" or "FFFFFFFF")
-	self.wndInterface:FindChild("TargetUnitFrame"):FindChild("RotateR"):SetBGColor(g_InterfaceOptions.Carbine.bTargetFrameFlipped and "66FFFFFF" or "FFFFFFFF")
-	
-	self.wndInterface:FindChild("FocusUnitFrame"):FindChild("RotateL"):SetBGColor(not g_InterfaceOptions.Carbine.bFocusFrameFlipped and "66FFFFFF" or "FFFFFFFF")
-	self.wndInterface:FindChild("FocusUnitFrame"):FindChild("RotateR"):SetBGColor(g_InterfaceOptions.Carbine.bFocusFrameFlipped and "66FFFFFF" or "FFFFFFFF")
-end
-
-
-function OptionsInterface:OnToggleTutorials(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bShowTutorials = wndHandler:IsChecked()
-	Event_FireGenericEvent("OptionsUpdated_ShowTutorials")
-	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_TutorialsToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
-end
-
-function OptionsInterface:OnToggleQuestTrackerByDistance(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bQuestTrackerByDistance = wndHandler:IsChecked()
-	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
-	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_DistanceSortingToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
-end
-
-function OptionsInterface:OnToggleQuestTrackerAlignTop(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom = not wndHandler:IsChecked()
-	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
-end
-
-function OptionsInterface:OnToggleQuestTrackerAlignBottom(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom = wndHandler:IsChecked()
-	Event_FireGenericEvent("OptionsUpdated_QuestTracker")
 end
 
 function OptionsInterface:OnToggleInteractTextOnUnit(wndHandler, wndControl)
@@ -729,26 +716,5 @@ function OptionsInterface:OnToggleInteractTextOnUnit(wndHandler, wndControl)
 	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", Apollo.GetString("HUDAlert_InteractTextVisibilityChanged"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False"))
 end
 
-function OptionsInterface:OnToggleInteractQuestZoneFilter(wndHandler, wndControl)
-	g_InterfaceOptions.Carbine.bQuestZoneFilter = wndHandler:IsChecked()
-	Event_FireGenericEvent("OptionsUpdated_QuestZoneFilter")
-	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("InterfaceOptions_QuestZoneFilterToggle"), wndHandler:IsChecked() and Apollo.GetString("Command_Chat_True") or Apollo.GetString("Command_Chat_False")))
-end
-
 local OptionsInterfaceInst = OptionsInterface:new()
 OptionsInterfaceInst:Init()
-sekit:kitBtn_Holo_IconBase" Font="CRB_InterfaceMedium" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="38" TAnchorPoint="0" TAnchorOffset="54" RAnchorPoint="0" RAnchorOffset="214" BAnchorPoint="0" BAnchorOffset="91" DT_VCENTER="1" DT_CENTER="0" Name="ShowRewardTypeQuest" BGColor="white" TextColor="UI_BtnTextBlueNormal" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Template="CRB_Normal" NewControlDepth="3" Text="" TextId="Nameplates_QuestObjectives" DT_WORDBREAK="0" DrawAsCheckbox="1" TooltipColor="" DT_SINGLELINE="1">
-                <Event Name="ButtonCheck" Function="OnGenericSingleCheck"/>
-                <Event Name="ButtonUncheck" Function="OnGenericSingleCheck"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="0" RAnchorOffset="26" BAnchorPoint="1" BAnchorOffset="-9" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Icon" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_TargetFrameRewardPanelSprites:sprTargetFrame_EligibleQuest" NewControlDepth="5"/>
-            </Control>
-            <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_IconBase" Font="CRB_InterfaceMedium" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="38" TAnchorPoint="0" TAnchorOffset="96" RAnchorPoint="0" RAnchorOffset="219" BAnchorPoint="0" BAnchorOffset="133" DT_VCENTER="1" DT_CENTER="0" Name="ShowRewardTypeMission" BGColor="white" TextColor="UI_BtnTextBlueNormal" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Template="CRB_Normal" NewControlDepth="3" Text="" TextId="Nameplates_MissionObjectives" DT_WORDBREAK="0" DrawAsCheckbox="1" TooltipColor="" DT_SINGLELINE="1">
-                <Event Name="ButtonCheck" Function="OnGenericSingleCheck"/>
-                <Event Name="ButtonUncheck" Function="OnGenericSingleCheck"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="0" RAnchorOffset="26" BAnchorPoint="1" BAnchorOffset="-9" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Icon" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_TargetFrameRewardPanelSprites:sprTargetFrame_PathSet" NewControlDepth="5"/>
-            </Control>
-            <Control Class="Button" Base="CRB_UIKitSprites:btn_radioSMALL" Font="CRB_InterfaceMedium" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="428" TAnchorPoint="1" TAnchorOffset="-170" RAnchorPoint="0" RAnchorOffset="553" BAnchorPoint="1" BAnchorOffset="-138" DT_VCENTER="1" DT_CENTER="0" Name="ShowRewardTypeAchievement" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Template="CRB_Normal" NewControlDepth="3" Text="" TextId="CRB_Achievements" DT_WORDBREAK="1" DrawAsCheckbox="1" TooltipColor="" Visible="0" HideInEditor="0">
-                <Event Name="ButtonCheck" Function="OnShowRewardTypeAchievement"/>
-                <Event Name="ButtonUncheck" Function="OnShowRewardTypeAchievement"/>
-            </Control>
-            <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_IconBase" Font="CRB_InterfaceMedium" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="221" TAnchorPoint="0" TAnchorOffset="96" RAnchorPoint="0" RAnchorOffset="415" BAnchorPoint="0" BAnchorOffset="133" DT_VCENTER="1" DT_CENTER="0" Name="ShowRewardTypeChallenge

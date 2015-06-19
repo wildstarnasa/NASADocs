@@ -3,7 +3,10 @@
 	<Color Name="UI_WindowTitleYellow" Color="ffffeea4" />
 	<Color Name ="UI_WindowYellow" Color="aaffff00" />
     <Color Name="EditSelection" Color="8000ffff" />
+    <Color Name="EditIMECompositionBG" Color="20ffffff" />
+    <Color Name="EditIMECandidateSelection" Color="20ffffff" />
 
+	<Color Name="AlertOrangeYellow" Color="fffdbd83" />
 	<Color Name="AttributeStrength" Color="ffbe8300" />
     <Color Name="AttributeDexterity" Color="fffde792" />
     <Color Name="AttributeTechnology" Color="ff8080ff" />

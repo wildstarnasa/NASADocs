@@ -229,9 +229,9 @@
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="364" BAnchorPoint="0" BAnchorOffset="342" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PowerCorePicker" Picture="1" Overlapped="0" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" NoClip="1" Tooltip="" TooltipId="" Sprite="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="44" TAnchorPoint="0" TAnchorOffset="33" RAnchorPoint="0" RAnchorOffset="100" BAnchorPoint="0" BAnchorOffset="89" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CircuitPickerArrowPulse" BGColor="white" TextColor="white" TooltipColor="" Sprite="sprCircuit_GreenPlus_Anim" Picture="1" IgnoreMouse="1">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="180" BAnchorPoint="0" BAnchorOffset="99" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Tutorial_TEMP" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_TutorialSprites:sprTut_ConnectorUL" Picture="1" IgnoreMouse="1" NoClip="1">
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="180" BAnchorPoint="0" BAnchorOffset="99" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Tutorial_AddCore" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_TutorialSprites:sprTut_ConnectorUL" Picture="1" IgnoreMouse="1" NoClip="1">
                 <Pixie LAnchorPoint="0" LAnchorOffset="58" TAnchorPoint="0" TAnchorOffset="58" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" BGColor="white" Font="Default" TextColor="white" Text="" Sprite="CRB_TutorialSprites:sprTut_BackerSmallLit" Line="0"/>
-                <Pixie LAnchorPoint="0" LAnchorOffset="64" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0" BAnchorOffset="84" BGColor="white" Font="CRB_Interface9_O" TextColor="UI_TextHoloBodyHighlight" Text="Add a Power Core" TextId="" Line="0"/>
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="66" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="4" BAnchorPoint="0" BAnchorOffset="85" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyHighlight" Template="Default" TooltipType="OnCursor" Name="Text" TooltipColor="" TextId="CRB_Crafting_AddCoreTutorial" IgnoreMouse="1" AutoScaleTextOff="1"/>
             </Control>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="48" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="0" RAnchorOffset="96" BAnchorPoint="0" BAnchorOffset="84" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="CircuitPickerIcon" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" NewControlDepth="1" Sprite="ClientSprites:Icon_CraftingUI_Item_Crafting_PowerCore_Green"/>
@@ -291,92 +291,3 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="64" TAnchorPoint="0" TAnchorOffset="64" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="84" BGColor="white" Font="CRB_Interface9_O" TextColor="UI_TextHoloBodyHighlight" Text="" TextId="CRB_Crafting_AdjustChargeTutorial" Line="0"/>
     </Form>
 </Forms>
-SystemLib.ChatChannel_Whisper then
-		if not tMessage.bSelf then
-			self.tLastWhisperer = { strCharacterName = strWhisperName, eChannelType = ChatSystemLib.ChatChannel_Whisper }--record the last incoming whisperer for quick response
-		end
-		Sound.Play(Sound.PlayUISocialWhisper)
-		self:InsertIntoRecent(strWhisperName, false)
-	elseif eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
-
-		local tPreviousWhisperer = self.tLastWhisperer
-
-		self.tLastWhisperer =
-		{
-			strCharacterName = tMessage.strSender,
-			strRealmName = nil,
-			strDisplayName = nil,
-			eChannelType = ChatSystemLib.ChatChannel_AccountWhisper
-		}
-
-		local tAccountFriends = FriendshipLib.GetAccountList()
-		for idx, tAccountFriend in pairs(tAccountFriends) do
-			if tAccountFriend.arCharacters ~= nil then
-				for idx, tCharacter in pairs(tAccountFriend.arCharacters) do
-					if tCharacter.strCharacterName == tMessage.strSender and (tMessage.strRealmName:len() == 0 or tCharacter.strRealm == tMessage.strRealmName) then
-						if not tMessage.bSelf or (tPreviousWhisperer and tPreviousWhisperer.strCharacterName == tMessage.strSender) then
-							self.tLastWhisperer.strDisplayName = tAccountFriend.strCharacterName
-							self.tLastWhisperer.strRealmName = tCharacter.strRealm
-						end
-						strDisplayName = tAccountFriend.strCharacterName
-					end
-				end
-			end
-		end
-		Sound.Play(Sound.PlayUISocialWhisper)
-		self:InsertIntoRecent(strDisplayName, true)
-	end
-
-	-- We build strings backwards, right to left
-	if eChannelType == ChatSystemLib.ChatChannel_AnimatedEmote then -- emote animated channel gets special formatting
-		xml:AddLine(strTime, crChannel, self.strFontOption, "Left")
-
-	elseif eChannelType == ChatSystemLib.ChatChannel_Emote then -- emote channel gets special formatting
-		xml:AddLine(strTime, crChannel, self.strFontOption, "Left")
-		if strDisplayName:len() > 0 then
-			if tMessage.bGM then
-				xml:AppendImage(kstrGMIcon, 16, 16)
-			end
-			local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
-			xml:AppendText(strDisplayName, crPlayerName, self.strFontOption, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId, strCrossFaction = strCross}, "Source")
-		end
-		xml:AppendText(" ")
-	else
-		local strChannel
-		if eChannelType == ChatSystemLib.ChatChannel_Society then
-			strChannel = (string.format("%s ", String_GetWeaselString(Apollo.GetString("ChatLog_GuildCommand"), tQueuedMessage.strChannelName, tQueuedMessage.strChannelCommand))) --String DB removed empty characters at the end of string, so have to hardcode it here.
-		else
-			strChannel = String_GetWeaselString(Apollo.GetString("CRB_Brackets_Space"), tQueuedMessage.strChannelName)
-		end
-
-		if self.bShowChannel ~= true then
-			strChannel = ""
-		end
-
-		xml:AddLine(strTime .. strChannel, crChannel, self.strFontOption, "Left")
-		if strDisplayName:len() > 0 then
-
-			local strWhisperNamePrefix = ""
-			if eChannelType == ChatSystemLib.ChatChannel_Whisper or eChannelType == ChatSystemLib.ChatChannel_AccountWhisper then
-				if tMessage.bSelf then
-					strWhisperNamePrefix = Apollo.GetString("ChatLog_To")
-				else
-					strWhisperNamePrefix = Apollo.GetString("ChatLog_From")
-				end
-			end
-
-			xml:AppendText( strWhisperNamePrefix, crText, self.strFontOption)
-
-			if tMessage.bGM then
-				xml:AppendImage(kstrGMIcon, 16, 16)
-			end
-
-			local strCross = tMessage.bCrossFaction and "true" or "false"--has to be a string or a number due to code restriction
-			xml:AppendText( strDisplayName, crPlayerName, self.strFontOption, {strCharacterName = strWhisperName, nReportId = tMessage.nReportId , strCrossFaction = strCross}, "Source")
-		end
-		xml:AppendText( strPresenceState .. Apollo.GetString("Chat_ColonBreak"), crChannel, self.strFontOption, "Left")
-	end
-
-	local xmlBubble = nil
-	if tMessage.bShowChatBubble then
-		xmlBubble = XmlDoc.new() -- This is the speech bubble fo

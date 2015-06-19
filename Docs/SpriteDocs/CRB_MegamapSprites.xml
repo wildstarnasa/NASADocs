@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Sprites>
     <Sprite Name="sprMap_SuperMapEdgeLeft" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_ContinentMap_Fill_Left.tga" x0="0" x1="0" x2="0" x3="0" x4="388" x5="388" y0="0" y1="0" y2="0" y3="0" y4="1000" y5="1000" HotspotX="0" HotspotY="0" Stretchy="1" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_ContinentMap_Fill_Left.tga" x0="0" x1="0" x2="0" x3="0" x4="388" x5="388" y0="0" y1="0" y2="0" y3="0" y4="1000" y5="1000" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprMap_SuperMapEdgeRight" Cycle="1">
-        <Frame Texture="UI\Assets\Textures\UI_ContinentMap_Fill_Right.tga" x0="0" x1="0" x2="0" x3="0" x4="388" x5="388" y0="0" y1="0" y2="0" y3="0" y4="1000" y5="1000" HotspotX="0" HotspotY="0" Stretchy="1" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_ContinentMap_Fill_Right.tga" x0="0" x1="0" x2="0" x3="0" x4="388" x5="388" y0="0" y1="0" y2="0" y3="0" y4="1000" y5="1000" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprMap_LabelBacker" Cycle="1">
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_118_173.tga" x0="0" x1="0" x2="0" x3="20" x4="24" x5="48" y0="0" y1="0" y2="0" y3="0" y4="0" y5="38" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="7dffffff" EndColor="7dffffff"/>
@@ -158,6 +158,15 @@
     <Sprite Name="sprMap_IconCompletion_World" Cycle="1">
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_81_373.tga" x0="0" x1="0" x2="0" x3="0" x4="74" x5="74" y0="0" y1="0" y2="0" y3="0" y4="67" y5="67" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="sprMap_IconCompletion_Lore_Stretch" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_0_429.tga" x0="0" x1="0" x2="0" x3="0" x4="40" x5="40" y0="0" y1="0" y2="0" y3="0" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMap_SignalLost_Framing" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SignalLost_0_503.tga" x0="56" x1="85" x2="87" x3="87" x4="87" x5="116" y0="1" y1="31" y2="32" y3="32" y4="32" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprMap_SignalLost_HeaderBG" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SignalLost_0_503.tga" x0="0" x1="0" x2="256" x3="256" x4="256" x5="256" y0="62" y1="62" y2="256" y3="256" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <Composite Name="sprMap_HexFill_Lit" Cycle="0">
         <Layer Name="sprMap_HexFill_Base"/>
         <Layer Name="sprMap_HexFill_Overlay"/>
@@ -175,7 +184,7 @@
         <Layer Name="sprMap_PlayerPulse"/>
         <Layer Name="sprMap_PlayerDot"/>
     </Composite>
-    <Sprite Name="sprMap_IconCompletion_Lore_Stretch" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_Megamap_0_429.tga" x0="0" x1="0" x2="0" x3="0" x4="40" x5="40" y0="0" y1="0" y2="0" y3="0" y4="40" y5="40" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="sprMap_SignalLost_FramingOrange" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_SignalLost_0_503.tga" x0="116" x1="145" x2="147" x3="147" x4="147" x5="176" y0="1" y1="31" y2="32" y3="32" y4="32" y5="62" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
 </Sprites>

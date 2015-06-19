@@ -47,6 +47,7 @@ function Abilities:OnDocumentReady()
 	Apollo.RegisterEventHandler("ActionSetError", 								"OnActionSetError", self)
 	Apollo.RegisterEventHandler("AbilityAMPs_ToggleDirtyBit", 					"OnToggleDirtyBit", self)
 	Apollo.RegisterEventHandler("CharacterUnlockedInlaidEldanAugmentation", 	"OnLevelUpUnlock_AMPSystem", self)
+	Apollo.RegisterEventHandler("CharacterEldanAugmentationsUpdated",			"HelperRedrawPoints", self)
 
 	Apollo.RegisterEventHandler("PlayerChanged", 								"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 							"OnCharacterCreated", self)
@@ -355,41 +356,43 @@ function Abilities:DrawSpellBook()
 	-- Determine Base ability and the HighestTier ability
 	local tActiveAbilityList = {}
 	local tNotActiveAbilityList = {}
-	local tAllAbilities = {}
-	if eSelectedFilter then
-		tAllAbilities = AbilityBook.GetAbilitiesList(eSelectedFilter)
 	
-	else
-		for idx, tBaseAbility in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Assault) or {}) do
-			table.insert(tAllAbilities, tBaseAbility)
-		end
+	local tAllAbilities = 
+	{
+		[Spell.CodeEnumSpellTag.Assault] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Assault),
+		[Spell.CodeEnumSpellTag.Support] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Support),
+		[Spell.CodeEnumSpellTag.Utility] = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Utility),		
+	}
 
-		for idx, tBaseAbility in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Support) or {}) do
-			table.insert(tAllAbilities, tBaseAbility)
-		end
-
-		for idx, tBaseAbility in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Utility) or {}) do
-			table.insert(tAllAbilities, tBaseAbility)
-		end
-	end
-
-	for idx, tBaseAbility in pairs(tAllAbilities) do
-		local tHighestTier = tBaseAbility.tTiers[1] -- assume the first tier is the highest tier
-		if tBaseAbility.bIsActive then
-			tHighestTier = tBaseAbility.tTiers[tBaseAbility.nCurrentTier]
-			table.insert(tActiveAbilityList, { tBaseAbility, tHighestTier })
-		else
-			table.insert(tNotActiveAbilityList, tHighestTier)
+	local tAbilitiesById = {}
+	for eSpellTag, tAbilityCategory in pairs(tAllAbilities) do
+		local bIsCurrentFilter = eSpellTag == eSelectedFilter
+		for idx, tBaseAbility in pairs(tAbilityCategory) do
+			tAbilitiesById[tBaseAbility.nId] = tBaseAbility
+			
+			if bIsCurrentFilter then
+				local tHighestTier = tBaseAbility.tTiers[1] -- assume the first tier is the highest tier
+				if tBaseAbility.bIsActive then
+					tHighestTier = tBaseAbility.tTiers[tBaseAbility.nCurrentTier]
+					table.insert(tActiveAbilityList, { tBaseAbility, tHighestTier })
+				else
+					table.insert(tNotActiveAbilityList, tHighestTier)
+				end
+			end
 		end
 	end
 	table.sort(tActiveAbilityList, function(a,b) return (self:HelperSortLevelReqThenID(a[1].tTiers[1], b[1].tTiers[1])) end)
 	table.sort(tNotActiveAbilityList, function(a,b) return (self:HelperSortLevelReqThenID(a,b)) end)
 
-	-- refreshing the screen should always use the temp storage until the new set is commited
-	-- TODO REFACTOR
 	local arSpellIds = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 	for idx, wndCurr in pairs(self.tWndRefs.wndMain:FindChild("BGFrame:AbilityBuilderMain:BottomContainer:CurrentSetSlots:SlotItemContainer"):GetChildren()) do
-		arSpellIds[idx] = wndCurr:FindChild("SlotDisplay"):GetAbilityId()
+		local nId = wndCurr:FindChild("SlotDisplay"):GetAbilityId()
+
+		if tAbilitiesById[nId] and tAbilitiesById[nId].bIsActive then		
+			arSpellIds[idx] = nId
+		else
+			wndCurr:FindChild("SlotDisplay"):SetAbilityId(0)
+		end
 	end
 	arSpellIds[9] = self.tWndRefs.wndGadgetSlot:FindChild("GadgetSlotItem:SlotDisplay"):GetAbilityId()
 	arSpellIds[10] = self.nSelectedPathId or 0
@@ -923,4 +926,3 @@ end
 
 local AbilitiesInst = Abilities:new()
 AbilitiesInst:Init()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

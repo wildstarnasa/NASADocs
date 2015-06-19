@@ -102,7 +102,6 @@ The value we&apos;re passing out is not recognized by apollo, so why are we pass
         </Event>
         <Event Name="ToggleErrorDialog" Id="92" Desc="Fires whenever a Lua error occurs.  This is only received by the client that the error occurred on."/>
         <Event Name="TogglePlayerTicketWindow" Id="95" Desc="Fires whenever the player types the slash command to open the Player Ticket Window.  It is only handled by the player who used the command."/>
-        <Event Name="ErrorDialogSetSelection" Id="96" Deprecated="true" NotImplemented="true" InternalNotes="Could not find any references to this in code."/>
         <Event Name="PersonaUpdateCharacterStats" Id="98" Desc="Fires whenever the player moves an item from one inventory slot to another, the player gains a new item, or the player&apos;s stats change (via a buff, debuff, or new equipment)."/>
         <Event Name="UI_XPChanged" Id="99" Desc="Fires whenever the player&apos;s XP, Elder Points, or rested bonus changes.">
             <Param Name="nXP" Type="Integer" Id="100" Desc="The player&apos;s current XP.  Note, this will not list the player&apos;s current EP once they have hit level 50."/>
@@ -492,7 +491,7 @@ end">
         </Event>
         <Event Name="RemoveCCStateStun" Id="6706" Desc="Fires whenever the player leaves the Stun CC state." Remarks="This is a more focused event than RemoveCCState, in that it only fires for the player that the state was removed from and it only applies if the CC State that was removed was Stun."/>
         <Event Name="MapHexesRevealed" Id="6707" Deprecated="true" InternalNotes="This appears to be depricated, as it isn&apos;t being called anywhere in code."/>
-        <Event Name="ShowLocOnWorldMap" Id="6708" Desc="Fires whenever a player clicks a location that was linked in an galactic archive article.">
+        <Event Name="ShowLocOnWorldMap" Id="6708" Desc="Fires whenever a player clicks a location that was linked in an galactic archive article or quest.">
             <Param Type="Table" Name="tLocationInfo" Id="14530">
                 <Item Type="Table" Name="zoneMap" Id="14531">
                     <Item Name="strFolder" Desc="The folder name where the map is found." Type="String" Id="14532"/>
@@ -592,7 +591,7 @@ Need to figure out why some flags always return true when changed." NeedProofrea
             <Param Name="strName" Desc="The name of the player that the operation was attempted on." Type="String" Id="14079"/>
             <Param Name="eResult" Desc="The reason why the operation failed." Type="GroupLib.ActionResult" Id="14080"/>
         </Event>
-        <Event Name="Group_Updated" Id="6738" InternalNotes="Need more reasons why this fires.  It seems to fire every second." Desc="Fires whenever the the number of players in a group change, the instance difficulty is changed, " NeedProofread="true" NotStandard="true"/>
+        <Event Name="Group_Updated" Id="6738" InternalNotes="Need more reasons why this fires.  It seems to fire every second." Desc="Fires whenever the the number of players in a group change, the instance difficulty is changed, " NeedProofread="true" NotStandard="true" Incomplete="true"/>
         <Event Name="Group_UpdatePosition" Id="6739" NotStandard="true" InternalNotes="There&apos;s some information being passed here that idk we want to expose, such as folders.
 " Desc="Fires at regular, 1 second intervals with updates to the player&apos;s positions in the world.">
             <Param Type="Table" Name="arMemberPosInfo" Array="true" Id="14116">
@@ -1677,7 +1676,6 @@ end" NotStandard="true">
         <Event Name="CraftingModItem" Id="6997" Deprecated="true" InternalNotes="The functionality tied to this event seems to be depricated." Desc="Fires when the player is holding ALT and clicks on an item.  This fires when the mouse button is raised.">
             <Param Name="itemMod" Desc="The item that the player is attempting to moddify." Type="Item" Id="13820"/>
         </Event>
-        <Event Name="CraftingExtractItem" Id="6998" Deprecated="true" InternalNotes="This doesn&apos;t appear to be in code."/>
         <Event Name="ShowTutorial" Id="6999" Desc="Fires whenever a tutorial should be shown or when the UI calls Event_ShowTutorial().  It informs the UI which tutorial to display and where to display it.">
             <Param Name="idTutorial" Desc="The tutorial&apos;s id number." Type="Integer" Id="14568"/>
             <Param Name="bInstant" Desc="Whether the tutorial is shown immediately or is placed in a queue." Type="Boolean" Id="14569"/>
@@ -1693,9 +1691,6 @@ end" NotStandard="true">
         <Event Name="MapTrackedUnitUpdate" Id="7003" Deprecated="true" NotTested="true" InternalNotes="Unable to figure out how to track units on the zone map, so unable to get this to fire."/>
         <Event Name="MapTrackedUnitDisable" Id="7004" NotTested="true" InternalNotes="Unsure of how to track units on the map, so unable to get this to fire." Deprecated="true"/>
         <Event Name="NextFrame" Id="7005" NotStandard="true" InternalNotes="Really?  We&apos;re firing an event every frame that&apos;s just saying the frame updated?" Desc="Fires once every frame."/>
-        <Event Name="ColorChanged" Id="7008" NotTested="true" Desc="Fired whent he player selects a color from the ColorPicker window" NotStandard="true" InternalNotes="Uses CColor instead of ApolloColor">
-            <Param Name="crNewColor" Desc="The color that was selected when this event was fired." Type="CColor" Id="13507"/>
-        </Event>
         <Event Name="DialogClosing" Id="7009" InternalNotes="Unknown usage." Deprecated="true" NotTested="true" NotStandard="true"/>
         <Event Name="ScriptResurrect" Id="8124" Desc="Fires when the player is forced to resurrect by a scripted event in game."/>
         <Event Name="GuildQueueStateChanged" Id="8125" Desc="Fires whenever the arena team&apos;s or warparty&apos;s enters a queue, leaves a queue, enters a match, or leaves a match." Remarks="Possible values for the different states are:
@@ -1710,8 +1705,18 @@ GuildLib.GuildQueueState_InBattle">
         <Event Name="DuelAccepted" Id="8126" Desc="Fires whenever a player accepts a duel request.">
             <Param Name="fCountdownTimer" Desc="The countdown timer before the duel starts (in seconds)." Type="Float" Id="13859"/>
         </Event>
-        <Event Name="CharacterFlagsUpdated" Incomplete="true" Id="8127" InternalNotes="Need to find out how to see where all the initial message gets fired from.
-Need to figure out where to get these flags from." Desc="Fires whenever the character&apos;s flags are updated, such as when the player chooses to ignore duel requests." NotStandard="true"/>
+        <Event Name="CharacterFlagsUpdated" Id="8127" Desc="Fires whenever the player&apos;s state flags are updated.  Changing any of the following states will trigger this event:
+PvP Flag
+Block Friendships
+Limit Hazard Rez
+Ignore Duel Requests
+Hide Top Guild Holomark
+Hide Left Guild Holomark
+Hide Right Guild Holomark
+Hide Back Guild Holomark
+Disable Character
+Display Guild Holomark Near
+Require Name Change"/>
         <Event Name="RefreshHealthShieldBar" Id="8209" Desc="Fires whenever the a unit&apos;s health or shields is updated." Remarks="Note, this is not fired if the player&apos;s absorption shield is updated.  Also, if the damage is applied to both health and shields, this event will fire twice." InternalNotes="It would be awesome if we could get the unit whose health / shields updated and if it fired when absorb shields update."/>
         <Event Name="ToggleChallengesWindow" Id="8210" Deprecated="true" InternalNotes="This does not seem to be called."/>
         <Event Name="ToggleTradeskills" Id="8211" Desc="Fires whenever the player presses the key bound to Tradeskills.  This only fires for the player that pressed the key."/>
@@ -1937,11 +1942,11 @@ This might be depricated and replaced with PublicEventLeave." Deprecated="true" 
             <Param Name="unitTarget" Desc="The unit that the inspect function was called on." Type="Unit" Id="14265"/>
             <Param Name="arItems" Desc="The items that unitTarget currently has equipped." Type="Item" Array="true" Id="14266"/>
         </Event>
-        <Event Name="ChatAccountTellFailed" Incomplete="true" Id="8274" Desc="Fires whenever the player tries to send an account whisper to an invalid player.">
-            <Param Name="chanWhisper" Desc="The chat channel that the player tried to whisper from.  This should always be the &quot;Account Whisper&quot; channel." Type="ChatChannelLib" Id="13443"/>
+        <Event Name="ChatAccountTellFailed" Id="8274" Desc="Fires whenever the player tries to send an account whisper to an invalid player.">
+            <Param Name="channelWhisper" Desc="The chat channel that the player tried to whisper from.  This should always be the &quot;Account Whisper&quot; channel." Type="ChatChannelLib" Id="13443"/>
             <Param Name="strName" Desc="The name of the player who was intended to receive the account whisper." Type="String" Id="13444"/>
         </Event>
-        <Event Name="AccountSupportTicketResult" Incomplete="true" Id="8275" InternalNotes="Need more info on this one.  It seems to be the channel to display the success/fail message and whether or not it succeeded or failed, but it&apos;s hard to tell" Desc="Informs the player if the ticket that they submitted successfully made it to the server or not." Example="function ChatLog:OnAccountSupportTicketResult( channelSource, bSuccess )
+        <Event Name="AccountSupportTicketResult" Id="8275" InternalNotes="Need more info on this one.  It seems to be the channel to display the success/fail message and whether or not it succeeded or failed, but it&apos;s hard to tell" Desc="Informs the player if the ticket that they submitted successfully made it to the server or not." Example="function ChatLog:OnAccountSupportTicketResult( channelSource, bSuccess )
 	if( bSuccess ) then
 		ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_System, Apollo.GetString(&quot;PlayerTicket_TicketSent&quot;), &quot;&quot;)
 	else
@@ -2005,7 +2010,7 @@ end">
         <Event Name="ZoneMapPlayerIndicatorUpdated" Id="8295" Desc="Fires whenever a player is added or removed from the Zone Map." Remarks="An example of this is when a player joins or leaves a group.">
             <Param Name="bVisible" Desc="Whether the player is visible on the map or not." Type="Boolean" Id="14664"/>
         </Event>
-        <Event Name="AccountPendingItemsUpdate" Id="8296" Desc="Fires when items that are pending for the current player&apos;s account have changed states." Incomplete="true"/>
+        <Event Name="AccountPendingItemsUpdate" Id="8296" Desc="Fires when items are added or removed from the pending list for the player&apos;s account inventory."/>
         <Event Name="AccountInventoryUpdate" Id="8297" Desc="Fires when the Account Inventory for the current account has changed."/>
         <Event Name="AccountEntitlementUpdate" Id="8298" Desc="Fires when a change is made to the current account&apos;s entitlements." Example="function AccountInventory:OnAccountEntitlementUpdate()
 	if not self.wndMain or not self.wndMain:IsValid() then
@@ -2086,7 +2091,6 @@ end"/>
             </Param>
             <Param Name="arOrders" Desc="A table with all the CREDD buy and sell orders." Type="CREDDExchangeOrder" Array="true" Id="13844"/>
         </Event>
-        <Event Name="CREDDExchangeOperationResults" Id="9460" Deprecated="true" InternalNotes="Does not appear to be fired from code."/>
         <Event Name="PublicEventLeave" Id="9461" Desc="Fires whenever the player leaves a public event area or zone.">
             <Param Name="peEvent" Desc="The public event that the player left." Type="PublicEvent" Id="14452"/>
             <Param Name="eReason" Desc="The reason the event was fired.  This lines up with the PublicEvent.PublicEventParticipantRemoveReason set of int constants." Type="Integer" Id="14453"/>
@@ -2309,7 +2313,7 @@ Why pass the inventory index that you passed in right back to the user?" Desc="R
             <ReturnValue Type="Integer" Id="15140"/>
         </Function>
         <Function Name="GetXpToNextLevel" Id="12325" Desc="The amount of XP required for the player to reach the next level."/>
-        <Function Name="GetXpPercentToNextLevel" Incomplete="true" Id="12326" Desc="Calculates how much, percentage wise, the player has to earn before hitting the next level." Remarks="This does a basic calculation of 
+        <Function Name="GetXpPercentToNextLevel" Id="12326" Desc="Calculates the amount of XP the player needs to reach their next level, then returns the percentage of that XP that they have not yet earned." Remarks="This does a basic calculation of 
 
 (XPToNextLevel - XPToCurrentLevel) / (CurrentXP - XPToCurrentLevel)">
             <ReturnValue Type="Float" Id="15138"/>
@@ -2423,8 +2427,13 @@ Stab ‘em with your 2 knives">
             <Param Name="idCreature" Desc="The creature&apos;s Id number." Type="Integer" Id="14674"/>
             <ReturnValue Type="String" Desc="The name of the creature with the given ID." Id="14675"/>
         </Function>
-        <Function Name="PlayerTicketDialog_Report" Incomplete="true" Id="12346"/>
-        <Function Name="PlayerTicket_GetSubtype" Incomplete="true" Id="12347"/>
+        <Function Name="PlayerTicket_GetSubtype" Id="12347" Desc="Gets a list of all the subcategories under a specific player ticket category.">
+            <ReturnValue Type="Table" Desc="An array of subcategory ids and names for the specified category." Array="true" Id="17010">
+                <Item Name="index" Desc="The ticket subcategory&apos;s id number." Type="Integer" Id="17011"/>
+                <Item Name="localizedText" Desc="The name of the subcategory." Type="String" Id="17012"/>
+            </ReturnValue>
+            <Param Name="idParentCategory" Desc="The function will return all of the subcategories for the parent category with this id." Type="Integer" Id="17013"/>
+        </Function>
         <Function Name="PlayerTicket_GetErrorTypeList" Id="12348" Desc="Gets a list of categories for CS tickets, along with a localized name for the category." NotStandard="true" InternalNotes="This should all be in a table somewhere.  This seems like a terrible way to do this.">
             <ReturnValue Type="Table" Desc="An array of tables containing the category IDs and localized names." Array="true" Id="15165">
                 <Item Name="index" Desc="The category&apos;s id number." Type="Integer" Id="15166"/>
@@ -2483,29 +2492,71 @@ This should probably be in Unit." NotStandard="true" Desc="Sets the stance for a
         <Event Name="HousingButtonVendor" Incomplete="true" Id="14733"/>
         <Event Name="HousingButtonList" Incomplete="true" Id="14734"/>
         <Event Name="HousingExitEditMode" Incomplete="true" Id="14735"/>
-        <Function Name="Event_CancelCREDDExchange" Incomplete="true" Id="14736"/>
+        <Function Name="Event_CancelCREDDExchange" Id="14736" Desc="Forces the CREDD Exchange window to close." Example="This function will cause the Event_CREDDExchangeWindowClose event to fire."/>
         <Event Name="PlayerEnteredWorld" Incomplete="true" Id="14737"/>
         <Event Name="QuestPeriodicReset" Incomplete="true" Id="14738"/>
-        <Event Name="AppearanceChanged" Incomplete="true" Id="14739"/>
+        <Event Name="AppearanceChanged" Id="14739" Desc="Fires whenever the player updates a costume, purchases a dye job on their equipment, or purchases a character customization change."/>
         <Event Name="Group_LootRulesChanged" Incomplete="true" Id="14740"/>
         <Event Name="Group_FlagsChanged" Incomplete="true" Id="14741"/>
         <Event Name="Group_ReadyCheckCooldownExpired" Incomplete="true" Id="14742"/>
         <Event Name="FriendshipPostRemove" Incomplete="true" Id="14743"/>
         <Event Name="CombatLogLifeSteal" Incomplete="true" Id="14744"/>
-        <Event Name="CharacterEldanAugmentationsReset" Incomplete="true" Id="14745"/>
+        <Event Name="CharacterEldanAugmentationsReset" Id="14745" Deprecated="true" NotImplemented="true" InternalNotes="Does not seem to fire when resetting the player&apos;s AMPs.  It is most likely depricated."/>
         <Event Name="PublicEventUnitUpdate" Incomplete="true" Id="14746"/>
         <Event Name="UnitGibbed" Incomplete="true" Id="14747"/>
         <Event Name="CREDDRedeemResult" Incomplete="true" Id="14748"/>
         <Function Name="GetResourceCooldownPercent" Id="14749" Deprecated="true" InternalNotes="There&apos;s no code here!  Why is it still in code?"/>
         <Event Name="ApplicationWindowSizeChanged" Incomplete="true" Id="14750"/>
-        <Event Name="CommunityRegistrarOpen" Incomplete="true" Id="16408"/>
-        <Event Name="CommunityRegistrarClose" Incomplete="true" Id="16409"/>
+        <Event Name="CommunityRegistrarOpen" Incomplete="true" Id="16408" InternalNotes="This is new...haven&apos;t seen anything about this."/>
+        <Event Name="CommunityRegistrarClose" Incomplete="true" Id="16409" InternalNotes="This is new...haven&apos;t seen anything about this."/>
         <Event Name="LootTakenBy" Incomplete="true" Id="16410"/>
-        <Event Name="LootBindcheck" Incomplete="true" Id="16411"/>
+        <Event Name="LootBindcheck" Id="16411" Desc="Fires whenever the player attempts to loot an item that is Bind on Pickup while in a group.">
+            <Param Type="Table" Name="tLootInfo" Desc="A table that contains information about the Bind on Pickup items that the player is trying to loot." Id="17014">
+                <Item Name="nLootId" Desc="A unique identifier for the item that was dropped." Type="Integer" Id="17015"/>
+                <Item Name="itemDrop" Desc="The item that was dropped." Type="Item" Id="17016"/>
+            </Param>
+        </Event>
+        <Function Name="Event_CancelContractBoard" Incomplete="true" Id="17017"/>
+        <Function Name="Event_CancelEldanForge" Incomplete="true" Id="17018"/>
+        <Function Name="Event_CancelBarber" Incomplete="true" Id="17019"/>
+        <Event Name="UpdateResurrectDialog" Incomplete="true" Id="17020"/>
+        <Event Name="ContractStateChanged" Incomplete="true" Id="17021"/>
+        <Event Name="ContractObjectiveUpdated" Incomplete="true" Id="17022"/>
+        <Event Name="ContractGoodQualityChanged" Incomplete="true" Id="17023"/>
+        <Event Name="ContractBoardOpen" Incomplete="true" Id="17024"/>
+        <Event Name="ContractBoardClose" Incomplete="true" Id="17025"/>
+        <Event Name="EldanForgeOpen" Incomplete="true" Id="17026"/>
+        <Event Name="EldanForgeClose" Incomplete="true" Id="17027"/>
+        <Event Name="BarberOpen" Id="17028" Deprecated="true" DevOnly="true" InternalNotes="This is a depricated event used for Character Customization."/>
+        <Event Name="BarberClose" Id="17029" Deprecated="true" DevOnly="true" InternalNotes="This is a depricated event that was for Character Customization"/>
+        <Event Name="ContractFloater" Incomplete="true" Id="17030"/>
+        <Event Name="PlayerRealmName" Incomplete="true" Id="17031"/>
+        <Event Name="RecruitmentDescription" Incomplete="true" Id="17032"/>
+        <Event Name="RecruitmentDemands" Incomplete="true" Id="17033"/>
+        <Event Name="RecruitmentMinLevel" Incomplete="true" Id="17034"/>
+        <Event Name="GuildClassification" Incomplete="true" Id="17035"/>
+        <Event Name="RecruitmentGuildsList" Incomplete="true" Id="17036"/>
+        <Event Name="RecruitmentGuildsUpdated" Incomplete="true" Id="17037"/>
+        <Event Name="RecruitmentUnsubscribed" Incomplete="true" Id="17038"/>
+        <Event Name="RecruitmentDetailedGuildInfo" Incomplete="true" Id="17039"/>
+        <Event Name="RecruitmentDetailedInfoRequestsUnblocked" Incomplete="true" Id="17040"/>
+        <Event Name="EldanForgeResult" Incomplete="true" Id="17041"/>
+        <Event Name="ToggleItemContextMenu" Incomplete="true" Id="17042"/>
+        <Event Name="PublicEventBombStatus" Incomplete="true" Id="17043"/>
+        <Event Name="PublicEventBombDropped" Incomplete="true" Id="17044"/>
+        <Event Name="CharacterRecustomizationResult" Incomplete="true" Id="17045"/>
+        <Event Name="ICCommReceiveThrottled" Incomplete="true" Id="17181"/>
+        <Event Name="RewardTracksLoaded" Incomplete="true" Id="17182"/>
+        <Event Name="RewardTrackUpdated" Incomplete="true" Id="17183"/>
+        <Event Name="RewardTrackActive" Incomplete="true" Id="17184"/>
+        <Event Name="CostumeUnlockResult" Incomplete="true" Id="17252"/>
+        <Event Name="CostumeForgetResult" Incomplete="true" Id="17253"/>
+        <Event Name="CostumeSaveRequested" Incomplete="true" Id="17254"/>
         <Event Name="ShowQuestSynopsis" Incomplete="true" Id="30" Deleted="true"/>
         <Event Name="SubMissionRequest" Incomplete="true" Id="33" Deleted="true"/>
         <Event Name="NextActionBar" Incomplete="true" Id="41" Deleted="true"/>
         <Event Name="ServerBroadcastMessage" Incomplete="true" Id="93" Deleted="true"/>
+        <Event Name="ErrorDialogSetSelection" Incomplete="true" Id="96" Deleted="true"/>
         <Event Name="ProgressClickWindowDisplay" Incomplete="true" Id="139" Deleted="true"/>
         <Event Name="TurnOnClickableTab" Incomplete="true" Id="141" Deleted="true"/>
         <Event Name="ProgressClickShowYesNoWindow" Incomplete="true" Id="152" Deleted="true"/>
@@ -2526,6 +2577,8 @@ This should probably be in Unit." NotStandard="true" Desc="Sets the stance for a
         <Event Name="OnForceResurrect" Incomplete="true" Id="258" Deleted="true"/>
         <Event Name="FriendshipRequestWithdrawn" Incomplete="true" Id="6785" Deleted="true"/>
         <Event Name="ChatBanList" Incomplete="true" Id="6950" Deleted="true"/>
+        <Event Name="CraftingExtractItem" Incomplete="true" Id="6998" Deleted="true"/>
+        <Event Name="ColorChanged" Incomplete="true" Id="7008" Deleted="true"/>
         <Event Name="ReadyToEnter" Incomplete="true" Id="7010" Deleted="true"/>
         <Event Name="ShowHello" Incomplete="true" Id="7011" Deleted="true"/>
         <Event Name="TriggerDemoOptions" Incomplete="true" Id="7012" Deleted="true"/>
@@ -2566,7 +2619,7 @@ This should probably be in Unit." NotStandard="true" Desc="Sets the stance for a
         <Function Name="StopTimer" Desc="Stops a timer that is currently running." Id="289">
             <Param Name="strTimerName" Type="String" Id="290" Desc="The name of the timer that the function should stop."/>
         </Function>
-        <Function Name="RegisterSlashCommand" Desc="Registers a slash command with Apollo and sets up a function to handle the event fired when the command is used." Incomplete="true" Id="291">
+        <Function Name="RegisterSlashCommand" Desc="Registers a slash command with Apollo and sets up a function to handle the event fired when the command is used." Id="291">
             <Param Name="strCommand" Type="String" Id="292" Desc="The slash command that will get registered with Apollo.  This string should contain everything that comes after the / in the command."/>
             <Param Name="strFunction" Type="String" Id="293" Desc="The function that will handle the event that gets fired when the slash command is used."/>
             <Param Name="tAddonHandler" Type="Table" Default="LUA_NOREF" Id="294" Desc="The instance of the addon that will handle the event fired by the slash command.  This is usually the addon&apos;s &quot;self&quot;."/>
@@ -2599,7 +2652,7 @@ end">
             <ReturnValue Type="String" Id="308" Desc="Returns the string for Console_CommandNotFound if the slash command that was passed in was invalid.  Otherwise, this returns an empty string."/>
             <Param Name="strInput" Type="String" Id="309" Desc="The string that the function will parse."/>
         </Function>
-        <Function Name="LoadSprites" Desc="Runs the ReadXML method on the apollo manager specified with strFile and strDoc." Id="310" InternalNotes="Unsure on that second parameter">
+        <Function Name="LoadSprites" Desc="Loads a sprite set." Id="310" InternalNotes="Really need to figure out what exactly this does." NeedProofread="true" Incomplete="true">
             <Param Name="strFile" Type="String or XmlDoc" Id="311" Desc="The name of the form that contains the sprites, or the XmlDoc that contains them."/>
             <Param Name="strDoc" Type="String" Id="312" Desc="The name of the spriteDoc.  This variable is optional."/>
         </Function>
@@ -2645,7 +2698,7 @@ end">
             <Param Name="strFilename" Type="String" Id="343" Desc="The file name of the asset."/>
             <ReturnValue Type="String" Desc="The asset&apos;s size, in bytes." Id="15493"/>
         </Function>
-        <Function Name="AssetFileTimeString" Desc="Gets the date and time that the asset was last updated." Incomplete="true" Id="344">
+        <Function Name="AssetFileTimeString" Desc="Gets the date and time that the asset was last updated." Id="344">
             <Param Name="strFilename" Type="String" Id="345" Desc="The asset&apos;s file name."/>
             <ReturnValue Type="String" Desc="A string that contains the date and time when the specified asset was last updated." Id="15494"/>
         </Function>
@@ -2878,7 +2931,7 @@ end">
             </Param>
             <ReturnValue Type="Boolean" Desc="Whether the subclass was sucessfully registered with Apollo or not." Id="15610"/>
         </Function>
-        <Function Name="IsWindowSubclassRegistered" Incomplete="true" Id="8319" Desc="Determines whether the specified Window Subclass has been registered with Apollo.">
+        <Function Name="IsWindowSubclassRegistered" Id="8319" Desc="Determines whether the specified Window Subclass has been registered with Apollo.">
             <Param Name="strSubclassName" Desc="The name of the Window Subclass that the function will look for." Type="String" Id="15588"/>
             <ReturnValue Type="Boolean" Desc="Whether the Subclass is registered or not." Id="15589"/>
         </Function>
@@ -2890,7 +2943,7 @@ end">
         <Function Name="GetAPIVersion" Id="9084" Desc="Gets the current API version used by the game.">
             <ReturnValue Type="Integer" Desc="Apollo&apos;s current API version." Id="15530"/>
         </Function>
-        <Function Name="GetPackage" Incomplete="true" Id="9471" Desc="Returns information on a package that was registered with Apollo.">
+        <Function Name="GetPackage" Id="9471" Desc="Returns information on a package that was registered with Apollo.">
             <Param Name="strPackageName" Desc="The name of the package." Type="String" Id="15560"/>
             <ReturnValue Type="Table" Desc="Information about the package." Id="15561">
                 <Item Name="strName" Desc="The name of the package." Type="String" Id="15562"/>
@@ -2933,7 +2986,7 @@ end">
         <Function Name="GetMoveMetaKey" Id="14753" Desc="Gets the meta key that is bound to the Sprint action.">
             <ReturnValue Type="GameLib.CodeEnumInputModifier" Desc="The meta key that is bound to the Sprint action." Id="15557"/>
         </Function>
-        <Function Name="LoadTemplates" Incomplete="true" Id="16412"/>
+        <Function Name="LoadTemplates" Incomplete="true" Id="16412" InternalNotes="Not quite sure what&apos;s going on with this one..."/>
         <Function Name="GetObjectize" Desc="(lives in LuaObjectizer of UiModule.cpp)
 Does a lua_pushnumber of pObject&apos;s size." Incomplete="true" Id="375" Deleted="true"/>
     </Library>
@@ -3009,7 +3062,7 @@ Does a lua_pushnumber of pObject&apos;s size." Incomplete="true" Id="375" Delete
         <Function Name="IsLASChangeActive" Id="8327" Desc="Checks to make sure that the Change Spec ability is active.">
             <ReturnValue Type="Boolean" Desc="Informs the UI whether the Limited Action Set can be chaged." Id="15388"/>
         </Function>
-        <Function Name="GetTagsForSpell" Incomplete="true" Id="8328" Desc="Gets the category that the spell belongs to.">
+        <Function Name="GetTagsForSpell" Id="8328" Desc="Gets the category that the spell belongs to.">
             <Param Name="idSpell" Desc="The id number for the spell that is being checked." Type="Integer" Id="15384"/>
             <ReturnValue Type="String" Desc="An array of strings that contain the names of the categories that the spell belongs to." Array="true" Id="15385"/>
         </Function>
@@ -3108,7 +3161,7 @@ Activated - The player has spent points to activate this AMP">
         <Function Name="GetCurrentSpec" Id="9085" Desc="Gets the number of the Action Set that the player is currently using.">
             <ReturnValue Type="Integer" Desc="The number of the Action Set that the player is currently using." Id="15278"/>
         </Function>
-        <Function Name="GetNumUnlockedSpecs" Incomplete="true" Id="9086" Desc="Gets the number of Action Sets the current player has unlocked.">
+        <Function Name="GetNumUnlockedSpecs" Id="9086" Desc="Gets the number of Action Sets the current player has unlocked.">
             <ReturnValue Type="Integer" Desc="The number of Action Sets the player has unlocked." Id="15381"/>
         </Function>
         <Function Name="RespecEldanAugmentations" Id="12368" Desc="Attempts to reset the player&apos;s AMPs for their current spec.">
@@ -3127,6 +3180,11 @@ Activated - The player has spent points to activate this AMP">
                 <Item Name="eLimitedActionSetReslut" Desc="The result that the SpecIndex is tied to." Type="Integer" Id="15376"/>
             </ReturnValue>
         </Function>
+        <EnumSet Name="CodeEnumAMPRespecType" Incomplete="true" Id="17046">
+            <Enum Name="Full" Id="17047"/>
+            <Enum Name="Section" Id="17048"/>
+            <Enum Name="Single" Id="17049"/>
+        </EnumSet>
         <Function Name="CanTrainTier" Desc="Returns a bool that indicates if training is possible" Incomplete="true" Id="379" Deleted="true"/>
         <Function Name="TrainTier" Desc="Attempts to train the next tier of the ability with the corresponding ID" Incomplete="true" Id="380" Deleted="true"/>
         <Function Name="GetExplorerRelicList" Incomplete="true" Id="3094" Desc="Creates an array of Spells obtained via Explorer Relics" Deleted="true"/>
@@ -3167,7 +3225,7 @@ Activated - The player has spent points to activate this AMP">
                 </Item>
             </ReturnValue>
         </Function>
-        <Function Name="GetTradeskillAchievementCategoryTree" Incomplete="true" Id="3274" Desc="Gets a list of all of the categories and subcategories for a tradeskill&apos;s tech tree." Remarks="The Group returned in this function is always the tradeskill itself, with its subgroups being the different ranks of that tradeskill.">
+        <Function Name="GetTradeskillAchievementCategoryTree" Id="3274" Desc="Gets a list of all of the categories and subcategories for a tradeskill&apos;s tech tree." Remarks="The Group returned in this function is always the tradeskill itself, with its subgroups being the different ranks of that tradeskill.">
             <Param Name="eTradeskill" Desc="The function will return the tech tree for this tradeskill." Type="CraftingLib.CodeEnumTradeskill" Id="15438"/>
             <ReturnValue Type="Table" Desc="A table containing the name of the tradeskill and its subcategories." Array="true" Id="15439">
                 <Item Name="nGroupId" Desc="The id number for the tradeskill." Type="Integer" Id="15440"/>
@@ -3190,7 +3248,9 @@ Activated - The player has spent points to activate this AMP">
             <Param Name="bGetGuild" Desc="Whether the function should return guild achievements or not." Type="Boolean" Id="15436"/>
             <ReturnValue Type="Achievement" Desc="An array of the most recent achievements the player has earned, in order of most recent to least." Array="true" Id="15437"/>
         </Function>
-        <Function Name="GetGuildAchievementPoints" Incomplete="true" Id="16413"/>
+        <Function Name="GetGuildAchievementPoints" Id="16413" Desc="Returns the number of Guild Achivement Points the player&apos;s current guild has earned.">
+            <ReturnValue Type="Integer" Desc="The number of Guild Achievement Points that the guild has earned." Id="17009"/>
+        </Function>
         <Function Name="GetVisibleAchievements" Incomplete="true" Id="383" Deleted="true"/>
         <Function Name="GetAchievementData" Desc="Does a lua_newtable describing many (10+) fields relating to an achievement specified by nAchievementId." Incomplete="true" Id="386" Deleted="true"/>
         <Function Name="GetAchievementCategories" Desc="Does a lua_newtable with an index, id, and nameString of achievement categories." Incomplete="true" Id="389" Deleted="true"/>
@@ -3314,6 +3374,7 @@ Activated - The player has spent points to activate this AMP">
         <Function Name="RejectSharedChallenge" Id="8368" Desc="Declines a shared challenge.">
             <Param Name="idChallenge" Desc="The id number for the challenge that the function will reject." Type="Integer" Id="15802"/>
         </Function>
+        <Function Name="AtChallengeStartLocation" Incomplete="true" Id="17255"/>
         <Event Name="ChallengeTierCompleted" Incomplete="true" Id="401" Deleted="true"/>
         <Event Name="ChallengeInfo" Incomplete="true" Id="412" Deleted="true"/>
         <Event Name="ChallengeUpdate" Incomplete="true" Id="417" Deleted="true"/>
@@ -3573,6 +3634,8 @@ Activated - The player has spent points to activate this AMP">
             <Enum Name="QuestCommunicatorReceived" Id="9499"/>
             <Enum Name="DatachronBody" Id="9500"/>
             <Enum Name="Recall" Id="9501"/>
+            <Enum Name="InterruptArmor" Id="17185"/>
+            <Enum Name="Contracts" Id="17256"/>
             <Enum Name="CharacterPanel" Id="3305" Deleted="true"/>
             <Enum Name="AbilityWindow" Id="3306" Deleted="true"/>
             <Enum Name="Codex" Id="3331" Deleted="true"/>
@@ -3613,6 +3676,8 @@ Activated - The player has spent points to activate this AMP">
             <Enum Name="FriendshipAccountEmail" Id="8379"/>
             <Enum Name="FriendshipInviteNote" Id="8380"/>
             <Enum Name="PlayerTicketText" Id="16414"/>
+            <Enum Name="GuildRecruitDescription" Id="17050"/>
+            <Enum Name="PlayerTicketSubject" Id="17051"/>
         </EnumSet>
         <EnumSet Name="CodeEnumTutorial" Incomplete="true" Id="4422">
             <Enum Name="Crafting_UI_Tutorial" Id="9502"/>
@@ -3682,6 +3747,7 @@ Activated - The player has spent points to activate this AMP">
             <Enum Name="Housing_Room" Id="9566"/>
             <Enum Name="General_CREDD" Id="14757"/>
             <Enum Name="General_AccountServices" Id="14758"/>
+            <Enum Name="Contracts" Id="17257"/>
             <Enum Name="Inventory" Id="7079" Deleted="true"/>
         </EnumSet>
         <EnumSet Name="CodeEnumGenericError" Incomplete="true" Id="4427">
@@ -3724,9 +3790,22 @@ Activated - The player has spent points to activate this AMP">
             <Enum Name="Item_WrongFaction" Id="12388"/>
             <Enum Name="Instance_WrongLevel" Id="14759"/>
             <Enum Name="Mail_Squelched" Id="14760"/>
+            <Enum Name="LootForge_QualityMismatch" Id="17052"/>
+            <Enum Name="LootForge_InvalidItem" Id="17053"/>
+            <Enum Name="LootForge_CountMismatch" Id="17054"/>
+            <Enum Name="LootForge_Invalid" Id="17055"/>
+            <Enum Name="RewardTrack_CannotClaim" Id="17186"/>
+            <Enum Name="RewardTrack_InvalidRewardChoice" Id="17187"/>
+            <Enum Name="RewardTrack_InvalidTrackChoice" Id="17188"/>
+            <Enum Name="RewardTrack_TrackNotActive" Id="17189"/>
+            <Enum Name="RewardTrack_TrackAlreadyActive" Id="17190"/>
+            <Enum Name="Item_EquipPrereqFailed" Id="17191"/>
         </EnumSet>
         <EnumSet Name="CodeEnumVital" Incomplete="true" Id="7182">
             <Enum Name="Volatility" Id="9596"/>
+            <Enum Name="Resource8" Id="17056"/>
+            <Enum Name="Resource9" Id="17057"/>
+            <Enum Name="Resource10" Id="17058"/>
         </EnumSet>
         <EnumSet Name="CodeEnumTutorialCategory" Incomplete="true" Id="7207">
             <Enum Name="UNUSED12" Id="14761"/>
@@ -3788,7 +3867,7 @@ Activated - The player has spent points to activate this AMP">
         <Function Name="GetAvailableTargetMarkers" Incomplete="true" Id="8417"/>
         <Function Name="GetUnitScreenPosition" Incomplete="true" Id="8418"/>
         <Function Name="GetGameCommand" Incomplete="true" Id="8419"/>
-        <Function Name="GetLevelUpUnlockTypes" Incomplete="true" Id="8420"/>
+        <Function Name="GetLevelUpUnlockTypes" Id="8420" Incomplete="true"/>
         <Function Name="GetLevelUpUnlock" Incomplete="true" Id="8421"/>
         <Function Name="GetPendingLevelUpUnlocks" Incomplete="true" Id="8422"/>
         <Function Name="GetUnlocksForLevel" Incomplete="true" Id="8423"/>
@@ -3890,6 +3969,12 @@ Activated - The player has spent points to activate this AMP">
             <Enum Name="GenericMapNodeChoose" Id="14794"/>
             <Enum Name="SubmitSupportTicket" Id="14795"/>
             <Enum Name="LootItem" Id="16415"/>
+            <Enum Name="EldanForge" Id="17059"/>
+            <Enum Name="RuneSlotReroll" Id="17060"/>
+            <Enum Name="RuneSlotFinishReroll" Id="17061"/>
+            <Enum Name="UnlockCostumeItem" Id="17258"/>
+            <Enum Name="ForgetCostumeItem" Id="17259"/>
+            <Enum Name="SaveCostumeChanges" Id="17260"/>
         </EnumSet>
         <Function Name="GetGuildHolomarkDistance" Incomplete="true" Id="9087"/>
         <Function Name="GetVersionInfo" Incomplete="true" Id="9597"/>
@@ -4419,6 +4504,23 @@ Activated - The player has spent points to activate this AMP">
             <Enum Name="Custom1" Id="16435"/>
             <Enum Name="Custom2" Id="16436"/>
         </EnumSet>
+        <Function Name="ReplayLevelUp" Incomplete="true" Id="17062"/>
+        <EnumSet Name="CharacterRecustomizationResultCharacterRecustomizationResult" Incomplete="true" Id="17063">
+            <Enum Name="Success" Id="17064"/>
+            <Enum Name="UnknownError" Id="17065"/>
+            <Enum Name="NoChanges" Id="17066"/>
+            <Enum Name="InsufficientFunds" Id="17067"/>
+            <Enum Name="OutOfRange" Id="17068"/>
+        </EnumSet>
+        <Function Name="ToggleSettlerStructureCallouts" Incomplete="true" Id="17192"/>
+        <Function Name="AreSettlerStructureCalloutsVisible" Incomplete="true" Id="17193"/>
+        <Function Name="GetMountList" Incomplete="true" Id="17194"/>
+        <Function Name="GetVanityPetList" Incomplete="true" Id="17195"/>
+        <Function Name="GetGameMode" Incomplete="true" Id="17261"/>
+        <EnumSet Name="CodeEnumGameMode" Incomplete="true" Id="17262">
+            <Enum Name="West" Id="17263"/>
+            <Enum Name="China" Id="17264"/>
+        </EnumSet>
         <Function Name="GetPlayerMoney" Desc="Deprecated" Incomplete="true" Id="562" Deleted="true"/>
         <Function Name="GetPvpGraveyards" Desc="Does a lua_newtable with infoId and available of PvpObjectiveType_Graveyard." Incomplete="true" Id="583" Deleted="true"/>
         <Function Name="RecallShardGetInfo" Desc="return the RecallShardGetInfo" Incomplete="true" Id="597" Deleted="true"/>
@@ -4463,6 +4565,7 @@ bind should receive an id of a shard location" Incomplete="true" Id="604" Delete
             <Enum Name="OrderInvalidMember" Id="8508"/>
             <Enum Name="OrderFailedLeader" Id="8509"/>
             <Enum Name="AlreadyInGroupInstance" Id="12440"/>
+            <Enum Name="OrderFailedInUse" Id="17069"/>
         </EnumSet>
         <EnumSet Name="Difficulty" Incomplete="true" Id="3454">
             <Enum Name="Count" Id="12441"/>
@@ -4492,6 +4595,7 @@ bind should receive an id of a shard location" Incomplete="true" Id="604" Delete
         <Function Name="CanGotoGroupInstance" Incomplete="true" Id="14823"/>
         <Function Name="GetMemberVisibility" Incomplete="true" Id="14824"/>
         <Function Name="PrepareInfractionReportInvite" Incomplete="true" Id="14825"/>
+        <Function Name="SetOrder" Incomplete="true" Id="17070"/>
         <Function Name="GetInviteReceivedString" Desc="Does a lua_pushwstring of GetInviteReceivedString." Incomplete="true" Id="640" Deleted="true"/>
         <Function Name="CreateGroup" Desc="Runs m_clientGroup&apos;s RequestGroupCreate method." Incomplete="true" Id="641" Deleted="true"/>
         <Function Name="DenyInvite" Desc="Runs m_clientGroup&apos;s DenyInvite method with strMessage." Incomplete="true" Id="655" Deleted="true"/>
@@ -4522,6 +4626,8 @@ bind should receive an id of a shard location" Incomplete="true" Id="604" Delete
         <Function Name="DeleteMultipleMessages" Incomplete="true" Id="8530"/>
         <Method Name="GetSenderType" Incomplete="true" Id="9088"/>
         <Method Name="PrepareInfractionReport" Incomplete="true" Id="14826"/>
+        <Function Name="TakeAllAttachmentsFromMultipleMessages" Incomplete="true" Id="17071"/>
+        <Function Name="MarkMultipleMessagesAsRead" Incomplete="true" Id="17072"/>
         <Function Name="SendMail" Desc="Runs either g_game&apos;s MailSend or MailSendWithAttachments." Incomplete="true" Id="713" Deleted="true"/>
         <Function Name="GetId" Desc="Does a lua_pushinteger of the email&apos;s id, or nil if null." Incomplete="true" Id="724" Deleted="true"/>
         <Function Name="RejectCOD" Desc="Runs pEmail&apos;s ReturnToSender." Incomplete="true" Id="735" Deleted="true"/>
@@ -4551,15 +4657,107 @@ bind should receive an id of a shard location" Incomplete="true" Id="604" Delete
         <Function Name="GetRewardMissions" Incomplete="true" Id="2530" Deleted="true"/>
         <Function Name="ScientistScanBotInDespawnRange" Incomplete="true" Id="2535" Deleted="true"/>
     </Library>
-    <Object Name="DialogResponse" Incomplete="true" Id="802" Prefix="dr">
-        <Method Name="__gc" Incomplete="true" Id="13072"/>
+    <Object Name="DialogResponse" Id="802" Prefix="dr" Desc="DialogResponses are the various options that the player can select when conversing with NPCs and turning in quests.">
+        <Method Name="GetText" Desc="Gets the text for this DialogResponse." Id="803">
+            <ReturnValue Type="String" Desc="The DialogResponse&apos;s text." Id="16924"/>
+        </Method>
+        <Method Name="GetType" Desc="Gets the DialogResponse&apos;s type." Id="804">
+            <ReturnValue Type="Integer" Desc="The response&apos;s type.  This value corresponds with the DialogResponse.DialogResponseType enum." Id="16926"/>
+        </Method>
+        <Method Name="GetUniqueId" Desc="Gets the dialog&apos;s unique id number." Id="805">
+            <ReturnValue Type="Integer" Desc="The dialog&apos;s unique id number." Id="16921"/>
+        </Method>
+        <Method Name="GetQuestId" Desc="Gets the id of the quest associated with this dialog." Id="806">
+            <ReturnValue Type="Integer" Desc="The id number of the quest associated with this dialog response." Id="16922"/>
+        </Method>
+        <Method Name="GetRewardId" Desc="Gets the id of the reward associated with this dialog response." Id="807">
+            <ReturnValue Type="Integer" Desc="The id number of the reward associated with this response." Id="16923"/>
+        </Method>
+        <Method Name="Select" Desc="Tells the client that the player has chosen this DialogResponse" Id="808"/>
+        <Function Name="is" Id="2541" Desc="Determines whether a variable is a DialogResponse or not.">
+            <Param Name="oVariable" Desc="The object that the function will check." Type="Variable" Id="16919"/>
+            <ReturnValue Type="Boolean" Desc="Whether the object is a dialog response or not." Id="16920"/>
+        </Function>
+        <Method Name="__gc" Id="13072" Desc="Forces the garbage collector to be called on this variable."/>
     </Object>
-    <Object Name="Episode" Incomplete="true" Id="809" Prefix="epi">
-        <Method Name="IsWorldStory" Incomplete="true" Id="12445"/>
-        <Method Name="IsZoneStory" Incomplete="true" Id="12446"/>
-        <Method Name="IsRegionalStory" Incomplete="true" Id="12447"/>
-        <Method Name="__gc" Incomplete="true" Id="13073"/>
-        <Method Name="__eq" Incomplete="true" Id="13074"/>
+    <Object Name="Episode" Id="809" Prefix="epi" Desc="Episodes are a set of quests that are linked by a storyline or area.">
+        <Method Name="GetId" Desc="Gets the Episode&apos;s id." Id="810">
+            <ReturnValue Type="Integer" Desc="The Episode&apos;s id." Id="16953"/>
+        </Method>
+        <Method Name="GetState" Desc="Gets the Episode&apos;s current state." Id="811" InternalNotes="Episode.EpisodeState constants should be enums">
+            <ReturnValue Type="Integer" Desc="The Episode&apos;s current state.  This value corresponds with the Episode.EpisodeState set of constants." Id="16964"/>
+        </Method>
+        <Method Name="GetTitle" Desc="Gets the Episode&apos;s title." Id="812">
+            <ReturnValue Type="String" Desc="The Episode&apos;s title." Id="16967"/>
+        </Method>
+        <Method Name="GetDesc" Desc="Gets the description that should be shown for the Episode when it is incomplete." Id="813">
+            <ReturnValue Type="String" Desc="The string that should be used as the Episode&apos;s description while it is incomplete." Id="16952"/>
+        </Method>
+        <Method Name="GetSummary" Desc="Gets the description that should be shown for the Episode once it&apos;s complete." Id="814">
+            <ReturnValue Type="String" Desc="The string that should be shown for the Episode&apos;s description once it&apos;s in the Completed state." Id="16965"/>
+        </Method>
+        <Method Name="GetConLevel" Desc="Gets the level that the player is expected to be in order to complete the Episode." Id="815" InternalNotes="This doesn&apos;t seem to be used anymore.  Maybe it&apos;s depricated?" NotTested="true">
+            <ReturnValue Type="Integer" Desc="The level that the player is expected to be to complete the Episode." Id="16951"/>
+        </Method>
+        <Method Name="IsTaskOnly" Desc="Determines if the Episode only has Tasks.  Tasks are Quests that are not part of any larger chain." Id="816">
+            <ReturnValue Type="Boolean" Desc="Whether the Episode&apos;s Quests are all Tasks or not." Id="16982"/>
+        </Method>
+        <Method Name="GetZoneId" Desc="Gets the id number of the zone that the Episode takes place in." Id="817">
+            <ReturnValue Type="Integer" Desc="The id number of the zone that the Episode is in." Id="16975"/>
+        </Method>
+        <Method Name="GetZoneName" Desc="Gets the name of the zone that the Episode is found in." Id="818">
+            <ReturnValue Type="String" Desc="The name of the zone that the episode is in." Id="16977"/>
+        </Method>
+        <Method Name="GetVisibleQuests" Desc="Gets a list of Quests that are part of the Episode and match the filters that are flagged with the variables that are passed in" Id="819">
+            <Param Name="bShowCompleted" Type="Boolean" Id="820" Desc="Whether completed quests should be added to the list or not."/>
+            <Param Name="bShowOutLeveled" Type="Boolean" Id="821" Desc="Whether Quests whose con level are 10 below the player&apos;s effective level should be added to the list or not."/>
+            <Param Name="bSortByName" Type="Boolean" Id="823" Desc="Whether the list should be sorted alphabetically by name or not."/>
+            <Param Name="idQuestCategory" Desc="The Quests that are returned will be filtered by this QuestCategory id." Type="Integer" Id="16973"/>
+            <ReturnValue Type="Quest" Desc="An array of Quests that has been filtered and possibly sorted by the variables that were passed into the function." Array="true" Id="16974"/>
+            <Param Name="bShowMentioned" Type="Boolean" Id="822" Deleted="true"/>
+        </Method>
+        <Method Name="GetTrackedQuests" Desc="Gets a list of tracked quests that have the specified QuestCategory and are part of the Episode." Id="824">
+            <Param Name="idQuestCategory" Desc="The id of the QuestCategory that the function will use to filter the results." Type="Integer" Id="16968"/>
+            <Param Name="bSortByDistance" Desc="Whether the function should sort the results by distance, with the closest quests coming first in the list." Type="Boolean" Id="16969"/>
+            <ReturnValue Type="Quest" Desc="An array of Quests that are part of the Episode and have a QuestCategory whose id matches the one passed in." Array="true" Id="16970"/>
+        </Method>
+        <Method Name="GetQuest" Desc="Gets the Quest with the specified id if it is in this Episode." Id="825">
+            <Param Name="idQuest" Desc="The id of the Quest that the function will look for." Type="Integer" Id="16962"/>
+            <ReturnValue Type="Quest" Desc="The Quest whose id matches the one passed in." Id="16963"/>
+            <Param Name="nQuestId" Type="Integer" Id="826" Deleted="true"/>
+        </Method>
+        <Method Name="GetProgress" Desc="Gets information on the player&apos;s progress towards completing every quest of a specific category in this Episode." Id="827">
+            <Param Name="idQuestCategory" Desc="The function will get the Episode&apos;s progress for Quests whose category uses this id." Type="Integer" Id="16958"/>
+            <ReturnValue Type="Table" Desc="A count of how many Quests the player has completed and how many the Episode has for the specified category." Id="16959">
+                <Item Name="nTotal" Desc="The total number of Quests of the specified category that are in the Episode." Type="Integer" Id="16960"/>
+                <Item Name="nCompleted" Desc="The number of Quests of the specified category that the player has completed." Type="Integer" Id="16961"/>
+            </ReturnValue>
+        </Method>
+        <Function Name="is" Id="2542" Desc="Checks whether the variable that is passed in is an Episode or not.">
+            <Param Name="oVariable" Desc="The variable that the function will check.  This variable can be of any type." Type="Variable" Id="16944"/>
+            <ReturnValue Type="Boolean" Desc="Whether the variable that was passed in is an Episode or not." Id="16945"/>
+        </Function>
+        <Method Name="GetCategories" Incomplete="true" Id="3476" Desc="Gets a list of all of the QuestCategories that are used by quests in the Episode.">
+            <ReturnValue Type="QuestCategory" Desc="An array of QuestCategories that are used by quests in the Episode." Array="true" Id="16950"/>
+        </Method>
+        <Method Name="GetAllQuests" Id="3477" Desc="Gets a list of all of the quests in the Episode that match the passed in category id and that have been unlocked by the player.">
+            <Param Name="idQuestCategory" Desc="The function will return all quests with this category." Type="Integer" Id="16948"/>
+            <ReturnValue Type="Quest" Desc="An array of quests that have the same category as the one that was passed in and have been unlocked by the player." Array="true" Id="16949"/>
+        </Method>
+        <Method Name="IsWorldStory" Incomplete="true" Id="12445" Desc="Determines if the Episode is a World Story or not.  World Stories are quest chains that span multiple zones.">
+            <ReturnValue Type="Boolean" Desc="Whether the Episode is a World Story or not." Id="16983"/>
+        </Method>
+        <Method Name="IsZoneStory" Id="12446" Desc="Determines if the Episode is a Zone Story or not.  Zone Stories are Episodes that span an entire zone.">
+            <ReturnValue Type="Boolean" Desc="Whether the Episode is a Zone Story or not." Id="16984"/>
+        </Method>
+        <Method Name="IsRegionalStory" Id="12447" Desc="Checks if the Episode is a Regional Story.  Regional Stories are Episodes that take place in a specific region within a zone, but do not breadcrumb to other areas.">
+            <ReturnValue Type="Boolean" Desc="Whether the Episode is a Regional Story or not." Id="16981"/>
+        </Method>
+        <Method Name="__gc" Id="13073" Desc="Manually calls the garbage collector on this Episode."/>
+        <Method Name="__eq" Id="13074" Desc="Determines if two Episodes are the same.">
+            <Param Name="epiCompare" Desc="The episode being compared to this Episode." Type="Episode" Id="16946"/>
+            <ReturnValue Type="Boolean" Desc="Whether the two Episodes are the same or not." Id="16947"/>
+        </Method>
     </Object>
     <Object Name="Item" Incomplete="true" Id="828" Prefix="item">
         <EnumSet Name="CodeEnumItemType" Incomplete="true" Id="2176">
@@ -4571,6 +4769,25 @@ bind should receive an id of a shard location" Incomplete="true" Id="604" Delete
             <Enum Name="Exquisite" Id="2310" Deleted="true"/>
             <Enum Name="Phenomenal" Id="2311" Deleted="true"/>
             <Enum Name="Extraordinary" Id="2312" Deleted="true"/>
+        </EnumSet>
+        <EnumSet Name="CodeEnumItemUpdateReason" Incomplete="true" Id="3531">
+            <Enum Name="GM" Id="17073"/>
+            <Enum Name="Expired" Id="17074"/>
+            <Enum Name="Gadget" Id="17075"/>
+            <Enum Name="AltSpell" Id="17076"/>
+            <Enum Name="Challenge" Id="17077"/>
+            <Enum Name="SettlerImprovementConsumeResource" Id="17078"/>
+            <Enum Name="HousingContribution" Id="17079"/>
+            <Enum Name="HousingUpkeep" Id="17080"/>
+            <Enum Name="TradeskillAdditiveCost" Id="17081"/>
+            <Enum Name="TradeskillGlyph" Id="17082"/>
+            <Enum Name="UniqueCleanup" Id="17083"/>
+            <Enum Name="PathExplorerReward" Id="17084"/>
+            <Enum Name="CharacterRecustomization" Id="17085"/>
+            <Enum Name="LootForge" Id="17086"/>
+            <Enum Name="RewardTrack" Id="17196"/>
+            <Enum Name="MatchingReward" Id="17197"/>
+            <Enum Name="DyeCostume" Id="17265"/>
         </EnumSet>
         <EnumSet Name="CodeEnumMicrochipType" Incomplete="true" Id="4990">
             <Enum Name="Resistor" Id="8534"/>
@@ -4721,6 +4938,12 @@ bind should receive an id of a shard location" Incomplete="true" Id="604" Delete
         <Function Name="GetBankCount" Incomplete="true" Id="16533"/>
         <Function Name="GetRuneInfo" Incomplete="true" Id="16534"/>
         <Function Name="GetTradeskillSchematicId" Incomplete="true" Id="16535"/>
+        <Function Name="CanCombineInEldanForge" Incomplete="true" Id="17087"/>
+        <Function Name="IsAtEldanForge" Incomplete="true" Id="17088"/>
+        <Method Name="GetEffectiveLevel" Incomplete="true" Id="17089"/>
+        <Method Name="IsTradeable" Incomplete="true" Id="17090"/>
+        <Method Name="IsAlwaysTradeable" Incomplete="true" Id="17266"/>
+        <Method Name="IsTradeableTo" Incomplete="true" Id="17267"/>
         <Method Name="GetEffectiveLevel" Desc="Does a lua_pushinteger of itemData&apos;s effective level, or niil if null." Incomplete="true" Id="830" Deleted="true"/>
         <Method Name="GetBinding" Desc="Does a localized lua_pushwstring of either Soulbound, Bind of Pickup, or Bind on Equip specified by itemData, or nil if null." Incomplete="true" Id="835" Deleted="true"/>
         <Method Name="GetGenericString" Desc="Does a lua_pushwstring of a formatted string (to &apos;$1c $1n&apos;) with an actor corresponding to strName and fVal.
@@ -4759,6 +4982,7 @@ uses as library" Incomplete="true" Id="840" Deleted="true"/>
         <EnumSet Name="CodeEnumCurrencyType" Incomplete="true" Id="3503">
             <Enum Name="GroupCurrency" Id="8546"/>
             <Enum Name="ShadeSilver" Id="16451"/>
+            <Enum Name="Glory" Id="17091"/>
         </EnumSet>
         <Method Name="GetAltType" Incomplete="true" Id="8547"/>
         <Method Name="SetAltType" Incomplete="true" Id="8548"/>
@@ -4768,6 +4992,8 @@ uses as library" Incomplete="true" Id="840" Deleted="true"/>
             <Enum Name="WarCoins" Id="8552"/>
         </EnumSet>
         <Method Name="__eq" Incomplete="true" Id="13151"/>
+        <Method Name="GetExchangeItem" Incomplete="true" Id="17092"/>
+        <Method Name="SetExchangeItem" Incomplete="true" Id="17093"/>
     </Object>
     <Object Name="Quest" Incomplete="true" Id="914" Prefix="que">
         <Method Name="IsAbleToAdvanceInRaid" Incomplete="true" Id="8553"/>
@@ -4779,6 +5005,10 @@ uses as library" Incomplete="true" Id="840" Deleted="true"/>
         <Method Name="__eq" Incomplete="true" Id="13154"/>
         <Method Name="__gc" Incomplete="true" Id="13155"/>
         <Method Name="IsOptionalForEpisode" Incomplete="true" Id="14839"/>
+        <Method Name="IsImbuementQuest" Incomplete="true" Id="17094"/>
+        <Method Name="IsContract" Incomplete="true" Id="17095"/>
+        <Method Name="GetRepeatPeriod" Incomplete="true" Id="17096"/>
+        <Method Name="GetZoneId" Incomplete="true" Id="17198"/>
         <Method Name="GetTrackerIndex" Desc="Currently has no implementation" Incomplete="true" Id="950" Deleted="true"/>
         <Method Name="AcceptSubMission" Desc="Runs AcceptMission with the quest id and pUnit&apos;s id." Incomplete="true" Id="961" Deleted="true"/>
         <Method Name="IsSubMission" Desc="Does a lua_pushboolean of IsPathSubMission." Incomplete="true" Id="963" Deleted="true"/>
@@ -4846,6 +5076,9 @@ uses as library" Incomplete="true" Id="840" Deleted="true"/>
             <Enum Name="Caster_MustBe_PvpFlagged" Id="12457"/>
             <Enum Name="Target_OutsideTelegraph" Id="12458"/>
             <Enum Name="ShieldsOverloaded" Id="12459"/>
+            <Enum Name="CasterVitalCostResource8" Id="17097"/>
+            <Enum Name="CasterVitalCostResource9" Id="17098"/>
+            <Enum Name="CasterVitalCostResource10" Id="17099"/>
             <Enum Name="SpellUnkown" Id="7396" Deleted="true"/>
             <Enum Name="ItemAchievmentComplete" Id="7419" Deleted="true"/>
             <Enum Name="Caster_CannotBeInCombatPVE" Id="7451" Deleted="true"/>
@@ -4877,6 +5110,20 @@ uses as library" Incomplete="true" Id="840" Deleted="true"/>
             <Enum Name="Disembark" Id="9912"/>
             <Enum Name="ChangePlane" Id="9913"/>
             <Enum Name="ModifyRestedXP" Id="12460"/>
+            <Enum Name="HousingPlantSeed" Id="17100"/>
+            <Enum Name="UnlockVanityPet" Id="17101"/>
+            <Enum Name="SummonVanityPet" Id="17102"/>
+            <Enum Name="UNUSED114" Id="17199"/>
+            <Enum Name="UNUSED115" Id="17200"/>
+            <Enum Name="UNUSED011" Id="17268"/>
+            <Enum Name="UNUSED039" Id="17269"/>
+            <Enum Name="UNUSED050" Id="17270"/>
+            <Enum Name="UNUSED054" Id="17271"/>
+            <Enum Name="UNUSED070" Id="17272"/>
+            <Enum Name="UNUSED072" Id="17273"/>
+            <Enum Name="UNUSED074" Id="17274"/>
+            <Enum Name="UNUSED102" Id="17275"/>
+            <Enum Name="UNUSED103" Id="17276"/>
             <Enum Name="CharmCreature" Id="7746" Deleted="true"/>
             <Enum Name="NpcSetAIState" Id="7747" Deleted="true"/>
             <Enum Name="RecalculateSpellModifications" Id="7749" Deleted="true"/>
@@ -4902,9 +5149,13 @@ uses as library" Incomplete="true" Id="840" Deleted="true"/>
             <Enum Name="DoesNotUseSpecIndex" Id="9921"/>
             <Enum Name="Utility" Id="9922"/>
             <Enum Name="NotAutoActivated" Id="12461"/>
+            <Enum Name="Conditional" Id="17103"/>
+            <Enum Name="VanityPet" Id="17104"/>
         </EnumSet>
         <Method Name="__eq" Incomplete="true" Id="13156"/>
         <Method Name="__gc" Incomplete="true" Id="13157"/>
+        <Method Name="GetCostInfoString" Incomplete="true" Id="17105"/>
+        <Method Name="ShouldHideCooldownInTooltip" Incomplete="true" Id="17106"/>
         <Method Name="GetInstanceMaxCount" Desc="Does a lua_pushinteger of pSpell&apos;s maxSpellInstanceCount." Incomplete="true" Id="998" Deleted="true"/>
         <Function Name="ShortcutCast" Desc="Runs g_game&apos;s CastShortcutSpell with pSpell&apos;s id." Incomplete="true" Id="1024" Deleted="true"/>
     </Object>
@@ -5514,6 +5765,12 @@ removing depricated values." NeedProofread="true">
             <Enum Name="ReputationQuestMultiplier" Id="12464"/>
             <Enum Name="PrestigeQuestMultiplier" Id="12465"/>
             <Enum Name="NPCSpellExecutionFreqMultiplier" Id="16452"/>
+            <Enum Name="ResourceMax_8" Id="17107"/>
+            <Enum Name="ResourceRegenMultiplier_8" Id="17108"/>
+            <Enum Name="ResourceMax_9" Id="17109"/>
+            <Enum Name="ResourceRegenMultiplier_9" Id="17110"/>
+            <Enum Name="ResourceMax_10" Id="17111"/>
+            <Enum Name="ResourceRegenMultiplier_10" Id="17112"/>
             <Enum Name="AbilityPowerBase" Id="2413" Deleted="true"/>
             <Enum Name="AbilityPowerBaseRanged" Id="2414" Deleted="true"/>
             <Enum Name="AbilityPowerBaseSpell" Id="2415" Deleted="true"/>
@@ -5640,7 +5897,9 @@ for the flight path.  This corresponds with the Money.CodeEnumCurrencyType enum"
             </ReturnValue>
         </Method>
         <EnumSet Name="CodeEnumGender" Incomplete="true" Id="3667" Desc="An enum representing a unit&apos;s gender.  For the sake of this enum, Chua are male."/>
-        <EnumSet Name="CodeEnumSpellMechanic" Incomplete="true" Id="3671" Desc="An enum representing the spell mechanics of each class" InternalNotes="Do we still care about Empathy? (pun very much intended)"/>
+        <EnumSet Name="CodeEnumSpellMechanic" Incomplete="true" Id="3671" Desc="An enum representing the spell mechanics of each class" InternalNotes="Do we still care about Empathy? (pun very much intended)">
+            <Enum Name="Unused03" Id="17201"/>
+        </EnumSet>
         <Method Name="GetGender" Incomplete="true" Id="3677" Desc="Returns an integer representing the unit&apos;s gender.">
             <ReturnValue Type="Integer" Desc="Returns an integer representing the unit&apos;s gender.  This corresponds with the CodeEnumGender enum" Id="9145"/>
         </Method>
@@ -6083,6 +6342,22 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
             <Enum Name="Townie" Id="16457"/>
             <Enum Name="EliteNoShields" Id="16458"/>
         </EnumSet>
+        <Method Name="CanGrantXp" Incomplete="true" Id="17113"/>
+        <Method Name="RequestRealmName" Incomplete="true" Id="17114"/>
+        <EnumSet Name="CodeEnumRewardInfoType" Incomplete="true" Id="17202">
+            <Enum Name="Quest" Id="17203"/>
+            <Enum Name="Challenge" Id="17204"/>
+            <Enum Name="Explorer" Id="17205"/>
+            <Enum Name="Scientist" Id="17206"/>
+            <Enum Name="Soldier" Id="17207"/>
+            <Enum Name="Settler" Id="17208"/>
+            <Enum Name="PublicEvent" Id="17209"/>
+            <Enum Name="Rival" Id="17210"/>
+            <Enum Name="Friend" Id="17211"/>
+            <Enum Name="ScientistSpell" Id="17212"/>
+            <Enum Name="TSpell" Id="17213"/>
+            <Enum Name="Contract" Id="17214"/>
+        </EnumSet>
         <Event Name="UnitCCStateChanged" Desc="Updates the target frame if the targetted unit becomes vulnerable by displaying vulnerability indicators" Incomplete="true" Id="1069" Deleted="true"/>
         <Event Name="StartLooting" Incomplete="true" Id="1085" Deleted="true"/>
         <Event Name="StopLooting" Incomplete="true" Id="1087" Deleted="true"/>
@@ -6135,7 +6410,13 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
     <WindowControl Name="IconListBox" Incomplete="true" Id="1378" Parent="Window"/>
     <WindowControl Name="MenuBarWindow" Incomplete="true" Id="1387" Parent="Window"/>
     <WindowControl Name="MLWindow" Incomplete="true" Id="1391" Parent="Window"/>
-    <WindowControl Name="ProgressBar" Incomplete="true" Id="1406" Parent="Window"/>
+    <WindowControl Name="ProgressBar" Incomplete="true" Id="1406" Parent="Window">
+        <Method Name="GetFloor" Incomplete="true" Id="17215"/>
+        <Method Name="GetMax" Incomplete="true" Id="17216"/>
+        <Method Name="GetProgress" Incomplete="true" Id="17217"/>
+        <Method Name="GetClipPoints" Incomplete="true" Id="17218"/>
+        <Method Name="SetClipPoints" Incomplete="true" Id="17219"/>
+    </WindowControl>
     <WindowControl Name="SliderBar" Incomplete="true" Id="1432" Parent="Window"/>
     <WindowControl Name="Spinner" Incomplete="true" Id="1447" Parent="Window"/>
     <WindowControl Name="TabWindow" Incomplete="true" Id="1464" Parent="Window">
@@ -6211,13 +6492,32 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
         <Method Name="SetNewItemOverlaySprite" Incomplete="true" Id="8631"/>
         <Method Name="SetItemSortComparer" Incomplete="true" Id="14851"/>
         <Method Name="SetSort" Incomplete="true" Id="14852"/>
+        <Event Name="ItemClick" Id="17309">
+            <Param Name="eMouseButton" Desc="The mouse button being clicked." Id="17311" Type="EMouseButton"/>
+            <Param Name="itemClicked" Desc="Item that was clicked" Type="Item" Id="17313"/>
+        </Event>
         <Method Name="DeleteItem" Incomplete="true" Id="1859" Deleted="true"/>
         <Method Name="SalvageItem" Incomplete="true" Id="2602" Deleted="true"/>
     </WindowControl>
     <WindowControl Name="BuffWindow" Incomplete="true" Id="1885" Parent="Window"/>
-    <WindowControl Name="CashWindow" Incomplete="true" Id="1888" Parent="Window"/>
+    <WindowControl Name="CashWindow" Incomplete="true" Id="1888" Parent="Window">
+        <Method Name="SetExchangeItem" Incomplete="true" Id="17115"/>
+    </WindowControl>
     <WindowControl Name="CostumeWindow" Incomplete="true" Id="1911" Parent="Window">
         <Method Name="SetItemsByCreationId" Incomplete="true" Id="12489"/>
+        <Method Name="GetBones" Incomplete="true" Id="17116"/>
+        <Method Name="SetBone" Incomplete="true" Id="17117"/>
+        <Method Name="ResetBone" Incomplete="true" Id="17118"/>
+        <Method Name="ResetAllBones" Incomplete="true" Id="17119"/>
+        <Method Name="SetLook" Incomplete="true" Id="17120"/>
+        <Method Name="GetLooks" Incomplete="true" Id="17121"/>
+        <Method Name="GetLookIndexes" Incomplete="true" Id="17122"/>
+        <Method Name="GetSliderCodes" Incomplete="true" Id="17123"/>
+        <Method Name="SetBySliderCodes" Incomplete="true" Id="17124"/>
+        <Method Name="CommitCustomizationChanges" Incomplete="true" Id="17125"/>
+        <Method Name="GetCostForCustomizationSelection" Incomplete="true" Id="17126"/>
+        <Method Name="GetCostForBoneChanges" Incomplete="true" Id="17127"/>
+        <Method Name="RemoveItem" Incomplete="true" Id="17220"/>
     </WindowControl>
     <WindowControl Name="ItemSlotWindow" Incomplete="true" Id="1946" Parent="Window">
         <Method Name="GetSprWhenEmpty" Incomplete="true" Id="8632"/>
@@ -6293,7 +6593,27 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
     <WindowControl Name="ActionBarButton" Incomplete="true" Id="2629" Parent="Window"/>
     <WindowControl Name="DragDropFrame" Incomplete="true" Id="2659" Parent="Window"/>
     <WindowControl Name="IconButton" Incomplete="true" Id="2661" Parent="Button"/>
-    <Library Name="CraftingLib" Incomplete="true" Id="2672">
+    <Library Name="CraftingLib" Id="2672" Desc="This library is the primary way that the UI interacts with various tradeskills and schematics.  This includes tradeskills that the player has chosen, as well as ones that they are automatically granted such as cooking and runecrafting.">
+        <Function Name="GetSchematicList" Id="2676" NotStandard="true" InternalNotes="We could really use an enum for item categories." Desc="Gets a list of schematics that meet the requirements that are passed into this function.">
+            <Param Name="eTradeskillId" Desc="The function will return the schematics that the player knows for this tradeskill." Type="CraftingLib.CodeEnumTradeskill" Id="16650"/>
+            <Param Name="nItemCategory" Desc="The function will only return schematics that create items that fall under this category." Type="Integer" Id="16651"/>
+            <Param Name="eTier" Desc="The function will return schematics that belong to this tradeskill tier." Type="CraftingLib.CodeEnumTradeskillTier" Id="16652"/>
+            <Param Name="bShowUnknown" Desc="Whether the function should return schematics that the player has not unlocked or not." Type="Boolean" Id="16653"/>
+            <ReturnValue Type="Table" Desc="An array that contains info on each of the schematics that meet the requirements passed into the function." Array="true" Id="16654">
+                <Item Name="nSchematicId" Desc="The schematic&apos;s id number." Type="Integer" Id="16655"/>
+                <Item Name="strName" Desc="The name of the schematic." Type="String" Id="16656"/>
+                <Item Name="eItemType" Desc="The type of the item that is created by the schematic." Type="Item.CodeEnumItemType" Id="16657"/>
+                <Item Name="eTier" Desc="The tradeskill tier that the schematic belongs to." Type="CraftingLib.CodeEnumTradeskillTier" Id="16658"/>
+                <Item Name="bIsKnown" Desc="Whether the player has learned the schematic or not." Type="Boolean" Id="16659"/>
+                <Item Name="bIsOneUse" Desc="Whether the schematic can only be used once or not." Type="Boolean" Id="16660"/>
+                <Item Name="strItemTypeName" Desc="The item&apos;s type, in string form." Type="String" Id="16661"/>
+                <Item Type="Table" Name="tSubRecipes" Desc="An array that contains info on this schematic&apos;s sub-schematics." Array="true" Id="16662">
+                    <Item Name="nSchematicId" Desc="The id number for the sub-schematic." Type="Integer" Id="16663"/>
+                    <Item Name="strName" Desc="The name of the schematic." Type="String" Id="16664"/>
+                    <Item Name="bIsKnown" Desc="Whether the player has learned the sub-schematic or not." Type="Boolean" Id="16665"/>
+                </Item>
+            </ReturnValue>
+        </Function>
         <Function Name="CraftItem" Id="2678" Desc="Begins a crafting attempt for the specified schematic." Example="If the crafting attempt is successfully started, then the CraftingUpdateCurrent event will fire and the materials for the schematic will be consumed.">
             <Param Name="idSchematic" Desc="The schematic that the player is trying to craft." Type="Integer" Id="16045"/>
         </Function>
@@ -6303,16 +6623,94 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
                 <Item Name="strName" Desc="The name of the tradeskill." Type="String" Id="16197"/>
             </ReturnValue>
         </Function>
-        <Function Name="GetSchematicInfo" Incomplete="true" Id="3139" Desc="Gets information on a specific schematic.">
+        <Function Name="GetTradeskillInfo" Id="3138" Desc="Returns a table with info about the chosen tradeskill" NotStandard="true" InternalNotes="tTalentTiers needs some format work.">
+            <Param Name="eTradeskillId" Desc="The id for the tradeskill that the function will return info on." Type="CraftingLib.CodeEnumTradeskill" Id="16668"/>
+            <ReturnValue Type="Table" Desc="Detailed information on the tradeskill, including its description, XP requirements, requirements to relearn, and talents." Id="16669">
+                <Item Name="strName" Desc="The tradeskill&apos;s name." Type="String" Id="16670"/>
+                <Item Name="strDescription" Desc="A description of the tradeskill." Type="String" Id="16671"/>
+                <Item Name="nXpMax" Desc="The maximum amount of XP the player can earn for this tradeskill." Type="Integer" Id="16672"/>
+                <Item Name="nTierMax" Desc="The number of tiers the tradeskill has." Type="Integer" Id="16673"/>
+                <Item Name="bIsHobby" Desc="Whether the tradeskill is a hobby or not.  The only hobby currently in game is Cooking." Type="Boolean" Id="16674"/>
+                <Item Name="bIsAutoLearn" Desc="Whether the tradeskill is automatically learned by the player at a certain level or not." Type="Boolean" Id="16675"/>
+                <Item Name="bIsHarvesting" Desc="Whether the tradeskill is a harvesting tradeskill or not." Type="Boolean" Id="16676"/>
+                <Item Name="bIsCircuitBoardCrafting" Desc="Whether the tradeskill&apos;s schematics use Circuit Board Crafting or not." Type="Boolean" Id="16677"/>
+                <Item Name="bIsCoordinateCrafting" Desc="Whether the tradeskill&apos;s schematics use Coordinate Crafting or not." Type="Boolean" Id="16678"/>
+                <Item Name="tXpTiers" Desc="An array that contains the amount of XP required to reach each tier of the tradeskill." Type="Integer" Array="true" Id="16679"/>
+                <Item Name="tAxisNames" Desc="The names of the directions in the coordinate crafting grid for this tradeskill." Type="String" Array="true" Id="16680"/>
+                <Item Name="bIsActive" Desc="Whether the player currently knows the tradeskill or not." Type="Boolean" Id="16681"/>
+                <Item Name="nXP" Desc="The amount of XP the player has earned for this tradeskill." Type="Integer" Id="16682"/>
+                <Item Name="eTier" Desc="The tier that the player has reached in the tradeskill." Type="CraftingLib.CodeEnumTradeskillTier" Id="16683"/>
+                <Item Name="nXpForTier" Desc="The amount of XP the player has earned while in the current tier." Type="Integer" Id="16684"/>
+                <Item Name="nXpForNextTier" Desc="The amount of XP the player needs to reach their next tradeskill tier." Type="Integer" Id="16685"/>
+                <Item Name="nTalentPoints" Desc="The number of talent points the player has unlocked." Type="Integer" Id="16686"/>
+                <Item Name="monRelearnCost" Desc="The amount and type of currency needed to relearn this tradeskill" Type="Money" Id="16687"/>
+                <Item Name="nRelearnCooldownDays" Desc="The number of days until the player can relearn this tradeskill." Type="Integer" Id="16688"/>
+                <Item Type="Table" Name="tTalentTiers" Desc="Information on each tier of talents for this tradeskill." Array="true" Id="16689">
+                    <Item Type="Table" Desc="These tables have no name.  They are indexed by sequential numbers, starting at 1." Array="true" Id="16690">
+                        <Item Name="nId" Desc="The id number of the talent." Type="Integer" Id="16691"/>
+                        <Item Name="bIsActive" Desc="Whether the player has activated this talent or not." Type="Boolean" Id="16692"/>
+                    </Item>
+                    <Item Name="nId" Desc="The talent tier&apos;s id." Type="Integer" Id="16693"/>
+                    <Item Name="nPointsNeeded" Desc="The number of talent points that are needed to unlock this tier of talents." Type="Integer" Id="16694"/>
+                </Item>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetSchematicInfo" Id="3139" Desc="Gets information on a specific schematic." NotStandard="true" InternalNotes="A few depricated variables.">
             <Param Name="idSchematic" Desc="The id number of the schematic that the function will look at." Type="Integer" Id="16244"/>
             <Param Name="nMicrochipSockets" Desc="The number of sockets that the function should return information for.  This value defaults to 0." Type="Integer" Id="16245"/>
-            <ReturnValue Type="Table" Id="16246">
+            <ReturnValue Type="Table" Id="16246" Desc="A table containing detailed information on the specified schematic, including information on any sub-schematics the schematic may have.">
                 <Item Name="nSchematicId" Desc="The schematic&apos;s id number." Type="Integer" Id="16247"/>
                 <Item Name="eTradeskillId" Desc="The id number of the tradeskill that uses the schematic." Type="CraftingLib.CodeEnumTradeskill" Id="16248"/>
                 <Item Name="eTier" Desc="The tradeskill tier that the schematic belongs to." Type="CraftingLib.CodeEnumTradeskillTier" Id="16249"/>
                 <Item Name="strName" Desc="The name of the item created by the schematic." Type="String" Id="16250"/>
-                <Item Name="fVectorX" Desc="The x distance from the center of the coordinate crafting map that the map reaches." Type="Float" Id="16251"/>
-                <Item Name="fVectorY" Desc="The y distance from the center of the coordinate crafting map that the map reaches." Type="Float" Id="16252"/>
+                <Item Name="fVectorX" Desc="The x distance from the center of the coordinate crafting map that this schematic can be found.  This is only useful for sub-schematics." Type="Float" Id="16251"/>
+                <Item Name="fVectorY" Desc="The y distance from the center of the coordinate crafting map that this schematic can be found.  This is only useful for sub-schematics." Type="Float" Id="16252"/>
+                <Item Name="fRadius" Desc="The radius of the schematic on the coordinate crafting grid.  This is only useful for sub-schematics." Type="Float" Id="16607"/>
+                <Item Name="fCritRadius" Desc="This variable is likely depricated." Type="Float" Id="16608"/>
+                <Item Name="nParentSchematicId" Desc="The id number for this schematic&apos;s parent schematic.  This is only useful for sub-schematics." Type="Integer" Id="16609"/>
+                <Item Name="itemOutput" Desc="The item that is made if this schematic is successfully crafted." Type="Item" Id="16610"/>
+                <Item Name="achSource" Desc="The achievement (read Tech Tree node) that unlocks this schematic." Type="Achievement" Id="16611"/>
+                <Item Name="achTier" Desc="If the schematic is automatically learned, this variable contains the achievement for the tradeskill tier that the schematic belongs to." Type="Achievement" Id="16612"/>
+                <Item Name="nCraftXp" Desc="The amount of tradeskill XP the player gains when they successfully craft this schematic." Type="Integer" Id="16613"/>
+                <Item Name="nFailXp" Desc="The amount of XP the player gains if their crafting attempt fails." Type="Integer" Id="16614"/>
+                <Item Name="nLearnXp" Type="Integer" Id="16615"/>
+                <Item Name="bIsKnown" Desc="Whether the player already knows the schematic or not." Type="Boolean" Id="16616"/>
+                <Item Name="bIsOneUse" Desc="Whether the schematic is a one-time use schematic or not." Type="Boolean" Id="16617"/>
+                <Item Name="bIsAutoCraft" Desc="Whether the schematic can be automatically crafted without doing coordinate / circuit board crafting." Type="Boolean" Id="16618"/>
+                <Item Name="bIsAutoLearn" Desc="Whether the player automatically learns the schematic upon reaching the appropriate tradeskill tier or not." Type="Boolean" Id="16619"/>
+                <Item Name="nCraftAtOnceMax" Desc="The number of times the player can craft the schematic in one attempt.  This variable is depricated." Type="Integer" Id="16620"/>
+                <Item Type="Table" Name="tSockets" Desc="Information on each of the item&apos;s microchip sockets." Array="true" Id="16621">
+                    <Item Name="eSocketType" Desc="The type of item that can be placed in this socket." Type="Item.CodeEnumMicrochipType" Id="16622"/>
+                    <Item Name="nParent" Desc="The socket index of this socket&apos;s parent." Type="Integer" Id="16623"/>
+                    <Item Name="fRatio" Desc="The power/waste ratio applied to microchips in this socket." Type="Float" Id="16624"/>
+                    <Item Name="itemDefaultChip" Desc="The default microchip that is placed in this socket." Type="Item" Id="16625"/>
+                    <Item Name="bIsChangeable" Desc="Whether the microchip in this socket can be changed out for another one." Type="Boolean" Id="16626"/>
+                </Item>
+                <Item Type="Table" Name="tMaterials" Desc="Information on the materials needed to craft this schematic." Array="true" Id="16627">
+                    <Item Name="nAmount" Desc="The number of this particular item needed to craft this schematic." Type="Integer" Id="16628"/>
+                    <Item Name="itemMaterial" Desc="An item needed to craft this schematic." Type="Item" Id="16629"/>
+                </Item>
+                <Item Name="nCreateCount" Desc="The number of items created when the player crafts the schematic." Type="Integer" Id="16630"/>
+                <Item Name="itemCritResult" Desc="This variable is depricated." Type="Item" Id="16631"/>
+                <Item Name="nCritCount" Desc="This variable is depricated." Type="Integer" Id="16632"/>
+                <Item Name="nMaxAdditives" Desc="The number of additives that can be applied to the schematic per crafting attempt." Type="Integer" Id="16633"/>
+                <Item Type="Table" Name="tSubRecipes" Desc="An array that contains info on each of the sub-schematics associated with this schematic." Array="true" Id="16634">
+                    <Item Name="nSchematicId" Desc="The id number of the sub-schematic." Type="Integer" Id="16635"/>
+                    <Item Name="strName" Desc="The name of this sub-schematic." Type="String" Id="16636"/>
+                    <Item Name="bIsKnown" Desc="Whether the player has learned this sub-schematic or not." Type="Boolean" Id="16637"/>
+                    <Item Name="fDiscoveryAngle" Desc="The angle of the starting edge of a discoverable area, in degrees.  " Type="Float" Id="16638"/>
+                    <Item Name="fDiscoveryDistanceMin" Desc="The distance from the center of the coordinate crafting grid to the closest point in the discoverable area." Type="Float" Id="16639"/>
+                    <Item Name="fDiscoveryDistanceMax" Desc="The distance from the center of the coordinate crafting grid to the furthest point in a discoverable area." Type="Float" Id="16640"/>
+                    <Item Name="bIsUndiscovered" Desc="If the player has not discovered the sub-schematic, this will be true.  Otherwise, it will be false." Type="Boolean" Id="16641"/>
+                    <Item Name="fVectorX" Desc="The sub-schematic&apos;s X position on the coordinate crafting grid." Type="Float" Id="16642"/>
+                    <Item Name="fVectorY" Desc="The sub-schematic&apos;s Y position on the coordinate crafting grid." Type="Float" Id="16643"/>
+                    <Item Name="fRadius" Desc="The radius of the sub schematic on the coordinate crafting grid." Type="Float" Id="16644"/>
+                    <Item Name="fCritRadius" Desc="This value is depricated and no longer used." Type="Float" Id="16645"/>
+                    <Item Name="itemOutput" Desc="The item created by the sub-schematic." Type="Item" Id="16646"/>
+                    <Item Name="nCount" Desc="The number of items created by this sub schematic." Type="Integer" Id="16647"/>
+                    <Item Name="itemCritResult" Desc="This variable is depricated and is no longer used." Type="Item" Id="16648"/>
+                    <Item Name="nCritCount" Desc="This variable is depricated.  It currently matches the nCount variable." Type="Integer" Id="16649"/>
+                </Item>
             </ReturnValue>
         </Function>
         <Function Name="GetModSchematicInfo" Id="3140" Deprecated="true" InternalNotes="Pretty sure this is depricated..." Desc="Gets information on the item&apos;s schematic and microchip sockets.">
@@ -6333,6 +6731,11 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
             </ReturnValue>
             <Param Name="itemCrafting" Desc="The item that the player is trying to craft." Type="Item" Id="16211"/>
         </Function>
+        <Function Name="ValidateSocketItem" Id="3141" InternalNotes="Probably depricated.  We aren&apos;t using it anywhere.  I also don&apos;t think this is returning anything." NeedProofread="true" Deprecated="true" NotStandard="true">
+            <Param Name="idSchematic" Desc="The id for the schematic that the socket belongs to." Type="Integer" Id="16751"/>
+            <Param Name="nSocketIdx" Desc="The index of the socket that the function will validate." Type="Integer" Id="16752"/>
+            <Param Name="idInventory" Desc="The id number for the inventory slot that this item is in." Type="Integer" Id="16753"/>
+        </Function>
         <EnumSet Name="CodeEnumTradeskill" Id="3802" Desc="A list of the different tradeskills available to the player.  Augmentor, Farmer, and Fishing are not currently used.">
             <Enum Name="Runecrafting" Id="9996"/>
         </EnumSet>
@@ -6341,7 +6744,19 @@ AdventureSpell: Drops that have an immediate effect on the player that picks the
             <Enum Name="Master" Id="9998"/>
             <Enum Name="GrandMaster" Id="9999"/>
         </EnumSet>
+        <Function Name="LearnTradeskill" Id="3821" Desc="Grants the character the chosen tradeskill.  If the character is already at the maximum number of tradeskills allowed, this function also drops a chosen tradeskill." Example="Fires the Tradeskills_Learned event when successful.">
+            <Param Name="eTradeskillId" Desc="The id of the Tradeskill that the player will learn." Type="CraftingLib.CodeEnumTradeskill" Id="4756"/>
+            <Param Name="eDroppedTradeskillId" Desc="The id of the tradeskill that the player wants to drop in order to learn the new one." Type="CraftingLib.CodeEnumTradeskill" Id="4757"/>
+            <ReturnValue Type="Integer" Desc="Returns 0 if the tradeskillId is not a valid tradeskill.  Otherwise, returns 1." Id="4758" Deleted="true"/>
+        </Function>
         <Function Name="ForgetTradeskill" Id="3822" NotImplemented="true" Deprecated="true" Desc="This function has no code and does nothing."/>
+        <Function Name="GetValidSocketItems" Id="3823" Deprecated="true" InternalNotes="This very well may be depricated and replaced by CraftingLib.GetAvailableMicrochips" Desc="Gets a list of microchips that are valid for a specific socket in a schematic.">
+            <Param Name="idSchematic" Desc="The function will use the schematic with this id, in combination with the socket index, to get the list of valid items that can be added to the socket." Type="Integer" Id="16729"/>
+            <Param Name="nSocketIdx" Desc="The function will get a list of items that can be added to this socket." Type="Integer" Id="16730"/>
+            <ReturnValue Type="Table" Desc="A table that contains an array with every microchip in it." Id="16731">
+                <Item Name="arSkill" Desc="An array that contains all the microchips available." Type="Item" Array="true" Id="16732"/>
+            </ReturnValue>
+        </Function>
         <Function Name="GetPreviewInfo" Id="3826" InternalNotes="Thresholds should not be 0 based.
 Lots of depricated variables, but the function is not completely depricated." Desc="Gets information to draw a preview of the item that will be created by the specified schematic." NotStandard="true">
             <Param Name="idSchematic" Desc="The id number for the schematic that we want to preview." Type="Integer" Id="16212"/>
@@ -6399,14 +6814,58 @@ Lots of depricated variables, but the function is not completely depricated." De
                 <Item Desc="The threshold index for the specified socket.  This index needs to be 0 based." Type="Integer" Id="16042"/>
             </Param>
         </Function>
+        <Function Name="ShowTradeskillTutorial" Id="3832" Desc="Starts up the tutorial for tradeskills if tutorials are not disabled and the tutorial is not flagged as &quot;seen&quot;." Example="This will fire the ShowTutorial event if the player has not disabled tutorials and the tradeskill tutorial is not flagged as &quot;seen&quot;.  Otherwise, nothing will happen."/>
         <Function Name="GetAchievementCategoryForTier" Id="3833" Desc="Gets the achievement category id for the tradeskill tier&apos;s associated achievement.">
             <Param Name="eTradeskill" Desc="The tradeskill that the function will use to find the achievement category." Type="CraftingLib.CodeEnumTradeskill" Id="16046"/>
             <Param Name="eTier" Desc="The tier that the function will return the achievement category id for." Type="CraftingLib.CodeEnumTradeskillTier" Id="16047"/>
             <ReturnValue Type="Integer" Desc="The id number for the achievement category that the tradeskill tier belongs to." Id="16048"/>
         </Function>
+        <Function Name="GetTierForAchievementCategory" Id="3834" Desc="Gets the tradeskill tier that matches the achievement category that is passed in.">
+            <Param Name="idCategory" Desc="The id for the achievement category that the function will match to a tradeskill tier." Type="Integer" Id="16666"/>
+            <ReturnValue Type="CraftingLib.CodeEnumTradeskillTier" Desc="The tier that corresponds with the achievement category that was passed in." Id="16667"/>
+        </Function>
         <Function Name="GetSchematicCraftableCount" Id="6618" Desc="Gets the number of times a specified schematic can be crafted based on the items in the player&apos;s inventory, supply satchel, and bank.">
             <Param Name="idSchematic" Desc="The id number of the schematic." Type="Integer" Id="16242"/>
             <ReturnValue Type="Integer" Desc="The number of times the schematic can be created based on the items in the player&apos;s inventory, supply satchel, and bank." Id="16243"/>
+        </Function>
+        <Function Name="IsAtCraftingStation" Id="6620" Desc="Checks if the player is within range of a crafting station.">
+            <ReturnValue Type="Boolean" Desc="Determines whether the player is within range of a crafting station or not." Id="16737"/>
+        </Function>
+        <Function Name="GetTradeskillTalents" Id="6621" Desc="Gets a list of all the talents for a particular tradeskill." Example="If bDebugPrint is set to true, each talent tier for the tradeskill will be listed in chat in sequential order.  The format for each line is:
+&lt;Number of points needed to reach this talent tier&gt;: &lt;ID numbers for each talent in this tier&gt;
+
+Numbers with a * next to it are tiers that the player has reached, or talents that they have selected, depending on what type of number it is next to.">
+            <Param Name="eTradeskillId" Desc="The function will get the talents for the tradeskill with this ID." Type="CraftingLib.CodeEnumTradeskill" Id="16707"/>
+            <Param Name="bDebugPrint" Desc="If this is set to true, then the player will see debug information in their chat log." Type="Boolean" Id="16708"/>
+            <ReturnValue Type="Table" Desc="Information on each of the talent tiers for the tradeskill that was passed in to this function." Array="true" Id="16709">
+                <Item Name="nPointsRequired" Desc="The number of points required to reach this talent tier." Type="Integer" Id="16710"/>
+                <Item Type="Table" Name="tTalents" Desc="Information on each talent in this tier." Array="true" Id="16711">
+                    <Item Name="nTalentId" Desc="The id number for the talent." Type="Integer" Id="16712"/>
+                    <Item Name="bActive" Desc="Whether the player has activated this talent or not." Type="Boolean" Id="16713"/>
+                    <Item Name="strIcon" Desc="The name of the icon that should be displayed for the talent." Type="String" Id="16714"/>
+                    <Item Name="strName" Desc="The talent&apos;s name." Type="String" Id="16715"/>
+                    <Item Name="strTooltip" Desc="The tooltip that should be displayed for the talent." Type="String" Id="16716"/>
+                </Item>
+            </ReturnValue>
+        </Function>
+        <Function Name="PickTradeskillTalent" Id="6622" Desc="Attempts to activate the specified talent." Example="If the talent is successfully activated, the TalentsChanged event will fire.
+
+Note: Only one talent can be selected per tier.  If one is already selected in this tier, ">
+            <Param Name="eTradeskillId" Desc="The id of the tradeskill that the talent belongs to." Type="CraftingLib.CodeEnumTradeskill" Id="16738"/>
+            <Param Name="nTalentTier" Desc="The talent tier that the talent belongs to." Type="Integer" Id="16739"/>
+            <Param Name="idTalent" Desc="The id number for the talent that was chosen." Type="Integer" Id="16740"/>
+        </Function>
+        <Function Name="ResetTradeskillTalents" Id="6623" Desc="Attempts to reset the talents that are set for the specified tradeskill." Example="No event is fired if this function is successful.  Instead, CraftingLib.GetTradeskillTalents should return a talent list where no talents are set.">
+            <Param Name="eTradeskillId" Desc="The function will attempt to reset the talents of the tradeskill with this id." Type="CraftingLib.CodeEnumTradeskill" Id="16745"/>
+        </Function>
+        <Function Name="GetTradeskillTierXp" Id="6617" Desc="Gets the amount of XP required to reach a specific tradeskill tier.">
+            <Param Name="eTradeskillId" Desc="The id number of the Tradeskill that this function query." Type="CraftingLib.CodeEnumTradeskill" Id="16717"/>
+            <Param Name="eTradeskillTier" Desc="The function will return the XP amount required to reach this tier." Type="CraftingLib.CodeEnumTradeskillTier" Id="16718"/>
+            <ReturnValue Type="Integer" Desc="The amount of XP required to reach the tradeskill / tier combination that was passed into the function." Id="16719"/>
+        </Function>
+        <Function Name="GetTradeskillTalentRespecCost" Id="5391" Desc="Gets the amount and type of currency needed to reset the tradeskill&apos;s talents.">
+            <Param Name="eTradeskillId" Desc="The function will check the talent respec cost for this tradeskill." Type="CraftingLib.CodeEnumTradeskill" Id="16695"/>
+            <ReturnValue Type="Money" Desc="The type and amount of currency needed to reset the tradeskill&apos;s talents." Id="16696"/>
         </Function>
         <Function Name="GetAvailableAdditives" Id="5392" Desc="Gets a list of the additives that are available for the specified schematic.">
             <Param Name="eTradeskill" Desc="The tradeskill that the schematic belongs to." Type="CraftingLib.CodeEnumTradeskill" Id="16052"/>
@@ -6455,9 +6914,11 @@ Lots of depricated variables, but the function is not completely depricated." De
         <Function Name="AddRuneSlot" Id="10000" InternalNotes="Need to figure out what event is fired if this is successful." NeedProofread="true" Desc="Attempts to add a rune slot to an item.">
             <Param Name="nNewSlotCount" Desc="The number of rune slots on the item after adding a new one." Type="Integer" Id="16063"/>
         </Function>
-        <Function Name="RandomizeSigil" Incomplete="true" Id="10001"/>
-        <Function Name="GetValidGlyphItems" Incomplete="true" Id="10002"/>
-        <Function Name="GetValidGlyphableItems" Incomplete="true" Id="10003"/>
+        <Function Name="GetItemsWithRuneSlots" Id="10003" Desc="Gets a list of each item with rune slots that the player owns." Remarks="If neither variable that is passed in is set to true, the list of items will be empty.">
+            <Param Name="bIncludeEquipped" Desc="Whether items that the player has equipped should be included in the list or not." Type="Boolean" Id="16720"/>
+            <Param Name="bIncludeBags" Desc="Whether items that are in the player&apos;s bags should be included in the list or not." Type="Boolean" Id="16721"/>
+            <ReturnValue Type="Item" Desc="An array of items that have rune slots and are in the specified locations." Array="true" Id="16722"/>
+        </Function>
         <Function Name="GetAvailableProperties" Id="10004" Desc="Gets a list of properties that the player can set microchips for on the schematic.">
             <Param Name="idSchematic" Desc="The function will return the properties that are available for the schematic with the specified id." Type="Integer" Id="16076"/>
             <Param Name="idPowerCore" Desc="The item id for the power core that is set for the schematic.  This defaults to 0 if this value is not passed in." Type="Integer" Id="16077"/>
@@ -6476,11 +6937,9 @@ Lots of depricated variables, but the function is not completely depricated." De
             <ReturnValue Type="Item" Desc="A table that contains the item information for power cores that can be used for the specified schematic." Array="true" Id="16075"/>
         </Function>
         <Function Name="GetPropertyChipType" Id="10007" InternalNotes="This doesn&apos;t appear to be called anywhere in our addons.  Probably depricated." Deprecated="true"/>
-        <Function Name="UnlockSigil" Incomplete="true" Id="10009"/>
         <Function Name="ClearRuneSlot" Id="10010" InternalNotes="Need to figure out what event is fired as a response." NeedProofread="true" Desc="Attempts to remove the rune in the specified rune slot.">
             <Param Name="nSlotIdx" Desc="The index of the rune slot that the function will attempt to clear." Type="Integer" Id="16065"/>
         </Function>
-        <Function Name="InstallGlyphs" Incomplete="true" Id="10011"/>
         <Function Name="GetCurrentOverchargeInfo" Id="10012" Desc="Gets information on the current overcharge and various overcharge limits of the current Circuit Board schematic.">
             <ReturnValue Type="Table" Desc="A table that contains information on all things overcharge related to the current schematic." Id="16103">
                 <Item Name="arMultipliers" Desc="The property multipliers used for each microchip where the player matched the color of the chip with the slot." Type="Float" Array="true" Id="16104"/>
@@ -6543,12 +7002,26 @@ Lots of depricated variables, but the function is not completely depricated." De
             <Enum Name="W" Id="10022"/>
             <Enum Name="NW" Id="10023"/>
         </EnumSet>
-        <Function Name="RerollRuneSlot" Incomplete="true" Id="16466"/>
+        <Function Name="RerollRuneSlot" Id="16466" Desc="Attempts to change a rune slot to a different type." Example="If this function is successful, the ItemModified event will fire.">
+            <Param Name="itemSource" Desc="The item that contains the rune slot that the function will attempt to reroll." Type="Item" Id="16741"/>
+            <Param Name="nSlotIdx" Desc="The index of the rune slot that the function will attempt to reroll." Type="Integer" Id="16742"/>
+        </Function>
         <Function Name="CompleteRerollRuneType" Incomplete="true" Id="16467"/>
-        <Function Name="GetValidRuneItems" Incomplete="true" Id="16468"/>
+        <Function Name="GetValidRuneItems" Id="16468" Desc="Gets a list of all of the valid runes for a specific rune slot.  This list filters based on slot type and removes duplicate runes.">
+            <Param Name="itemSelected" Desc="The function will return the valid runes for this item." Type="Item" Id="16726"/>
+            <Param Name="nSlot" Desc="The function will return all of the valid runes for the rune slot at this index." Type="Integer" Id="16727"/>
+            <ReturnValue Type="Item" Desc="An array of runes that can be set to the specified rune slot." Array="true" Id="16728"/>
+        </Function>
         <Function Name="GetItemsWithRuneSlots" Incomplete="true" Id="16469"/>
-        <Function Name="UnlockRuneSlot" Incomplete="true" Id="16470"/>
-        <Function Name="InstallRuneIntoSlot" Incomplete="true" Id="16471"/>
+        <Function Name="UnlockRuneSlot" Id="16470" Desc="Attempts to unlock a rune slot on an item." Example="Fires the ItemModified event if the slot is successfully unlocked.">
+            <Param Name="itemSource" Desc="The function will attempt to unlock a rune slot that belongs to this item." Type="Item" Id="16746"/>
+            <Param Name="nSlotIdx" Desc="The index of the rune slot that the function will attempt to unlock." Type="Integer" Id="16747"/>
+        </Function>
+        <Function Name="InstallRuneIntoSlot" Id="16471" Desc="Attempts to update the runes that should be installed on an item." Example="If the operation is successful, the ItemModified event should fire.">
+            <Param Name="itemSource" Desc="The item that the rune will be installed in." Type="Item" Id="16735"/>
+            <Param Name="tInstalledRunes" Desc="An array of item ids for runes that should be installed on the item after the operation is complete." Type="Integer" Array="true" Id="16736"/>
+        </Function>
+        <Function Name="IsAtEngravingStation" Incomplete="true" Id="17128"/>
         <Function Name="RequestSchematic" Incomplete="true" Id="2673" Deleted="true"/>
         <Function Name="RequestSchematicList" Incomplete="true" Id="2674" Deleted="true"/>
         <Function Name="GetSchematic" Incomplete="true" Id="2675" Deleted="true"/>
@@ -6572,10 +7045,192 @@ Lots of depricated variables, but the function is not completely depricated." De
         <Function Name="BotchCraft" Incomplete="true" Id="6619" Deleted="true"/>
         <Function Name="AddCatalyst" Incomplete="true" Id="5390" Deleted="true"/>
     </Library>
-    <Library Name="CSIsLib" Incomplete="true" Id="2686">
+    <Library Name="CSIsLib" Id="2686" Desc="Allows the UI to interact with Client Side Interaction minigames, such as patern matching and timed clicking.">
+        <Function Name="GetActiveCSI" Id="2687" Desc="Gets a table containing information on the active CSI.  Returns nil if there is no active CSI.">
+            <ReturnValue Type="Table" Desc="A table containing information on the current Client Side Interaction.  " Id="6456">
+                <Item Name="eType" Desc="The type of CSI that is active." Type="CSIsLib.ClientSideInteractionType" Id="6457"/>
+                <Item Name="strContext" Desc="A string containing the text that should be displayed for the current CSI." Type="String" Id="6458"/>
+                <Item Name="nThreshold" Desc="The number of misses allowed for this CSI before the user fails.  This variable only exists for Metronome CSIs." Type="Integer" Id="6459"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="StartActiveCSI" Id="2688" Desc="Starts the currently active CSI."/>
+        <Function Name="CancelActiveCSI" Id="2689" Desc="Stops the current Client Side Interaction"/>
+        <Function Name="IsCSIRunning" Id="2690" Desc="Determines if the active CSI has been started.">
+            <ReturnValue Type="Boolean" Id="6469" Desc="Whether the active CSI is running or not."/>
+        </Function>
+        <Function Name="CSIProcessInteraction" Id="2691" Desc="Processes the user&apos;s input for the Client Side Interaction.  Different types of Client Side Interactions behave differently" Example="Functionality per CSI type:
+Precision: 
+Button Down: Informs the CSI of a button click.
+Button Up: Nothing
+
+Metronome: 
+Button Down: Informs the CSI of a button click
+ButtonUp: Nothing
+
+Rapid Tap:
+Button Down: Starts the CSI if it wasn&apos;t already running.  Informs the CSI of a button click.
+Button Up: Nothing
+
+Press and Hold: 
+Button Down: Starts the CSI if it wasn&apos;t already running.  Tells the CSI that the button is being held.
+Button Up: Tells the CSI that the button isn&apos;t being held.
+
+Yes/No: 
+ButtonDown: Treats the CSI as if the player clicked &quot;Yes&quot;
+ButtonUp: Treats the CSI as if the player clicked &quot;No&quot;
+"/>
+        <Function Name="GetTimeRemainingForActiveCSI" Id="3836" Desc="Gets the time remaining before the user fails the current CSI."/>
         <EnumSet Name="ClientSideInteractionType" Incomplete="true" Desc="An enumeration identifying the different types of Client Side Interactions" Id="6460" Deleted="true"/>
     </Library>
-    <Library Name="DatacubeLib" Incomplete="true" Id="2692">
+    <Library Name="DatacubeLib" Id="2692" Desc="A library that allows the player to interact with and get information on Datacubes, Journals, and Tales from Beyond the Fringe entries">
+        <Function Name="IsDatacubeComplete" Id="2693" Desc="Determines if an entry is complete.  This generally means whether the player has found all of the unlocks / sub-entries for the specified entry.">
+            <Param Name="idDatacube" Desc="The id for the entry that the function will check." Type="Integer" Id="16915"/>
+            <ReturnValue Type="Boolean" Desc="Whether the player has interacted with each of the entry&apos;s unlocks / sub-entries or not." Id="16916"/>
+        </Function>
+        <Function Name="GetVolumes" Id="2695" Desc="Gets a info on each journal entry that the player has unlocked at least one entry for.">
+            <ReturnValue Type="Table" Desc="Information on each journal entry that the player has unlocked at least one entry for." Array="true" Id="16899">
+                <Item Name="nDatacubeId" Desc="The journal&apos;s id number." Type="Integer" Id="16900"/>
+                <Item Name="strTitle" Desc="The journal&apos;s title." Type="String" Id="16901"/>
+                <Item Name="strAsset" Desc="The name of the asset associated with this journal entry." Type="String" Id="16902"/>
+                <Item Name="bIsComplete" Desc="Whether the player has unlocked all of the journal&apos;s sub-entries or not." Type="Boolean" Id="16903"/>
+                <Item Name="nNumCompleted" Desc="The number of the journal&apos;s sub-entries that the player has unlocked." Type="Integer" Id="16904"/>
+                <Item Name="nNumTotal" Desc="The number of sub-entries that the player needs to unlock to complete the journal." Type="Integer" Id="16905"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetLastUpdatedDatacube" Id="2696" Desc="Gets the information for the last datacube entry that was updated for the player.">
+            <ReturnValue Type="Table" Id="16850" Desc="Information on the player&apos;s most recently updated datacube entry.">
+                <Item Name="nDatacubeId" Desc="The entry&apos;s id number." Type="Integer" Id="16851"/>
+                <Item Name="eDatacubeType" Desc="The type of  entry.  This value corresponds with the DatacubeLib.DatacubeType set of constants." Type="Integer" Id="16852"/>
+                <Item Name="nWorldZoneId" Desc="The id of the zone that this entry is associated with." Type="Integer" Id="16853"/>
+                <Item Name="strZoneName" Desc="The name of the zone that this journal is associated with." Type="String" Id="16854"/>
+                <Item Name="nVolumeId" Desc="The id of the journal that this entry belongs to, if any." Type="Integer" Id="16855"/>
+                <Item Name="strText" Desc="The entry&apos;s text." Type="String" Id="16856"/>
+                <Item Name="bIsComplete" Desc="Whether the entry has been unlocked or not." Type="Boolean" Id="16857"/>
+                <Item Name="bHasSound" Desc="Whether the entry has a sound associated with it or not." Type="Boolean" Id="16858"/>
+                <Item Name="strTitle" Desc="The entry&apos;s title." Type="String" Id="16859"/>
+                <Item Name="nNumCompleted" Desc="The number of unlocks the player has found for this entry.  This variable only applies to Chronicle type entries." Type="Integer" Id="16860"/>
+                <Item Name="nNumTotal" Desc="The total number of unlocks needed to finish the entry.  This variable only applies to Chronicle type entries." Type="Integer" Id="16861"/>
+                <Item Name="strAsset" Desc="The sprite used for the entry when it is completed.  This variable only applies to Chronicle type entries." Type="String" Id="16862"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetDatacubesForZone" Id="2697" NotStandard="true" InternalNotes="Need enum for DatacubeType.
+" Desc="Gets a list of datacube entries that are found in a specific zone.">
+            <Param Name="idZone" Desc="The function will return the datacube entries found in the zone with this id." Type="Integer" Id="16828"/>
+            <ReturnValue Type="Table" Desc="An array of tables that contain information on each datacube entry in the specified zone." Array="true" Id="16829">
+                <Item Name="nDatacubeId" Desc="The id number for the entry." Type="Integer" Id="16830"/>
+                <Item Name="eDatacubeType" Desc="The type associated with the datacube.  This value corresponds with the DatacubeLib.DatacubeType set of constants." Type="Integer" Id="16831"/>
+                <Item Name="nWorldZoneId" Desc="The id for the world zone that the datacube entry is associated with." Type="Integer" Id="16832"/>
+                <Item Name="strZoneName" Desc="The name of the zone that the datacube entry is unlocked in." Type="String" Id="16833"/>
+                <Item Name="strText" Desc="The datacube entry&apos;s text." Type="String" Id="16835"/>
+                <Item Name="bIsComplete" Desc="Whether the entry is completed or not." Type="Boolean" Id="16836"/>
+                <Item Name="bHasSound" Desc="Whether the entry has a sound attached to it." Type="Boolean" Id="16837"/>
+                <Item Name="strTitle" Desc="The entry&apos;s title." Type="String" Id="16838"/>
+                <Item Name="nNumCompleted" Desc="The number of unlocks that have been found for the entry.  This only applies to Chronicle type entries." Type="Integer" Id="16839"/>
+                <Item Name="nNumTotal" Desc="The number of unlocks required to complete the entry.  This only exist for Chronicle type entries." Type="Integer" Id="16840"/>
+                <Item Name="strAsset" Desc="The file name for the sprite shown in the completed entry.  This only applies to Chronicle type entries." Type="String" Id="16841"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetDatacubesForVolume" Id="2698" InternalNotes="Needs enum for DatacubeType." Desc="Gets a list of datacube sub-entries for a journal." NotStandard="true">
+            <Param Name="idJournal" Desc="The id number for the journal entry that the results belong to." Type="Integer" Id="16817"/>
+            <ReturnValue Type="Table" Array="true" Desc="An array of tables that contain information on each sub-entry associated with the specified journal." Id="16818">
+                <Item Name="nDatacubeId" Desc="The entry&apos;s id number." Type="Integer" Id="16819"/>
+                <Item Name="eDatacubeType" Desc="This value lines up with the DatacubeLib.DatacubeType_ set of contstants." Type="Integer" Id="16820"/>
+                <Item Name="nWorldZoneId" Desc="The id of the world zone that the entry belongs to." Type="Integer" Id="16821"/>
+                <Item Name="strZoneName" Desc="The name of the zone that the entry belongs to." Type="String" Id="16822"/>
+                <Item Name="nVolumeId" Desc="The id number of the parent journal entry." Type="Integer" Id="16823"/>
+                <Item Name="strText" Desc="The entry&apos;s text." Type="String" Id="16824"/>
+                <Item Name="bIsComplete" Desc="Whether the entry has been unlocked or not." Type="Boolean" Id="16825"/>
+                <Item Name="bHasSound" Desc="Whether the entry has a sound file associated with it or not." Type="Boolean" Id="16826"/>
+                <Item Name="strTitle" Desc="The entry&apos;s title." Type="String" Id="16827"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetZonesWithDatacubes" Id="2699" Desc="Gets a list of each zone that has a Datacube entry.">
+            <ReturnValue Type="Table" Desc="The id number and name of each zone that has a Datacube entry associated with it." Array="true" Id="16906">
+                <Item Name="nZoneId" Desc="The zone&apos;s id number." Type="Integer" Id="16907"/>
+                <Item Name="strName" Desc="The zone&apos;s name." Type="String" Id="16908"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="PlayDatacubeSound" Id="2700" Desc="Plays the sound associated with the entry.">
+            <Param Name="idDatacube" Desc="The function will cause the entry with this id to play its sound." Type="Integer" Id="16917"/>
+        </Function>
+        <Function Name="StopDatacubeSound" Id="2701" Desc="Stops the sound associated with a specific entry.">
+            <Param Name="idDatacube" Desc="The function will stop the sound associated with the datacube with this id." Type="Integer" Id="16918"/>
+        </Function>
+        <Function Name="GetTotalCollectionSize" Id="3147" Desc="Gets the total number of entries that the player has made progress on of a specific type.">
+            <Param Name="eDatacubeType" Desc="The function will return the number of entries that the player knows about of this type. This value corresponds with the DatacubeLib.DatacubeType set of constants." Type="Integer" Id="16889"/>
+            <ReturnValue Type="Integer" Desc="The number of entries of a specific type that the player has made progress on." Id="16890"/>
+        </Function>
+        <Function Name="GetTotalVolumeCount" Incomplete="true" Id="3148" Desc="Gets the number of journal entries within a specific zone." Example="This will only count top level journal entries, not sub-entries for each journal.">
+            <Param Name="idZone" Desc="The id of the zone that the function will look through." Type="Integer" Id="16897"/>
+            <ReturnValue Type="Integer" Desc="The number of journal entries within the specified zone." Id="16898"/>
+        </Function>
+        <Function Name="GetJournalsForZone" Id="3837" Desc="Gets a list of all the journal entries within a zone.">
+            <Param Name="idZone" Desc="The function will return the journal entries found in this zone." Type="Integer" Id="16842"/>
+            <ReturnValue Type="Table" Desc="An array of tables that contain information on all of the journal entries within the zone." Array="true" Id="16843">
+                <Item Name="nDatacubeId" Desc="The journal&apos;s id number." Type="Integer" Id="16844"/>
+                <Item Name="strTitle" Desc="The journal&apos;s title." Type="String" Id="16845"/>
+                <Item Name="strAsset" Desc="The sprite associated with the journal." Type="String" Id="16846"/>
+                <Item Name="bIsComplete" Desc="Whether the player has unlocked all of the sub-entries for the journal or not." Type="Boolean" Id="16847"/>
+                <Item Name="nNumCompleted" Desc="The number of sub-entries that the player has unlocked for this journal." Type="Integer" Id="16848"/>
+                <Item Name="nNumTotal" Desc="The total number of sub-entries for the journal." Type="Integer" Id="16849"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetTalesForZone" Id="3838" Desc="Gets a list of all of the Tales entries that the player has made progress on within a specific zone.">
+            <Param Name="idZone" Desc="The function will get a list of Tales that are associated with the zone with this id." Type="Integer" Id="16875"/>
+            <ReturnValue Type="Table" Desc="Information on each of the Tales entries that the player has unlocked at least one entry for in the specified zone." Array="true" Id="16876">
+                <Item Name="nDatacubeId" Desc="The entry&apos;s id number." Type="Integer" Id="16877"/>
+                <Item Name="eDatacubeType" Desc="The entry&apos;s type.  This value should always be DatacubeLib.DatacubeType_Chronicle for this entry." Type="Integer" Id="16878"/>
+                <Item Name="nWorldZoneId" Desc="The id of the zone that is associated with this entry." Type="Integer" Id="16879"/>
+                <Item Name="strZoneName" Desc="The name of the zone that the entry is associated with." Type="String" Id="16880"/>
+                <Item Name="nVolumeId" Desc="The id of the journal entry that serves as this entry&apos;s parent.  This value should always be 0 for this entry." Type="Integer" Id="16881"/>
+                <Item Name="strText" Desc="The entry&apos;s text." Type="String" Id="16882"/>
+                <Item Name="bIsComplete" Desc="Whether the player has interacted with all of the unlocks for this entry or not." Type="Boolean" Id="16883"/>
+                <Item Name="bHasSound" Desc="Whether the entry has a sound associated with it or not." Type="Boolean" Id="16884"/>
+                <Item Name="strTitle" Desc="The entry&apos;s title." Type="String" Id="16885"/>
+                <Item Name="nNumCompleted" Desc="The number of this entry&apos;s unlocks that the player has activated." Type="Integer" Id="16886"/>
+                <Item Name="nNumTotal" Desc="The number of unlocks needed to complete this Tales entry." Type="Integer" Id="16887"/>
+                <Item Name="strAsset" Desc="The sprite that should be shown when this entry is complete." Type="String" Id="16888"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetTales" Id="3839" Desc="Gets information on all the Tales from Beyond the Fringe entries that the player has unlocked at least one part of.">
+            <ReturnValue Type="Table" Id="16863" Desc="Information on each Tales entry that the player has made progress on.">
+                <Item Name="nDatacubeId" Desc="The id number for the entry." Type="Integer" Id="16864"/>
+                <Item Name="eDatacubeType" Desc="The entry&apos;s type.  This should be DatacubeLib.DatacubeType_Chronicle for every entry returned by this function." Type="Integer" Id="16865"/>
+                <Item Name="nWorldZoneId" Desc="The id of the zone that the entry is associated with." Type="Integer" Id="16866"/>
+                <Item Name="strZoneName" Desc="The name of the zone that the entry is associated with." Type="String" Id="16867"/>
+                <Item Name="nVolumeId" Desc="The id of the entry&apos;s parent journal entry.  This value will be 0 if it has none." Type="Integer" Id="16868"/>
+                <Item Name="strText" Desc="The entry&apos;s text." Type="String" Id="16869"/>
+                <Item Name="bIsComplete" Desc="Whether the player has found all of the unlocks for this Tales entry or not." Type="Boolean" Id="16870"/>
+                <Item Name="bHasSound" Desc="Whether the entry has sound or not." Type="Boolean" Id="16871"/>
+                <Item Name="nNumCompleted" Desc="The number of unlocks the player has found for this entry." Type="Integer" Id="16872"/>
+                <Item Name="nNumTotal" Desc="The number of unlocks needed to complete this entry." Type="Integer" Id="16873"/>
+                <Item Name="strAsset" Desc="The sprite displayed when the entry is completed." Type="String" Id="16874"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetZonesWithJournals" Id="3840" Desc="Gets a list of each zone that has a journal entry associated with it.">
+            <ReturnValue Type="Table" Desc="The id number and name of each zone that has a journal entry associated with it." Array="true" Id="16909">
+                <Item Name="nZoneId" Desc="The zone&apos;s id number." Type="Integer" Id="16910"/>
+                <Item Name="strName" Desc="The zone&apos;s name." Type="String" Id="16911"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetZonesWithTales" Id="3841" Desc="Gets a list of each zone with a Tales entry associated with it.">
+            <ReturnValue Type="Table" Desc="A list with the id and name of each zone that has a Tales entry associated with it." Id="16912">
+                <Item Name="nZoneId" Desc="The zone&apos;s id." Type="Integer" Id="16913"/>
+                <Item Name="strName" Desc="The zone&apos;s name." Type="String" Id="16914"/>
+            </ReturnValue>
+        </Function>
+        <Function Name="GetTotalDatacubesForZone" Id="8163" Desc="Gets the number of entries within a zone that have the Datacube type.">
+            <Param Name="idZone" Desc="The function will get the number of Datacube entries in the zone with this id." Type="Integer" Id="16891"/>
+            <ReturnValue Type="Integer" Desc="The number of datacube entries in the specified zone." Id="16892"/>
+        </Function>
+        <Function Name="GetTotalJournalsForZone" Id="8164" Desc="Gets the number of journal entries within a specific zone.">
+            <Param Name="idZone" Desc="The function will get the number of journal entries in the zone with this id." Type="Integer" Id="16893"/>
+            <ReturnValue Type="Integer" Desc="The number of journal entries found in the specified zone." Id="16894"/>
+        </Function>
+        <Function Name="GetTotalTalesForZone" Id="8165" Desc="Gets the number of Tales entries in a specific zone.">
+            <Param Name="idZone" Desc="The function will get the number of Tales in the zone with this id." Type="Integer" Id="16895"/>
+            <ReturnValue Type="Integer" Desc="The number of Tales entries in the specified zone." Id="16896"/>
+        </Function>
         <Function Name="GetDatacubes" Incomplete="true" Id="2694" Deleted="true"/>
     </Library>
     <Library Name="HazardsLib" Incomplete="true" Id="2702">
@@ -6701,6 +7356,7 @@ Lots of depricated variables, but the function is not completely depricated." De
         <Method Name="GetObjective" Incomplete="true" Id="14853"/>
         <Method Name="GetLiveEvent" Incomplete="true" Id="14854"/>
         <Method Name="PrepareInfractionReport" Incomplete="true" Id="14855"/>
+        <Method Name="GetStat" Incomplete="true" Id="17221"/>
         <Function Name="GetEvents" Incomplete="true" Id="2814" Deleted="true"/>
     </Object>
     <Object Name="PublicEventObjective" Incomplete="true" Id="2815" Prefix="peo">
@@ -6709,6 +7365,7 @@ Lots of depricated variables, but the function is not completely depricated." De
         <Method Name="__gc" Incomplete="true" Id="13181"/>
         <Method Name="GetObjectiveId" Incomplete="true" Id="14856"/>
         <Method Name="GetLiveEventSummary" Incomplete="true" Id="14857"/>
+        <Method Name="GetMedalPoints" Incomplete="true" Id="17222"/>
     </Object>
     <WindowControl Name="ProtostarMapWindow" Incomplete="true" Id="2830" Parent="Window"/>
     <Object Name="ApolloCursor" Id="2837" Desc="ApolloCursors are the sprites that are used on the cursor in different situations." Prefix="ac">
@@ -6915,7 +7572,7 @@ While this functionality is not yet depricated, it may be in the future.  We hig
         <Method Name="__index" Incomplete="true" Id="13229"/>
         <Method Name="__newindex" Incomplete="true" Id="13230"/>
     </Object>
-    <Object Name="EulerAngles" Incomplete="true" Id="3009">
+    <Object Name="EulerAngles" Incomplete="true" Id="3009" InternalNotes="Gonna skip this one until I understand them better...we aren&apos;t really using them yet anyways.">
         <Method Name="__newindex" Incomplete="true" Id="13231"/>
         <Method Name="__tostring" Incomplete="true" Id="13232"/>
         <Method Name="__index" Incomplete="true" Id="13233"/>
@@ -6952,8 +7609,11 @@ While this functionality is not yet depricated, it may be in the future.  We hig
         <Method Name="SetWeaponSheath" Incomplete="true" Id="13299"/>
         <Method Name="SetDefaultSequence" Incomplete="true" Id="13300"/>
         <Method Name="IsWeaponEquipped" Incomplete="true" Id="13301"/>
+        <Method Name="SetItemsByCreationGearSet" Incomplete="true" Id="17223"/>
     </Object>
-    <Object Name="ScreenModelManager" Incomplete="true" Id="3072" DevOnly="true"/>
+    <Object Name="ScreenModelManager" Incomplete="true" Id="3072" DevOnly="true">
+        <Method Name="AddActorByRaceGenderClass" Incomplete="true" Id="17224"/>
+    </Object>
     <Library Name="Sound" Incomplete="true" Id="3077">
         <Function Name="PlayLootItemSound" Incomplete="true" Id="3080" Deleted="true"/>
         <Function Name="PlayLootMoneySound" Incomplete="true" Id="3081" Deleted="true"/>
@@ -7033,12 +7693,26 @@ While this functionality is not yet depricated, it may be in the future.  We hig
             <Enum Name="Door" Id="9109"/>
             <Enum Name="Sky" Id="9110"/>
             <Enum Name="Music" Id="14859"/>
+            <Enum Name="Ground" Id="17129"/>
         </EnumSet>
         <Function Name="GetNumPlacedDecorInterior" Incomplete="true" Id="10397"/>
         <Function Name="GetNumPlacedDecorExterior" Incomplete="true" Id="10398"/>
         <Function Name="GetMaxPlacedDecorExterior" Incomplete="true" Id="10399"/>
         <Function Name="GetRemodelMusicExteriorList" Incomplete="true" Id="14860"/>
         <Function Name="PrepareInfractionReport" Incomplete="true" Id="14861"/>
+        <Function Name="GetMaxPlacedDecorInterior" Incomplete="true" Id="17130"/>
+        <Function Name="GetRemodelGroundList" Incomplete="true" Id="17131"/>
+        <Function Name="SetNeighborGardenSplit" Incomplete="true" Id="17132"/>
+        <Function Name="GetNeighborGardenSplit" Incomplete="true" Id="17133"/>
+        <Function Name="IsGroundClutterHidden" Incomplete="true" Id="17134"/>
+        <Function Name="SetGroundClutterHidden" Incomplete="true" Id="17135"/>
+        <Function Name="RequestVisitPlayer" Incomplete="true" Id="17225"/>
+        <Function Name="GetControlMode" Incomplete="true" Id="17277"/>
+        <Function Name="SetControlMode" Incomplete="true" Id="17278"/>
+        <EnumSet Name="DecorControlMode" Incomplete="true" Id="17279">
+            <Enum Name="Local" Id="17280"/>
+            <Enum Name="Global" Id="17281"/>
+        </EnumSet>
         <Function Name="RequestProperties" Incomplete="true" Id="3164" Deleted="true"/>
         <Function Name="RequestPlots" Incomplete="true" Id="3165" Deleted="true"/>
         <Function Name="PurchaseProperty" Incomplete="true" Id="3168" Deleted="true"/>
@@ -7172,6 +7846,8 @@ While this functionality is not yet depricated, it may be in the future.  We hig
         </Method>
         <Method Name="__eq" Id="13237" Deprecated="true" InternalNotes="Unsure if this is used or not.  Could not find any functionality for it."/>
         <Method Name="__gc" Id="13238" Desc="Challenge&apos;s garbage collection function.  This will delete the Challenge from memory."/>
+        <Method Name="GetTimer" Incomplete="true" Id="17282"/>
+        <Method Name="GetDuration" Incomplete="true" Id="17283"/>
     </Object>
     <WindowControl Name="WorldFixedWindow" Incomplete="true" Id="3247" Parent="Window"/>
     <Library Name="ActionSetLib" Id="3963" Desc="This library contains functions for validating and saving the player&apos;s Limited Action Set.">
@@ -7194,6 +7870,7 @@ While this functionality is not yet depricated, it may be in the future.  We hig
             <Enum Name="EldanAugmentation_VersionMismatch" Id="14862"/>
             <Enum Name="EldanAugmentation_SpecNotFound" Id="14863"/>
             <Enum Name="LASChangeSpellFailed" Id="16472"/>
+            <Enum Name="SpecUnlockPrereqFalse" Id="17226"/>
         </EnumSet>
         <Function Name="IsSlotUnlocked" Id="3756" Desc="Determines if the specified slot is unlocked for the player.">
             <Param Name="nSlotIdx" Desc="The slot number that the function should check." Type="Integer" Id="15455"/>
@@ -7329,7 +8006,7 @@ end"/>
         <Method Name="GetCategoryFullName" Id="3771" Desc="Returns the long version of the name of the category that the achievement belongs to">
             <ReturnValue Type="String" Id="10960"/>
         </Method>
-        <Method Name="GetCategoryId" Incomplete="true" Id="3772" Desc="Returns the id number for the category that the achievement belongs to"/>
+        <Method Name="GetCategoryId" Id="3772" Desc="Returns the id number for the category that the achievement belongs to"/>
         <Method Name="GetGroup" Id="3773" Desc="Gets the name of the tradeskill that the achievement belongs to, if any.">
             <ReturnValue Type="String" Id="10969"/>
         </Method>
@@ -7416,8 +8093,11 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Method Name="GetSubGroupId" Id="8733" Desc="Returns the id number of the subgroup that the achievement belongs to.">
             <ReturnValue Type="Integer" Id="10975"/>
         </Method>
-        <Method Name="__eq" Incomplete="true" Id="13239"/>
-        <Method Name="__gc" Incomplete="true" Id="13240"/>
+        <Method Name="__eq" Id="13239" Desc="Determines if the Achievement that is passed in is the same as the achievement that called this function.">
+            <Param Name="achCompare" Desc="The achievement that will be compared to the one that called this function." Type="Achievement" Id="17007"/>
+            <ReturnValue Type="Boolean" Desc="Whether the two Achievements were the same or not." Id="17008"/>
+        </Method>
+        <Method Name="__gc" Id="13240" Desc="Manually calls the Achievement&apos;s garbage collector."/>
         <Method Name="IsCurrencyShown" Id="14875" Desc="Determines whether the achievent requires currency to be completed.">
             <ReturnValue Type="Boolean" Desc="If the achievement requires currency, this will return true." Id="15413"/>
         </Method>
@@ -7436,6 +8116,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Function Name="GetSelectedRoles" Incomplete="true" Id="7932" Remarks="Known Issue: The values returned from this function carry over to characters with the same name on the same realm and same account.  Because of this, the selected roles may be different than the roles the new character is eligible for."/>
         <EnumSet Name="MatchType" Incomplete="true" Id="7945">
             <Enum Name="Event" Id="14877"/>
+            <Enum Name="Shiphand" Id="17136"/>
         </EnumSet>
         <EnumSet Name="RatingType" Incomplete="true" Id="7976">
             <Enum Name="Warplot" Id="8734"/>
@@ -7459,6 +8140,8 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
             <Enum Name="Drowning" Id="8751"/>
         </EnumSet>
         <Method Name="__eq" Incomplete="true" Id="13243"/>
+        <Function Name="GetMatchingGameType" Incomplete="true" Id="17137"/>
+        <Method Name="GetReward" Incomplete="true" Id="17227"/>
         <Method Name="Queue" Incomplete="true" Id="7909" Deleted="true"/>
         <Method Name="QueueAsGroup" Incomplete="true" Id="7910" Deleted="true"/>
     </Object>
@@ -7486,6 +8169,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
     <Object Name="QuestCategory" Incomplete="true" Id="4559" Prefix="qc">
         <Method Name="__eq" Incomplete="true" Id="13254"/>
         <Method Name="__gc" Incomplete="true" Id="13255"/>
+        <Method Name="GetCategoryType" Incomplete="true" Id="17138"/>
     </Object>
     <Object Name="ApolloColor" Id="4564" Desc="ApolloColors are the primary way that the UI uses colors.  There are a number predefined colors, which can be found under Virtual colors section of Houston&apos;s color chooser.  Addon developers can also create their own ApolloColors using a string with the color&apos;s ARGB values in hex format." Prefix="cr">
         <Function Name="new" Id="5491" Desc="Creates a new ApolloColor object." NeedProofread="true" InternalNotes="This is a pain to write simply because there are so many different options for what kinds of variables can be passed in." Remarks="This can be created using  a string with the ApolloColor&apos;s name, a string with the color&apos;s ARGB values in hex, a table with the color&apos;s ARGB values, or a set of integers using the ARGB values.  "/>
@@ -7657,6 +8341,9 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
             <Enum Name="Tier4Unlock" Id="13270"/>
         </EnumSet>
         <Function Name="PrepareInfractionReportInvite" Incomplete="true" Id="14879"/>
+        <Function Name="RecruitmentGetActiveGuilds" Incomplete="true" Id="17139"/>
+        <Function Name="RecruitmentSubscribe" Incomplete="true" Id="17140"/>
+        <Function Name="RecruitmentUnsubscribe" Incomplete="true" Id="17141"/>
     </Library>
     <Library Name="PetCustomizationLib" Incomplete="true" Id="5570">
         <Function Name="GetCustomization" Incomplete="true" Id="8766"/>
@@ -7709,7 +8396,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Method Name="__gc" Incomplete="true" Id="13282"/>
         <Method Name="GetUnlockCount" Incomplete="true" Id="14880"/>
     </Object>
-    <Object Name="PetCustomization" Incomplete="true" Id="5596">
+    <Object Name="PetCustomization" Incomplete="true" Id="5596" Prefix="cust">
         <Method Name="ClearFlairInSlot" Incomplete="true" Id="8785"/>
         <Method Name="GetSlotsByFlairType" Incomplete="true" Id="8786"/>
         <Method Name="GetPreviewAttachSlot" Incomplete="true" Id="8787"/>
@@ -7718,21 +8405,38 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
     </Object>
     <WindowControl Name="SendEmailButton" Incomplete="true" Id="5608" Parent="Window"/>
     <WindowControl Name="TradeCommitButton" Incomplete="true" Id="5612" Parent="Window"/>
-    <Object Name="DialogSys" Incomplete="true" Id="2704">
-        <Function Name="GetState" Incomplete="true" Id="10024"/>
-        <Function Name="GetResponses" Incomplete="true" Id="10025"/>
-        <Function Name="End" Incomplete="true" Id="10026"/>
-        <Function Name="GetViewableQuest" Incomplete="true" Id="10027"/>
-        <Function Name="GetCommCreatureId" Incomplete="true" Id="10028"/>
-        <Function Name="GetNPC" Incomplete="true" Id="10029"/>
-        <Function Name="GetNPCText" Incomplete="true" Id="10030"/>
-        <Function Name="GetResponseText" Incomplete="true" Id="10031"/>
-        <Function Name="IsItemQuestGiver" Incomplete="true" Id="10032"/>
+    <Object Name="DialogSys" Id="2704" InternalNotes="Shouldn&apos;t this be a library?" Desc="Dialogs are the chat bubbles that appear when speaking with an NPC.  They can be used for accepting and turning in quests and other conversations with NPCs.  This library allows the player to get information on the currently displayed dialog.">
+        <Function Name="GetState" Id="10024" Desc="Gets the dialog&apos;s current state." NotStandard="true" InternalNotes="Need to make DialogSys.DialogState an enum.">
+            <ReturnValue Type="Integer" Desc="The dialog&apos;s current state.  This value lines up with the DialogSys_DialogState set of constants." Id="16940"/>
+        </Function>
+        <Function Name="GetResponses" Id="10025" Desc="Gets a list of possible responses that the player can send.">
+            <Param Name="idQuest" Desc="The id number of the quest that is giving the player responses." Type="Integer" Id="16936"/>
+            <ReturnValue Type="String" Desc="The list of responses the player can select for the dialog." Array="true" Id="16937"/>
+        </Function>
+        <Function Name="End" Id="10026" Desc="Cancels the current dialog."/>
+        <Function Name="GetViewableQuest" Id="10027" Desc="Grabs the quest with the specified id if it is the one that the dialog is using." InternalNotes="This should be moved to the quest library or game library or somewhere other than dialogsys">
+            <Param Name="idQuest" Desc="The id number of the quest that the function will try to match with any quest that the current dialog is displaying." Type="Integer" Id="16941"/>
+            <ReturnValue Type="Quest" Desc="The quest with the specified id.  If the dialog was not showing a quest or was showing a quest with a different id, this will be nil." Id="16942"/>
+        </Function>
+        <Function Name="GetCommCreatureId" Id="10028" Desc="Gets the id number of the NPC associated with the current dialog.">
+            <ReturnValue Type="Integer" Desc="The id number of the NPC that is tied to the dialog." Id="16928"/>
+        </Function>
+        <Function Name="GetNPC" Id="10029" Desc="Gets the unit associated with the dialog.">
+            <ReturnValue Type="Unit" Desc="The unit associated with the dialog." Id="16929"/>
+        </Function>
+        <Function Name="GetNPCText" Id="10030" Desc="Gets the string that contains the NPC&apos;s text.  This will also play any VO associated with this dialog.">
+            <Param Name="idQuest" Desc="The id number of the quest that the dialog is associated with." Type="Integer" Id="16930"/>
+            <ReturnValue Type="string" Desc="The text that the dialog should show for the NPC." Id="16931"/>
+        </Function>
+        <Function Name="GetResponseText" Id="10031" Desc="Gets the text that the player is responding to.">
+            <ReturnValue Type="String" Desc="The text that the player&apos;s responses o" Id="16938"/>
+        </Function>
+        <Function Name="IsItemQuestGiver" Id="10032" Desc="Checks if the dialog was triggered by an item that is granting a quest.">
+            <ReturnValue Type="Boolean" Desc="Whether the quest is granted by an item or not." Id="16943"/>
+        </Function>
     </Object>
     <WindowControl Name="ActionConfirmButton" Incomplete="true" Id="8788" Parent="Window">
-        <Method Name="SetActionData" Incomplete="true" Id="8789">
-            <Param Name="eType" Type="GameLib.CodeEnumConfirmButtonType" Id="16564"/>
-        </Method>
+        <Method Name="SetActionData" Incomplete="true" Id="8789"/>
         <Event Name="SalvageItemRequested" Incomplete="true" Id="8790"/>
         <Event Name="DeleteItemRequested" Incomplete="true" Id="8791"/>
         <Event Name="EmailSent" Incomplete="true" Id="8792"/>
@@ -7760,8 +8464,9 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Event Name="ReportPlayerComplete" Incomplete="true" Id="14883"/>
         <Event Name="SupportTicketSubmitted" Incomplete="true" Id="14884"/>
         <Event Name="LootItemRequested" Incomplete="true" Id="16474"/>
-        <Event Name="RuneSlotRerolled" Id="16565"/>
-        <Event Name="RuneSlotRerollCompleted" Id="16566"/>
+        <Event Name="RuneSlotRerolled" Id="17005"/>
+        <Event Name="RuneSlotRerollCompleted" Id="17006"/>
+        <Event Name="EldanForgeRequested" Incomplete="true" Id="17142"/>
     </WindowControl>
     <Library Name="AccountItemLib" Incomplete="true" Id="8793" InternalNotes="Temporarily skipping this since idk much about how this works.">
         <Function Name="GetPendingAccountSingleItems" Incomplete="true" Id="8794"/>
@@ -7879,15 +8584,12 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Method Name="__eq" Incomplete="true" Id="16537"/>
         <Method Name="__gc" Incomplete="true" Id="16538"/>
     </Object>
-    <Library Name="CREDDExchangeLib" Incomplete="true" Id="10897">
-        <Function Name="RequestExchangeInfo" Incomplete="true" Id="10898"/>
-        <Function Name="SellCREDD" Incomplete="true" Id="10899"/>
-        <Function Name="SellCREDD2" Incomplete="true" Id="10900"/>
-        <Function Name="BuyCREDD" Incomplete="true" Id="10901"/>
-        <Function Name="BuyCREDD2" Incomplete="true" Id="10902"/>
-        <Function Name="CancelOrder" Incomplete="true" Id="10903"/>
-        <Function Name="CancelOrder2" Incomplete="true" Id="10904"/>
-        <EnumSet Name="CodeEnumAccountOperationResult" Incomplete="true" Id="10905">
+    <Library Name="CREDDExchangeLib" Id="10897" Desc="This library is one of the primary ways that the player interacts with the CREDD Exchange.  This does not include creating and fulfilling orders, which is handled by the ActionConfirmButton.">
+        <Function Name="RequestExchangeInfo" Id="10898" Desc="Requests a list for the CREDD Exchange&apos;s stats and CREDDExchangeOrders." Example="The server will fire the CREDDExchangeInfoResults event in response"/>
+        <Function Name="CancelOrder" Id="10903" Desc="Removes a CREDD Exchange Order from the Exchange." Example="The CREDDExchangeInfoResults event is fired in response to this, informing the UI of the status of the operation.">
+            <Param Name="crdOrder" Desc="The order that the player wishes to cancel." Type="CREDDExchangeOrder" Id="16755"/>
+        </Function>
+        <EnumSet Name="CodeEnumAccountOperationResult" Id="10905" Desc="Results of various account operations.  This includes reasons the operation might have failed, as well as &quot;Ok&quot; for successful operations.">
             <Enum Name="Ok" Id="10906"/>
             <Enum Name="GenericFail" Id="10907"/>
             <Enum Name="DBError" Id="10908"/>
@@ -7916,7 +8618,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
             <Enum Name="Cooldown" Id="12542"/>
             <Enum Name="MissingEntitlement" Id="12543"/>
         </EnumSet>
-        <EnumSet Name="CodeEnumAccountOperation" Incomplete="true" Id="10931">
+        <EnumSet Name="CodeEnumAccountOperation" Id="10931" Desc="The different types of account operations that the player can perform.">
             <Enum Name="MTXPurchase" Id="10932"/>
             <Enum Name="ClaimPending" Id="10933"/>
             <Enum Name="ReturnPending" Id="10934"/>
@@ -7932,25 +8634,70 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
             <Enum Name="BuyCREDDComplete" Id="10944"/>
             <Enum Name="CREDDRedeem" Id="14896"/>
         </EnumSet>
-        <Function Name="GetCREDDHistory" Incomplete="true" Id="12544"/>
+        <Function Name="GetCREDDHistory" Id="12544" Desc="Requests player&apos;s buy and sell history from the server." Example="The server will send the results in the CREDDOperationHistoryResults event."/>
     </Library>
-    <Object Name="CREDDExchangeOrder" Incomplete="true" Id="10945">
-        <Method Name="GetPrice" Incomplete="true" Id="10946"/>
-        <Method Name="GetListTime" Incomplete="true" Id="10947"/>
-        <Method Name="GetExpirationTime" Incomplete="true" Id="10948"/>
-        <Method Name="IsBuy" Incomplete="true" Id="10949"/>
-        <Method Name="SetPrice" Incomplete="true" Id="10950"/>
-        <Method Name="IsPosted" Incomplete="true" Id="10951"/>
-        <Method Name="CanPost" Incomplete="true" Id="10952"/>
-        <Method Name="Post" Incomplete="true" Id="10953"/>
-        <Method Name="Cancel" Incomplete="true" Id="10954"/>
-        <Function Name="is" Incomplete="true" Id="10955"/>
-        <Function Name="newBuyOrder" Incomplete="true" Id="10956"/>
-        <Function Name="newSellOrder" Incomplete="true" Id="10957"/>
-        <Method Name="__eq" Incomplete="true" Id="13285"/>
-        <Method Name="__gc" Incomplete="true" Id="13286"/>
+    <Object Name="CREDDExchangeOrder" Id="10945" Desc="Individual orders on the CREDD Exchange." Prefix="crd">
+        <Method Name="GetPrice" Id="10946" Desc="Gets the price that the order was set for.">
+            <ReturnValue Type="Money" Desc="The amount and type of money that the order is requesting or offering for a CREDD." Id="16764"/>
+        </Method>
+        <Method Name="GetListTime" Id="10947" Desc="Gets the time that the order was posted." Example="The full date/time can be converted to a string using the Time object&apos;s _tostring function:
+
+local crdNewOrder = CCExchangeOrder.newBuyOrder()
+local monPrice = Money.new()
+monPrice:SetAmount(1)
+
+crdNewOrder:SetPrice(monPrice)
+crdNewOrder:Post()
+
+local timeExpiration = crdNewOrder:GetListTime()
+Print(timeExpiration:_tostring())">
+            <ReturnValue Type="Time" Desc="A time object for when the order was posted." Id="16763"/>
+        </Method>
+        <Method Name="GetExpirationTime" Id="10948" Desc="Gets the amount of time that the order will remain on the CREDD Exchange." Example="The full date/time can be converted to a string using the Time object&apos;s _tostring function:
+
+local crdNewOrder = CCExchangeOrder.newBuyOrder()
+local monPrice = Money.new()
+monPrice:SetAmount(1)
+
+crdNewOrder:SetPrice(monPrice)
+crdNewOrder:Post()
+
+local timeExpiration = crdNewOrder:GetExpirationTime()
+Print(timeExpiration:_tostring())">
+            <ReturnValue Type="Time" Desc="A Time object that states when the order will expire." Id="16762"/>
+        </Method>
+        <Method Name="IsBuy" Id="10949" Desc="Determines if the order is a buy order.">
+            <ReturnValue Type="Boolean" Desc="Whether the order is a buy order or not." Id="16765"/>
+        </Method>
+        <Method Name="SetPrice" Id="10950" Desc="Sets the price that the order asks for once it is posted on the CREDD Exchange." Example="Note that the Money has to be in credits and the amount has to be greater than 0.">
+            <Param Name="monPrice" Desc="The amount of money that the order will pay for / accept for CREDD." Type="Money" Id="16768"/>
+            <ReturnValue Type="Boolean" Desc="Whether the price was set successfully or not." Id="16769"/>
+        </Method>
+        <Method Name="IsPosted" Id="10951" Desc="Checks if the order is posted on the CREDD Exchange.">
+            <ReturnValue Type="Boolean" Desc="Whether the order is posted on the CREDD Exchange or not." Id="16767"/>
+        </Method>
+        <Method Name="CanPost" Id="10952" Desc="Validates that the order is set for a valid number ( &gt; 0 ) of credits and is not currently posted on the CREDD Exchange.">
+            <ReturnValue Type="Boolean" Desc="Whether the order can be posted on the CREDD Exchange or not." Id="16760"/>
+        </Method>
+        <Method Name="Post" Id="10953" Desc="Posts the order on the CREDD Exchange."/>
+        <Method Name="Cancel" Id="10954" Desc="Removes the order from the CREDD Exchange."/>
+        <Function Name="is" Id="10955" Desc="Checks if the variable that was passed in is a CREDDExchangeOrder.">
+            <Param Name="oVariable" Desc="The variable that this function will check." Type="Variable" Id="16756"/>
+            <ReturnValue Type="Boolean" Desc="Whether the variable that was passed in is a CREDDExchangeOrder or not." Id="16757"/>
+        </Function>
+        <Function Name="newBuyOrder" Id="10956" Desc="Creates a new CREDDExchangeOrder that is a buy order." Example="This is largely unused since CREDDExchangeOrders are created using the ActionConfirmButton.">
+            <ReturnValue Type="CREDDExchangeOrder" Desc="A new CREDD Exchange buy order." Id="16758"/>
+        </Function>
+        <Function Name="newSellOrder" Id="10957" Desc="Creates a new CREDDExchangeOrder that is a sell order." Example="This is largely unused since CREDDExchangeOrders are created using the ActionConfirmButton.">
+            <ReturnValue Type="CREDDExchangeOrder" Desc="A new sell order for the CREDD Exchange." Id="16759"/>
+        </Function>
+        <Method Name="__eq" Id="13285" Desc="Determines if another CREDDExchangeOrder is the same as this one.">
+            <Param Name="crdCompare" Desc="The CREDDExchangeOrder that is being compared to the one calling this function." Type="CREDDExchangeOrder" Id="16773"/>
+            <ReturnValue Type="Boolean" Desc="Whether the two CREDDExchangeOrders are the same order or not." Id="16774"/>
+        </Method>
+        <Method Name="__gc" Id="13286" Desc="Forces the garbage collector to be called on the CREDDExchangeOrder that called the function."/>
     </Object>
-    <Library Name="DemoSummary" Incomplete="true" Id="12545" DevOnly="true">
+    <Library Name="DemoSummary" Incomplete="true" Id="12545" DevOnly="true" InternalNotes="Temporarily skipping since it&apos;s Dev Only and possibly depricated.">
         <Function Name="LogPositionChange" Incomplete="true" Id="12546"/>
         <Function Name="LogKill" Incomplete="true" Id="12547"/>
         <Function Name="LogDeath" Incomplete="true" Id="12548"/>
@@ -7970,58 +8717,21 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Function Name="GetChallengeList" Incomplete="true" Id="12562"/>
         <Function Name="GetStats" Incomplete="true" Id="12563"/>
     </Library>
-    <Library Name="CustomerSurveyLib" Incomplete="true" Id="12564">
-        <Function Name="GetPending" Incomplete="true" Id="12565"/>
-        <Function Name="GetPendingCount" Incomplete="true" Id="12566"/>
-        <EnumSet Name="CodeEnumSurveyType" Incomplete="true" Id="12567">
+    <Library Name="CustomerSurveyLib" Id="12564" Desc="A library that allows the player to interact with queued customer surveys.">
+        <Function Name="GetPending" Id="12565" Desc="Gets a pending customer survey that the player has not filled out.">
+            <Param Name="nIndex" Desc="The index of the survey that will be returned.  If no value is provided, the function will get the first pending survey." Type="Integer" Id="16770"/>
+            <ReturnValue Type="CustomerSurveyTypeLib" Desc="The pending survey." Id="16771"/>
+        </Function>
+        <Function Name="GetPendingCount" Incomplete="true" Id="12566" Desc="Gets the number of surveys that are waiting to be filled out by the player.">
+            <ReturnValue Type="Integer" Desc="The number of surveys that are waiting to be filled out by the player." Id="16772"/>
+        </Function>
+        <EnumSet Name="CodeEnumSurveyType" Id="12567" Desc="The different types of surveys that the player can receive.">
             <Enum Name="General" Id="12568"/>
             <Enum Name="Quest" Id="12569"/>
             <Enum Name="PathMission" Id="12570"/>
             <Enum Name="Challenge" Id="12571"/>
         </EnumSet>
     </Library>
-    <Object Name="Friend" Incomplete="true" Id="12572">
-        <Function Name="RespondToInvite" Incomplete="true" Id="12573"/>
-        <Function Name="AddByName" Incomplete="true" Id="12574"/>
-        <Function Name="AddByUnit" Incomplete="true" Id="12575"/>
-        <Function Name="AddByGroupIndex" Incomplete="true" Id="12576"/>
-        <Function Name="AddBySuggested" Incomplete="true" Id="12577"/>
-        <Function Name="GetInviteList" Incomplete="true" Id="12578"/>
-        <Function Name="GetInviteById" Incomplete="true" Id="12579"/>
-        <Function Name="InviteMarkSeen" Incomplete="true" Id="12580"/>
-        <Function Name="Remove" Incomplete="true" Id="12581"/>
-        <Function Name="SetNote" Incomplete="true" Id="12582"/>
-        <Function Name="SetType" Incomplete="true" Id="12583"/>
-        <Function Name="GetById" Incomplete="true" Id="12584"/>
-        <Function Name="GetList" Incomplete="true" Id="12585"/>
-        <Function Name="IsLoaded" Incomplete="true" Id="12586"/>
-        <Function Name="IsLocked" Incomplete="true" Id="12587"/>
-        <Function Name="SetLock" Incomplete="true" Id="12588"/>
-        <Function Name="GetLocations" Incomplete="true" Id="12589"/>
-        <Function Name="SetAutoResponseMessages" Incomplete="true" Id="12590"/>
-        <Function Name="SetAwayFromKeyboardMessage" Incomplete="true" Id="12591"/>
-        <Function Name="SetDoNotDisturbMessage" Incomplete="true" Id="12592"/>
-        <Function Name="GetPersonalStatus" Incomplete="true" Id="12593"/>
-        <Function Name="SetPersonalPresenceState" Incomplete="true" Id="12594"/>
-        <Function Name="SetPersonalIgnoreStrangersState" Incomplete="true" Id="12595"/>
-        <Function Name="GetAccountInviteList" Incomplete="true" Id="12596"/>
-        <Function Name="GetAccountList" Incomplete="true" Id="12597"/>
-        <Function Name="AccountAddByEmail" Incomplete="true" Id="12598"/>
-        <Function Name="AccountAddByUpgrade" Incomplete="true" Id="12599"/>
-        <Function Name="AccountInviteMarkSeen" Incomplete="true" Id="12600"/>
-        <Function Name="AccountInviteRespond" Incomplete="true" Id="12601"/>
-        <Function Name="AccountRemove" Incomplete="true" Id="12602"/>
-        <Function Name="GetAccountById" Incomplete="true" Id="12603"/>
-        <Function Name="GetAccountInviteById" Incomplete="true" Id="12604"/>
-        <Function Name="SetPublicNote" Incomplete="true" Id="12605"/>
-        <Function Name="SetPublicDisplayName" Incomplete="true" Id="12606"/>
-        <Function Name="SetFriendPrivateData" Incomplete="true" Id="12607"/>
-        <Function Name="GetUnitById" Incomplete="true" Id="12608"/>
-        <Function Name="GetSuggestedList" Incomplete="true" Id="12609"/>
-        <Function Name="GetSuggestedById" Incomplete="true" Id="12610"/>
-        <Function Name="VisitResidence" Incomplete="true" Id="12611"/>
-        <Function Name="NeighborInvite" Incomplete="true" Id="12612"/>
-    </Object>
     <Object Name="ChatChannel" Id="12613" Desc="One of the channels that chat messages can be sent to." Prefix="chan">
         <Method Name="GetName" Incomplete="true" Id="12614" Desc="Gets the ChatChannel&apos;s name.">
             <ReturnValue Type="String" Desc="The name of the ChatChannel." Id="15857"/>
@@ -8123,18 +8833,45 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         </Method>
         <Method Name="__gc" Id="13288" Desc="ChatChannel&apos;s garbage collection function.  This will delete the ChatChannel from memory."/>
     </Object>
-    <Object Name="CustomerSurveyTypeLib" Incomplete="true" Id="12641">
-        <Method Name="isCustomerSurvey" Incomplete="true" Id="12642"/>
-        <Method Name="GetTitle" Incomplete="true" Id="12643"/>
-        <Method Name="GetSurveyType" Incomplete="true" Id="12644"/>
-        <Method Name="GetQuestions" Incomplete="true" Id="12645"/>
-        <Method Name="GetResults" Incomplete="true" Id="12646"/>
-        <Method Name="GetComment" Incomplete="true" Id="12647"/>
-        <Method Name="SetResults" Incomplete="true" Id="12648"/>
-        <Method Name="SetComment" Incomplete="true" Id="12649"/>
-        <Method Name="SendResult" Incomplete="true" Id="12650"/>
-        <Method Name="Cancel" Incomplete="true" Id="12651"/>
-        <Method Name="__eq" Incomplete="true" Id="13289"/>
+    <Object Name="CustomerSurveyTypeLib" Id="12641" NotStandard="true" InternalNotes="This really needs to be renamed" Desc="Surveys that are sent out to players during betas and on the PTR.  These are disabled in the live game." Prefix="svy">
+        <Method Name="isCustomerSurvey" Id="12642" InternalNotes="This is a method.  If it wasn&apos;t a CustomerSurvey, it wouldn&apos;t be able to call this." Desc="Checks if this variable is a CustomerSurvey." NotStandard="true">
+            <ReturnValue Type="Boolean" Desc="Whether this is a CustomerSurvey or not." Id="16786"/>
+        </Method>
+        <Method Name="GetTitle" Id="12643" Desc="Gets the survey&apos;s title.">
+            <ReturnValue Type="String" Desc="The survey&apos;s title." Id="16785"/>
+        </Method>
+        <Method Name="GetSurveyType" Id="12644" Desc="Gets the survey&apos;s type." Remarks="The survey&apos;s type corresponds with what triggered it.">
+            <ReturnValue Type="CustomerSurveyLib.CodeEnumSurveyType" Desc="The survey&apos;s type." Id="16783"/>
+        </Method>
+        <Method Name="GetQuestions" Id="12645" Desc="Gets the text for the questions on the survey.">
+            <Param Name="nIndex" Desc="If this is passed in, the function will return a single string for the question at this index." Type="Integer" Id="16778"/>
+            <ReturnValue Type="String" Desc="An array of all of the survey&apos;s questions.  If nIndex was set, this will be a single string and not an array." Array="true" Id="16779"/>
+        </Method>
+        <Method Name="GetResults" Id="12646" Desc="Gets a list of the player&apos;s responses to the survey.">
+            <Param Name="nIndex" Desc="If this is passed in, the function will only return the result for the question at this index." Type="Integer" Id="16780"/>
+            <ReturnValue Type="Integer" Desc="An array of integers with the player&apos;s responses to the survey.  If nIndex was set, then this will be a single integer instead of an array." Array="true" Id="16781"/>
+        </Method>
+        <Method Name="GetComment" Incomplete="true" Id="12647" Desc="Gets the text from the Comment section of the survey.">
+            <ReturnValue Type="String" Desc="The text that is in the Comment section of the survey." Id="16777"/>
+        </Method>
+        <Method Name="SetResults" Id="12648" InternalNotes="This is returning 1 for some reason.  It probably shouldn&apos;t be." Desc="Sets a result for each question in the survey.">
+            <Param Name="arResponses" Desc="An array that contains responses for each of the survey&apos;s questions." Type="Integer" Array="true" Id="16790"/>
+        </Method>
+        <Method Name="SetComment" Id="12649" InternalNotes="This is returning 1 when it probably shouldn&apos;t be." Desc="Sets the survey&apos;s comment section.">
+            <Param Name="strComment" Desc="The text that will become the survey&apos;s comment." Type="String" Id="16789"/>
+        </Method>
+        <Method Name="SendResult" Id="12650" Desc="Attempts to send the CustomerSurvey to Carbine.">
+            <ReturnValue Type="Boolean" Desc="Whether the CustomerSurvey was successfully sent or not." Id="16788"/>
+        </Method>
+        <Method Name="Cancel" Id="12651" Desc="Cancels the current survey.  If the survey stopped the player from leaving the game, they will now be able to leave."/>
+        <Method Name="__eq" Id="13289" Desc="Determines if two CustomerSurveys are the same.">
+            <Param Name="svyCompare" Desc="The CustomerSurvey that is being compared to the one that called this function." Type="CustomerSurveyTypeLib" Id="16775"/>
+            <ReturnValue Type="Boolean" Desc="Whether the two CustomerSurveys are the same or not." Id="16776"/>
+        </Method>
+        <Method Name="SetResults" Id="16792" InternalNotes="This returns 1 and it probably shouldn&apos;t." Desc="Sets the result for a specific question in the survey.">
+            <Param Name="nQuestion" Desc="The index for the question that the response belongs to." Type="Integer" Id="16793"/>
+            <Param Name="nResponse" Desc="The index of the response." Type="Integer" Id="16794"/>
+        </Method>
     </Object>
     <Object Name="GenericMapNode" Incomplete="true" Id="12652" DevOnly="true">
         <Method Name="GetId" Incomplete="true" Id="12653"/>
@@ -8272,6 +9009,7 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
         <Event Name="RealmBroadcast" Incomplete="true" Id="14905" DevOnly="true"/>
         <Event Name="CharacterDisabled" Incomplete="true" Id="14906" DevOnly="true"/>
         <Event Name="CharacterBack" Incomplete="true" Id="16475"/>
+        <Function Name="IsCharacterNamePartValid" Incomplete="true" Id="17143"/>
     </Library>
     <Library Name="OptionsScreen" Incomplete="true" Id="12763" DevOnly="true">
         <Event Name="TriggerDemoOptions" Incomplete="true" Id="7012"/>
@@ -8427,6 +9165,9 @@ of the item required for this part of the achievement." Type="Integer" Id="10964
             <Enum Name="RealmTransferFailed_Money" Id="14922"/>
             <Enum Name="RealmTransferFailed_CharacterCooldown" Id="14923"/>
             <Enum Name="RenameFailed_GameSessionMissing" Id="14924"/>
+            <Enum Name="RealmTransferFailed_HasSavedInstance" Id="17228"/>
+            <Enum Name="UndeleteOk" Id="17284"/>
+            <Enum Name="UndeleteFailed" Id="17285"/>
         </EnumSet>
         <EnumSet Name="CodeEnumCharacterSelectResults" Incomplete="true" Id="12880">
             <Enum Name="FailedRename" Id="12881"/>
@@ -8508,11 +9249,19 @@ This isn&apos;t used in our current Lua and may be depricated." Deprecated="true
         <Function Name="CombatMessageStringCount" Incomplete="true" Id="13309" Deprecated="true" DevOnly="true"/>
         <Function Name="CombatMessageString_None" Incomplete="true" Id="13310" Deprecated="true" DevOnly="true"/>
     </Library>
-    <Object Name="FriendshipLib" Incomplete="true" Id="14928">
+    <Object Name="FriendshipLib" Id="14928" Desc="A library that contains functions for interacting with the game&apos;s Friend and Account Friend systems.  ">
         <Function Name="RespondToInvite" Incomplete="true" Id="14929"/>
-        <Function Name="AddByName" Incomplete="true" Id="14930"/>
+        <Function Name="AddByName" Id="14930" Desc="Changes the friendship type with the  player with the specified name." Example="If the Friendship Type is Friend or Account Friend, an invite will be sent to the player.  Other changes in Friend status do not need confirmation from the other player.">
+            <Param Name="eFriendshipType" Desc="The friendship type that the player will change to.  This value lines up with FriendshipLib.CharacterFriendshipType set of constants." Type="Integer" Id="17001"/>
+            <Param Name="strName" Desc="The name of the player whose friendship type will be updated." Type="String" Id="17002"/>
+            <Param Name="strRealmName" Desc="The name of the realm that the player is on.  This is only necessary for players that are not on the same realm." Type="String" Id="17003"/>
+            <Param Name="strNote" Desc="A note that will be sent to the specified player if the friendship type is either Friend or Account Friend.  This note will be visible in the invite that the player receives." Type="String" Id="17004"/>
+        </Function>
         <Function Name="AddByUnit" Incomplete="true" Id="14931"/>
-        <Function Name="AddByGroupIndex" Incomplete="true" Id="14932"/>
+        <Function Name="AddByGroupIndex" Id="14932" Desc="Attempts to change the friendship status of a player in your current group." Example="This will send an invite if the type sent is Friend or Account friend.">
+            <Param Name="eType" Desc="The friendship status that the player wants to add to the specified group member.  This value lines up with the FriendshipLib.CharacterFriendshipType set of constants." Type="Integer" Id="16995"/>
+            <Param Name="nMemberIdx" Desc="The index of the player within the group." Type="Integer" Id="16996"/>
+        </Function>
         <Function Name="AddBySuggested" Incomplete="true" Id="14933"/>
         <Function Name="GetInviteList" Incomplete="true" Id="14934"/>
         <Function Name="GetInviteById" Incomplete="true" Id="14935"/>
@@ -8534,11 +9283,22 @@ This isn&apos;t used in our current Lua and may be depricated." Deprecated="true
         <Function Name="SetPersonalIgnoreStrangersState" Incomplete="true" Id="14951"/>
         <Function Name="GetAccountInviteList" Incomplete="true" Id="14952"/>
         <Function Name="GetAccountList" Incomplete="true" Id="14953"/>
-        <Function Name="AccountAddByEmail" Incomplete="true" Id="14954"/>
-        <Function Name="AccountAddByUpgrade" Incomplete="true" Id="14955"/>
-        <Function Name="AccountInviteMarkSeen" Incomplete="true" Id="14956"/>
-        <Function Name="AccountInviteRespond" Incomplete="true" Id="14957"/>
-        <Function Name="AccountRemove" Incomplete="true" Id="14958"/>
+        <Function Name="AccountAddByEmail" Id="14954" Desc="Attempts to send an account friend invite to the account that is registered to the specified email address.">
+            <Param Name="strAddress" Desc="The email address associated with the account that the player wants to send the invite to." Type="String" Id="16985"/>
+            <Param Name="strNote" Desc="A note that will be sent to the player that receives the account friend invite." Type="String" Id="16986"/>
+        </Function>
+        <Function Name="AccountAddByUpgrade" Id="14955" Desc="Attempts to send an invitation to upgrade a Friend to an Account Friend.">
+            <Param Name="idFriend" Desc="The Friend id of the player that will receive the Account Friend Invite." Type="Integer" Id="16989"/>
+            <Param Name="strNote" Desc="A note that the person who receives the Account Friend invite will see in the invite." Type="String" Id="16990"/>
+        </Function>
+        <Function Name="AccountInviteMarkSeen" Id="14956" Desc="Marks an account invite as &quot;Seen&quot; by the system." Remarks="This flag has no set use, however the UI tends to use it to inform the player that they have pending invites."/>
+        <Function Name="AccountInviteRespond" Id="14957" Desc="Sends a response to an Account Invite that the player has received.">
+            <Param Name="idFriend" Desc="The id of the friend invite that the player is responding to." Type="Integer" Id="16991"/>
+            <Param Name="bAccepted" Desc="Whether the player accepted the invite or not." Type="Boolean" Id="16992"/>
+        </Function>
+        <Function Name="AccountRemove" Id="14958" Desc="Removes the specified Account Friend from the player&apos;s friends&apos; list">
+            <Param Name="idFriend" Desc="The Friend id of the Account Friend that the player wants to remove." Type="Integer" Id="16994"/>
+        </Function>
         <Function Name="GetAccountById" Incomplete="true" Id="14959"/>
         <Function Name="GetAccountInviteById" Incomplete="true" Id="14960"/>
         <Function Name="SetPublicNote" Incomplete="true" Id="14961"/>
@@ -8585,6 +9345,7 @@ This isn&apos;t used in our current Lua and may be depricated." Deprecated="true
         <Function Name="is" Incomplete="true" Id="15000" Deprecated="true"/>
         <Method Name="__eq" Incomplete="true" Id="16539"/>
         <Method Name="__gc" Incomplete="true" Id="16540"/>
+        <Method Name="GetUniqueId" Incomplete="true" Id="17144"/>
     </Object>
     <Object Name="GuildTypeLib" Incomplete="true" Id="15001">
         <Method Name="GetType" Incomplete="true" Id="15002"/>
@@ -8665,6 +9426,18 @@ This isn&apos;t used in our current Lua and may be depricated." Deprecated="true
         <Method Name="SetRankBankMoneyLimitToAll" Incomplete="true" Id="16477"/>
         <Method Name="__eq" Incomplete="true" Id="16541"/>
         <Method Name="__gc" Incomplete="true" Id="16542"/>
+        <Method Name="GetBankMoneyRepairRemaining" Incomplete="true" Id="17145"/>
+        <Method Name="Rename" Incomplete="true" Id="17146"/>
+        <Method Name="SetRecruitmentDescription" Incomplete="true" Id="17147"/>
+        <Method Name="GetRecruitmentDescription" Incomplete="true" Id="17148"/>
+        <Method Name="SetRecruitmentDemand" Incomplete="true" Id="17149"/>
+        <Method Name="GetRecruitmentDemands" Incomplete="true" Id="17150"/>
+        <Method Name="SetGuildClassification" Incomplete="true" Id="17151"/>
+        <Method Name="GetGuildClassification" Incomplete="true" Id="17152"/>
+        <Method Name="SetRecruitmentMinLevel" Incomplete="true" Id="17153"/>
+        <Method Name="GetRecruitmentMinLevel" Incomplete="true" Id="17154"/>
+        <Method Name="SetMyRecruitmentAvailability" Incomplete="true" Id="17155"/>
+        <Method Name="GetMyRecruitmentAvailability" Incomplete="true" Id="17156"/>
     </Object>
     <Object Name="IncidentReportLib" Incomplete="true" Id="15077">
         <Method Name="GetDescription" Incomplete="true" Id="15078"/>
@@ -8695,6 +9468,7 @@ This isn&apos;t used in our current Lua and may be depricated." Deprecated="true
             <Enum Name="TradeRequest" Id="15102"/>
             <Enum Name="AccountFriendRequest" Id="15103"/>
             <Enum Name="NeighborRequest" Id="15104"/>
+            <Enum Name="Overturn" Id="17157"/>
         </EnumSet>
         <Method Name="__gc" Incomplete="true" Id="16543"/>
         <Method Name="__eq" Incomplete="true" Id="16544"/>
@@ -8728,6 +9502,83 @@ This isn&apos;t used in our current Lua and may be depricated." Deprecated="true
         </EnumSet>
         <Method Name="__eq" Incomplete="true" Id="16560"/>
         <Method Name="__gc" Incomplete="true" Id="16561"/>
+    </Object>
+    <Library Name="ContractsLib" Incomplete="true" Id="17158">
+        <Function Name="GetPeriodicContracts" Incomplete="true" Id="17159"/>
+        <Function Name="GetActiveContracts" Incomplete="true" Id="17160"/>
+        <Function Name="IsAtContractBoard" Incomplete="true" Id="17161"/>
+    </Library>
+    <Object Name="Contract" Incomplete="true" Id="17162">
+        <Method Name="GetId" Incomplete="true" Id="17163"/>
+        <Method Name="GetQuest" Incomplete="true" Id="17164"/>
+        <Method Name="GetQuality" Incomplete="true" Id="17165"/>
+        <Method Name="GetType" Incomplete="true" Id="17166"/>
+        <Method Name="IsAvailable" Incomplete="true" Id="17167"/>
+        <Method Name="IsAccepted" Incomplete="true" Id="17168"/>
+        <Method Name="IsAchieved" Incomplete="true" Id="17169"/>
+        <Method Name="IsCompleted" Incomplete="true" Id="17170"/>
+        <Method Name="Accept" Incomplete="true" Id="17171"/>
+        <Method Name="Complete" Incomplete="true" Id="17172"/>
+        <Function Name="is" Incomplete="true" Id="17173"/>
+        <Method Name="GetRewardTrackType" Incomplete="true" Id="17229"/>
+        <Method Name="GetRewardTrackValue" Incomplete="true" Id="17230"/>
+    </Object>
+    <Object Name="RecruitmentGuildTypeLib" Incomplete="true" Id="17174">
+        <Method Name="RecruitmentRequestDetailedGuildInfo" Incomplete="true" Id="17175"/>
+        <Method Name="RecruitmentGetDetailedGuildInfo" Incomplete="true" Id="17176"/>
+        <Function Name="is" Incomplete="true" Id="17177"/>
+    </Object>
+    <WindowControl Name="ColorPicker" Incomplete="true" Id="17178">
+        <Method Name="SetColor" Incomplete="true" Id="17179"/>
+        <Method Name="GetColor" Incomplete="true" Id="17180"/>
+        <Event Name="ColorChanged" Id="7008" NotTested="true" Desc="Fired whent he player selects a color from the ColorPicker window" NotStandard="true" InternalNotes="Uses CColor instead of ApolloColor">
+            <Param Name="crNewColor" Desc="The color that was selected when this event was fired." Type="CColor" Id="13507"/>
+        </Event>
+    </WindowControl>
+    <Library Name="RewardTrackLib" Incomplete="true" Id="17231">
+        <Function Name="GetAllRewardTracks" Incomplete="true" Id="17232"/>
+        <Function Name="GetActiveRewardTracks" Incomplete="true" Id="17233"/>
+        <Function Name="GetActiveRewardTrackByType" Incomplete="true" Id="17234"/>
+        <Function Name="ChooseRewardTrack" Incomplete="true" Id="17235"/>
+    </Library>
+    <Object Name="RewardTrack" Incomplete="true" Id="17236">
+        <Method Name="GetId" Incomplete="true" Id="17237"/>
+        <Method Name="GetType" Incomplete="true" Id="17238"/>
+        <Method Name="GetName" Incomplete="true" Id="17239"/>
+        <Method Name="GetSummary" Incomplete="true" Id="17240"/>
+        <Method Name="GetImageAssetPath" Incomplete="true" Id="17241"/>
+        <Method Name="GetNumRewards" Incomplete="true" Id="17242"/>
+        <Method Name="GetRewardCost" Incomplete="true" Id="17243"/>
+        <Method Name="IsActive" Incomplete="true" Id="17244"/>
+        <Method Name="GetAllRewards" Incomplete="true" Id="17245"/>
+        <Method Name="GetRewardPointsEarned" Incomplete="true" Id="17246"/>
+        <Method Name="ClaimRewardPoint" Incomplete="true" Id="17247"/>
+        <Function Name="is" Incomplete="true" Id="17248"/>
+    </Object>
+    <Library Name="CostumesLib" Incomplete="true" Id="17286">
+        <Function Name="GetCostumeCount" Incomplete="true" Id="17287"/>
+        <Function Name="GetCostumeUnlockLevel" Incomplete="true" Id="17288"/>
+        <Function Name="GetCostumeIndex" Incomplete="true" Id="17289"/>
+        <Function Name="SetCostumeIndex" Incomplete="true" Id="17290"/>
+        <Function Name="GetCostume" Incomplete="true" Id="17291"/>
+        <Function Name="GetUnlockedSlotItems" Incomplete="true" Id="17292"/>
+        <Function Name="GetUnlockItemCount" Incomplete="true" Id="17293"/>
+        <Function Name="GetActiveMannequinCostume" Incomplete="true" Id="17294"/>
+    </Library>
+    <Object Name="Costume" Incomplete="true" Id="17295">
+        <Method Name="GetId" Incomplete="true" Id="17296"/>
+        <Method Name="GetSlotItem" Incomplete="true" Id="17297"/>
+        <Method Name="GetSlotItemIcon" Incomplete="true" Id="17298"/>
+        <Method Name="IsSlotVisible" Incomplete="true" Id="17299"/>
+        <Method Name="GetSlotDyes" Incomplete="true" Id="17300"/>
+        <Method Name="SetSlotItem" Incomplete="true" Id="17301"/>
+        <Method Name="SetSlotVisible" Incomplete="true" Id="17302"/>
+        <Method Name="SetSlotDyes" Incomplete="true" Id="17303"/>
+        <Method Name="HasChanges" Incomplete="true" Id="17304"/>
+        <Method Name="DiscardChanges" Incomplete="true" Id="17305"/>
+        <Method Name="SaveChanges" Incomplete="true" Id="17306"/>
+        <Method Name="GetCostOfChanges" Incomplete="true" Id="17307"/>
+        <Function Name="is" Incomplete="true" Id="17308"/>
     </Object>
     <Object Name="Talent" Incomplete="true" Id="1028" Prefix="tal" Deleted="true"/>
     <Object Name="TalentPool" Incomplete="true" Id="1049" Prefix="pool" Deleted="true"/>

@@ -110,7 +110,6 @@ function CombatLog:OnDocumentReady()
 	self.crVitalModifier = "ffffffff"
 	self.unitPlayer = nil
 	self.tPetUnits = {}
-	self.timerPetStatusUpdate = ApolloTimer.Create(5.0, false, "TEMP_PetStatusUpdate_HACK", self)
 end
 function CombatLog:PostOnChannel(strResult)
 	ChatSystemLib.PostOnChannel(ChatSystemLib.ChatChannel_Combat, string.format("<P Font=\"CRB_InterfaceMedium\">%s</P>", strResult), "")
@@ -643,10 +642,6 @@ function CombatLog:OnFactionFloater(unitTarget, pstrMessage, nAmount, strFaction
 end
 
 function CombatLog:OnPetStatusUpdated()
-	self.timerPetStatusUpdate:Set(1.0, false)
-end
-
-function CombatLog:TEMP_PetStatusUpdate_HACK()
 	self.tPetUnits = GameLib.GetPlayerPets()
 end
 
@@ -883,41 +878,3 @@ end
 local CombatLogInstance = CombatLog:new()
 CombatLog:Init()
 
-tBarContainer"]:Show(bShowIt)
-	self.tWindowMap["PetBtn"]:SetCheck(not bShowIt)
-end
-
-function ClassResources:OnPetBtn(wndHandler, wndControl)
-	self.bShowPet = not self.tWindowMap["PetBarContainer"]:IsShown()
-	
-	self:HelperShowPetBar(self.bShowPet)
-end
-
-function ClassResources:OnShowActionBarShortcut(eWhichBar, bIsVisible, nNumShortcuts)
-	if eWhichBar ~= ActionSetLib.CodeEnumShortcutSet.PrimaryPetBar or not self.wndMain or not self.wndMain:IsValid() then
-		return
-	end
-
-	self.tWindowMap["PetBtn"]:Show(bIsVisible)
-	self.tWindowMap["PetBtn"]:SetCheck(not bIsVisible or not self.bShowPet)
-	self.tWindowMap["PetBarContainer"]:Show(bIsVisible and self.bShowPet)
-end
-
-function ClassResources:OnEngineerPetBtnMouseEnter(wndHandler, wndControl)
-	local strHover = ""
-	local strWindowName = wndHandler:GetName()
-	if strWindowName == "ActionBarShortcut.12" then
-		strHover = Apollo.GetString("ClassResources_Engineer_PetAttack")
-	elseif strWindowName == "ActionBarShortcut.13" then
-		strHover = Apollo.GetString("CRB_Stop")
-	elseif strWindowName == "ActionBarShortcut.15" then
-		strHover = Apollo.GetString("ClassResources_Engineer_GoTo")
-	end
-	self.tWindowMap["PetText"]:SetText(strHover)
-	wndHandler:SetBGColor("white")
-end
-
-function ClassResources:OnEngineerPetBtnMouseExit(wndHandler, wndControl)
-	self.tWindowMap["PetText"]:SetText(self.tWindowMap["PetText"]:GetData() or "")
-	wndHandler:SetBGColor("UI_AlphaPercent50")
-end

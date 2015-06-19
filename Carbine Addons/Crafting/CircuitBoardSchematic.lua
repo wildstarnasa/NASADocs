@@ -6,6 +6,8 @@
 require "Window"
 require "CraftingLib"
 
+local knTextPadding = 72
+
 local ktCraftingAttributeIconsText =
 { 	-- There are only 15 needed for Crafting
 	[Unit.CodeEnumProperties.Dexterity] 					= {"Icon_Windows_UI_CRB_Attribute_Finesse", 			Apollo.GetString("CRB_Finesse")},
@@ -303,8 +305,17 @@ function CircuitBoardSchematic:Initialize(tSchematicInfo)
 					self:HelperBuildItemTooltip(wndCurrItem, tCurrentPowerCore)
 				end
 			end
+			
 			wndPowerPicker:FindChild("PowerCorePickerList"):ArrangeChildrenTiles(0)
 			wndPowerPicker:FindChild("PowerCorePickerList"):SetText(bFoundAnItem and "" or Apollo.GetString("CBCrafting_GoFindPowerAmps"))
+			
+			if wndPowerPicker:FindChild("CircuitPickerArrowPulse"):FindChild("Tutorial_AddCore") then
+				local wndTutorialAddCore = wndPowerPicker:FindChild("CircuitPickerArrowPulse"):FindChild("Tutorial_AddCore")
+				local nTextWidth = Apollo.GetTextWidth("CRB_Interface9_O", Apollo.GetString("CRB_Crafting_AddCoreTutorial"))
+				local nLeft, nTop, nRight, nBottom = wndTutorialAddCore:GetAnchorOffsets()
+				
+				wndTutorialAddCore:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + knTextPadding, nBottom)
+			end
 		end
 	end
 
@@ -482,7 +493,7 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 					self.wndArrowTutorial = Apollo.LoadForm(self.xmlDoc, "Tutorial_SmallRightArrow", wndSocketButton:FindChild(strCurr), self)
 					local nTextWidth = Apollo.GetTextWidth("CRB_Interface9_O", Apollo.GetString("CRB_Crafting_AdjustChargeTutorial"))
 					local nLeft, nTop, nRight, nBottom = self.wndArrowTutorial:GetAnchorOffsets()
-					self.wndArrowTutorial:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + 72, nBottom)
+					self.wndArrowTutorial:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + knTextPadding, nBottom)
 				end
 			end
 		end
@@ -555,7 +566,7 @@ function CircuitBoardSchematic:DrawSocket(wndSocketButton, nLayoutLoc, tSocket, 
 		local wndTutorialAddChip = wndSocketButton:FindChild("CircuitPickerArrowPulse"):FindChild("Tutorial_AddChip")
 		local nTextWidth = Apollo.GetTextWidth("CRB_Interface9_O", Apollo.GetString("CRB_Crafting_AddChipTutorial"))
 		local nLeft, nTop, nRight, nBottom = wndTutorialAddChip:GetAnchorOffsets()
-		wndTutorialAddChip:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + 72, nBottom)
+		wndTutorialAddChip:SetAnchorOffsets(nLeft, nTop, nLeft + nTextWidth + knTextPadding, nBottom)
 	end
 
 	return bFoundItem
@@ -916,5 +927,3 @@ function CircuitBoardSchematic:HelperBuildItemTooltip(wndArg, itemCurr)
 	local itemEquipped = itemCurr and itemCurr:GetEquippedItemForItemType() or nil
 	Tooltip.GetItemTooltipForm(self, wndArg, itemCurr, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
 end
- Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="1" TAnchorOffset="-80" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-14" RelativeToClient="1" Font="CRB_Interface9" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextMetalBodyHighlight" Template="Default" TooltipType="OnCursor" Name="DyeChannelText" TooltipColor="" DT_RIG

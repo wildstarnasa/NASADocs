@@ -22,8 +22,6 @@ local kcrTitleDisabled = CColor.new(128/255, 64/255, 64/255, 1)
 local kcrBodyEnabled = CColor.new(47/255, 148/255, 172/255, 1)
 local kcrBodyDisabled = CColor.new(128/255, 0/255, 0/255, 1)
 
-local knSaveVersion = 1
-
 function Datachron:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -41,7 +39,7 @@ function Datachron:new(o)
 end
 
 function Datachron:Init()
-	Apollo.RegisterAddon(self, false, nil, {"PathExplorerContent", "PathScientistContent", "PathSettlerContent", "PathSoldierContent", "MatchTracker", "QuestTracker"})
+	Apollo.RegisterAddon(self)
 end
 
 function Datachron:OnLoad()
@@ -49,38 +47,8 @@ function Datachron:OnLoad()
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 end
 
-function Datachron:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
-		return
-	end
-
-	local tSave =
-	{
-		bIsShown = g_wndDatachron == nil or g_wndDatachron:IsShown(),
-		nSaveVersion = knSaveVersion,
-	}
-
-	return tSave
-end
-
-function Datachron:OnRestore(eType, tSavedData)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
-		return
-	end
-
-	if tSavedData and tSavedData.nSaveVersion == knSaveVersion then
-		self.bMaximized = tSavedData.bIsShown
-	end
-
-	if self.bMaximized and g_wndDatachron and not g_wndDatachron:IsShown() then
-		self:OnRestoreDatachron()
-	elseif not self.bMaximized and g_wndDatachron and g_wndDatachron:IsShown() then
-		self:OnMinimizeDatachron()
-	end
-end
-
 function Datachron:OnDocumentReady()
-	if  self.xmlDoc == nil then
+	if self.xmlDoc == nil then
 		return
 	end
 
@@ -110,7 +78,7 @@ function Datachron:OnDocumentReady()
 	self.timerNPCBubbleFade = ApolloTimer.Create(9.500, false, "OnNpcBubbleFade", self)
 	self.timerNPCBubbleFade:Stop()
 
-	g_wndDatachron 			= Apollo.LoadForm(self.xmlDoc, "Datachron", "FixedHudStratum", self) -- Do not rename. This is global and used by other forms as a parent.
+	g_wndDatachron 			= Apollo.LoadForm(self.xmlDoc, "Datachron", "FixedHudStratumHigh", self) -- Do not rename. This is global and used by other forms as a parent.
 	g_wndDatachron:Show(false, true)
 
 	self.wndMinimized 		= Apollo.LoadForm(self.xmlDoc, "MinimizedState", "FixedHudStratum", self)
@@ -138,15 +106,8 @@ function Datachron:OnDocumentReady()
 
 	self:SetPath()
 
-	if self.bMaximized then
-		self:OnRestoreDatachron()
-	else
-		self:OnMinimizeDatachron()
-	end
-
+	self.bMaximized = false
 	self:ProcessDatachronState()
-
-	Event_FireGenericEvent("Datachron_LoadPvPContent")
 end
 
 function Datachron:SetPath()
@@ -215,9 +176,9 @@ function Datachron:OnMinimizeDatachron()
 	self.wndMinimized:FindChild("DisableCommBtnMin"):SetCheck(false)
 	self.wndMinimized:FindChild("DisableCommBtnMin"):SetTooltip(Apollo.GetString("Datachron_Maximize"))
 
-	g_wndDatachron:Show(false)
+	self.bMaximized = false
+	g_wndDatachron:Show(self.bMaximized)
 	Event_FireGenericEvent("DatachronMinimized")
-	g_wndDatachron:FindChild("QueuedCallsContainer"):Show(false)
 
 	Sound.Play(Sound.PlayUI38CloseRemoteWindowDigital)
 end
@@ -226,7 +187,8 @@ function Datachron:OnRestoreDatachron()
 	self.wndMinimized:FindChild("DisableCommBtnMin"):SetCheck(true)
 	self.wndMinimized:FindChild("DisableCommBtnMin"):SetTooltip(Apollo.GetString("CRB_Datachron_MinimizeBtn_Desc"))
 
-	g_wndDatachron:Show(true)
+	self.bMaximized = true
+	g_wndDatachron:Show(self.bMaximized)
 	Event_FireGenericEvent("DatachronRestored")
 
 	Sound.Play(Sound.PlayUI37OpenRemoteWindowDigital)
@@ -465,13 +427,14 @@ function Datachron:OnCommPlayBtn()
 			return
 		end
 	end
-
-	if not g_wndDatachron:IsShown() then -- Restores from minimized, as per spec
+	
+	if self.bMaximized then
+		self:OnMinimizeDatachron()
+	else
 		self:OnRestoreDatachron()
 	end
-
+	
 	self.wndMinimized:FindChild("CommCallPulseMinBlue"):Show(false)
-	g_wndDatachron:FindChild("QueuedCallsContainer"):Show(not g_wndDatachron:FindChild("QueuedCallsContainer"):IsShown())
 end
 
 function Datachron:OnDenyCallbackBtn(wndHandler, wndControl) -- CommCallDeny
@@ -603,10 +566,13 @@ function Datachron:DrawCallSystem(strNewState)
 	self.wndMinimized:FindChild("CommCallPulseMinRed"):Show(strLocalState == "MissedCall")
 	self.wndMinimized:FindChild("CommCallPulseMinBlue"):Show(strLocalState == "CommQueueAvail")
 
-	g_wndDatachron:FindChild("QueuedCallsContainer"):Show(false) -- Every action hides this menu, even dialog
-
+	local bHaveComCalls = ktValidPlayEnable[strLocalState]
+	if not bHaveComCalls then
+		self:OnMinimizeDatachron()
+	end
+	
+	self.wndMinimized:Show(bHaveComCalls)
 	self.wndMinimized:FindChild("CommCallDenyMin"):Enable(ktValidDenyEnable[strLocalState])
-	self.wndMinimized:FindChild("CommPlayBtnMin"):Enable(ktValidPlayEnable[strLocalState])
 	self.wndMinimized:FindChild("CommPlayBtnMin"):ChangeArt(ktValidPlaySprite[strLocalState] or "HUD_BottomBar:btn_HUD_Datachron_CallPlay")
 
 	-- Super Huge State Machine
@@ -689,25 +655,3 @@ end
 
 local DatachronInst = Datachron:new()
 DatachronInst:Init()
-toryFull"))
-	end
-
-	-- Hide if at max
-	local bReadyToCraft = bCurrentCraftStarted and tCurrentCraft.nAdditiveCount == tSchematicInfo.nMaxAdditives
-	self.wndMain:FindChild("AdditiveListBlocker"):Show(bReadyToCraft)
-	self.wndMain:FindChild("HelperText_ReadyToCraft"):Show(bReadyToCraft)
-end
-
-function CraftingGrid:RedrawCash()
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsVisible() then
-		return
-	end
-
-	self.wndMain:FindChild("BGPlayerCashWindow"):SetAmount(GameLib.GetPlayerCurrency(), true)
-end
-
------------------------------------------------------------------------------------------------
--- Craft Btn
------------------------------------------------------------------------------------------------
-
-function CraftingGrid:OnPreviewStartCraftBtn(wndHandler, wndControl) -- Pre

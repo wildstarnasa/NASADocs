@@ -178,18 +178,3 @@
         </Control>
     </Form>
 </Forms>
-"" TextId="" RadioDisallowNonSelection="0" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" Visible="1" HideInEditor="0" DT_BOTTOM="0" WindowSoundTemplate="HoloButtonLarge" TestAlpha="1">
-            <Event Name="ButtonCheck" Function="OnSpellbookProgPieceToggle"/>
-            <Event Name="ButtonUncheck" Function="OnSpellbookProgPieceToggle"/>
-        </Control>
-        <Event Name="GenerateTooltip" Function="OnSpellbookProgPieceTooltip"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="209" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="SpellbookProgPieceBigEnd" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="1" Overlapped="0" TooltipColor="" Tooltip="" TestAlpha="1" IgnoreTooltipDelay="1">
-        <Control Class="Button" Base="Abilities:btnAbilitiesLargeEnd" Font="CRB_InterfaceTiny_BB" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="-2" TAnchorPoint="0.5" TAnchorOffset="-32" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0.5" BAnchorOffset="38" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="SpellbookProgPieceBtn" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="" TextId="" RadioDisallowNonSelection="0" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" Visible="1" HideInEditor="0" DT_BOTTOM="0" WindowSoundTemplate="HoloButtonLarge" TestAlpha="1">
-            <Event Name="ButtonCheck" Function="OnSpellbookProgPieceToggle"/>
-            <Event Name="ButtonUncheck" Function="OnSpellbookProgPieceToggle"/>
-        </Control>
-        <Event Name="GenerateTooltip" Function="OnSpellbookProgPieceTooltip"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="106" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SpellbookProgPieceFirst" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" IgnoreTooltipDelay="1" TestAlpha="1">
-        <Control Class="Button" Base="Abilities:btnAbilitiesBasePoint" Font="CRB_InterfaceTiny_BB" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="14" TAnchorPoint="0.5" TAnchorOffset="-23" RAnchorPoint="1" RAnchorOffset="-41" BAnchorPoint="0.5" BAnchor

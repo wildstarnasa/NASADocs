@@ -283,7 +283,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function ArenaTeam:OnGuildRoster(guildCurr, tRoster)
-	if guildCurr ~= self.wndMain:GetData() and #tRoster == 0 then 
+	if guildCurr ~= self.wndMain:GetData() or #tRoster == 0 then 
 		return
 	end
 
@@ -522,10 +522,3 @@ end
 -----------------------------------------------------------------------------------------------
 local ArenaTeamInst = ArenaTeam:new()
 ArenaTeamInst:Init()
-rsor" IgnoreTooltipDelay="1" TooltipColor="" ShortHotkeyFontAttribute="CRB_Pixel_O" LongHotkeyFontAttribute="CRB_Pixel_O" CountFontAttribute="CRB_InterfaceSmall_O" CooldownFontAttribute="CRB_HeaderLarge" DrawShortcutBottom="1">
-                        <Event Name="GenerateTooltip" Function="OnGenerateTooltip"/>
-                    </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="0" RAnchorOffset="54" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Shadow" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:spr_HUD_BottomBar_SlotShadow" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" HideInEditor="0" NewWindowDepth="1"/>
-                </Control>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="290" TAnchorPoint="0.5" TAnchorOffset="-32" RAnchorPoint="0" RAnchorOffset="348" BAnchorPoint="0.5" BAnchorOffset="34" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ActionBarShortcutContainer6" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="HUD_BottomBar:spr_HUD_BottomBar_SlotCover" HideInEditor="0">
-                    <Control Class="ActionBarButton" Name="ActionBarShortcut.6" ContentType="RMSBar" ContentId="5" Base="Button_ActionBarBlank" RelativeToClient="1" IfHoldNoSignal="1" DT_VCENTER="1" DT_CENTER="1" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint

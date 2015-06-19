@@ -487,20 +487,3 @@ end
 
 local BaseBarCornerInst = XPBar:new()
 BaseBarCornerInst:Init()
-Template="Default" TooltipType="OnCursor" Name="BankItem" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetSimple" Picture="1" IgnoreMouse="1" HideInEditor="0" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="6" TAnchorPoint="0" TAnchorOffset="6" RAnchorPoint="1" RAnchorOffset="-6" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="CRB_InterfaceSmall_O" Text="" Template="Default" TooltipType="OnCursor" Name="BankItemIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="0" DT_RIGHT="1" DT_BOTTOM="1" Tooltip="">
-            <Event Name="QueryDragDrop" Function="OnBankItemQueryDragDrop"/>
-            <Event Name="DragDrop" Function="OnBankItemEndDragDrop"/>
-            <Event Name="QueryBeginDragDrop" Function="OnBankItemBeginDragDrop"/>
-            <Event Name="MouseButtonDown" Function="OnBankItemBeginDragDrop"/>
-            <Event Name="DragDropCancel" Function="OnBankItemDragDropCancel"/>
-            <Event Name="DragDropEnd" Function="OnBankItemDragDropEnd"/>
-        </Control>
-    </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="298" BAnchorPoint="0" BAnchorOffset="47" RelativeToClient="1" Font="CRB_InterfaceSmall_O" Text="" Template="Default" TooltipType="OnCursor" Name="PermissionsGridRow" BGColor="ffffffff" TextColor="ff2f94ac" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" DT_VCENTER="1" TextId="" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="16" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-170" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="PermissionsGridRowText" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" DT_VCENTER="1" TextId="GuildBank_BankTab" DT_RIGHT="1" DT_WORDBREAK="1" Picture="0" IgnoreMouse="1" Sprite=""/>
-        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-4" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="PermissionsGridRowBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_Basekit:kitInnerFrame_Holo_SimpleInset" Picture="1" IgnoreMouse="1" Tooltip="">
-            <Control Class="Button" Base="BK3:btnHolo_Check" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="12" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0" RAnchorOffset="47" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="PermissionGridBtnVisible" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" RelativeToClient="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="GuildBank_ToggleVisibility">
-                <Event Name="ButtonSignal" Function="OnPermissionGridBtnVisibleDeposit"/>
-            </Control>
-            <Control Class="Button" Base="BK3:btnHolo_Check" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="-13" TAnchorPoint="0" TAnchorOffset="8" RAnchorPoint="0.5" RAnchorOffset="22" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="PermissionGridBtnDeposit" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" Text="" RelativeToClient="1" Tooltip="" TooltipFont="CRB_Interfac

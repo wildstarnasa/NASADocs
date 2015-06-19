@@ -236,7 +236,11 @@ function Runecrafting:Initialize()
 			wndCurr:FindChild("RuneCreationElementName"):SetTextColor("WindowTitleColor")
 		end
 	end
+	
 	wndParent:ArrangeChildrenVert(0, function(a,b) return a:GetName() < b:GetName() end)
+	
+	--Default to equipped tab.
+	self.wndMain:FindChild("ToggleEquipRunes"):SetCheck(true)
 end
 
 function Runecrafting:OnRunecrafting_TimerStationCheck() -- Hackish: These are async from the rest of the UI (and definitely can't handle data being set)
@@ -1104,38 +1108,3 @@ end
 
 local RunecraftingInst = Runecrafting:new()
 RunecraftingInst:Init()
-iveProg = self:FactoryCacheProduce(wndObjective, "QuestProgressItem", "QuestProgressItem")
-		local nCompleted = bComplete and tObjective.nNeeded or tObjective.nCompleted
-		local nNeeded = tObjective.nNeeded
-		wndObjectiveProg:FindChild("QuestProgressBar"):SetMax(nNeeded)
-		wndObjectiveProg:FindChild("QuestProgressBar"):SetProgress(nCompleted)
-		wndObjectiveProg:FindChild("QuestProgressBar"):EnableGlow(nCompleted > 0 and nCompleted ~= nNeeded)
-	end
-end
-
-function QuestLog:CheckLeftSideFilters(queQuest)
-	local bCompleteState = queQuest:GetState() == Quest.QuestState_Completed
-	local bResult1 = self.wndLeftFilterActive:IsChecked() and not bCompleteState and not queQuest:IsIgnored()
-	local bResult2 = self.wndLeftFilterFinished:IsChecked() and bCompleteState
-	local bResult3 = self.wndLeftFilterHidden:IsChecked() and queQuest:IsIgnored()
-
-	return bResult1 or bResult2 or bResult3
-end
-
-function QuestLog:HelperPrereqFailed(tCurrItem)
-	return tCurrItem and tCurrItem:IsEquippable() and not tCurrItem:CanEquip()
-end
-
-function QuestLog:HelperPrefixTimeString(fTime, strAppend, strColorOverride)
-	local fSeconds = fTime % 60
-	local fMinutes = fTime / 60
-	local strColor = "fffffc00"
-	if strColorOverride then
-		strColor = strColorOverride
-	elseif fMinutes < 1 and fSeconds <= 30 then
-		strColor = "ffff0000"
-	end
-	return string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">(%d:%.02d) </T>%s", strColor, fMinutes, fSeconds, strAppend)
-end
-
-function QuestLog:FactoryC

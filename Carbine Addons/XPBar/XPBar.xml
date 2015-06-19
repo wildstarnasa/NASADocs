@@ -30,36 +30,8 @@
             <Event Name="ButtonSignal" Function="OnToggleFromDatachronIcon"/>
         </Control>
         <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-280" TAnchorPoint="1" TAnchorOffset="-33" RAnchorPoint="1" RAnchorOffset="-208" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_Header9" Template="Default" Name="CountText" BGColor="white" TextColor="UI_TextHoloBodyCyan" Text="" IgnoreMouse="1" TooltipColor="" Tooltip="" DT_RIGHT="1" DT_VCENTER="1" NoClip="1" TextId=""/>
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-54" TAnchorPoint="1" TAnchorOffset="-50" RAnchorPoint="1" RAnchorOffset="-28" BAnchorPoint="1" BAnchorOffset="-25" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="QuestItemNotice" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" NewControlDepth="8" Sprite="ClientSprites:sprItem_NewQuest" Visible="0" HideInEditor="1" TooltipColor="white" NoClip="1" TooltipType="OnCursor" TooltipFont="CRB_InterfaceMedium" Tooltip="" TooltipId="Inventory_HaveQuestItemTooltip" IgnoreTooltipDelay="1"/>
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-68" TAnchorPoint="1" TAnchorOffset="-54" RAnchorPoint="1" RAnchorOffset="-18" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="QuestItemNotice" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" NewControlDepth="8" Sprite="ClientSprites:sprItem_NewQuest" Visible="0" HideInEditor="1" TooltipColor="white" NoClip="1" TooltipType="OnCursor" TooltipFont="CRB_InterfaceMedium" Tooltip="" TooltipId="Inventory_HaveQuestItemTooltip" IgnoreTooltipDelay="1"/>
         <Event Name="MouseButtonUp" Function="OnInvokeFormMouseButtonUp"/>
         <Control Class="CashWindow" LAnchorPoint="1" LAnchorOffset="-256" TAnchorPoint="1" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="-56" BAnchorPoint="1" BAnchorOffset="-8" RelativeToClient="1" Font="CRB_Header9" Sprite="" Text="" Template="OldMetalControl" Name="MainCashWindow" BGColor="white" TextColor="UI_TextHoloBodyCyan" Picture="1" IgnoreMouse="1" DT_VCENTER="0" DT_RIGHT="1" SkipZeroes="1" Visible="1" Tooltip="" TooltipType="OnCursor" TooltipFont="CRB_InterfaceSmall_O" IgnoreTooltipDelay="1" TooltipId="" TooltipColor="" DT_CENTER="0" NoClip="1" DT_BOTTOM="0"/>
     </Form>
 </Forms>
-wndRestXPBarFill:SetProgress(math.min(nEPDailyMax, nCurrentEP + nRestedEP))
-	end
-
-	local bShowRestEPGoal = nRestedEP and nRestedEPPool and nRestedEP > 0 and nRestedEPPool > 0
-	wndRestXPBarGoal:SetMax(nEPDailyMax)
-	wndRestXPBarGoal:Show(bShowRestEPGoal)
-	if bShowRestEPGoal then
-		wndRestXPBarGoal:SetProgress(math.min(nEPDailyMax, nCurrentEP + nRestedEPPool))
-	end
-
-	return nCurrentEP / nEPDailyMax * 100
-end
-
-function XPBar:ConfigureEPTooltip(unitPlayer)
-	local nCurrentEP = GetElderPoints()
-	local nCurrentToDailyMax = GetPeriodicElderPoints()
-	local nEPToAGem = GameLib.ElderPointsPerGem
-	local nEPDailyMax = GameLib.ElderPointsDailyMax
-
-	local nRestedEP = GetRestXp() 							-- amount of rested xp
-	local nRestedEPPool = GetRestXpKillCreaturePool() 		-- amount of rested xp remaining from creature kills
-
-	if not nCurrentEP or not nEPToAGem or not nEPDailyMax then
-		return
-	end
-
-	-- Top String
-	local strTooltip = String_GetWeaselString(Apollo.GetString("BaseBar_Elde

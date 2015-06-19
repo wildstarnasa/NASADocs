@@ -15,7 +15,6 @@ local ktIcons =
 	[GameLib.CodeEnumZoneCompletionType.EpisodeQuest]	= 	"CRB_MegamapSprites:sprMap_IconCompletion_EpisodeQuest",
 	[GameLib.CodeEnumZoneCompletionType.TaskQuest]		=	"CRB_MegamapSprites:sprMap_IconCompletion_TaskQuest",
 	[GameLib.CodeEnumZoneCompletionType.Challenge]		=	"CRB_MegamapSprites:sprMap_IconCompletion_Challenge",
-	[GameLib.CodeEnumZoneCompletionType.TaxiNode]		=	"CRB_MegamapSprites:sprMap_IconCompletion_Taxi",
 	[GameLib.CodeEnumZoneCompletionType.Datacube]		=	"CRB_MegamapSprites:sprMap_IconCompletion_Datacube",
 	[GameLib.CodeEnumZoneCompletionType.Tale]			=	"CRB_MegamapSprites:sprMap_IconCompletion_Tales",
 	[GameLib.CodeEnumZoneCompletionType.Journal]		=	"CRB_MegamapSprites:sprMap_IconCompletion_Lore",
@@ -302,62 +301,3 @@ end
 
 local ZoneCompletionInst = ZoneCompletion:new()
 ZoneCompletionInst:Init()
-EP + nRestedEPPool > nEPDailyMax then
-			strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, Apollo.GetString("Base_EPRestedEndsAfterLevelTooltip"))
-		else
-			local strRestLineTwo = String_GetWeaselString(Apollo.GetString("Base_EPRestedPoolTooltip"), Apollo.FormatNumber(nRestedEPPool, 0, true), ((nRestedEPPool + nCurrentEP)  / nEPDailyMax) * 100)
-			strTooltip = string.format("%s<P Font=\"CRB_InterfaceSmall_O\" TextColor=\"ffda69ff\">%s</P>", strTooltip, strRestLineTwo)
-		end
-	end
-	
-	return string.format("<P Font=\"CRB_InterfaceSmall_O\">%s%s</P>%s", Apollo.GetString("CRB_Level_"), unitPlayer:GetLevel(), strTooltip)
-end
-
------------------------------------------------------------------------------------------------
--- XP (When less than level 50)
------------------------------------------------------------------------------------------------
-
-function XPBar:RedrawXP()
-	local nCurrentXP = GetXp() - GetXpToCurrentLevel() 		-- current amount of xp into the current level
-	local nNeededXP = GetXpToNextLevel() 					-- total amount needed to move through current level
-	local nRestedXP = GetRestXp() 							-- amount of rested xp
-	local nRestedXPPool = GetRestXpKillCreaturePool() 		-- amount of rested xp remaining from creature kills
-
-	if not nCurrentXP or not nNeededXP or not nNeededXP or not nRestedXP then
-		return
-	end
-	
-	local wndXPBarFill = self.wndMain:FindChild("XPBarContainer:XPBarFill")
-	local wndRestXPBarFill = self.wndMain:FindChild("XPBarContainer:RestXPBarFill")
-	local wndRestXPBarGoal = self.wndMain:FindChild("XPBarContainer:RestXPBarGoal")
-
-	wndXPBarFill:SetMax(nNeededXP)
-	wndXPBarFill:SetProgress(nCurrentXP)
-
-	wndRestXPBarFill:SetMax(nNeededXP)
-	wndRestXPBarFill:Show(nRestedXP and nRestedXP > 0)
-	if nRestedXP and nRestedXP > 0 then
-		wndRestXPBarFill:SetProgress(math.min(nNeededXP, nCurrentXP + nRestedXP))
-	end
-
-	wndRestXPBarGoal:SetMax(nNeededXP)
-	wndRestXPBarGoal:Show(nRestedXP and nRestedXPPool and nRestedXP > 0 and nRestedXPPool > 0)
-	if nRestedXP and nRestedXPPool and nRestedXP > 0 and nRestedXPPool > 0 then
-		wndRestXPBarGoal:SetProgress(math.min(nNeededXP, nCurrentXP + nRestedXPPool))
-	end
-
-	return nCurrentXP / nNeededXP * 100
-end
-
-function XPBar:ConfigureXPTooltip(unitPlayer)
-	local nCurrentXP = GetXp() - GetXpToCurrentLevel() 		-- current amount of xp into the current level
-	local nNeededXP = GetXpToNextLevel() 					-- total amount needed to move through current level
-	local nRestedXP = GetRestXp() 							-- amount of rested xp
-	local nRestedXPPool = GetRestXpKillCreaturePool() 		-- amount of rested xp remaining from creature kills
-
-	if not nCurrentXP or not nNeededXP or not nNeededXP or not nRestedXP then
-		return
-	end
-
-	local strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P>", String_GetWeaselString(Apollo.GetString("Base_XPValue"), Apollo.FormatNumber(nCurrentXP, 0, true), Apollo.FormatNumber(nNeededXP, 0, true), nCurrentXP / nNeededXP * 100))
-	if n

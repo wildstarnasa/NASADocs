@@ -1,5 +1,5 @@
 <Forms>
-    <Form Class="WorldFixedWindow" LAnchorPoint="0.5" LAnchorOffset="-342" TAnchorPoint="0.5" TAnchorOffset="-20" RAnchorPoint="0.5" RAnchorOffset="-152" BAnchorPoint="0.5" BAnchorOffset="70" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SprintMeterFormVert" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" AutoDestroyWithUnit="0" TextId="" DT_RIGHT="0" Tooltip="" DT_BOTTOM="1" Visible="1" TransitionShowHide="1" HideInEditor="0">
+    <Form Class="WorldFixedWindow" LAnchorPoint="0.5" LAnchorOffset="-204" TAnchorPoint="0.5" TAnchorOffset="-20" RAnchorPoint="0.5" RAnchorOffset="-152" BAnchorPoint="0.5" BAnchorOffset="70" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SprintMeterFormVert" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" AutoDestroyWithUnit="0" TextId="" DT_RIGHT="0" Tooltip="" DT_BOTTOM="1" Visible="1" TransitionShowHide="1" HideInEditor="0">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_AlphaPercent70" TextColor="UI_TextHoloBody" Template="Default" TooltipType="OnCursor" Name="Backer" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" AutoFade="1" TextId="" DT_VCENTER="1" DT_RIGHT="0" DT_CENTER="1" DT_WORDBREAK="1" Visible="0" HideInEditor="1">
             <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-58" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="1" BAnchorOffset="-15" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SprintIconBacker" BGColor="UI_AlphaPercent50" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="IconSprites:Icon_Windows32_UI_Hazards_Sprint" HideInEditor="0"/>
             <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-42" TAnchorPoint="1" TAnchorOffset="-103" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ProgFlashBacker" BGColor="UI_AlphaPercent50" TextColor="ffffffff" TooltipColor="" Sprite="SprintMeter:sprVerticalBar_BG" Picture="1" IgnoreMouse="1" NewControlDepth="1" Tooltip=""/>
@@ -21,91 +21,8 @@
             </Control>
         </Control>
         <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-58" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="1" BAnchorOffset="-15" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ActiveIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="IconSprites:Icon_Windows32_UI_Hazards_Sprint" TransitionShowHide="1" Tooltip=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="126" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsArrangeHorz" TooltipColor="">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="42" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsRadiationMain" TooltipColor="" Visible="0" TooltipFont="CRB_InterfaceSmall_O" IgnoreMouse="1" IgnoreTooltipDelay="1">
-                <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0.5" TAnchorOffset="-45" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="0.5" BAnchorOffset="45" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="HazardsBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="SprintMeter:sprHazards_BG" NoClip="0" Tooltip=""/>
-                <Control Class="ProgressBar" Text="" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0.5" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="0.5" BAnchorOffset="28" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="SprintMeter:sprHazards_Fill" TooltipType="OnCursor" Name="HazardsProgBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="white" Picture="1" Sprite="" BRtoLT="1" VerticallyAligned="1" Tooltip="" IgnoreMouse="1" ProgressEdgeGlow="SprintMeter:sprHazards_EdgeGlow" EdgeGlow="1" NoClipEdgeGlow="1"/>
-                <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsProgFlash" TooltipColor="" Sprite="SprintMeter:sprHazards_Flash" Picture="1" IgnoreMouse="1" Tooltip="" NoClip="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-1" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="0" RAnchorOffset="31" BAnchorPoint="1" BAnchorOffset="-15" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsIcon" TooltipColor="" Sprite="IconSprites:Icon_Windows32_UI_Hazards_Radiation" Picture="1" IgnoreMouse="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderTiny_O" Text="" BGColor="UI_WindowBGDefault" TextColor="ffff8587" Template="Default" TooltipType="OnCursor" Name="HazardsText" TooltipColor="" TextId="" DT_RIGHT="1" DT_BOTTOM="1" DT_VCENTER="0" IgnoreMouse="1" NoClip="1"/>
-            </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="42" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="84" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsTemperatureMain" TooltipColor="" Visible="0" TooltipFont="CRB_InterfaceSmall_O" IgnoreMouse="1" IgnoreTooltipDelay="1">
-                <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0.5" TAnchorOffset="-45" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="0.5" BAnchorOffset="45" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="HazardsBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="SprintMeter:sprHazards_BG" NoClip="0" Tooltip=""/>
-                <Control Class="ProgressBar" Text="" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0.5" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="0.5" BAnchorOffset="28" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="SprintMeter:sprHazards_Fill" TooltipType="OnCursor" Name="HazardsProgBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="white" Picture="1" Sprite="" BRtoLT="1" VerticallyAligned="1" Tooltip="" IgnoreMouse="1" ProgressEdgeGlow="SprintMeter:sprHazards_EdgeGlow" EdgeGlow="1" NoClipEdgeGlow="1"/>
-                <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="white" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsProgFlash" TooltipColor="" Sprite="SprintMeter:sprHazards_Flash" Picture="1" IgnoreMouse="1" Tooltip="" NoClip="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="3" TAnchorPoint="1" TAnchorOffset="-46" RAnchorPoint="0" RAnchorOffset="35" BAnchorPoint="1" BAnchorOffset="-14" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsIcon" TooltipColor="" Sprite="IconSprites:Icon_Windows32_UI_Hazards_Temperature" Picture="1" IgnoreMouse="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderTiny_O" Text="" BGColor="UI_WindowBGDefault" TextColor="ffff8587" Template="Default" TooltipType="OnCursor" Name="HazardsText" TooltipColor="" TextId="" DT_RIGHT="1" DT_BOTTOM="1" DT_VCENTER="0" IgnoreMouse="1" NoClip="1"/>
-            </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="84" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="126" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsBreathMain" TooltipColor="" Visible="0" TooltipFont="CRB_InterfaceSmall_O" IgnoreMouse="1" IgnoreTooltipDelay="1" Tooltip="" TooltipId="CRB_Breath_">
-                <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0.5" TAnchorOffset="-45" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="0.5" BAnchorOffset="45" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="HazardsBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="SprintMeter:sprHazards_BG" NoClip="0" Tooltip=""/>
-                <Control Class="ProgressBar" Text="" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0.5" TAnchorOffset="-28" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="0.5" BAnchorOffset="28" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="SprintMeter:sprHazards_Fill" TooltipType="OnCursor" Name="HazardsProgBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="white" Picture="1" Sprite="" BRtoLT="1" VerticallyAligned="1" Tooltip="" IgnoreMouse="1" ProgressEdgeGlow="SprintMeter:sprHazards_EdgeGlow" EdgeGlow="1" NoClipEdgeGlow="1"/>
-                <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-27" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="15" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="white" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsProgFlash" TooltipColor="" Sprite="SprintMeter:sprHazards_Flash" Picture="1" IgnoreMouse="1" Tooltip="" NoClip="1"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-47" RAnchorPoint="0" RAnchorOffset="32" BAnchorPoint="1" BAnchorOffset="-15" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HazardsIcon" TooltipColor="" Sprite="IconSprites:Icon_Windows32_UI_Hazards_Water" Picture="1" IgnoreMouse="1" Tooltip=""/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderTiny_O" Text="" BGColor="UI_WindowBGDefault" TextColor="ffff8587" Template="Default" TooltipType="OnCursor" Name="HazardsText" TooltipColor="" TextId="" DT_RIGHT="1" DT_BOTTOM="1" DT_VCENTER="0" IgnoreMouse="1" NoClip="1"/>
-            </Control>
-        </Control>
+    </Form>
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="42" BAnchorPoint="0" BAnchorOffset="1" RelativeToClient="0" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Threshold" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" TooltipColor="" Tooltip="">
+        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-24" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="ThresholdMarker" TooltipColor="" Sprite="sprintmeter:sprHazards_Threshold" Picture="1" IgnoreMouse="1"/>
     </Form>
 </Forms>
-lor="ffffffff" TextColor="xkcdBattleshipGrey" DT_VCENTER="1" TextId="SocialPanel_UnusedMembership" DT_WORDBREAK="0" TooltipColor="" DT_CENTER="1"/>
-    </Form>
-</Forms>
-lperLoadRewardIcon(wndRewardPanel, eType)
-
-					local strMission = ""
-					if pmMission:GetMissionState() >= PathMission.PathMissionState_Unlocked then
-						if pmMission:GetType() == PathMission.PathMissionType_Scientist_FieldStudy then
-							strMission = String_GetWeaselString(Apollo.GetString("TargetFrame_MissionProgress"), pmMission:GetName(), pmMission:GetNumCompleted(), pmMission:GetNumNeeded())
-							local tActions = pmMission:GetScientistFieldStudy()
-							if tActions then
-								for idx, tEntry in ipairs(tActions) do
-									if not tEntry.bIsCompleted then
-										strMission = String_GetWeaselString(Apollo.GetString("TargetFrame_FieldStudyAction"), strMission , tEntry.strName)
-									end
-								end
-							end
-						else
-							strMission = String_GetWeaselString(Apollo.GetString("TargetFrame_MissionProgress"), pmMission:GetName(), pmMission:GetNumCompleted(), pmMission:GetNumNeeded())
-						end
-					else
-						strMission = Apollo.GetString("TargetFrame_UnknownReward")
-					end
-
-					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-
-					local strProgress = "" -- specific to #7
-					local strUnitName = unitTarget:GetName() -- specific to #7
-					local strBracketText = Apollo.GetString("Nameplates_Missions") -- specific to #7
-					if wndCurr:IsShown() then -- already have a tooltip
-						tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\">%s</P>", tRewardString[eType], strMission)
-
-					else
-						tRewardString[eType] = string.format("%s<P Font=\"CRB_InterfaceMedium\" TextColor=\"Yellow\">%s</P>"..
-														 "<P Font=\"CRB_InterfaceMedium\">%s</P>", tRewardString[eType], String_GetWeaselString(Apollo.GetString("TargetFrame_HealthShieldText"), strUnitName, strBracketText), strMessage)
-					end
-
-					wndCurr:SetTooltip(tRewardString[eType])
-				end
-
-				if splSpell then
-					local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, Unit.CodeEnumRewardInfoType.ScientistSpell)
-					nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-					if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
-						Tooltip.GetSpellTooltipForm(self, wndCurr, splSpell)
-					end
-				end
-			elseif eType == Unit.CodeEnumRewardInfoType.PublicEvent and not self:HelperFlagOrDefault(tFlags, "bHidePublicEvents", false) then
-				local wndCurr = self:HelperLoadRewardIcon(wndRewardPanel, eType)
-
-				local peEvent = tRewardInfo[idx].peoObjective
-				local strTitle = peEvent:GetEvent():GetName()
-				local nCompleted = peEvent:GetCount()
-				local nNeeded = peEvent:GetRequiredCount()
-
-				nActiveRewardCount = nActiveRewardCount + self:HelperDrawRewardIcon(wndCurr)
-
-				local strTempTitle = strTitle
-				if peEvent:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_Exterminate then
-					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_NumRemaining"), strTitle, nCompleted)
-				elseif peEvent:ShowPercent() then
-					strTempTitle = String_GetWeaselString(Apollo.GetString("Nameplates_PercentCompleted"), strTitle, nCompleted / nNeeded * 100)
-				elseif peEvent:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveTyp

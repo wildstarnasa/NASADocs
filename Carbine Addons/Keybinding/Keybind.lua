@@ -50,7 +50,6 @@ function Keybind:OnDocumentReady()
 	Apollo.RegisterEventHandler("MouseWheel", 					"OnMouseWheel", self)
 	Apollo.RegisterEventHandler("MouseButtonUp", 				"OnMouseButtonUp", self)
 	Apollo.RegisterEventHandler("KeyBindingUpdated", 			"RefreshKeybindList", self) -- reload keybind list
-	Apollo.RegisterEventHandler("KeyBindingReceived", 			"UpdateCopySet", self) -- received the copy set from db
 	Apollo.RegisterSlashCommand("keybind", 						"OnShow", self)
 	
 	-- if without the delay: while dropdown list is visible (and dropdown button is disabled), click on the dropdown button -> 
@@ -1239,9 +1238,3 @@ end
 
 local KeybindInst = Keybind:new()
 KeybindInst:Init()
-set="69" BAnchorPoint="0" BAnchorOffset="53" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="VirtualItem" Picture="1" SwallowMouseClicks="1" Overlapped="1" BGColor="white" TextColor="white" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" Tooltip="" TooltipType="OnCursor" IgnoreTooltipDelay="1" TooltipColor="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="13" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="1" BAnchorOffset="7" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="VirtualItemDisplay" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" IgnoreTooltipDelay="1" TooltipType="OnCursor" TooltipColor="" DT_BOTTOM="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-16" TAnchorPoint="0" TAnchorOffset="-9" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-13" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" Name="VirtualItemCount" BGColor="white" TextColor="white" DT_BOTTOM="0" DT_RIGHT="0" TextId="" Tooltip="" TooltipColor="" DT_CENTER="0" DT_VCENTER="0"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-162" TAnchorPoint=".5" TAnchorOffset="-224" RAnchorPoint=".5" RAnchorOffset="161" BAnchorPoint=".5" BAnchorOffset="-31" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="InventorySalvageNotice" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" NoClip="0" Visible="0" Sprite="" TooltipColor="" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint=

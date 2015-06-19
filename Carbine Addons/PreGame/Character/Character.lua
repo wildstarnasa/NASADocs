@@ -25,36 +25,36 @@ local s_isInSelectButtons = false
 
 local c_arRaceStrings =  --inserting values so we can use direct race numbering. Each holds a table with name, then description
 {
-	[PreGameLib.CodeEnumRace.Human] 		= {strName = "CRB_ExileHuman", 		strFaction="CRB_Exiles",		strDescription = "CRB_CC_Race_ExileHumans", 		strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuM_ExNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuF_ExNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
-	[PreGameLib.CodeEnumRace.Mordesh] 		= {strName = "CRB_Mordesh", 			strFaction="CRB_Exiles", 		strDescription = "CRB_CC_Race_Mordesh", 			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MoMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MoFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
-	[PreGameLib.CodeEnumRace.Granok] 		= {strName = "CRB_DemoCC_Granok", 	strFaction="CRB_Exiles",		strDescription = "CRB_CC_Race_Granok", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_GrMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_GrFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
-	[PreGameLib.CodeEnumRace.Aurin] 			= {strName = "CRB_DemoCC_Aurin",	strFaction="CRB_Exiles",		strDescription = "CRB_CC_Race_Aurin", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_AuMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_AuFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
-	[PreGameLib.CodeEnumRace.Draken] 		= {strName = "RaceDraken",				strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Draken", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_DrMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_DrFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
-	[PreGameLib.CodeEnumRace.Mechari] 		= {strName = "RaceMechari",				strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Mechari",				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MeMNormal", 		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MeFNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
-	[PreGameLib.CodeEnumRace.Chua] 			= {strName = "RaceChua",					strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Chua", 				strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_ChuaNormal",		strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_ChuaNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
-	[k_idCassian] 										= {strName = "CRB_Cassian",				strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_DominionHumans",	strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuM_DomNormal", strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuF_DomNormal", strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[PreGameLib.CodeEnumRace.Human] 		= {strName = "CRB_ExileHuman", 		strFaction="CRB_Exiles",	strDescription = "CRB_CC_Race_ExileHumans", 	strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuM_ExNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuF_ExNormal", 	strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Mordesh] 		= {strName = "CRB_Mordesh", 		strFaction="CRB_Exiles", 	strDescription = "CRB_CC_Race_Mordesh", 		strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MoMNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MoFNormal", 		strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Granok] 		= {strName = "CRB_DemoCC_Granok", 	strFaction="CRB_Exiles",	strDescription = "CRB_CC_Race_Granok", 			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_GrMNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_GrFNormal", 		strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Aurin] 		= {strName = "CRB_DemoCC_Aurin",	strFaction="CRB_Exiles",	strDescription = "CRB_CC_Race_Aurin", 			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_AuMNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_AuFNormal", 		strFactionIcon="charactercreate:sprCharC_Ico_Exile_Lrg",},
+	[PreGameLib.CodeEnumRace.Draken] 		= {strName = "RaceDraken",			strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Draken", 			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_DrMNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_DrFNormal", 		strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[PreGameLib.CodeEnumRace.Mechari] 		= {strName = "RaceMechari",			strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Mechari",			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MeMNormal", 	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_MeFNormal", 		strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[PreGameLib.CodeEnumRace.Chua] 			= {strName = "RaceChua",			strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_Chua", 			strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_ChuaNormal",	strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_ChuaNormal", 		strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
+	[k_idCassian] 							= {strName = "CRB_Cassian",			strFaction="CRB_Dominion",	strDescription = "CRB_CC_Race_DominionHumans",	strMaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuM_DomNormal", strFemaleIcon="CRB_CharacterCreateSprites:btnCharC_RG_HuF_DomNormal", 	strFactionIcon="charactercreate:sprCharC_Ico_Dominion_Lrg",},
 }
 
 local c_arClassStrings =  --inserting values so we can use direct class numbering. Each holds a table with name, then description
 {
-	[PreGameLib.CodeEnumClass.Warrior] 		= {strName = "ClassWarrior", 			strDescription = "CharacterCreation_Blurb_Warrior",		strIcon="bk3:UI_Icon_CharacterCreate_Class_Warrior",},
+	[PreGameLib.CodeEnumClass.Warrior] 		= {strName = "ClassWarrior", 		strDescription = "CharacterCreation_Blurb_Warrior",			strIcon="bk3:UI_Icon_CharacterCreate_Class_Warrior",},
 	[PreGameLib.CodeEnumClass.Engineer] 	= {strName = "ClassEngineer", 		strDescription = "CharacterCreation_Blurb_Engineer",		strIcon="bk3:UI_Icon_CharacterCreate_Class_Engineer",},
 	[PreGameLib.CodeEnumClass.Esper] 		= {strName = "ClassESPER", 			strDescription = "CharacterCreation_Blurb_Esper",			strIcon="Ibk3:UI_Icon_CharacterCreate_Class_Esper",},
 	[PreGameLib.CodeEnumClass.Medic] 		= {strName = "ClassMedic", 			strDescription = "CharacterCreation_Blurb_Medic",			strIcon="bk3:UI_Icon_CharacterCreate_Class_Medic",},
-	[PreGameLib.CodeEnumClass.Stalker] 		= {strName = "ClassStalker", 			strDescription = "CharacterCreation_Blurb_Stalker",		strIcon="bk3:UI_Icon_CharacterCreate_Class_Stalker",},
+	[PreGameLib.CodeEnumClass.Stalker] 		= {strName = "ClassStalker", 		strDescription = "CharacterCreation_Blurb_Stalker",			strIcon="bk3:UI_Icon_CharacterCreate_Class_Stalker",},
 	[PreGameLib.CodeEnumClass.Spellslinger] = {strName = "ClassSpellslinger", 	strDescription = "CharacterCreation_Blurb_Spellslinger",	strIcon="bk3:UI_Icon_CharacterCreate_Class_Spellslinger",},
 }
 
 local c_arRaceButtons =  --inserting values so we can use direct race numbering. Each holds a table with name, then description
 {
-	[PreGameLib.CodeEnumRace.Human] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Ex", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Ex"},
+	[PreGameLib.CodeEnumRace.Human] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Ex", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Ex"},
 	[PreGameLib.CodeEnumRace.Mordesh] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_MoM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_MoF"},
 	[PreGameLib.CodeEnumRace.Granok] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_GrM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_GrF"},
-	[PreGameLib.CodeEnumRace.Aurin] 			= {male = "CRB_CharacterCreateSprites:btnCharC_RG_AuM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_AuF"},
+	[PreGameLib.CodeEnumRace.Aurin] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_AuM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_AuF"},
 	[PreGameLib.CodeEnumRace.Draken] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_DrM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_DrF"},
 	[PreGameLib.CodeEnumRace.Mechari] 		= {male = "CRB_CharacterCreateSprites:btnCharC_RG_MeM", 		female = "CRB_CharacterCreateSprites:btnCharC_RG_MeF"},
 	[PreGameLib.CodeEnumRace.Chua] 			= {male = "CRB_CharacterCreateSprites:btnCharC_RG_Chua"}, -- Chua
-	[k_idCassian]	 									= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Dom", female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Dom"},
+	[k_idCassian]	 						= {male = "CRB_CharacterCreateSprites:btnCharC_RG_HuM_Dom", 	female = "CRB_CharacterCreateSprites:btnCharC_RG_HuF_Dom"},
 }
 
 local c_arFactionStrings =
@@ -88,8 +88,8 @@ local c_arAllowedClass =
 
 local c_arPathStrings =  --paths are sequential but zero-indexed
 {
-	[PreGameLib.CodeEnumPlayerPathType.Soldier] 		= {strName = "CRB_Soldier", 		strDescription = "CharacterCreation_Blurb_Soldier",		strIcon = "bk3:UI_Icon_CharacterCreate_Path_Soldier"},
-	[PreGameLib.CodeEnumPlayerPathType.Settler] 	= {strName = "CRB_Settler", 		strDescription = "CharacterCreation_Blurb_Settler",	strIcon = "bk3:UI_Icon_CharacterCreate_Path_Settler"},
+	[PreGameLib.CodeEnumPlayerPathType.Soldier] 	= {strName = "CRB_Soldier", 	strDescription = "CharacterCreation_Blurb_Soldier",		strIcon = "bk3:UI_Icon_CharacterCreate_Path_Soldier"},
+	[PreGameLib.CodeEnumPlayerPathType.Settler] 	= {strName = "CRB_Settler", 	strDescription = "CharacterCreation_Blurb_Settler",		strIcon = "bk3:UI_Icon_CharacterCreate_Path_Settler"},
 	[PreGameLib.CodeEnumPlayerPathType.Scientist] 	= {strName = "CRB_Scientist", 	strDescription = "CharacterCreation_Blurb_Scientist",	strIcon = "bk3:UI_Icon_CharacterCreate_Path_Scientist"},
 	[PreGameLib.CodeEnumPlayerPathType.Explorer] 	= {strName = "CRB_Explorer", 	strDescription = "CharacterCreation_Blurb_Explorer",	strIcon = "bk3:UI_Icon_CharacterCreate_Path_Explorer"},
 }
@@ -801,6 +801,8 @@ function Character:OnSelectDominion()
 	self:EnableButtons()
 
 	self:OnRandomizeBtn()
+	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Faction"))
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1139,12 +1141,16 @@ end
 function Character:SetCharacterCreateIndex( characterCreateIndex )
 
 	--Set the main and shadow character. The shadow is used to populate our option lists during customization and is discretely placed waaaaaaaay off into space.
-	if g_arActors.primary == nil or g_bReplaceActor == true or self.characterCreateIndex == nil or self.arCharacterCreateOptions[self.characterCreateIndex] == nil or
-	self.arCharacterCreateOptions[self.characterCreateIndex].raceId ~= self.arCharacterCreateOptions[characterCreateIndex].raceId or
-	self.arCharacterCreateOptions[self.characterCreateIndex].factionId ~= self.arCharacterCreateOptions[characterCreateIndex].factionId or
-	   self.arCharacterCreateOptions[self.characterCreateIndex].genderId ~= self.arCharacterCreateOptions[characterCreateIndex].genderId then
+	if g_arActors.primary == nil
+		or g_bReplaceActor == true
+		or self.characterCreateIndex == nil
+		or self.arCharacterCreateOptions[self.characterCreateIndex] == nil
+		or self.arCharacterCreateOptions[self.characterCreateIndex].raceId ~= self.arCharacterCreateOptions[characterCreateIndex].raceId
+		or self.arCharacterCreateOptions[self.characterCreateIndex].factionId ~= self.arCharacterCreateOptions[characterCreateIndex].factionId
+		or self.arCharacterCreateOptions[self.characterCreateIndex].genderId ~= self.arCharacterCreateOptions[characterCreateIndex].genderId
+		or self.arCharacterCreateOptions[self.characterCreateIndex].classId ~= self.arCharacterCreateOptions[characterCreateIndex].classId then
 
-		g_arActors.primary = g_scene:AddActorByRaceGender(1, self.arCharacterCreateOptions[characterCreateIndex].raceId, self.arCharacterCreateOptions[characterCreateIndex].genderId)
+		g_arActors.primary = g_scene:AddActorByRaceGenderClass(1, self.arCharacterCreateOptions[characterCreateIndex].raceId, self.arCharacterCreateOptions[characterCreateIndex].genderId, self.arCharacterCreateOptions[characterCreateIndex].classId)
 		if g_arActors.primary then
 			g_arActors.primary:SetFaction(self.arCharacterCreateOptions[characterCreateIndex].factionId)
 		end
@@ -1152,7 +1158,7 @@ function Character:SetCharacterCreateIndex( characterCreateIndex )
 
 	end
 
-	g_arActors.shadow = g_scene:AddActorByRaceGender(25, self.arCharacterCreateOptions[characterCreateIndex].raceId, self.arCharacterCreateOptions[characterCreateIndex].genderId)
+	g_arActors.shadow = g_scene:AddActorByRaceGenderClass(25, self.arCharacterCreateOptions[characterCreateIndex].raceId, self.arCharacterCreateOptions[characterCreateIndex].genderId, self.arCharacterCreateOptions[characterCreateIndex].classId)
 	if g_arActors.shadow then
 		g_arActors.shadow:SetFaction(self.arCharacterCreateOptions[characterCreateIndex].factionId)
 		local scaleShadow = 1.0
@@ -1279,6 +1285,7 @@ function Character:OnRaceSelectCheckMale(wndHandler, wndControl)
 
 	self:OnRandomizeBtn()
 	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"))
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1308,6 +1315,7 @@ function Character:OnRaceSelectCheckFemale(wndHandler, wndControl)
 
 	self:OnRandomizeBtn()
 	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Race"))
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1315,6 +1323,11 @@ end
 function Character:OnClassSelect(wndHandler, wndControl)
 	if s_isInSelectButtons or wndHandler ~= wndControl then
 		return
+	end
+	
+	if g_arActors.primary then
+		self.arCustomizeLookOptions = g_arActors.primary:GetLooks()
+		self.arCustomizeBoneOptions = g_arActors.primary:GetBones()
 	end
 
 	local tSelectedOptions = self:GetSelectedOptionsCopy()
@@ -1330,14 +1343,19 @@ function Character:OnClassSelect(wndHandler, wndControl)
 	self:SelectButtons()
 	self:EnableButtons()
 
-	if g_arActors.primary then
-		self.arCustomizeLookOptions = g_arActors.primary:GetLooks()
-
+	if self.arCustomizeLookOptions then
 		for i, option in pairs(self.arCustomizeLookOptions) do
-			g_arActors.shadow:SetLook(option.sliderId, option.values[ option.valueIdx ] )
+			g_arActors.primary:SetLook(option.sliderId, option.values[ option.valueIdx ])
 		end
 	end
 	
+	if self.arCustomizeBoneOptions then		
+		for i, bone in pairs(self.arCustomizeBoneOptions) do
+			g_arActors.primary:SetBone(bone.sliderId, bone.value)
+		end
+	end
+	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Class"))
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1368,6 +1386,7 @@ function Character:OnPathSelect(wndHandler, wndControl)
 		g_arActors.pathIcon:Animate(0, c_pathIconAnimation[self.iSelectedPath], 0, true, false)
 	end
 	
+	self:InfoPanelDisplayContainer(self.wndInfoPane:FindChild("InfoPane_SortContainer"):FindChild("Path"))
 	Sound.Play(Sound.PlayUIPlayerSelectButton)
 end
 
@@ -1527,7 +1546,7 @@ function Character:OnNameChanged()
 	end
 
 	local nNameLength = string.len(strFirstName) + string.len(strLastName)
-	local strColor = nNameLength > knMaxCharacterName and "UI_BtnTextRedNormal" or "UI_TextHoloTitle"
+	local strColor = nNameLength > knMaxCharacterName and "UI_BtnTextRedNormal" or "UI_TextHoloBodyHighlight"
 	local strHelpText = string.format(
 		"%s [%s/%s]", 
 		Apollo.GetString("CharacterCreate_NameRules"), 
@@ -2468,8 +2487,7 @@ function Character:OnRandomLastName(characterCreateIndex)
 	local nFactionId = self.arCharacterCreateOptions[self.characterCreateIndex].factionId
 	local nGenderId = self.arCharacterCreateOptions[self.characterCreateIndex].genderId
 			
-	--Pulled from CharacterNames.lua
-	local tName = RandomNameGenerator(nRaceId, nFactionId, nGenderId)
+	local tName = PreGameLib.GetRandomName(nRaceId, nGenderId, nFactionId)
 	
 	self.wndLastNameEntry:SetText(tName.strLastName)
 	self.wndFirstNameEntry:SetText(tName.strFirstName)
@@ -2481,9 +2499,4 @@ end
 -- Character instance
 ---------------------------------------------------------------------------------------------------
 local CharacterInst = Character:new()
-CharacterInst:Init()="1" RAnchorOffset="-30" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" Name="BGHeaderText" BGColor="white" TextColor="UI_WindowTitleYellow" TextId="OptionsInterface_InterfaceOptions" DT_CENTER="1" DT_VCENTER="1" TooltipColor="" IgnoreMouse="1" AutoScaleText="1"/>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="26" TAnchorPoint="0" TAnchorOffset="48" RAnchorPoint="1" RAnchorOffset="-26" BAnchorPoint="0" BAnchorOffset="124" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="HeaderButtons" TooltipColor="" HideInEditor="0">
-            <Control Class="Button" Base="BK3:btnMetal_TabMainLeft" Font="CRB_ButtonHeader" ButtonType="Check" RadioGroup="OptionsInterfaceTabGroup" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0.33" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="GeneralBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" RelativeToClient="1" Text="" TooltipColor="" HideInEditor="0" Visible="1" Tooltip="" TestAlpha="1" NewWindowDepth="0" RadioDisallowNonSelection="1" GlobalRadioGroup="" TextId="CombatLogOptions_General">
-                <Event Name="ButtonCheck" Function="OnGeneralOptionsCheck"/>
-                <Event Name="
+CharacterInst:Init()

@@ -46,22 +46,22 @@
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_182_480.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="90" y0="0" y1="0" y2="0" y3="0" y4="0" y5="110" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprChallengeTierBronze" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_40_336.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ChallengeCurrency.tex" x0="1" x1="1" x2="1" x3="1" x4="1" x5="17" y0="34" y1="34" y2="34" y3="34" y4="34" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprChallengeTierSilver" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_56_336.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ChallengeCurrency.tex" x0="18" x1="18" x2="18" x3="18" x4="18" x5="34" y0="34" y1="34" y2="34" y3="34" y4="34" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
-    <Sprite Name="sprChallengeTierSilverStretch" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_56_336.tga" x0="0" x1="0" x2="0" x3="0" x4="15" x5="15" y0="0" y1="0" y2="0" y3="0" y4="15" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ff7d7d7d" EndColor="ff7d7d7d"/>
+    <Sprite Name="sprChallengeTierSilver32" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ChallengeCurrency.tex" x0="34" x1="34" x2="34" x3="34" x4="66" x5="66" y0="1" y1="1" y2="1" y3="1" y4="33" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
     <Sprite Name="sprChallengeTierGold" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_72_336.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ChallengeCurrency.tex" x0="35" x1="35" x2="35" x3="35" x4="35" x5="51" y0="34" y1="34" y2="34" y3="34" y4="34" y5="50" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprChallengeTierComplete" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_88_336.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_88_336.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprChallengeTierCompleteStretch" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_88_336.tga" x0="0" x1="0" x2="0" x3="0" x4="15" x5="15" y0="0" y1="0" y2="0" y3="0" y4="15" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_88_336.tga" x0="0" x1="0" x2="0" x3="0" x4="16" x5="16" y0="0" y1="0" y2="0" y3="0" y4="16" y5="16" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
     <Sprite Name="sprChallengeFrameAnchor" Cycle="1">
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_287_183.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="37" y0="0" y1="0" y2="0" y3="0" y4="0" y5="137" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
@@ -79,13 +79,19 @@
     <Sprite Name="sprChallengeFrameOutcroppingBCrop" Cycle="1">
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_254_0.tga" x0="0" x1="29" x2="29" x3="29" x4="48" x5="79" y0="0" y1="0" y2="0" y3="4" y4="48" y5="52" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
+    <Sprite Name="sprChallengeTierRed" Cycle="1">
+        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_56_336_red.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+    <Sprite Name="sprChallengeTierBronze32" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ChallengeCurrency.tex" x0="1" x1="1" x2="1" x3="1" x4="33" x5="33" y0="1" y1="1" y2="1" y3="1" y4="33" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprChallengeTierGold32" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_CRB_ChallengeCurrency.tex" x0="67" x1="67" x2="67" x3="67" x4="99" x5="99" y0="1" y1="1" y2="1" y3="1" y4="33" y5="33" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <AutoButton Name="btnChallengeTabPassed" Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_0_0.tga" x0="0" x1="0" x2="0" x3="6" x4="57" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" StateBits="15" Direction="Across"/>
     <AutoButton Name="btnChallengeTab" Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_0_41.tga" x0="0" x1="0" x2="0" x3="6" x4="57" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" StateBits="15" Direction="Across"/>
     <AutoButton Name="btnChallengeTabFailed" Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_0_82.tga" x0="0" x1="0" x2="0" x3="6" x4="57" x5="63" y0="0" y1="0" y2="0" y3="0" y4="0" y5="40" Stretchy="1" StateBits="15" Direction="Across"/>
     <AutoButton Name="btnChallengeButton" Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_0_142.tga" x0="0" x1="0" x2="0" x3="6" x4="58" x5="64" y0="0" y1="0" y2="0" y3="0" y4="0" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnChallengeClose" Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_0_123.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="18" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnChallengeTierBacker" Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_197_323.tga" x0="0" x1="0" x2="0" x3="5" x4="20" x5="27" y0="0" y1="0" y2="0" y3="6" y4="21" y5="27" Stretchy="1" StateBits="3" Direction="Across"/>
-    <Sprite Name="sprChallengeTierRed" Cycle="1">
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_ChallengeTracker_56_336_red.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="15" y0="0" y1="0" y2="0" y3="0" y4="0" y5="15" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
-    </Sprite>
 </Sprites>

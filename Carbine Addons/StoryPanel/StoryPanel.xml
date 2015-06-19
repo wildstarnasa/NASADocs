@@ -66,22 +66,3 @@
         </Control>
     </Form>
 </Forms>
-ScrollScroller"/>
-        </VScroll>
-        <BlankButton Auto="CRB_DatachronSprites:btnDCM_DataMenu"/>
-    </WindowTemplate>
-    <WindowTemplate Name="CRB_ChatWindow" BorderTopLeft="CRB_ChatLogSprites:sprChatBorderTopLeft" BorderTop="CRB_ChatLogSprites:sprChatBorderTop" BorderTopRight="CRB_ChatLogSprites:sprChatBorderTopRight" BorderRight="" BorderBottomRight="" BorderBottom="" BorderBottomLeft="" BorderLeft="" ClientFrame="" DefaultCursor="Default" SingleBorderFrame="" UseMargins="1" TopMargin="20" LeftMargin="15" RightMargin="5" BottomMargin="5" ResizeNSCursor="DefaultResizeNS" ResizeEWCursor="DefaultResizeEW" ResizeNESWCursor="DefaultResizeNESW" ResizeNWSECursor="DefaultResizeNWSE">
-        <HScroll Internal="">
-            <IncButton Auto="" ButtonSoundTemplate="Test"/>
-            <DecButton Auto=""/>
-            <Thumb Auto=""/>
-        </HScroll>
-        <VScroll Internal="CRB_DatachronSprites:sprDCM_ScrollBacker">
-            <IncButton Auto="CRB_DatachronSprites:btnDCM_DataScrollDown"/>
-            <DecButton Auto="CRB_DatachronSprites:btnDCM_DataScrollUp"/>
-            <Thumb Auto="CRB_DatachronSprites:btnDCM_DataScrollScroller"/>
-        </VScroll>
-        <BlankButton Auto="CRB_DatachronSprites:btnDCM_DataMenu"/>
-        <Adornment LAnchorPoint="1" LAnchorOffset="-15" TAnchorPoint="1" TAnchorOffset="-15" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="" BGColor="white" Rotation="0" ResizeHandle="5"/>
-    </WindowTemplate>
-    <WindowTemplate Name="CRB_TooltipBasic" BorderTopLeft="" BorderTop="" BorderTopRight="" BorderRight="" BorderBottomRight="" BorderBottom="" BorderBottomLeft="" BorderLeft="" ClientFrame="" DefaultCursor="Default" SingleBorderFrame="CRB_TooltipSprites:sprTT_SimpleBack" UseMargins="1" TopMargin="10" LeftMargin="26" RightMargin="10" BottomMargin="10" ResizeNSCursor="DefaultResizeNS" ResizeEWCurs

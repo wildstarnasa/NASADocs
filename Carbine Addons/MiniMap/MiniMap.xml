@@ -33,17 +33,6 @@
         <Control Class="Window" LAnchorPoint="0.06863" LAnchorOffset="0" TAnchorPoint="0.77451" TAnchorOffset="0" RAnchorPoint="0.06863" RAnchorOffset="18" BAnchorPoint="0.77451" BAnchorOffset="18" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MiniMapResizeArtForPixie" BGColor="white" TextColor="white" TooltipColor="" Sprite="CRB_MinimapSprites:btnMM_ResizeToggleNormal" Picture="1" IgnoreMouse="1" Visible="0" TransitionShowHide="1"/>
         <Event Name="MouseEnter" Function="OnMiniMapMouseEnter"/>
         <Event Name="MouseExit" Function="OnMiniMapMouseExit"/>
-        <Control Class="Window" LAnchorPoint="-0.93137" LAnchorOffset="0" TAnchorPoint="0.09804" TAnchorOffset="0" RAnchorPoint="0.24510" RAnchorOffset="0" BAnchorPoint="0.34314" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="EventContainer" TooltipColor="" IgnoreMouse="1" NoClip="1" Visible="0" HideInEditor="0" TransitionShowHide="1">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0.5" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="-47" BAnchorPoint="0.5" BAnchorOffset="10" RelativeToClient="1" Font="CRB_HeaderMedium_O" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyHighlight" Template="Default" TooltipType="OnCursor" Name="EventTitle" TooltipColor="" TextId="Event_ShadesEveTitle" DT_RIGHT="1" Visible="0" IgnoreMouse="1" TransitionShowHide="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0.5" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-47" BAnchorPoint="0.5" BAnchorOffset="20" RelativeToClient="1" Font="CRB_HeaderTiny_O" Text="" BGColor="UI_WindowBGDefault" TextColor="white" Template="Default" TooltipType="OnCursor" Name="EventSubtitle" TooltipColor="" TextId="Event_WorldEventTitle" DT_RIGHT="1" Visible="0" IgnoreMouse="1" TransitionShowHide="1"/>
-            <Control Class="Button" Base="Event_ShadesEve:btnEvent_Shade_Pumpkin" Font="DefaultButton" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-48" TAnchorPoint="0.5" TAnchorOffset="-25" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0.5" BAnchorOffset="25" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="EventMoreInfoBtn" TooltipColor="" RelativeToClient="1" TestAlpha="1" NeverBringToFront="1" IgnoreMouse="0">
-                <Event Name="ButtonSignal" Function="OnEventMoreInfoBtn"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-20" TAnchorPoint="0.5" TAnchorOffset="-20" RAnchorPoint="0.5" RAnchorOffset="20" BAnchorPoint="0.5" BAnchorOffset="20" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="EventSmallerHitZone" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" NewControlDepth="1">
-                    <Event Name="MouseEnter" Function="OnEventMoreInfoMouseEnter"/>
-                    <Event Name="MouseExit" Function="OnEventMoreInfoMouseExit"/>
-                </Control>
-            </Control>
-        </Control>
     </Form>
     <Form Class="Window" LAnchorPoint="Minimap_Right" LAnchorOffset="-295" TAnchorPoint="Minimap_Bottom" TAnchorOffset="-22" RAnchorPoint="Minimap_Right" RAnchorOffset="2" BAnchorPoint="Minimap_Bottom" BAnchorOffset="309" RelativeToClient="1" Font="Default" Text="" Template="CRB_NormalFramedThin" Name="MinimapOptions" BGColor="white" TextColor="white" Border="0" IgnoreMouse="1" NoClip="1" UseTemplateBG="0" Visible="0" AutoFade="0" TransitionShowHide="0" HideInEditor="0" NewWindowDepth="1" Escapable="1" Overlapped="1" LeftEdgeControlsAnchor="" RightEdgeControlsAnchor="" TopEdgeControlsAnchor="" BottomEdgeControlsAnchor="" TooltipColor="" CloseOnExternalClick="1" Tooltip="" TextId="">
         <Event Name="MouseExit" Function="OnMenuMouseExit"/>
@@ -188,51 +177,4 @@
             </Control>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-594" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-200" BAnchorPoint="0" BAnchorOffset="504" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LiveEventMain" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" TooltipColor="" Sprite="" IgnoreMouse="1" Tooltip="" TransitionShowHide="1">
-        <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-116" TAnchorPoint="0" TAnchorOffset="50" RAnchorPoint="0.5" RAnchorOffset="116" BAnchorPoint="0" BAnchorOffset="266" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="LiveEventTitle" TooltipColor="" Sprite="Event_ShadesEve:sprEvent_Shade_Title_DE" Picture="1" IgnoreMouse="1" Visible="1" TransitionShowHide="1"/>
-        <Pixie LAnchorPoint="0" LAnchorOffset="30" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="-30" BAnchorPoint="1" BAnchorOffset="-30" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="BK3:UI_BK3_Holo_Framing_1_Blocker" Line="0"/>
-        <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="Event_ShadesEve:sprEvent_Shade_Frame" Line="0"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="1" RAnchorOffset="-50" BAnchorPoint="1" BAnchorOffset="-103" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="ff56b381" Template="Default" TooltipType="OnCursor" Name="LiveEventExplanation" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" TextId="Challenges_NoProgress"/>
-        <Pixie LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="0" TAnchorOffset="276" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="1" BAnchorOffset="-93" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="BK3:UI_BK3_Metal_Inset_SharpCorner" Line="0"/>
-        <Control Class="Button" Base="BK3:btnHolo_Close" Font="DefaultButton" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-59" TAnchorPoint="0" TAnchorOffset="17" RAnchorPoint="1" RAnchorOffset="-17" BAnchorPoint="0" BAnchorOffset="61" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="LiveEventCloseBtn" TooltipColor="">
-            <Event Name="ButtonSignal" Function="OnLiveEventClose"/>
-        </Control>
-        <Event Name="WindowClosed" Function="OnLiveEventClose"/>
-    </Form>
 </Forms>
-s[MatchingGame.Roles.Healer]:SetCheck(true)
-		self.tRoleCheckRoleButtons[MatchingGame.Roles.Healer]:SetCheck(true)
-	end
-
-	MatchingGame.SelectRole(MatchingGame.Roles.Healer, true)
-
-	local tSelectedRoles = MatchingGame.GetSelectedRoles()
-	self.wndConfirmRole:FindChild("AcceptButton"):Enable(#tSelectedRoles > 0)
-end
-
-function MatchMaker:OnHealerUnchecked(wndHandler, wndControl)
-	if wndHandler == self.tRoleCheckRoleButtons[MatchingGame.Roles.Healer] or wndHandler == self.tGroupFinderRoleButtons[MatchingGame.Roles.Healer] then
-		self.tGroupFinderRoleButtons[MatchingGame.Roles.Healer]:SetCheck(false)
-		self.tRoleCheckRoleButtons[MatchingGame.Roles.Healer]:SetCheck(false)
-	end
-
-	MatchingGame.SelectRole(MatchingGame.Roles.Healer, false)
-
-	local tSelectedRoles = MatchingGame.GetSelectedRoles()
-	self.wndConfirmRole:FindChild("AcceptButton"):Enable(#tSelectedRoles > 0)
-end
-
-function MatchMaker:OnDPSChecked(wndHandler, wndControl)
-	if wndHandler == self.tRoleCheckRoleButtons[MatchingGame.Roles.DPS] or wndHandler == self.tGroupFinderRoleButtons[MatchingGame.Roles.DPS] then
-		self.tGroupFinderRoleButtons[MatchingGame.Roles.DPS]:SetCheck(true)
-		self.tRoleCheckRoleButtons[MatchingGame.Roles.DPS]:SetCheck(true)
-	end
-
-	MatchingGame.SelectRole(MatchingGame.Roles.DPS, true)
-
-	local tSelectedRoles = MatchingGame.GetSelectedRoles()
-	self.wndConfirmRole:FindChild("AcceptButton"):Enable(#tSelectedRoles > 0)
-end
-
-function MatchMaker:OnDPSUnchecked(wndHandler, wndControl)
-	if wndHandler == self.tRoleCheckRoleButtons[MatchingGame.Roles.DPS] or wndHandler == self.tGro

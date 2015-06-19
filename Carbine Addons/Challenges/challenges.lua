@@ -212,8 +212,8 @@ end
 
 -- This will be repeatedly called by itself once started and until it finishes
 function Challenges:UpdateLeftAreaTime()
-	local strTimeRemaining = ChallengesLib.GetTimeRemaining(self.idLeftArea, ChallengesLib.ChallengeTimerFlags_Active)
-	local strCountdown = ChallengesLib.GetTimeRemaining(self.idLeftArea, ChallengesLib.ChallengeTimerFlags_LeftArea)
+	local strTimeRemaining = self:HelperConvertToTime(ChallengesLib.GetTimeRemaining(self.idLeftArea, ChallengesLib.ChallengeTimerFlags_Active))
+	local strCountdown = self:HelperConvertToTime(ChallengesLib.GetTimeRemaining(self.idLeftArea, ChallengesLib.ChallengeTimerFlags_LeftArea))
 	self.timerAreaLeft:Stop()
 
 	if strTimeRemaining < strCountdown then
@@ -726,7 +726,7 @@ local wndTrackerTitle = self.wndBigDisplay:FindChild("TrackerTitle")
 			local strTier = tCurrTier["nGoalCount"]
 			if clgActive:IsTimeTiered() then
 				wndCurrTier:SetTextColor(kstrFadedBlue)
-				wndCurrTier:SetText(self:HelperConvertToTime(strTier))
+				wndCurrTier:SetText(self:HelperConvertToTime(strTier, true))
 			elseif iTierIdx == (clgActive:GetCurrentTier() + 1) then -- Active tier
 				wndCurrTier:SetTextColor(kstrBrightBlue)
 				wndCurrTier:SetText(strTier == 100 and strPercent or strTier)
@@ -1144,8 +1144,10 @@ function Challenges:CalculateMLTimeText(clgCurrent, strFontName)
     local strTime = ""
 	local strPrefix = ""
 
-    if clgCurrent ~= nil and clgCurrent:GetTimeStr() ~= nil then
-        strTime = clgCurrent:GetTimeStr()
+	local nSeconds = clgCurrent and clgCurrent:GetTimer() or 0
+	if  nSeconds > 0 then
+        strTime = self:HelperConvertToTime(nSeconds)
+		
 		if string.find(strTime, "00:") == 1 then
 			strTime = string.gsub(strTime, "00:", "")
 			strPrefix = "00:"	-- Will display as 00: + 59
@@ -1309,19 +1311,20 @@ function Challenges:HelperAllChallengesInCooldown(tChallengeData)
 	return bResult
 end
 
-function Challenges:HelperConvertToTime(nArg) -- nArg is passed in as 20000 for 20 seconds
+function Challenges:HelperConvertToTime(nInSeconds, bReturnZero)
+	if not bReturnZero and nInSeconds == 0 then
+		return ""
+	end
+	
 	local strResult = ""
-	local nInSeconds = math.floor(nArg / 1000)
 	local nHours = math.floor(nInSeconds / 3600)
 	local nMins = math.floor(nInSeconds / 60 - (nHours * 60))
 	local nSecs = string.format("%02.f", math.floor(nInSeconds - (nHours * 3600) - (nMins * 60)))
 
 	if nHours ~= 0 then
 		strResult = nHours .. ":" .. nMins .. ":" .. nSecs
-	elseif nMins ~= 0 then
-		strResult = nMins .. ":" .. nSecs
 	else
-		strResult = ":" .. nSecs
+		strResult = nMins .. ":" .. nSecs
 	end
 
 	return strResult
@@ -1426,6 +1429,3 @@ end
 
 local ChallengesInstance = Challenges:new()
 ChallengesInstance:Init()
- кккк            кккк            кккк            кккк            кккк            кккк            ккккй	С$IТ$    ккккЇ ╨IЧ$    ккккўf        кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          ккккўf     0    ккккЇ  мkТ$    ккккй`Т$IТ$    кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            ккккв	С$IТ$    ккккЇ `
-╔Ы$    ккккЇ   S    кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          ккккЇ    &:    ккккЇ  ╤}Т$    ккккв`Т$IТ$    кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк$IР$IТ$    ккккЇР╝IТ$    ккккЇ 0 yЧ$    ккккї   w    кккк√ю         кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√√          кккк√ю          ккккї    ┤:    ккккЇ  `ыУ$    ккккЇ└┌'IТ$    кккк$HТ$IТ$    кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк│яР$IТ$    ккккЇ pЧIТ$    ккккЇ   ЙЫ$    ккккЇ   ▄Ф$    ккккї!    Р▀    кккк°|    Р╗    кккк·┴    Ч    кккк√ь    
-    кккк√ь     1    кккк·┴    └:    кккк°|    P?    ккккї!    р?    ккккЇ   ┌Ш$    ккккЇ  @uТ$    ккккЇ └·IТ$    кккк│XЯ$IТ$    кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк            кккк

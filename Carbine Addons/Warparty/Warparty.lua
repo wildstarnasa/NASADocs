@@ -11,8 +11,8 @@ require "GameLib"
 
 local Warparty = {}
 
-local crGuildNameLengthError = ApolloColor.new("red")
-local crGuildNameLengthGood = ApolloColor.new("ffffffff")
+local crGuildNameLengthError = ApolloColor.new("AlertOrangeYellow")
+local crGuildNameLengthGood = ApolloColor.new("UI_TextHoloBodyCyan")
 local knSaveVersion = 2
 
 function Warparty:new(o)
@@ -105,6 +105,9 @@ function Warparty:OnDocumentReady()
 	wndPermissionContainer:ArrangeChildrenVert()
 	
 	self.wndRankPopout = self.wndMain:FindChild("RankPopout")
+	
+	-- This string has formatting that must go through string weasel to work correctly.
+	self.wndMain:FindChild("PublicConfirmationText"):SetText(String_GetWeaselString(Apollo.GetString("Warparty_PublicWarplotConfirm")))
 
 	if self.tInviteSent then
 		self:OnGuildInvite( self.tStrWarpartyName, self.tStrInvitorName, GuildLib.GuildType_WarParty )
@@ -802,6 +805,7 @@ function Warparty:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
 	end
 	
 	wndSettings:FindChild("RankPopoutOkBtn"):Enable((bNew and bNameValid) or (not bNew and bNameValid and (bNameChanged or bPermissionChanged)))
+	wndSettings:FindChild("ValidAlert"):Show(not bNameValid)
 end
 
 function Warparty:OnRankSettingsCloseBtn(wndControl, wndHandler)
@@ -867,59 +871,3 @@ end
 -----------------------------------------------------------------------------------------------
 local WarpartyInst = Warparty:new()
 WarpartyInst:Init()
---------------------------
--- Guild
------------------------------------------------------------------------------------------------
-
-function Vendor:OnGuildChange() -- Catch All method to validate Guild Repair
-	if not self.wndVendor or not self.wndVendor:IsValid() or not self.wndVendor:IsVisible() then
-		return
-	end
-
-	local tMyGuild = nil
-	for idx, tGuild in pairs(GuildLib.GetGuilds()) do
-		if tGuild:GetType() == GuildLib.GuildType_Guild then
-			tMyGuild = tGuild
-			break
-		end
-	end
-
-	local bIsRepairing = self.wndVendor:FindChild(kstrTabRepair):IsChecked()
-
-	-- The following code allows for tMyGuild to be nil
-	local nLeft, nTop, nRight, nBottom = self.wndVendor:FindChild("LeftSideContainer"):GetAnchorOffsets()
-	local nLeft2, nTop2, nRight2, nBottom2 = self.wndVendor:FindChild("BottomContainer"):GetAnchorOffsets()
-	self.wndVendor:FindChild("LeftSideContainer"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -138 or -88) -- TODO HACKY: Hardcoded formatting
-	self.wndVendor:FindChild("VendorFlash"):SetAnchorOffsets(nLeft, nTop, nRight, (tMyGuild and bIsRepairing) and -138 or -88) -- TODO HACKY: Hardcoded formatting
-	self.wndVendor:FindChild("BottomContainer"):SetAnchorOffsets(nLeft2, (tMyGuild and bIsRepairing) and -138 or -88, nRight2, nBottom2) -- TODO HACKY: Hardcoded formatting
-	self.wndVendor:FindChild("GuildRepairContainer"):Show(tMyGuild and bIsRepairing)
-
-	if tMyGuild then -- If not valid, it won't be shown anyways
-		local tMyRankData = tMyGuild:GetRanks()[tMyGuild:GetMyRank()]
-
-		local nAvailableFunds
-		local nRepairRemainingToday = math.min(knMaxGuildLimit, tMyRankData.monBankRepairLimit:GetAmount()) - tMyGuild:GetBankMoneyRepairToday():GetAmount()
-		if tMyGuild:GetMoney():GetAmount() <= nRepairRemainingToday then
-			nAvailableFunds = tMyGuild:GetMoney():GetAmount()
-		else
-			nAvailableFunds = nRepairRemainingToday
-		end
-
-		self.wndVendor:FindChild("GuildRepairFundsCashWindow"):SetAmount(math.max(0, nAvailableFunds))
-
-		local repairableItems = self.wndVendor:GetData():GetRepairableItems()
-		local bHaveItemsToRepair = #repairableItems > 0
-
-		-- Check if you have enough and text color accordingly
-		local nRepairAllCost = 0
-		for key, tCurrItem in pairs(repairableItems) do
-			local tCurrPrice = math.max(tCurrItem.tPriceInfo.nAmount1, tCurrItem.tPriceInfo.nAmount2) * tCurrItem.nStackSize
-			nRepairAllCost = nRepairAllCost + tCurrPrice
-		end
-		local bSufficientFunds = nRepairAllCost <= nAvailableFunds
-
-		-- Enable / Disable button
-		local tCurrItem = self.wndVendor:FindChild("Buy"):GetData()
-		if tCurrItem and tCurrItem.tPriceInfo then
-			local tCurrPrice = math.max(tCurrItem.tPriceInfo.nAmount1, tCurrItem.tPriceInfo.nAmount2) * tCurrItem.nStackSize
-			bSufficientFun

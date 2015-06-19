@@ -1,5 +1,5 @@
 <Forms>
-    <Form Class="Window" LAnchorPoint=".7" LAnchorOffset="-200" TAnchorPoint=".5" TAnchorOffset="-96" RAnchorPoint=".7" RAnchorOffset="200" BAnchorPoint=".5" BAnchorOffset="118" RelativeToClient="1" Font="Default" Text="" Template="HoloWindowSound" Name="ArenaTeamRegistrationForm" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" TextId="" TooltipColor="" Tooltip="" HideInEditor="0">
+    <Form Class="Window" LAnchorPoint=".7" LAnchorOffset="-200" TAnchorPoint=".5" TAnchorOffset="-99" RAnchorPoint=".7" RAnchorOffset="200" BAnchorPoint=".5" BAnchorOffset="121" RelativeToClient="1" Font="Default" Text="" Template="HoloWindowSound" Name="ArenaTeamRegistrationForm" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" TextId="" TooltipColor="" Tooltip="" HideInEditor="0">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="BGArt" BGColor="white" TextColor="white" TooltipColor="" Sprite="BK3:UI_BK3_Holo_Framing_2" Picture="1" IgnoreMouse="1" HideInEditor="0"/>
         <Control Class="Button" Base="BK3:btnHolo_Red_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="2" TAnchorPoint="1" TAnchorOffset="-105" RAnchorPoint=".5" RAnchorOffset="122" BAnchorPoint="1" BAnchorOffset="-33" DT_VCENTER="1" DT_CENTER="1" Name="CancelButton" BGColor="white" TextColor="white" NewControlDepth="2" WindowSoundTemplate="TogglePhys03" TextId="CRB_Cancel" Text="" TooltipColor="" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedPressedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" Template="Default">
             <Event Name="ButtonSignal" Function="OnCancel"/>
@@ -9,13 +9,14 @@
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="46" TAnchorPoint="0" TAnchorOffset="47" RAnchorPoint="1" RAnchorOffset="-49" BAnchorPoint="0" BAnchorOffset="126" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="RegistrationContent" BGColor="white" TextColor="white" TooltipColor="" Tooltip="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="18" TAnchorPoint="0" TAnchorOffset="-6" RAnchorPoint="1" RAnchorOffset="-18" BAnchorPoint="0" BAnchorOffset="18" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" TooltipType="OnCursor" Name="ArenaTeamNameLabel" BGColor="white" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="Arena_DesiredTeamName" DT_CENTER="1" DT_BOTTOM="0" DT_VCENTER="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="64" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="UnderPaint_Guild" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_Snippet"/>
-            <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="11" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="0" RAnchorOffset="240" BAnchorPoint="0" BAnchorOffset="64" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="ArenaTeamNameString" BGColor="white" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" TextId="" DT_VCENTER="1">
+            <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="66" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_InputBox" TooltipType="OnCursor" Name="ArenaTeamNameString" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_VCENTER="1" Tooltip="" Picture="0" Border="1" UseTemplateBG="1">
                 <Event Name="EditBoxChanging" Function="OnNameChanging"/>
                 <Event Name="EditBoxChanged" Function="OnNameChanging"/>
             </Control>
-            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-67" TAnchorPoint="0" TAnchorOffset="34" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="0" BAnchorOffset="58" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="(25/25)" Template="Default" TooltipType="OnCursor" Name="Limit" BGColor="ffffffff" TextColor="red" TooltipColor="" TextId="" DT_VCENTER="1" DT_RIGHT="1"/>
-            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-69" TAnchorPoint="1" TAnchorOffset="-44" RAnchorPoint="1" RAnchorOffset="-45" BAnchorPoint="1" BAnchorOffset="-20" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ValidAlert" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitIcon_NewDisabled" Tooltip="" Visible="1" TooltipFont="CRB_InterfaceSmall_O" TooltipId="MatchMaker_InvalidName" NewControlDepth="1" TextId="" HideInEditor="0"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="29" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="66" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ValidAlert" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_Snippet_Alert" Tooltip="" Visible="1" TooltipFont="CRB_InterfaceSmall" TooltipId="" NewControlDepth="1" TextId="" HideInEditor="0" TransitionShowHide="1">
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="284" TAnchorPoint="0" TAnchorOffset="9" RAnchorPoint="0" RAnchorOffset="319" BAnchorPoint="0" BAnchorOffset="44" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Symbol" TooltipColor="" Sprite="BK3:UI_BK3_StoryPanelAlert_Icon" Picture="1" IgnoreMouse="1" NoClip="1" Tooltip="" TooltipId="MatchMaker_InvalidName"/>
+            </Control>
+            <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-67" TAnchorPoint="0" TAnchorOffset="36" RAnchorPoint="1" RAnchorOffset="-14" BAnchorPoint="0" BAnchorOffset="59" RelativeToClient="1" Font="CRB_InterfaceSmall_O" Text="(25/25)" Template="Default" TooltipType="OnCursor" Name="Limit" BGColor="ffffffff" TextColor="fffdbd83" TooltipColor="" TextId="" DT_VCENTER="1" DT_RIGHT="1" HideInEditor="0"/>
         </Control>
         <Event Name="MouseButtonDown" Function="HelperClearFocus"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="32" TAnchorPoint="0" TAnchorOffset="31" RAnchorPoint="1" RAnchorOffset="-32" BAnchorPoint="1" BAnchorOffset="-32" RelativeToClient="1" Font="Default" Text="" Template="HoloNotificationSound" TooltipType="OnCursor" Name="AlertMessage" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" NewWindowDepth="1" Visible="0" TransitionShowHide="1" HideInEditor="1" Tooltip="">
@@ -28,17 +29,3 @@
         </Control>
     </Form>
 </Forms>
-oltipGenerateType_Spell then
-		Tooltip.GetSpellTooltipForm(self, wndControl, oArg1)
-	elseif eType == Tooltip.TooltipGenerateType_PetCommand then
-		xml = XmlDoc.new()
-		xml:AddLine(oArg2)
-		wndControl:SetTooltipDoc(xml)
-	end
-end
-
------------------------------------------------------------
-local ActionBarShor    úŸ ‘  ‘∏Î$ àIò4KarShortcut:new()
-ActionBarShortcut_Singleton:Init()
-–‡À  À±Î$ àIò4K≠çÉ†®™çå
-Ä Ä‡

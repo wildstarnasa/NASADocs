@@ -2,37 +2,3 @@
     <Script Name="Datachron.lua" />
     <Form Name="Datachron.xml" />
 </Addon>
-DatachronBaseTexture.tga" Left="0" Top="2" Width="336" Height="204" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="DatachronStatic" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronStaticFrames.tga" Left="0" Top="0" Width="236" Height="152" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronStaticFrames.tga" Left="237" Top="0" Width="236" Height="152" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronStaticFrames.tga" Left="474" Top="0" Width="236" Height="152" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="CommIndicator_Normal" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="0" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="CommIndicator_Green" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="83" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="CommIndicator_GreenGlow" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="166" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="0.600" StartColor="ffffffff" EndColor="50ffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="166" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="0.600" StartColor="50ffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="CommIndicator_Red" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="249" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="CommIndicator_RedGlow" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="332" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="0.600" StartColor="ffffffff" EndColor="50ffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronAlertSymbol.tga" Left="332" Top="0" Width="82" Height="82" HotspotX="0" HotspotY="0" Duration="0.600" StartColor="50ffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="DatachronScreenOverlay" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronScreenOverlay.tga" Left="0" Top="0" Width="241" Height="152" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff" />
-    </Sprite>
-    <Sprite Name="CommIncomingAnim" Cycle="1">
-        <Frame Texture="UI\Datachron\UI_DatachronSonarAnimation.tga" Left="0" Top="0" Width="200" Height="200" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronSonarAnimation.tga" Left="200" Top="0" Width="200" Height="200" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronSonarAnimation.tga" Left="400" Top="0" Width="200" Height="200" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronSonarAnimation.tga" Left="600" Top="0" Width="200" Height="200" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronSonarAnimation.tga" Left="800" Top="0" Width="200" Height="200" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffffff" EndColor="ffffffff" />
-        <Frame Texture="UI\Datachron\UI_DatachronSonarAnimation.tga" Left="1000" Top="0" Width="200" Height="

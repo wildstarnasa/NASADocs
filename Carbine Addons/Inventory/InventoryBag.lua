@@ -20,7 +20,7 @@ local karCurrency =  	-- Alt currency table; re-indexing the enums so they don't
 {						-- To add a new currency just add an entry to the table; the UI will do the rest. Idx == 1 will be the default one shown
 	{eType = Money.CodeEnumCurrencyType.Renown, 			strTitle = Apollo.GetString("CRB_Renown"), 				strDescription = Apollo.GetString("CRB_Renown_Desc")},
 	{eType = Money.CodeEnumCurrencyType.ElderGems, 			strTitle = Apollo.GetString("CRB_Elder_Gems"), 			strDescription = Apollo.GetString("CRB_Elder_Gems_Desc")},
-	{eType = Money.CodeEnumCurrencyType.Glory, 			strTitle = Apollo.GetString("CRB_Glory"), 			strDescription = Apollo.GetString("CRB_Glory_Desc")},
+	{eType = Money.CodeEnumCurrencyType.Glory, 				strTitle = Apollo.GetString("CRB_Glory"), 				strDescription = Apollo.GetString("CRB_Glory_Desc")},
 	{eType = Money.CodeEnumCurrencyType.Prestige, 			strTitle = Apollo.GetString("CRB_Prestige"), 			strDescription = Apollo.GetString("CRB_Prestige_Desc")},
 	{eType = Money.CodeEnumCurrencyType.CraftingVouchers, 	strTitle = Apollo.GetString("CRB_Crafting_Vouchers"), 	strDescription = Apollo.GetString("CRB_Crafting_Voucher_Desc")}
 }
@@ -30,6 +30,7 @@ function InventoryBag:new(o)
 	setmetatable(o, self)
 	self.__index = self
 
+	o.bCostumesOpen = false
 	o.bShouldSortItems = false
 	o.nSortItemType = 1
 
@@ -189,8 +190,9 @@ function InventoryBag:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("InterfaceMenu_ToggleInventory", 			"OnToggleVisibility", self) -- TODO: The datachron attachment needs to be brought over
 	Apollo.RegisterEventHandler("GuildBank_ShowPersonalInventory", 			"OnToggleVisibilityAlways", self)
-
-	Apollo.RegisterEventHandler("PersonaUpdateCharacterStats", 				"UpdateBagSlotItems", self) -- using this for bag changes
+	Apollo.RegisterEventHandler("InvokeVendorWindow", 							"OnToggleVisibilityAlways", self)
+	Apollo.RegisterEventHandler("ShowBank",											 "OnToggleVisibilityAlways", self)
+	Apollo.RegisterEventHandler("PlayerEquippedItemChanged", 				"UpdateBagSlotItems", self) -- using this for bag changes
 	Apollo.RegisterEventHandler("PlayerPathMissionUpdate", 					"OnQuestObjectiveUpdated", self) -- route to same event
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 					"OnQuestObjectiveUpdated", self)
 	Apollo.RegisterEventHandler("PlayerPathRefresh", 						"OnQuestObjectiveUpdated", self) -- route to same event
@@ -200,6 +202,8 @@ function InventoryBag:OnDocumentReady()
 	Apollo.RegisterEventHandler("ChallengeUpdated", 						"OnChallengeUpdated", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 						"OnCharacterCreated", self)
 	Apollo.RegisterEventHandler("PlayerEquippedItemChanged",				"OnEquippedItem", self)
+	Apollo.RegisterEventHandler("GenerciEvent_CostumesWindowOpened",		"OnGenerciEvent_CostumesWindowOpened", self)
+	Apollo.RegisterEventHandler("GenerciEvent_CostumesWindowClosed",		"OnGenerciEvent_CostumesWindowClosed", self)
 
 	Apollo.RegisterEventHandler("GenericEvent_SplitItemStack", 				"OnGenericEvent_SplitItemStack", self)
 
@@ -210,12 +214,6 @@ function InventoryBag:OnDocumentReady()
 	Apollo.RegisterEventHandler("LootStackItemSentToTradeskillBag", "OnLootstackItemSentToTradeskillBag", self)
 	Apollo.RegisterEventHandler("SupplySatchelOpen", "OnSupplySatchelOpen", self)
 	Apollo.RegisterEventHandler("SupplySatchelClosed", "OnSupplySatchelClosed", self)
-
-
-
-	--Apollo.RegisterTimerHandler("InventoryUpdateTimer", 					"OnUpdateTimer", self)
-	--Apollo.CreateTimer("InventoryUpdateTimer", 1.0, true)
-	--Apollo.StopTimer("InventoryUpdateTimer")
 
 	-- TODO Refactor: Investigate these two, we may not need them if we can detect the origin window of a drag
 	Apollo.RegisterEventHandler("DragDropSysBegin", "OnSystemBeginDragDrop", self)
@@ -365,7 +363,7 @@ end
 -- Main Update Timer
 -----------------------------------------------------------------------------------------------
 function InventoryBag:OnInventoryClosed( wndHandler, wndControl )
-	self.wndMain:FindChild("MainBagWindow"):MarkAllItemsAsSeen()
+	self.wndMainBagWindow:MarkAllItemsAsSeen()
 end
 
 function InventoryBag:OnPlayerCurrencyChanged()
@@ -377,32 +375,30 @@ function InventoryBag:OnPlayerCurrencyChanged()
 end
 
 function InventoryBag:UpdateBagSlotItems() -- update our bag display
-	local strEmptyBag = Apollo.GetString("Inventory_EmptySlot")
 	local nOldBagCount = self.nEquippedBagCount -- record the old count
 
 	self.nEquippedBagCount = 0	-- reset
 
 	for idx = 1, knMaxBags do
-		local itemBag = self.wndMain:FindChild("MainBagWindow"):GetBagItem(idx)
+		local itemBag = self.wndMainBagWindow:GetBagItem(idx)
 		local wndCtrl = self.wndMain:FindChild("BagBtn"..idx)
-		if itemBag then
-			self.tBagCounts[idx]:SetText("+" .. itemBag:GetBagSlots())
-			wndCtrl:FindChild("RemoveBagIcon"):Show(true)
-			wndCtrl:FindChild("RemoveBagIcon"):SetData(itemBag)
-			self.nEquippedBagCount = self.nEquippedBagCount + 1
-			Tooltip.GetItemTooltipForm(self, self.wndMain:FindChild("BagBtn"..idx), itemBag, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
-		else
-			self.tBagCounts[idx]:SetText("")
-			wndCtrl:SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"white\">%s</T>", strEmptyBag))
-			wndCtrl:FindChild("RemoveBagIcon"):Show(false)
+		
+		if itemBag ~= wndCtrl:GetData() then
+			wndCtrl:SetData(itemBag)
+			if itemBag then
+				self.tBagCounts[idx]:SetText("+" .. itemBag:GetBagSlots())
+				local wndRemoveBagIcon = wndCtrl:FindChild("RemoveBagIcon")
+				wndRemoveBagIcon:Show(true)
+				wndRemoveBagIcon:SetData(itemBag)
+				self.nEquippedBagCount = self.nEquippedBagCount + 1
+				Tooltip.GetItemTooltipForm(self, wndCtrl, itemBag, {bPrimary = true, bSelling = false})
+			else
+				self.tBagCounts[idx]:SetText("")
+				wndCtrl:SetTooltip(string.format("<T Font=\"CRB_InterfaceSmall\" TextColor=\"white\">%s</T>", Apollo.GetString("Inventory_EmptySlot")))
+				wndCtrl:FindChild("RemoveBagIcon"):Show(false)
+			end
 		end
 	end
-end
-
-function InventoryBag:OnBagBtnMouseEnter(wndHandler, wndControl)
-end
-
-function InventoryBag:OnBagBtnMouseExit(wndHandler, wndControl)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -419,9 +415,9 @@ function InventoryBag:UpdateSquareSize()
 		return
 	end
 
-	local wndBag = self.wndMain:FindChild("MainBagWindow")
-	wndBag:SetSquareSize(self.nBoxSize, self.nBoxSize)
-
+	if self.wndMainBagWindow then
+		self.wndMainBagWindow:SetSquareSize(self.nBoxSize, self.nBoxSize)
+	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -510,6 +506,21 @@ function InventoryBag:OnToggleSupplySatchel(wndHandler, wndControl)
 	self.wndNewSatchelItemRunner:Show(false)
 end
 
+function InventoryBag:OnItemClick(wndHandler, wndControl, eButton, item)
+	if self.bCostumesOpen then
+		Event_FireGenericEvent("GenericEvent_CostumeUnlock", item)
+	end
+	return self.bCostumesOpen
+end
+
+function InventoryBag:OnGenerciEvent_CostumesWindowOpened()
+	self.bCostumesOpen = true
+end
+
+function InventoryBag:OnGenerciEvent_CostumesWindowClosed()
+	self.bCostumesOpen = false
+end
+
 -----------------------------------------------------------------------------------------------
 -- Salvage All
 -----------------------------------------------------------------------------------------------
@@ -530,16 +541,6 @@ function InventoryBag:OnQueryDragDropSalvage(wndHandler, wndControl, nX, nY, wnd
 		return Apollo.DragDropQueryResult.Accept
 	end
 	return Apollo.DragDropQueryResult.Ignore
-end
-
-function InventoryBag:OnDragDropNotifySalvage(wndHandler, wndControl, bMe) -- TODO: We can probably replace this with a button mouse over state
-	if bMe and self.wndMain:FindChild("SalvageIcon"):GetData() then
-		--self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageToggleFlyby")
-		--self.wndMain:FindChild("TextActionPrompt_Salvage"):Show(true)
-	elseif self.wndMain:FindChild("SalvageIcon"):GetData() then
-		--self.wndMain:FindChild("SalvageIcon"):SetSprite("CRB_Inventory:InvBtn_SalvageTogglePressed")
-		--self.wndMain:FindChild("TextActionPrompt_Salvage"):Show(false)
-	end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -614,26 +615,26 @@ end
 -- Drag and Drop
 -----------------------------------------------------------------------------------------------
 
-function InventoryBag:OnBagDragDropCancel(wndHandler, wndControl, strType, iData, eReason)
+function InventoryBag:OnBagDragDropCancel(wndHandler, wndControl, strType, nIndex, eReason)
 	if strType ~= "DDBagItem" or eReason == Apollo.DragDropCancelReason.EscapeKey or eReason == Apollo.DragDropCancelReason.ClickedOnNothing then
 		return false
 	end
 
 	if eReason == Apollo.DragDropCancelReason.ClickedOnWorld or eReason == Apollo.DragDropCancelReason.DroppedOnNothing then
-		self:InvokeDeleteConfirmWindow(iData)
+		self:InvokeDeleteConfirmWindow(nIndex)
 	end
 	return false
 end
 
 -- Trash Icon
-function InventoryBag:OnDragDropTrash(wndHandler, wndControl, nX, nY, wndSource, strType, iData)
+function InventoryBag:OnDragDropTrash(wndHandler, wndControl, nX, nY, wndSource, strType, nIndex)
 	if strType == "DDBagItem" then
-		self:InvokeDeleteConfirmWindow(iData)
+		self:InvokeDeleteConfirmWindow(nIndex)
 	end
 	return false
 end
 
-function InventoryBag:OnQueryDragDropTrash(wndHandler, wndControl, nX, nY, wndSource, strType, iData)
+function InventoryBag:OnQueryDragDropTrash(wndHandler, wndControl, nX, nY, wndSource, strType, nIndex)
 	if strType == "DDBagItem" then
 		return Apollo.DragDropQueryResult.Accept
 	end
@@ -702,7 +703,7 @@ function InventoryBag:OnSystemBeginDragDrop(wndSource, strType, iData)
 
 	self.wndMain:FindChild("TrashIcon"):SetSprite("CRB_Inventory:InvBtn_TrashTogglePressed")
 
-	local item = self.wndMain:FindChild("MainBagWindow"):GetItem(iData)
+	local item = self.wndMainBagWindow:GetItem(iData)
 	if item and item:CanSalvage() then
 		self.wndMain:FindChild("SalvageIcon"):SetData(true)
 		self.wndSalvageAllBtn:Enable(true)
@@ -779,8 +780,7 @@ function InventoryBag:InvokeDeleteConfirmWindow(iData)
 		return
 	end
 	self.wndDeleteConfirm:SetData(iData)
-	self.wndDeleteConfirm:Show(true)
-	self.wndDeleteConfirm:ToFront()
+	self.wndDeleteConfirm:Invoke()
 	self.wndDeleteConfirm:FindChild("DeleteBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.DeleteItem, iData)
 	self.wndMain:FindChild("DragDropMouseBlocker"):Show(true)
 	Sound.Play(Sound.PlayUI55ErrorVirtual)
@@ -788,8 +788,7 @@ end
 
 function InventoryBag:InvokeSalvageConfirmWindow(iData)
 	self.wndSalvageConfirm:SetData(iData)
-	self.wndSalvageConfirm:Show(true)
-	self.wndSalvageConfirm:ToFront()
+	self.wndSalvageConfirm:Invoke()
 	self.wndSalvageConfirm:FindChild("SalvageBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.SalvageItem, iData)
 	self.wndMain:FindChild("DragDropMouseBlocker"):Show(true)
 	Sound.Play(Sound.PlayUI55ErrorVirtual)
@@ -845,22 +844,9 @@ function InventoryBag:OnSplitStackCloseClick()
 	self.wndSplit:Show(false)
 end
 
-function InventoryBag:OnSpinnerChanged()
-	local wndValue = self.wndSplit:FindChild("SplitValue")
-	local nValue = wndValue:GetValue()
-	local itemStack = self.wndSplit:GetData()
-	local nMaxStackSplit = itemStack:GetStackCount() - 1
-
-	if nValue < 1 then
-		wndValue:SetValue(1)
-	elseif nValue > nMaxStackSplit then
-		wndValue:SetValue(nMaxStackSplit)
-	end
-end
-
 function InventoryBag:OnSplitStackConfirm(wndHandler, wndCtrl)
 	self.wndSplit:Close()
-	self.wndMain:FindChild("MainBagWindow"):StartSplitStack(self.wndSplit:GetData(), self.wndSplit:FindChild("SplitValue"):GetValue())
+	self.wndMainBagWindow:StartSplitStack(self.wndSplit:GetData(), self.wndSplit:FindChild("SplitValue"):GetValue())
 end
 
 function InventoryBag:OnGenerateTooltip(wndControl, wndHandler, tType, item)
@@ -875,11 +861,3 @@ end
 
 local InventoryBagInst = InventoryBag:new()
 InventoryBagInst:Init()
-Ÿ#˜+-ÊıéÂ§ﬂ^2ükhÁÈÖ96£}ÒœÁß‚}y‰ıYâ Ôü≤^r¥≠£I{Ø¯˙Ñà˛$òüéû¬ΩÚqê~~àöì⁄Ó…%˘∏™¥'a^≠ƒâd˛^•§ÛÌÒy}$®˜4_1Ô·ı€Ìﬂﬂƒº›ÌÊ„≤Ûz¶ôf˙+„=‰©Ñ£y{'xÔ/ì“˜«ºßÁÒ&y˚Û©Û{ƒ˚Sﬁºoõ]&Ú][·Õ{ßµOÏœè¬{ƒÎ4ä˜p_^rLOÌ√Ô¬˙ûŒ◊Gı˝π±xøÿbﬁπÊO?y_æ–¨ŸfŸácŸﬁ[Íôø{;:Nòø˚‰—ÿ2π*4ÌhB´0wŸ …ÏÛRÎg]í`ﬁ¯—!?Ô«≈˚ÏÀJP˝;ç‘ÁÀ-º—æà‘œãÛm›ï§üoôÀ74-"˝˜ºd˜!G;©œ3„›˚a~R4Ø?∂üÙbMÆÜ¶píoÇü»~[£÷˜€Ü®yø„ÌÔÈ…ﬂOøÛX€}$OGj~´ã\ÙößW–˘πr·ü‡=∫ûÛE˜Ô·y˝ƒ˚˜À«eöi¶ø˙k¿˚ÒÊÔ©˛¿<û»gƒ{ƒO3‡=ÆÔâﬂÒ~–i%ıΩQˆ¿ºgIø=2º±≠’ûÔ≈{¬ƒ˚r_ﬁìÁÖ‹tzæœí„Oùœ/.¿Û¿ØW‹®}y›Y≈»¸›ôÂû˘ª∑QΩé˝¯W~ˆÒ˛ì•[v„˝wàó+˘-«œùúÅœÛ±?ÔÈÂûº‹]√yπ•ø√¡|ùÖﬂÁ(%˚gäs‹Œ&êo[êâyNÍÎÏd∑ìÓﬂ„º‹<∞œ’˚`ø]¨—fj÷ìy˙»ê˛DgÈÑk∞üÓàxˇµ2ÍﬁuÑoÍ@é€ö!^«Ûvp>˜Ô·˛Â(ı<ú∑£˚_Dˇ˛6ÁÌ8÷øgöi¶øzò˜R¢«Ê˝(¸ß¸˜„ÁÈOÚﬁèKΩ_ÓÁïØÎ√{:_O•®xsı;Ñˇò˜pæN\1˜„µ’gÁw‹xon{–N¸¯Ò8ˇÜú˜'«8hﬁ„y<∏/'ùŒ”µ‰Tü˝~Ã˚óÓÔWU‹+Ï√Èôø[ÅxüP&«˘˜à˜ÚOû≈Ûw≤èè&ÙË¸%¸ôãeÓàO˛ˆû>yV–dƒ˚¬ç%?æEÂ…À]f·•´@=?ü?ÛË-Ÿú¥˘û\ë◊˘ÈÆ∏ﬂ~n"ﬂ`y∏©±8ØŒ€ı„<]‡øÁ•ΩœÄyªŒøÏ√W˜;·æ]ù*4ÊÈ®ïúﬂÒN“ÔT‡˘9Xœ„˛|ßw=
-xÔ5ow˚Í'ÿøùpˇûÌ≥eöi¶ø~⁄√˚¿{∫ææ”º˜ì“y9à˜‘Á	º|˜û\0?”nﬁ!ˆ«1Ô·æM†£¢mˆü¿¸}≈`pÒÛµ8_ˇ~í∑„À{‹_ìÉœ˜ùp˛˛‹∫Û$?«õ˜Ÿ3ÁÅºüÖÛÒÎ…ÛF]Œ«ø™~yx˛Óóyˆﬂ·˘:Ï«ˇ€ˆÔ	~¸›à˜ì9~Èá+ÚÖº\Ã{Ïœ´Z∏œzı≥3FÚróXîs:´@=üèˇB	è-smM O/7≈∂ØyôèÀLpÍ;@Ê·ìblˆEß¡ºor,œÁıÓW¿˛z£ñ◊ˇ
-Ã„Ö©›˚˚Ï§ˇØ	ƒy∂ØÃ!ºÁÔÇy:Å
-:Ôœ€Q˛{Å˜Pﬂªú‘æ;ôêßg ˇûº˙˜£~b˝˚âÔ∑c˘∏L3ÕÙ◊QﬂﬁO(oÛˆÔ˝d˛ﬁºßÓÁùßãxﬂ“nn º?{ ã˜÷ç≥óë˙^Ì≈{ùyÁö0RˇGÜ„}6ÑœÒÙæ:oﬁg$–Û¯y©’ﬁº/Üyº≈Ûïµü| æˇßÔµjœ˛ªÌQñ˜j◊v§M¬yyò˜Ø‚ñ∫<~|<`bIë∞œ˛Z4‚˝CÖñÖ”^?e∑Œàˆ„/.pÔø|˝Ÿoìã˚›Øà¸ùüÅyü#^œIrwÙΩDÂÂQÛtâë®~^HˆÈ≈›&ò«FÔØ7hm∆æﬂ˛Î‘Æ≠›ï‰˘C8Ø˚ÙÇï+Ó…u|^oy:>˘9rz~Ô∑Éºæπ¸˚âˆÔ·º›ƒ˚˜lﬁéi¶ô˛&Ë/:_◊Oä˚Ò≠cÚû˜è∆{tù>‡˜õ[B)ﬁ∑Õ.Îü˙ÒﬁFÚs£√*®˘˚∫üåÛvﬁ•y?o7yæ»KÔ›U{·AÒ~ŸsÍyﬂyo›∏ÓCÒ˙s≈¬¸ùzhx˛ÓØe=uyªc∏˙Y]S∫ßH∏ÂÈñ¢WSÍû∆yπÎùãv
-~¸¡a?˛b◊plØU‰gqæ∞ñ‰·fq“-ÀI?=/›v»QE¯>7—’·ÿ[˚˜˚•§ﬂüÈÍ8¯m¿y:$/BÁvBø@∏∆u∏¯ıu¡˝á?9â⁄gª¸ﬂA.~qÇzû£Í{Ö‹Â§˜›˚oH>ÆåﬁwwS˘˜ÌﬂO<//h6o«4”L#ÙmÁÎé3èèxO˘ÌGÁ=È7¯ú4ô\W–üÁÕ{u`ò9˚i¢CÇÎÜÊˇíú◊0ÔA˝-¯Ûﬂ º«ÛwÔÂ0è/#—ºŒ„Â§Vº9Ù
-≤>˛¿
-ÚıäÚÒº¿d˛Æœﬂ’·y:Ï«?WYwE°
-M´OËÊÔ.,„eˆÚR=ºˇË°gä=˛º›	…˙-ñÖ6”	‡w/ÃEı;òáõ?˚Û	ÔsRlˆJ¬„åD€>Ëˇ'G˜;õV˛«õpû>Ò€GÜÒ≤¶ªÔµIgãË˘9ajwÙÛkUÆ≠}ø%˝˙`%◊`ß˜›PÛu8?' ;/hºÔÜ⁄o'£˚ˇü≥ø6Ë	˙Ôo%/èÕ€1Õ4”ﬂ<}ã˘;¿Ø?>Ô!Ø˝dÙÎΩÁß¸zmﬁº/Ì%ﬂO

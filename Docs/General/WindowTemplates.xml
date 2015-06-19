@@ -147,11 +147,11 @@
         <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-25" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="CRB_Basekit:kitBase_HoloTeal_NoBorder" BGColor="white" Rotation="0"/>
         <Adornment LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="CRB_Basekit:kitAccent_Scanlines_Lighter" BGColor="white" Rotation="0"/>
     </WindowTemplate>
-    <WindowTemplate Name="Holo_InputBox" SingleBorderFrame="BK3:UI_BK3_Holo_Snippet" UseMargins="1" TopMargin="7" LeftMargin="9" RightMargin="10" BottomMargin="4">
+    <WindowTemplate Name="Holo_InputBox" SingleBorderFrame="BK3:UI_BK3_Holo_Snippet" UseMargins="1" TopMargin="9" LeftMargin="10" RightMargin="10" BottomMargin="8">
         <VScroll Internal="BK3:UI_BK3_Holo_InsetSimple">
-            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarLarge"/>
-            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownLarge"/>
-            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpLarge"/>
+            <Thumb Auto="CRB_Basekit:kitBtn_ScrollHolo_VertBarSmall"/>
+            <IncButton Auto="CRB_Basekit:kitBtn_ScrollHolo_DownSmall"/>
+            <DecButton Auto="CRB_Basekit:kitBtn_ScrollHolo_UpSmall"/>
         </VScroll>
         <BlankButton Auto="Basekit3:btnHolo_Blue_Small"/>
         <CheckButton Auto="Basekit3:btnHolo_Check"/>

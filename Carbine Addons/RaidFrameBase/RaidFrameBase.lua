@@ -4,7 +4,6 @@
 -----------------------------------------------------------------------------------------------
 
 require "Window"
-require "bit32"
 
 local RaidFrameBase = {}
 
@@ -95,7 +94,7 @@ local ktItemQualityToStr =
 
 local ktRowSizeIndexToPixels =
 {
-	[1] = 21, -- Previously 19
+	[1] = 21,
 	[2] = 23,
 	[3] = 25,
 	[4] = 27,
@@ -106,36 +105,42 @@ local ktRowSizeIndexToPixels =
 	[9] = 42,
 }
 
-local ktUpdateSpeedToSeconds =
-{
-	[1] = 0.1,
-	[2] = 0.25,
-	[3] = 0.5,
-	[4] = 0.75,
-	[5] = 1,
-	[6] = 2,
-	[7] = 3,
-	[8] = 4,
-	[9] = 5,
-}
-
 local knNumColumnsMax = 5
 local knReadyCheckTimeout = 16 -- in seconds
 local ktGeneralCategories = {Apollo.GetString("RaidFrame_Members")}
 local ktRoleCategoriesToUse = {Apollo.GetString("RaidFrame_Tanks"), Apollo.GetString("RaidFrame_Healers"), Apollo.GetString("RaidFrame_DPS")}
 
-local knDirtyNone = 0
-local knDirtyLootRules = bit32.lshift(1, 0)
-local knDirtyMembers = bit32.lshift(1, 1)
-local knDirtyGeneral = bit32.lshift(1, 2)
-local knDirtyResize = bit32.lshift(1, 3)
+local knMinWidth = 175
+local knMaxWidth = 1000
+local knHealthCritical = 0.3
+local knHealthWarn = 0.5
 
-local knSaveVersion = 6
+local knSaveVersion = 10
 
 function RaidFrameBase:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tMemberWindowsByMemberIdx = {}
+	o.tMemberWindowsByCharacterName = {}
+	
+	o.tSettings =
+	{
+		bShowLeaderIcons		= true,
+		bShowClassIcons			= false,
+		bShowMarkIcons			= false,
+		bShowManaBar			= false,
+		bShowFixedShields		= false,
+		bShowCategories			= true,
+		bShowNames				= true,
+		bLockInCombat			= true,
+		bInstantHealthUpdate	= false,
+		nRowSize				= 1,
+		nNumColumns				= 1,
+		bIsLocked				= false,
+	}
+
     return o
 end
 
@@ -153,7 +158,7 @@ function RaidFrameBase:OnSave(eType)
 		return
 	end
 
-	local tSave =
+	return
 	{
 		nSaveVersion 			= knSaveVersion,
 		bShowLeaderIcons		= self.tSettings.bShowLeaderIcons,
@@ -161,64 +166,64 @@ function RaidFrameBase:OnSave(eType)
 		bShowMarkIcons			= self.tSettings.bShowMarkIcons,
 		bShowManaBar			= self.tSettings.bShowManaBar,
 		bShowFixedShields		= self.tSettings.bShowFixedShields,
+		bShowCategories			= self.tSettings.bShowCategories,
 		bShowNames				= self.tSettings.bShowNames,
 		bLockInCombat			= self.tSettings.bLockInCombat,
+		bInstantHealthUpdate	= self.tSettings.bInstantHealthUpdate,
 		nRowSize				= self.tSettings.nRowSize,
 		nNumColumns				= self.tSettings.nNumColumns,
-		nUpdateSpeed			= self.tSettings.nUpdateSpeed,
-
 		bIsLocked				= self.tSettings.bIsLocked,
 	}
-	return tSave
 end
 
 function RaidFrameBase:OnRestore(eType, tSavedData)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
+		return
+	end
 	if not tSavedData or tSavedData.nSaveVersion ~= knSaveVersion then
 		return
 	end
 
-	-- Defaults
-	local tDefaults =
-	{
-		["bShowLeaderIcons"]		= true,
-		["bShowClassIcons"]			= false,
-		["bShowMarkIcons"]			= false,
-		["bShowManaBar"]			= false,
-		["bShowFixedShields"]		= false,
-		["bShowCategories"]			= true,
-		["bShowNames"]				= true,
-		["bLockInCombat"]			= true,
-		["nRowSize"]				= 2,
-		["nNumColumns"]				= 1,
-		["nUpdateSpeed"]			= 1,
-
-		["bIsLocked"]				= false,
-	}
-
-	for strName, oDefault in pairs(tDefaults) do
-		if tSavedData[strName] == nil then
-			tSavedData[strName] = oDefault
-		end
+	if tSavedData.bShowLeaderIcons ~= nil then
+		self.tSettings.bShowLeaderIcons = tSavedData.bShowLeaderIcons
 	end
-
-	if self.tSettings == nil then
-		self.tSettings = {}
+	if tSavedData.bShowClassIcons ~= nil then
+		self.tSettings.bShowClassIcons = tSavedData.bShowClassIcons
 	end
-
-	-- Load Settings
-	self.tSettings.bShowLeaderIcons 		= tSavedData.bShowLeaderIcons
-	self.tSettings.bShowClassIcons 			= tSavedData.bShowClassIcons
-	self.tSettings.bShowMarkIcons 			= tSavedData.bShowMarkIcons
-	self.tSettings.bShowManaBar 			= tSavedData.bShowManaBar
-	self.tSettings.bShowFixedShields 		= tSavedData.bShowFixedShields
-	self.tSettings.bShowCategories 			= tSavedData.bShowCategories
-	self.tSettings.bShowNames 				= tSavedData.bShowNames
-	self.tSettings.bLockInCombat 			= tSavedData.bLockInCombat
-	self.tSettings.nRowSize 				= tSavedData.nRowSize
-	self.tSettings.nNumColumns 				= tSavedData.nNumColumns
-	self.tSettings.nUpdateSpeed 			= tSavedData.nUpdateSpeed
-
-	self.tSettings.bIsLocked 				= tSavedData.bIsLocked
+	if tSavedData.bShowMarkIcons ~= nil then
+		self.tSettings.bShowMarkIcons = tSavedData.bShowMarkIcons
+	end
+	if tSavedData.bShowManaBar ~= nil then
+		self.tSettings.bShowManaBar = tSavedData.bShowManaBar
+	end
+	if tSavedData.bShowFixedShields ~= nil then
+		self.tSettings.bShowFixedShields = tSavedData.bShowFixedShields
+	end
+	if tSavedData.bShowCategories ~= nil then
+		self.tSettings.bShowCategories = tSavedData.bShowCategories
+	end
+	if tSavedData.bShowNames ~= nil then
+		self.tSettings.bShowNames = tSavedData.bShowNames
+	end
+	if tSavedData.bLockInCombat ~= nil then
+		self.tSettings.bLockInCombat = tSavedData.bLockInCombat
+	end
+	if tSavedData.bInstantHealthUpdate ~= nil then
+		self.tSettings.bInstantHealthUpdate = tSavedData.bInstantHealthUpdate
+	end
+	if tSavedData.nRowSize ~= nil then
+		self.tSettings.nRowSize = tSavedData.nRowSize
+	end
+	if tSavedData.nNumColumns  ~= nil then
+		self.tSettings.nNumColumns = tSavedData.nNumColumns
+	end
+	if tSavedData.bIsLocked ~= nil then
+		self.tSettings.bIsLocked = tSavedData.bIsLocked
+	end
+	
+	if self.wndMain ~= nil and self.wndMain:IsValid() then
+		self:HelperUpdateSettings()
+	end
 end
 
 function RaidFrameBase:OnDocumentReady()
@@ -226,50 +231,28 @@ function RaidFrameBase:OnDocumentReady()
 		return
 	end
 
-	Apollo.RegisterEventHandler("CharacterCreated", 						"OnCharacterCreated", self)
-	Apollo.RegisterEventHandler("GenericEvent_Raid_ToggleRaidUnTear", 		"OnRaidUnTearOff", self)
-	Apollo.RegisterEventHandler("GenericEvent_Raid_UncheckMasterLoot", 		"OnUncheckMasterLoot", self)
-	Apollo.RegisterEventHandler("GenericEvent_Raid_UncheckLeaderOptions", 	"OnUncheckLeaderOptions", self)
-	Apollo.RegisterEventHandler("WindowManagementReady", 					"OnWindowManagementReady", self)
+	Apollo.RegisterEventHandler("CharacterCreated",							"OnCharacterCreated", self)
+	Apollo.RegisterEventHandler("GenericEvent_Raid_UncheckMasterLoot",		"OnUncheckMasterLoot", self)
+	Apollo.RegisterEventHandler("GenericEvent_Raid_UncheckLeaderOptions",	"OnUncheckLeaderOptions", self)
+	Apollo.RegisterEventHandler("WindowManagementReady",					"OnWindowManagementReady", self)
 
-	Apollo.RegisterEventHandler("ChangeWorld", 								"OnChangeWorld", self)
-	Apollo.RegisterEventHandler("UnitCreated", 								"OnUnitCreated", self)
-	Apollo.RegisterEventHandler("UnitDestroyed", 							"OnUnitDestroyed", self)
-	Apollo.RegisterEventHandler("UnitEnteredCombat", 						"OnEnteredCombat", self)
-	Apollo.RegisterEventHandler("Group_Updated", 							"OnGroup_Updated", self)
-	Apollo.RegisterEventHandler("Group_Join", 								"OnGroup_Join", self)
-	Apollo.RegisterEventHandler("Group_Left", 								"OnGroup_Left", self)
+	Apollo.RegisterEventHandler("VarChange_FrameCount",						"OnFrame", self)
+	
+	Apollo.RegisterEventHandler("UnitCreated",								"OnUnitCreated", self)
+	Apollo.RegisterEventHandler("UnitDestroyed",							"OnUnitDestroyed", self)
+	Apollo.RegisterEventHandler("UnitEnteredCombat",						"OnEnteredCombat", self)
+	Apollo.RegisterEventHandler("Group_Join",								"OnGroup_Join", self)
+	Apollo.RegisterEventHandler("Group_Left",								"OnGroup_Left", self)
 	Apollo.RegisterEventHandler("Group_Add",								"OnGroup_Add", self)
 	Apollo.RegisterEventHandler("Group_Remove",								"OnGroup_Remove", self) -- Kicked, or someone else leaves (yourself leaving is Group_Leave)
 	Apollo.RegisterEventHandler("Group_MemberFlagsChanged",					"OnGroup_MemberFlagsChanged", self)
 	Apollo.RegisterEventHandler("Group_FlagsChanged",						"OnGroup_FlagsChanged", self)
+	Apollo.RegisterEventHandler("Group_SetMark",							"OnGroup_SetMark", self)
 	Apollo.RegisterEventHandler("Group_LootRulesChanged",					"OnGroup_LootRulesChanged", self)
-	Apollo.RegisterEventHandler("MasterLootUpdate",							"OnMasterLootUpdate", 	self)
-
-	self.timerRaidBaseTimer = ApolloTimer.Create(ktUpdateSpeedToSeconds[self.tSettings and self.tSettings.nUpdateSpeed or 1], true, "OnRaidFrameBaseTimer", self)
-	self.timerResizeTimer = ApolloTimer.Create(0.2, true, "ResizeAllFrames", self)
-
-	Apollo.RegisterTimerHandler("RaidFrame_MinuteTimer", 					"OnRaidFrame_MinuteTimer", self)
-	Apollo.CreateTimer("RaidFrame_MinuteTimer", 60, true)
-
-	Apollo.RegisterTimerHandler("ReadyCheckTimeout", 						"OnReadyCheckTimeout", self)
-	Apollo.CreateTimer("ReadyCheckTimeout", knReadyCheckTimeout, false)
-	Apollo.StopTimer("ReadyCheckTimeout")
-
-	Apollo.RegisterTimerHandler("RaidFrameBase_ResizeThrottle",				"OnRaidFrameBase_ResizeThrottle", self) -- Resize throttle
-	Apollo.CreateTimer("RaidFrameBase_ResizeThrottle", 0.5, false)
-	Apollo.StopTimer("RaidFrameBase_ResizeThrottle")
-
-	Apollo.RegisterTimerHandler("RaidFrameBase_UnitUpdateThrottle",			"OnRaidFrameBase_UnitUpdateThrottle", self) -- Unit Combat / Range throttle
-	Apollo.CreateTimer("RaidFrameBase_UnitUpdateThrottle", 2, false)
-	Apollo.StopTimer("RaidFrameBase_UnitUpdateThrottle")
-
-	Apollo.RegisterTimerHandler("RaidFrameBase_GroupUpdatedThrottle",		"OnRaidFrameBase_GroupUpdatedThrottle", self) -- Group Updated
-	Apollo.CreateTimer("RaidFrameBase_GroupUpdatedThrottle", 30, false)
-	Apollo.StopTimer("RaidFrameBase_GroupUpdatedThrottle")
+	Apollo.RegisterEventHandler("MasterLootUpdate",							"OnMasterLootUpdate", self)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "RaidFrameBaseForm", "FixedHudStratum", self)
-
+	
 	self.wndRaidConfigureBtn = self.wndMain:FindChild("RaidConfigureBtn")
 	self.wndRaidCategoryContainer = self.wndMain:FindChild("RaidCategoryContainer")
 	self.wndRaidTitle = self.wndMain:FindChild("RaidTitle")
@@ -283,58 +266,31 @@ function RaidFrameBase:OnDocumentReady()
 
 	self.wndRaidConfigureBtn:AttachWindow(self.wndMain:FindChild("RaidOptions"))
 	self.wndMain:Show(false, true)
-
-	-- Settings
-	if not self.tSettings then
-		self:OnRestore(nil, { nSaveVersion = knSaveVersion })
-	end
-
+	
 	local wndRaidOptions = self.wndMain:FindChild("RaidOptions:SelfConfigRaidCustomizeOptions")
-	wndRaidOptions:FindChild("RaidCustomizeLeaderIcons"):SetCheck(self.tSettings.bShowLeaderIcons)
-	wndRaidOptions:FindChild("RaidCustomizeClassIcons"):SetCheck(self.tSettings.bShowClassIcons)
-	wndRaidOptions:FindChild("RaidCustomizeMarkIcons"):SetCheck(self.tSettings.bShowMarkIcons)
-	wndRaidOptions:FindChild("RaidCustomizeManaBar"):SetCheck(self.tSettings.bShowManaBar)
-	wndRaidOptions:FindChild("RaidCustomizeFixedShields"):SetCheck(self.tSettings.bShowFixedShields)
-	wndRaidOptions:FindChild("RaidCustomizeCategories"):SetCheck(self.tSettings.bShowCategories)
-	wndRaidOptions:FindChild("RaidCustomizeShowNames"):SetCheck(self.tSettings.bShowNames)
-	wndRaidOptions:FindChild("RaidCustomizeLockInCombat"):SetCheck(self.tSettings.bLockInCombat)
-
-	self.wndRaidCustomizeNumColAdd = wndRaidOptions:FindChild("RaidCustomizeNumColAdd")
-	self.wndRaidCustomizeNumColSub = wndRaidOptions:FindChild("RaidCustomizeNumColSub")
-	self.wndRaidCustomizeNumColValue = wndRaidOptions:FindChild("RaidCustomizeNumColValue")
-	self.wndRaidCustomizeRowSizeSub = wndRaidOptions:FindChild("RaidCustomizeRowSizeSub")
-	self.wndRaidCustomizeRowSizeAdd = wndRaidOptions:FindChild("RaidCustomizeRowSizeAdd")
-	self.wndRaidCustomizeRowSizeValue = wndRaidOptions:FindChild("RaidCustomizeRowSizeValue")
-	self.wndRaidCustomizeSpeedSub = wndRaidOptions:FindChild("RaidCustomizeSpeedSub")
-	self.wndRaidCustomizeSpeedAdd = wndRaidOptions:FindChild("RaidCustomizeSpeedAdd")
-	self.wndRaidCustomizeSpeedValue = wndRaidOptions:FindChild("RaidCustomizeSpeedValue")
+	wndRaidOptions:FindChild("RaidCustomizeLeaderIcons"):SetData("bShowLeaderIcons")
+	wndRaidOptions:FindChild("RaidCustomizeClassIcons"):SetData("bShowClassIcons")
+	wndRaidOptions:FindChild("RaidCustomizeMarkIcons"):SetData("bShowMarkIcons")
+	wndRaidOptions:FindChild("RaidCustomizeManaBar"):SetData("bShowManaBar")
+	wndRaidOptions:FindChild("RaidCustomizeFixedShields"):SetData("bShowFixedShields")
+	wndRaidOptions:FindChild("RaidCustomizeCategories"):SetData("bShowCategories")
+	wndRaidOptions:FindChild("RaidCustomizeShowNames"):SetData("bShowNames")
+	wndRaidOptions:FindChild("RaidCustomizeInstantHealthUpdates"):SetData("bInstantHealthUpdate")
+	wndRaidOptions:FindChild("RaidCustomizeLockInCombat"):SetData("bLockInCombat")
+	
+	self.wndRaidCustomizeNumColAdd = wndRaidOptions:FindChild("RaidCustomizeNumColText:RaidCustomizeNumColAdd")
+	self.wndRaidCustomizeNumColSub = wndRaidOptions:FindChild("RaidCustomizeNumColText:RaidCustomizeNumColSub")
+	self.wndRaidCustomizeNumColValue = wndRaidOptions:FindChild("RaidCustomizeNumColText:RaidCustomizeNumColValue")
+	self.wndRaidCustomizeRowSizeSub = wndRaidOptions:FindChild("RaidCustomizeRowSizeText:RaidCustomizeRowSizeSub")
+	self.wndRaidCustomizeRowSizeAdd = wndRaidOptions:FindChild("RaidCustomizeRowSizeText:RaidCustomizeRowSizeAdd")
+	self.wndRaidCustomizeRowSizeValue = wndRaidOptions:FindChild("RaidCustomizeRowSizeText:RaidCustomizeRowSizeValue")
 	self.wndRaidLockFrameBtn = self.wndMain:FindChild("RaidLockFrameBtn")
-
-	-- TODO Refactor
-	self.nRowSize					= self.tSettings.nRowSize
-	self.nNumColumns 				= self.tSettings.nNumColumns
-	self.nUpdateSpeed 				= self.tSettings.nUpdateSpeed
-	self:HelperUpdateSettings()
-
-	-- Initialize
-	self.nDirtyFlag 				= 0
-	self.kstrMyName 				= ""
-	self.nHealthWarn 				= 0.4
-	self.nHealthWarn2 				= 0.6
-	self.bThrottleResize	 		= false
-	self.bThrottleGroupUpdate 		= false
-	self.bThrottleUnitUpdate 		= false
-	self.bSwapToTwoColsOnce 		= false
-	self.bTimerRunning 				= false
-	self.nPrevMemberCount			= 0
-	self.arMemberIndexToWindow 		= {}
-	self.nRaidMemberWidth 			= 0
-
+	
 	local wndMeasure = Apollo.LoadForm(self.xmlDoc, "RaidCategory", nil, self)
 	self.knWndCategoryHeight = wndMeasure:GetHeight()
 	wndMeasure:Destroy()
-
-	self.knWndMainHeight = self.wndMain:GetHeight()
+	
+	self.knBaseMainHeight = self.wndMain:GetHeight() - self.wndRaidCategoryContainer:GetHeight()
 
 	local unitPlayer = GameLib.GetPlayerUnit()
 	if unitPlayer then
@@ -344,452 +300,584 @@ end
 
 function RaidFrameBase:OnWindowManagementReady()
 	Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("CRB_Raid") })
+	
+	local wndCategoryContainer = self.wndMain:FindChild("RaidCategoryContainer")
+	local nCategoryContainerHeight = wndCategoryContainer:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.knBaseMainHeight + nCategoryContainerHeight)
+	
+	local nMainHeight = self.wndMain:GetHeight()
+	self.wndMain:SetSizingMinimum(knMinWidth, nMainHeight)
+	self.wndMain:SetSizingMaximum(knMaxWidth, nMainHeight)
 end
 
 function RaidFrameBase:OnCharacterCreated()
-	self.kstrMyName = GameLib.GetPlayerUnit():GetName()
-
-	self:UpdateLootRules()
-	self:BuildAllFrames()
-	self:ResizeAllFrames()
-end
-
------------------------------------------------------------------------------------------------
--- Main Timer
------------------------------------------------------------------------------------------------
-
-function RaidFrameBase:OnRaidFrameBaseTimer()
 	if not GroupLib.InRaid() then
-		if self.wndMain and self.wndMain:IsValid() then
-			self.wndMain:Show(false)
-		end
 		return
 	end
-
-	if not self.wndMain:IsShown() then
-		self:OnMasterLootUpdate()
-		self.wndMain:Show(true)
-	end
-
-	if self.nDirtyFlag > knDirtyNone then
-		if bit32.btest(self.nDirtyFlag, knDirtyGeneral) then -- Rebuild everything
-			self:BuildAllFrames()
-		elseif bit32.btest(self.nDirtyFlag, knDirtyMembers) then -- Fully update all members
-			for idx, tRaidMember in pairs(self.arMemberIndexToWindow) do
-				self:UpdateSpecificMember(tRaidMember, idx, GroupLib.GetGroupMember(idx), self.nPrevMemberCount)
-			end
-		else -- Fast update all members
-			self:UpdateAllMembers()
-		end
-
-		if bit32.btest(self.nDirtyFlag, knDirtyLootRules) then
-			self:UpdateLootRules()
-		end
-	else -- Fast update all members
-		self:UpdateAllMembers()
-	end
-
-	self.nDirtyFlag = knDirtyNone
-end
-
------------------------------------------------------------------------------------------------
--- Main Draw Methods
------------------------------------------------------------------------------------------------
-
-function RaidFrameBase:OnGroup_Join()
-	if not GroupLib.InRaid() then return end
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyGeneral)
-end
-
-function RaidFrameBase:OnGroup_Add(strName)
-	if not GroupLib.InRaid() then return end
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyGeneral)
-end
-
-function RaidFrameBase:OnGroup_Remove()
-	if not GroupLib.InRaid() then return end
-	self:DestroyMemberWindows(self.nPrevMemberCount)
-	self.nPrevMemberCount = self.nPrevMemberCount - 1
-end
-
-function RaidFrameBase:OnGroup_Left()
-	if not GroupLib.InRaid() then return end
-	self:DestroyMemberWindows(self.nPrevMemberCount)
-	self.nPrevMemberCount = self.nPrevMemberCount - 1
-end
-
-function RaidFrameBase:OnGroup_MemberFlagsChanged(nMemberIdx, bFromPromotion, tChangedFlags)
-	if not GroupLib.InRaid() then return end
-	if not tChangedFlags or not tChangedFlags.bHasSetReady then -- Ready Check is in a different add-on, so ignore for this one now
-		self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyGeneral)
-	end
-end
-
-function RaidFrameBase:OnGroup_LootRulesChanged()
-	if not GroupLib.InRaid() then return end
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyLootRules)
-end
-
-function RaidFrameBase:OnGroup_FlagsChanged()
-	if not GroupLib.InRaid() then return end
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyGeneral)
-end
-
-function RaidFrameBase:OnEnteredCombat(unitArg, bInCombat)
-	if not self.bThrottleUnitUpdate and self.tSettings.bLockInCombat then
-		if GroupLib.InRaid() and self.wndMain and self.wndMain:IsValid() and self.wndMain:IsVisible() and unitArg == GameLib.GetPlayerUnit() then
-			self.tSettings.bIsLocked = bInCombat -- If bLockInCombat then it has control over bIsLocked
-			self:UpdateCategoryBtns()
-			self:HelperUpdateSettings() -- Will update the frame, movable, sizeable
-			self.bThrottleUnitUpdate = true
-			Apollo.StartTimer("RaidFrameBase_UnitUpdateThrottle")
-		end
-	end
-end
-
-function RaidFrameBase:OnGroup_Updated()
-	if not self.bThrottleGroupUpdate and GroupLib.InRaid() then
-		self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers)
-		self.bThrottleGroupUpdate = true
-		Apollo.StartTimer("RaidFrameBase_GroupUpdatedThrottle")
-	end
-end
-
-function RaidFrameBase:OnChangeWorld()
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyGeneral)
-end
-
-function RaidFrameBase:OnUnitCreated(unitNew)
-	if not self.bThrottleUnitUpdate and unitNew and unitNew:IsInYourGroup() then
-		self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers)
-		self.bThrottleUnitUpdate = true
-		Apollo.StartTimer("RaidFrameBase_UnitUpdateThrottle")
-	end
-end
-
-function RaidFrameBase:OnUnitDestroyed(unitOld)
-	if not self.bThrottleUnitUpdate and unitOld and unitOld:IsInYourGroup() then
-		self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers)
-		self.bThrottleUnitUpdate = true
-		Apollo.StartTimer("RaidFrameBase_UnitUpdateThrottle")
-	end
-end
-
-function RaidFrameBase:OnRaidFrameBase_UnitUpdateThrottle()
-	Apollo.StopTimer("RaidFrameBase_UnitUpdateThrottle")
-	self.bThrottleUnitUpdate = false
-end
-
-function RaidFrameBase:OnRaidFrameBase_GroupUpdatedThrottle()
-	Apollo.StopTimer("RaidFrameBase_UnitUpdateThrottle")
-	self.bThrottleGroupUpdate = false
-end
-
-function RaidFrameBase:BuildAllFrames()
-	local nGroupMemberCount = GroupLib.GetMemberCount()
-	if nGroupMemberCount == 0 then
-		self:OnLeaveBtn()
-		return
-	elseif not self.bSwapToTwoColsOnce and nGroupMemberCount > 20 then
-		self.bSwapToTwoColsOnce = true
-		self:OnRaidCustomizeNumColAdd(self.wndRaidCustomizeNumColAdd, self.wndRaidCustomizeNumColAdd) -- TODO HACK
-	end
-
-	if nGroupMemberCount ~= self.nPrevMemberCount then
-		if nGroupMemberCount < self.nPrevMemberCount then
-			for nRemoveMemberIdx = nGroupMemberCount + 1, self.nPrevMemberCount do
-				self:DestroyMemberWindows(nRemoveMemberIdx)
-			end
-		end
-		self.nPrevMemberCount = nGroupMemberCount
-	end
-
-	local tMemberList = {}
-	for idx = 1, nGroupMemberCount do
-		tMemberList[idx] = {idx, GroupLib.GetGroupMember(idx)}
-	end
-
-	local tCategoriesToUse = ktGeneralCategories
-	if self.tSettings.bShowCategories then
-		tCategoriesToUse = ktRoleCategoriesToUse
-	end
-
-	local nInvalidOrDeadMembers = 0
-	for idx, tCurrMemberList in pairs(tMemberList) do
-		local tMemberData = tCurrMemberList[2]
-		if not tMemberData.bIsOnline or tMemberData.nHealthMax == 0 or tMemberData.nHealth == 0 then
-			nInvalidOrDeadMembers = nInvalidOrDeadMembers + 1
-		end
-	end
-
+	
 	self.wndRaidCategoryContainer:DestroyChildren()
-	for key, strCurrCategory in pairs(tCategoriesToUse) do
-		local tCategory = self:FactoryCategoryWindow(self.wndRaidCategoryContainer, strCurrCategory)
-		local wndCategory = tCategory.wnd
-		local wndRaidCategoryBtn = tCategory.wndRaidCategoryBtn
-		local wndRaidCategoryName = tCategory.wndRaidCategoryName
-		local wndRaidCategoryItems = tCategory.wndRaidCategoryItems
+	self.tMemberWindowsByMemberIdx = {}
+	self.tMemberWindowsByCharacterName = {}
+	
+	self:HelperUpdateSettings()
+	self:UpdateLootRules()
+	self:BuildMembers()
+	self:UpdateRaidOptions()
+	
+	self.wndMain:Show(true)
+end
 
-		wndRaidCategoryBtn:Show(not self.tSettings.bIsLocked)
-		if wndRaidCategoryName:GetText() == "" then
-			wndRaidCategoryName:SetText(" " .. strCurrCategory)
-		end
+function RaidFrameBase:OnFrame()
+	if not GroupLib.InRaid() then
+		return
+	end
 
-		if wndRaidCategoryBtn:IsEnabled() and not wndRaidCategoryBtn:IsChecked() then
-			for idx, tCurrMemberList in pairs(tMemberList) do
-				self:UpdateMemberFrame(tCategory, tCurrMemberList, strCurrCategory)
+	local bInstantHealth = self.tSettings.bInstantHealthUpdate
+	
+	local nInvalidOrDeadMembers = 0
+	local nMemberCount = GroupLib.GetMemberCount()
+	for memberIndex = 1, nMemberCount do
+		local tMember = GroupLib.GetGroupMember(memberIndex)
+		local tWndMember = self.tMemberWindowsByMemberIdx[tMember.nMemberIdx]
+		if tWndMember ~= nil and tWndMember.wndMember ~= nil and tWndMember.wndMember:IsValid() then
+			
+			local unitMember = GroupLib.GetUnitForGroupMember(tMember.nMemberIdx)
+			if unitMember ~= nil then
+				local nHealthCurr = unitMember:GetHealth()
+				local nHealthMax = unitMember:GetMaxHealth()
+				local nShieldCurr = unitMember:GetShieldCapacity()
+				local nShieldMax = unitMember:GetShieldCapacityMax()
+				local nAbsorbCurr = 0
+				local nAbsorbMax = unitMember:GetAbsorptionMax()
+				if nAbsorbMax > 0 then
+					nAbsorbCurr = unitMember:GetAbsorptionValue() -- Since it doesn't clear when the buff drops off
+				end
+				local nManaCurr = unitMember:GetMana()
+				local nManaMax = unitMember:GetMaxMana() or nManaCurr
+				
+				if tWndMember.nLastKnownHealth ~= nHealthCurr and (tWndMember.nLastKnownHealth == 0 or nHealthCurr == 0) then
+					self:BuildMember(tWndMember.wndParent, tMember)
+				else
+					self:DrawHealth(tWndMember, nHealthCurr, nHealthMax, nShieldCurr, nShieldMax, nAbsorbCurr, nAbsorbMax, nManaCurr, nManaMax, bInstantHealth)
+				end
+			else
+				if tWndMember.nLastKnownHealth ~= nHealthCurr and (tWndMember.nLastKnownHealth == 0 or nHealthCurr == 0) then
+					self:BuildMember(tWndMember.wndParent, tMember)
+				else
+					self:DrawHealth(tWndMember, tMember.nHealth, tMember.nHealthMax, tMember.nShield, tMember.nShieldMax, tMember.nAbsorption, tMember.nAbsorptionMax, tMember.nMana, tMember.nManaMax, bInstantHealth)
+				end
+			end
+			
+			if not tMember.bIsOnline or tMember.nHealthMax == 0 or tMember.nHealth == 0 then
+				nInvalidOrDeadMembers = nInvalidOrDeadMembers + 1
 			end
 		end
+	end
+	
+	self.wndRaidTitle:SetText(String_GetWeaselString(Apollo.GetString("RaidFrame_MemberCount"), nMemberCount - nInvalidOrDeadMembers, nMemberCount))
+end
 
-		if wndRaidCategoryBtn:IsEnabled() then
-			wndCategory:Show(wndRaidCategoryBtn:IsChecked() or next(wndRaidCategoryItems:GetChildren()) ~= nil)
+function RaidFrameBase:DrawHealth(tWndMember, nHealthCurr, nHealthMax, nShieldCurr, nShieldMax, nAbsorbCurr, nAbsorbMax, nManaCurr, nManaMax, bInstantProgress)
+	local wndMemberBtn = tWndMember.wndMemberBtn
+	local wndHealthBar = tWndMember.wndHealthBar
+	local wndAbsorbBar = tWndMember.wndAbsorbBar
+	local wndShieldBar = tWndMember.wndShieldBar
+	local wndManaBar = tWndMember.wndManaBar
+	
+	if nHealthCurr == 0 then
+		nShieldCurr = 0
+		nAbsorbCurr = 0
+		nManaCurr = 0
+	end
+	
+	tWndMember.nLastKnownHealth = nHealthCurr
+	local nHealthDisplayMax = self.tSettings.bShowFixedShields and nHealthMax or (nHealthMax + nShieldMax + nAbsorbMax)
+	wndHealthBar:SetMax(nHealthDisplayMax)
+	if bInstantProgress then
+		wndHealthBar:SetProgress(nHealthCurr)
+	else
+		wndHealthBar:SetProgress(nHealthCurr, nHealthDisplayMax * 4)
+	end
+	
+	local nShieldAbsorbDisplayMax = self.tSettings.bShowFixedShields and (nShieldMax + nAbsorbMax) or (nHealthMax + nShieldMax + nAbsorbMax)
+	
+	wndShieldBar:SetMax(nShieldAbsorbDisplayMax)
+	local nShieldDisplay = self.tSettings.bShowFixedShields and nShieldCurr or (nHealthCurr+nShieldCurr)
+	if bInstantProgress then
+		wndShieldBar:SetProgress(nShieldDisplay)
+	else
+		wndShieldBar:SetProgress(nShieldDisplay, nShieldAbsorbDisplayMax * 4)
+	end
+	
+	wndAbsorbBar:SetMax(nShieldAbsorbDisplayMax)
+	local nAbsorbDisplay = self.tSettings.bShowFixedShields and (nShieldCurr+nAbsorbCurr) or (nHealthCurr+nShieldCurr+nAbsorbCurr)
+	if bInstantProgress then
+		wndAbsorbBar:SetProgress(nAbsorbDisplay)
+	else
+		wndAbsorbBar:SetProgress(nAbsorbDisplay, nShieldAbsorbDisplayMax * 4)
+	end
+	
+	-- Health Bar Color
+	if (nHealthCurr / nHealthMax) < knHealthCritical then
+		wndHealthBar:SetFullSprite("sprRaid_HealthProgBar_Red")
+	elseif (nHealthCurr / nHealthMax) < knHealthWarn then
+		wndHealthBar:SetFullSprite("sprRaid_HealthProgBar_Orange")
+	else
+		wndHealthBar:SetFullSprite("sprRaid_HealthProgBar_Green")
+	end
+	
+	-- Mana Bar
+	local bShowManaBar = self.tSettings.bShowManaBar
+	if bShowManaBar then
+		wndManaBar:SetMax(nManaMax)
+		if bInstantProgress then
+			wndManaBar:SetProgress(nManaCurr)
 		else
-			wndCategory:Show(true)
+			wndManaBar:SetProgress(nManaCurr, nManaMax * 4)
 		end
 	end
-	self.wndRaidTitle:SetText(String_GetWeaselString(Apollo.GetString("RaidFrame_MemberCount"), nGroupMemberCount - nInvalidOrDeadMembers, nGroupMemberCount))
-
-	local bInInstanceSync = GroupLib.CanGotoGroupInstance()
-	self.wndRaidTitle:Show(not bInInstanceSync)
-	self.wndRaidWrongInstance:Show(bInInstanceSync)
+	
+	wndManaBar:Show(bShowManaBar and nManaMax > 0 and nHealthCurr > 0 and nHealthMax > 0)
 end
 
-function RaidFrameBase:UpdateLootRules()
-	local tLootRules = GroupLib.GetLootRules()
-	local strThresholdQuality = ktItemQualityToStr[tLootRules.eThresholdQuality]
-	local strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P>",
-						Apollo.GetString("RaidFrame_LootRules"),
-						String_GetWeaselString(Apollo.GetString("RaidFrame_UnderThreshold"), strThresholdQuality, Apollo.GetString(ktLootModeToString[tLootRules.eNormalRule])),
-						String_GetWeaselString(Apollo.GetString("RaidFrame_ThresholdAndAbove"), strThresholdQuality, Apollo.GetString(ktLootModeToString[tLootRules.eThresholdRule])))
-	self.wndRaidMasterLootIconOnly:SetTooltip(strTooltip)
+function RaidFrameBase:CategorizeMembers()
+	local tCategories = {}
+
+	if self.tSettings.bShowCategories then
+		local nMemberCount = GroupLib.GetMemberCount()
+		for nMemberIdx = 1, nMemberCount do
+			local tMember = GroupLib.GetGroupMember(nMemberIdx)
+			if tMember.bTank then
+				if tCategories[1] == nil then
+					tCategories[1] = {}
+				end
+				tCategories[1][#tCategories[1] + 1] = tMember
+			elseif tMember.bHealer then
+				if tCategories[2] == nil then
+					tCategories[2] = {}
+				end
+				tCategories[2][#tCategories[2] + 1] = tMember
+			else
+				if tCategories[3] == nil then
+					tCategories[3] = {}
+				end
+				tCategories[3][#tCategories[3] + 1] = tMember
+			end
+		end
+	else
+		tCategories[1] = {}
+		local nMemberCount = GroupLib.GetMemberCount()
+		for nMemberIdx = 1, nMemberCount do
+			tCategories[1][#tCategories[1] + 1] = GroupLib.GetGroupMember(nMemberIdx)
+		end
+	end
+	
+	return tCategories
 end
 
-function RaidFrameBase:UpdateMemberFrame(tCategory, tCurrMemberList, strCategory)
-	local wndCategory = tCategory.wnd
-	local wndRaidCategoryItems = tCategory.wndRaidCategoryItems
+function RaidFrameBase:BuildMembers()
+	local nMemberCount = GroupLib.GetMemberCount()
+	
+	local wndCategoryContainer = self.wndMain:FindChild("RaidCategoryContainer")
+	
+	local tRoleCategories
+	if self.tSettings.bShowCategories then
+		tRoleCategories = ktRoleCategoriesToUse
+	else
+		tRoleCategories = ktGeneralCategories
+	end
+	
+	local tMemberCategories = self:CategorizeMembers()
+	for idx, tMemberCategory in pairs(tMemberCategories) do
+		local wndRaidCategory = wndCategoryContainer:FindChild(tRoleCategories[idx])
+		if wndRaidCategory == nil or not wndRaidCategory:IsValid() then
+			wndRaidCategory = Apollo.LoadForm(self.xmlDoc, "RaidCategory", wndCategoryContainer, self)
+			wndRaidCategory:SetName(tRoleCategories[idx])
+			
+			wndRaidCategory:FindChild("RaidCategoryName"):SetText(tRoleCategories[idx])
+		end
+		
+		local wndRaidCategoryItems = wndRaidCategory:FindChild("RaidCategoryItems")
+		
+		local wndRaidCategoryBtn = wndRaidCategory:FindChild("RaidCategoryBtn")
+		wndRaidCategoryBtn:Show(not self.tSettings.bIsLocked)
+		
+		self:BuildMemeberCategory(wndRaidCategoryItems, tMemberCategory)
+		
+		local nHeight = 0
+		if not wndRaidCategoryBtn:IsChecked() then
+			for idx, wndColumn in pairs(wndRaidCategoryItems:GetChildren()) do
+				local nColumnHeight = wndColumn:GetHeight()
+				if nColumnHeight > nHeight then
+					nHeight = nColumnHeight
+				end
+			end
+		end
+		local nLeft, nTop, nRight, nBottom = wndRaidCategory:GetAnchorOffsets()
+		wndRaidCategory:SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.knWndCategoryHeight + nHeight)
+	end
+	
+	for idx, wndCategory in pairs(wndCategoryContainer:GetChildren()) do
+		local wndRaidCategoryItems = wndCategory:FindChild("RaidCategoryItems")
+		local tColumns = wndRaidCategoryItems:GetChildren()
+		if #tColumns > 0 then
+			local bHasMembers = false
+			for idx, wndColumn in pairs(wndRaidCategoryItems:GetChildren()) do
+				local wndMemberContainer = wndColumn:FindChild("MemberContainer")
+				bHasMembers = bHasMembers or #wndMemberContainer:GetChildren() > 0
+			end
+			
+			if not bHasMembers then
+				wndCategory:Destroy()
+			end
+		else
+			wndCategory:Destroy()
+		end
+	end
+	
+	local nCategoryContainerHeight = wndCategoryContainer:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop, function(a, b)
+		return a:GetName() < b:GetName()
+	end)
+	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + self.knBaseMainHeight + nCategoryContainerHeight)
+	
+	local nMainHeight = self.wndMain:GetHeight()
+	self.wndMain:SetSizingMinimum(knMinWidth, nMainHeight)
+	self.wndMain:SetSizingMaximum(knMaxWidth, nMainHeight)
+end
 
-	local nCodeIdx = tCurrMemberList[1] -- Since actual lua index can change
-	local tMemberData = tCurrMemberList[2]
-	if tMemberData and self:HelperVerifyMemberCategory(strCategory, tMemberData) then
-		local nGroupMemberCount = GroupLib.GetMemberCount()
-		local tRaidMember = self:FactoryMemberWindow(wndRaidCategoryItems, nCodeIdx)
-		self:UpdateSpecificMember(tRaidMember, nCodeIdx, tMemberData, nGroupMemberCount)
-		self.arMemberIndexToWindow[nCodeIdx] = tRaidMember
+function RaidFrameBase:BuildMemeberCategory(wndCategoryItems, arMembers)
+	local arColumns = {}
 
-		-- Me, Self Config at top right
-		if tMemberData.strCharacterName == self.kstrMyName then -- TODO better comparison
-			self:UpdateRaidOptions(nCodeIdx, tMemberData)
-			self.wndRaidLeaderOptionsBtn:Show(tMemberData.bIsLeader or tMemberData.bRaidAssistant)
-			self.wndRaidMasterLootIconOnly:Show(not tMemberData.bIsLeader)
-			self.wndRaidMasterLootBtn:Show(tMemberData.bIsLeader)
+	local nAnchorPointPart = 1.0 / self.tSettings.nNumColumns
+	local nColumnAnchorPointOffset = 0
+	for nColumn = 1, self.tSettings.nNumColumns do
+		local strWindowName = "Column" .. nColumn
+		local wndColumn = wndCategoryItems:FindChild(strWindowName)
+		if wndColumn == nil or not wndColumn:IsValid() then
+			wndColumn = Apollo.LoadForm(self.xmlDoc, "RaidCategoryColumn", wndCategoryItems, self)
+			wndColumn:SetName(strWindowName)
+		end
+		arColumns[#arColumns + 1] = wndColumn
+		
+		local nLeft, nTop, nRight, nBottom = wndColumn:GetAnchorPoints()
+		
+		nLeft = nColumnAnchorPointOffset
+		
+		nColumnAnchorPointOffset = nColumnAnchorPointOffset + nAnchorPointPart
+		
+		nRight = nColumnAnchorPointOffset
+		if nColumn == self.tSettings.nNumColumns then
+			nRight = 1
+		end
+		
+		wndColumn:SetAnchorPoints(nLeft, nTop, nRight, nBottom)
+	end
+	
+	-- add members
+	for idx, tMember in pairs(arMembers) do
+		local nColumnIndex = (idx % (#arColumns + 1))
+		if nColumnIndex == 0 then
+			nColumnIndex = 1
+		end
+		local wndColumn = arColumns[nColumnIndex]
+		local wndMemberContainer = wndColumn:FindChild("MemberContainer")
+		
+		self:BuildMember(wndMemberContainer, tMember)
+	end
+	
+	for idx, wndColumn in pairs(wndCategoryItems:GetChildren()) do
+		local wndMemberContainer = wndColumn:FindChild("MemberContainer")
+		local nHeight = wndMemberContainer:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+		local nLeft, nTop, nRight, nBottom = wndColumn:GetAnchorOffsets()
+		wndColumn:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nHeight)
+		
+		if #wndMemberContainer:GetChildren() == 0 then
+			wndColumn:Destroy()
 		end
 	end
 end
 
-function RaidFrameBase:UpdateAllMembers()
-	local nGroupMemberCount = GroupLib.GetMemberCount()
-	local nInvalidOrDeadMembers = 0
-
-	for idx, tRaidMember in pairs(self.arMemberIndexToWindow) do
-		-- HP and Shields
-		local tMemberData = GroupLib.GetGroupMember(idx)
-		local unitCurr = GroupLib.GetUnitForGroupMember(idx)
-		if unitCurr then
-			self:DoHPAndShieldResizing(tRaidMember, unitCurr)
+function RaidFrameBase:BuildMember(wndMemberContainer, tMember)
+	local strWindowName = "Member" .. tMember.nMemberIdx
+	local wndMember = wndMemberContainer:FindChild(strWindowName)
+	local tWndMember
+	if wndMember ~= nil and wndMember:IsValid() and wndMember:GetData() ~= nil then
+		tWndMember = self.tMemberWindowsByMemberIdx[wndMember:GetData()]
+	end
+	if tWndMember == nil or tWndMember.wndMember == nil or not tWndMember.wndMember:IsValid() then
+		local wndMember = Apollo.LoadForm(self.xmlDoc, "RaidMember", wndMemberContainer, self)
+		wndMember:SetName(strWindowName)
+		wndMember:SetData(tMember.nMemberIdx)
+		
+		tWndMember =
+		{
+			nMemberIdx = tMember.nMemberIdx,
+			nLastKnownHealth = tMember.nHealth,
+			wndMember = wndMember,
+			wndMemberBtn = wndMember:FindChild("RaidMemberBtn"),
+			wndHealthBar = wndMember:FindChild("RaidMemberBtn:HealthBar"),
+			wndAbsorbBar = wndMember:FindChild("RaidMemberBtn:AbsorbBar"),
+			wndShieldBar = wndMember:FindChild("RaidMemberBtn:ShieldBar"),
+			wndManaBar = wndMember:FindChild("RaidMemberBtn:RaidMemberManaBar"),
+			wndParent = wndMemberContainer,
+		}
+		
+		if self.tMemberWindowsByMemberIdx[tMember.nMemberIdx] ~= nil then
+			self.tMemberWindowsByMemberIdx[tMember.nMemberIdx].wndMember:Destroy()
 		end
+		self.tMemberWindowsByMemberIdx[tMember.nMemberIdx] = tWndMember
+		self.tMemberWindowsByCharacterName[tMember.strCharacterName] = tWndMember
+		
+		tWndMember.wndMemberBtn:SetData(tMember.nMemberIdx)
+	end
 
-		if not tMemberData.bIsOnline or tMemberData.nHealthMax == 0 or tMemberData.nHealth == 0 then
-			nInvalidOrDeadMembers = nInvalidOrDeadMembers + 1
+	local wndMember	= tWndMember.wndMember
+
+	local wndRaidMemberIcons = wndMember:FindChild("RaidMemberIcons")
+	local wndRaidMemberBtn = wndMember:FindChild("RaidMemberBtn")
+	
+	local wndLeaderIcon = wndRaidMemberIcons:FindChild("RaidMemberIsLeader")
+	if self.tSettings.bShowLeaderIcons then
+		local nLeaderIdx = 0
+		if tMember.bIsLeader then
+			nLeaderIdx = 1
+		elseif tMember.bMainTank then
+			nLeaderIdx = 2
+		elseif tMember.bMainAssist then
+			nLeaderIdx = 3
+		elseif tMember.bRaidAssistant then
+			nLeaderIdx = 4
+		end
+		wndLeaderIcon:SetSprite(ktIdToLeaderSprite[nLeaderIdx])
+		wndLeaderIcon:SetTooltip(Apollo.GetString(ktIdToLeaderTooltip[nLeaderIdx]))
+	end
+	wndLeaderIcon:Show((tMember.bIsLeader or tMember.bMainTank or tMember.bMainAssist or tMember.bRaidAssistant) and self.tSettings.bShowLeaderIcons)
+
+	local wndClass = wndRaidMemberIcons:FindChild("RaidMemberClassIcon")
+	wndClass:SetSprite(ktIdToClassSprite[tMember.eClassId])
+	wndClass:Show(self.tSettings.bShowClassIcons)
+	
+	local wndMark = wndRaidMemberIcons:FindChild("RaidMemberMarkIcon")
+	wndMark:SetSprite(kstrRaidMarkerToSprite[tMember.nMarkerId])
+	wndMark:Show(self.tSettings.bShowMarkIcons)
+	
+	local nIconsWidth = wndRaidMemberIcons:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	local nBarsLeft, nBarsTop, nBarsRight, nBarsBottom = wndRaidMemberBtn:GetAnchorOffsets()	
+	wndRaidMemberBtn:SetAnchorOffsets(nIconsWidth, nBarsTop, nBarsRight, nBarsBottom)
+	
+	if self.tSettings.bShowFixedShields then
+		local nLeft, nTop, nRight, nBottom
+		
+		nLeft, nTop, nRight, nBottom = tWndMember.wndHealthBar:GetAnchorPoints()
+		tWndMember.wndHealthBar:SetAnchorPoints(nLeft, nTop, 0.9, nBottom)
+		
+		nLeft, nTop, nRight, nBottom = tWndMember.wndAbsorbBar:GetAnchorPoints()
+		tWndMember.wndAbsorbBar:SetAnchorPoints(0.9, nTop, nRight, nBottom)
+		
+		nLeft, nTop, nRight, nBottom = tWndMember.wndShieldBar:GetAnchorPoints()
+		tWndMember.wndShieldBar:SetAnchorPoints(0.9, nTop, nRight, nBottom)
+	else
+		local nLeft, nTop, nRight, nBottom
+		
+		nLeft, nTop, nRight, nBottom = tWndMember.wndHealthBar:GetAnchorPoints()
+		tWndMember.wndHealthBar:SetAnchorPoints(nLeft, nTop, 1.0, nBottom)
+		
+		nLeft, nTop, nRight, nBottom = tWndMember.wndAbsorbBar:GetAnchorPoints()
+		tWndMember.wndAbsorbBar:SetAnchorPoints(0.0, nTop, nRight, nBottom)
+		
+		nLeft, nTop, nRight, nBottom = tWndMember.wndShieldBar:GetAnchorPoints()
+		tWndMember.wndShieldBar:SetAnchorPoints(0.0, nTop, nRight, nBottom)
+	end
+	
+	local wndName = wndRaidMemberBtn:FindChild("RaidMemberName")
+	wndName:Show(self.tSettings.bShowNames)
+	
+	local unitMember = GroupLib.GetUnitForGroupMember(tMember.nMemberIdx)
+	
+	local bOutOfRange = tMember.bOutOfRange or unitMember == nil or not unitMember:IsValid()
+	local bDead = tMember.nHealth == 0 and tMember.nHealthMax ~= 0
+	if not tMember.bIsOnline then
+		wndRaidMemberBtn:SetSprite("CRB_Raid:sprRaid_HealthProgBar_Red")
+		wndName:SetText(String_GetWeaselString(Apollo.GetString("Group_OfflineMember"), tMember.strCharacterName))
+	elseif bDead then
+		wndRaidMemberBtn:SetSprite("CRB_Raid:sprRaid_HealthProgBar_Red")
+		wndName:SetText(String_GetWeaselString(Apollo.GetString("Group_DeadMember"), tMember.strCharacterName))
+	elseif bOutOfRange and tMember.nMemberIdx ~= 1 then
+		wndRaidMemberBtn:SetSprite("")
+		wndName:SetText(String_GetWeaselString(Apollo.GetString("Group_OutOfRange"), tMember.strCharacterName))
+	else
+		wndRaidMemberBtn:SetSprite("")
+		wndName:SetText(tMember.strCharacterName)
+	end
+
+	local nLeft, nTop, nRight, nBottom = wndMember:GetAnchorOffsets()
+	wndMember:SetAnchorOffsets(nLeft, nTop, nRight, nTop + ktRowSizeIndexToPixels[self.tSettings.nRowSize])
+	
+	self:DrawHealth(tWndMember, tMember.nHealth, tMember.nHealthMax, tMember.nShield, tMember.nShieldMax, tMember.nAbsorption, tMember.nAbsorptionMax, tMember.nMana, tMember.nManaMax, true)
+end
+
+function RaidFrameBase:OnRaidMemberBtnClick(wndHandler, wndControl, eMouseButton)
+	if wndHandler ~= wndControl or wndControl == nil or wndControl:GetData() == nil then
+		return
+	end
+	
+	if eMouseButton == GameLib.CodeEnumInputMouse.Left then
+		local unitMember = GroupLib.GetUnitForGroupMember(wndControl:GetData())
+		if unitMember then
+			GameLib.SetTargetUnit(unitMember)
+		end
+	elseif eMouseButton == GameLib.CodeEnumInputMouse.Right then
+		local strMemberName = wndHandler:FindChild("RaidMemberName"):GetText()
+		local unitMember = GroupLib.GetUnitForGroupMember(wndControl:GetData())
+		if unitMember then
+			Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", wndHandler, strMemberName, unitMember)
+		else
+			Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", wndHandler, strMemberName)
 		end
 	end
-
-	self.wndRaidTitle:SetText(String_GetWeaselString(Apollo.GetString("RaidFrame_MemberCount"), nGroupMemberCount - nInvalidOrDeadMembers, nGroupMemberCount))
 end
 
-local kfnSortCategoryMembers = function(a, b)
-	return a:GetData().strKey < b:GetData().strKey
-end
+function RaidFrameBase:UpdateRaidOptions()
+	local tMemberData = GroupLib.GetGroupMember(1)
 
-function RaidFrameBase:UpdateCategoryBtns()
-	for idx, wndCategory in pairs(self.wndRaidCategoryContainer:GetChildren()) do
-		local tCategory = wndCategory:GetData()
-		tCategory.wndRaidCategoryBtn:Show(not self.tSettings.bIsLocked)
-	end
-end
-
-function RaidFrameBase:ResizeAllFrames()
-	-- Calculate these outside the loop, as its the same for entry
-	self.nRaidMemberWidth = (self.wndMain:GetWidth() - 22) / self.nNumColumns
-
-	-- Now update each member
-	local nLeft, nTop, nRight, nBottom
-	for key, wndCategory in pairs(self.wndRaidCategoryContainer:GetChildren()) do
-		local tCategory = wndCategory:GetData()
-		local wndRaidCategoryItems = tCategory.wndRaidCategoryItems
-		for key2, wndRaidMember in pairs(wndRaidCategoryItems:GetChildren()) do
-			self:ResizeMemberFrame(wndRaidMember)
-		end
-
-		wndRaidCategoryItems:ArrangeChildrenTiles(0, kfnSortCategoryMembers)
-		nLeft, nTop, nRight, nBottom = wndCategory:GetAnchorOffsets()
-		local nChildrenHeight = 0
-		if wndRaidCategoryItems:IsShown() then
-			nChildrenHeight = math.ceil(#wndRaidCategoryItems:GetChildren() / self.nNumColumns) * ktRowSizeIndexToPixels[self.nRowSize]
-		end
-		wndCategory:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nChildrenHeight + self.knWndCategoryHeight)
-	end
-
-	-- Lock Max Height
-	nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
-	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + math.max(self.wndRaidCategoryContainer:ArrangeChildrenVert(0) + 58, self.knWndMainHeight))
-	self.wndMain:SetSizingMinimum(175, self.wndMain:GetHeight())
-	self.wndMain:SetSizingMaximum(1000, self.wndMain:GetHeight())
-end
-
-function RaidFrameBase:ResizeMemberFrame(wndRaidMember)
-	local tRaidMember = wndRaidMember:GetData()
-	local nLeft, nTop, nRight, nBottom = wndRaidMember:GetAnchorOffsets()
-	wndRaidMember:SetAnchorOffsets(nLeft, nTop, nLeft + self.nRaidMemberWidth, nTop + ktRowSizeIndexToPixels[self.nRowSize])
-	wndRaidMember:ArrangeChildrenHorz(0)
-
-	-- Button Offsets (from tear off button)
-	local nLeftOffset = 0
-	if tRaidMember.wndRaidMemberIsLeader:IsShown() then
-		nLeftOffset = nLeftOffset + 22
-	end
-	if tRaidMember.wndRaidMemberClassIcon:IsShown() then
-		nLeftOffset = nLeftOffset + 16
-	end
-	if tRaidMember.wndRaidMemberMarkIcon:IsShown() then
-		nLeftOffset = nLeftOffset + 16
-	end
-
-	-- Resize Button
-	local wndRaidMemberBtn = tRaidMember.wndRaidMemberBtn
-	nLeft,nTop,nRight,nBottom = wndRaidMemberBtn:GetAnchorOffsets()
-	wndRaidMemberBtn:SetAnchorOffsets(nLeft, nTop, nLeft + self.nRaidMemberWidth - nLeftOffset, nTop + ktRowSizeIndexToPixels[self.nRowSize] + 9)
-end
-
-function RaidFrameBase:UpdateRaidOptions(nCodeIdx, tMemberData)
 	local wndRaidOptions = self.wndMain:FindChild("RaidOptions")
 	local wndRaidOptionsToggles = self.wndMain:FindChild("RaidOptions:SelfConfigSetAsLabel")
 
-	wndRaidOptionsToggles:FindChild("SelfConfigSetAsDPS"):SetData(nCodeIdx)
 	wndRaidOptionsToggles:FindChild("SelfConfigSetAsDPS"):SetCheck(tMemberData.bDPS)
-
-	wndRaidOptionsToggles:FindChild("SelfConfigSetAsHealer"):SetData(nCodeIdx)
 	wndRaidOptionsToggles:FindChild("SelfConfigSetAsHealer"):SetCheck(tMemberData.bHealer)
-
-	wndRaidOptionsToggles:FindChild("SelfConfigSetAsNormTank"):SetData(nCodeIdx)
 	wndRaidOptionsToggles:FindChild("SelfConfigSetAsNormTank"):SetCheck(tMemberData.bTank)
 
 	wndRaidOptionsToggles:Show(not tMemberData.bRoleLocked)
 	wndRaidOptions:FindChild("SelfConfigReadyCheckLabel"):Show(tMemberData.bIsLeader or tMemberData.bMainTank or tMemberData.bMainAssist or tMemberData.bRaidAssistant)
 
 	local nLeft, nTop, nRight, nBottom = wndRaidOptions:GetAnchorOffsets()
-	wndRaidOptions:SetAnchorOffsets(nLeft, nTop, nRight, nTop + wndRaidOptions:ArrangeChildrenVert(0))
+	wndRaidOptions:SetAnchorOffsets(nLeft, nTop, nRight, nTop + wndRaidOptions:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop))
+	
+	self.wndRaidLeaderOptionsBtn:Show(tMemberData.bIsLeader or tMemberData.bRaidAssistant)
+	self.wndRaidMasterLootIconOnly:Show(not tMemberData.bIsLeader)
+	self.wndRaidMasterLootBtn:Show(tMemberData.bIsLeader)
 end
 
-function RaidFrameBase:UpdateSpecificMember(tRaidMember, nCodeIdx, tMemberData, nGroupMemberCount)
-	if not tRaidMember then
-		return
-	end
-
-	local wndRaidMember = tRaidMember.wnd
-	if not wndRaidMember or not wndRaidMember:IsValid() then
-		return
-	end
-
-	local unitCurr = GroupLib.GetUnitForGroupMember(nCodeIdx)
-
-	tRaidMember.wndHealthBar:Show(false)
-	tRaidMember.wndMaxAbsorbBar:Show(false)
-	tRaidMember.wndMaxShieldBar:Show(false)
-	tRaidMember.wndCurrShieldBar:Show(false)
-	tRaidMember.wndRaidMemberBtn:SetData(tMemberData.nMemberIdx)
-
-	tRaidMember.wndRaidMemberName:Show(self.tSettings.bShowNames)
-
-	local bOutOfRange = not unitCurr
-	local bDead = tMemberData.nHealth == 0 and tMemberData.nHealthMax ~= 0
-	if not tMemberData.bIsOnline then
-		tRaidMember.wndRaidMemberBtn:SetSprite("CRB_Raid:btnRaid_ThinHoloRedBtnNormal")
-		tRaidMember.wndRaidMemberName:SetText(String_GetWeaselString(Apollo.GetString("Group_OfflineMember"), tMemberData.strCharacterName))
-	elseif bDead then
-		tRaidMember.wndRaidMemberBtn:SetSprite("CRB_Raid:btnRaid_ThinHoloRedBtnNormal")
-		tRaidMember.wndRaidMemberName:SetText(String_GetWeaselString(Apollo.GetString("Group_DeadMember"), tMemberData.strCharacterName))
-	elseif bOutOfRange then
-		tRaidMember.wndRaidMemberBtn:SetSprite("")
-		tRaidMember.wndRaidMemberName:SetText(String_GetWeaselString(Apollo.GetString("Group_OutOfRange"), tMemberData.strCharacterName))
-	else
-		tRaidMember.wndRaidMemberBtn:SetSprite("")
-		tRaidMember.wndRaidMemberName:SetText(tMemberData.strCharacterName)
-	end
-
-	local wndClassIcon = tRaidMember.wndRaidMemberClassIcon
-	if self.tSettings.bShowClassIcons then
-		wndClassIcon:SetSprite(ktIdToClassSprite[tMemberData.eClassId])
-		wndClassIcon:SetTooltip(Apollo.GetString(ktIdToClassTooltip[tMemberData.eClassId]))
-	end
-	wndClassIcon:Show(self.tSettings.bShowClassIcons)
-
-	local nLeaderIdx = 0
-	local bShowLeaderIcon = self.tSettings.bShowLeaderIcons
-	local wndLeaderIcon = tRaidMember.wndRaidMemberIsLeader
-	if bShowLeaderIcon then
-		if tMemberData.bIsLeader then
-			nLeaderIdx = 1
-		elseif tMemberData.bMainTank then
-			nLeaderIdx = 2
-		elseif tMemberData.bMainAssist then
-			nLeaderIdx = 3
-		elseif tMemberData.bRaidAssistant then
-			nLeaderIdx = 4
-		end
-		wndLeaderIcon:SetSprite(ktIdToLeaderSprite[nLeaderIdx])
-		wndLeaderIcon:SetTooltip(Apollo.GetString(ktIdToLeaderTooltip[nLeaderIdx]))
-	end
-	wndLeaderIcon:Show(bShowLeaderIcon and nLeaderIdx ~= 0)
-
-	local nMarkIdx = 0
-	local wndMarkIcon = tRaidMember.wndRaidMemberMarkIcon
-	if self.tSettings.bShowMarkIcons then
-		nMarkIdx = tMemberData.nMarkerId or 0
-		wndMarkIcon:SetSprite(kstrRaidMarkerToSprite[nMarkIdx])
-	end
-	wndMarkIcon:Show(self.tSettings.bShowMarkIcons and nMarkIdx ~= 0)
-
-	-- HP and Shields
-	if unitCurr then
-		self:DoHPAndShieldResizing(tRaidMember, unitCurr)
-	end
-
-	self:ResizeMemberFrame(wndRaidMember)
-end
-
-function RaidFrameBase:OnRaidMemberBtnClick(wndHandler, wndControl) -- wndRaidMemberBtn
-	if wndHandler ~= wndControl or not wndHandler or not wndHandler:GetData() then
-		return
-	end
-
-	local unitMember = GroupLib.GetUnitForGroupMember(wndHandler:GetData())
-	if unitMember then
-		GameLib.SetTargetUnit(unitMember)
-	end
-end
-
------------------------------------------------------------------------------------------------
--- UI
------------------------------------------------------------------------------------------------
-
-function RaidFrameBase:OnRaidFrame_MinuteTimer()
+function RaidFrameBase:OnEnteredCombat(unitArg, bInCombat)
 	if not GroupLib.InRaid() then return end
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers)
+	
+	if self.tSettings.bLockInCombat and unitArg == GameLib.GetPlayerUnit() then
+		self.tSettings.bIsLocked = bInCombat -- If bLockInCombat then it has control over bIsLocked
+		self:HelperUpdateSettings() -- Will update the frame, movable, sizeable
+	end
+end
+
+function RaidFrameBase:OnUnitCreated(unitNew)
+	if not GroupLib.InRaid() then return end
+
+	if unitNew ~= nil and unitNew:IsValid() and unitNew:IsInYourGroup() then
+		local tWndMember = self.tMemberWindowsByCharacterName[unitNew:GetName()]
+		if tWndMember ~= nil and tWndMember.wndParent ~= nil and tWndMember.wndParent:IsValid() then
+			local tMember = GroupLib.GetGroupMember(tWndMember.nMemberIdx)
+			if tMember ~= nil then
+				self:BuildMember(tWndMember.wndParent, tMember)
+			end
+		end
+	end
+end
+
+function RaidFrameBase:OnUnitDestroyed(unitOld)
+	if not GroupLib.InRaid() then return end
+	
+	if unitOld ~= nil and unitOld:IsInYourGroup() then
+		local tWndMember = self.tMemberWindowsByCharacterName[unitOld:GetName()]
+		if tWndMember ~= nil and tWndMember.wndParent ~= nil and tWndMember.wndParent:IsValid() then
+			local tMember = GroupLib.GetGroupMember(tWndMember.nMemberIdx)
+			if tMember ~= nil then
+				tMember.bOutOfRange = true
+				self:BuildMember(tWndMember.wndParent, tMember)
+			end
+		end
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Group Events
+-----------------------------------------------------------------------------------------------
+
+function RaidFrameBase:OnGroup_Join()
+	if not GroupLib.InRaid() then return end
+	self:OnCharacterCreated()
+end
+
+function RaidFrameBase:OnGroup_Add(strName)
+	if not GroupLib.InRaid() then return end
+	self:BuildMembers()
+end
+
+function RaidFrameBase:OnGroup_Remove(strName)
+	if not GroupLib.InRaid() then return end
+	
+	self:OnCharacterCreated()
+end
+
+function RaidFrameBase:OnGroup_Left()
+	local bInRaid = GroupLib.InRaid()
+	
+	self:OnCharacterCreated()
+
+	self.wndMain:Show(bInRaid)
+end
+
+function RaidFrameBase:OnGroup_MemberFlagsChanged(nMemberIdx, bFromPromotion, tChangedFlags)
+	if not GroupLib.InRaid() then return end
+	
+	if nMemberIdx == 1 then
+		self:UpdateRaidOptions()
+	end
+	
+	if tChangedFlags.bTank ~= nil or tChangedFlags.bHealer ~= nil or tChangedFlags.bDPS ~= nil then
+		self:BuildMembers()
+	else
+		local tWndMember = self.tMemberWindowsByMemberIdx[nMemberIdx]
+		if tWndMember ~= nil and tWndMember.wndParent ~= nil and tWndMember.wndParent:IsValid() then
+			self:BuildMember(tWndMember.wndParent, GroupLib.GetGroupMember(nMemberIdx))
+		end
+	end
+end
+
+function RaidFrameBase:OnGroup_FlagsChanged()
+	if not GroupLib.InRaid() then
+		self.wndMain:Show(false)
+		return
+	end
+	
+	if not self.wndMain:IsShown() then
+		self:OnCharacterCreated()
+	end
+end
+
+function RaidFrameBase:OnGroup_SetMark(idMark, unitMarked)
+	if not GroupLib.InRaid() then return end
+	
+	if unitMarked == nil then
+		self:BuildMembers()
+	elseif unitMarked:IsInYourGroup() then
+		local tWndMember = self.tMemberWindowsByCharacterName[unitMarked:GetName()]
+		if tWndMember ~= nil and tWndMember.wndParent ~= nil and tWndMember.wndParent:IsValid() then
+			self:BuildMember(tWndMember.wndParent, GroupLib.GetGroupMember(tWndMember.nMemberIdx))
+		end
+	end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Settings UI
+-----------------------------------------------------------------------------------------------
+
+function RaidFrameBase:OnRaidLockFrameBtnToggle(wndHandler, wndControl) -- RaidLockFrameBtn
+	self.tSettings.bIsLocked = wndHandler:IsChecked()
+	self:HelperUpdateSettings()
 end
 
 function RaidFrameBase:OnRaidCategoryBtnToggle(wndHandler, wndControl) -- RaidCategoryBtn
-	local tCategory = wndHandler:GetParent():GetData()
-	tCategory.wndRaidCategoryItems:Show(not tCategory.wndRaidCategoryItems:IsShown())
+	self:BuildMembers()
 end
 
 function RaidFrameBase:OnRaidLeaderOptionsToggle(wndHandler, wndControl) -- RaidLeaderOptionsBtn
@@ -849,11 +937,27 @@ function RaidFrameBase:OnUncheckMasterLoot()
 	end
 end
 
+function RaidFrameBase:OnRaidWrongInstance()
+	GroupLib.GotoGroupInstance()
+end
+
+-----------------------------------------------------------------------------------------------
+-- Loot
+-----------------------------------------------------------------------------------------------
+
 function RaidFrameBase:OnGroupBagBtn()
 	Event_FireGenericEvent("GenericEvent_ToggleGroupBag")
 end
 
+function RaidFrameBase:OnGroup_LootRulesChanged()
+	if not GroupLib.InRaid() then return end
+	
+	self:UpdateLootRules()
+end
+
 function RaidFrameBase:OnMasterLootUpdate()
+	if not GroupLib.InRaid() then return end
+	
 	local tMasterLoot = GameLib.GetMasterLoot()
 	local bShowMasterLoot = tMasterLoot and #tMasterLoot > 0
 	local nLeft, nTop, nRight, nBottom = self.wndRaidTitle:GetAnchorOffsets()
@@ -862,13 +966,22 @@ function RaidFrameBase:OnMasterLootUpdate()
 	self.wndGroupBagBtn:Show(bShowMasterLoot)
 end
 
-function RaidFrameBase:OnRaidWrongInstance()
-	GroupLib.GotoGroupInstance()
+function RaidFrameBase:UpdateLootRules()
+	local tLootRules = GroupLib.GetLootRules()
+	local strThresholdQuality = ktItemQualityToStr[tLootRules.eThresholdQuality]
+	local strTooltip = string.format("<P Font=\"CRB_InterfaceSmall_O\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P><P Font=\"CRB_InterfaceSmall_O\">%s</P>",
+						Apollo.GetString("RaidFrame_LootRules"),
+						String_GetWeaselString(Apollo.GetString("RaidFrame_UnderThreshold"), strThresholdQuality, Apollo.GetString(ktLootModeToString[tLootRules.eNormalRule])),
+						String_GetWeaselString(Apollo.GetString("RaidFrame_ThresholdAndAbove"), strThresholdQuality, Apollo.GetString(ktLootModeToString[tLootRules.eThresholdRule])))
+	self.wndRaidMasterLootIconOnly:SetTooltip(strTooltip)
 end
 
 -----------------------------------------------------------------------------------------------
 -- Ready Check
 -----------------------------------------------------------------------------------------------
+function RaidFrameBase:OnReadyCheckChanged(wndHandler, wndControl, strText)
+	self.wndMain:FindChild("RaidOptions:SelfConfigReadyCheckLabel:StartReadyCheckBtn"):Enable(GameLib.IsTextValid(strText, GameLib.CodeEnumUserText.ReadyCheck, GameLib.CodeEnumUserTextFilterClass.Strict))
+end
 
 function RaidFrameBase:OnStartReadyCheckBtn(wndHandler, wndControl) -- StartReadyCheckBtn
 	self.wndRaidConfigureBtn:SetFocus() -- To remove out of edit box
@@ -890,325 +1003,94 @@ end
 
 function RaidFrameBase:HelperUpdateSettings()
 	local wndRaidOptions = self.wndMain:FindChild("RaidOptions:SelfConfigRaidCustomizeOptions")
-	self.tSettings.bShowLeaderIcons 		= wndRaidOptions:FindChild("RaidCustomizeLeaderIcons"):IsChecked()
-	self.tSettings.bShowClassIcons 			= wndRaidOptions:FindChild("RaidCustomizeClassIcons"):IsChecked()
-	self.tSettings.bShowMarkIcons 			= wndRaidOptions:FindChild("RaidCustomizeMarkIcons"):IsChecked()
-	self.tSettings.bShowManaBar 			= wndRaidOptions:FindChild("RaidCustomizeManaBar"):IsChecked()
-	self.tSettings.bShowFixedShields 		= wndRaidOptions:FindChild("RaidCustomizeFixedShields"):IsChecked()
-	self.tSettings.bShowCategories 			= wndRaidOptions:FindChild("RaidCustomizeCategories"):IsChecked()
-	self.tSettings.bShowNames 				= wndRaidOptions:FindChild("RaidCustomizeShowNames"):IsChecked()
-	self.tSettings.bLockInCombat 			= wndRaidOptions:FindChild("RaidCustomizeLockInCombat"):IsChecked()
-	self.tSettings.nRowSize 				= self.nRowSize
-	self.tSettings.nNumColumns 				= self.nNumColumns
-	self.tSettings.nUpdateSpeed				= self.nUpdateSpeed
+	wndRaidOptions:FindChild("RaidCustomizeLeaderIcons"):SetCheck(self.tSettings.bShowLeaderIcons)
+	wndRaidOptions:FindChild("RaidCustomizeClassIcons"):SetCheck(self.tSettings.bShowClassIcons)
+	wndRaidOptions:FindChild("RaidCustomizeMarkIcons"):SetCheck(self.tSettings.bShowMarkIcons)
+	wndRaidOptions:FindChild("RaidCustomizeManaBar"):SetCheck(self.tSettings.bShowManaBar)
+	wndRaidOptions:FindChild("RaidCustomizeFixedShields"):SetCheck(self.tSettings.bShowFixedShields)
+	wndRaidOptions:FindChild("RaidCustomizeCategories"):SetCheck(self.tSettings.bShowCategories)
+	wndRaidOptions:FindChild("RaidCustomizeShowNames"):SetCheck(self.tSettings.bShowNames)
+	wndRaidOptions:FindChild("RaidCustomizeLockInCombat"):SetCheck(self.tSettings.bLockInCombat)
 
 	self.wndRaidCustomizeRowSizeSub:Enable(self.tSettings.nRowSize > 1)
 	self.wndRaidCustomizeRowSizeAdd:Enable(self.tSettings.nRowSize < #ktRowSizeIndexToPixels)
 	self.wndRaidCustomizeRowSizeValue:SetText(self.tSettings.nRowSize)
-
+	
 	self.wndRaidCustomizeNumColSub:Enable(self.tSettings.nNumColumns > 1)
 	self.wndRaidCustomizeNumColAdd:Enable(self.tSettings.nNumColumns < knNumColumnsMax)
 	self.wndRaidCustomizeNumColValue:SetText(self.tSettings.nNumColumns)
 
-	self.wndRaidCustomizeSpeedSub:Enable(self.tSettings.nUpdateSpeed > 1)
-	self.wndRaidCustomizeSpeedAdd:Enable(self.tSettings.nUpdateSpeed < #ktUpdateSpeedToSeconds)
-	self.wndRaidCustomizeSpeedValue:SetText(self.tSettings.nUpdateSpeed)
-
-	--self.tSettings.bIsLocked 				= wndRaidOptions:FindChild("RaidLockFrameBtn"):IsChecked() -- GOTCHA: Don't do this, as it can get auto clicked by bLockInCombat
+	-- Lock
 	self.wndRaidLockFrameBtn:SetCheck(self.tSettings.bIsLocked)
 	self.wndMain:SetStyle("Sizable", not self.tSettings.bIsLocked)
 	self.wndMain:SetStyle("Moveable", not self.tSettings.bIsLocked)
 	self.wndMain:SetSprite(self.tSettings.bIsLocked and "sprRaid_BaseNoArrow" or "sprRaid_Base")
+	local wndCategoryContainer = self.wndMain:FindChild("RaidCategoryContainer")
+	for idx, wndCategory in pairs(wndCategoryContainer:GetChildren()) do
+		wndCategory:FindChild("RaidCategoryBtn"):Show(not self.tSettings.bIsLocked)
+	end
 end
 
 function RaidFrameBase:OnConfigSetAsDPSToggle(wndHandler, wndControl)
-	GroupLib.SetRoleDPS(wndHandler:GetData(), wndHandler:IsChecked()) -- Will fire event Group_MemberFlagsChanged
+	GroupLib.SetRoleDPS(1, wndHandler:IsChecked()) -- Will fire event Group_MemberFlagsChanged
 end
 
 function RaidFrameBase:OnConfigSetAsTankToggle(wndHandler, wndControl)
-	GroupLib.SetRoleTank(wndHandler:GetData(), wndHandler:IsChecked()) -- Will fire event Group_MemberFlagsChanged
+	GroupLib.SetRoleTank(1, wndHandler:IsChecked()) -- Will fire event Group_MemberFlagsChanged
 end
 
 function RaidFrameBase:OnConfigSetAsHealerToggle(wndHandler, wndControl)
-	GroupLib.SetRoleHealer(wndHandler:GetData(), wndHandler:IsChecked()) -- Will fire event Group_MemberFlagsChanged
+	GroupLib.SetRoleHealer(1, wndHandler:IsChecked()) -- Will fire event Group_MemberFlagsChanged
 end
 
-function RaidFrameBase:OnRaidCustomizeCategoryCheck(wndHandler, wndControl, eMouseButton)
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyGeneral)
-	self:HelperUpdateSettings()
+function RaidFrameBase:OnRaidCustomizeCheck(wndHandler, wndControl, eMouseButton)
+	self.tSettings[wndControl:GetData()] = wndControl:IsChecked()
+	self:BuildMembers()
 end
 
-function RaidFrameBase:OnRaidCustomizeShowNamesCheck(wndHandler, wndControl, eMouseButton)
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers)
-	self:HelperUpdateSettings()
-end
-
-function RaidFrameBase:OnRaidCustomizeDirtyMembers(wndHandler, wndControl, eMouseButton)
-	self.nDirtyFlag = bit32.bor(self.nDirtyFlag, knDirtyMembers)
-	self:HelperUpdateSettings()
-end
-
-function RaidFrameBase:OnRaidCustomizeNumColAdd(wndHandler, wndControl) -- RaidCustomizeNumColAdd, and once from bSwapToTwoColsOnce
-	self.nNumColumns = self.nNumColumns + 1
-	if self.nNumColumns >= knNumColumnsMax then
+function RaidFrameBase:OnRaidCustomizeNumColAdd(wndHandler, wndControl)
+	self.tSettings.nNumColumns = self.tSettings.nNumColumns + 1
+	if self.tSettings.nNumColumns >= knNumColumnsMax then
 		self.nNumColumns = knNumColumnsMax
 		wndHandler:Enable(false)
 	end
 	self.wndRaidCustomizeNumColSub:Enable(true)
-	self.wndRaidCustomizeNumColValue:SetText(self.nNumColumns)
-	self:HelperUpdateSettings()
+	self.wndRaidCustomizeNumColValue:SetText(self.tSettings.nNumColumns)
+	self:BuildMembers()
 end
 
-function RaidFrameBase:OnRaidCustomizeNumColSub(wndHandler, wndControl) -- RaidCustomizeNumColSub
-	self.nNumColumns = self.nNumColumns - 1
-	if self.nNumColumns <= 1 then
-		self.nNumColumns = 1
+function RaidFrameBase:OnRaidCustomizeNumColSub(wndHandler, wndControl)
+	self.tSettings.nNumColumns = self.tSettings.nNumColumns - 1
+	if self.tSettings.nNumColumns <= 1 then
+		self.tSettings.nNumColumns = 1
 		wndHandler:Enable(false)
 	end
 	self.wndRaidCustomizeNumColAdd:Enable(true)
-	self.wndRaidCustomizeNumColValue:SetText(self.nNumColumns)
-	self:HelperUpdateSettings()
+	self.wndRaidCustomizeNumColValue:SetText(self.tSettings.nNumColumns)
+	self:BuildMembers()
 end
 
-function RaidFrameBase:OnRaidCustomizeRowSizeAdd(wndHandler, wndControl) -- RaidCustomizeRowSizeAdd
-	self.nRowSize = self.nRowSize + 1
-	if self.nRowSize >= #ktRowSizeIndexToPixels then
-		self.nRowSize = #ktRowSizeIndexToPixels
+function RaidFrameBase:OnRaidCustomizeRowSizeAdd(wndHandler, wndControl)
+	self.tSettings.nRowSize = self.tSettings.nRowSize + 1
+	if self.tSettings.nRowSize >= #ktRowSizeIndexToPixels then
+		self.tSettings.nRowSize = #ktRowSizeIndexToPixels
 		wndHandler:Enable(false)
 	end
 	self.wndRaidCustomizeRowSizeSub:Enable(true)
-	self.wndRaidCustomizeRowSizeValue:SetText(self.nRowSize)
-	self:HelperUpdateSettings()
+	self.wndRaidCustomizeRowSizeValue:SetText(self.tSettings.nRowSize)
+	self:BuildMembers()
 end
 
-function RaidFrameBase:OnRaidCustomizeRowSizeSub(wndHandler, wndControl) -- RaidCustomizeRowSizeSub
-	self.nRowSize = self.nRowSize - 1
-	if self.nRowSize <= 1 then
-		self.nRowSize = 1
+function RaidFrameBase:OnRaidCustomizeRowSizeSub(wndHandler, wndControl)
+	self.tSettings.nRowSize = self.tSettings.nRowSize - 1
+	if self.tSettings.nRowSize <= 1 then
+		self.tSettings.nRowSize = 1
 		wndHandler:Enable(false)
 	end
 	self.wndRaidCustomizeRowSizeAdd:Enable(true)
-	self.wndRaidCustomizeRowSizeValue:SetText(self.nRowSize)
-	self:HelperUpdateSettings()
-end
-
-function RaidFrameBase:OnRaidCustomizeSpeedAdd(wndHandler, wndControl) -- RaidCustomizeSpeedAdd
-	self.nUpdateSpeed = self.nUpdateSpeed + 1
-	if self.nUpdateSpeed >= #ktUpdateSpeedToSeconds then
-		self.nUpdateSpeed = #ktUpdateSpeedToSeconds
-		wndHandler:Enable(false)
-	end
-	self.wndRaidCustomizeSpeedSub:Enable(true)
-	self.wndRaidCustomizeSpeedValue:SetText(self.nUpdateSpeed)
-
-	self:HelperUpdateRaidUpdateSpeed()
-	self:HelperUpdateSettings()
-end
-
-function RaidFrameBase:OnRaidCustomizeSpeedSub(wndHandler, wndControl) -- RaidCustomizeSpeedSub
-	self.nUpdateSpeed = self.nUpdateSpeed - 1
-	if self.nUpdateSpeed <= 1 then
-		self.nUpdateSpeed = 1
-		wndHandler:Enable(false)
-	end
-	self.wndRaidCustomizeRowSizeAdd:Enable(true)
-	self.wndRaidCustomizeRowSizeValue:SetText(self.nUpdateSpeed)
-
-	self:HelperUpdateRaidUpdateSpeed()
-	self:HelperUpdateSettings()
-end
-
-function RaidFrameBase:HelperUpdateRaidUpdateSpeed()
-	self.timerRaidBaseTimer:Stop()
-	self.timerRaidBaseTimer = ApolloTimer.Create(ktUpdateSpeedToSeconds[self.nUpdateSpeed], true, "OnRaidFrameBaseTimer", self)
-	Event_FireGenericEvent("GenericEvent_SystemChannelMessage", String_GetWeaselString(Apollo.GetString("RaidFrame_UpdateSpeedChanged"), tostring(ktUpdateSpeedToSeconds[self.nUpdateSpeed])))
-end
-
-function RaidFrameBase:OnRaidLockFrameBtnToggle(wndHandler, wndControl) -- RaidLockFrameBtn
-	self.tSettings.bIsLocked = wndHandler:IsChecked()
-	self:HelperUpdateSettings()
-	self:UpdateCategoryBtns()
-end
-
------------------------------------------------------------------------------------------------
--- Clean Up
------------------------------------------------------------------------------------------------
-
-function RaidFrameBase:DestroyMemberWindows(nMemberIdx)
-	local tCategoriesToUse = {Apollo.GetString("RaidFrame_Members")}
-	if self.tSettings.bShowCategories then
-		tCategoriesToUse = {Apollo.GetString("RaidFrame_Tanks"), Apollo.GetString("RaidFrame_Healers"), Apollo.GetString("RaidFrame_DPS")}
-	end
-
-	for key, strCurrCategory in pairs(tCategoriesToUse) do
-		local wndCategory = self.wndRaidCategoryContainer:FindChild(strCurrCategory)
-		if wndCategory ~= nil then
-			local wndMember = wndCategory:FindChild(nMemberIdx)
-			if wndMember ~= nil then
-				self.arMemberIndexToWindow[nMemberIdx] = nil
-				wndMember:Destroy()
-			end
-		end
-	end
-end
-
------------------------------------------------------------------------------------------------
--- Helpers
------------------------------------------------------------------------------------------------
-
-function RaidFrameBase:HelperVerifyMemberCategory(strCurrCategory, tMemberData)
-	local bResult = true
-	if strCurrCategory == Apollo.GetString("RaidFrame_Tanks") then
-		bResult =  tMemberData.bTank
-	elseif strCurrCategory == Apollo.GetString("RaidFrame_Healers") then
-		bResult = tMemberData.bHealer
-	elseif strCurrCategory == Apollo.GetString("RaidFrame_DPS") then
-		bResult = not tMemberData.bTank and not tMemberData.bHealer
-	end
-	return bResult
-end
-
-function RaidFrameBase:DoHPAndShieldResizing(tRaidMember, unitPlayer)
-	local nHealthCurr = unitPlayer:GetHealth()
-	local nHealthMax = unitPlayer:GetMaxHealth()
-	local nShieldCurr = unitPlayer:GetShieldCapacity()
-	local nShieldMax = unitPlayer:GetShieldCapacityMax()
-	local nAbsorbCurr = 0
-	local nAbsorbMax = unitPlayer:GetAbsorptionMax()
-	if nAbsorbMax > 0 then
-		nAbsorbCurr = unitPlayer:GetAbsorptionValue() -- Since it doesn't clear when the buff drops off
-	end
-	local nTotalMax = nHealthMax + nShieldMax + nAbsorbMax
-
-	-- Bars
-	local wndHealthBar = tRaidMember.wndHealthBar
-	local wndMaxAbsorb = tRaidMember.wndMaxAbsorbBar
-	local wndMaxShield = tRaidMember.wndMaxShieldBar
-	wndHealthBar:Show(nHealthCurr > 0 and nHealthMax > 0)
-	wndMaxAbsorb:Show(nHealthCurr > 0 and nAbsorbMax > 0)
-	wndMaxShield:Show(nHealthCurr > 0 and nShieldMax > 0)
-
-	local wndCurrShieldBar = tRaidMember.wndCurrShieldBar
-	wndCurrShieldBar:Show(nHealthCurr > 0 and nShieldMax > 0)
-	wndCurrShieldBar:SetMax(nShieldMax)
-	wndCurrShieldBar:SetProgress(nShieldCurr)
-	wndCurrShieldBar:EnableGlow((wndCurrShieldBar:GetWidth() * nShieldCurr/nShieldMax) > 4)
-
-	local wndCurrAbsorbBar = tRaidMember.wndCurrAbsorbBar
-	wndCurrAbsorbBar:SetMax(nAbsorbMax)
-	wndCurrAbsorbBar:SetProgress(nAbsorbCurr)
-	wndCurrAbsorbBar:EnableGlow((wndCurrAbsorbBar:GetWidth() * nAbsorbCurr/nAbsorbMax) > 4)
-
-	-- Health Bar Color
-	if (nHealthCurr / nHealthMax) < self.nHealthWarn then
-		wndHealthBar:SetSprite("sprRaid_HealthProgBar_Red")
-	elseif (nHealthCurr / nHealthMax) < self.nHealthWarn2 then
-		wndHealthBar:SetSprite("sprRaid_HealthProgBar_Orange")
-	else
-		wndHealthBar:SetSprite("sprRaid_HealthProgBar_Green")
-	end
-
-	-- Scaling
-	local nArtOffset = 2
-	local nWidth = tRaidMember.wndRaidMemberBtn:GetWidth() - 4
-	local nPointHealthRight = nWidth * (nHealthCurr / nTotalMax)
-	local nPointShieldRight = nWidth * ((nHealthCurr + nShieldMax) / nTotalMax)
-	local nPointAbsorbRight = nWidth * ((nHealthCurr + nShieldMax + nAbsorbMax) / nTotalMax)
-
-	local nLeft, nTop, nRight, nBottom = wndHealthBar:GetAnchorOffsets()
-	if not self.tSettings.bShowFixedShields then
-		wndHealthBar:SetAnchorOffsets(nLeft, nTop, nPointHealthRight, nBottom)
-		wndMaxShield:SetAnchorOffsets(nPointHealthRight - nArtOffset, nTop, nPointShieldRight, nBottom)
-		wndMaxAbsorb:SetAnchorOffsets(nPointShieldRight - nArtOffset, nTop, nPointAbsorbRight, nBottom)
-	elseif nAbsorbMax == 0 then
-		wndHealthBar:SetAnchorOffsets(nLeft, nTop, nWidth * 0.9 * nHealthCurr / nHealthMax, nBottom)
-		wndMaxShield:SetAnchorOffsets(nWidth * 0.9, nTop, nWidth, nBottom)
-	else
-		wndHealthBar:SetAnchorOffsets(nLeft, nTop, nWidth * 0.9 * nHealthCurr / nHealthMax, nBottom)
-		wndMaxShield:SetAnchorOffsets(nWidth * 0.9, nTop, nWidth, nBottom)
-		wndMaxAbsorb:SetAnchorOffsets(nWidth * 0.8, nTop, nWidth * 0.9, nBottom)
-	end
-
-	-- Mana Bar
-	local nManaCurr = unitPlayer:GetMana()
-	local nManaMax = unitPlayer:GetMaxMana() or nManaCurr
-	if self.tSettings.bShowManaBar then
-		tRaidMember.wndRaidMemberManaBar:SetMax(nManaMax)
-		tRaidMember.wndRaidMemberManaBar:SetProgress(nManaCurr)
-	end
-	tRaidMember.wndRaidMemberManaBar:Show(self.tSettings.bShowManaBar and nManaMax > 0 and nHealthCurr > 0 and nHealthMax > 0)
-end
-
-function RaidFrameBase:FactoryMemberWindow(wndParent, strKey)
-	if self.cache == nil then
-		self.cache = {}
-	end
-
-	local tbl = self.cache[strKey]
-	if tbl == nil or not tbl.wnd:IsValid() then
-		local wndNew = Apollo.LoadForm(self.xmlDoc, "RaidMember", wndParent, self)
-		wndNew:SetName(strKey)
-
-		tbl =
-		{
-			["strKey"] = strKey,
-			wnd = wndNew,
-			wndHealthBar = wndNew:FindChild("RaidMemberBtn:HealthBar"),
-			wndMaxAbsorbBar = wndNew:FindChild("RaidMemberBtn:MaxAbsorbBar"),
-			wndCurrAbsorbBar = wndNew:FindChild("RaidMemberBtn:MaxAbsorbBar:CurrAbsorbBar"),
-			wndMaxShieldBar = wndNew:FindChild("RaidMemberBtn:MaxShieldBar"),
-			wndCurrShieldBar = wndNew:FindChild("RaidMemberBtn:MaxShieldBar:CurrShieldBar"),
-			wndRaidMemberBtn = wndNew:FindChild("RaidMemberBtn"),
-			wndRaidMemberManaBar = wndNew:FindChild("RaidMemberBtn:RaidMemberManaBar"),
-			wndRaidMemberName = wndNew:FindChild("RaidMemberName"),
-			wndRaidMemberClassIcon = wndNew:FindChild("RaidMemberClassIcon"),
-			wndRaidMemberIsLeader = wndNew:FindChild("RaidMemberIsLeader"),
-			wndRaidMemberMarkIcon = wndNew:FindChild("RaidMemberMarkIcon"),
-		}
-		wndNew:SetData(tbl)
-		self.cache[strKey] = tbl
-
-		for strCacheKey, wndCached in pairs(self.cache) do
-			if not self.cache[strCacheKey].wnd:IsValid() then
-				self.cache[strCacheKey] = nil
-			end
-		end
-	end
-
-	return tbl
-end
-
-function RaidFrameBase:FactoryCategoryWindow(wndParent, strKey)
-	if self.cache == nil then
-		self.cache = {}
-	end
-
-	local tbl = self.cache[strKey]
-	if tbl == nil or not tbl.wnd:IsValid() then
-		local wndNew = Apollo.LoadForm(self.xmlDoc, "RaidCategory", wndParent, self)
-		wndNew:SetName(strKey)
-
-		tbl =
-		{
-			wnd = wndNew,
-			wndRaidCategoryBtn = wndNew:FindChild("RaidCategoryBtn"),
-			wndRaidCategoryName = wndNew:FindChild("RaidCategoryName"),
-			wndRaidCategoryItems = wndNew:FindChild("RaidCategoryItems"),
-		}
-		wndNew:SetData(tbl)
-		self.cache[strKey] = tbl
-
-		for strCacheKey, wndCached in pairs(self.cache) do
-			if not self.cache[strCacheKey].wnd:IsValid() then
-				self.cache[strCacheKey] = nil
-			end
-		end
-	end
-
-	return tbl
+	self.wndRaidCustomizeRowSizeValue:SetText(self.tSettings.nRowSize)
+	self:BuildMembers()
 end
 
 local RaidFrameBaseInst = RaidFrameBase:new()
 RaidFrameBaseInst:Init()
-orOffset="349" BAnchorPoint="1" BAnchorOffset="-16" DT_VCENTER="1" DT_CENTER="1" Name="CancelBtn" BGColor="ffffffff" TextColor="ff4dffff" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" WindowSoundTemplate="PushbuttonDigi03" TextId="CRB_Cancel" TooltipColor="" DisabledTextColor="UI_BtnTextRedDisabled">
-                <Event Name="ButtonSignal" Funct

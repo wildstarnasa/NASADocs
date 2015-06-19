@@ -230,33 +230,4 @@ function Protogames:CheckForProtogames()
 end
 
 local ProtogamesInstance = Protogames:new()
-ProtogamesInstance:Init()ite="CRB_Basekit:kitBase_MetalGrey_Large" Line="0"/>
-        <Event Name="WindowClosed" Function="OnCancel"/>
-    </Form>
-</Forms>
-								 Apollo.GetString("RealmPopulation_Medium"),
-								 Apollo.GetString("RealmPopulation_High"),
-								 Apollo.GetString("RealmPopulation_Full") }
-
-	for idx, tRealm in ipairs(tList) do
-		self:HelperConfigureRealmEntry(tRealm)
-	end
-
-	self:SortList()
-
-	----
-
-	if self.btnSelected ~= nil then
-		self.wndRealmList:SetRadioSelButton("SelectedRealm", self.btnSelected)
-		self.wndRealmList:EnsureChildVisible(self.btnSelected)
-		self:OnRealmSelect(self.btnSelected, self.btnSelected)
-		self.wndSelectForm:FindChild("SelectBtn"):Enable(true)
-	else
-		self.wndSelectForm:FindChild("SelectBtn"):Enable(false)
-	end
-
-	self.wndSelectForm:SetFocus()
-end
-
-local tSortTypeFieldMap =
-{	-
+ProtogamesInstance:Init()

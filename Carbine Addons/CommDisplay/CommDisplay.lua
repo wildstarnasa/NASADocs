@@ -361,22 +361,11 @@ end
 
 function CommDisplay:DrawLootItem(tCurrReward, wndParentArg)
 	if tCurrReward and tCurrReward.eType == Quest.Quest2RewardType_Money then
-		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):Show(true)
-		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetMoneySystem(tCurrReward.eCurrencyType or 0)
-		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetAmount(tCurrReward.nAmount, 0)
-
-		local strText = ""
-		if tCurrReward.nAmount >= 1000000 then
-			strText = String_GetWeaselString(Apollo.GetString("CRB_Platinum"), math.floor(tCurrReward.nAmount / 1000000))
-		end
-		if tCurrReward.nAmount >= 10000 then
-			strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Gold"), math.floor(tCurrReward.nAmount % 1000000 / 10000))
-		end
-		if tCurrReward.nAmount >= 100 then
-			strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Silver"), math.floor(tCurrReward.nAmount % 10000 / 100))
-		end
-		strText = strText .. " " .. String_GetWeaselString(Apollo.GetString("CRB_Copper"), math.floor(tCurrReward.nAmount % 100))
-		self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow"):SetTooltip(strText)
+		local wndLootCashWindow = self.wndMain:FindChild("CashRewards"):FindChild("LootCashWindow")
+		wndLootCashWindow:Show(true)
+		wndLootCashWindow:SetMoneySystem(tCurrReward.eCurrencyType or 0)
+		wndLootCashWindow:SetAmount(tCurrReward.nAmount, 0)
+		wndLootCashWindow:FindChild("LootCashWindow"):SetTooltip(wndLootCashWindow:GetCurrency():GetMoneyString())
 	end
 
 	local strIconSprite = ""
@@ -455,82 +444,3 @@ end
 
 local CommDisplayInst = CommDisplay:new()
 CommDisplayInst:Init()
-) do
-		if not bDisableOtherPlayers or self.unitPlayer == tHeal.unitHealed then
-			local strVital = Apollo.GetString("CombatLog_UnknownVital")
-			if tHeal.eVitalType then
-				strVital = Unit.GetVitalTable()[tHeal.eVitalType].strName
-			end
-			
-			-- units in caster's group can get healed
-			if tHeal.unitHealed ~= tEventArgs.unitCaster then
-				tCastInfo.strTarget = tCastInfo.strCaster
-				tCastInfo.strCaster = self:HelperGetNameElseUnknown(tHeal.unitHealed)
-			end
-
-			local strAmount = string.format("<T TextColor=\"%s\">%s</T>", self.crVitalModifier, tHeal.nHealAmount)
-			local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_GainVital"), tCastInfo.strCaster, strAmount, strVital, tCastInfo.strTarget)
-
-			if tHeal.nOverheal and tHeal.nOverheal > 0 then
-				local strOverhealString = ""
-				if tHeal.eVitalType == GameLib.CodeEnumVital.ShieldCapacity then
-					strOverhealString = Apollo.GetString("CombatLog_Overshield")
-				else
-					strOverhealString = Apollo.GetString("CombatLog_Overheal")
-				end
-				strAmount = string.format("<T TextColor=\"white\">%s</T>", tHeal.nOverheal)
-				strResult = String_GetWeaselString(strOverhealString, strResult, strAmount)
-			end
-
-			if tEventArgs.eCombatResult == GameLib.CodeEnumCombatResult.Critical then
-				strResult = String_GetWeaselString(Apollo.GetString("CombatLog_Critical"), strResult)
-			end
-
-			-- TODO: Analyze if we can refactor (this has no spell)
-			local strColor = kstrColorCombatLogIncomingGood
-			if tEventArgs.unitCaster ~= self.unitPlayer then
-				strColor = kstrColorCombatLogOutgoing
-			end
-			self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", strColor, strResult))
-		end
-	end
-end
-
-function CombatLog:OnCombatLogInterrupted(tEventArgs)
-	if not tEventArgs or not tEventArgs.unitCaster then
-		return
-	end
-
-	local tCastInfo = self:HelperCasterTargetSpell(tEventArgs, true, true)
-	tCastInfo.strSpellName = string.format("<T Font=\"%s\">%s</T>", kstrFontBold, tCastInfo.strSpellName)
-	local strResult = String_GetWeaselString(Apollo.GetString("CombatLog_TargetInterrupted"), tCastInfo.strTarget, tCastInfo.strSpellName) -- NOTE: strTarget is first, usually strCaster is first
-
-	if tEventArgs.unitCaster ~= tEventArgs.unitTarget then
-		if tEventArgs.splInterruptingSpell and tEventArgs.splInterruptingSpell:GetName() then
-			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSourceCaster"), strResult, tEventArgs.unitCaster:GetName(), tEventArgs.splInterruptingSpell:GetName())
-		else
-			strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSource"), strResult, tEventArgs.unitCaster:GetName())
-		end
-	elseif tEventArgs.strCastResult and tEventArgs.strCastResult ~= "" then
-		strResult = String_GetWeaselString(Apollo.GetString("CombatLog_InterruptSelf"), strResult, tEventArgs.strCastResult)
-	end
-
-	-- TODO: Analyze if we can refactor (this has a unique spell)
-	local strColor = kstrColorCombatLogIncomingGood
-	if tEventArgs.unitCaster == self.unitPlayer then
-		strColor = kstrColorCombatLogOutgoing
-	end
-	self:PostOnChannel(string.format("<T TextColor=\"%s\">%s</T>", strColor, strResult))
-end
-
-function CombatLog:OnCombatLogKillStreak(tEventArgs)
-	if tEventArgs.nStreakAmount <= 1 then
-		return
-	end
-
-	local strCaster = self:HelperGetNameElseUnknown(tEventArgs.unitCaster)
-	local strResult = Apollo.GetString("CombatLog_Achieves")
-	local strStreakType = ""
-	if tEventArgs.eStatType == CombatFloater.CodeEnumCombatMomentum.Impulse then
-		strStreakType = String_GetWeaselString(Apollo.GetString("CombatLog_ImpulseStreak"), tEventArgs.nStreakAmount)
-	el

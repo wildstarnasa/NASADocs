@@ -82,7 +82,7 @@ function ArenaTeamRegister:OnDocumentReady()
 end
 
 function ArenaTeamRegister:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MatchMaker_Arenas")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MatchMaker_Arenas"), nSaveVersion=2})
 end
 
 -----------------------------------------------------------------------------------------------
@@ -157,8 +157,8 @@ function ArenaTeamRegister:OnNameChanging(wndHandler, wndControl)
 		
 		wndLimit:SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), nNameLength, nMaxLength))
 
-		if not bIsValid or nNameLength < knMinGuildNameLength or nNameLength > nMaxLength then
-			wndLimit:SetTextColor(ApolloColor.new("xkcdReddish"))
+		if nNameLength < knMinGuildNameLength or nNameLength > nMaxLength then
+			wndLimit:SetTextColor(ApolloColor.new("AlertOrangeYellow"))
 		else
 			wndLimit:SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
 		end
@@ -230,12 +230,3 @@ end
 -----------------------------------------------------------------------------------------------
 local ArenaTeamRegisterInst = ArenaTeamRegister:new()
 ArenaTeamRegister:Init()
-orOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="RemoveMemberBG" BGColor="white" TextColor="white" Sprite="BK3:sprHolo_Alert_Flyout" Picture="1" IgnoreMouse="1" TooltipColor=""/>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="47" TAnchorPoint="0" TAnchorOffset="72" RAnchorPoint="1" RAnchorOffset="-58" BAnchorPoint="0" BAnchorOffset="104" RelativeToClient="1" Font="CRB_InterfaceMedium_B" Text="" Template="Default" Name="RemoveMemberLabel" BGColor="white" TextColor="UI_WindowTitleYellow" TextId="Circles_KickDefault" TooltipColor="" DT_WORDBREAK="1"/>
-                    <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_Close2" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-59" TAnchorPoint="0" TAnchorOffset="75" RAnchorPoint="1" RAnchorOffset="-41" BAnchorPoint="0" BAnchorOffset="92" DT_VCENTER="1" DT_CENTER="1" Name="RemoveMemberCloseBtn" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="" WindowSoundTemplate="HoloButtonSmall">
-                        <Event Name="ButtonSignal" Function="OnRosterRemoveMemberCloseBtn"/>
-                    </Control>
-                    <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_InterfaceMedium_B" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="0" TAnchorOffset="92" RAnchorPoint="0.5" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="145" DT_VCENTER="1" DT_CENTER="1" Name="RemoveMemberYesBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Text="" TextId="Yes" TooltipColor="" WindowSoundTemplate="HoloButtonSmall">
-                        <Event Name="ButtonSignal" Function="OnRosterRemoveMemberYesClick"/>
-                    </Control>
-                    <Control Class="Button" Base="BK3:btnHolo_Red_Small" Font="CRB_InterfaceMedium_B" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="92" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="145" DT_VCENTER="1" DT_CENTER="1" Name="RemoveMemberNoBtn" BGColor="white" TextColor="white" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" Text="" TextId="No" TooltipC

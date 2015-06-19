@@ -101,4 +101,3 @@ end
 -----------------------------------------------------------------------------------------------
 local DecorPreviewInst = DecorPreview:new()
 DecorPreviewInst:Init()
-s="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="56" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="426" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="HazardList" BGColor="UI_AlphaPercent10" TextColor="white" Picture="0" Ignor

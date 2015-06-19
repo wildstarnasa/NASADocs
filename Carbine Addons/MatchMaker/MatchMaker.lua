@@ -161,8 +161,6 @@ function MatchMaker:OnDocumentReady()
 	self.wndListParent 				= self.wndModeContent:FindChild("MatchListFrame")
 	self.wndList 					= self.wndListParent:FindChild("MatchList")
 	self.wndRole 					= self.wndModeContent:FindChild("RoleFrame")
-	self.wndRealmFilterContainer	= self.wndModeContent:FindChild("RealmFrame")
-	self.wndRealmFilter				= self.wndRealmFilterContainer:FindChild("RealmFilterBtn")
 	self.wndOthersFilterContainer	= self.wndModeContent:FindChild("OthersFrame")
 	self.wndOthersFilter			= self.wndOthersFilterContainer:FindChild("OthersFilterBtn")
 	self.wndMercFilterContainer     = self.wndModeContent:FindChild("MercenaryFrame")
@@ -194,7 +192,6 @@ function MatchMaker:OnDocumentReady()
 	self.wndDuelRequest				= Apollo.LoadForm(self.xmlDoc, "DuelRequest", nil, self)
 	self.wndDuelWarning				= Apollo.LoadForm(self.xmlDoc, "DuelWarning", nil, self)
 	self.wndRoleBlocker				= self.wndRole:FindChild("RoleBlocker")
-	self.wndRealmFilterBlocker		= self.wndRealmFilterContainer:FindChild("RealmBlocker")
 	self.wndMercFilterBlocker		= self.wndMercFilterContainer:FindChild("MercenaryBlocker")
 	self.wndOthersFilterBlocker		= self.wndOthersFilterContainer:FindChild("OthersBlocker")
 	
@@ -219,7 +216,6 @@ function MatchMaker:OnDocumentReady()
 	self.wndAllyConfirm:Show(false, true)
 	self.wndAllyEnemyConfirm:Show(false, true)
 	self.wndRoleBlocker:Show(false)
-	self.wndRealmFilterBlocker:Show(false)
 	self.wndOthersFilterBlocker:Show(false)
 	self.wndMercFilterBlocker:Show(false)
 	self.bInCombat = false
@@ -374,7 +370,7 @@ function MatchMaker:OnMatchMakerOn()
 	self.wndModeList:Show(false)
 
 	-- go to the correct tab
-	if MatchingGame.IsInMatchingGame() then
+	if MatchingGame.IsInMatchingGame() and not MatchingGame.IsMatchingGameFinished() then
 		local eMatchingGameType = MatchingGame.GetMatchingGameType()
 		if eMatchingGameType ~= nil then
 			self.eSelectedTab = eMatchingGameType
@@ -525,15 +521,13 @@ end
 function MatchMaker:HelperConfigureListAndRealmSelect()
 	local nLeft, nTop, nRight, nBottom = self.wndListParent:GetAnchorOffsets()
 	local nLeft2, nTop2, nRight2, nBottom2 = self.wndMyRating:GetAnchorOffsets()
-	local nLeftRealm, nTopRealm, nRightRealm, nBottomRealm = self.wndRealmFilterContainer:GetAnchorOffsets()
-	self.wndListParent:SetAnchorOffsets(nLeft, nBottomRealm, nRight, nTop2)
+	self.wndListParent:SetAnchorOffsets(nLeft, nTop, nRight, nTop2)
 
 	self.wndMyRating:FindChild("RatingValue"):SetText(math.floor(GameLib.GetGearScore()) or 0)
 	self.wndMyRating:FindChild("RatingLabel"):SetText(Apollo.GetString("MatchMaker_GearScoreLabel"))
 
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(false)
-	self.wndRealmFilterContainer:Show(true)
 	self.wndOthersFilterContainer:Show(false)
 	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(true)
@@ -551,7 +545,6 @@ function MatchMaker:HelperConfigureListAndRating()
 
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(false)
-	self.wndRealmFilterContainer:Show(false)
 	self.wndOthersFilterContainer:Show(false)
 	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(true)
@@ -565,7 +558,6 @@ function MatchMaker:HelperConfigureListAndRole() --dungeons & adventures
 
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(true)
-	self.wndRealmFilterContainer:Show(true)
 	self.wndOthersFilterContainer:Show(false)
 	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(false)
@@ -580,7 +572,6 @@ function MatchMaker:HelperConfigureListAndFindOthers() --shiphands
 
 	self.wndArenaTeams:Show(false)
 	self.wndRole:Show(false)
-	self.wndRealmFilterContainer:Show(false)
 	self.wndOthersFilterContainer:Show(true)
 	self.wndMercFilterContainer:Show(false)
 	self.wndMyRating:Show(false)
@@ -606,15 +597,14 @@ function MatchMaker:HelperConfigureListAndTeams(tTeam, bForWarplots)
 	self.wndMercFilterContainer:Show(bForWarplots)
 	self.wndArenaTeams:Show(true)
 	self.wndRole:Show(false)
-	self.wndRealmFilterContainer:Show(false)
 	self.wndOthersFilterContainer:Show(false)
 	self.wndMyRating:Show(false)
 	
 	-- teams
 	self.wndArenaTeams:FindChild("TeamList"):DestroyChildren()
-
+	
+	local bFound = false
 	for idx, tInfo in pairs(tTeam) do
-		local bFound = false
 
 		for key, tCurrGuild in pairs(GuildLib.GetGuilds()) do
 			if tCurrGuild:GetType() == tTeam[idx].eGuildType then
@@ -654,6 +644,10 @@ function MatchMaker:HelperConfigureListAndTeams(tTeam, bForWarplots)
 			wndEntry:FindChild("ArrowMark"):Show(false)
 		end
 	end
+	
+	self.wndAllowWarpartyFilter:Enable(bFound)
+	self.wndAllowWarpartyFilter:SetCheck(bFound)
+	self.wndAllowMercFilter:SetCheck(not bFound)
 
 	self.wndArenaTeams:FindChild("TeamList"):ArrangeChildrenVert()
 end
@@ -788,7 +782,6 @@ function MatchMaker:RefreshStatus()
 	self.wndAltTeleportIntoGame:Show(false)
 	self.wndModeListToggle:Enable(true)
 
-	self.wndRealmFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleRealmFilter) or false)
 	self.wndAllowMercFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleAllowMercFilter) or false)
 	self.wndAllowWarpartyFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleAllowWarpartyFilter) or false)
 	self.wndOthersFilter:SetCheck(Apollo.GetConsoleVariable(kstrConsoleDoNotFindOthers) or false)
@@ -858,7 +851,6 @@ function MatchMaker:RefreshStatus()
 	if tSelectedRoles then
 		for idx, eRole in ipairs(tSelectedRoles) do
 			self.wndRoleBlocker:Show(bIsQueued)
-			self.wndRealmFilterBlocker:Show(bIsQueued)
 			self.wndOthersFilterBlocker:Show(bIsQueued)
 			self.wndMercFilterBlocker:Show(bIsQueued)
 			--self.tGroupFinderRoleButtons[eRole]:Enable(bIsQueued == false)
@@ -903,12 +895,12 @@ function MatchMaker:RefreshStatus()
 				self.wndJoinAsGroup:Show(true)
 				self.wndModeListToggle:Enable(true)
 				self.wndListBlocker:Show(false)
-			elseif bInInstance then
-				self.wndLeaveGame:Show(true)
-			else
+			elseif not bInInstance then
 				self.wndListBlocker:Show(true)
 				self.wndListBlocker:SetText(Apollo.GetString("MatchMaker_CantQueueWhileGrouped"))
 			end
+			
+			self.wndLeaveGame:Show(true)
 		else
 			local tMatchState = MatchingGame:GetPVPMatchState()
 			local bCanDisband = not tMatchState -- Not in PvP.
@@ -1487,14 +1479,6 @@ function MatchMaker:OnOtherFilterUnchecked( wndHandler, wndControl, eMouseButton
 	Apollo.SetConsoleVariable(kstrConsoleDoNotFindOthers, false)
 end
 
-function MatchMaker:OnRealmFilterChecked( wndHandler, wndControl, eMouseButton )
-	Apollo.SetConsoleVariable(kstrConsoleRealmFilter, true)
-end
-
-function MatchMaker:OnRealmFilterUnchecked( wndHandler, wndControl, eMouseButton )
-	Apollo.SetConsoleVariable(kstrConsoleRealmFilter, false)
-end
-
 function MatchMaker:OnAllowMercChecked( wndHandler, wndControl, eMouseButton )
 	Apollo.SetConsoleVariable(kstrConsoleAllowMercFilter, true)
 end
@@ -1839,9 +1823,3 @@ end
 -----------------------------------------------------------------------------------------------
 local MatchMakerInst = MatchMaker:new()
 MatchMakerInst:Init()
-?Fêá0Æ_ç®¶e*ò¿¯·HõýÇü…r½?æ÷1+ž·ÛòƒçŸýËÞtìJÜ·7E¬§÷å%·#%Å(ú|ðéÉù‹Öä“\Wð9eæx¿ç××¤4&ˆ~Ý›çÊëNsÅ§•MØ³Gò‚’Óú—Äz}ÓsÍ5Ÿœ%ÓÓæ¤Ý6û¿·µ_hªëÜjÜÕþYÓÖè­;%o;|ª÷ü~,ú–•|dM‰6½-ùEÇí·~kêT±û»žù)Û_ù ÿ\n>úÁŠø?¸ÏsàþÝž
-£>Ì¢´¶ÿ—ÓéÔôÛQæc©×ïúÆÆ¶·k<ÐñÅù…ú÷s(ÏÊõ‚C}ÿZþãKcŒot«ëáûãÉk·_^?¹þ¡ÿz,;Cv}~ëó,š×3‚9žqûcŒ‡Ï5®œÄ×Ž.ùþ§'¦¦¦üƒä¶OÝ¶F·[ÄóŽöûJšKþíÉ÷oÙ=¿x}ƒ˜ŸÿUãÇ®Ù³“D?ýdwë“}••’;ËÿÑóÕ—"¿~^NGâÓO_õý	9Í‰ÛS“’ÿÓs‡k{c‚è'°°Õ°B§3ˆùãéÖÊºÛÃKÅù¶—æ.?v^ô÷¿¿*Áµ¶¨ý’Ú¦˜¢'”‰ú„¿æ4ß}÷E—èhØ<Å|téÐûcû‹ÿ'©ê×<–€õrê~÷Þ¿¥Ú×íšz{ý ýùÄÆÒö¾ë…ÙÕ¾þý¡x^ð]¿~’Æ™"¡cLÜ_NÖ“ÄcŒƒrßýÔ"9Ôñ½ÿû}pëí*ûjó!¾¹Þygh|Å~…ƒ‹×õã÷=¿ÌIjË{…ßŒñ•pÏâÅ:ñÓR®¿³­Mî¸ªÞ6m±SÌÇ—••Z‹
-s%O/¸Ýœú›½û%ÏÚr öû•òúzŸ7Ç¾vño"^Ïl]épÓïºÆÃó\Nç%Ùí¥9Î6‘Žß»ý›Ž²Ž5
-G˜&Ê‚Œ§=V}B‚¨?øüêUÙŠxÕ¾í™ùuK/Ÿ|Ð1Å4qf‚"Þº÷že²?JSö?öóôÿë,vÕ|½%L¯™¯ÏÔÆß×ô]]Ý_»½Æ>ý{4¯kûó__ë…ùö‡ÏÐX{?ó3>¯±f|a^ z‘Þû«êýBýy`Œ1Æ×ƒýÄÏŠúÇëõ«¯xÀ{ño_¾„%àõ©òB}¾ãÐy£ª¿h«Ô”úî‚?HþÄõb|ÎŠBO/ˆ4ÍÞ¿Z¬èíøTQÑ’3[Çûõ/l½ÐT³tÈ7¸«åBS~Ï„e’oéuO}]§rû®	]²W¦å/ÿýzÉïVU[Sþ²Dü¾åðsww‘8Ÿ‹õÑöÖx‘?°`Ed|Ã/Î=¥¼Þ°(?é›ø_Ó¿Ç~Å÷cŒ1ÆZWÛ,:ùçúï?w£]/ÆxðŽZ¨SÌ÷V—W¥åÛ+Eýÿûû=ÇÖJ~Äµ2¾{Q¦Ø¿Ôz"qÁ#M?•|KKsÜö9_ÿñÖ›[þÔýr“ìM—/­ñ¾7þ_î¬S:¼gs­rÿ¤Æ.ÑÀÙúYSCí«¢ßÿÂÖRëâEÙYâürJÓN>Y$4ËÛrÓëSÄñŸF9–]<&Ö÷óTÜ›¦w‘ý¢C9ÿúïcŒ1ÆcŒ1Š7ªú£åî[éÈíªùùwz6å¾ðÔM’g½ä¶fg-‘e›“føj¿ˆ§gmiŽ[¶¤m²ä»Zî°ÙôÞ~|7·<ñÐc=’½óùOww‹ü›{ãýÚâÚNyÿMgÖ×ö(””$Æ2[ïl±ÿù—Ê¯Ï5+ÒtgËN$îïúêkÉ‡ÊÎy}qH@XåysÕ’[E½À–²7¬O]|Uô?l©8™61jò·¯üùaŒ1ÆcŒ1Æ×‚KmEü?ë×s‡)”|§çdÆ¿<ò¾ˆ¯§ºæ˜ÏïÛ$úå%¸"MµÇ~œ/ùw‡#L)	n·ä…­ç*u»ÛDGL¯Ÿ=wVòã­ÉîµrÇ[ZbÜºðž6Ùç+uë/¯“÷¯ß¦«½,æç¶¾W9ÎpQŒÜÜ»\íë"ýBS‹5;+KôØSñÆü	ãþQò?ývãªÛÖvl×_5ÍõøÒ-’\]QeýöäÉŠþl¡þ¾0ÆcŒ1Æã¡ØíPÆÿóKJÒvì¨ñõÙ
-Ïü5O=%êã§ºž±îùï»¦Hþè)æ5ÙÙ"^^Õ¸!fbt´˜Ÿ¿i¢{ÑwÇ‰~þ<ŸVöl6Lm¯_lhè‘·qIÔ…Ë¯'»×ïçû™g–ûÈk5;dÛëWëj”v†7ˆ‚Ÿ{žIËÊÊýÆ•D˜gÔ½õœä3uQe†¸ð’;wÿ(çé¬5b<£ºbŠé;“'‹|†Ð_cŒ1ÆcŒñÕ»¥â-Ó+½?’ÏVœÊÈÎÎ^$ù&Çsøf[®äjë‰¸Üœåb~ý±¦±ÑãW‹ãý²ÉjÒ­w
-¿â‰7éjeöN|¼Òï{ŽÅ©¦zýMê×ß{'Ç¤»,û]OºÊ?õÜŸ_(ûÙòRsýL·Eò¡ŠM®ñõ¢Ÿ@t¥¡0gEçùó(5OŽŠŠêç‰1ÆcŒ1ÆE,—œüž˜/ŸQ¸!æµîË]òöwÜZ¦XoJüÕ¬7úN¸Ç¢:ß*s›b½ÃƒåUfƒÓ®x}Ž)*J¯p¨ÏcŒ1Æ×º½k¯aŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1ÆcŒ1Æx¤í©ÐéœNµuZ‡óÅcŒ1ÆcŒq°>¹ÛSáýƒµw< Ì©/ÓŽèµãzÙcëú1ÆcŒ1ÆãÁÁÆÿWkïx€^;~`ÔŽµãÆ±òyaŒ1ÆcŒ1Æ×¢G;þ‰ñv<zŒ1ÆcŒ1Æ×¼ýÆ³8óŠñq¨ã÷PÛo=ƒžzŒ1ÆcŒ1¾öÜ¯Y4 ^¶0Ÿ<€µñd ‡:þÅW?~`¾žAáPÿûÀcŒ1ÆcÉ}ñŠ]ãâg{pñ²=¸øÙBüŒ¯S®ž!

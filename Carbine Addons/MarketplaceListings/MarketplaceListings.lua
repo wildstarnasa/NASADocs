@@ -80,8 +80,9 @@ function MarketplaceListings:OnToggle()
 		self.wndMain = nil
 	else
 		self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceListingsForm", nil, self)
-		self.wndMain:SetSizingMinimum(450, 300)
-		self.wndMain:SetSizingMaximum(450, 1000)
+		local nMainWidth = self.wndMain:GetWidth()
+		self.wndMain:SetSizingMinimum(nMainWidth, 300)
+		self.wndMain:SetSizingMaximum(nMainWidth, 1000)
 		self.wndMain:Show(false, true)
 
 		self.wndCreddHeader = Apollo.LoadForm(self.xmlDoc, "HeaderItem", self.wndMain:FindChild("MainScroll"), self)
@@ -99,7 +100,7 @@ function MarketplaceListings:OnToggle()
 		self:RequestData()
 
 		Apollo.StartTimer("MarketplaceUpdateTimer")
-		Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AuctionListings"), nSaveVersion = 2 })
+		Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("InterfaceMenu_AuctionListings"), nSaveVersion = 4 })
 	end
 end
 
@@ -216,10 +217,11 @@ function MarketplaceListings:SharedDrawMain()
 		else
 			local nHeight = wndCurr:FindChild("HeaderItemList"):ArrangeChildrenVert(0)
 			local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-			wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + (wndCurr:FindChild("HeaderItemBtn"):IsChecked() and nHeight or 0) + 41)
+			wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + (wndCurr:FindChild("HeaderItemBtn"):IsChecked() and nHeight + 40 or 80))
+			wndCurr:FindChild("HeaderItemList"):Show(wndCurr:FindChild("HeaderItemBtn"):IsChecked())
 			wndCurr:Show(true)
 		end
-		wndCurr:FindChild("HeaderItemBtn"):SetText(String_GetWeaselString(Apollo.GetString(tHeaderData.strTitle), nChildren, tHeaderData.nLimit))
+		wndCurr:FindChild("HeaderItemTitle"):SetText(String_GetWeaselString(Apollo.GetString(tHeaderData.strTitle), nChildren, tHeaderData.nLimit))
 	end
 
 	self.wndMain:FindChild("MainScroll"):SetText(nNumChildren == 0 and Apollo.GetString("MarketplaceListings_NoActiveListings") or "")
@@ -278,7 +280,7 @@ function MarketplaceListings:BuildAuctionOrder(nIdx, aucCurrent, wndParent)
 	wndCurr:FindChild("AuctionItemName"):SetHeightToContentHeight()
 	local AuctionItemNameHeight = wndCurr:FindChild("AuctionItemName"):GetHeight()
 	local nLeft, nTop, nRight, nBottom = wndCurr:GetAnchorOffsets()
-	wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + AuctionItemNameHeight + 80) -- 80 is bottom content
+	wndCurr:SetAnchorOffsets(nLeft, nTop, nRight, nTop + AuctionItemNameHeight + 90) -- 80 is bottom content
 end
 
 function MarketplaceListings:BuildCommodityOrder(nIdx, aucCurrent, wndParent)
@@ -544,40 +546,3 @@ end
 
 local MarketplaceListingsInst = MarketplaceListings:new()
 MarketplaceListingsInst:Init()
-tplaceCREDD:OnCREDDExchangeOperationResults(eOperationType, eResult)
-	if self.tWindowMap["WaitingScreen"] then
-		local bSuccess = eResult == CREDDExchangeLib.CodeEnumAccountOperationResult.Ok
-		self.tWindowMap["WaitingScreen"]:Show(false)
-		self.tWindowMap["PostResultNotification"]:Show(true)
-		self.tWindowMap["PostResultNotificationLabel"]:SetText(bSuccess and Apollo.GetString("CRB_Success") or Apollo.GetString("CRB_Error"))
-		self.tWindowMap["PostResultNotificationLabel"]:SetTextColor(bSuccess and ApolloColor.new("UI_TextHoloTitle") or ApolloColor.new("xkcdLightOrange"))
-
-		self.tWindowMap["PostResultNotificationSubText"]:SetText(bSuccess and Apollo.GetString("MarketplaceCredd_TransactionSuccess") or Apollo.GetString((ktResultErrorCodeStrings[eResult] or MarketplaceCredd_Error_GenericFail)))
-	end
-
-	Apollo.StartTimer("HidePostResultNotification")
-	self:RefreshBoundCredd()
-end
-
-function MarketplaceCREDD:OnHidePostResultNotification() -- Both Timer and Mouse Click
-	if self.tWindowMap["PostResultNotification"] then
-		self.tWindowMap["PostResultNotification"]:Show(false)
-	end
-end
-
------------------------------------------------------------------------------------------------
--- Log
------------------------------------------------------------------------------------------------
-
-function MarketplaceCREDD:OnCREDDOperationHistoryResults(tHistory)
-	if not self.tWindowMap["LogScroll"] or not self.tWindowMap["LogScroll"]:IsValid() or not self.tWindowMap["LogScroll"]:IsVisible() then
-		return
-	end
-
-	-- Sort table
-	table.sort(tHistory, function(a,b) return a.nLogAge < b.nLogAge end)
-
-	self.tWindowMap["LogScroll"]:DestroyChildren()
-	for idx, tEntry in pairs(tHistory) do
-		local wndEntry = Apollo.LoadForm(self.xmlDoc, "LogEntryBasicForm", self.tWindowMap["LogScroll"], self)
-		wndEntry:FindChild("LogName"):SetText(Apollo.GetString(ktLogTypeStrings[tEntr

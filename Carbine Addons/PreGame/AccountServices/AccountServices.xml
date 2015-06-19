@@ -116,7 +116,7 @@
             </Control>
         </Control>
         <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-215" TAnchorPoint="0.5" TAnchorOffset="-195" RAnchorPoint=".5" RAnchorOffset="215" BAnchorPoint="0.5" BAnchorOffset="195" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_Medium" TooltipType="OnCursor" Name="TrustedIPFlyout" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" UseTemplateBG="1" Border="1" Visible="0" HideInEditor="0" Tooltip="">
-            <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-8" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="Trusted IPs" TextId="" DT_CENTER="1" Line="0"/>
+            <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-8" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="AccountServices_TrustedIPs" DT_CENTER="1" Line="0"/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="22" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="93" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_TextCallout" TooltipType="OnCursor" Name="TrustedIPFlyoutLabel" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="AccountServices_TrustedIPDescription" DT_VCENTER="1" DT_CENTER="1" DT_WORDBREAK="1" IgnoreMouse="1" NewWindowDepth="1" AutoScaleText="0" Border="1" UseTemplateBG="1"/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="1" TAnchorPoint="0" TAnchorOffset="128" RAnchorPoint="1" RAnchorOffset="1" BAnchorPoint="0" BAnchorOffset="239" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_ScrollListSmall" TooltipType="OnCursor" Name="TrustedIPContent" TooltipColor="" Picture="0" IgnoreMouse="1" Sprite="" VScroll="1" Border="1" UseTemplateBG="1"/>
             <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="65" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="0.5" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="356" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="TrustedIPConfirmBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="AccountServices_ForgetIP" TestAlpha="1" DT_WORDBREAK="1" ButtonTextXMargin="18">
@@ -125,18 +125,18 @@
             <Control Class="Button" Base="BK3:btnHolo_Red_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="286" RAnchorPoint="1" RAnchorOffset="-65" BAnchorPoint="0" BAnchorOffset="356" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="CRB_Back" TestAlpha="1">
                 <Event Name="ButtonSignal" Function="OnTrustedIPFlyoutCloseBtn"/>
             </Control>
-            <Control Class="Button" Base="BK3:btnHolo_Close" Font="CRB_Header12" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-73" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-31" BAnchorPoint="0" BAnchorOffset="72" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="">
+            <Control Class="Button" Base="BK3:btnHolo_Close" Font="CRB_Header12" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-73" TAnchorPoint="0" TAnchorOffset="28" RAnchorPoint="1" RAnchorOffset="-31" BAnchorPoint="0" BAnchorOffset="72" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TrustedIPBackBtn" TooltipColor="" Tooltip="" RelativeToClient="0" Text="" TextId="" NoClip="1" NewControlDepth="2">
                 <Event Name="ButtonSignal" Function="OnTrustedIPFlyoutCloseBtn"/>
             </Control>
             <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="101" RAnchorPoint=".5" RAnchorOffset="-1" BAnchorPoint="0" BAnchorOffset="131" Sprite="bk3:btnHolo_ListView_TopNormal" BGColor="white" TextColor="UI_TextHoloBody" Rotation="0" Font="CRB_InterfaceSmall" DT_CENTER="1" DT_VCENTER="1" Text="" TextId="Pregame_2FA_IPAddress"/>
             <Pixie LAnchorPoint=".5" LAnchorOffset="-3" TAnchorPoint="0" TAnchorOffset="101" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="131" Sprite="bk3:btnHolo_ListView_TopNormal" BGColor="white" TextColor="UI_TextHoloBody" Rotation="0" Font="CRB_InterfaceSmall" Text="" TextId="Pregame_2FA_DateRemembered" DT_CENTER="1" DT_VCENTER="1"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-260" TAnchorPoint="0" TAnchorOffset="-205" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="125" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MinimizedPicker" Border="0" Picture="1" SwallowMouseClicks="1" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Tooltip="" IgnoreMouse="1" Sprite="CRB_CharacterCreateSprites:sprCharS_ListBackerReverse" Moveable="0" UseTemplateBG="0" Visible="0" HideInEditor="0">
+    <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-320" TAnchorPoint="0" TAnchorOffset="-205" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="125" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MinimizedPicker" Border="0" Picture="1" SwallowMouseClicks="1" Escapable="0" Overlapped="0" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Tooltip="" IgnoreMouse="1" Sprite="CRB_CharacterCreateSprites:sprCharS_ListBackerReverse" Moveable="0" UseTemplateBG="0" Visible="0" HideInEditor="0">
         <Event Name="WindowKeyEscape" Function="OnEscapeKey"/>
         <Event Name="WindowKeyReturn" Function="OnEnterKey"/>
-        <Pixie LAnchorPoint="0" LAnchorOffset="75" TAnchorPoint="1" TAnchorOffset="-118" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="0" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="AccountServices_AccountServicesTitle" DT_CENTER="1" Line="0" DT_RIGHT="0"/>
-        <Control Class="Button" Base="charactercreate:btnCharC_Show" Font="CRB_ButtonHeader" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-135" TAnchorPoint="1" TAnchorOffset="-95" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-43" DT_VCENTER="0" DT_CENTER="0" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="ShowMainPicker" TooltipColor="" Text="" TextId="Nameplates_Show" RelativeToClient="1" TestAlpha="0" ButtonTextXMargin="42" DT_RIGHT="1" ButtonTextYMargin="13">
+        <Pixie LAnchorPoint="0" LAnchorOffset="27" TAnchorPoint="1" TAnchorOffset="-118" RAnchorPoint="1" RAnchorOffset="2" BAnchorPoint="1" BAnchorOffset="-94" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="AccountServices_AccountServicesTitle" DT_CENTER="1" Line="0" DT_RIGHT="0"/>
+        <Control Class="Button" Base="charactercreate:btnCharC_Show" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-135" TAnchorPoint="1" TAnchorOffset="-95" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-43" DT_VCENTER="0" DT_CENTER="0" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="ShowMainPicker" TooltipColor="" Text="" TextId="Nameplates_Show" RelativeToClient="1" TestAlpha="0" ButtonTextXMargin="42" DT_RIGHT="1" ButtonTextYMargin="13">
             <Event Name="ButtonSignal" Function="OnShowMainPicker"/>
         </Control>
     </Form>
@@ -200,8 +200,7 @@
         <Control Class="Button" Base="BK3:btnHolo_Red_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-95" RAnchorPoint="1" RAnchorOffset="-48" BAnchorPoint="1" BAnchorOffset="-22" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedPressedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" TooltipType="OnCursor" Name="TransferNoBtn" TooltipColor="" RelativeToClient="1" Text="" TextId="No">
             <Event Name="ButtonSignal" Function="OnTransferConfirmNoBtn"/>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="54" TAnchorPoint="0" TAnchorOffset="170" RAnchorPoint="1" RAnchorOffset="-52" BAnchorPoint="0" BAnchorOffset="209" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="TransferNameInputBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_Snippet"/>
-        <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="60" TAnchorPoint="0" TAnchorOffset="174" RAnchorPoint="1" RAnchorOffset="-60" BAnchorPoint="0" BAnchorOffset="206" RelativeToClient="1" Font="CRB_InterfaceLarge_B" Text="" Template="Default" TooltipType="OnCursor" Name="TransferNameInput" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" DT_VCENTER="1" TextId="" DefaultTarget="0" NoSelectOnFocus="0" DT_CENTER="1">
+        <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="54" TAnchorPoint="0" TAnchorOffset="174" RAnchorPoint="1" RAnchorOffset="-54" BAnchorPoint="0" BAnchorOffset="211" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Holo_InputBox" TooltipType="OnCursor" Name="TransferNameInput" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" DT_VCENTER="1" TextId="" DefaultTarget="0" NoSelectOnFocus="0" DT_CENTER="1" Border="1" UseTemplateBG="1">
             <Event Name="EditBoxChanged" Function="OnTransferNameChanged"/>
         </Control>
     </Form>
@@ -213,7 +212,7 @@
             <Event Name="ButtonSignal" Function="OnErrorMessageClose"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="TrustedIPButton" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" TooltipColor="">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="30" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="TrustedIPButton" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" TooltipColor="" Tooltip="">
         <Control Class="Button" Base="BK3:btnHolo_ListView_Check" Font="DefaultButton" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextDefault" PressedTextColor="UI_BtnTextDefault" FlybyTextColor="UI_BtnTextDefault" PressedFlybyTextColor="UI_BtnTextDefault" DisabledTextColor="UI_BtnTextDefault" TooltipType="OnCursor" Name="Button" TooltipColor="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="28" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint=".5" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-3" RelativeToClient="1" Font="CRB_Button" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextHoloListNormal" Template="Default" TooltipType="OnCursor" Name="IPNumber" TooltipColor="" TextId="" DT_VCENTER="1"/>
             <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-4" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-19" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyCyan" Template="Default" TooltipType="OnCursor" Name="IPDateAdded" TooltipColor="" TextId="" DT_VCENTER="1" DT_RIGHT="1"/>
@@ -227,37 +226,3 @@
         <Pixie LAnchorPoint="0.5" LAnchorOffset="-40" TAnchorPoint="0" TAnchorOffset="25" RAnchorPoint="0.5" RAnchorOffset="40" BAnchorPoint="0" BAnchorOffset="105" BGColor="UI_WindowBGDefault" Font="Default" TextColor="UI_WindowTextDefault" Text="" Sprite="CRB_Anim_Spinner:sprAnim_SpinnerLarge" Line="0"/>
     </Form>
 </Forms>
-n -- queued, but we don't know what for
-		local tAllTypes =
-		{
-			MatchingGame.MatchType.Battleground,
-			MatchingGame.MatchType.Arena,
-			MatchingGame.MatchType.Dungeon,
-			MatchingGame.MatchType.Adventure,
-			MatchingGame.MatchType.Warplot,
-			MatchingGame.MatchType.RatedBattleground,
-			MatchingGame.MatchType.OpenArena
-		}
-
-		for key, nType in pairs(tAllTypes) do
-			local tGames = MatchingGame.GetAvailableMatchingGames(nType)
-			for key, matchGame in pairs(tGames) do
-				if matchGame:IsQueued() == true then
-					self.matchesQueued[matchGame:GetName()] = matchGame
-				end
-			end
-		end
-	end
-end
-
------------------------------------------------------------------------------------------------
--- MatchMaker Instance
------------------------------------------------------------------------------------------------
-local MatchMakerInst = MatchMaker:new()
-MatchMakerInst:Init()
-?çFÍ·0∆_ÁÆ∂e*ÚøØ∑Hı˝«¸ÖrΩ?Ê˜1+ûê∑€ÚÉÁü˝ÀﬁtÏJ‹∑7E¨ß˜Â%∑#%≈(˙|È…˘ã÷‰ì\Wê9eÊxøÁ◊◊§4&à~Å›õÁ ÎNs≈ßïMÿ≥GÚÇí”˙óƒz}”sÕ5üú%””Ê§›6˚ø∑µ_h™Î‹jê‹’˛Y”÷Ë≠;%o;|™˜¸~,˙ñï|dMâ6Ω-˘E«Ì∑~kÍT±˚ªû˘)€_˘ ˇ\n>˙¡ä¯?∏œs‡˛›û
-£>Ã¢¥∂ˇó”È‘Ù€QÊc©◊Ô˙∆∆∂∑k<–Ò≈˘Ö˙˜s(œ ıÇC}ˇZ˛„Kcåot´Î·˚„…k∑_^?π˛°ˇz,;Cv}~ÎùÛ,ö◊3Ç9ûq˚cåáœ5Æúƒ◊é.˘˛ß'¶¶¶¸É‰∂O›∂F∑[ƒÛéˆ˚JöK˛Ì…˜oŸ=øx}ÉòüˇU„«ÆŸ≥ìD?˝dwçÎì}ïïí;Àˇê—Û’ó"ø~^NG‚”O_ı˝	9Õâ€Sìíˇ”sák{cÇË'∞∞’∞Bß3à˘„È÷ ∫€√K≈˘∂óÊ.?v^Ù˜øø*¡µ∂®˝í⁄¶ò¢'îâ˙ÑøÊ4ﬂ}˜EóËhÿ<≈|tÈ–˚c˚ãˇ'©Í◊<ñÄırÍ~˜ﬁø•⁄◊Ìöz{˝ ˝˘ƒ∆“ˆæÎÖŸ’æ˛˝°x^]ø~í∆ô"°cL‹_çN÷ìƒcåÉrﬂ˝‘"9‘ÒΩˇ˚}pÎÌ*˚jÛ!æπﬁygh|≈~ÖÉã◊ı„˜=øÃIjÀ{èÖﬂåÒïùpœ‚≈:Ò”RÆø≥≠MÓ∏™ﬁù6m±SÃ«óïïZã
-s%O/∏›ú˙õΩ˚%œ⁄r ˆ˚ïÚ˙zü7«ævÒo"^œl]Èpù”Ô∫∆√Û\NÁ%ŸÌ•9Œ6ëéﬂª˝õé≤é5
-Gò& Çåß=V}BÇ®?¯¸ùÍUŸäx’æÌô˘uK/üê|–1≈4qfÇ"ﬁ∫˜ûe≤?JSˆ?ˆÛÙˇÎ,v’|Ω%LØôØœ‘∆ﬂÅ◊Ù]]›_ªΩ∆>˝{4Øk˚Û__ÎÖ˘ˆáœ–X{?Û3>Ø±f|a^†zëﬁ˚´Í˝B˝y`å1∆◊É˝ƒœä˙«Îı´èØx¿{Òo_æÑ%‡ı©ÚB}æ„–y£™øhù´‘î˙ÓÇ?H˛ƒıb|ŒäBêO/à4ÕﬁøZ¨ËÌ¯TQ—í3[è«çèê˚ı/lΩ–T≥tç»7∏´ÂBS~œÑeíoÈuO}]ßr˚Æ	]≤W¶Â/ˇ˝z…ÔVU[S˛≤D¸æÂswwë8üãı—ˆ÷xë?∞`Ed|√/Œ=•ºﬁ∞(?Èõ¯_”ø«~≈˜cå1∆ZW€,:˘Á˙Ô?w£]/∆xéZ®SÃ˜VóW•Â€+E˝ˇ˚˚=ù«÷J~ƒµ2æ{Q¶ÿø‘z"q¡#M?ï|KKs‹ˆ9_ˇÒ÷õ[˛‘˝rìÏMó/≠Òæ7˛_Ó¨S:ºgs≠rˇ§∆.—¿Ÿ˙YSCÌ´¢ﬂˇ¬÷RÎ‚EŸY‚¸rJ”N>Y$4À€r”ÎSƒÒçüF9ñ]<&÷˜ÛT‹õ¶wë˝¢C9ˇ˙Ôcå1∆cå1ä7™˙£ÂÓ[È»Ì™˘˘wz6Âæù‘MígΩ‰∂fg-ëeõìf¯jøàßgmié[∂§m≤‰ªZÓ∞çŸÙﬁ~|7∑<Ò–c=íΩÛ˘Owwã¸Åõ{„˝⁄‚⁄NyˇMg÷◊ˆ(ùîî$∆2[Ôl±ˇ˘ó Øœ5+“tgÀN$ÓÔ˙Ík…á Œy}qùH@XÂys’í[EΩ¿ñ≤7¨O]|UÙ?l©8ô61jÚ∑Ø¸˘aå1∆cå1∆◊ÇKmE¸?Îù◊sá)î|ßÁd∆ø<ÚæàØß∫ÊòœÔ€$˙Â%∏"Mµ«~ú/˘wá#L)	n∑‰Ö≠Á*uª€DGÅLØü=wVÚ„≠…Óµr«Å[Zb‹∫û6ŸÁ+uÎ/Øì˜Øﬂ¶´Ω,ÊÁ∂æW9ŒpQå‹‹ª\ÌÎ"˝BSã5;+KÙÿSÒ∆¸	„˛QÚ?˝v„™€÷vl◊_5Õı¯“-í\]Qe˝ˆ‰…ä˛l°˛æ0∆cå1∆„°ÿÌP∆ˇÛKJ“vÏ®ÒıŸ
-œ¸5O=%Í„ß∫û±Ó˘Ôª¶H˛ËÅ)Ê5ŸŸ"^^’∏!fbt¥òüøi¢{—w«â~˛<üVˆl6LêmØ_lhËë∑èqI‘ÖÀØ'ª◊ÔÁ˚ôgñ˚»k5;d€ÎWÎjîvÜ7àÇü{ûIÀ  ˝∆ïDòg‘Ωıú‰3uQeÜ∏í;wˇ(ÁÈ¨5b<£∫bäÈ;ì'ã|Ü–_cå1∆cåÒ’ª•‚-”+Ω?íœVú »ŒŒ^$˘&«s¯f[Æ‰jÎâ∏‹úÂb~˝±¶±—„Wã„˝≤…j“≠w
-ø‚â7ÈjeˆN|º“Ô{é≈©¶z˝MÍ◊ﬂ{'«§ª,˚]O∫ ?ı‹ü_(˚ŸÚRs˝L∑EÚ°äMÆÒı¢ü@t•°0gEÁ˘Û(5OéääÍÁâ1∆cå1∆èE,èóú¸ûò/üQ∏!ÊµÓÀ]Úˆw‹Z¶XoJ¸’¨è7˙N∏«¢:ﬂ*sõbΩ√ÉÂUfÉ”Æx}é)*JØp®œcå1∆◊∫ΩkØaå1∆cå1∆cå1∆cå1∆cå1∆cå1∆cå1∆cå1∆cå1∆cå1∆x§Ì©–ÈúNµuZáçùÛ≈cå1∆cåq∞>π€S·˝Éµw< Ã©/”éËµ„zŸcÎ˙1∆cå1∆„¡¡∆ˇWkÔxÄ^;~`‘éµ„∆±Úyaå1∆cå1∆◊¢G;˛âÒùv<Åzå1∆cå1∆◊º˝∆≥8ÛäÒq®„˜P€o=Éûzå1∆cå1æˆ‹ØY4 ^∂0ü<ÄµÒd á:˛≈W?~`æûA·Pˇ˚¿cå1∆c…}Òä]„‚g{pÒ≤=∏¯ŸB¸åØSÆû!

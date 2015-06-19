@@ -207,19 +207,3 @@ end
 
 local TradeskillContainerInst = TradeskillContainer:new()
 TradeskillContainerInst:Init()
-t="" Template="Default" TooltipType="OnCursor" Name="SwapTimeWarningContainer" BGColor="ffffffff" TextColor="ff7fffb9" TooltipColor="" TextId="" TooltipFont="CRB_InterfaceSmall" Tooltip="" TooltipId="TradeskillTrainer_MaxCDTooltip" IgnoreMouse="1" IgnoreTooltipDelay="1" HideInEditor="0" NewControlDepth="1" Visible="0">
-                        <Pixie LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="53" RAnchorPoint="0" RAnchorOffset="42" BAnchorPoint="0" BAnchorOffset="85" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="CRB_Basekit:kitIcon_NewDisabled" Line="0"/>
-                        <Pixie LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="114" RAnchorPoint="0" RAnchorOffset="42" BAnchorPoint="0" BAnchorOffset="193" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="CRB_Basekit:kitIcon_NewDisabled" Line="0"/>
-                        <Pixie LAnchorPoint="1" LAnchorOffset="-45" TAnchorPoint="0" TAnchorOffset="53" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="0" BAnchorOffset="85" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="CRB_Basekit:kitIcon_NewDisabled" Line="0"/>
-                        <Pixie LAnchorPoint="1" LAnchorOffset="-45" TAnchorPoint="0" TAnchorOffset="114" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="0" BAnchorOffset="193" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="CRB_Basekit:kitIcon_NewDisabled" Line="0"/>
-                        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-131" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="-8" BAnchorPoint="0" BAnchorOffset="21" RelativeToClient="1" Font="CRB_Interface9_B" Text="" Template="Default" TooltipType="OnCursor" Name="SwapTimeWarningLabel" BGColor="ffffffff" TextColor="ff7fffb9" TooltipColor="" TextId="CRB__2" DT_RIGHT="1" DT_CENTER="0" DT_VCENTER="0" Tooltip=""/>
-                    </Control>
-                </Control>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="1" TAnchorOffset="-175" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="0" Font="CRB_InterfaceMedium" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTitleGray" Template="Default" TooltipType="OnCursor" Name="BotchCraftBlocker" TooltipColor="" Picture="1" IgnoreMouse="0" Sprite="BK3:sprHolo_Alert_Confirm" NewControlDepth="5" HideInEditor="1" DT_CENTER="1" DT_VCENTER="1" TextId="" DT_WORDBREAK="1" NoClip="1" Visible="0" SwallowMouseClicks="1">
-                    <Pixie LAnchorPoint="0" LAnchorOffset="30" TAnchorPoint="0" TAnchorOffset="30" RAnchorPoint="1" RAnchorOffset="-30" BAnchorPoint="1" BAnchorOffset="-30" BGColor="UI_WindowBGDefault" Font="CRB_InterfaceMedium_B" TextColor="UI_TextHoloTitle" Text="" TextId="TradeskillTrainer_FinishCraftsFirst" DT_CENTER="1" DT_VCENTER="1" DT_WORDBREAK="1" Line="0"/>
-                </Control>
-            </Control>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Metal_Primary_NoNav" Name="BGBorder" Picture="0" BGColor="ffffffff" TextColor="ffffffff" TextId="" IgnoreMouse="1" Sprite="" NewControlDepth="10" TooltipColor="" Border="1" UseTemplateBG="1" HideInEditor="0"/>
-        <Event Name="WindowClosed" Function="OnWindowClosed"/>
-        <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" 

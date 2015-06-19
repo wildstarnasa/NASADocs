@@ -52,4 +52,10 @@
         <Frame Texture="UI\Assets\Textures\UI_HUD_Bars.tex" x0="75" x1="75" x2="75" x3="75" x4="75" x5="99" y0="241" y1="241" y2="241" y3="241" y4="241" y5="273" HotspotX="0" HotspotY="0" Duration="0.250" StartColor="UI_AlphaPercent0" EndColor="white"/>
         <Frame Texture="UI\Assets\Textures\UI_HUD_Bars.tex" x0="75" x1="75" x2="75" x3="75" x4="75" x5="99" y0="241" y1="241" y2="241" y3="241" y4="241" y5="273" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="UI_AlphaPercent0"/>
     </Sprite>
+    <Sprite Name="sprHazards_Threshold" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_HUD_Bars.tex" x0="147" x1="147" x2="147" x3="147" x4="147" x5="171" y0="41" y1="42" y2="42" y3="42" y4="42" y5="42" HotspotX="21" HotspotY="-20" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprVerticalBar_Threshold" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\UI_HUD_Bars.tex" x0="147" x1="147" x2="147" x3="147" x4="147" x5="171" y0="145" y1="145" y2="145" y3="145" y4="145" y5="146" HotspotX="21" HotspotY="-20" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
 </Sprites>

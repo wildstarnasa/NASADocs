@@ -408,6 +408,7 @@ function ZoneMap:BuildCustomMarkerInfo()
 		VendorPvPArena				= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Arena",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		VendorPvPBattlegrounds		= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Battlegrounds",	bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
 		VendorPvPWarplots			= { nOrder = 38,	objectType = self.eObjectTypeVendor,			strIcon = "IconSprites:Icon_MapNode_Map_Vendor_Prestige_Warplot",		bNeverShowOnEdge = true, bFixedSizeMedium = true, bHideIfHostile = true },
+		ContractBoard				= { nOrder = 14,	objectType = self.eObjectTypeQuestNew, 			strIcon = "IconSprites:Icon_MapNode_Map_Contracts", 		bNeverShowOnEdge = true, bHideIfHostile = true },
 	}
 end
 
@@ -743,7 +744,6 @@ function ZoneMap:OnDocumentReady()
 
 	self.bIgnoreQuestStateChanged = false
 	self.eLastZoomLevel = nil
-	self.idLastCurrentZone = nil
 	self.bControlPanelShown = false -- lives across sessions
 
 	-----------------------------------------------------------------------------------------
@@ -794,7 +794,6 @@ function ZoneMap:OnDocumentReady()
 	end
 
 	self:BuildShownTypesArrays()
-	self:SetTypeVisibility(self.eObjectTypeNemesisRegion, false)
 
 	-- Top two options
 	self.wndMain:FindChild("MarkerPaneButtonList"):FindChild("OptionsBtnLabels"):SetCheck(true)
@@ -845,8 +844,6 @@ function ZoneMap:OnDocumentReady()
 	self.wndMapControlPanel:Show(false)
 
 	self:BuildCustomMarkerInfo()
-
-	self:ReloadNemesisRegions()
 
 	self:OnLevelChanged(GameLib.GetPlayerLevel())
 
@@ -925,6 +922,7 @@ function ZoneMap:ToggleWindow()
 		self:UpdateMissionList()
 		self:UpdateChallengeList()
 		self:UpdatePublicEventList()
+		self:ReloadNemesisRegions()
 
 		if self.bControlPanelShown then
 			self:OnToggleControlsOn()
@@ -994,11 +992,13 @@ function ZoneMap:OnToggleGhostModeMap() -- for keyboard input turning ghost mode
 end
 
 function ZoneMap:UpdateCurrentZone()
-	local tZoneInfo = GameLib.GetCurrentZoneMap(self.idCurrentZone)
-	if tZoneInfo then
+	local idPrevZone = self.idCurrentZone
+	local tZoneInfo = GameLib.GetCurrentZoneMap(idPrevZone)
+	if tZoneInfo and tZoneInfo.id ~= idPrevZone then
 		self.idCurrentZone = tZoneInfo.id
 		self.strZoneName = tZoneInfo.strName
 		self.wndZoneMap:SetZone(self.idCurrentZone)
+		self:OnZoneChanged()
 	end
 end
 
@@ -1235,7 +1235,12 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 		return
 	end
 
-	local idCurrentZone = tCurrentInfo.id
+	local bZoneChanged = false
+	if self.idCurrentZone ~= tCurrentInfo.id then
+		bZoneChanged = true
+		self.idCurrentZone = tCurrentInfo.id
+		self:OnZoneChanged()
+	end
 
 	if tCurrentInfo == nil then
 		self.wndMain:FindChild("ZoneComplexToggle"):Enable(false)
@@ -1255,15 +1260,9 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 	}
 
 	-- Reset if different
-	if self.eLastZoomLevel ~= eZoomLevel or idCurrentZone ~= self.idLastCurrentZone then
+	if self.eLastZoomLevel ~= eZoomLevel or bZoneChanged then
 		-- TODO: Put more stuff here
 		self.wndMain:FindChild("SubzoneListContent"):DestroyChildren()
-	end
-
-	if idCurrentZone ~= self.idLastCurrentZone then
-		self.idLastCurrentZone = idCurrentZone
-		Event_FireGenericEvent("GenericEvent_ZoneMap_ZoneChanged", idCurrentZone)
-		Event_FireGenericEvent("GenericEvent_ZoneMap_ZoomLevelChanged", bValidZoneZoomLevels[eZoomLevel])
 	end
 
 	-- No GPS Signal
@@ -1351,6 +1350,11 @@ function ZoneMap:SetControls() -- runs off timer, sets the controls to reflect t
 	if tInfoForEnable then
 		self.wndMain:FindChild("ZoneComplexToggle"):Enable(eZoomLevel ~= tZoneMapEnums.World and self.wndZoneMap:GetContinentInfo(tInfoForEnable.continentId).bCanDisplay)
 	end
+end
+
+function ZoneMap:OnZoneChanged()
+	Event_FireGenericEvent("GenericEvent_ZoneMap_ZoneChanged", self.idCurrentZone)
+	self:ReloadNemesisRegions()
 end
 
 function ZoneMap:HelperCheckAndBuildSubzones(tZoneInfo, eZoomLevel) -- This repeatedly calls on a timer
@@ -1867,8 +1871,6 @@ function ZoneMap:OnPlayerIndicatorUpdated()
 end
 
 function ZoneMap:OnSubZoneChanged()
-	self:ReloadNemesisRegions()
-
   	if self.tUnitsShown then
 		for idx, tCurr in pairs(self.tUnitsShown) do
 			self.wndZoneMap:RemoveUnit(tCurr.unitValue)
@@ -1885,10 +1887,12 @@ function ZoneMap:OnSubZoneChanged()
 		end
 	end
 
-	local tCurrentZoneMap = GameLib.GetCurrentZoneMap()
-	if tCurrentZoneMap then
-		self.wndZoneMap:SetZone(tCurrentZoneMap.id)
+	local tCurrentZoneMap = GameLib.GetCurrentZoneMap(self.idCurrentZone)
+	if tCurrentZoneMap and tCurrentZoneMap.id ~= self.idCurrentZone then
+		self.idCurrentZone = tCurrentZoneMap.id
+		self.wndZoneMap:SetZone(self.idCurrentZone)
 		self:OnMissionsCheck()
+		self:OnZoneChanged()
 	end
 
 	self:SetControls()
@@ -2199,12 +2203,6 @@ function ZoneMap:ReloadNemesisRegions()
 		end
 
 		self.wndZoneMap:HighlightRegionsByType(self.eObjectTypeNemesisRegion)
-
-		if self.tToggledIcons.bNemesisRegions then
-			self.wndZoneMap:ShowRegionsByType(self.eObjectTypeNemesisRegion)
-		else
-			self.wndZoneMap:HideRegionsByType(self.eObjectTypeNemesisRegion)
-		end
 	end
 end
 
@@ -3131,9 +3129,12 @@ end
 function ZoneMap:OnZoneMap_PollCityDirectionsMarker()
 	-- Wipe city directions if near it (GOTCHA: We don't care about Y)
 	if self.tCityDirectionsLoc then
-		local tPosPlayer = GameLib.GetPlayerUnit():GetPosition()
-		if math.abs(self.tCityDirectionsLoc.x - tPosPlayer.x) < 9 and math.abs(self.tCityDirectionsLoc.z - tPosPlayer.z) < 9 then
-			self:OnZoneMap_TimeOutCityDirectionMarker()
+		local unitPlayer = GameLib.GetPlayerUnit()
+		if unitPlayer then
+			local tPosPlayer = unitPlayer:GetPosition()
+			if math.abs(self.tCityDirectionsLoc.x - tPosPlayer.x) < 9 and math.abs(self.tCityDirectionsLoc.z - tPosPlayer.z) < 9 then
+				self:OnZoneMap_TimeOutCityDirectionMarker()
+			end
 		end
 	end
 end
@@ -3211,7 +3212,7 @@ function ZoneMap:BuildQuestTitleString(queCurr)
 
 	local strQuestTitle = string.format("<P Font=\"%s\" TextColor=\"%s\">%s</P>", kstrQuestFont, kstrQuestNameColor, queCurr:GetTitle())
 	if strQuestTitle ~= "" then
-		strQuestTitle = String_GetWeaselString(Apollo.GetString("ZoneMap_MissionTypeName"), strQuestTitle, strName)
+		strQuestTitle = String_GetWeaselString(Apollo.GetString("ZoneMap_MissionTypeName"), strName, strQuestTitle)
 	end
 
 	return strQuestTitle
@@ -3608,4 +3609,3 @@ local ZoneMap_Singleton = ZoneMap:new()
 ZoneMap_Singleton:Init()
 ZoneMapLibrary = ZoneMap_Singleton
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      

@@ -9,22 +9,23 @@ require "QuestLib"
 
 local QuestTracker 					= {}
 
-local knMaxZombieEventCount					= 7
-local knQuestProgBarFadeoutTime				= 10
-local knChallngeOffset						= 132
-local kstrRaidWarningQuestMarker			= "00RaidWarning"
-local kstrPinnedQuestMarker					= "01Pinned"
-local kstrPublicEventMarker					= "10Event"
-local kstrWorldStoryQuestMarker				= "20World"
-local kstrZoneStoryQuestMarker				= "30Zone"
-local kstrRegionalStoryQuestMarker			= "40Regional"
-local kstrImbuementQuestMarker				= "50Imbuement"
-local kstrTaskQuestMarker					= "60Task"
-local kstrFilteredZoneStoryQuestMarker		= "70FilteredZone"
+local knMaxZombieEventCount				= 7
+local knQuestProgBarFadeoutTime			= 10
+local knChallngeOffset							= 132
+local kstrQuestAddon	 						= "003QuestAddon"
+local kstrPublicEventContainer				= "001EventContainer"
+local kstrContractsContainer					= "002ContractsContainer"
+local kstrQuestContainer 						= "003QuestContainer"
+local kstrRaidWarningQuestMarker			= "101RaidWarning"
+local kstrPinnedQuestMarker					= "102Pinned"
+local kstrWorldStoryQuestMarker			= "120World"
+local kstrZoneStoryQuestMarker				= "130Zone"
+local kstrRegionalStoryQuestMarker			= "140Regional"
+local kstrImbuementQuestMarker			= "150Imbuement"
+local kstrTaskQuestMarker					= "160Task"
 
 local knXCursorOffset = 10
 local knYCursorOffset = 25
-local knDatachronShift = 230 -- TODO: Hardcoded. How far to shift the tracker when the Datachron is minimized/restored
 
 local ktNumbersToLetters =
 {
@@ -57,7 +58,7 @@ local ktConToColor =
 	[Unit.CodeEnumLevelDifferentialAttribute.Grey] 		= "ff9aaea3",
 	[Unit.CodeEnumLevelDifferentialAttribute.Green] 	= "ff37ff00",
 	[Unit.CodeEnumLevelDifferentialAttribute.Cyan] 		= "ff46ffff",
-	[Unit.CodeEnumLevelDifferentialAttribute.Blue] 		= "ff3052fc",
+	[Unit.CodeEnumLevelDifferentialAttribute.Blue] 		= "ff309afc",
 	[Unit.CodeEnumLevelDifferentialAttribute.White] 	= "ffffffff",
 	[Unit.CodeEnumLevelDifferentialAttribute.Yellow] 	= "ffffd400", -- Yellow
 	[Unit.CodeEnumLevelDifferentialAttribute.Orange] 	= "ffff6a00", -- Orange
@@ -89,6 +90,15 @@ local ktPvPEventTypes =
 	[PublicEvent.PublicEventType_PVP_Battleground_HoldTheLine] 	= true,
 }
 
+local ktContractTypeArt =
+{
+	[0]		= { strActive = "Contracts:sprContracts_Type01",		strAvailable = "Contracts:sprContracts_Type01",		strOverview = Apollo.GetString("CombatLogOptions_General"), },
+	[122]	= { strActive = "Contracts:sprContracts_Type01",		strAvailable = "Contracts:sprContracts_Type01",		strOverview = Apollo.GetString("CombatLogOptions_General"), },
+	[123]	= { strActive = "Contracts:sprContracts_Type02",		strAvailable = "Contracts:sprContracts_Type02",		strOverview = Apollo.GetString("CRB_Kill"), },
+	[124]	= { strActive = "Contracts:sprContracts_Type03",		strAvailable = "Contracts:sprContracts_Type03",		strOverview = Apollo.GetString("CRB_Collection"), },
+	[125]	= { strActive = "Contracts:sprContracts_Type04",		strAvailable = "Contracts:sprContracts_Type04",		strOverview = Apollo.GetString("CRB_Completion"), },
+}
+
 local kstrRed 		= "ffff4c4c"
 local kstrGreen 	= "ff2fdc02"
 local kstrYellow 	= "fffffc00"
@@ -101,6 +111,11 @@ function QuestTracker:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+	
+	o.bFilterDistance = true
+	o.nMaxMissionDistance = 999
+	o.bShowQuests = true
+	o.bShowContracts = true
 
 	o.tCurentQuestsOrdered = {}
 	o.nCurentQuestsOrderedCount = 0
@@ -130,6 +145,8 @@ end
 function QuestTracker:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("QuestTracker.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+	
+	Event_FireGenericEvent("ObjectiveTracker_RequestParent")
 end
 
 function QuestTracker:OnSave(eType)
@@ -141,7 +158,11 @@ function QuestTracker:OnSave(eType)
 	{
 		tHiddenImbu = self.tHiddenImbu,
 		tMinimized = self.tMinimized,
-		tPinned = self.tPinned
+		tPinned = self.tPinned,
+		bShowQuests		 = self.bShowQuests,
+		bShowContracts = self.bShowContracts,
+		nMaxMissionDistance = self.nMaxMissionDistance,
+		bFilterDistance = self.bFilterDistance,
 	}
 end
 
@@ -153,11 +174,29 @@ function QuestTracker:OnRestore(eType, tSavedData)
 	if tSavedData.tMinimized ~= nil then
 		self.tMinimized = tSavedData.tMinimized
 	end
+	
 	if tSavedData.tPinned ~= nil then
 		self.tPinned = tSavedData.tPinned
 	end
+	
 	if tSavedData.tHiddenImbu ~= nil then
 		self.tHiddenImbu = tSavedData.tHiddenImbu
+	end
+	
+	if tSavedData.bShowContracts ~= nil then
+		self.bShowContracts = tSavedData.bShowContracts
+	end
+	
+	if tSavedData.bShowQuests ~= nil then
+		self.bShowQuests = tSavedData.bShowQuests
+	end
+	
+	if tSavedData.nMaxMissionDistance ~= nil then
+		self.nMaxMissionDistance = tSavedData.nMaxMissionDistance
+	end
+	
+	if tSavedData.bFilterDistance ~= nil then
+		self.bFilterDistance = tSavedData.bFilterDistance
 	end
 end
 
@@ -166,14 +205,16 @@ function QuestTracker:OnDocumentReady()
 		Apollo.AddAddonErrorText(self, "Could not load the main window document for some reason.")
 		return
 	end
-
-	Apollo.RegisterEventHandler("WindowManagementReady", 					"OnWindowManagementReady", self)
-	Apollo.RegisterEventHandler("WindowManagementUpdate", 					"OnWindowManagementUpdate", self)
-	Apollo.RegisterEventHandler("OptionsUpdated_QuestTracker", 				"OnOptionsUpdated", self)
-	Apollo.RegisterEventHandler("OptionsUpdated_QuestZoneFilter", 			"OnOptionsUpdated", self)
 	
-	Apollo.RegisterEventHandler("QuestTracker_ExternalRequestRedraw", 	"ResizeAll", self)
+	Apollo.RegisterEventHandler("ObjectiveTrackerLoaded",		"OnObjectiveTrackerLoaded", self)
+	
+	Apollo.RegisterEventHandler("ToggleShowContracts", 			"OnToggleShowContracts", self)
+	Apollo.RegisterEventHandler("ToggleContractOptions", 		"OnToggleContractOptions", self)
+	Apollo.RegisterEventHandler("ToggleShowQuests", 				"OnToggleShowQuests", self)
+	Apollo.RegisterEventHandler("ToggleQuestOptions", 			"OnToggleQuestOptions", self)
 
+	Apollo.RegisterEventHandler("OptionsUpdated_QuestTracker", 				"OnOptionsUpdated", self)
+	
 	Apollo.RegisterTimerHandler("QuestTrackerBlinkTimer", 					"OnQuestTrackerBlinkTimer", self)
 
 	Apollo.CreateTimer("QuestTrackerBlinkTimer", 4, false)
@@ -183,6 +224,8 @@ function QuestTracker:OnDocumentReady()
 	-- TODO: an event needs to wndQuest:FindChild("ObjectiveContainer"):DestroyChildren() when moving to complete/botched
 	Apollo.RegisterEventHandler("EpisodeStateChanged", 						"DestroyAndRedraw", self)
 	Apollo.RegisterEventHandler("QuestStateChanged", 						"OnQuestStateChanged", self)
+	Apollo.RegisterEventHandler("ContractStateChanged", 					"OnContractStateChanged", self)
+	Apollo.RegisterEventHandler("ContractObjectiveUpdated", 					"OnContractStateChanged", self)
 	Apollo.RegisterEventHandler("QuestObjectiveUpdated", 					"OnQuestObjectiveUpdated", self)
 	Apollo.RegisterEventHandler("GenericEvent_QuestLog_TrackBtnClicked", 	"OnGenericEvent_QuestLog_TrackBtnClicked", self) -- This is an event from QuestLog
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 				"OnTutorial_RequestUIAnchor", self)
@@ -201,47 +244,33 @@ function QuestTracker:OnDocumentReady()
 	Apollo.RegisterEventHandler("PublicEventUpdate", 						"OnPublicEventUpdate", self)
 	Apollo.RegisterEventHandler("PublicEventLiveStatsUpdate",				"OnPublicEventLiveStatsUpdate", self)
 	Apollo.RegisterEventHandler("PublicEventObjectiveUpdate", 				"OnPublicEventObjectiveUpdate", self)
-	Apollo.RegisterEventHandler("PVPMatchFinished", 						"OnLeavePvP", self)
-	Apollo.RegisterEventHandler("MatchExited", 								"OnLeavePvP", self)
 
 	-- Formatting events
-	Apollo.RegisterEventHandler("DatachronRestored", 						"OnDatachronRestored", self)
-	Apollo.RegisterEventHandler("DatachronMinimized", 						"OnDatachronMinimized", self)
-	Apollo.RegisterEventHandler("GenericEvent_ChallengeTrackerToggled", 	"OnGenericEvent_ChallengeTrackerToggled", self)
 	Apollo.RegisterEventHandler("QuestLog_ToggleLongQuestText", 			"OnToggleLongQuestText", self)
 
 	-- Checking Player Death (can't turn in quests if dead)
 	Apollo.RegisterEventHandler("PlayerResurrected", 						"OnPlayerResurrected", self)
 	Apollo.RegisterEventHandler("ShowResurrectDialog", 						"OnShowResurrectDialog", self)
 
+	Apollo.RegisterEventHandler("PlayerLevelChange", 								"RedrawAll", self)
+	
 	Apollo.RegisterTimerHandler("QuestTrackerRedrawTimer", 					"RedrawAll", self)
 	Apollo.RegisterTimerHandler("QuestTracker_EarliestProgBarTimer", 		"OnQuestTracker_EarliestProgBarTimer", self)
-	Apollo.RegisterTimerHandler("QuestTrackerOrderTimer", 					"OnQuestTrackerOrderTimer", self)
-
-	Apollo.CreateTimer("QuestTrackerOrderTimer", 1, true)
+	
 	Apollo.CreateTimer("QuestTrackerRedrawTimer", 0.2, false)
 	Apollo.StopTimer("QuestTrackerRedrawTimer")
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "QuestTrackerForm", "FixedHudStratum", self)
-	self.wndRaidWarning = nil
-
+    self.wndRaidWarning = nil
 	self.wndQuestRightClick = nil
-	self.wndQuestTrackerScroll = self.wndMain:FindChild("QuestTrackerScroll")
-	self.wndMain:SetSizingMinimum(325, 120)
-	self.bMoveable = self.wndMain:IsStyleOn("Moveable")
-	self.nLeft, self.nTop, self.nRight, self.nBottom = self.wndMain:GetAnchorOffsets()
-
-	local unitPlayer = GameLib.GetPlayerUnit()
+	
+	self.unitPlayer = GameLib.GetPlayerUnit()
 	self.bQuestTrackerByDistance 		= g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerByDistance or true
 	self.bQuestTrackerAlignBottom 		= g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestTrackerAlignBottom or true
-	self.bQuestZoneFilter				= g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestZoneFilter or false
 	self.nQuestCounting 				= 0
+	self.nTrackerCounting				= 0
 	self.strPlayerPath 					= ""
 	self.nFlashThisQuest 				= nil
 	self.bPlayerIsDead 					= unitPlayer and unitPlayer:IsDead() or false
-	self.bDrawPvPScreenOnly 			= false
-	self.bDrawDungeonScreenOnly 		= false
-	self.bDrawShiphandScreenOnly 		= false
 	self.tZombiePublicEvents 			= {}
 	self.tActiveProgBarQuests 			= {}
 	self.tClickBlinkingQuest			= nil
@@ -253,42 +282,47 @@ function QuestTracker:OnDocumentReady()
 	self.tTimedEvents					= {}
 	self.tTimedEventObjectives			= {}
 	self.tQueuedCommMessages			= {}
-	self.bChallengeVisible				= nil
-	-- TODO: Challenges is firing the toggle event for basically any event that happens regardless of whether or not it toggled. Once this is fixed, we can remove this state storage var.
 
+	Event_FireGenericEvent("ObjectiveTracker_RequestParent")
+end
+
+function QuestTracker:OnObjectiveTrackerLoaded(wndForm)
+	if self.bLoaded or not wndForm or not wndForm:IsValid() then
+		return
+	end
+	
+	local tQuestData = {
+		["strAddon"]				= Apollo.GetString("CRB_Quests"),
+		["strEventMouseLeft"]	= "ToggleShowQuests", 
+		["strEventMouseRight"]	= "ToggleQuestOptions", 
+		["strIcon"]					= "spr_ObjectiveTracker_IconQuest",
+		["strDefaultSort"]			= kstrQuestContainer,
+	}
+	
+	local tContractData = {
+		["strAddon"]				= Apollo.GetString("CRB_Contracts"),
+		["strEventMouseLeft"]	= "ToggleShowContracts", 
+		["strEventMouseRight"]	= "ToggleContractOptions", 
+		["strIcon"]					= "spr_ObjectiveTracker_IconContract",
+		["strDefaultSort"]			= kstrContractsContainer,
+	}
+	
+	Event_FireGenericEvent("ObjectiveTracker_NewAddOn", tQuestData)	
+	Event_FireGenericEvent("ObjectiveTracker_NewAddOn", tContractData)
+	Apollo.RegisterEventHandler("ObjectiveTrackerUpdated",	"OnQuestTrackerOrderTimer", self)
+	
+	self.bLoaded = true
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "QuestTrackerForm", wndForm, self)
+	self.wndMain:SetData(kstrQuestAddon)
+	self.nLeft, self.nTop, self.nRight, self.nBottom = self.wndMain:GetAnchorOffsets()
+	
 	self:InitializeWindowMeasuring()
 	self:OnOptionsUpdated()
 	self:RedrawAll()
 end
 
-function QuestTracker:OnWindowManagementReady()
-	Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = Apollo.GetString("CRB_QuestTracker"), nSaveVersion = 3 })
-end
-
-function QuestTracker:OnWindowManagementUpdate(tSettings)
-	local bOldHasMoved = self.bHasMoved
-	local bOldMoveable = self.bMoveable
-
-	if tSettings and tSettings.wnd and tSettings.wnd == self.wndMain then
-		self.bMoveable = self.wndMain:IsStyleOn("Moveable")
-		self.bHasMoved = tSettings.bHasMoved
-
-		self.wndMain:FindChild("Background"):SetSprite(self.bMoveable and "BK3:UI_BK3_Holo_InsetFlyout" or "")
-		self.wndMain:SetStyle("Sizable", self.bMoveable and self.bHasMoved)
-		self.wndMain:SetStyle("IgnoreMouse", not self.bMoveable)
-
-		if not self.bHasMoved then
-			if g_wndDatachron and g_wndDatachron:IsShown() then
-				self:OnDatachronRestored()
-			else
-				self:OnDatachronMinimized()
-			end
-		end
-	end
-
-	if bOldHasMoved ~= self.bHasMoved then
-		self:RedrawAll()
-	end
+function QuestTracker:OnToggleQuestOptions()
+	self:DrawContextMenu()
 end
 
 function QuestTracker:InitializeWindowMeasuring() -- Try not to run these OnLoad as they may be expensive
@@ -342,12 +376,6 @@ function QuestTracker:OnOptionsUpdated()
 		self.bQuestTrackerAlignBottom = true
 	end
 
-	if g_InterfaceOptions and g_InterfaceOptions.Carbine.bQuestZoneFilter ~= nil then
-		self.bQuestZoneFilter = g_InterfaceOptions.Carbine.bQuestZoneFilter
-	else
-		self.bQuestZoneFilter = false
-	end
-
 	self:DestroyAndRedraw()
 end
 
@@ -360,9 +388,6 @@ function QuestTracker:OnSubZoneChanged()
 end
 
 function QuestTracker:OnChangeWorld()
-	self.bDrawPvPScreenOnly 			= false
-	self.bDrawDungeonScreenOnly 		= false
-	self.bDrawShiphandScreenOnly 		= false
 	self:DestroyAndRedraw()
 end
 
@@ -419,7 +444,7 @@ function QuestTracker:RequestRunObjectiveTimer()
 end
 
 function QuestTracker:DestroyAndRedraw()
-	self.wndQuestTrackerScroll:DestroyChildren()
+	self.wndMain:DestroyChildren()
 	self.tTimedQuests = {}
 	self.tTimedObjectives = {}
 	self.tTimedEvents = {}
@@ -448,40 +473,33 @@ function QuestTracker:RedrawTimed()
 		end
 	end
 
-	if not self.bDrawPvPScreenOnly and not self.bDrawDungeonScreenOnly and not self.bDrawShiphandScreenOnly then
-		for index, tQuestInfo in pairs(self.tTimedQuests) do
-			if tQuestInfo.wndTitleFrame ~= nil then
-				local strTitle = self:HelperBuildTimedQuestTitle(tQuestInfo.queQuest)
-				tQuestInfo.wndTitleFrame:SetAML(strTitle)
-			else
-				self.tTimedQuests[index] = nil
-			end
+	for index, tQuestInfo in pairs(self.tTimedQuests) do
+		if tQuestInfo.wndTitleFrame ~= nil then
+			local strTitle = self:HelperBuildTimedQuestTitle(tQuestInfo.queQuest)
+			tQuestInfo.wndTitleFrame:SetAML(strTitle)
+		else
+			self.tTimedQuests[index] = nil
 		end
+	end
 
-		for index, tObjectiveInfo in pairs(self.tTimedObjectives) do
-			local wndCurrObjective = tObjectiveInfo.wndObjective
-			if wndCurrObjective ~= nil and wndCurrObjective:FindChild("QuestObjectiveBtn") ~= nil then
-				wndCurrObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(tObjectiveInfo.queQuest, tObjectiveInfo.tObjective, true))
-				wndCurrObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(tObjectiveInfo.queQuest, tObjectiveInfo.tObjective))
-			else
-				self.tTimedObjectives[index] = nil
-			end
+	for index, tObjectiveInfo in pairs(self.tTimedObjectives) do
+		local wndCurrObjective = tObjectiveInfo.wndObjective
+		if wndCurrObjective ~= nil and wndCurrObjective:FindChild("QuestObjectiveBtn") ~= nil then
+			wndCurrObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(tObjectiveInfo.queQuest, tObjectiveInfo.tObjective, true))
+			wndCurrObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(tObjectiveInfo.queQuest, tObjectiveInfo.tObjective))
+		else
+			self.tTimedObjectives[index] = nil
 		end
 	end
 
 	self.bRunObjectiveTimer = next(self.tTimedEvents) ~= nil
 		or next(self.tTimedEventObjectives) ~= nil
-		or (not self.bDrawPvPScreenOnly and not self.bDrawDungeonScreenOnly and not self.bDrawShiphandScreenOnly
-			and (next(self.tTimedQuests) ~= nil or next(self.tTimedObjectives) ~= nil))
+		or (next(self.tTimedQuests) ~= nil or next(self.tTimedObjectives) ~= nil)
 end
 
 function QuestTracker:RedrawAll()
 	Apollo.StopTimer("QuestTrackerRedrawTimer")
 	self.bRedrawQueued = false
-
-	self:HelperFindAndDestroyQuests()
-
-	self:UpdateGroup() -- Raid Indicator
 
 	-- We skip over Live Events, it's handled in another add-on
 	local bShowPublicEvents = false
@@ -492,153 +510,216 @@ function QuestTracker:RedrawAll()
 			break
 		end
 	end
-
+	
+	self:HelperFindAndDestroyQuests()
+	self:UpdateGroup() -- Raid Indicator
+	
+	if self.wndQuestContainer and self.wndQuestContainer:IsValid() then
+		self.wndQuestContainer:Destroy()
+	end
+	
+	if self.wndEventContainer and self.wndEventContainer:IsValid() then
+		self.wndEventContainer:Destroy()
+	end
+	
+	self.wndEventContainer = self:BuildContainer(kstrPublicEventContainer)
+	
+	--Contracts
+	if self.wndContractContainer and self.wndContractContainer:IsValid() then
+		self.wndContractContainer:Destroy()
+	end
+	
+	self.wndContractContainer = self:BuildContainer(kstrContractsContainer)
+	self.wndContractContainer:SetData(kstrContractsContainer)
+	self.wndContractContainer:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("CRB_Contracts"))
+	self.wndContractContainer:FindChild("EpisodeGroupMinimizeBtn"):SetCheck(self.tMinimized.tEpisodeGroup[kstrContractsContainer])
+	self.wndContractContainerContent = self.wndContractContainer:FindChild("EpisodeGroupContainer")
+	
+	-- Inline Sort Method
+	local function SortMissionItems(pmData1, pmData2) -- GOTCHA: This needs to be declared before it's used
+		local aMissionName = pmData1:GetQuest():GetTitle()
+		local bMissionName = pmData2:GetQuest():GetTitle()
+		
+		return aMissionName < bMissionName 
+	end
+	
+	local tFullMissionList = ContractsLib.GetActiveContracts()
+	local tActiveMissionList = {}
+	for _, tContracts in pairs(tFullMissionList) do
+		for _, contractActive in pairs(tContracts) do
+			table.insert(tActiveMissionList, contractActive)
+		end
+	end
+	
+	table.sort(tActiveMissionList, SortMissionItems)
+	
+	local nContracts = 0
+	for _, contractActive in pairs(tActiveMissionList) do
+		self:DrawContract(contractActive:GetQuest(), self.wndContractContainerContent)
+			
+		nContracts = nContracts + 1
+	end
+	
+	self.wndQuestContainer = self:BuildContainer(kstrQuestContainer)
+	self.wndQuestContainer:SetData(kstrQuestContainer)
+	self.wndQuestContainer:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("CRB_Quests"))
+	self.wndQuestContainerContent = self.wndQuestContainer:FindChild("EpisodeGroupContainer")
+	
+	local wndBtn = self.wndQuestContainer:FindChild("EpisodeGroupMinimizeBtn")
 	if #self.tZombiePublicEvents > 0 then
 		self:DrawPublicEpisodes(tPublicEvents)
 	elseif bShowPublicEvents then
 		self:DrawPublicEpisodes(tPublicEvents)
-	elseif self.wndQuestTrackerScroll:FindChildByUserData(kstrPublicEventMarker) then
-		-- Safety (should rarely fire): If we're out of events and the window is still around, switch views.
-		self.bDrawShiphandScreenOnly = false
-		self.bDrawDungeonScreenOnly = false
-		self.bDrawPvPScreenOnly = false
-		self.wndQuestTrackerScroll:FindChildByUserData(kstrPublicEventMarker):Destroy()
+	elseif self.wndMain:FindChildByUserData(kstrPublicEventContainer) then
+		self.wndMain:FindChildByUserData(kstrPublicEventContainer):Destroy()
 	end
+	
+	wndBtn:Show(wndBtn:IsChecked())
 
-	if not self.bDrawPvPScreenOnly and not self.bDrawDungeonScreenOnly and not self.bDrawShiphandScreenOnly then
-		local wndEpisodeGroup
-		local wndPinnedContainer
-		if next(self.tPinned.tQuests) ~= nil then
-			wndEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrPinnedQuestMarker)
-			wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Pinned"))
-			wndPinnedContainer = wndEpisodeGroup:FindChild("EpisodeGroupContainer")
-		end
-		
-		local wndImbuementEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrImbuementQuestMarker)
-		wndImbuementEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Imbuement"))
-		
-		local wndTaskEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrTaskQuestMarker)
-		wndTaskEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Tasks"))
-		
-		local wndFilteredEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrFilteredZoneStoryQuestMarker)
-		wndFilteredEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_FilteredZone"))
-
-		self.nQuestCounting = 0
-		for idx, epiEpisode in pairs(QuestLib.GetTrackedEpisodes(self.bQuestTrackerByDistance)) do
-			wndEpisodeGroup = nil
-			if epiEpisode:IsWorldStory() then
-				wndEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrWorldStoryQuestMarker)
-				wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_WorldStory"))
-			elseif epiEpisode:IsZoneStory() then
-				if not self.bQuestZoneFilter or GameLib.IsInWorldZone(epiEpisode:GetZoneId()) then
-					wndEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrZoneStoryQuestMarker)
-					wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_ZoneStory"))
-				else
-					local wndFilteredGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrFilteredZoneStoryQuestMarker)
-					wndFilteredGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_FilteredZone"))
-
-					self:DrawEpisodeQuests(epiEpisode, wndFilteredGroup:FindChild("EpisodeGroupContainer"), wndPinnedContainer)
-				end
-			elseif epiEpisode:IsRegionalStory() then
-				if not self.bQuestZoneFilter or GameLib.IsInWorldZone(epiEpisode:GetZoneId()) then
-					wndEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrRegionalStoryQuestMarker)
-					wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_RegionalStory"))
-				else
-					local wndFilteredGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrFilteredZoneStoryQuestMarker)
-					wndFilteredGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_FilteredZone"))
-
-					self:DrawEpisodeQuests(epiEpisode, wndFilteredGroup:FindChild("EpisodeGroupContainer"), wndPinnedContainer)
-				end
-			else -- task
+	local wndEpisodeGroup
+	local wndPinnedContainer
+	if next(self.tPinned.tQuests) ~= nil then
+		wndEpisodeGroup = self:BuildEpisodeGroup(kstrPinnedQuestMarker)
+		wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Pinned"))
+		wndEpisodeGroup:FindChild("EpisodeGroupIcon"):SetSprite("spr_ObjectiveTracker_IconPinned")
+		wndPinnedContainer = wndEpisodeGroup:FindChild("EpisodeGroupContainer")
+	end
+	
+	local wndImbuementEpisodeGroup = self:BuildEpisodeGroup(kstrImbuementQuestMarker)
+	wndImbuementEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Imbuement"))
+	wndImbuementEpisodeGroup:FindChild("EpisodeGroupIcon"):SetSprite("spr_ObjectiveTracker_IconImbument")
+	
+	local wndTaskEpisodeGroup = self:BuildEpisodeGroup(kstrTaskQuestMarker)
+	wndTaskEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Tasks"))
+	wndTaskEpisodeGroup:FindChild("EpisodeGroupIcon"):SetSprite("spr_ObjectiveTracker_IconTask")
+	
+	self.nTrackerCounting = 0
+	self.nQuestCounting = 0
+	for idx, epiEpisode in pairs(QuestLib.GetTrackedEpisodes(self.bQuestTrackerByDistance)) do
+		wndEpisodeGroup = nil
+		if epiEpisode:IsWorldStory() then
+			wndEpisodeGroup = self:BuildEpisodeGroup(kstrWorldStoryQuestMarker)
+			wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_WorldStory"))
+			wndEpisodeGroup:FindChild("EpisodeGroupIcon"):SetSprite("spr_ObjectiveTracker_IconWorld")
+		elseif epiEpisode:IsZoneStory() then
+			wndEpisodeGroup = self:BuildEpisodeGroup(kstrZoneStoryQuestMarker)
+			wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_ZoneStory"))
+			wndEpisodeGroup:FindChild("EpisodeGroupIcon"):SetSprite("spr_ObjectiveTracker_IconZone")
+		elseif epiEpisode:IsRegionalStory() then
+			wndEpisodeGroup = self:BuildEpisodeGroup(kstrRegionalStoryQuestMarker)
+			wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_RegionalStory"))
+			wndEpisodeGroup:FindChild("EpisodeGroupIcon"):SetSprite("spr_ObjectiveTracker_IconWorld")
+		else -- task
+			for nIdx, queQuest in pairs(epiEpisode:GetTrackedQuests(0, self.bQuestTrackerByDistance)) do
+				local wndTaskGroup = nil
 				
-				for nIdx, queQuest in pairs(epiEpisode:GetTrackedQuests(0, self.bQuestTrackerByDistance)) do
-					local wndTaskGroup = nil
+				if queQuest:IsImbuementQuest() then
+					wndTaskGroup = wndImbuementEpisodeGroup
+				else
+					wndTaskGroup = wndTaskEpisodeGroup
+				end
+				
+				if self.tHiddenImbu and self.tHiddenImbu[queQuest:GetId()] then
+					-- Skip imbuement quests, these need to constantly re-grant themselves so we have to use a UI hack.
+				else
+					self.nQuestCounting = self.nQuestCounting + 1
 					
-					if queQuest:IsImbuementQuest() then
-						wndTaskGroup = wndImbuementEpisodeGroup
-					elseif not self.bQuestZoneFilter or GameLib.IsInWorldZone(queQuest:GetZoneId()) then
-						wndTaskGroup = wndTaskEpisodeGroup
-						
-						local wndOldQuest = wndFilteredEpisodeGroup:FindChildByUserData(queQuest)
-						if wndOldQuest ~= nil and wndOldQuest:IsValid() then
-							wndOldQuest:Destroy()
-						end
+					if self.tPinned.tQuests[queQuest:GetId()] then
+						self:DrawQuest(self.nQuestCounting, queQuest, wndPinnedContainer)
 					else
-						wndTaskGroup = wndFilteredEpisodeGroup
-						
-						local wndOldQuest = wndTaskEpisodeGroup:FindChildByUserData(queQuest)
-						if wndOldQuest ~= nil and wndOldQuest:IsValid() then
-							wndOldQuest:Destroy()
-						end
+						self:DrawQuest(self.nQuestCounting, queQuest, wndTaskGroup:FindChild("EpisodeGroupContainer"))
 					end
-					
-					if self.tHiddenImbu and self.tHiddenImbu[queQuest:GetId()] then
-						-- Skip imbuement quests, these need to constantly re-grant themselves so we have to use a UI hack.
-					else
-						self.nQuestCounting = self.nQuestCounting + 1
-						if not self.tPinned.tQuests[queQuest:GetId()] then
-							self:DrawQuest(self.nQuestCounting, queQuest, wndTaskGroup:FindChild("EpisodeGroupContainer"))
-						else
-							self:DrawQuest(self.nQuestCounting, queQuest, wndPinnedContainer)
-						end
-					end
-				end
-			
-				-- Inline Sort Method
-				local function SortQuestTrackerScroll(a, b)
-					if not a or not b or not a:FindChild("QuestNumber") or not b:FindChild("QuestNumber") then return true end
-					return (tonumber(a:FindChild("QuestNumber"):GetText()) or 0) < (tonumber(b:FindChild("QuestNumber"):GetText()) or 0)
-				end
-			
-				if wndImbuementEpisodeGroup ~= nil and wndImbuementEpisodeGroup:IsValid() then
-					wndImbuementEpisodeGroup:FindChild("EpisodeGroupContainer"):ArrangeChildrenVert(0, SortQuestTrackerScroll)
-				end
-				if wndTaskEpisodeGroup ~= nil and wndTaskEpisodeGroup:IsValid() then
-					wndTaskEpisodeGroup:FindChild("EpisodeGroupContainer"):ArrangeChildrenVert(0, SortQuestTrackerScroll)
-				end
-				if wndFilteredEpisodeGroup ~= nil and wndFilteredEpisodeGroup:IsValid() then
-					wndFilteredEpisodeGroup:FindChild("EpisodeGroupContainer"):ArrangeChildrenVert(0, SortQuestTrackerScroll)
 				end
 			end
-
-			if wndEpisodeGroup ~= nil then
-				self:DrawEpisode(idx, epiEpisode, wndEpisodeGroup:FindChild("EpisodeGroupContainer"), wndPinnedContainer)
+		
+			-- Inline Sort Method
+			local function SortQuestTrackerScroll(a, b)
+				if not a or not b or not a:FindChild("QuestNumber") or not b:FindChild("QuestNumber") then return true end
+				return (tonumber(a:FindChild("QuestNumber"):GetText()) or 0) < (tonumber(b:FindChild("QuestNumber"):GetText()) or 0)
+			end
+			
+			if wndImbuementEpisodeGroup ~= nil and wndImbuementEpisodeGroup:IsValid() then
+				wndImbuementEpisodeGroup:FindChild("EpisodeGroupContainer"):ArrangeChildrenVert(0, SortQuestTrackerScroll)
+			end
+			if wndTaskEpisodeGroup ~= nil and wndTaskEpisodeGroup:IsValid() then
+				wndTaskEpisodeGroup:FindChild("EpisodeGroupContainer"):ArrangeChildrenVert(0, SortQuestTrackerScroll)
 			end
 		end
-		
-		self:DestroyEmptyEpisodeGroup(kstrPinnedQuestMarker)
-		self:DestroyEmptyEpisodeGroup(kstrWorldStoryQuestMarker)
-		self:DestroyEmptyEpisodeGroup(kstrZoneStoryQuestMarker)
-		self:DestroyEmptyEpisodeGroup(kstrRegionalStoryQuestMarker)
-		self:DestroyEmptyEpisodeGroup(kstrImbuementQuestMarker)
-		self:DestroyEmptyEpisodeGroup(kstrTaskQuestMarker)
-		self:DestroyEmptyEpisodeGroup(kstrFilteredZoneStoryQuestMarker)
+
+		if wndEpisodeGroup ~= nil then
+			self:DrawEpisode(idx, epiEpisode, wndEpisodeGroup:FindChild("EpisodeGroupContainer"), wndPinnedContainer)
+		end
 	end
 
-	Event_FireGenericEvent("QuestTrackerUpdated", self.wndQuestTrackerScroll)
+	self:CleanEpisodeGroup(kstrPinnedQuestMarker)
+	self:CleanEpisodeGroup(kstrWorldStoryQuestMarker)
+	self:CleanEpisodeGroup(kstrZoneStoryQuestMarker)
+	self:CleanEpisodeGroup(kstrRegionalStoryQuestMarker)
+	self:CleanEpisodeGroup(kstrImbuementQuestMarker)
+	self:CleanEpisodeGroup(kstrTaskQuestMarker)
+	
+	local tQuestData = {
+		["strAddon"]	= Apollo.GetString("CRB_Quests"),
+		["strText"]		= self.nTrackerCounting,
+		["bChecked"]	= self.bShowQuests,
+	}
+	
+	local bShow = true
+	if self.unitPlayer and self.unitPlayer:IsValid() then
+		bShow = self.unitPlayer:GetLevel() >= 50
+	end	
+	
+	local tContractData = {
+		["strAddon"]	= Apollo.GetString("CRB_Contracts"),
+		["strText"]		= nContracts,
+		["bChecked"]	= self.bShowContracts,
+		["bShow"]		= bShow,
+	}
+
+	Event_FireGenericEvent("ObjectiveTracker_UpdateAddOn", tQuestData)
+	Event_FireGenericEvent("ObjectiveTracker_UpdateAddOn", tContractData)
+	
 	self:ResizeAll()
 end
 
-function QuestTracker:DestroyEmptyEpisodeGroup(strMarker)
-	local wndEpisodeGroup = self.wndQuestTrackerScroll:FindChildByUserData(strMarker)
-	if wndEpisodeGroup ~= nil and wndEpisodeGroup:IsValid() and next(wndEpisodeGroup:FindChild("EpisodeGroupContainer"):GetChildren()) == nil then
-		wndEpisodeGroup:Destroy()
+function QuestTracker:CleanEpisodeGroup(strMarker)
+	local wndEpisodeGroup = self.wndMain:FindChildByUserData(strMarker)
+	if wndEpisodeGroup ~= nil and wndEpisodeGroup:IsValid() then
+		local nChildren = #wndEpisodeGroup:FindChild("EpisodeGroupContainer"):GetChildren()
+		local wndTitle = wndEpisodeGroup:FindChild("EpisodeGroupTitle")
+		
+		if nChildren > 0 then
+			wndTitle:SetText(nChildren > 1 and string.format("%s [%d]", wndTitle:GetText(), nChildren) or wndTitle:GetText())
+		else
+			wndEpisodeGroup:Destroy()
+		end
 	end
 end
 
-function QuestTracker:BuildEpisodeGroup(wndParent, strEpisodeGroupMarker)
-	local wndEpisodeGroup = self:FactoryProduce(wndParent, "EpisodeGroupItem", strEpisodeGroupMarker)
-
+function QuestTracker:BuildContainer(strEpisodeGroupMarker)
+	local wndEpisodeGroup = self:FactoryProduce(self.wndMain, "ContentGroupItem", strEpisodeGroupMarker)
 	local wndEpisodeGroupMinimizeBtn = wndEpisodeGroup:FindChild("EpisodeGroupMinimizeBtn")
-
-	wndEpisodeGroupMinimizeBtn:SetData(strEpisodeGroupMarker)
-
-	local bDefaultChecked = strEpisodeGroupMarker == kstrFilteredZoneStoryQuestMarker
-		and self.tMinimized.tEpisodeGroup[strEpisodeGroupMarker] == nil
-
-	if self.tMinimized.tEpisodeGroup[strEpisodeGroupMarker] or bDefaultChecked then
+	
+	if self.tMinimized.tEpisodeGroup[strEpisodeGroupMarker] then
 		wndEpisodeGroupMinimizeBtn:SetCheck(true)
 	end
+	
+	wndEpisodeGroupMinimizeBtn:Show(wndEpisodeGroupMinimizeBtn:IsChecked())
+	wndEpisodeGroupMinimizeBtn:SetData(strEpisodeGroupMarker)
+
+	return wndEpisodeGroup
+end
+
+function QuestTracker:BuildEpisodeGroup(strEpisodeGroupMarker)
+	local wndEpisodeGroup = self:FactoryProduce(self.wndQuestContainerContent, "EpisodeGroupItem", strEpisodeGroupMarker)
+	local wndEpisodeGroupMinimizeBtn = wndEpisodeGroup:FindChild("EpisodeGroupMinimizeBtn")
+	
+	if self.tMinimized.tEpisodeGroup[strEpisodeGroupMarker] then
+		wndEpisodeGroupMinimizeBtn:SetCheck(true)
+	end
+	
+	wndEpisodeGroupMinimizeBtn:SetData(strEpisodeGroupMarker)
+	wndEpisodeGroupMinimizeBtn:Show(wndEpisodeGroupMinimizeBtn:IsChecked())
 
 	return wndEpisodeGroup
 end
@@ -647,17 +728,18 @@ function QuestTracker:DrawFilteredTaskEpisode(idx, epiEpisode, wndParent, wndPin
 	local wndEpisode = self:FactoryProduce(wndParent, "EpisodeItem", "FilteredTaskEpisode")
 	local wndEpisodeTitle = wndEpisode:FindChild("EpisodeTitle")
 	local wndEpisodeMinimizeBtn = wndEpisode:FindChild("EpisodeMinimizeBtn")
-
+	
 	wndEpisodeTitle:SetData(999999) -- For sorting to bottom
-	wndEpisodeMinimizeBtn:SetData("FilteredTaskEpisode")
+	wndEpisodeTitle:SetText(Apollo.GetString("QuestTracker_Tasks"))
 
 	if self.tMinimized.tEpisode["FilteredTaskEpisode"] then
 		wndEpisodeMinimizeBtn:SetCheck(true)
 	end
+	
+	wndEpisodeMinimizeBtn:SetData("FilteredTaskEpisode")
+	wndEpisodeMinimizeBtn:Show(wndEpisodeMinimizeBtn:IsChecked())
 
 	if wndEpisodeMinimizeBtn and wndEpisodeMinimizeBtn:IsChecked() then
-		wndEpisodeTitle:SetText("> " .. Apollo.GetString("QuestTracker_Tasks"))
-		wndEpisodeTitle:SetTextColor(ApolloColor.new("8031fcf6"))
 
 		-- Flash if we are told to
 		if self.nFlashThisQuest then
@@ -674,9 +756,6 @@ function QuestTracker:DrawFilteredTaskEpisode(idx, epiEpisode, wndParent, wndPin
 			end
 		end
 	elseif wndEpisodeMinimizeBtn then
-		wndEpisodeTitle:SetText(Apollo.GetString("QuestTracker_Tasks"))
-		wndEpisodeTitle:SetTextColor(self.kcrEpisodeTitle)
-
 		local wndEpisodeQuestContainer = wndEpisode:FindChild("EpisodeQuestContainer")
 		self:DrawEpisodeQuests(epiEpisode, wndEpisodeQuestContainer, wndPinnedContainer)
 		if next(wndEpisodeQuestContainer:GetChildren()) == nil then
@@ -689,18 +768,20 @@ function QuestTracker:DrawEpisode(idx, epiEpisode, wndParent, wndPinnedContainer
 	local wndEpisode = self:FactoryProduce(wndParent, "EpisodeItem", epiEpisode)
 	local wndEpisodeTitle = wndEpisode:FindChild("EpisodeTitle")
 	local wndEpisodeMinimizeBtn = wndEpisode:FindChild("EpisodeMinimizeBtn")
-
+	local nTrackedQuests = #epiEpisode:GetTrackedQuests()
+	local strTitle =  nTrackedQuests > 1 and string.format("%s [%d]", epiEpisode:GetTitle(), nTrackedQuests) or epiEpisode:GetTitle()
+	
 	wndEpisodeTitle:SetData(idx) -- For sorting
-	wndEpisodeMinimizeBtn:SetData(epiEpisode:GetId())
+	wndEpisodeTitle:SetText(strTitle)
 
 	if self.tMinimized.tEpisode[epiEpisode:GetId()] then
 		wndEpisodeMinimizeBtn:SetCheck(true)
 	end
+	
+	wndEpisodeMinimizeBtn:SetData(epiEpisode:GetId())
+	wndEpisodeMinimizeBtn:Show(wndEpisodeMinimizeBtn:IsChecked())
 
 	if wndEpisodeMinimizeBtn and wndEpisodeMinimizeBtn:IsChecked() then
-		wndEpisodeTitle:SetText("> " .. epiEpisode:GetTitle())
-		wndEpisodeTitle:SetTextColor(ApolloColor.new("8031fcf6"))
-
 		-- Flash if we are told to
 		if self.nFlashThisQuest then
 			for key, queQuest in pairs(epiEpisode:GetTrackedQuests()) do
@@ -716,9 +797,6 @@ function QuestTracker:DrawEpisode(idx, epiEpisode, wndParent, wndPinnedContainer
 			end
 		end
 	elseif wndEpisodeMinimizeBtn then
-		wndEpisodeTitle:SetText(epiEpisode:GetTitle())
-		wndEpisodeTitle:SetTextColor(self.kcrEpisodeTitle)
-
 		local wndEpisodeQuestContainer = wndEpisode:FindChild("EpisodeQuestContainer")
 		self:DrawEpisodeQuests(epiEpisode, wndEpisodeQuestContainer, wndPinnedContainer)
 		if next(wndEpisodeQuestContainer:GetChildren()) == nil then
@@ -750,7 +828,90 @@ function QuestTracker:DrawEpisodeQuests(epiEpisode, wndContainer, wndPinnedConta
 	wndContainer:ArrangeChildrenVert(0, SortQuestTrackerScroll)
 end
 
+function QuestTracker:DrawContract(queQuest, wndParent)
+	if not self.bShowContracts then return end
+	
+	local wndQuest = self:FactoryProduce(wndParent, "ContractItem", queQuest)
+
+	-- Quest Title
+	local strTitle = queQuest:GetTitle()
+	local eQuestState = queQuest:GetState()
+	if eQuestState == Quest.QuestState_Botched then
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrRed, String_GetWeaselString(Apollo.GetString("QuestTracker_Failed"), strTitle))
+	elseif eQuestState == Quest.QuestState_Achieved then
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s</T>", kstrGreen,String_GetWeaselString(Apollo.GetString("QuestTracker_Complete"), strTitle))
+	elseif (eQuestState == Quest.QuestState_Accepted or eQuestState == Quest.QuestState_Achieved) and queQuest:IsQuestTimed() then
+		strTitle = self:HelperBuildTimedQuestTitle(queQuest)
+		self.tTimedQuests[queQuest:GetId()] = { queQuest = queQuest, wndTitleFrame = wndQuest:FindChild("TitleText") }
+		self:RequestRunObjectiveTimer()
+	else
+		local strColor = self.tActiveProgBarQuests[queQuest:GetId()] and "ffffffff" or kstrLightGrey
+		local crLevelConDiff = ktConToColor[queQuest:GetColoredDifficulty() or 0]
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s </T><T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">(%s)</T>", strColor, strTitle, crLevelConDiff, queQuest:GetConLevel())
+	end
+
+	wndQuest:FindChild("TitleText"):SetAML(strTitle)
+	wndQuest:FindChild("TitleText"):SetHeightToContentHeight()
+	wndQuest:FindChild("ContractIcon"):SetSprite(ktContractTypeArt[queQuest:GetSubType()].strAvailable)
+
+	wndQuest:FindChild("ControlBackerBtn"):SetData(wndQuest)
+	wndQuest:FindChild("ControlBackerBtn"):Enable(false)
+
+	-- Flash if we are told to
+	if self.nFlashThisQuest == queQuest then
+		self.nFlashThisQuest = nil
+		wndQuest:SetSprite("sprWinAnim_BirthSmallTemp")
+	end
+
+	local bMinimized = self.tMinimized.tQuests[queQuest:GetId()]
+	local wndObjectiveContainer = wndQuest:FindChild("ObjectiveContainer")
+
+	-- Conditional drawing
+	wndObjectiveContainer:Show(not bMinimized)
+
+	-- State depending drawing
+	if eQuestState == Quest.QuestState_Achieved then
+		wndObjectiveContainer:DestroyChildren()
+		
+		local wndObjective = self:FactoryProduce(wndObjectiveContainer, "QuestObjectiveItem", "ObjectiveCompleted")
+		wndObjective:FindChild("QuestObjectiveBtn"):SetTooltip(self:BuildObjectiveTitleString(queQuest, tObjective, true))
+		wndObjective:FindChild("QuestObjectiveBtn"):SetData({["queOwner"] = queQuest, ["nObjectiveIdx"] = nil})
+		wndObjective:FindChild("QuestObjectiveBtn"):Enable(false)
+		wndObjective:FindChild("QuestObjectiveText"):SetAML(self:BuildObjectiveTitleString(queQuest))
+
+	else
+		-- Objectives must always be recreated
+		wndObjectiveContainer:DestroyChildren()
+		-- Potentially multiple objectives if not minimized or in the achieved/botched state
+		for idx, tObjective in pairs(queQuest:GetVisibleObjectiveData()) do
+			if tObjective.nCompleted < tObjective.nNeeded then
+				local wndObjective = self:FactoryProduce(wndObjectiveContainer, "QuestObjectiveItem", tObjective.nIndex)
+				self:DrawQuestObjective(wndQuest, wndObjective, queQuest, tObjective)
+				wndObjective:FindChild("QuestObjectiveBtn"):Enable(false)
+
+				if queQuest:IsObjectiveTimed(tObjective.nIndex) then
+					self.tTimedObjectives[tostring(queQuest:GetId())..tObjective.nIndex] = { queQuest = queQuest, tObjective = tObjective, wndObjective = wndObjective }
+					self:RequestRunObjectiveTimer()
+				end
+			end
+		end
+	end
+
+	wndQuest:FindChild("ObjectiveContainer"):ArrangeChildrenVert(0)
+end
+
 function QuestTracker:DrawQuest(nIdx, queQuest, wndParent)
+	if self.bFilterDistance and self.nMaxMissionDistance > 0 and queQuest:GetDistance() > self.nMaxMissionDistance 
+		and not self.tPinned.tQuests[queQuest:GetId()]
+		and not queQuest:IsImbuementQuest()
+		and not queQuest:IsBreadcrumb()
+		
+		then return 
+	end
+	
+	self.nTrackerCounting = self.nTrackerCounting + 1
+	if not self.bShowQuests then return end
+	
 	local wndQuest = self:FactoryProduce(wndParent, "QuestItem", queQuest)
 
 	-- Quest Title
@@ -767,7 +928,7 @@ function QuestTracker:DrawQuest(nIdx, queQuest, wndParent)
 	else
 		local strColor = self.tActiveProgBarQuests[queQuest:GetId()] and "ffffffff" or kstrLightGrey
 		local crLevelConDiff = ktConToColor[queQuest:GetColoredDifficulty() or 0]
-		strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s </T><T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">[%s]</T>", strColor, strTitle, crLevelConDiff, queQuest:GetConLevel())
+		strTitle = string.format("<T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">%s </T><T Font=\"CRB_InterfaceMedium\" TextColor=\"%s\">(%s)</T>", strColor, strTitle, crLevelConDiff, queQuest:GetConLevel())
 	end
 
 	wndQuest:FindChild("TitleText"):SetAML(strTitle)
@@ -882,42 +1043,17 @@ function QuestTracker:DrawQuestObjective(wndQuest, wndObjective, queQuest, tObje
 end
 
 function QuestTracker:DrawPublicEpisodes(tPublicEvents)
-	if self.bDrawPvPScreenOnly or self.bDrawDungeonScreenOnly or self.bDrawShiphandScreenOnly then
-		self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-	elseif not self.wndMain:FindChild("SwapToPvP") and not self.wndMain:FindChild("SwapToDungeons") and not self.wndMain:FindChild("SwapToShiphand") then
-		for key, peEvent in pairs(tPublicEvents) do
-			if not self.bDrawPvPScreenOnly and ktPvPEventTypes[peEvent:GetEventType()] then
-				self.bDrawPvPScreenOnly = true
-				self:DestroyAndRedraw()
-				self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-				return
-			end
-			if not self.bDrawDungeonScreenOnly and peEvent:GetEventType() == PublicEvent.PublicEventType_Dungeon then
-				self.bDrawDungeonScreenOnly = true
-				self:DestroyAndRedraw()
-				self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-				return
-			end
-			if not self.bDrawShiphandScreenOnly and peEvent:GetEventType() == PublicEvent.PublicEventType_Shiphand then
-				self.bDrawShiphandScreenOnly = true
-				self:DestroyAndRedraw()
-				self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-				return
-			end
-		end
-	end
-
-	local wndEpisodeGroup = self:BuildEpisodeGroup(self.wndQuestTrackerScroll, kstrPublicEventMarker)
-	wndEpisodeGroup:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Events"))
-
-	local wndEpisodeQuestContainer = wndEpisodeGroup:FindChild("EpisodeGroupContainer")
+	self.wndEventContainerContent = self.wndEventContainer:FindChild("EpisodeGroupContainer")
+	self.wndEventContainerContent:DestroyChildren()
+	
+	self.wndEventContainer:FindChild("EpisodeGroupTitle"):SetText(Apollo.GetString("QuestTracker_Events"))
 
 	-- Events
 	local nAlphabetNumber = 0
 	for key, peEvent in pairs(tPublicEvents) do
 		if peEvent:GetEventType() ~= PublicEvent.PublicEventType_LiveEvent then -- Done in the LiveEvents addon
 			nAlphabetNumber	= math.min(knNumberToLettersMax, nAlphabetNumber + 1)
-			self:DrawEvent(wndEpisodeQuestContainer, peEvent, nAlphabetNumber)
+			self:DrawEvent(self.wndEventContainerContent, peEvent, nAlphabetNumber)
 		end
 	end
 
@@ -932,7 +1068,7 @@ function QuestTracker:DrawPublicEpisodes(tPublicEvents)
 	-- Now Draw Completed Events
 	for key, tZombieEvent in pairs(self.tZombiePublicEvents) do
 		nAlphabetNumber	= math.min(knNumberToLettersMax, nAlphabetNumber + 1)
-		self:DrawZombieEvent(wndEpisodeQuestContainer, tZombieEvent, nAlphabetNumber)
+		self:DrawZombieEvent(self.wndEventContainerContent, tZombieEvent, nAlphabetNumber)
 	end
 
 	-- Inline Sort Method
@@ -940,10 +1076,11 @@ function QuestTracker:DrawPublicEpisodes(tPublicEvents)
 		if not Window.is(a) or not Window.is(b) or not a:IsValid() or not b:IsValid() then
 			return false
 		end
+		
 		return a:FindChild("EventLetter"):GetText() < b:FindChild("EventLetter"):GetText()
 	end
-
-	wndEpisodeQuestContainer:ArrangeChildrenVert(0, SortEventTrackerScroll)
+	
+	self.wndEventContainerContent:ArrangeChildrenVert(0, SortEventTrackerScroll)
 end
 
 function QuestTracker:DrawEvent(wndParent, peEvent, nAlphabetNumber)
@@ -1075,13 +1212,15 @@ function QuestTracker:ResizeAll()
 	local function HelperSortEpisodes(a,b)
 		if a:FindChild("EpisodeTitle") and b:FindChild("EpisodeTitle") then
 			return a:FindChild("EpisodeTitle"):GetData() < b:FindChild("EpisodeTitle"):GetData()
-		elseif b:GetName() == "SwapToQuests" then
-			return true
 		end
+		
 		return false
 	end
+	
+	self:OnResizeEpisodeGroup(self.wndContractContainer)
+	self.wndContractContainer:Show(#self.wndContractContainerContent:GetChildren() > 0)
 
-	for idx1, wndEpisodeGroup in pairs(self.wndQuestTrackerScroll:GetChildren()) do
+	for idx1, wndEpisodeGroup in pairs(self.wndQuestContainerContent:GetChildren()) do
 		if wndEpisodeGroup:GetName() == "EpisodeGroupItem" then
 			-- Resize List
 			self:OnResizeEpisodeGroup(wndEpisodeGroup)
@@ -1093,14 +1232,40 @@ function QuestTracker:ResizeAll()
 		end
 	end
 
+	if self.wndEventContainer and self.wndEventContainer:IsValid() then
+		self:OnResizeEpisodeGroup(self.wndEventContainer)
+		self.wndEventContainer:Show(#self.wndEventContainerContent:GetChildren() > 0)
+	end
+	
+	self:OnResizeEpisodeGroup(self.wndQuestContainer)
+	self.wndQuestContainer:Show(#self.wndQuestContainerContent:GetChildren() > 0)
+	
 	local nAlign = self.bQuestTrackerAlignBottom and 2 or 0
-
-	self.wndQuestTrackerScroll:ArrangeChildrenVert(nAlign, function(a,b)
+	self.wndQuestContainerContent:ArrangeChildrenVert(nAlign, function(a,b)
 		return a:GetData() < b:GetData()
 	end)
+	self.wndMain:ArrangeChildrenVert(nAlign, function(a,b)
+		return a:GetData() < b:GetData()
+	end)
+	
+	local nMainContainerHeight = 0
+	for idx, wndChild in pairs(self.wndMain:GetChildren()) do
+		nMainContainerHeight = wndChild:IsShown() and nMainContainerHeight + wndChild:GetHeight() or nMainContainerHeight
+	end
+	
+	self.wndMain:ArrangeChildrenVert(0)
+	local nLeft, nTop, nRight, nBottom = self.wndMain:GetAnchorOffsets()
+	self.wndMain:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nMainContainerHeight)
+	self.wndMain:Show(nMainContainerHeight > 0)
+	
+	Event_FireGenericEvent("ObjectiveTracker_ExternalRequestRedraw")
 end
 
 function QuestTracker:OnResizeEpisodeGroup(wndEpisodeGroup)
+	if not wndEpisodeGroup or not wndEpisodeGroup:IsValid() then
+		return 0
+	end
+	
 	local nOngoingGroupCount = self.knInitialEpisodeGroupHeight
 	local wndEpisodeGroupContainer = wndEpisodeGroup:FindChild("EpisodeGroupContainer")
 	local bEpisodeGroupMinimizeBtnChecked = wndEpisodeGroup:FindChild("EpisodeGroupMinimizeBtn"):IsChecked()
@@ -1108,12 +1273,17 @@ function QuestTracker:OnResizeEpisodeGroup(wndEpisodeGroup)
 	if not bEpisodeGroupMinimizeBtnChecked then
 		for idx, wndEpisode in pairs(wndEpisodeGroupContainer:GetChildren()) do
 			local strWindowName = wndEpisode:GetName()
+			
 			if strWindowName == "EpisodeItem" then
 				nOngoingGroupCount = nOngoingGroupCount + self:OnResizeEpisode(wndEpisode)
 			elseif strWindowName == "QuestItem" then
 				nOngoingGroupCount = nOngoingGroupCount + self:OnResizeQuest(wndEpisode)
+			elseif strWindowName == "ContractItem" then
+				nOngoingGroupCount = nOngoingGroupCount + self:OnResizeQuest(wndEpisode)
 			elseif strWindowName == "EventItem" or strWindowName == "ZombieEventItem" then
 				nOngoingGroupCount = nOngoingGroupCount + self:OnResizeQuest(wndEpisode)
+			else
+				nOngoingGroupCount = nOngoingGroupCount + wndEpisode:GetHeight()
 			end
 		end
 	end
@@ -1122,6 +1292,7 @@ function QuestTracker:OnResizeEpisodeGroup(wndEpisodeGroup)
 	local nLeft, nTop, nRight, nBottom = wndEpisodeGroup:GetAnchorOffsets()
 	wndEpisodeGroup:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nOngoingGroupCount)
 	wndEpisodeGroupContainer:Show(not bEpisodeGroupMinimizeBtnChecked)
+	
 	return nOngoingGroupCount
 end
 
@@ -1157,7 +1328,7 @@ function QuestTracker:OnResizeQuest(wndQuest)
 	local nHeaderHeight = nResult
 	local wndObjectiveContainer = wndQuest:FindChild("ObjectiveContainer")
 	if wndObjectiveContainer then
-		local queQuest = wndQuest:GetName() == "QuestItem" and wndQuest:GetData()
+		local queQuest = (wndQuest:GetName() == "QuestItem" or wndQuest:GetName() == "ContractItem") and wndQuest:GetData()
 		local bMinimized = queQuest and queQuest:GetId() and self.tMinimized.tQuests[queQuest:GetId()]
 		if not bMinimized then
 			for idx, wndObj in pairs(wndObjectiveContainer:GetChildren()) do
@@ -1167,14 +1338,15 @@ function QuestTracker:OnResizeQuest(wndQuest)
 			local nLeft, nTop, nRight, nBottom = wndObjectiveContainer:GetAnchorOffsets()
 			wndObjectiveContainer:SetAnchorOffsets(nLeft, nHeaderHeight, nRight, nHeaderHeight + wndObjectiveContainer:ArrangeChildrenVert(0))
 		end
+		
 		wndObjectiveContainer:Show(not bMinimized)
 		wndObjectiveContainer:ArrangeChildrenVert(0)
 	end
 
-	nResult = math.max(nResult, self.knMinHeightEventItem)
-
 	local nLeft, nTop, nRight, nBottom = wndQuest:GetAnchorOffsets()
+	nResult = math.max(nResult, self.knMinHeightEventItem)
 	wndQuest:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nResult)
+	
 	return nResult
 end
 
@@ -1186,9 +1358,8 @@ function QuestTracker:OnResizeQuestObjective(wndObj)
 		nObjTextHeight = math.max(nObjTextHeight, self.knInitialSpellItemHeight)
 	end
 
-	local wndQuestObjectiveText = wndObj:FindChild("QuestObjectiveText")
-
 	-- If the text is bigger, use that instead
+	local wndQuestObjectiveText = wndObj:FindChild("QuestObjectiveText")
 	if wndQuestObjectiveText then
 		local nLocalWidth, nLocalHeight = wndQuestObjectiveText:SetHeightToContentHeight()
 		nObjTextHeight = math.max(nObjTextHeight, nLocalHeight + 8) -- for lower g height
@@ -1209,6 +1380,7 @@ function QuestTracker:OnResizeQuestObjective(wndObj)
 
 	local nLeft, nTop, nRight, nBottom = wndObj:GetAnchorOffsets()
 	wndObj:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nObjTextHeight)
+	
 	return nObjTextHeight
 end
 
@@ -1477,7 +1649,8 @@ end
 
 function QuestTracker:OnEpisodeControlBackerMouseExit(wndHandler, wndControl)
 	if wndHandler == wndControl then
-		wndHandler:FindChild("EpisodeMinimizeBtn"):Show(false)
+		local wndBtn = wndHandler:FindChild("EpisodeMinimizeBtn")
+		wndBtn:Show(wndBtn:IsChecked())
 	end
 end
 
@@ -1489,7 +1662,8 @@ end
 
 function QuestTracker:OnEpisodeGroupControlBackerMouseExit(wndHandler, wndControl)
 	if wndHandler == wndControl then
-		wndHandler:FindChild("EpisodeGroupMinimizeBtn"):Show(false)
+		local wndBtn = wndHandler:FindChild("EpisodeGroupMinimizeBtn")
+		wndBtn:Show(wndBtn:IsChecked())
 	end
 end
 
@@ -1498,9 +1672,8 @@ end
 -----------------------------------------------------------------------------------------------
 
 function QuestTracker:OnShowResurrectDialog()
-	unitPlayer = GameLib.GetPlayerUnit()
-	if unitPlayer then
-		self.bPlayerIsDead = unitPlayer:IsDead()
+	if self.unitPlayer then
+		self.bPlayerIsDead = self.unitPlayer:IsDead()
 	end
 end
 
@@ -1524,6 +1697,10 @@ function QuestTracker:OnQuestStateChanged(queQuest, eState)
 	end
 
 	self:RequestRedrawAll()
+end
+
+function QuestTracker:OnContractStateChanged(contractActive, eState)
+	self:OnQuestStateChanged(contractActive:GetQuest(), eState)
 end
 
 function QuestTracker:OnQuestObjectiveUpdated(queQuest, idObjective)
@@ -1575,46 +1752,6 @@ function QuestTracker:OnDestroyQuestObject(queQuest)
 	self:RequestRedrawAll()
 end
 
-function QuestTracker:OnDatachronRestored()
-	if not self.wndMain then
-		return
-	end
-
-	if not self.bHasMoved then
-		self.wndMain:SetAnchorOffsets(self.nLeft, self.nTop, self.nRight, self.nBottom - knDatachronShift)
-	end
-
-	self:RedrawAll()
-end
-
-function QuestTracker:OnDatachronMinimized()
-	if not self.wndMain then
-		return
-	end
-
-	if not self.bHasMoved then
-		self.wndMain:SetAnchorOffsets(self.nLeft, self.nTop, self.nRight, self.nBottom)
-	end
-
-	self:RedrawAll()
-end
-
-function QuestTracker:OnGenericEvent_ChallengeTrackerToggled(bVisible)
-	if not self.wndMain or self.bChallengeVisible == bVisible then
-		return
-	end
-
-	self.bChallengeVisible = bVisible
-	local nTopOffset =  bVisible and self.nTop+knChallngeOffset or self.nTop
-	local nBottomOffset = g_wndDatachron and g_wndDatachron:IsShown() and self.nBottom - knDatachronShift or self.nBottom
-
-	if not self.bHasMoved then
-		self.wndMain:SetAnchorOffsets(self.nLeft, nTopOffset, self.nRight, nBottomOffset)
-	end
-
-	self:RedrawAll()
-end
-
 -----------------------------------------------------------------------------------------------
 -- Public Events
 -----------------------------------------------------------------------------------------------
@@ -1624,7 +1761,7 @@ function QuestTracker:OnPublicEventStart(peEvent)
 	for idx, tZombieEvent in pairs(self.tZombiePublicEvents) do
 		if tZombieEvent.peEvent == peEvent then
 			self.tZombiePublicEvents[idx] = nil
-			local wndPublicEvent = self.wndQuestTrackerScroll:FindChildByUserData(kstrPublicEventMarker)
+			local wndPublicEvent = self.wndMain:FindChildByUserData(kstrPublicEventContainer)
 			if wndPublicEvent then
 				local wndEvent = wndPublicEvent:FindChildByUserData(peEvent)
 				if wndEvent then
@@ -1646,7 +1783,7 @@ function QuestTracker:OnPublicEventEnd(peEvent, eReason, tStats)
 	end
 
 	-- Delete existing
-	local wndPublicEvent = self.wndQuestTrackerScroll:FindChildByUserData(kstrPublicEventMarker)
+	local wndPublicEvent = self.wndMain:FindChildByUserData(kstrPublicEventContainer)
 	if wndPublicEvent then
 		local wndEvent = wndPublicEvent:FindChildByUserData(peEvent)
 		if wndEvent then
@@ -1724,7 +1861,7 @@ function QuestTracker:BuildObjectiveTitleString(queQuest, tObjective, bIsTooltip
 	elseif strShortText and string.len(strShortText) > 0 then
 		strResult = string.format("<T Font=\"CRB_InterfaceSmall\">%s</T>", strShortText)
 	end
-
+	
 	-- Prefix Optional or Progress if it hasn't been finished yet
 	if tObjective.nCompleted < tObjective.nNeeded then
 		local strPrefix = ""
@@ -1749,7 +1886,7 @@ function QuestTracker:BuildObjectiveTitleString(queQuest, tObjective, bIsTooltip
 	if queQuest:IsObjectiveTimed(tObjective.nIndex) then
 		strResult = self:HelperPrefixTimeString(math.max(0, math.floor(queQuest:GetObjectiveTimeRemaining(tObjective.nIndex) / 1000)), strResult)
 	end
-
+	
 	return strResult
 end
 
@@ -1816,71 +1953,8 @@ function QuestTracker:BuildEventObjectiveTitleString(queQuest, peoObjective, bIs
 			strResult = String_GetWeaselString(Apollo.GetString("QuestTracker_BuildText"), strPrefix, strResult)
 		end
 	end
+	
 	return strResult
-end
-
------------------------------------------------------------------------------------------------
--- PvP
------------------------------------------------------------------------------------------------
-
-function QuestTracker:OnLeavePvP()
-	self.bDrawPvPScreenOnly = false
-	if self.wndMain:FindChild("SwapToPvP") and self.wndMain:FindChild("SwapToPvP"):IsValid() then
-		self.wndMain:FindChild("SwapToPvP"):Destroy()
-	end
-	if self.wndMain:FindChild("SwapToQuests") and self.wndMain:FindChild("SwapToQuests"):IsValid() then
-		self.wndMain:FindChild("SwapToQuests"):Destroy()
-	end
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToPvPBtn() -- Also from code
-	self.bDrawPvPScreenOnly = true
-	if self.wndMain:FindChild("SwapToPvP") and self.wndMain:FindChild("SwapToPvP"):IsValid() then
-		self.wndMain:FindChild("SwapToPvP"):Destroy()
-	end
-	self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToDungeonsBtn() -- Also from code
-	self.bDrawDungeonScreenOnly = true
-	if self.wndMain:FindChild("SwapToDungeons") and self.wndMain:FindChild("SwapToDungeons"):IsValid() then
-		self.wndMain:FindChild("SwapToDungeons"):Destroy()
-	end
-	self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToShiphandBtn() -- Also from code
-	self.bDrawShiphandScreenOnly = true
-	if self.wndMain:FindChild("SwapToShiphand") and self.wndMain:FindChild("SwapToShiphand"):IsValid() then
-		self.wndMain:FindChild("SwapToShiphand"):Destroy()
-	end
-	self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToQuestsBtn()
-	if self.bDrawPvPScreenOnly then
-		self.bDrawPvPScreenOnly = false
-		self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToPvP", "SwapToPvP")
-	end
-
-	if self.bDrawDungeonScreenOnly then
-		self.bDrawDungeonScreenOnly = false
-		self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToDungeons", "SwapToDungeons")
-	end
-
-	if self.bDrawShiphandScreenOnly then
-		self.bDrawShiphandScreenOnly = false
-		self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToShiphand", "SwapToShiphand")
-	end
-
-	if self.wndMain:FindChild("SwapToQuests") and self.wndMain:FindChild("SwapToQuests"):IsValid() then
-		self.wndMain:FindChild("SwapToQuests"):Destroy()
-	end
-	self:RedrawAll() -- GOTCHA: Don't destroy, we check for SwapToPvPBtn being valid later
 end
 
 function QuestTracker:OnGenerateTooltip(wndControl, wndHandler, eType, arg1, arg2)
@@ -1919,7 +1993,7 @@ end
 function QuestTracker:UpdateGroup()
 	local bInRaid = GroupLib.InRaid()
 	if bInRaid and self.wndRaidWarning == nil then
-		self.wndRaidWarning = Apollo.LoadForm(self.xmlDoc, "QuestTrackerRaidWarning", self.wndQuestTrackerScroll, self)
+		self.wndRaidWarning = Apollo.LoadForm(self.xmlDoc, "QuestTrackerRaidWarning", self.wndMain, self)
 		self.wndRaidWarning:SetData(kstrRaidWarningQuestMarker)
 		self:RedrawAll()
 	elseif not bInRaid and self.wndRaidWarning and self.wndRaidWarning:IsValid() then
@@ -1951,7 +2025,7 @@ function QuestTracker:HelperFindAndDestroyQuests()
 		return
 	end
 
-	for idx1, wndEpGroup in pairs(self.wndQuestTrackerScroll:GetChildren()) do
+	for idx1, wndEpGroup in pairs(self.wndMain:GetChildren()) do
 		if wndEpGroup:GetName() == "EpisodeGroupItem" then
 			for idx2, wndEp in pairs(wndEpGroup:FindChild("EpisodeGroupContainer"):GetChildren()) do
 				for key, queQuest in pairs(self.tQuestsQueuedForDestroy) do
@@ -1960,7 +2034,7 @@ function QuestTracker:HelperFindAndDestroyQuests()
 						if wndQuest then
 							wndQuest:Destroy()
 
-							if wndEp:GetData() ~= kstrPublicEventMarker and next(wndEp:GetData():GetTrackedQuests()) == nil then
+							if wndEp:GetData() ~= kstrPublicEventContainer and next(wndEp:GetData():GetTrackedQuests()) == nil then
 								wndEp:Destroy()
 							end
 
@@ -1976,7 +2050,7 @@ function QuestTracker:HelperFindAndDestroyQuests()
 
 							self:OnQuestDestroyed(queQuest)
 						end
-					elseif wndEp:GetName() == "QuestItem" and wndEp:GetData() == queQuest then
+					elseif (wndEp:GetName() == "QuestItem" or wndEp:GetName() == "ContractItem") and wndEp:GetData() == queQuest then
 						wndEp:Destroy()
 
 						if next(wndEpGroup:FindChild("EpisodeGroupContainer"):GetChildren()) == nil then
@@ -2039,6 +2113,101 @@ function QuestTracker:FactoryProduce(wndParent, strFormName, tObject)
 	return wnd
 end
 
+-----------------------------------------------------------------------------------------------
+-- Right Click
+-----------------------------------------------------------------------------------------------
+function QuestTracker:CloseContextMenu() -- From a variety of source
+	if self.wndContextMenu and self.wndContextMenu:IsValid() then
+		self.wndContextMenu:Destroy()
+		self.wndContextMenu = nil
+		
+		return true
+	end
+	
+	return false
+end
+
+function QuestTracker:DrawContextMenu()
+	local nXCursorOffset = -36
+	local nYCursorOffset = 5
+
+	if self:CloseContextMenu() then
+		return
+	end
+
+	self.wndContextMenu = Apollo.LoadForm(self.xmlDoc, "ContextMenu", nil, self)
+	
+	self:HelperDrawContextMenuSubOptions()
+	
+	local nWidth = self.wndContextMenu:GetWidth()
+	local nHeight = self.wndContextMenu:GetHeight()
+		
+	local tCursor = Apollo.GetMouse()
+	self.wndContextMenu:Move(
+		tCursor.x - nWidth - nXCursorOffset,
+		tCursor.y - nHeight - nYCursorOffset,
+		nWidth,
+		nHeight
+	)
+end
+
+function QuestTracker:HelperDrawContextMenuSubOptions(wndIgnore)
+	if self.wndContextMenu and self.wndContextMenu:IsValid() then
+		local wndToggleOnQuests = self.wndContextMenu:FindChild("ToggleOnQuests")
+		local wndToggleFilterDistance = self.wndContextMenu:FindChild("ToggleFilterDistance")
+		local wndMissionDistanceEditBox = self.wndContextMenu:FindChild("MissionDistanceEditBox")
+		
+		wndToggleOnQuests:SetCheck(self.bShowQuests)
+		wndToggleFilterDistance:SetCheck(self.bFilterDistance)
+		
+		if not wndIgnore or wndIgnore and wndIgnore ~= wndMissionDistanceEditBox then
+			wndMissionDistanceEditBox:SetText(self.bFilterDistance and self.nMaxMissionDistance or 0)
+		end
+	end
+end
+
+function QuestTracker:OnToggleShowContracts()
+	self.bShowContracts = not self.bShowContracts
+	
+	--self:HelperDrawContextMenuSubOptions()
+	self:RedrawAll()
+end
+
+function QuestTracker:OnToggleShowQuests()
+	self.bShowQuests = not self.bShowQuests
+	
+	self:HelperDrawContextMenuSubOptions()
+	self:RedrawAll()
+end
+
+function QuestTracker:OnToggleFilterDistance()
+	self.bFilterDistance = not self.bFilterDistance
+	
+	self:HelperDrawContextMenuSubOptions()
+	self:RedrawAll()
+end
+
+function QuestTracker:OnMissionDistanceEditBoxChanged(wndHandler, wndControl)
+	if wndHandler ~= wndControl then return end
+	
+	self.nMaxMissionDistance = tonumber(wndControl:GetText()) or 0
+	self.bFilterDistance = self.nMaxMissionDistance > 0
+	
+	self:HelperDrawContextMenuSubOptions(wndControl)
+	self:RedrawAll()
+end
+
+function QuestTracker:OnRightClickOptionBtn(wndHandler, wndControl)
+	strKey = wndHandler and wndHandler:IsValid() and wndHandler:GetData()
+	
+	if not strKey then
+		return
+	end
+	
+	self.tHidden[strKey] = not self.tHidden[strKey]
+	self:RedrawAll()
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Tutorial anchor request
 ---------------------------------------------------------------------------------------------------
@@ -2046,7 +2215,7 @@ function QuestTracker:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupTe
 	if eAnchor == GameLib.CodeEnumTutorialAnchor.QuestTracker or eAnchor == GameLib.CodeEnumTutorialAnchor.QuestCommunicatorReceived then
 
 	local tRect = {}
-	tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
+	tRect.l, tRect.t, tRect.r, tRect.b = self.wndQuestContainer:GetRect()
 
 	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
 	end
@@ -2054,6 +2223,3 @@ end
 
 local QuestTrackerInst = QuestTracker:new()
 QuestTrackerInst:Init()
-èé´ﬁ
-òÔl= ç2tmı>©ÑOÉø##˝ü»»‹?»»ÙO¿¢_ñZÂ¥Tãá§Q9,Ì˙É‡€CöU∂µOöûw∞¨Á¸—4ß¿◊»ﬁs}%å§∆⁄ﬂÃ:sÓ=R>ı$)◊‹Â|^TÛˆ¸6ó7à]ﬂìÀdæ•ã˝kú?ér,∞uiˇﬂ¨[∞L+Ê8·∏¡z0ó/0ıaÊ˜0ö+cX∆µ0Î#≤ÿY—Í5ßÊZñü(ƒaÍ∫¯ôã˘9û•ó≠Vˇì˘8˙B∞lõÇf£úÀ3-äç>sæf§˛¶'<∂KîiN£A9éπ8Rh.◊ÿ°L≥{≤Ï±N˝¬^5ŒÆÙ’WdŒ!HL/©Óxèi…Ô‹\$Õ’ÙtO</3⁄	|À≥P{ÌÁÿˇﬁ°V◊:ºñ:g„é¶Ê∏Fﬂì1¥2o'Øx;∏F¶ï_´Ê|–ö’kµ\|≠ˆU-¡∫2{N[5≠°céƒgÎ8¸–È-Sã∂„sø˚CíÏ˘∞D'ﬁïŒΩ7•MCw≠Å_π√Í5Àµ>ô›ñlTΩf|”-Rüº[Y‘û9≠\k—,◊8èMmã—l∞í∑˛ËE	Ô∫.ï‡nÕü÷9ˇbÚ¥4fó•±ˆa©éùê˙‘yùØÀö∂⁄¸—MÔ@∑}N⁄[~A¢Ωø-›˝GÒüˇKI¶nÂbbd⁄Yù£˙¶G ‰6¡¯´Ωîj6≤ Ë∂3€Wﬂè˚gáÿÒX”}≈ã 5œ;e∏Êõ£÷n@wµk¯N(C◊ñÔÄ.; Öˆ[–lˇáåå˝_22˛˜¯åˇµîõÔÉ}'‡ì‚˜Ø@ﬂ5òG8™Ê+ﬂºmj∑”∂Ô}qEæ‘≠}VTÑG›,… Õãí'ÆÁ`T˘ñÕˆu˛g4ÏÉﬁ∆>gK≤W‚Œ©ó≈≈
-vŒ∏”d.w1⁄ÀxñøÕ]ß9∆ «4{πîÚjÖf~©ÎQX…≤bòi∫TœÂ~n¡∆÷J.Gá)´ãq8‰ñÏ~Ø2uµx÷⁄‚uÎ“Z2µUªıïo&G†F=>˘~ø£ÁA»Îåy°·ög~ß—g^Í÷ŸÅœ1˜˝ùˇ…ö∞|pÊZxe˛^m≤MÎ1|ù¢sBÚ15Õ%ƒ∂∆7∂\Àﬂ+M\-≤LÛm}á©Ò–wöv8∑õ3n9[®ò1≠lckd[≈ÒÀr:çæh•∆úu\¶’Jd_uÿUñ’K)yôΩ£-ø´zç5°ŒıæWk‘‚]œJoœãí‹ˇ∫«~|πÇVÎØïÊÿº∆”4O@¶Ïëz≠gòFµÅ«¥◊]îˆ‹Ui

@@ -12,6 +12,14 @@
             <Event Name="MouseExit" Function="OnBtnRegularMouseExit"/>
         </Control>
     </Form>
+    <Form Class="ActionBarButton" Base="BK3:btnHolo_ListView_Mid" Font="CRB_InterfaceSmall_O" ButtonType="PushButton" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="25" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="BtnPetDismiss" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextGrayListNormal" PressedTextColor="UI_BtnTextGrayListPressed" FlybyTextColor="UI_BtnTextGrayListFlyby" PressedFlybyTextColor="UI_BtnTextGrayListPressedFlyby" DisabledTextColor="UI_BtnTextGrayListDisabled" RelativeToClient="1" Sprite="" Text="" TextId="" IgnoreMouse="0" Overlapped="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" ContentType="SBar" ContentId="36" UseBaseButtonArt="1">
+        <Event Name="ButtonSignal" Function="OnRegularBtn"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="BtnText" BGColor="white" TextColor="UI_BtnTextBlueNormal" TooltipColor="" TextId="Challenges_NoProgress" DT_VCENTER="1" Visible="1" IgnoreMouse="1"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="BtnMouseCatcher" BGColor="white" TextColor="white" TooltipColor="" Visible="1" HideInEditor="0" Tooltip="">
+            <Event Name="MouseEnter" Function="OnBtnRegularMouseEnter"/>
+            <Event Name="MouseExit" Function="OnBtnRegularMouseExit"/>
+        </Control>
+    </Form>
     <Form Class="Button" Base="BK3:btnHolo_ListView_Mid" Font="Thick" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="25" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="BtnGroupList" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" RadioAlwaysSignal="0" RelativeToClient="1" Tooltip="" GlobalRadioGroup="ContextMenuPlayer_Checkbox_GlobalRadioGroup">
         <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-22" TAnchorPoint="0.5" TAnchorOffset="-10" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="0.5" BAnchorOffset="10" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="BtnCheckboxArrow" BGColor="UI_AlphaPercent65" TextColor="white" TooltipColor="" Sprite="Crafting_CircuitSprites:btnCircuit_Holo_RightArrowNormal" Picture="1" IgnoreMouse="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="BtnText" BGColor="white" TextColor="UI_BtnTextBlueNormal" TooltipColor="" TextId="ChatType_Party" DT_VCENTER="1" Visible="1" IgnoreMouse="1"/>
@@ -89,64 +97,3 @@
         <Event Name="ButtonCheck" Function="OnBtnCheckboxMouseDown"/>
     </Form>
 </Forms>
-egularButton(wndCurr, not MatchingGame.IsVoteKickActive())
-			end
-
-			if bInMatchingGame and not bIsMatchingGameFinished then
-				local tMatchState = MatchingGame:GetPVPMatchState()
-				if tMatchState and tMatchState.eRules ~= MatchingGame.Rules.DeathmatchPool then
-					local wndCurr = self:HelperBuildRegularButton(wndGroupListItems, "BtnVoteToDisband", Apollo.GetString("ContextMenu_VoteToDisband"))
-					self:HelperEnableDisableRegularButton(wndCurr, not MatchingGame.IsVoteSurrenderActive())
-				end
-			end
-
-			if bAmIGroupLeader then
-				if tTargetGroupData.bCanKick then
-					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeKick", Apollo.GetString("ContextMenu_DenyKicks"))
-				else
-					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveKick", Apollo.GetString("ContextMenu_AllowKicks"))
-				end
-
-				if tTargetGroupData.bCanInvite then
-					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeInvite", Apollo.GetString("ContextMenu_DenyInvites"))
-				else
-					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveInvite", Apollo.GetString("ContextMenu_AllowInvites"))
-				end
-
-				if tTargetGroupData.bCanMark then
-					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupTakeMark", Apollo.GetString("ContextMenu_DenyMarking"))
-				else
-					self:HelperBuildRegularButton(wndGroupListItems, "BtnGroupGiveMark", Apollo.GetString("ContextMenu_AllowMarking"))
-				end
-			end
-		end
-
-		if not tTargetGroupData and tMyGroupData.bCanInvite and not bCrossFaction then
-			self:HelperBuildRegularButton(wndGroupListItems, "BtnInvite", Apollo.GetString("ContextMenu_Invite"))
-		end
-
-		if #btnGroupList:FindChild("GroupPopoutItems"):GetChildren() == 0 then
-			btnGroupList:Destroy()
-		end
-	end
-
-	if bInGroup and unitTarget == unitPlayer then
-		self:HelperBuildRegularButton(wndButtonList, "BtnLeaveGroup", Apollo.GetString("ContextMenu_LeaveGroup"))
-	end
-	
-	-----------------------------------------------------------------------------------------------
-	-- Guild Options
-	-----------------------------------------------------------------------------------------------
-	local tMyRankPermissions = self.guildCurr and self.guildCurr:GetRanks()[self.guildCurr:GetMyRank()] or nil
-	local bTargetIsUnderMyRank = self.guildCurr and self.guildCurr:GetMyRank() < self.tPlayerGuildData.nRank
-	if self.tPlayerGuildData and self.guildCurr ~= nil and tMyRankPermissions.bChangeMemberRank and bTargetIsUnderMyRank then
-		local btnGuildList = self:FactoryProduce(wndButtonList, "BtnGuildList", "BtnGuildList")
-		local wndGuildListItems = btnGuildList:FindChild("GuildListPopoutItems")
-		btnGuildList:AttachWindow(btnGuildList:FindChild("GuildListPopoutFrame"))
-	
-			if self.guildCurr then
-				--[[if tMyRankPermissions.bKick then
-				self:HelperBuildRegularButton(wndGuildListItems, "BtnKickFromGuild", Apollo.GetString("ContextMenu_KickFromGuild"))
-				end]]--
-				
-				if bTargetIsUnder

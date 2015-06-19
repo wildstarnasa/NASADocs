@@ -65,7 +65,7 @@ function PathSettlerMissions:LoadFromList(pmMission)
 		self.wndMain = nil
 	end
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathSettlerrMissionMain", g_wndDatachron:FindChild("PathContainer"):FindChild("SettlerMissionContainer"), self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathSettlerrMissionMain", "FixedHudStratum", self)
 	self.wndMain:SetData(pmMission)
 end
 
@@ -234,7 +234,7 @@ function PathSettlerMissions:OnInfrastructureUpdateTimer()
 
 	if wndHub:FindChild("StatusContainer"):IsShown() then
 		local wndContainer = wndHub:FindChild("StatusContainer")
-
+		
 		wndContainer:FindChild("InfraStatusBar"):SetMax(100) -- hardcoded formatting
 		wndContainer:FindChild("InfraStatusBar"):SetProgress(0)
 		wndContainer:FindChild("InfraStatusText"):SetTextColor(CColor.new(122/255, 122/255, 122/255, 1.0))
@@ -429,11 +429,3 @@ end
 
 local PathSettlerMissionsInst = PathSettlerMissions:new()
 PathSettlerMissionsInst:Init()
-iew_Mid" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" DT_VCENTER="1" DT_CENTER="1" Name="ListItemBigBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" IgnoreMouse="0" Visible="1" RelativeToClient="1" Text="" TooltipColor="" NewControlDepth="1" Tooltip="">
-                <Event Name="ButtonSignal" Function="OnListItemHintArrow"/>
-            </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ListItemNewRunner" BGColor="ffffffff" TextColor="ffffffff" Picture="1" IgnoreMouse="1" Sprite="CRB_Anim_Outline:spr_Anim_OutlineStretch" Visible="0" HideInEditor="1" TooltipColor=""/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="44" BAnchorPoint="0" BAnchorOffset="46" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ListItemIcon" BGColor="ffffffff" TextColor="ffffffff" Picture="1" Sprite="ClientSprites:Icon_Mission_Soldier_HoldoutSecurity" IgnoreMouse="1" NewControlDepth="1" TooltipColor="" Tooltip=""/>
-            <Control Name="ListItemSpell" Class="ActionBarButton" ContentType="TSMBar" ContentId="0" Base="Button_ActionBarBlank" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="0" RAnchorOffset="44" BAnchorPoint="0" BAnchorOffset="46" Visible="0" RelativeToClient="1" WindowSoundTemplate="ActionBarButton" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Text="" TooltipType="OnCursor" NewControlDepth="1" HideInEditor="1" NoClip="0">
-                <Event Name="GenerateTooltip" Function="OnGenerateSpellTooltip"/>
-            </Co

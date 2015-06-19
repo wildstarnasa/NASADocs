@@ -257,31 +257,3 @@
         </Control>
     </Form>
 </Forms>
-t.r, tRect.b = self.wndMain:GetRect()
-	Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
-end
-
----------------------------------------------------------------------------------------------------
-
-function MatchMaker:DisplayPendingInfo()
-	if self.wndJoinGame:IsShown() then
-		return
-	end
-
-	local tPendingInfo = MatchingGame.GetPendingInfo()
-
-	if tPendingInfo.nPendingEnemies and tPendingInfo.nPendingEnemies > 0 then
-		self.wndAllyEnemyConfirm:FindChild("AllyCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), tPendingInfo.nAcceptedAllies, tPendingInfo.nPendingAllies))
-		self.wndAllyEnemyConfirm:FindChild("EnemyCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), tPendingInfo.nAcceptedEnemies, tPendingInfo.nPendingEnemies))
-		self.wndAllyEnemyConfirm:Invoke()
-	elseif tPendingInfo.nPendingAllies and tPendingInfo.nPendingAllies > 0 then
-		self.wndAllyConfirm:FindChild("AllyCount"):SetText(String_GetWeaselString(Apollo.GetString("CRB_Progress"), tPendingInfo.nAcceptedAllies, tPendingInfo.nPendingAllies))
-		self.wndAllyConfirm:Invoke()
-	else
-		self.wndAllyConfirm:Show(false)
-		self.wndAllyEnemyConfirm:Show(false)
-	end
-end
-
-function MatchMaker:OnCheckRating(strCommand, strRatingType)
-	strRatingType = 

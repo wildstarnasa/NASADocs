@@ -202,9 +202,9 @@ function UnitFrames:OnUnitFrameOptionsUpdated()
 		bFocusFrameFlipped = g_InterfaceOptions.Carbine.bFocusFrameFlipped
 	end
 	
-	self.luaFocusFrame:Init(self, 	{fScale=1.0, bFlipped=bFocusFrameFlipped, nConsoleVar="hud.focusTargetFrameDisplay", bDrawClusters=false})
-	self.luaTargetFrame:Init(self, {fScale=1.0, bFlipped=bTargetFrameFlipped, bFlipClusters=true})
-	self.luaUnitFrame:Init(self, 	{fScale=1.0, bFlipped=bMyUnitFrameFlipped, nConsoleVar="hud.myUnitFrameDisplay", bDrawToT=false})
+	self.luaFocusFrame:Init(self.xmlDoc, 	{fScale=1.0, bFlipped=bFocusFrameFlipped, nConsoleVar="hud.focusTargetFrameDisplay", bDrawClusters=false})
+	self.luaTargetFrame:Init(self.xmlDoc, {fScale=1.0, bFlipped=bTargetFrameFlipped, bFlipClusters=true})
+	self.luaUnitFrame:Init(self.xmlDoc, 	{fScale=1.0, bFlipped=bMyUnitFrameFlipped, nConsoleVar="hud.myUnitFrameDisplay", bDrawToT=false})
 	
 	-- setup default positions
 	self.luaUnitFrame.locDefaultPosition = WindowLocation.new({fPoints = {0.24, 1, 0.24, 1}, nOffsets = {0,-324,358,-220}})
@@ -308,11 +308,7 @@ function TargetFrame:new(o)
 	return o
 end
 
-function TargetFrame:Init(luaUnitFrameSystem, tParams)
-	Apollo.LinkAddon(luaUnitFrameSystem, self)
-	
-	self.luaUnitFrameSystem = luaUnitFrameSystem
-	
+function TargetFrame:Init(xmlDoc, tParams)		
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 		"OnTutorial_RequestUIAnchor", self)
 	Apollo.RegisterEventHandler("KeyBindingKeyChanged", 			"OnKeyBindingUpdated", self)
 	
@@ -331,7 +327,7 @@ function TargetFrame:Init(luaUnitFrameSystem, tParams)
 	self.sprHealthFillYellow = "spr_TargetFrame_HealthFillYellow" .. strFlipped
 	self.sprHealthFillGreen = "spr_TargetFrame_HealthFillGreen" .. strFlipped
 	
-	self.wndMainClusterFrame = Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, tParams.bFlipped and "ClusterTargetFlipped" or "ClusterTarget", "FixedHudStratumLow", self)
+	self.wndMainClusterFrame = Apollo.LoadForm(xmlDoc, tParams.bFlipped and "ClusterTargetFlipped" or "ClusterTarget", "FixedHudStratumLow", self)
 	self.arClusterFrames =
 	{
 		ClusterFrame:new(),
@@ -341,14 +337,10 @@ function TargetFrame:Init(luaUnitFrameSystem, tParams)
 	}
 	
 	for idx = 1, #self.arClusterFrames do
-		self.arClusterFrames[idx]:Init(self.luaUnitFrameSystem, self.wndMainClusterFrame:FindChild("Clusters"))
+		self.arClusterFrames[idx]:Init(xmlDoc, self.wndMainClusterFrame:FindChild("Clusters"))
 	end
 	
 	self.wndMainClusterFrame:SetScale(self.tParams.fScale)
-	
-	
-	self.wndPetFrame = self.wndMainClusterFrame:FindChild("PetContainerDespawnBtn")
-	self.wndPetContainerDespawnBtn = self.wndPetFrame:FindChild("PetContainerDespawnBtn")
 	self.wndLargeFrame = self.wndMainClusterFrame:FindChild("LargeFrame")
 	
 	-- Get main references
@@ -388,7 +380,7 @@ function TargetFrame:Init(luaUnitFrameSystem, tParams)
 	self:ArrangeClusterMembers()
 	self.wndMainClusterFrame:ArrangeChildrenHorz(1)
 
-	self.wndSimpleFrame = Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "SimpleTargetFrame", "FixedHudStratum", self)
+	self.wndSimpleFrame = Apollo.LoadForm(xmlDoc, "SimpleTargetFrame", "FixedHudStratum", self)
 	self.wndSimpleFrame:Show(false)
 
 	self.nLFrameLeft, self.nLFrameTop, self.nLFrameRight, self.nLFrameBottom = self.wndLargeFrame:GetAnchorOffsets()
@@ -471,38 +463,11 @@ function TargetFrame:OnUpdate()
 		end
 		
 		-- Treat Pets as Cluster Targets
-		self.wndPetContainerDespawnBtn:SetData(nil)
-		
-		local tPlayerPets = GameLib.GetPlayerPets()
-		
-		local bShowPetFrame = false
-		
+		local tPlayerPets = GameLib.GetPlayerPets()	
 		for k,v in ipairs(tPlayerPets) do
-			local nDismissCommand = GameLib.GetPetDismissCommand(v) or 0
-			
-			if nDismissCommand > 0 then
-				if k == 1 then
-					if v == unitTarget then
-						self.wndPetContainerDespawnBtn:SetData(v)
-						self.wndPetContainerDespawnBtn:SetContentId(nDismissCommand)
-						bShowPetFrame = true
-					end
-				elseif k == 2 then
-					if v == unitTarget then
-						self.wndPetContainerDespawnBtn:SetData(v)
-						self.wndPetContainerDespawnBtn:SetContentId(nDismissCommand)
-						bShowPetFrame = true
-					end
-				end
-			end
-			
-			if k < 3 and unitTarget == unitPlayer then
+			if k < 3 and unitTarget == unitPlayer and v:GetHealth() and v:GetHealth() > 0 then
 				table.insert(tCluster, v)
 			end
-		end
-		
-		if bShowPetFrame ~= self.wndPetFrame:IsShown() then
-			self.wndPetFrame:Show(bShowPetFrame)
 		end
 		
 		if self.tParams.bDrawClusters ~= true or tCluster == nil or #tCluster < 1 then
@@ -536,6 +501,8 @@ function TargetFrame:OnUpdate()
 			bShowWindow = unitPlayer:IsInCombat() or nCurrEffHP < nMaxEffHP
 		elseif nVisibility == 4 then --on out of combat
 			bShowWindow = not unitPlayer:IsInCombat()
+		elseif nVisibility == 5 then --on with a target (unit frame symmetry)
+			bShowWindow = unitPlayer:GetTarget()  and unitPlayer:GetTarget():GetHealth() ~= nil or nCurrEffHP < nMaxEffHP
 		else
 			bShowWindow = true
 		end
@@ -556,26 +523,26 @@ function TargetFrame:OnSlowUpdate()
 	if self.unitTarget == nil or not self.unitTarget:IsValid() then
 		return
 	end
+	
+	
+	local tDispositionSpriteLabel =
+	{
+		[Unit.CodeEnumDisposition.Unknown] = "Hostile",
+		[Unit.CodeEnumDisposition.Hostile] = "Hostile",
+		[Unit.CodeEnumDisposition.Neutral] = "Neutral",
+		[Unit.CodeEnumDisposition.Friendly] = "Friendly",
+	}
 
 	local unitTarget = self.unitTarget
 	
 	local strFlipped = self.tParams.bFlipped and "Flipped" or ""
 		
 	--Disposition/flags
-	local eDisposition = unitTarget:GetDispositionTo(kunitPlayer)
-	local strDisposition = self.strDisposition
-	
+	local eDisposition = unitTarget:GetDispositionTo(kunitPlayer) or Unit.CodeEnumDisposition.Hostile
+	local strDisposition = tDispositionSpriteLabel[eDisposition]
+
 	if eDisposition ~= self.eDisposition then
 		self.wndTargetName:SetTextColor(karDispositionColors[eDisposition])
-		
-		if eDisposition == Unit.CodeEnumDisposition.Hostile then
-			strDisposition = "Hostile"
-		elseif eDisposition == Unit.CodeEnumDisposition.Neutral then
-			strDisposition = "Neutral"
-		else
-			strDisposition = "Friendly"
-		end
-		self.strDisposition = strDisposition
 		
 		--Rare and Elite NPCs
 		if unitTarget:IsRare() then
@@ -862,6 +829,10 @@ end
 
 function TargetFrame:SetTargetForFrame(wndFrame, bTargetChanged)
 	local unitTarget = self.unitTarget
+	if unitTarget:IsInVehicle() then
+		unitTarget = unitTarget:GetVehicle()
+	end
+	
 	self:SetTargetHealthAndShields(wndFrame, unitTarget)
 	
 	if unitTarget then
@@ -880,7 +851,7 @@ function TargetFrame:SetTargetForFrame(wndFrame, bTargetChanged)
 		self:UpdateInterruptArmor()
 		
 		-- Must be last as several sections above use eDisposition
-		self.eDisposition = eDisposition
+		self.eDisposition = unitTarget:GetDispositionTo(kunitPlayer)
 	end
 
 	self:UpdateCastingBar(wndFrame, unitTarget)
@@ -937,7 +908,7 @@ function TargetFrame:UpdateInterruptArmor()
 		
 		nCCArmorValue = -1
 	elseif nCCArmorMax > 0 then -- has armor, has value
-		bShow = true
+		bShow = nCCArmorValue > 0
 		
 		if nCCArmorValue ~= self.nCCArmorValue then
 			wndCCArmor:SetText(nCCArmorValue)
@@ -986,12 +957,28 @@ function TargetFrame:UpdateCastingBar(wndFrame, unitCaster)
 	if nVulnerable > 0 then
 		nMaxZone = 1
 		bShowCasting = true
-		nElapsed =  nVulnerable * 1000
+		nElapsed = nVulnerable * 1000
 		nDuration = 4000
 		strSpellName = Apollo.GetString("Vulnerable")
 		strColor = "magenta"
 		strFillSprite = "spr_TargetFrame_FrameCastBarFillVulnerable"..strFlipped
 		strBaseSprite = "spr_TargetFrame_FrameCastBarVulnerable"..strFlipped
+		
+		if wndCastProgress and wndCastProgress:IsValid() then
+			-- add a countdown timer if nDuration is > 0.999 seconds.
+			local strDuration = nDuration > 0999 and " (" .. string.format("%00.01f", nVulnerable)..")" or ""
+			
+			wndCastProgress:SetMax(nDuration)
+			if math.abs(nElapsed - wndCastProgress:GetProgress()) > 100 then
+				wndCastProgress:SetProgress(nElapsed) -- Bar is behind or reset and needs to be adjusted
+			end
+			
+			wndCastProgress:SetProgress(0, 1000)
+			wndCastProgress:EnableGlow(bEnableGlow)
+			wndCastName:SetTextColor(strColor)
+			wndCastName:SetText(strSpellName .. strDuration)
+		end
+		
 	elseif unitCaster:ShouldShowCastBar() then
 		-- results for GetCastBarType can be:
 		-- Unit.CodeEnumCastBarType.None
@@ -1021,6 +1008,22 @@ function TargetFrame:UpdateCastingBar(wndFrame, unitCaster)
 			nDuration 		= unitCaster:GetCastDuration()
 			nElapsed 		= unitCaster:GetCastElapsed()
 			strSpellName 	= unitCaster:GetCastName()
+			
+			
+			if wndCastProgress and wndCastProgress:IsValid() then
+				-- add a countdown timer if nDuration is > 0.999 seconds.
+				local strDuration = nDuration > 0999 and " (" .. string.format("%00.01f", (nDuration - nElapsed) / 1000)..")" or ""
+				
+				wndCastProgress:SetMax(nDuration)
+				if math.abs(nElapsed - wndCastProgress:GetProgress()) > 100 then
+					wndCastProgress:SetProgress(nElapsed) -- Bar is behind or reset and needs to be adjusted
+				end
+				
+				wndCastProgress:SetProgress(nDuration, 1000)
+				wndCastProgress:EnableGlow(bEnableGlow)
+				wndCastName:SetTextColor(strColor)
+				wndCastName:SetText(strSpellName .. strDuration)
+			end
 		end
 	end
 
@@ -1032,11 +1035,8 @@ function TargetFrame:UpdateCastingBar(wndFrame, unitCaster)
 
 	if bShowCasting and nDuration > 0 and nMaxZone > 0 then
 		wndCastIcon:SetSprite(strIcon)
-
-		if wndCastProgress and wndCastProgress:IsValid() then
-			-- add a countdown timer if nDuration is > 0.999 seconds.
-			local strDuration = nDuration > 0999 and " (" .. string.format("%00.01f", (nDuration-nElapsed)/1000)..")" or ""
 		
+		if wndCastProgress and wndCastProgress:IsValid() then		
 			if self.strFillSprite ~= strFillSprite then
 				wndCastProgress:SetFullSprite(strFillSprite)
 			end
@@ -1049,14 +1049,6 @@ function TargetFrame:UpdateCastingBar(wndFrame, unitCaster)
 			self.strBaseSprite = strBaseSprite
 			
 			wndCastProgress:Show(true)
-			wndCastProgress:SetMax(nDuration)
-			if math.abs(nElapsed - wndCastProgress:GetProgress()) > 100 then
-				wndCastProgress:SetProgress(nElapsed) -- Bar is behind or reset and needs to be adjusted
-			end
-			wndCastProgress:SetProgress(nDuration, 1000)
-			wndCastProgress:EnableGlow(bEnableGlow)
-			wndCastName:SetTextColor(strColor)
-			wndCastName:SetText(strSpellName .. strDuration)
 		end
 	else
 		if wndCastProgress and wndCastProgress:IsValid() then
@@ -1160,24 +1152,12 @@ function TargetFrame:SetTargetHealthAndShields(wndTargetFrame, unitTarget)
 	end
 
 	-- Bars
-	if nHealthMax ~= self.nHealthMax then
-		self.wndHealthCapacityTint:SetMax(nHealthMax)
-	end
-	if nHealthCurr ~= self.nHealthCurr then
-		self.wndHealthCapacityTint:SetProgress(nHealthCurr)
-	end
-	if nShieldMax ~= self.nShieldMax then
-		self.wndShieldCapacityTint:SetMax(nShieldMax)
-	end
-	if nShieldCurr ~= self.nShieldCurr then
-		self.wndShieldCapacityTint:SetProgress(nShieldCurr)
-	end
-	if nAbsorbMax ~= self.nAbsorbMax then
-		self.wndAbsorbCapacityTint:SetMax(nAbsorbMax)
-	end
-	if nAbsorbCurr ~= self.nAbsorbCurr then
-		self.wndAbsorbCapacityTint:SetProgress(nAbsorbCurr)
-	end
+	self.wndHealthCapacityTint:SetMax(nHealthMax)
+	self.wndHealthCapacityTint:SetProgress(nHealthCurr)
+	self.wndShieldCapacityTint:SetMax(nShieldMax)
+	self.wndShieldCapacityTint:SetProgress(nShieldCurr)
+	self.wndAbsorbCapacityTint:SetMax(nAbsorbMax)
+	self.wndAbsorbCapacityTint:SetProgress(nAbsorbCurr)
 	
 	local bShowMaxShield = nShieldCurr > 0 and nShieldMax > 0
 	if bShowMaxShield ~= self.wndMaxShield:IsShown() then
@@ -1456,12 +1436,8 @@ function ClusterFrame:new(o)
 	return o
 end
 
-function ClusterFrame:Init(luaUnitFrameSystem, wndParent)
-	Apollo.LinkAddon(luaUnitFrameSystem, self)
-	
-	self.luaUnitFrameSystem = luaUnitFrameSystem
-	
-	self.wndCluster = Apollo.LoadForm(luaUnitFrameSystem.xmlDoc, "ClusterTargetMini", wndParent, self)
+function ClusterFrame:Init(xmlDoc, wndParent)	
+	self.wndCluster = Apollo.LoadForm(xmlDoc, "ClusterTargetMini", wndParent, self)
 	self.wndTargetModel = self.wndCluster:FindChild("TargetModel")
 	self.wndTargetGoalPanel = self.wndCluster:FindChild("TargetGoalPanel")
 	self.wndTargetLevel = self.wndCluster:FindChild("TargetLevel")
@@ -1524,6 +1500,7 @@ function ClusterFrame:OnFrame()
 		RewardIcons.GetUnitRewardIconsForm(self.wndTargetGoalPanel, unitTarget, {bVert = false})
 	end
 	
+	local idUnit		= unitTarget:GetId()
 	local nHealth		= unitTarget:GetHealth()
 	local nMaxHealth	= unitTarget:GetMaxHealth()
 	local nShield		= unitTarget:GetShieldCapacity()
@@ -1549,18 +1526,11 @@ function ClusterFrame:OnFrame()
 			self.wndCover:SetSprite(nMaxShield > 0 and "spr_TargetFrame_ClusterCoverShield" or "spr_TargetFrame_ClusterCover")
 		end
 		
-		if nMaxHealth ~= self.nMaxHealth then
-			wndHealth:SetMax(nMaxHealth)
-		end
-		if nHealth ~= self.nHealth then
-			wndHealth:SetProgress(nHealth)
-		end
-		if nMaxShield ~= self.nMaxShield then
-			wndShieldBar:SetMax(nMaxShield)
-		end
-		if nShield ~= self.nShield then
-			wndShieldBar:SetProgress(nShield)
-		end
+		wndHealth:SetMax(nMaxHealth)
+		wndHealth:SetProgress(nHealth)
+		
+		wndShieldBar:SetMax(nMaxShield)
+		wndShieldBar:SetProgress(nShield)
 		
 		if nHealth ~= self.nHealth or nMaxHealth ~= self.nMaxHealth then
 			if unitTarget:IsInCCState(Unit.CodeEnumCCState.Vulnerability) then
@@ -1577,7 +1547,8 @@ function ClusterFrame:OnFrame()
 		if nHealth ~= self.nHealth
 			or nMaxHealth ~= self.nMaxHealth
 			or nShield ~= self.nShield
-			or nMaxShield ~= self.nMaxShield then
+			or nMaxShield ~= self.nMaxShield
+			or idUnit ~= self.idUnit then
 			
 			if nHealth ~= self.nHealth or nMaxHealth ~= self.nMaxHealth then
 				local strHealthCurr = nHealth > 0 and TargetFrame.HelperFormatBigNumber(self, nHealth) or "0"
@@ -1646,6 +1617,7 @@ function ClusterFrame:OnFrame()
 		self.nCon = nCon
 	end
 	
+	self.idUnit = idUnit
 	self.nHealth = nHealth
 	self.nMaxHealth = nMaxHealth
 	self.nShield = nShield
@@ -1713,11 +1685,4 @@ function ClusterFrame:OnMouseButtonDown(wndHandler, wndControl, eMouseButton, x,
 end
 
 local UnitFramesInstance = UnitFrames:new()
-UnitFrames:Init() x4="95" x5="190" y0="0" y1="0" y2="0" y3="0" y4="0" y5="95" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TrackerAnim.tga" x0="190" x1="190" x2="190" x3="190" x4="190" x5="285" y0="0" y1="0" y2="0" y3="0" y4="0" y5="95" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.050" StartColor="ffffffff" EndColor="ffffffff"/>
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TrackerAnim.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="95" y0="95" y1="95" y2="95" y3="95" y4="95" y5="190" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.020" StartColor="ffffffff" EndColor="ffffffff"/>
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TrackerAnim.tga" x0="95" x1="95" x2="95" x3="95" x4="95" x5="190" y0="95" y1="95" y2="95" y3="95" y4="95" y5="190" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.020" StartColor="ffffffff" EndColor="ffffffff"/>
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TrackerAnim.tga" x0="190" x1="190" x2="190" x3="190" x4="190" x5="285" y0="95" y1="95" y2="95" y3="95" y4="95" y5="190" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.020" StartColor="ffffffff" EndColor="ffffffff"/>
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TrackerAnim.tga" x0="190" x1="190" x2="190" x3="190" x4="190" x5="285" y0="95" y1="95" y2="95" y3="95" y4="95" y5="190" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.100" StartColor="ffffff" EndColor="ffffff"/>
-        <Frame Texture="UI\Assets\TexPieces\UI_CRB_TrackerAnim.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="95" y0="190" y1="190" y2="190" y3="190" y4="190" y5="285" Stretchy="1" HotspotX="0" HotspotY="0" Duration="0.075" StartColor="ffffffff" EndColor="ffffffff"/>
-        
+UnitFrames:Init()

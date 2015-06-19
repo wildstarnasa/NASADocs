@@ -5,6 +5,7 @@
 
 require "Window"
 require "GameLib"
+require "Sound"
 
 local TutorialPrompts = {}
 
@@ -23,7 +24,7 @@ local kTutorialComponents =
 	[GameLib.CodeEnumTutorialAnchor.GroupFinder] 				= {"Group Finder", 			8, -50, -480},
 	[GameLib.CodeEnumTutorialAnchor.AbilityBar] 				= {"Action Bar", 			4,  208, -10},
 	[GameLib.CodeEnumTutorialAnchor.Codex] 						= {"Codex", 				8,  18,   22},
-	[GameLib.CodeEnumTutorialAnchor.Challenge] 					= {"Challenges", 			2,  370,  -4},
+	[GameLib.CodeEnumTutorialAnchor.Challenge] 					= {"Challenges", 			2,  0,  -4},
 	[GameLib.CodeEnumTutorialAnchor.Datachron] 					= {"Datachron", 			4,  -20, -30},
 	[GameLib.CodeEnumTutorialAnchor.Inventory] 					= {"Inventory", 			4,   -2, -25},
 	[GameLib.CodeEnumTutorialAnchor.MiniMap] 					= {"MiniMap", 				3,  -40,  -2},
@@ -54,6 +55,9 @@ function TutorialPrompts:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.arDelayedHintWindows = {}
+
     return o
 end
 
@@ -140,6 +144,8 @@ function TutorialPrompts:OnDocumentReady()
 	Apollo.CreateTimer("AutoCloseTutorial", 1.0, true)
 	Apollo.StopTimer("AutoCloseTutorial")
 
+	self.timerHintWindowDelay = ApolloTimer.Create(1, false, "OnHintWindowDelayTimer", self)
+	
 	self.wndTransparentTutorial = nil
 	self.tDisplayedPrompts = {}
 	self.tPendingTutorials = {}
@@ -316,6 +322,19 @@ function TutorialPrompts:UpdateAlerts()
 end
 
 function TutorialPrompts:DrawHintWindow(eAnchor, nTutorialId, strPopupText, tRect)
+	self.arDelayedHintWindows[#self.arDelayedHintWindows + 1] = { ["eAnchor"]=eAnchor, ["nTutorialId"]=nTutorialId, ["strPopupText"]=strPopupText, ["tRect"]=tRect }
+	self.timerHintWindowDelay:Start()
+end
+
+function TutorialPrompts:OnHintWindowDelayTimer()
+	for idx, tHintWindow in pairs(self.arDelayedHintWindows) do
+		self:DelayedDrawHintWindow(tHintWindow.eAnchor, tHintWindow.nTutorialId, tHintWindow.strPopupText, tHintWindow.tRect)
+	end
+
+	self.arDelayedHintWindows = {}
+end
+
+function TutorialPrompts:DelayedDrawHintWindow(eAnchor, nTutorialId, strPopupText, tRect)
 	if self.tDisplayedPrompts[eAnchor] ~= nil then
 		self.tDisplayedPrompts[eAnchor]:Destroy()
 		self.tDisplayedPrompts[eAnchor] = nil
@@ -338,10 +357,16 @@ function TutorialPrompts:DrawHintWindow(eAnchor, nTutorialId, strPopupText, tRec
 		wnd:FindChild("PanelToggleContainer"):Show(false)
 		GameLib.MarkTutorialViewed(nTutorialId, true)
 	end
-
+	
 	wnd:FindChild("BGArt_Prompt"):Show(tTutorial ~= nil)
-	wnd:FindChild("BGArt_NoPrompt"):Show(tTutorial == nil)
-
+	
+	if tTutorial == nil then
+		wnd:FindChild("BGArt_NoPrompt"):Show(true)	
+		Sound.Play(Sound.PlayUIMiniMapPing)
+		wnd:FindChild("BGArt_NoPrompt:BGArt_Flicker"):SetSprite("BK3:sprHolo_Accent_Rounded_FlashAnim")
+		wnd:FindChild("BGArt_NoPrompt:BGArt_Refresh"):SetSprite("BK3:UI_BK3_Holo_RefreshReflectionSquare_anim")
+	end
+	
 	-- Crazy resize time!
 	local wndText = wnd:FindChild("HintTextWnd")
 	wndText:SetText(strPopupText)
@@ -481,13 +506,11 @@ end
 
 function TutorialPrompts:OnHintMouseEnter(wndHandler, wndControl)
 	if wndHandler ~= wndControl then return false end
-	wndControl:FindChild("Overlay"):Show(true)
 	wndControl:FindChild("HintAlertBtn"):Show(true)
 end
 
 function TutorialPrompts:OnHintMouseExit(wndHandler, wndControl)
 	if wndHandler ~= wndControl then return false end
-	wndControl:FindChild("Overlay"):Show(false)
 	wndControl:FindChild("HintAlertBtn"):Show(false)
 end
 
@@ -567,11 +590,14 @@ function TutorialPrompts:DrawTutorialPage(nTutorialId, nPassedPage) --(wndArg, n
 		local wndToDo = nil
 		local bStrCurrTextExists = strCurrText and string.len(strCurrText) > 0
 		local strAsAML = "<P Font=\"CRB_InterfaceMedium\" TextColor=\"ffffffff\" Align=\"Left\">"..strCurrText.."</P>"
+		Sound.Play(Sound.PlayUIMiniMapPing)
+		wnd:FindChild("BGArt_Refresh"):SetSprite("BK3:UI_BK3_Holo_RefreshReflectionSquare_anim")
 
 		if idx == 1 and bStrCurrTextExists then
 			wnd:FindChild("Body"):Show(true)
 			wnd:FindChild("BodyFrameBG"):Show(true)
 			wnd:FindChild("Body"):SetAML(strAsAML)
+			
 
 			if wnd:GetName() ~= "TutorialForm_ExtraLarge" then
 				local nWidth, nHeight = wnd:FindChild("Body"):SetHeightToContentHeight()
@@ -889,10 +915,3 @@ end
 -----------------------------------------------------------------------------------------------
 local TutorialPromptsInst = TutorialPrompts:new()
 TutorialPromptsInst:Init()
-"0" TAnchorPoint="1" TAnchorOffset="-60" RAnchorPoint="0.5" RAnchorOffset="150" BAnchorPoint="1" BAnchorOffset="-12" DT_VCENTER="1" DT_CENTER="1" Name="CancelBtn" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="2" WindowSoundTemplate="TogglePhys05" TextId="CRB_Cancel" TooltipColor="" NormalTextColor="UI_BtnTextRedNormal" PressedTextColor="UI_BtnTextRedPressed" FlybyTextColor="UI_BtnTextRedFlyby" PressedFlybyTextColor="UI_BtnTextRedFlyby" DisabledTextColor="UI_BtnTextRedDisabled" RelativeToClient="1" TestAlpha="1">
-                <Event Name="ButtonSignal" Function="OnCancelBtn"/>
-            </Control>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="ConfirmBlocker" BGColor="ffffffff" TextColor="ffffffff" NewControlDepth="15" HideInEditor="1" TooltipColor="">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="29" TAnchorPoint="0" TAnchorOffset="76" RAnchorPoint="1" RAnchorOffset="-28" BAnchorPoint="1" BAnchorOffset="-93" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="ItemBlocker" BGColor="80000000" TextColor="ffffffff" Sprite="BK3:UI_BK3_Metal_Framing_BlockerFull" Picture="1" NewControlDepth="10" HideInEditor="1" SwallowMouseClicks="1" TooltipColor="" IgnoreMouse="1"/>
-            <

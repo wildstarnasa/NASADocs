@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <Forms>
     <Form Class="Window" LAnchorPoint="0.5" LAnchorOffset="-433" TAnchorPoint=".5" TAnchorOffset="-400" RAnchorPoint="0.5" RAnchorOffset="433" BAnchorPoint=".5" BAnchorOffset="400" RelativeToClient="1" Font="Default" Text="" Name="RunecraftingForm" Moveable="1" Escapable="1" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Picture="1" Sprite="" RightEdgeControlsAnchor="RunecraftingForm_Right" TopEdgeControlsAnchor="RunecraftingForm_Top" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="95" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-35" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="RuneCreationContainer" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Tooltip="" Visible="1" HideInEditor="0" NewControlDepth="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="95" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-35" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="RuneCreationContainer" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Tooltip="" Visible="0" HideInEditor="0" NewControlDepth="1">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="285" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-75" BAnchorPoint="1" BAnchorOffset="-75" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Holo_Background_General" TooltipType="OnCursor" Name="HoloBG" TooltipColor="" HideInEditor="0"/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="300" TAnchorPoint="0" TAnchorOffset="10" RAnchorPoint="1" RAnchorOffset="-90" BAnchorPoint="1" BAnchorOffset="-135" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="InsetBG" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" HideInEditor="0" NewControlDepth="1"/>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="70" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="274" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="RuneCreationElementList" TooltipColor="" NewControlDepth="1"/>
@@ -33,13 +33,13 @@
         </Control>
         <Event Name="WindowClosed" Function="OnCloseFromUI"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="BGFrame" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="Crafting_RunecraftingSprites:sprRunecrafting_FrameBG_Larger" Picture="1" IgnoreMouse="1" NewControlDepth="5" HideInEditor="0" Tooltip="">
-            <Control Class="Button" Base="Runecrafting:btnRunecrafting_TabLeft" Font="CRB_Button" ButtonType="Check" RadioGroup="Runecrafting_BGHeaderToggles_LocalRadioGroup" LAnchorPoint="0.5" LAnchorOffset="-354" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="0.5" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="89" DT_VCENTER="1" DT_CENTER="1" Name="ToggleRuneCreation" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" Text="" RadioDisallowNonSelection="1" TooltipColor="" Tooltip="" RelativeToClient="1" GlobalRadioGroup="" TestAlpha="0" NeverBringToFront="1">
+            <Control Class="Button" Base="Runecrafting:btnRunecrafting_TabLeft" Font="CRB_Button" ButtonType="Check" RadioGroup="Runecrafting_BGHeaderToggles_LocalRadioGroup" LAnchorPoint="0.5" LAnchorOffset="-354" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="0.5" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="89" DT_VCENTER="1" DT_CENTER="1" Name="ToggleEquipRunes" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" Text="" RadioDisallowNonSelection="1" TooltipColor="" Tooltip="" RelativeToClient="1" GlobalRadioGroup="" TestAlpha="0" NeverBringToFront="1">
                 <Event Name="ButtonCheck" Function="OnRedrawAllFromUI"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-12" RelativeToClient="1" Font="CRB_ButtonHeader" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextGoldListNormal" Template="Default" TooltipType="OnCursor" Name="TopTabText" TooltipColor="" TextId="Runecrafting_CreateRunes" DT_CENTER="1" DT_VCENTER="1"/>
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-12" RelativeToClient="1" Font="CRB_ButtonHeader" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextGoldListNormal" Template="Default" TooltipType="OnCursor" Name="TopTabText" TooltipColor="" TextId="Runecrafting_EquipRunes" DT_CENTER="1" DT_VCENTER="1"/>
             </Control>
-            <Control Class="Button" Base="Runecrafting:btnRunecrafting_TabRight" Font="CRB_Button" ButtonType="Check" RadioGroup="Runecrafting_BGHeaderToggles_LocalRadioGroup" LAnchorPoint="0.5" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="0.5" RAnchorOffset="354" BAnchorPoint="0" BAnchorOffset="89" DT_VCENTER="1" DT_CENTER="1" Name="ToggleEquipRunes" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" Text="" RadioDisallowNonSelection="1" TooltipColor="" Tooltip="" RelativeToClient="1" GlobalRadioGroup="" TestAlpha="0" NeverBringToFront="1">
+            <Control Class="Button" Base="Runecrafting:btnRunecrafting_TabRight" Font="CRB_Button" ButtonType="Check" RadioGroup="Runecrafting_BGHeaderToggles_LocalRadioGroup" LAnchorPoint="0.5" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="0.5" RAnchorOffset="354" BAnchorPoint="0" BAnchorOffset="89" DT_VCENTER="1" DT_CENTER="1" Name="ToggleRuneCreation" BGColor="ffffffff" TextColor="ffffffff" HideInEditor="0" TextId="" NormalTextColor="UI_BtnTextGoldListNormal" PressedTextColor="UI_BtnTextGoldListPressed" FlybyTextColor="UI_BtnTextGoldListFlyby" PressedFlybyTextColor="UI_BtnTextGoldListPressedFlyby" DisabledTextColor="UI_BtnTextGoldListDisabled" Text="" RadioDisallowNonSelection="1" TooltipColor="" Tooltip="" RelativeToClient="1" GlobalRadioGroup="" TestAlpha="0" NeverBringToFront="1">
                 <Event Name="ButtonCheck" Function="OnRedrawAllFromUI"/>
-                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-12" RelativeToClient="1" Font="CRB_ButtonHeader" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextGoldListNormal" Template="Default" TooltipType="OnCursor" Name="TopTabText" TooltipColor="" TextId="Runecrafting_EquipRunes" DT_CENTER="1" DT_VCENTER="1"/>
+                <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-12" RelativeToClient="1" Font="CRB_ButtonHeader" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextGoldListNormal" Template="Default" TooltipType="OnCursor" Name="TopTabText" TooltipColor="" TextId="Runecrafting_CreateRunes" DT_CENTER="1" DT_VCENTER="1"/>
             </Control>
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="63" TAnchorPoint="0" TAnchorOffset="33" RAnchorPoint="0" RAnchorOffset="805" BAnchorPoint="0" BAnchorOffset="761" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="RerollBlocker" TooltipColor="" Picture="1" IgnoreMouse="0" Sprite="Crafting_RunecraftingSprites:sprRunecrafting_BlockerOverlay" HideInEditor="1" NewControlDepth="3" Visible="0" TransitionShowHide="1" SwallowMouseClicks="1" Tooltip="" TooltipFont="CRB_InterfaceSmall_O" DoNotBlockTooltip="0" Overlapped="1" NotRelative="0">
                 <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-75" TAnchorPoint="0.5" TAnchorOffset="-40" RAnchorPoint="0.5" RAnchorOffset="75" BAnchorPoint="0.5" BAnchorOffset="30" RelativeToClient="1" Font="CRB_InterfaceMedium_BO" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_TextHoloBodyHighlight" Template="Default" TooltipType="OnCursor" Name="RerollInitCastBarBG" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" TextId="EngravingStation_PickingElements" DT_BOTTOM="1" DT_CENTER="1" TransitionShowHide="1" Visible="0" HideInEditor="1">
@@ -122,7 +122,7 @@
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="40" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="TypeTierItem" Border="0" Picture="1" Moveable="0" Escapable="0" Overlapped="1" TooltipColor="" IgnoreMouse="1" Sprite="">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-5" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="TypeTierItemBG" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" Picture="1" IgnoreMouse="1"/>
-        <Control Class="Button" Base="BK3:btnHolo_ExpandCollapse" Font="CRB_Button" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="42" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="TypeTierItemBtn" TooltipColor="" Text="" TextId="" GlobalRadioGroup="Runecrafting_GlobalRadioGroup_TypeTierItem" Tooltip="">
+        <Control Class="Button" Base="BK3:btnHolo_ExpandCollapseSmall" Font="CRB_Button" ButtonType="Check" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-5" BAnchorPoint="0" BAnchorOffset="42" DT_VCENTER="1" DT_CENTER="1" BGColor="UI_BtnBGDefault" TextColor="UI_BtnTextDefault" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" TooltipType="OnCursor" Name="TypeTierItemBtn" TooltipColor="" Text="" TextId="" GlobalRadioGroup="Runecrafting_GlobalRadioGroup_TypeTierItem" Tooltip="">
             <Event Name="ButtonCheck" Function="OnTypeTierItemCheck"/>
             <Event Name="ButtonUncheck" Function="OnTypeTierItemUncheck"/>
         </Control>
@@ -157,7 +157,7 @@
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_Header9" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_BtnTextGoldListNormal" Template="Default" TooltipType="OnCursor" Name="StringAdd" TooltipColor="" TextId="ArenaRoster_Add" DT_VCENTER="1" DT_CENTER="1"/>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="224" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="UnlockConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="0" CloseOnExternalClick="1" Sprite="" NoClip="1" UseTemplateBG="1" Tooltip="" NewWindowDepth="1" TestAlpha="1">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="224" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="UnlockConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" CloseOnExternalClick="1" Sprite="" NoClip="1" UseTemplateBG="1" Tooltip="" NewWindowDepth="1" TestAlpha="1">
         <Event Name="WindowClosed" Function="OnCurrentConfirmPopupClose"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-5" TAnchorPoint="1" TAnchorOffset="-54" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="1" BAnchorOffset="-34" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SoulboundWarning" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="EngravingStation_ThisWillSoulbind" DT_WORDBREAK="0" HideInEditor="0" DT_CENTER="1" DT_BOTTOM="0" IgnoreMouse="1" AutoScaleText="1" NoClip="0" TestAlpha="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="CRB_Header10" Text="" Template="Default" TooltipType="OnCursor" Name="UnlockConfirmText" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="EngravingStation_SlotUnlockLabel" DT_CENTER="1"/>
@@ -169,7 +169,7 @@
             <Event Name="ButtonSignal" Function="OnCurrentConfirmPopupClose"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="209" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="ClearConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="0" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" TestAlpha="1">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="209" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="ClearConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" TestAlpha="1">
         <Event Name="WindowClosed" Function="OnCurrentConfirmPopupClose"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="CRB_Header10" Text="" Template="Default" TooltipType="OnCursor" Name="ClearConfirmText" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="EngravingStation_RemoveLabel" DT_WORDBREAK="0" DT_CENTER="1" VScroll="0" IgnoreMouse="1" DT_VCENTER="0"/>
         <Control Class="CashWindow" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="40" TooltipType="OnCursor" RelativeToClient="1" Font="CRB_Header9" Text="" Template="Default" BGColor="ffffffff" TextColor="UI_TextHoloTitle" DT_RIGHT="0" Name="ClearCashWindow" TooltipColor="" SkipZeroes="1" DT_CENTER="1" DT_VCENTER="0"/>
@@ -180,7 +180,7 @@
             <Event Name="ButtonSignal" Function="OnCurrentConfirmPopupClose"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="259" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="AddConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="0" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" Sizable="0" TestAlpha="1" Tooltip="">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="259" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="AddConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" Sizable="0" TestAlpha="1" Tooltip="">
         <Event Name="WindowClosed" Function="OnCurrentConfirmPopupClose"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-5" TAnchorPoint="0" TAnchorOffset="17" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="0" BAnchorOffset="37" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SoulboundWarning" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="EngravingStation_ThisWillSoulbind" DT_WORDBREAK="0" HideInEditor="0" DT_CENTER="1" DT_BOTTOM="0" IgnoreMouse="1" AutoScaleText="1" NoClip="1" TestAlpha="1"/>
         <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-20" TAnchorPoint="0" TAnchorOffset="37" RAnchorPoint="0.5" RAnchorOffset="20" BAnchorPoint="0" BAnchorOffset="77" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="AddConfirmIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="ClientSprites:Icon_SkillMisc_UI_ss_sglfire" Picture="1" IgnoreMouse="1" HideInEditor="0"/>
@@ -193,7 +193,7 @@
         </Control>
         <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" BGColor="ffffffff" Font="CRB_Header10" TextColor="UI_WindowTitleYellow" Text="" TextId="EngravingStation_AddConfirm" DT_CENTER="1" Line="0"/>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="250" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="ReplaceConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="0" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" Tooltip="" UseTemplateBG="1" TestAlpha="1">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="250" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="ReplaceConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" Tooltip="" UseTemplateBG="1" TestAlpha="1">
         <Event Name="WindowClosed" Function="OnCurrentConfirmPopupClose"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="20" RelativeToClient="1" Font="CRB_Header10" Text="" Template="Default" TooltipType="OnCursor" Name="AddConfirmText" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="EngravingStation_ReplaceConfirm" DT_CENTER="1"/>
         <Control Class="CashWindow" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="1" TAnchorOffset="-106" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="40" TooltipType="OnCursor" RelativeToClient="1" Font="CRB_Header9" Text="" Template="Default" BGColor="ffffffff" TextColor="UI_TextHoloTitle" DT_RIGHT="0" Name="ReplaceCashWindow" TooltipColor="" SkipZeroes="1" DT_CENTER="1"/>
@@ -205,7 +205,7 @@
             <Event Name="ButtonSignal" Function="OnCurrentConfirmPopupClose"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="260" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="AppendConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="0" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" TestAlpha="1" Tooltip="">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="260" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="AppendConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" TestAlpha="1" Tooltip="">
         <Event Name="WindowClosed" Function="OnCurrentConfirmPopupClose"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-5" TAnchorPoint="1" TAnchorOffset="-52" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="1" BAnchorOffset="-32" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SoulboundWarning" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="EngravingStation_ThisWillSoulbind" DT_WORDBREAK="0" HideInEditor="0" DT_CENTER="1" DT_BOTTOM="0" IgnoreMouse="1" AutoScaleText="1" NoClip="1" TestAlpha="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="32" RelativeToClient="1" Font="CRB_Header10" Text="" Template="Default" TooltipType="OnCursor" Name="AppendConfirmText" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="EngravingStation_AddNewRuneSlotLabel" DT_WORDBREAK="1" DT_CENTER="1"/>
@@ -217,7 +217,7 @@
             <Event Name="ButtonSignal" Function="OnCurrentConfirmPopupClose"/>
         </Control>
     </Form>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="260" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="RerollConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="0" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" TestAlpha="1" Tooltip="">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="-90" TAnchorPoint="0" TAnchorOffset="44" RAnchorPoint="0" RAnchorOffset="150" BAnchorPoint="0" BAnchorOffset="260" RelativeToClient="1" Font="Default" Text="" Template="Holo_Small_YesNoFlyout" TooltipType="OnCursor" Name="RerollConfirm" Border="1" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" IgnoreMouse="1" CloseOnExternalClick="1" Sprite="" NoClip="1" NewWindowDepth="1" UseTemplateBG="1" TestAlpha="1" Tooltip="">
         <Event Name="WindowClosed" Function="OnCurrentConfirmPopupClose"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-5" TAnchorPoint="1" TAnchorOffset="-52" RAnchorPoint="1" RAnchorOffset="5" BAnchorPoint="1" BAnchorOffset="-32" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SoulboundWarning" BGColor="ffffffff" TextColor="UI_TextHoloBody" TooltipColor="" TextId="EngravingStation_ThisWillSoulbind" DT_WORDBREAK="0" HideInEditor="0" DT_CENTER="1" DT_BOTTOM="0" IgnoreMouse="1" AutoScaleText="1" NoClip="1" TestAlpha="1"/>
         <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-20" TAnchorPoint="1" TAnchorOffset="-93" RAnchorPoint="0.5" RAnchorOffset="20" BAnchorPoint="1" BAnchorOffset="-53" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" TooltipType="OnCursor" Name="RerollMaterialIcon" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="IconSprites:Icon_ItemMisc_EldanPowerFragment" Picture="1" IgnoreMouse="1" DT_BOTTOM="1" DT_RIGHT="1" TextId=""/>
@@ -250,74 +250,3 @@
         <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-1" BAnchorPoint="1" BAnchorOffset="0" BGColor="ffffffff" Font="Default" TextColor="ffffffff" Text="" Sprite="Runecrafting:sprRunecrafting_Inset" Line="0"/>
     </Form>
 </Forms>
-tring_GetWeaselString(Apollo.GetString("QuestTracker_ValueComplete"), Apollo.FormatNumber(nCompleted, 0, true), Apollo.FormatNumber(nNeeded, 0, true)))
-		end
-
-		if strPrefix ~= "" then
-			strResult = String_GetWeaselString(Apollo.GetString("QuestTracker_BuildText"), strPrefix, strResult)
-			strPrefix = ""
-		end
-
-		-- Prefix Time
-		if peoObjective:IsBusy() then
-			strPrefix = string.format("<T Font=\"CRB_InterfaceMedium_B\" TextColor=\"%s\">%s </T>", kstrYellow, Apollo.GetString("QuestTracker_Paused"))
-			strResult = String_GetWeaselString(Apollo.GetString("QuestTracker_BuildText"), strPrefix, strResult)
-			strPrefix = ""
-		elseif peoObjective:GetTotalTime() > 0 then
-			local strColorOverride = peoObjective:GetObjectiveType() == PublicEventObjective.PublicEventObjectiveType_TimedWin and kstrGreen or nil
-			local nTime = math.max(0, math.floor((peoObjective:GetTotalTime() - peoObjective:GetElapsedTime()) / 1000))
-			strResult = self:HelperPrefixTimeString(nTime, strResult, strColorOverride)
-		end
-
-		-- Extra formatting
-		local bDungeon = queQuest:GetEventType() == PublicEvent.PublicEventType_Dungeon
-		if eCategory == PublicEventObjective.PublicEventObjectiveCategory_PlayerPath then
-			strPrefix = string.format("<T Font=\"CRB_InterfaceMedium_B\">%s </T>", String_GetWeaselString(Apollo.GetString("CRB_ProgressSimple"), self.strPlayerPath or Apollo.GetString("CRB_Path")))
-		elseif eCategory == PublicEventObjective.PublicEventObjectiveCategory_Optional then
-			strPrefix = string.format("<T Font=\"CRB_InterfaceMedium_B\">%s </T>", bDungeon and kstrDungeonBronzeIcon or Apollo.GetString("QuestTracker_OptionalTag"))
-		elseif eCategory == PublicEventObjective.PublicEventObjectiveCategory_Challenge then
-			strPrefix = string.format("<T Font=\"CRB_InterfaceMedium_B\">%s </T>", bDungeon and kstrDungeonGoldIcon or Apollo.GetString("QuestTracker_ChallengeTag"))
-		end
-
-		if strPrefix ~= "" then
-			strResult = String_GetWeaselString(Apollo.GetString("QuestTracker_BuildText"), strPrefix, strResult)
-		end
-	end
-	return strResult
-end
-
------------------------------------------------------------------------------------------------
--- PvP
------------------------------------------------------------------------------------------------
-
-function QuestTracker:OnLeavePvP()
-	self.bDrawPvPScreenOnly = false
-	if self.wndMain:FindChild("SwapToPvP") and self.wndMain:FindChild("SwapToPvP"):IsValid() then
-		self.wndMain:FindChild("SwapToPvP"):Destroy()
-	end
-	if self.wndMain:FindChild("SwapToQuests") and self.wndMain:FindChild("SwapToQuests"):IsValid() then
-		self.wndMain:FindChild("SwapToQuests"):Destroy()
-	end
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToPvPBtn() -- Also from code
-	self.bDrawPvPScreenOnly = true
-	if self.wndMain:FindChild("SwapToPvP") and self.wndMain:FindChild("SwapToPvP"):IsValid() then
-		self.wndMain:FindChild("SwapToPvP"):Destroy()
-	end
-	self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToDungeonsBtn() -- Also from code
-	self.bDrawDungeonScreenOnly = true
-	if self.wndMain:FindChild("SwapToDungeons") and self.wndMain:FindChild("SwapToDungeons"):IsValid() then
-		self.wndMain:FindChild("SwapToDungeons"):Destroy()
-	end
-	self:FactoryProduce(self.wndQuestTrackerScroll, "SwapToQuests", "SwapToQuests")
-	self:DestroyAndRedraw()
-end
-
-function QuestTracker:OnSwapToShiphandBtn() -- Also from code
-	self.bD

@@ -7,7 +7,6 @@ require "Window"
 require "ChatSystemLib"
 require "Apollo"
 require "DialogSys"
-require "Quest"
 require "GameLib"
 require "PlayerPathLib"
 require "Tooltip"
@@ -16,12 +15,13 @@ require "XmlDoc"
 local Who = {}
 local knSaveVersion = 1
 local knDefaultNearbyLimit = 5
+local kstrNearbyPlayersQuestMarker = "99WhoNearbyPlayers"
 
 local karSortTypes =
 {
-	NameAsc		= 1,
+	NameAsc			= 1,
 	NameDesc		= 2,
-	LocationAsc	= 3,
+	LocationAsc		= 3,
 	LocationDesc	= 4,
 	LevelAsc		= 5,
 	LevelDesc		= 6,
@@ -33,46 +33,46 @@ local karSortTypes =
 
 local ktClassToIcon =
 {
-	[GameLib.CodeEnumClass.Warrior] 			= "HUD_ClassIcons:spr_Icon_HUD_Class_Warrior",
+	[GameLib.CodeEnumClass.Warrior] 		= "HUD_ClassIcons:spr_Icon_HUD_Class_Warrior",
 	[GameLib.CodeEnumClass.Engineer] 		= "HUD_ClassIcons:spr_Icon_HUD_Class_Engineer",
 	[GameLib.CodeEnumClass.Esper] 			= "HUD_ClassIcons:spr_Icon_HUD_Class_Esper",
 	[GameLib.CodeEnumClass.Medic] 			= "HUD_ClassIcons:spr_Icon_HUD_Class_Medic",
-	[GameLib.CodeEnumClass.Stalker] 			= "HUD_ClassIcons:spr_Icon_HUD_Class_Stalker",
-	[GameLib.CodeEnumClass.Spellslinger] 		= "HUD_ClassIcons:spr_Icon_HUD_Class_Spellslinger",
+	[GameLib.CodeEnumClass.Stalker] 		= "HUD_ClassIcons:spr_Icon_HUD_Class_Stalker",
+	[GameLib.CodeEnumClass.Spellslinger]	= "HUD_ClassIcons:spr_Icon_HUD_Class_Spellslinger",
 }
 
 local ktClassToIconPanel =
 {
-	[GameLib.CodeEnumClass.Warrior] 			= "IconSprites:Icon_Windows_UI_CRB_Warrior",
+	[GameLib.CodeEnumClass.Warrior] 		= "IconSprites:Icon_Windows_UI_CRB_Warrior",
 	[GameLib.CodeEnumClass.Engineer] 		= "IconSprites:Icon_Windows_UI_CRB_Engineer",
 	[GameLib.CodeEnumClass.Esper] 			= "IconSprites:Icon_Windows_UI_CRB_Esper",
 	[GameLib.CodeEnumClass.Medic] 			= "IconSprites:Icon_Windows_UI_CRB_Medic",
-	[GameLib.CodeEnumClass.Stalker] 			= "IconSprites:Icon_Windows_UI_CRB_Stalker",
-	[GameLib.CodeEnumClass.Spellslinger] 		= "IconSprites:Icon_Windows_UI_CRB_Spellslinger",
+	[GameLib.CodeEnumClass.Stalker] 		= "IconSprites:Icon_Windows_UI_CRB_Stalker",
+	[GameLib.CodeEnumClass.Spellslinger]	= "IconSprites:Icon_Windows_UI_CRB_Spellslinger",
 }
 
 local c_arClassStrings =
 {
-	[GameLib.CodeEnumClass.Warrior] 			= "ClassWarrior",
+	[GameLib.CodeEnumClass.Warrior] 		= "ClassWarrior",
 	[GameLib.CodeEnumClass.Engineer] 		= "ClassEngineer",
 	[GameLib.CodeEnumClass.Esper] 			= "ClassESPER",
 	[GameLib.CodeEnumClass.Medic] 			= "ClassMedic",
-	[GameLib.CodeEnumClass.Stalker] 			= "ClassStalker",
-	[GameLib.CodeEnumClass.Spellslinger] 		= "CRB_Spellslinger",
+	[GameLib.CodeEnumClass.Stalker] 		= "ClassStalker",
+	[GameLib.CodeEnumClass.Spellslinger] 	= "CRB_Spellslinger",
 }
 
 
 local ktPathToIcon = {
-	[PlayerPathLib.PlayerPathType_Soldier] 	= "HUD_ClassIcons:spr_Icon_HUD_Path_Soldier",
-	[PlayerPathLib.PlayerPathType_Settler] 	= "HUD_ClassIcons:spr_Icon_HUD_Path_Settler",
-	[PlayerPathLib.PlayerPathType_Scientist] = "HUD_ClassIcons:spr_Icon_HUD_Path_Scientist",
+	[PlayerPathLib.PlayerPathType_Soldier] 		= "HUD_ClassIcons:spr_Icon_HUD_Path_Soldier",
+	[PlayerPathLib.PlayerPathType_Settler] 		= "HUD_ClassIcons:spr_Icon_HUD_Path_Settler",
+	[PlayerPathLib.PlayerPathType_Scientist] 	= "HUD_ClassIcons:spr_Icon_HUD_Path_Scientist",
 	[PlayerPathLib.PlayerPathType_Explorer] 	= "HUD_ClassIcons:spr_Icon_HUD_Path_Explorer",
 }
 
 local ktPathToIconPanel = {
-	[PlayerPathLib.PlayerPathType_Soldier] 	= "bk3:UI_Icon_CharacterCreate_Path_Soldier",
-	[PlayerPathLib.PlayerPathType_Settler] 	= "bk3:UI_Icon_CharacterCreate_Path_Settler",
-	[PlayerPathLib.PlayerPathType_Scientist] = "bk3:UI_Icon_CharacterCreate_Path_Scientist",
+	[PlayerPathLib.PlayerPathType_Soldier] 		= "bk3:UI_Icon_CharacterCreate_Path_Soldier",
+	[PlayerPathLib.PlayerPathType_Settler] 		= "bk3:UI_Icon_CharacterCreate_Path_Settler",
+	[PlayerPathLib.PlayerPathType_Scientist] 	= "bk3:UI_Icon_CharacterCreate_Path_Scientist",
 	[PlayerPathLib.PlayerPathType_Explorer] 	= "bk3:UI_Icon_CharacterCreate_Path_Explorer",
 }
 
@@ -80,7 +80,7 @@ local c_arPathStrings = {
 	[PlayerPathLib.PlayerPathType_Soldier] 		= "CRB_Soldier",
 	[PlayerPathLib.PlayerPathType_Settler] 		= "CRB_Settler",
 	[PlayerPathLib.PlayerPathType_Scientist] 	= "CRB_Scientist",
-	[PlayerPathLib.PlayerPathType_Explorer] 		= "CRB_Explorer",
+	[PlayerPathLib.PlayerPathType_Explorer] 	= "CRB_Explorer",
 }
 
 function Who:new(o)
@@ -102,21 +102,28 @@ function Who:OnLoad()
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 	
 	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", 	"OnInterfaceMenuListHasLoaded", self)
+	Apollo.RegisterEventHandler("ObjectiveTrackerLoaded", 		"OnObjectiveTrackerLoaded", self)
 	
 	Apollo.RegisterEventHandler("PlayerCreated", 				"Initialize", self)
 	Apollo.RegisterEventHandler("CharacterCreated", 			"Initialize", self)
 	Apollo.RegisterEventHandler("UnitCreated", 					"OnUnitCreated", self)
 	Apollo.RegisterEventHandler("UnitDestroyed", 				"OnUnitDestroyed", self)
-	Apollo.RegisterEventHandler("QuestTrackerUpdated", 		"OnQuestTrackerUpdated", self)
-	Apollo.RegisterEventHandler("WhoResponse", 				"OnWhoResponse", self)
+	Apollo.RegisterEventHandler("WhoResponse", 					"OnWhoResponse", self)
 	
-	self.wndQuestTracker = nil
+	Apollo.RegisterEventHandler("FriendshipUpdate", 			"HelperDelayResetUI", self)
+	Apollo.RegisterEventHandler("FriendshipRemove", 			"HelperDelayResetUI", self)
+	
+	Apollo.RegisterEventHandler("Group_Join", 					"HelperDelayResetUI", self)
+	Apollo.RegisterEventHandler("Group_Left", 					"HelperDelayResetUI", self)
+	Apollo.RegisterEventHandler("Group_FlagsChanged", 			"HelperDelayResetUI", self)
+	
+	self.wndObjectiveTracker = nil
 	self.nWhoSort = karSortTypes.NameAsc
 	self.nNearbySort = karSortTypes.NameAsc
 	self.nLimitPreference = knDefaultNearbyLimit
 	self.nLimit = knDefaultNearbyLimit
 	self.bFormLoaded = false
-	self.bQuestTrackerLoaded = false
+	self.bObjectiveTrackerLoaded = false
 	self.bShowSearchResults = true
 	self.bShowNearbyPlayers = true
 	self.bMinimized = false
@@ -125,8 +132,10 @@ function Who:OnLoad()
 	self.tWhoPlayers = {}
 	
 	self.bTimerRunning = false
-	self.timer = ApolloTimer.Create(1.5, true, "OnTimer", self)
+	self.timer = ApolloTimer.Create(5, true, "OnTimer", self)
 	self.timer:Stop()
+	
+	Event_FireGenericEvent("ObjectiveTracker_RequestParent")
 end
 
 function Who:OnSave(eType)
@@ -156,7 +165,7 @@ function Who:OnRestore(eType, tSavedData)
 		self.nWhoSort = tSavedData.nWhoSort or karSortTypes.NameAsc
 		self.nNearbySort = tSavedData.nNearbySort or karSortTypes.NameAsc
 		self.nLimitPreference = tSavedData.nLimitPreference or knDefaultNearbyLimit
-		self.nLimit = self.nLimitPreference
+		self.nLimit = self.bShowNearbyPlayers and self.nLimitPreference or 0
 	end
 end
 
@@ -165,11 +174,12 @@ function Who:OnDocumentReady()
         return
     end
 	
-	Apollo.RegisterEventHandler("ChangeWorld", 						"HelperDelayResetUI", self)
-	Apollo.RegisterEventHandler("SubZoneChanged",				"HelperDelayResetUI", self)
+	Apollo.RegisterEventHandler("ChangeWorld", 				"HelperDelayResetUI", self)
+	Apollo.RegisterEventHandler("SubZoneChanged",			"HelperDelayResetUI", self)
 	Apollo.RegisterEventHandler("WindowManagementReady", 	"OnWindowManagementReady", self)
 	Apollo.RegisterEventHandler("WindowManagementUpdate", 	"OnWindowManagementUpdate", self)
-	Apollo.RegisterEventHandler("ToggleWhoWindow", 				"OnWhoButtonClicked", self)
+	Apollo.RegisterEventHandler("ToggleWhoWindow", 			"OnWhoButtonClicked", self)
+	Apollo.RegisterEventHandler("ToggleShowNearbyPlayers", 	"OnToggleShowNearbyPlayers", self)
 	
 	self:Initialize()
 	
@@ -184,6 +194,30 @@ function Who:OnInterfaceMenuListHasLoaded()
 	}
 	
 	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("Who_WindowTitle"), tData)
+end
+
+function Who:OnObjectiveTrackerLoaded(wndForm)
+	self.wndObjectiveTracker = wndForm
+	
+	local tData = {
+		["strAddon"]				= Apollo.GetString("Who_NearbyPlayers"),
+		["strEventMouseLeft"]	= "ToggleShowNearbyPlayers", 
+		["strEventMouseRight"]	= "ToggleWhoWindow", 
+		["strIcon"]					= "spr_ObjectiveTracker_IconNearbyPlayers",
+		["strDefaultSort"]			= kstrNearbyPlayersQuestMarker,
+	}
+	
+	Event_FireGenericEvent("ObjectiveTracker_NewAddOn", tData)
+	
+	if not self.tWndRefs.wndTrackerHeader or self.tWndRefs.wndTrackerHeader and self.tWndRefs.wndTrackerHeader:GetParent() == nil then
+		self:HelperAttachToObjectiveTracker()
+	end
+	
+	if self.bFormLoaded then
+		self:HelperDelayResetUI()
+	else
+		self:Initialize()
+	end
 end
 
 function Who:OnWindowManagementReady()
@@ -218,6 +252,8 @@ function Who:Initialize()
 	self.tWndRefs.wndShowOnHUDLimit:SetText(self.nLimit)
 	
 	self.bMoveable = self.tWndRefs.wndPlayerForm:IsStyleOn("Moveable")
+	
+	self:HelperResetUI()
 end
 
 function Who:OnWindowManagementUpdate(tSettings)
@@ -234,17 +270,17 @@ end
 function Who:HelperLoadForms()
 	self:HelperDestroyForms()
 	
-	self.tWndRefs.wndMain 					= Apollo.LoadForm(self.xmlDoc, "WhoForm", nil, self)
-	self.tWndRefs.wndMainContent			= self.tWndRefs.wndMain:FindChild("Content")
-	self.tWndRefs.wndNearbyPlayers			= self.tWndRefs.wndMain:FindChild("btnNearbyPlayers")
-	self.tWndRefs.wndSearchResults			= self.tWndRefs.wndMain:FindChild("btnSearchResults")
+	self.tWndRefs.wndMain 				= Apollo.LoadForm(self.xmlDoc, "WhoForm", nil, self)
+	self.tWndRefs.wndMainContent		= self.tWndRefs.wndMain:FindChild("Content")
+	self.tWndRefs.wndNearbyPlayers		= self.tWndRefs.wndMain:FindChild("btnNearbyPlayers")
+	self.tWndRefs.wndSearchResults		= self.tWndRefs.wndMain:FindChild("btnSearchResults")
 	self.tWndRefs.wndShowNearbyPlayers	= self.tWndRefs.wndMain:FindChild("btnShowNearbyPlayers")
 	self.tWndRefs.wndShowOnHUDLimit 	= self.tWndRefs.wndMain:FindChild("ShowOnHUDLimitEditBox")
 	
 	self.tWndRefs.wndMainWhoContent		= self.tWndRefs.wndMain:FindChild("Controls_Who")
 	self.tWndRefs.wndMainNearbyContent	= self.tWndRefs.wndMain:FindChild("Controls_Nearby")
 	
-	self.tWndRefs.wndPlayerForm 			= Apollo.LoadForm(self.xmlDoc, "PlayerForm", "FixedHudStratum", self)
+	self.tWndRefs.wndPlayerForm 		= Apollo.LoadForm(self.xmlDoc, "PlayerForm", "FixedHudStratum", self)
 	self.tWndRefs.wndPlayerFormContent 	= self.tWndRefs.wndPlayerForm:FindChild("Content")
 	
 	self.tWndRefs.wndFormWhoHeader 		= self:FactoryProduce(self.tWndRefs.wndMainContent, "FormHeader", "NearbyPlayersFormHeader")
@@ -253,36 +289,35 @@ function Who:HelperLoadForms()
 	
 	self.tWndRefs.wndFormNearbyHeader 	= self:FactoryProduce(self.tWndRefs.wndMainContent, "FormHeader", "NearbyPlayersFormHeader")
 	self.tWndRefs.wndFormNearbyContent	= self.tWndRefs.wndFormNearbyHeader:FindChild("EpisodeGroupContainer")
-	self.tWndRefs.wndFormNearbyTitle 		= self.tWndRefs.wndFormNearbyHeader:FindChild("EpisodeGroupTitle")
+	self.tWndRefs.wndFormNearbyTitle 	= self.tWndRefs.wndFormNearbyHeader:FindChild("EpisodeGroupTitle")
 	
-	self.tWndRefs.wndFloaterHeader			= self:FactoryProduce(self.tWndRefs.wndPlayerFormContent, "TrackerHeader", "NearbyPlayersFloaterHeader")
-	self.tWndRefs.wndFloaterContent 		= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupContainer")
-	self.tWndRefs.wndFloaterTitle 			= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupTitle")
-	self.knInitialEpisodeGroupHeight 			= self.tWndRefs.wndFloaterHeader:GetHeight()
+	self.tWndRefs.wndFloaterHeader		= self:FactoryProduce(self.tWndRefs.wndPlayerFormContent, "TrackerHeader", "NearbyPlayersFloaterHeader")
+	self.tWndRefs.wndFloaterContent 	= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupContainer")
+	self.tWndRefs.wndFloaterTitle 		= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupTitle")
+	self.knInitialEpisodeGroupHeight 	= self.tWndRefs.wndFloaterHeader:GetHeight()
 	
-	self.tWndRefs.wndMinimizeFloater 		= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupMinimizeBtn")
+	self.tWndRefs.wndMinimizeFloater 	= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupMinimizeBtn")
 	self.tWndRefs.wndPopoutFloater 		= self.tWndRefs.wndFloaterHeader:FindChild("EpisodeGroupPopoutBtn")
 	
-	self:HelperAttachToQuestTracker()
+	self:HelperAttachToObjectiveTracker()
 	
 	self.bFormLoaded = true
 end
 
-function Who:HelperAttachToQuestTracker()
-	if not self.wndQuestTracker or not self.wndQuestTracker:IsValid() then
-		return false
+function Who:HelperAttachToObjectiveTracker()
+	if not self.wndObjectiveTracker or not self.wndObjectiveTracker:IsValid() then
+		return
 	end
 	
-	self.tWndRefs.wndTrackerHeader		= self:FactoryProduce(self.wndQuestTracker, "TrackerHeader", "NearbyPlayersTrackerHeader")
-	self.tWndRefs.wndTrackerHeader:SetData("99WhoNearbyPlayers") --QuestTracker sort index
+	self.tWndRefs.wndTrackerHeader		= self:FactoryProduce(self.wndObjectiveTracker, "TrackerHeader", kstrNearbyPlayersQuestMarker)
 	
-	self.tWndRefs.wndTrackerContent 		= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupContainer")
-	self.tWndRefs.wndTrackerTitle 			= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupTitle")
+	self.tWndRefs.wndTrackerContent		= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupContainer")
+	self.tWndRefs.wndTrackerTitle		= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupTitle")
 	
-	self.tWndRefs.wndMinimizeTracker 		= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupMinimizeBtn")
-	self.tWndRefs.wndPopoutTracer 			= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupPopoutBtn")
+	self.tWndRefs.wndMinimizeTracker 	= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupMinimizeBtn")
+	self.tWndRefs.wndPopoutTracker		= self.tWndRefs.wndTrackerHeader:FindChild("EpisodeGroupPopoutBtn")
 	
-	self.bQuestTrackerLoaded = true
+	self.bObjectiveTrackerLoaded = true
 end
 
 function Who:HelperDestroyForms()
@@ -295,27 +330,11 @@ function Who:HelperDestroyForms()
 	self.tWndRefs = { }
 end
 
-
-function Who:OnQuestTrackerUpdated(wndForm)
-	self.wndQuestTracker = wndForm
-	
-	if not self.tWndRefs.wndTrackerHeader or self.tWndRefs.wndTrackerHeader and self.tWndRefs.wndTrackerHeader:GetParent() == nil then
-		self:HelperAttachToQuestTracker()
-	end
-	
-	if self.bFormLoaded then
-		self:HelperDelayResetUI()
-	else
-		self:Initialize()
-	end
-end
-
 function Who:OnTimer()
 	self:HelperResetUI()
 end
 
 function Who:OnUnitCreated(unit)
-	--if unit:GetLevel() and unit:GetLevel() == 50 then
 	if unit:GetType() == "Player" then
 		self.tNearbyPlayers[unit:GetName()] = unit
 		
@@ -324,7 +343,6 @@ function Who:OnUnitCreated(unit)
 end
 
 function Who:OnUnitDestroyed(unit)
-	--if unit:GetLevel() and unit:GetLevel() == 50 then
 	if unit:GetType() == "Player" then
 		self.tNearbyPlayers[unit:GetName()] = nil
 		
@@ -332,7 +350,7 @@ function Who:OnUnitDestroyed(unit)
 	end
 end
 
-function Who:OnWhoResponse(arResponse, eWhoResult, strResponse)
+function Who:OnWhoResponse(arResponse, eWhoResult, strResponse)	
 	if eWhoResult == GameLib.CodeEnumWhoResult.OK or eWhoResult == GameLib.CodeEnumWhoResult.Partial then
 		self.tWhoPlayers = arResponse
 	elseif eWhoResult == GameLib.CodeEnumWhoResult.UnderCooldown then
@@ -348,7 +366,14 @@ function Who:OnWhoButtonClicked(wndHandler, wndControl)
 	self.bShowSearchResults = false
 	
 	self:HelperResetUI()
-	self.tWndRefs.wndMain:Show(true)
+	self.tWndRefs.wndMain:Show(not self.tWndRefs.wndMain:IsShown())
+end
+
+function Who:OnToggleShowNearbyPlayers()
+	self.bShowNearbyPlayers = not self.bShowNearbyPlayers
+	self.nLimit = self.bShowNearbyPlayers and self.nLimitPreference or 0
+	
+	self:HelperResetUI()
 end
 
 function Who:OnCancel(wndHandler, wndControl)
@@ -380,13 +405,14 @@ function Who:HelperResetUI()
 	
 	local nWhoCount = 0
 	local nPlayerCount = 0
-	
-	if not self.bFormLoaded or not GameLib.IsCharacterLoaded() then
-		return
-	end
+	local nRivals = 0
+	local strHeaderText = ""
 	
 	--Override floating pref if quest tracker isn't loaded.
-	local bFloating = self.bFloating or not self.bQuestTrackerLoaded
+	local bFloating = self.bFloating or not self.bObjectiveTrackerLoaded
+	
+	self.tWndRefs.wndShowNearbyPlayers:SetCheck(self.nLimit > 0)
+	self.tWndRefs.wndShowOnHUDLimit:SetText(self.nLimit)
 	
 	self.tWndRefs.wndFormWhoContent:DestroyChildren()
 	self.tWndRefs.wndFormNearbyContent:DestroyChildren()
@@ -395,11 +421,12 @@ function Who:HelperResetUI()
 	self.tWndRefs.wndMinimizeFloater:SetCheck(self.bMinimized)
 	self.tWndRefs.wndPopoutFloater:SetCheck(bFloating)
 	
-	if self.bQuestTrackerLoaded then
+	if self.bObjectiveTrackerLoaded then
 		self.tWndRefs.wndTrackerContent:DestroyChildren()
 		
+		self.tWndRefs.wndMinimizeTracker:Show(self.bMinimized)
 		self.tWndRefs.wndMinimizeTracker:SetCheck(self.bMinimized)
-		self.tWndRefs.wndPopoutTracer:SetCheck(bFloating)
+		self.tWndRefs.wndPopoutTracker:SetCheck(bFloating)
 	end
 	
 	--Display /who results
@@ -461,15 +488,17 @@ function Who:HelperResetUI()
 		self.tWndRefs.wndFormWhoHeader:Show(false)
 	end
 	
+	local tNearbyPlayers = { }
+	for unitName, unit in pairs(self.tNearbyPlayers) do
+		if not unit:IsInYourGroup() and not unit:IsThePlayer() then
+			table.insert(tNearbyPlayers, unit)
+		end
+	end
+	
+	nPlayerCount = #tNearbyPlayers
+	
 	--Display nearby players
 	if not self.bShowSearchResults or self.bShowNearbyPlayers then
-		local tNearbyPlayers = { }
-		for unitName, unit in pairs(self.tNearbyPlayers) do
-			if not unit:IsInYourGroup() and not unit:IsThePlayer() then
-				table.insert(tNearbyPlayers, unit)
-			end
-		end
-		
 		--Sorting
 		if self.nNearbySort == karSortTypes.NameAsc then
 			table.sort(tNearbyPlayers, function(a,b) return (a:GetName() < b:GetName()) end)
@@ -494,7 +523,7 @@ function Who:HelperResetUI()
 		for unitName, unit in ipairs(tNearbyPlayers) do
 			nRowCount = nRowCount + 1
 			local strClassIconSprite = ktClassToIconPanel[unit:GetClassId()] or ""
-			local strClass = Apollo.GetString(c_arClassStrings[unit:GetClassId()]) or ""
+			local strClass = c_arClassStrings[unit:GetClassId()] and Apollo.GetString(c_arClassStrings[unit:GetClassId()]) or ""
 			local nPathId = unit and unit:IsValid() and unit:GetPlayerPathType() > 0 and unit:GetPlayerPathType() or 0
 			local strPathIconSprite = ktPathToIconPanel[nPathId] or ""
 			local strPathType = c_arPathStrings[nPathId] and Apollo.GetString(c_arPathStrings[nPathId]) or ""
@@ -527,37 +556,37 @@ function Who:HelperResetUI()
 		local wndParentContent = bFloating and self.tWndRefs.wndFloaterContent or self.tWndRefs.wndTrackerContent
 		for unitName, unit in ipairs(tTrackerNearbyPlayers) do
 			local strClassIconSprite = ktClassToIcon[unit:GetClassId()] or ""
-			local strClass = Apollo.GetString(c_arClassStrings[unit:GetClassId()]) or ""
+			local strClass = c_arClassStrings[unit:GetClassId()] and Apollo.GetString(c_arClassStrings[unit:GetClassId()]) or ""
 			local nPathId = unit and unit:IsValid() and unit:GetPlayerPathType() > 0 and unit:GetPlayerPathType() or 0
 			local strPathIconSprite = ktPathToIcon[nPathId] or ""
 			local strPathType = c_arPathStrings[nPathId] and Apollo.GetString(c_arPathStrings[nPathId]) or ""
 			local strLocation = tostring(math.ceil(math.abs(unit:GetPosition().x - unitPlayer:GetPosition().x)))
 			local strColor = ApolloColor.new(unit:GetDispositionTo(unitPlayer) == Unit.CodeEnumDisposition.Hostile and "DispositionHostile" or "ffffffff")
+			local strRivalSprite = unit:IsRival() and "IconSprites:Icon_Windows_UI_CRB_Rival" or unit:IsAccountFriend() and "IconSprites:Icon_Windows_UI_CRB_Friend" or unit:IsFriend() and "IconSprites:Icon_Windows_UI_CRB_Friend" or ""
+			nRivals = unit:IsRival() and nRivals + 1 or nRivals + 0
 			
-			local wndListItem = self:FactoryProduce(wndParentContent, "TrackerListItem", unit)
-			wndListItem:FindChild("ListItemBigBtn"):SetData(unit)
-			wndListItem:FindChild("ListItemName"):SetText(unit:GetName())
-			wndListItem:FindChild("ListItemName"):SetTextColor(strColor)
-			wndListItem:FindChild("ListItemIcon"):SetSprite(strClassIconSprite)
-			wndListItem:FindChild("ListItemIcon"):SetTooltip(strClass)
-			wndListItem:FindChild("ListItemLevel"):SetText(unit:GetLevel())
-			wndListItem:FindChild("ListItemPathIcon"):SetSprite(strPathIconSprite)
-			wndListItem:FindChild("ListItemPathIcon"):SetTooltip(strPathType)
+			local wndTrackerListItem = self:FactoryProduce(wndParentContent, "TrackerListItem", unit)
+			wndTrackerListItem:FindChild("ListItemBigBtn"):SetData(unit)
+			wndTrackerListItem:FindChild("ListItemName"):SetText(unit:GetName())
+			wndTrackerListItem:FindChild("ListItemName"):SetTextColor(strColor)
+			wndTrackerListItem:FindChild("ListItemIcon"):SetSprite(strClassIconSprite)
+			wndTrackerListItem:FindChild("ListItemIcon"):SetTooltip(strClass)
+			wndTrackerListItem:FindChild("ListItemLevel"):SetText(unit:GetLevel())
+			wndTrackerListItem:FindChild("ListItemPathIcon"):SetSprite(strPathIconSprite)
+			wndTrackerListItem:FindChild("ListItemPathIcon"):SetTooltip(strPathType)
+			wndTrackerListItem:FindChild("ListItemRivalIcon"):SetSprite(strRivalSprite)
 		end
 		
-		local strHeaderText = #tNearbyPlayers > #tTrackerNearbyPlayers and String_GetWeaselString(Apollo.GetString("QuestTracker_NearbyPlayersLimited"), #tTrackerNearbyPlayers, #tNearbyPlayers) or String_GetWeaselString(Apollo.GetString("QuestTracker_NearbyPlayers"), #tTrackerNearbyPlayers)
+		strHeaderText = #tNearbyPlayers > #tTrackerNearbyPlayers and String_GetWeaselString(Apollo.GetString("QuestTracker_NearbyPlayersLimited"), #tTrackerNearbyPlayers, #tNearbyPlayers) or String_GetWeaselString(Apollo.GetString("QuestTracker_NearbyPlayers"), #tTrackerNearbyPlayers)
 		self.tWndRefs.wndFloaterTitle:SetText(strHeaderText)
 		self.tWndRefs.wndFormNearbyTitle:SetText(strHeaderText)
 		
-		if self.bQuestTrackerLoaded then
-			self.tWndRefs.wndTrackerTitle:SetText(strHeaderText)
-		end
-		
-		local nHeight = self:OnResizeContainer(wndParent, self.bShowNearbyPlayers and not self.bMinimized)
+		local nHeight = self:OnResizeContainer(wndParent, self.bShowNearbyPlayers)
 		local bShowTracker = self.bShowNearbyPlayers and #tTrackerNearbyPlayers > 0
 		self.tWndRefs.wndFloaterHeader:Show(bFloating and bShowTracker)
 		
-		if self.bQuestTrackerLoaded then
+		if self.bObjectiveTrackerLoaded then
+			self.tWndRefs.wndTrackerTitle:SetText(strHeaderText)
 			self.tWndRefs.wndTrackerHeader:Show(not bFloating and bShowTracker)
 		end
 		
@@ -570,8 +599,10 @@ function Who:HelperResetUI()
 		self:OnResizeContainer(self.tWndRefs.wndFormNearbyHeader, true)
 		self.tWndRefs.wndFormNearbyHeader:Show(not self.bShowSearchResults and #tNearbyPlayers > 0)
 		self.tWndRefs.wndPlayerForm:Show(bFloating and #tTrackerNearbyPlayers > 0)
-		
-		nPlayerCount = #tNearbyPlayers
+	else
+		if self.tWndRefs.wndTrackerHeader then
+			self.tWndRefs.wndTrackerHeader:Show(false)
+		end
 	end
 	
 	self.tWndRefs.wndMainContent:ArrangeChildrenVert()
@@ -586,9 +617,15 @@ function Who:HelperResetUI()
 	self.tWndRefs.wndNearbyPlayers:FindChild("SplashBtnAlert"):Show(nPlayerCount > 0)
 	self.tWndRefs.wndNearbyPlayers:FindChild("SplashBtnItemCount"):SetText(tostring(nPlayerCount))
 	
-	if not self.bFloating then
-		Event_FireGenericEvent("QuestTracker_ExternalRequestRedraw")
-	end
+	local tData = {
+		["strAddon"]	= Apollo.GetString("Who_NearbyPlayers"),
+		["strText"]		= nPlayerCount,
+		["bAlert"]		= nRivals > 0,
+		["bChecked"]	= self.bShowNearbyPlayers,
+		["bEnabled"]	= nPlayerCount > 0,
+	}
+
+	Event_FireGenericEvent("ObjectiveTracker_UpdateAddOn", tData)
 end
 
 function Who:OnWhoSortToggle(wndHandler, wndControl)	
@@ -678,21 +715,21 @@ function Who:OnWhoSortToggle(wndHandler, wndControl)
 end
 
 function Who:OnResizeContainer(wndEpisodeGroup, bIsShown)
-	local nOngoingGroupHeight = self.knInitialEpisodeGroupHeight
+	local nOngoingGroupHeight = bIsShown and self.knInitialEpisodeGroupHeight or 0
 	
 	if not wndEpisodeGroup or not wndEpisodeGroup:IsValid() then
 		return nOngoingGroupHeight
 	end
 	
 	local wndEpisodeGroupContainer = wndEpisodeGroup:FindChild("EpisodeGroupContainer")
+	local wndMinimize = wndEpisodeGroup:FindChild("EpisodeGroupMinimizeBtn")
 	
-	if bIsShown then
-		for idx, wndEpisode in pairs(wndEpisodeGroupContainer:GetChildren()) do
-			nOngoingGroupHeight = nOngoingGroupHeight + wndEpisode:GetHeight()
+	if bIsShown and (wndMinimize == nil or (wndMinimize and not wndMinimize:IsChecked())) then
+		for idx, wndChild in pairs(wndEpisodeGroupContainer:GetChildren()) do
+			nOngoingGroupHeight = nOngoingGroupHeight + wndChild:GetHeight()
 		end
 	end
 
-	nOngoingGroupHeight = nOngoingGroupHeight
 	wndEpisodeGroupContainer:ArrangeChildrenVert(0)
 	
 	local nLeft, nTop, nRight, nBottom = wndEpisodeGroup:GetAnchorOffsets()
@@ -705,7 +742,7 @@ end
 
 function Who:OnShowNearbyPlayersChecked(wndHandler, wndControl)
 	self.nLimit = wndControl:IsChecked() and self.nLimitPreference or 0
-	self.tWndRefs.wndShowOnHUDLimit:SetText(self.nLimit)
+	self.bShowNearbyPlayers = self.nLimit > 0
 	
 	self:HelperResetUI()
 end
@@ -714,24 +751,21 @@ function Who:OnShowNearbyPlayersChanged(wndHandler, wndControl)
 	self.nLimit = tonumber(wndControl:GetText()) or 0
 	self.nLimitPreference = self.nLimit
 	
-	self.tWndRefs.wndShowNearbyPlayers:SetCheck(self.nLimit > 0)
-	
 	self:HelperResetUI()
 end
 
 function Who:OnEpisodeGroupControlBackerMouseEnter(wndHandler, wndControl)
 	if wndHandler == wndControl then
 		wndHandler:FindChild("EpisodeGroupMinimizeBtn"):Show(true)
-		wndHandler:FindChild("EpisodeGroupPopoutBtn"):Show(self.bQuestTrackerLoaded)
-		wndHandler:FindChild("ListItemWhoBtn"):Show(true)
+		wndHandler:FindChild("EpisodeGroupPopoutBtn"):Show(self.bObjectiveTrackerLoaded)
 	end
 end
 
 function Who:OnEpisodeGroupControlBackerMouseExit(wndHandler, wndControl)
 	if wndHandler == wndControl then
-		wndHandler:FindChild("EpisodeGroupMinimizeBtn"):Show(false)
+		local wndBtn = wndHandler:FindChild("EpisodeGroupMinimizeBtn")
+		wndBtn:Show(wndBtn:IsChecked())
 		wndHandler:FindChild("EpisodeGroupPopoutBtn"):Show(false)
-		wndHandler:FindChild("ListItemWhoBtn"):Show(false)
 	end
 end
 
@@ -751,10 +785,6 @@ function Who:OnEpisodeGroupDockBtnChecked(wndHandler, wndControl, eMouseButton)
 	self.bFloating = true
 	
 	self:HelperResetUI()
-	
-	--This only gets fired in ResetUI() if the content is part of the quest tracker
-	--This click event is what pops it out of the quest tracker so we need to call this one-off to fix the quest tracker.
-	Event_FireGenericEvent("QuestTracker_ExternalRequestRedraw")
 end
 
 function Who:OnEpisodeGroupDockBtnUnChecked(wndHandler, wndControl, eMouseButton)
@@ -800,13 +830,12 @@ end
 -- Helpers
 -----------------------------------------------------------------------------------------------
 
-function Who:FactoryProduce(wndParent, strFormName, tObject)
+function Who:FactoryProduce(wndParent, strFormName, oObject)
 	local wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
-	wnd:SetData(tObject)
+	wnd:SetData(oObject)
 	
 	return wnd
 end
 
 local WhoInst = Who:new()
-WhoInst:Init()rOffset="-18" RAnchorPoint="1" RAnchorOffset="383" BAnchorPoint="0" BAnchorOffset="434" RelativeToClient="1" Font="Default" Text="" Template="Holo_Large" Name="RankPopout" Border="1" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TextId="" TooltipColor="" Tooltip="" HideInEditor="1" Visible="0" IgnoreMouse="1" Sprite="" NoClip="1" UseTemplateBG="1" NewWindowDepth="1" TestAlpha="1">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-12" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-33" RelativeToCl
+WhoInst:Init()

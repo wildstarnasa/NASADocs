@@ -36,10 +36,3 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="26" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="RewardEntryName" BGColor="white" TextColor="UI_TextHoloBodyHighlight" TextId="" DT_VCENTER="1" NewControlDepth="3" TooltipColor=""/>
     </Form>
 </Forms>
-" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="1" RAnchorOffset="-7" BAnchorPoint="1" BAnchorOffset="-6" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" Name="Count" BGColor="ffffffff" TextColor="ffffffff" DT_BOTTOM="1" DT_RIGHT="1" TextId="" Tooltip="" TooltipColor="" DT_WORDBREAK="1" HideInEditor="0"/>
-        <Event Name="MouseButtonDown" Function="OnItemMouseButtonDown"/>
-        <Event Name="MouseMove" Function="OnItemMouseMove"/>
-        <Event Name="MouseButtonUp" Function="OnItemMouseButtonUp"/>
-        <Event Name="DragDrop" Function="OnDragDrop"/>
-        <Event Name="QueryDragDrop" Function="OnQueryDragDrop"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="5" RAnchorPoint="1" RAnchorOffset="-5" BAncho

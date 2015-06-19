@@ -4,7 +4,7 @@
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="60" TAnchorPoint="0" TAnchorOffset="82" RAnchorPoint="1" RAnchorOffset="-60" BAnchorPoint="0" BAnchorOffset="341" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Window" TooltipColor="" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" Border="0" IgnoreMouse="1" Picture="1"/>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="60" TAnchorPoint="0" TAnchorOffset="38" RAnchorPoint="1" RAnchorOffset="-60" BAnchorPoint="0" BAnchorOffset="72" RelativeToClient="1" Font="CRB_HeaderMedium" Text="" Template="Default" TooltipType="OnCursor" Name="VoteTitle" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TooltipColor="" TextId="" DT_CENTER="1" Tooltip="" DT_VCENTER="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="66" TAnchorPoint="0" TAnchorOffset="81" RAnchorPoint="1" RAnchorOffset="-74" BAnchorPoint="0" BAnchorOffset="117" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" TooltipType="OnCursor" Name="VoteDescription" BGColor="ffffffff" TextColor="UI_TextHoloTitle" TooltipColor="" TextId="" DT_CENTER="1" Tooltip="" DT_WORDBREAK="1" DT_VCENTER="1"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="68" TAnchorPoint="0" TAnchorOffset="81" RAnchorPoint="1" RAnchorOffset="-74" BAnchorPoint="0" BAnchorOffset="117" RelativeToClient="1" Font="CRB_HeaderTiny" Text="" Template="Default" TooltipType="OnCursor" Name="VoteDescription" BGColor="ffffffff" TextColor="UI_TextHoloTitle" TooltipColor="" TextId="" DT_CENTER="0" Tooltip="" DT_WORDBREAK="1" DT_VCENTER="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="61" TAnchorPoint="0" TAnchorOffset="117" RAnchorPoint="1" RAnchorOffset="-61" BAnchorPoint="1" BAnchorOffset="-62" RelativeToClient="1" Font="Default" Text="" Template="Holo_ScrollList" TooltipType="OnCursor" Name="VoteFrameScroll" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" VScroll="1" IgnoreMouse="1" AutoHideScroll="0" Picture="0" Border="0" UseTemplateBG="0"/>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="45" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="VoteOptionItem" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Tooltip="">
@@ -18,83 +18,3 @@
         </Control>
     </Form>
 </Forms>
-.. " (" .. math.floor(tVoteData.fTimeRemaining) .. ")")
-	end
-end
-
-function PublicEventVote:OnPublicEventVoteTallied(nChoice)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then 
-		return 
-	end
-
-	for key, wndCurr in pairs(self.wndMain:FindChild("VoteFrameScroll"):GetChildren()) do
-		if wndCurr:FindChild("VoteOptionBtn"):GetData() == nChoice then
-			wndCurr:FindChild("VoteOptionBtnCheck"):SetData(wndCurr:FindChild("VoteOptionBtnCheck"):GetData() + 1)
-		end
-	end
-end
-
-function PublicEventVote:OnVoteOptionBtn(wndHandler, wndControl) -- VoteOptionBtn, data is tOptionData
-	if not PublicEvent.CanVote() or not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:IsShown() then 
-		return 
-	end
-
-	PublicEvent.CastVote(wndHandler:GetData())
-	wndHandler:FindChild("VoteOptionBtnCheck"):Show(true)
-	-- OnPublicEventVoteTallied should get fired and update this
-
-	-- Disable all other buttons
-	for key, wndCurr in pairs(self.wndMain:FindChild("VoteFrameScroll"):GetChildren()) do
-		if wndCurr ~= wndHandler then
-			wndCurr:FindChild("VoteOptionBtn"):Enable(false)
-		end
-	end
-	
-	self.nSelectedVote = wndHandler:GetData()
-end
-
-function PublicEventVote:OnPublicEventVoteEnded(nWinner)
-	if not self.wndMain or not self.wndMain:IsValid() then
-		self:Initialize()
-	end
-
-	local bResultFound = false
-	for key, wndCurr in pairs(self.wndMain:FindChild("VoteFrameScroll"):GetChildren()) do
-		if wndCurr:FindChild("VoteOptionBtn"):GetData() == nWinner then
-			bResultFound = true
-			wndCurr:FindChild("VoteOptionBtn"):Enable(false)
-			
-			local tVoteInfo =
-			{
-				["name"] = Apollo.GetString("PublicEventVote_Votes"),
-				["count"] = wndCurr:FindChild("VoteOptionBtnCheck"):GetData(),
-			}
-			wndCurr:FindChild("VoteOptionText"):SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">" .. String_GetWeaselString(Apollo.GetString("PublicEventVote_Winner"), tVoteInfo) .. "</P>")
-		else
-			wndCurr:Destroy()
-		end
-	end
-
-	if not bResultFound then
-		self.wndMain:FindChild("VoteDescription"):SetText(Apollo.GetString("PublicEventVote_NonePicked"))
-	end
-
-	self.wndMain:Show(true)
-	self.wndMain:FindChild("VoteTitle"):SetText(Apollo.GetString("PublicEventVote_VotingComplete"))
-	self.wndMain:FindChild("VoteFrameScroll"):ArrangeChildrenVert(0)
-	self.wndMain:FindChild("VoteFrameScroll"):RecalculateContentExtents()
-	self.wndMain:FindChild("VoteFrameScroll"):SetVScrollPos(0)
-
-	
-	Apollo.CreateTimer("HideWinnerTimer", 5.0, false)
-	Apollo.StartTimer("HideWinnerTimer")
-	
-	self.nSelectedVote = nil
-	
-	Sound.Play(Sound.PlayUIWindowPublicEventVoteVotingEnd)
-end
-
-function PublicEventVote:OnVoteFrameHideBtn(wndHandler, wndControl)
-	self.wndMain:Destroy()
-	self.wndMain = nil
-	Sound.Play(Sound.PlayUIWindowPublicEven

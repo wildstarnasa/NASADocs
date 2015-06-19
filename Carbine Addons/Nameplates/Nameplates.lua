@@ -251,7 +251,7 @@ function Nameplates:OnDocumentReady()
 		"ChallengeFailTime", "ChallengeFailArea", "ChallengeActivate", "ChallengeCompleted",
 		"ChallengeFailGeneric", "PublicEventObjectiveUpdate", "PublicEventUnitUpdate",
 		"PlayerPathMissionUpdate", "FriendshipAdd", "FriendshipPostRemove", "FriendshipUpdate",
-		"PlayerPathRefresh", "ContractObjectiveUpdated", "ContractStateChanged"
+		"PlayerPathRefresh", "ContractObjectiveUpdated", "ContractStateChanged", "ChallengeUpdated"
 	}
 
 	for i, str in pairs(tRewardUpdateEvents) do
@@ -759,11 +759,7 @@ end
 function Nameplates:DrawHealth(tNameplate)
 	local unitOwner = tNameplate.unitOwner
 
-	local bShow = unitOwner:GetHealth() ~= nil
-	
-	if unitOwner:GetName() == "Tradeskill XP Comm Call Reward" then
-		--Print(tostring(unitOwner:GetHealth()))
-	end
+	local bShow = unitOwner:GetHealth() ~= nil and not unitOwner:IsDead()
 	
 	if bShow then
 		local bUseTarget = tNameplate.bIsTarget
@@ -984,6 +980,7 @@ function Nameplates:DrawHealthShieldBar(wndHealth, unitOwner, eDisposition, tNam
 			tNameplate.wnd.healthMaxHealth:SetAnchorOffsets(self.nFrameLeft, self.nFrameTop, self.nFrameRight, self.nFrameBottom)
 			tNameplate.wnd.healthHealthLabel:SetText("")
 		end
+		
 		tNameplate.nHealthCurr = nHealthCurr
 		return
 	end
@@ -1013,20 +1010,8 @@ function Nameplates:DrawHealthShieldBar(wndHealth, unitOwner, eDisposition, tNam
 	end
 	
 	if nHealthTintType ~= tNameplate.nHealthTintType then
-		if nHealthTintType == 3 then
-			tNameplate.wnd.healthMaxHealth:SetSprite("CRB_Nameplates:sprNP_PurpleProg")
-			tNameplate.wnd.targetMarker:SetSprite("CRB_Nameplates:sprNP_BaseSelectedPurple")
-		elseif nHealthTintType == 2 then
-			tNameplate.wnd.healthMaxHealth:SetSprite("CRB_Nameplates:sprNP_RedProg")
-			tNameplate.wnd.targetMarker:SetSprite("CRB_Nameplates:sprNP_BaseSelectedRed")
-		elseif nHealthTintType == 1 then
-			tNameplate.wnd.healthMaxHealth:SetSprite("CRB_Nameplates:sprNP_YellowProg")
-			tNameplate.wnd.targetMarker:SetSprite("CRB_Nameplates:sprNP_BaseSelectedYellow")
-		else
-			tNameplate.wnd.healthMaxHealth:SetSprite("CRB_Nameplates:sprNP_GreenProg")
-			tNameplate.wnd.targetMarker:SetSprite("CRB_Nameplates:sprNP_BaseSelectedGreen")
-		end
-		
+		tNameplate.wnd.healthMaxHealth:SetSprite(nHealthTintType == 3 and "CRB_Nameplates:sprNP_PurpleProg" or karDisposition.tHealthBar[tNameplate.eDisposition])
+		tNameplate.wnd.targetMarker:SetSprite(nHealthTintType == 3 and "CRB_Nameplates:sprNP_BaseSelectedPurple" or karDisposition.tTargetPrimary[tNameplate.eDisposition])
 		tNameplate.nHealthTintType = nHealthTintType
 	end
 	
@@ -1496,5 +1481,3 @@ fnDrawTargeting = Nameplates.DrawTargeting
 -----------------------------------------------------------------------------------------------
 local NameplatesInst = Nameplates:new()
 NameplatesInst:Init()
-cks="1" Moveable="1" Escapable="1" Overlapped="1" TooltipColor="" Sprite="" IgnoreMouse="1" Tooltip="" TransitionShowHide="1">
-        <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-116" TAnchorPoint="0" TAnchorOffset="50" RAnchorPo

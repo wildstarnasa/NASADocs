@@ -1308,6 +1308,10 @@ function FriendsList:OnAddBtn(wndHandler, wndControl)
 	wndAccountAdd:FindChild("AccountInviteSentBy"):SetAML("<P Font=\"CRB_InterfaceTiny_BB\" TextColor=\"UI_TextHoloBodyCyan\">"..String_GetWeaselString(Apollo.GetString("FriendsList_AddAccountFromAlias"), strAlias).."</P>")
 end
 
+function FriendsList:OnAddPlayerTextChanged(wndHandler, wndControl, strText)
+	self.tWndRefs.wndMessage:FindChild("AddBtn:AddFriendContainer:AddMemberYesBtn"):Enable(GameLib.IsTextValid(strText, GameLib.CodeEnumUserText.FriendshipInviteNote, GameLib.CodeEnumUserTextFilterClass.Strict))
+end
+
 function FriendsList:OnFriendAddConfrimBtn(wndHandler, wndControl)
 	if wndHandler ~= wndControl then return end
 	local wndContainer = self.tWndRefs.wndAddBtn:FindChild("AddFriendContainer")
@@ -1516,6 +1520,7 @@ function FriendsList:OnNameWindowEdit( wndHandler, wndControl, strText )
 
 	local bValid = strText ~= strOldName and strText ~= "" and GameLib.IsTextValid(strText, GameLib.CodeEnumUserText.FriendshipAccountName, eProfanityFilter)
 	wndNote:FindChild("NameConfirmBtn"):Enable(bValid)
+	wndNote:FindChild("NicknameInvalidAlert"):Show(not bValid)
 end
 
 function FriendsList:OnNameBtn( wndHandler, wndControl)
@@ -2476,4 +2481,3 @@ end
 -----------------------------------------------------------------------------------------------
 local FriendsListInst = FriendsList:new()
 FriendsListInst:Init()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

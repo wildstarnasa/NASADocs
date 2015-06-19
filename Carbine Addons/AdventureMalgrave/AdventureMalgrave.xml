@@ -1,5 +1,5 @@
 <Forms>
-    <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-353" TAnchorPoint="0" TAnchorOffset="215" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="371" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MalgraveAdventureResourcesForm" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" Tooltip="" Visible="0">
+    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-176" TAnchorPoint="0" TAnchorOffset="-3" RAnchorPoint=".5" RAnchorOffset="177" BAnchorPoint="0" BAnchorOffset="153" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MalgraveAdventureResourcesForm" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="0" Overlapped="1" BGColor="white" TextColor="white" TooltipColor="" IgnoreMouse="1" Tooltip="" Visible="0">
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-10" TAnchorPoint="0" TAnchorOffset="-10" RAnchorPoint="1" RAnchorOffset="10" BAnchorPoint="1" BAnchorOffset="10" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="FrameBG" BGColor="white" TextColor="white" TooltipColor="" Sprite="BK3:UI_BK3_Holo_Framing_3" Picture="1" IgnoreMouse="1" Tooltip="" NoClip="1"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="155" TAnchorPoint="0" TAnchorOffset="21" RAnchorPoint="1" RAnchorOffset="-18" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="SubBars" BGColor="white" TextColor="white" TooltipColor="">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="30" TAnchorPoint="0" TAnchorOffset="-3" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="37" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="FoodBarBG" BGColor="white" TextColor="white" TooltipColor="" Sprite="BK3:UI_BK3_Holo_ProgressBar_BG" Picture="1" IgnoreMouse="1" IgnoreTooltipDelay="1" Tooltip="" TooltipId="MalgraveAdv_FoodTooltip" TooltipFont="CRB_InterfaceSmall_O">
@@ -25,7 +25,7 @@
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="5" TAnchorPoint="0" TAnchorOffset="59" RAnchorPoint="0" RAnchorOffset="29" BAnchorPoint="0" BAnchorOffset="83" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="IconFeed" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="IconSprites:Icon_Windows_UI_CRB_Adventure_Malgrave_Feed" Tooltip="" TooltipId="MalgraveAdv_KurgFeedTooltip" TooltipFont="CRB_InterfaceSmall_O" IgnoreTooltipDelay="1"/>
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="0" TAnchorOffset="19" RAnchorPoint="0" RAnchorOffset="152" BAnchorPoint="0" BAnchorOffset="104" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="LeftAssetCostumeFrame" BGColor="white" TextColor="white" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" NewControlDepth="1"/>
-        <Control Class="CostumeWindow" LAnchorPoint="0" LAnchorOffset="29" TAnchorPoint="0" TAnchorOffset="24" RAnchorPoint="0" RAnchorOffset="149" BAnchorPoint="0" BAnchorOffset="103" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="LeftAssetCostume" BGColor="white" TextColor="white" Visible="1" Animated="1" Camera="Target" Aminated="1" Sprite="" HideInEditor="0" TooltipColor="" IgnoreMouse="1" Tooltip=""/>
+        <Control Class="CostumeWindow" LAnchorPoint="0" LAnchorOffset="24" TAnchorPoint="0" TAnchorOffset="23" RAnchorPoint="0" RAnchorOffset="148" BAnchorPoint="0" BAnchorOffset="101" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="LeftAssetCostume" BGColor="white" TextColor="white" Visible="1" Animated="1" Camera="Target" Aminated="1" Sprite="" HideInEditor="0" TooltipColor="" IgnoreMouse="1" Tooltip=""/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="24" TAnchorPoint="1" TAnchorOffset="-80" RAnchorPoint="0" RAnchorOffset="50" BAnchorPoint="1" BAnchorOffset="-55" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="SurvivorCountLabel" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_CENTER="0" DT_BOTTOM="0" DT_WORDBREAK="0" Visible="1" HideInEditor="0" Tooltip="Total survivors remaining in the caravan" Sprite="IconSprites:Icon_Windows_UI_CRB_Adventure_Malgrave_Survivor" Picture="1" IgnoreMouse="1" TooltipId=""/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="50" TAnchorPoint="1" TAnchorOffset="-76" RAnchorPoint="0" RAnchorOffset="101" BAnchorPoint="1" BAnchorOffset="-54" RelativeToClient="1" Font="CRB_HeaderTiny_O" Text="30/30" Template="Default" TooltipType="OnCursor" Name="SurvivorCountText" BGColor="white" TextColor="UI_TextHoloBodyHighlight" TooltipColor="" TextId="" DT_CENTER="0" DT_BOTTOM="0" DT_WORDBREAK="0" Visible="1" HideInEditor="0"/>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="21" TAnchorPoint="1" TAnchorOffset="-50" RAnchorPoint="0" RAnchorOffset="52" BAnchorPoint="1" BAnchorOffset="-20" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="FatigueText" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_CENTER="0" DT_VCENTER="1" IgnoreMouse="1" IgnoreTooltipDelay="1" Tooltip="" TooltipId="MalgraveAdv_FatigueTooltip" TooltipFont="CRB_InterfaceSmall_O" Picture="1" Sprite="IconSprites:Icon_Windows_UI_CRB_Adventure_Malgrave_Fatigue"/>
@@ -35,82 +35,3 @@
         </Control>
     </Form>
 </Forms>
-FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-	
-	Event_FireGenericEvent("ShowActionBarShortcutDocked", self.bDocked)
-end
-
-function ActionBarShortcut:OnOrientationBtn(wndControl, wndHandler)
-	self.bDocked = false
-	self.bHorz = not self.bHorz
-	
-	for nbar, tActionBar in pairs(self.tActionBars) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and self.bDocked)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-	
-	for nbar, tActionBar in pairs(self.tActionBarsHorz) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and self.bHorz)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-	
-	for nbar, tActionBar in pairs(self.tActionBarsVert) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and not self.bHorz)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-	
-	Event_FireGenericEvent("ShowActionBarShortcutDocked", self.bDocked)
-end
-
-function ActionBarShortcut:OnGenerateTooltip(wndControl, wndHandler, eType, oArg1, oArg2)
-	local xml = nil
-	if eType == Tooltip.TooltipGenerateType_ItemInstance then
-		local itemEquipped = oArg1:GetEquippedItemForItemType()
-		Tooltip.GetItemTooltipForm(self, wndControl, oArg1, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
-		--Tooltip.GetItemTooltipForm(self, wndControl, itemEquipped, {bPrimary = false, bSelling = false, itemCompare = oArg1}) -- OLD
-	elseif eType == Tooltip.TooltipGenerateType_ItemData then
-		local itemEquipped = oArg1:GetEquippedItemForItemType()
-		Tooltip.GetItemTooltipForm(self, wndControl, oArg1, {bPrimary = true, bSelling = false, itemCompare = itemEquipped})
-		--Tooltip.GetItemTooltipForm(self, wndControl, itemEquipped, {bPrimary = false, bSelling = false, itemCompare = oArg1}) - OLD
-	elseif eType == Tooltip.TooltipGenerateType_GameCommand then
-		xml = XmlDoc.new()
-		xml:AddLine(oArg2)
-		wndControl:SetTooltipDoc(xml)
-	elseif eType == Tooltip.TooltipGenerateType_Macro then
-		xml = XmlDoc.new()
-		xml:AddLine(oArg1)
-		wndControl:SetTooltipDoc(xml)
-	elseif eType == Tooltip.TooltipGenerateType_Spell then
-		Tooltip.GetSpellTooltipForm(self, wndControl, oArg1)
-	elseif eType == Tooltip.TooltipGenerateType_PetCommand then
-		xml = XmlDoc.new()
-		xml:AddLine(oArg2)
-		wndControl:SetTooltipDoc(xml)
-	end
-end
-
------------------------------------------------------------
-local ActionBarShortcut_Singleton = ActionBarShortcut:new()
-ActionBarShortcut_Singleton:Init()
-f.wndMountFlyoutFrame:GetAnchorOffsets()
-
-		self.wndMountFlyoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
-		self:RedrawBarVisibility()
-	else
-		self.wndMountFlyout:Show(false)
-	end
-end
-
-function ActionBarFrame:OnMountBtn(wndHandler, wndControl)
-	self.nSelectedMount = wndControl:GetData():GetId()
-
-	self.wndMountFlyoutFrame:Show(false)
-	self:RedrawSelectedMounts()
-end
-
-function ActionBarFrame:RedrawPotions

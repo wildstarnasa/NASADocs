@@ -340,7 +340,17 @@ function AbilityAMPs:RedrawAll() -- Do not pass in arguments, this can come from
 		wndLabel:FindChild("CategoryRespecBtn"):Enable(bEnableRespec)
 		wndLabel:FindChild("CategoryRespecBtn"):SetData(tCategory.nId)
 
-		wndLabel:FindChild("CategoryRespecBtn"):SetTooltip(bEnableRespec and String_GetWeaselString(Apollo.GetString("AMP_ResetCategoryTooltip"), monRespecCost:GetMoneyString()) or "")
+		local strTooltip = ""
+		
+		if bEnableRespec then
+			if monRespecCost:GetAmount() > 0 then
+				strTooltip = String_GetWeaselString(Apollo.GetString("AMP_ResetCategoryTooltip"), monRespecCost:GetMoneyString())
+			else
+				strTooltip = Apollo.GetString("Amps_ResetCategoryFree")
+			end
+		end
+		
+		wndLabel:FindChild("CategoryRespecBtn"):SetTooltip(strTooltip)
 
 		local wndButtonLabel = self.tWndRefs.wndMain:FindChild("Buttons"):FindChild(karCategoryToConstantData[tCategory.nId].strButtonLabel)
 		wndButtonLabel:FindChild("ButtonProgBar"):SetMax(nProgBarMax)
@@ -617,9 +627,6 @@ function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl, eMouseBtn) -- AmpFormB
 		tValidTierReset[2] = nPowerUsed[1] >= nPowerRequired[2] or nPowerUsed[2] == 0
 		tValidTierReset[3] = tValidTierReset[2] and (nPowerUsed[1] + nPowerUsed[2] >= nPowerRequired[3] or nPowerUsed[3] == 0)
 		
-		
-		
-		
 		local wndResetConfirmation = self.tWndRefs.wndMain:FindChild("ResetConfirmation")
 		local wndConfirmationFrame = wndResetConfirmation:FindChild("ConfirmationFrame")
 		local wndResetConfirm = wndConfirmationFrame:FindChild("ResetConfirm")
@@ -629,8 +636,8 @@ function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl, eMouseBtn) -- AmpFormB
 							(self.tCategoryInfo[idCategory].nHighestTierUnlocked == 3 and tValidTierReset[3])
 
 		if bValidRespec then
-			local monRespecCost = AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Single, tAugment.nId)
-			if monRespecCost > 0 then
+			local nRespecCost = AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Single, tAugment.nId)
+			if nRespecCost > 0 then
 				-- Show the respec dialog
 				local strRespecList = Apollo.GetString("AMP_ResetSingle") .. "\n" .. tAugment.strTitle
 				
@@ -646,9 +653,9 @@ function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl, eMouseBtn) -- AmpFormB
 				local nResetLeft, nResetTop, nResetRight, nResetBottom = unpack(wndConfirmationFrame:GetOriginalLocation():ToTable().nOffsets)
 				wndConfirmationFrame:SetAnchorOffsets(nResetLeft, nResetTop, nResetRight, nResetBottom + nResize)
 				
-				wndResetConfirm:FindChild("CashWindow"):SetAmount(monRespecCost, true)
-				wndResetConfirm:FindChild("ResetConfirm"):SetData({eType = AbilityBook.CodeEnumAMPRespecType.Single, nId = tAugment.nId})
-				wndResetConfirm:Enable(true)
+				wndResetConfirm:FindChild("CashWindow"):SetAmount(nRespecCost, true)
+				wndResetConfirm:SetData({eType = AbilityBook.CodeEnumAMPRespecType.Single, nId = tAugment.nId})
+				wndResetConfirm:Enable(nRespecCost <= GameLib.GetPlayerCurrency():GetAmount())
 				wndResetConfirmation:FindChild("BodyText"):SetText(strRespecList)
 				
 				wndResetConfirm:FindChild("CashWindow"):Show(true)
@@ -682,28 +689,25 @@ function AbilityAMPs:OnAmpFormBtn(wndHandler, wndControl, eMouseBtn) -- AmpFormB
 			nUnlockedAugments = nUnlockedAugments + 1
 		end
 
-		local eResult = AbilityBook.ValidateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.tUnlockedAugments)
+		local eResult = AbilityBook.UpdateEldanAugmentationSpec(tAugment.nId)
 		if eResult ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
 			local strMessage = ""
+			local nDuration = 4.5
 			if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.NotEnoughPower then
 				strMessage = AbilityBook.GetAvailablePower() == 0 and Apollo.GetString("EldanAugmentation_AtMaxPower") or Apollo.GetString("EldanAugmentation_NotEnoughPower")
 			elseif ktAugmentationValidationResult[eResult] then
 				strMessage = ktAugmentationValidationResult[eResult]
+			elseif GameLib.GetPlayerUnit():IsInCombat() then
+				strMessage = Apollo.GetString("AbilityBuilder_BuildsCantBeChangedCombat")
+				nDuration = 2
+			else
+				strMessage = String_GetWeaselString(Apollo.GetString("EldanAugmentation_SaveFailed"), eResult)
+				nDuration = 2
 			end
 
-			self:HelperCreateMessage(strMessage, 4.5)
+			self:HelperCreateMessage(strMessage, nDuration)
 			self.tUnlockedAugments[tAugment.nId] = nil
 			self.tCachedAmps[tAugment.nId] = nil
-		else
-			local bTryToSave = AbilityBook.UpdateEldanAugmentationSpec(AbilityBook.GetCurrentSpec(), nUnlockedAugments, self.tUnlockedAugments)
-			if not bTryToSave then -- Show message if it didn't work
-				if GameLib.GetPlayerUnit():IsInCombat() then
-					self:HelperCreateMessage(Apollo.GetString("AbilityBuilder_BuildsCantBeChangedCombat"), 2)
-				else
-					self:HelperCreateMessage(String_GetWeaselString(Apollo.GetString("EldanAugmentation_SaveFailed"), nResult), 2)
-				end
-				self.tCachedAmps[tAugment.nId] = nil
-			end
 		end
 	end
 	
@@ -714,23 +718,28 @@ function AbilityAMPs:OnResetCategoryBtn(wndHandler, wndControl)
 	local idCategory = wndHandler:GetData()
 	local monRespecCost = AbilityBook.GetEldanAugmentationRespecCost(AbilityBook.CodeEnumAMPRespecType.Section, idCategory)
 	
-	if monRespecCost > 0 then
-		local wndResetConfirmation = self.tWndRefs.wndMain:FindChild("ResetConfirmation")
-		local wndConfirmationFrame = wndResetConfirmation:FindChild("ConfirmationFrame")
-		local wndResetConfirm = wndConfirmationFrame:FindChild("ResetConfirm")
-		
-		wndConfirmationFrame:FindChild("BodyText"):SetText(String_GetWeaselString(Apollo.GetString("AMP_ResetCategory"), karCategoryToConstantData[idCategory].strName))
-		wndResetConfirm:FindChild("CashWindow"):SetAmount(monRespecCost)
-		
-		wndResetConfirm:SetData({eType = AbilityBook.CodeEnumAMPRespecType.Section, nId = idCategory})
-		
-		wndResetConfirm:FindChild("DisabledResetLabel"):Show(false)
-		wndResetConfirm:SetText(Apollo.GetString("Amps_ConfirmReset"))
-		wndResetConfirmation:Show(true)
-	else
+	if monRespecCost <= 0 then
 		AbilityBook.RespecEldanAugmentations(AbilityBook.CodeEnumAMPRespecType.Section, idCategory)
 		self:HelperCheckCached()
+		return
 	end
+
+	local wndResetConfirmation = self.tWndRefs.wndMain:FindChild("ResetConfirmation")
+	local wndConfirmationFrame = wndResetConfirmation:FindChild("ConfirmationFrame")
+	local wndResetConfirm = wndConfirmationFrame:FindChild("ResetConfirm")
+	
+	wndConfirmationFrame:FindChild("BodyText"):SetText(String_GetWeaselString(Apollo.GetString("AMP_ResetCategory"), karCategoryToConstantData[idCategory].strName))
+	wndResetConfirm:FindChild("CashWindow"):SetAmount(monRespecCost)
+	
+	wndResetConfirm:SetData({eType = AbilityBook.CodeEnumAMPRespecType.Section, nId = idCategory})
+	if GameLib.GetPlayerCurrency():GetAmount() >= monRespecCost then		
+		wndResetConfirm:Enable(true)
+		wndResetConfirm:FindChild("DisabledResetLabel"):Show(false)
+		wndResetConfirm:SetText(Apollo.GetString("Amps_ConfirmReset"))
+	else
+		wndResetConfirm:Enable(false)
+	end
+	wndResetConfirmation:Show(true)
 end
 
 function AbilityAMPs:OnResetConfirm(wndHandler, wndControl)
@@ -786,33 +795,3 @@ end
 
 local AbilityAMPsInst = AbilityAMPs:new()
 AbilityAMPsInst:Init()
-hen
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetIndexOutOfBounds"))
-	elseif specError == AbilityBook.CodeEnumSpecError.IndexLocked then
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetIndexLocked"))
-	elseif specError == AbilityBook.CodeEnumSpecError.NoChange then
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetIndexNotChanged"))
-	elseif specError == AbilityBook.CodeEnumSpecError.InCombat then
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInCombat"))
-	elseif specError == AbilityBook.CodeEnumSpecError.InvalidPlayer then
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInvalidPlayer"))
-	elseif specError == AbilityBook.CodeEnumSpecError.PvPRestricted then
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInPvP"))
-	elseif specError == AbilityBook.CodeEnumSpecError.InVoid then
-		self:HelperShowError(Apollo.GetString("AbilityBuilder_SetChangeInVoid"))
-	elseif specError == AbilityBook.CodeEnumSpecError.Ok then
-		self:RedrawFromScratch()
-		Event_FireGenericEvent("GenericEvent_OpenEldanAugmentation", self.tWndRefs.wndMain:FindChild("BGFrame:AMPBuilderMain"))
-	end
-end
-
-function Abilities:OnActionSetError(eResult)
-	local strMessage = nil
-	if eResult == ActionSetLib.CodeEnumLimitedActionSetResult.InVoid then
-		strMessage = Apollo.GetString("ActionSet_Error_InTheVoid")
-		-- TODO MORE
-	end
-
-	if strMessage then
-		self:BuildWindow() -- This can happen after the set has "successfully" closed, so bring it back up if closed
-		self:Help

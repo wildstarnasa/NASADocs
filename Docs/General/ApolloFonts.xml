@@ -79,6 +79,8 @@
 	<Font Name="CRB_Header14_O" Face="Cube Offc Cond" Size="14" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
 	<Font Name="CRB_Header16" Face="Cube Offc Cond" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
 	<Font Name="CRB_Header16_O" Face="Cube Offc Cond" Size="16" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
+	<Font Name="CRB_Header18" Face="Cube Offc Cond" Size="18" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
+	<Font Name="CRB_Header18_O" Face="Cube Offc Cond" Size="18" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
 	<Font Name="CRB_Header20" Face="Cube Offc Cond" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
 	<Font Name="CRB_Header20_O" Face="Cube Offc Cond" Size="20" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="0" GfxFont_Outline="1"/>
 	<Font Name="CRB_Header24" Face="Cube Offc Cond" Size="24" GfxFont_3D="0" GfxFont_Bold="0" GfxFont_Italic="0" GfxFont_Shadow="1" GfxFont_Outline="0"/>
@@ -107,6 +109,8 @@
 	<Alias Name="CRB_InterfaceTiny_BB" Font="CRB_Interface7_BB"/>
 
 	<Alias Name="CRB_InterfaceSmall" Font="CRB_Interface9"/>
+	<Alias Name="CRB_InterfaceSmall_B" Font="CRB_Interface9_B"/>
+	<Alias Name="CRB_InterfaceSmall_BB" Font="CRB_Interface9_BB"/>
 	<Alias Name="CRB_InterfaceSmall_I" Font="CRB_Interface9_I"/>
 	<Alias Name="CRB_InterfaceSmall_O" Font="CRB_Interface9_O"/>
 

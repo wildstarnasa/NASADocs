@@ -35,37 +35,3 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-2" TAnchorPoint="0" TAnchorOffset="-4" RAnchorPoint="1" RAnchorOffset="4" BAnchorPoint="1" BAnchorOffset="5" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="Flash" BGColor="white" TextColor="white" IgnoreMouse="1" NoClip="1" Sprite="" Picture="1" TooltipColor=""/>
     </Form>
 </Forms>
-ks[idx]:Show(true)
-			self.tTierMarks[idx]:FindChild("MarkerBacker"):SetSprite(self.arTierSprites[idx].strMarkEmpty)
-			self.tTierMarks[idx]:FindChild("Marker"):SetSprite("")
-		end
-
-		self.wndOppBarTiered:FindChild("TierMarkContainer"):ArrangeChildrenHorz(1)
-
-		self.wndOppBarTiered:Show(true)
-	end
-
-	self.wndOppFrame:Show(true)
-
-	-- Do the initial update so the first tier is lit up correctly
-	self:OnUpdateSpellThreshold(idSpell, self.tCurrentOpSpell.nCurrentTier)
-end
-
-function CastBar:OnUpdateSpellThreshold(idSpell, nNewThreshold) -- Updates when P/H/R changes tier or RT tap is performed
-	if self.tCurrentOpSpell == nil or idSpell ~= self.tCurrentOpSpell.id then return end
-
-	self.tCurrentOpSpell.nCurrentTier = nNewThreshold
-	self.tTierMarks[nNewThreshold]:FindChild("Marker"):SetSprite(self.arTierSprites[nNewThreshold].strMarkFull)
-	self.tTierMarks[nNewThreshold]:FindChild("Flash"):SetSprite("CRB_CastBarSprites:sprCB_PHRMarkerFlash")
-	self.wndOppBarTiered:FindChild("AlertFlash2"):SetSprite("CRB_CastBarSprites:sprCB_Fill_Flash")
-	self.wndOppBarCircle:FindChild("AlertFlash"):SetSprite("CRB_Basekit:kitAccent_Glow_GoldFlash")
-end
-
-function CastBar:OnClearSpellThreshold(idSpell)
-	if self.tCurrentOpSpell ~= nil and idSpell ~= self.tCurrentOpSpell.id then return end -- different spell got loaded up before the previous was cleared. this is valid.
-
-	self.wndOppFrame:Show(false)
-	self.wndOppBar:Show(false)
-	self.wndOppBarCircle:Show(false)
-	self.wndOppBarTiered:Show(false)
-	self.wndOppBa

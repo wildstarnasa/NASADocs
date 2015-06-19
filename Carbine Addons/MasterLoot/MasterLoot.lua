@@ -21,11 +21,26 @@ local ktClassToIcon =
 	[GameLib.CodeEnumClass.Spellslinger]  	= "Icon_Windows_UI_CRB_Spellslinger",
 }
 
+local karItemColors =
+{
+	[Item.CodeEnumItemQuality.Inferior] 		= "ItemQuality_Inferior",
+	[Item.CodeEnumItemQuality.Average] 			= "ItemQuality_Average",
+	[Item.CodeEnumItemQuality.Good] 			= "ItemQuality_Good",
+	[Item.CodeEnumItemQuality.Excellent] 		= "ItemQuality_Excellent",
+	[Item.CodeEnumItemQuality.Superb] 			= "ItemQuality_Superb",
+	[Item.CodeEnumItemQuality.Legendary] 		= "ItemQuality_Legendary",
+	[Item.CodeEnumItemQuality.Artifact]		 	= "ItemQuality_Artifact",
+}
+
 function MasterLoot:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
 
+	o.tMasterLootItemWindows = {}
+	o.tMasterLootLooterWindows = {}
+	o.tLooterLootWindows = {}
+	
 	return o
 end
 
@@ -48,7 +63,6 @@ function MasterLoot:OnDocumentReady()
 	Apollo.RegisterEventHandler("MasterLootUpdate",				"OnMasterLootUpdate", self)
 	Apollo.RegisterEventHandler("LootAssigned",					"OnLootAssigned", self)
 
-	Apollo.RegisterEventHandler("Group_Updated", 				"OnGroupUpdated", self)
 	Apollo.RegisterEventHandler("Group_Left",					"OnGroup_Left", self) -- When you leave the group
 
 	Apollo.RegisterEventHandler("GenericEvent_ToggleGroupBag", 	"OnToggleGroupBag", self)
@@ -72,10 +86,6 @@ function MasterLoot:OnDocumentReady()
 	self.wndLooter:Show(false)
 
 	self.tOld_MasterLootList = {}
-
-	-- Master Looter Global Vars
-	self.tMasterLootSelectedItem = nil
-	self.tMasterLootSelectedLooter = nil
 end
 
 function MasterLoot:OnWindowManagementReady()
@@ -83,261 +93,223 @@ function MasterLoot:OnWindowManagementReady()
 end
 
 function MasterLoot:OnToggleGroupBag()
-	self:OnMasterLootUpdate(true) -- true makes it force open if we have items
+	self:OnMasterLootUpdate()
 end
 
 ----------------------------
 
-function MasterLoot:OnMasterLootUpdate(bForceOpen)
+function MasterLoot:OnMasterLootUpdate()
 	local tMasterLoot = GameLib.GetMasterLoot()
 
 	local tMasterLootItemList = {}
 	local tLooterItemList = {}
 
-	local bWeHaveLoot = false
-	local bWeHaveNewLoot = false
-	local bLootWasRemoved = false
-	local bLootersChanged = false
-
-
-
-	-- Go through NEW items
+	-- Break items out into MasterLooter and Looter lists (which UI displays them)
 	for idxNewItem, tCurNewItem in pairs(tMasterLoot) do
-
-		bWeHaveLoot = true
-
-		-- Break items out into MasterLooter and Looter lists (which UI displays them)
-		if tCurNewItem.bIsMaster then
-			table.insert(tMasterLootItemList, tCurNewItem)
-		else
-			table.insert(tLooterItemList, tCurNewItem)
-		end
-
-		-- Search through last MasterLootList to see if we got NEW items
-		local bFoundItem = false
-		for idxOldItem, tCurOldItem in pairs (self.tOld_MasterLootList) do
-			if tCurNewItem.nLootId == tCurOldItem.nLootId then -- persistant item
-
-				bFoundItem = true
-
-				local bNewLooter = false
-				local bLostLooter = false
-
-				for idxNewLooter, unitNewLooter in pairs (tCurNewItem.tLooters) do
-					local bFoundLooter = false
-					for idxOldLooter, unitOldLooter in pairs (tCurOldItem.tLooters) do
-						if unitNewLooter == unitOldLooter then
-							bFoundLooter = true
-							break
-						end
-					end
-					if not bFoundLooter then
-						bNewLooter = true
-						break
-					end
-				end
-
-				if not bNewLooter then
-					for idxOldLooter, unitOldLooter in pairs (tCurOldItem.tLooters) do
-						local bFoundLooter = false
-						for idxNewLooter, unitNewLooter in pairs (tCurNewItem.tLooters) do
-							if unitOldLooter == unitNewLooter then
-								bFoundLooter = true
-								break
-							end
-						end
-						if not bFoundLooter then
-							bLostLooter = true
-							break
-						end
-					end
-				end
-
-				if bNewLooter or bLostLooter then
-					bLootersChanged = true
-					break
-				end
-
-			end
-		end
-
-		if not bFoundItem then
-			bWeHaveNewLoot = true
-		end
-
+			table.insert(tCurNewItem.bIsMaster and tMasterLootItemList or tLooterItemList, tCurNewItem)
 	end
 
-	-- Go through OLD items
-	for idxOldItem, tCurOldItem in pairs (self.tOld_MasterLootList) do
-		-- Search through new list to see if we LOST any items
-		local bFound = false
-		for idxNewItem, tCurNewItem in pairs(tMasterLoot) do
-
-			if tCurNewItem.nLootId == tCurOldItem.nLootId then -- persistant item
-				bFound = true
-				break
-			end
-
-		end
-		if not bFound then
-			bLootWasRemoved = true
-			break
-		end
-	end
-
-	self.tOld_MasterLootList = tMasterLoot
-
-	if bForceOpen == true and bWeHaveLoot then -- pop window if closed, update open windows
-		if next(tMasterLootItemList) then
+	-- update lists with items
+	if next(tMasterLootItemList) ~= nil then
+		self:RefreshMasterLootItemList(tMasterLootItemList)
+		if not self.wndMasterLoot:IsShown() then
 			self.wndMasterLoot:Show(true)
-			self:RefreshMasterLootItemList(tMasterLootItemList)
-			self:RefreshMasterLootLooterList(tMasterLootItemList)
 		end
-		if next(tLooterItemList) then
+	end
+	if next(tLooterItemList) ~= nil then
+		self:RefreshLooterItemList(tLooterItemList)
+		if not self.wndLooter:IsShown() then
 			self.wndLooter:Show(true)
-			self:RefreshLooterItemList(tLooterItemList)
 		end
-
-	elseif bWeHaveLoot then
-		if bWeHaveNewLoot then -- pop window if closed, update open windows
-			if next(tMasterLootItemList) then
-				self.wndMasterLoot:Show(true)
-				self:RefreshMasterLootItemList(tMasterLootItemList)
-				self:RefreshMasterLootLooterList(tMasterLootItemList)
-			end
-			if next(tLooterItemList) then
-				self.wndLooter:Show(true)
-				self:RefreshLooterItemList(tLooterItemList)
-			end
-		elseif bLootWasRemoved or bLootersChanged then  -- update open windows
-			if self.wndMasterLoot:IsShown() and next(tMasterLootItemList) then
-				self:RefreshMasterLootItemList(tMasterLootItemList)
-				self:RefreshMasterLootLooterList(tMasterLootItemList)
-			end
-			if self.wndLooter:IsShown() and next(tLooterItemList) then
-				self:RefreshLooterItemList(tLooterItemList)
-			end
-		end
-	else
-		-- close any open windows
+	end
+	
+	-- hide empty windows
+	if next(tMasterLootItemList) == nil then
 		if self.wndMasterLoot:IsShown() then
 			self.locSavedMasterWindowLoc = self.wndMasterLoot:GetLocation()
-			self.tMasterLootSelectedItem = nil
-			self.tMasterLootSelectedLooter = nil
-			self.wndMasterLoot_ItemList:DestroyChildren()
-			self.wndMasterLoot_LooterList:DestroyChildren()
 			self.wndMasterLoot:Show(false)
 		end
+	end
+	
+	if next(tLooterItemList) == nil then
 		if self.wndLooter:IsShown() then
 			self.locSavedLooterWindowLoc = self.wndLooter:GetLocation()
-			self.wndLooter_ItemList:DestroyChildren()
 			self.wndLooter:Show(false)
 		end
-	end
-
-	if self.tMasterLootSelectedItem ~= nil and self.tMasterLootSelectedLooter ~= nil then
-		self.wndMasterLoot:FindChild("Assignment"):Enable(true)
-	else
-		self.wndMasterLoot:FindChild("Assignment"):Enable(false)
 	end
 end
 
 function MasterLoot:RefreshMasterLootItemList(tMasterLootItemList)
 
-	self.wndMasterLoot_ItemList:DestroyChildren()
-
+	local nVPos = self.wndMasterLoot_ItemList:GetVScrollPos()
+	local tIndexedList = {}
+	
 	for idx, tItem in ipairs (tMasterLootItemList) do
-		local wndCurrentItem = Apollo.LoadForm(self.xmlDoc, "ItemButton", self.wndMasterLoot_ItemList, self)
-		wndCurrentItem:FindChild("ItemIcon"):SetSprite(tItem.itemDrop:GetIcon())
-		wndCurrentItem:FindChild("ItemName"):SetText(tItem.itemDrop:GetName())
-		wndCurrentItem:SetData(tItem)
-		if self.tMasterLootSelectedItem ~= nil and (self.tMasterLootSelectedItem.nLootId == tItem.nLootId) then
-			wndCurrentItem:SetCheck(true)
-			self:RefreshMasterLootLooterList(tMasterLootItemList)
+		tIndexedList[tItem.nLootId] = tItem
+		
+		local wndCurrentItem = self.tMasterLootItemWindows[tItem.nLootId]
+		if wndCurrentItem == nil or not wndCurrentItem:IsValid() then
+			wndCurrentItem = Apollo.LoadForm(self.xmlDoc, "ItemButton", self.wndMasterLoot_ItemList, self)
+			self.tMasterLootItemWindows[tItem.nLootId] = wndCurrentItem
+			
+			wndCurrentItem:FindChild("ItemIcon"):GetWindowSubclass():SetItem(tItem.itemDrop)
+			wndCurrentItem:FindChild("ItemName"):SetText(tItem.itemDrop:GetName())
+			wndCurrentItem:FindChild("ItemName"):SetTextColor(karItemColors[tItem.itemDrop:GetItemQuality()])
+			
+			-- new item(s) show the window
+			self.wndMasterLoot:Show(true)
 		end
-		Tooltip.GetItemTooltipForm(self, wndCurrentItem , tItem.itemDrop, {bPrimary = true, bSelling = false, itemCompare = tItem.itemDrop:GetEquippedItemForItemType()})
+		
+		wndCurrentItem:SetData(tItem)
+		
+		if wndCurrentItem:IsChecked() then
+			self:RefreshMasterLootLooterList(tItem)
+		end
+	end
+	
+	for idx, wndItem in pairs(self.wndMasterLoot_ItemList:GetChildren()) do
+		local tItem = wndItem:GetData()
+		if tIndexedList[tItem.nLootId] ==  nil then
+			wndItem:Destroy()
+			self.tMasterLootItemWindows[tItem.nLootId] = nil
+		end
 	end
 
-	self.wndMasterLoot_ItemList:ArrangeChildrenVert(0)
-
+	self.wndMasterLoot_ItemList:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	self.wndMasterLoot_ItemList:SetVScrollPos(nVPos)
+	
 end
 
-function MasterLoot:RefreshMasterLootLooterList(tMasterLootItemList)
-
-	self.wndMasterLoot_LooterList:DestroyChildren()
-
-	if self.tMasterLootSelectedItem ~= nil then
-		for idx, tItem in pairs (tMasterLootItemList) do
-			if tItem.nLootId == self.tMasterLootSelectedItem.nLootId then
-				local bStillHaveLooter = false
-				for idx, unitLooter in pairs(tItem.tLooters) do
-					local wndCurrentLooter = Apollo.LoadForm(self.xmlDoc, "CharacterButton", self.wndMasterLoot_LooterList, self)
-					wndCurrentLooter:FindChild("CharacterName"):SetText(unitLooter:GetName())
-					wndCurrentLooter:FindChild("CharacterLevel"):SetText(unitLooter:GetBasicStats().nLevel)
-					wndCurrentLooter:FindChild("ClassIcon"):SetSprite(ktClassToIcon[unitLooter:GetClassId()])
-					wndCurrentLooter:SetData(unitLooter)
-					if self.tMasterLootSelectedLooter == unitLooter then
-						wndCurrentLooter:SetCheck(true)
-						bStillHaveLooter = true
-					end
-				end
-
-				if not bStillHaveLooter then
-					self.tMasterLootSelectedLooter = nil
-				end
-
-				-- get out of range people
-				-- tLootersOutOfRange
-				if tItem.tLootersOutOfRange and next(tItem.tLootersOutOfRange) then
-					for idx, strLooterOOR in pairs(tItem.tLootersOutOfRange) do
-						local wndCurrentLooter = Apollo.LoadForm(self.xmlDoc, "CharacterButton", self.wndMasterLoot_LooterList, self)
-						wndCurrentLooter:FindChild("CharacterName"):SetText(String_GetWeaselString(Apollo.GetString("Group_OutOfRange"), strLooterOOR))
-						wndCurrentLooter:FindChild("ClassIcon"):SetSprite("CRB_GroupFrame:sprGroup_Disconnected")
-						wndCurrentLooter:Enable(false)
-					end
-				end
-				self.wndMasterLoot_LooterList:ArrangeChildrenVert(0, function(a,b) return a:FindChild("CharacterName"):GetText() < b:FindChild("CharacterName"):GetText() end)
-			end
+function MasterLoot:RefreshMasterLootLooterList(tItem)
+	if tItem == nil then
+		self.wndMasterLoot:FindChild("Assignment"):Enable(false)
+		for idx, wndLooter in pairs(self.wndMasterLoot_LooterList:GetChildren()) do
+			wndLooter:Show(false)
+		end
+		return
+	end
+	
+	local tValidLooters = {}
+	
+	for idx, unitLooter in pairs(tItem.tLooters) do
+		local strName = unitLooter:GetName()
+		tValidLooters[strName] = true
+	
+		local wndCurrentLooter = self.tMasterLootLooterWindows[strName]
+		if wndCurrentLooter == nil or not wndCurrentLooter:IsValid() then
+			wndCurrentLooter = Apollo.LoadForm(self.xmlDoc, "CharacterButton", self.wndMasterLoot_LooterList, self)
+			wndCurrentLooter:SetName(strName)
+			self.tMasterLootLooterWindows[strName] = wndCurrentLooter
+		end
+		
+		wndCurrentLooter:Show(true)
+		wndCurrentLooter:FindChild("CharacterName"):SetText(strName)
+		wndCurrentLooter:FindChild("CharacterLevel"):SetText(unitLooter:GetBasicStats().nLevel)
+		wndCurrentLooter:FindChild("ClassIcon"):SetSprite(ktClassToIcon[unitLooter:GetClassId()])
+		wndCurrentLooter:Enable(true)
+		
+		local tData = { ["unitLooter"] = unitLooter, ["tItem"] = tItem }
+		wndCurrentLooter:SetData(tData)
+		
+		if wndCurrentLooter:IsChecked() then
+			self.wndMasterLoot:FindChild("Assignment"):SetData(tData)
+			self.wndMasterLoot:FindChild("Assignment"):Enable(true)
 		end
 	end
+
+	-- get out of range people
+	if tItem.tLootersOutOfRange and next(tItem.tLootersOutOfRange) then
+		for idx, strLooterOOR in pairs(tItem.tLootersOutOfRange) do
+			tValidLooters[strLooterOOR] = true
+		
+			local wndCurrentLooter = self.tMasterLootLooterWindows[strLooterOOR]
+			if wndCurrentLooter == nil or not wndCurrentLooter:IsValid() then
+				wndCurrentLooter = Apollo.LoadForm(self.xmlDoc, "CharacterButton", self.wndMasterLoot_LooterList, self)
+				wndCurrentLooter:SetName(strLooterOOR)
+				self.tMasterLootLooterWindows[strLooterOOR] = wndCurrentLooter
+			end
+			
+			wndCurrentLooter:Show(true)
+			wndCurrentLooter:FindChild("CharacterName"):SetText(String_GetWeaselString(Apollo.GetString("Group_OutOfRange"), strLooterOOR))
+			wndCurrentLooter:FindChild("CharacterLevel"):SetText(nil)
+			wndCurrentLooter:FindChild("ClassIcon"):SetSprite("CRB_GroupFrame:sprGroup_Disconnected")
+			wndCurrentLooter:Enable(false)
+			
+			if wndCurrentLooter:IsChecked() then
+				self.wndMasterLoot:FindChild("Assignment"):Enable(false)
+			end
+			wndCurrentLooter:SetCheck(false)
+		end
+	end
+	
+	for idx, wndLooter in pairs(self.wndMasterLoot_LooterList:GetChildren()) do
+		local strName = wndLooter:GetName()
+		if tValidLooters[strName] ==  nil then
+			wndLooter:Destroy()
+			self.tMasterLootLooterWindows[strName] = nil
+		end
+	end
+	
+	self.wndMasterLoot_LooterList:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop, function(a,b)
+		return a:FindChild("CharacterName"):GetText() < b:FindChild("CharacterName"):GetText()
+	end)
 end
 
 function MasterLoot:RefreshLooterItemList(tLooterItemList)
 
-	self.wndLooter_ItemList:DestroyChildren()
+	local nVPos = self.wndLooter_ItemList:GetVScrollPos()
+	local tIndexedList = {}
 
 	for idx, tItem in pairs (tLooterItemList) do
-		local wndCurrentItem = Apollo.LoadForm(self.xmlDoc, "LooterItemButton", self.wndLooter_ItemList, self)
-		wndCurrentItem:FindChild("ItemIcon"):SetSprite(tItem.itemDrop:GetIcon())
-		wndCurrentItem:FindChild("ItemName"):SetText(tItem.itemDrop:GetName())
+		tIndexedList[tItem.nLootId] = tItem
+	
+		local wndCurrentItem = self.tLooterLootWindows[tItem.nLootId]
+		if wndCurrentItem == nil or not wndCurrentItem:IsValid() then
+			wndCurrentItem = Apollo.LoadForm(self.xmlDoc, "LooterItemButton", self.wndLooter_ItemList, self)
+			self.tLooterLootWindows[tItem.nLootId] = wndCurrentItem
+			
+			wndCurrentItem:FindChild("ItemIcon"):GetWindowSubclass():SetItem(tItem.itemDrop)
+			wndCurrentItem:FindChild("ItemName"):SetText(tItem.itemDrop:GetName())
+			wndCurrentItem:FindChild("ItemName"):SetTextColor(karItemColors[tItem.itemDrop:GetItemQuality()])
+			
+			-- new item(s) show the window
+			self.wndLooter:Show(true)
+		end
+		
 		wndCurrentItem:SetData(tItem)
-		Tooltip.GetItemTooltipForm(self, wndCurrentItem , tItem.itemDrop, {bPrimary = true, bSelling = false, itemCompare = tItem.itemDrop:GetEquippedItemForItemType()})
 	end
 
-	self.wndLooter_ItemList:ArrangeChildrenVert(0)
+	for idx, wndItem in pairs(self.wndLooter_ItemList:GetChildren()) do
+		local tItem = wndItem:GetData()
+		if tIndexedList[tItem.nLootId] ==  nil then
+			wndItem:Destroy()
+			self.tLooterLootWindows[tItem.nLootId] = nil
+		end
+	end
+	
+	self.wndLooter_ItemList:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	self.wndLooter_ItemList:SetVScrollPos(nVPos)
 
 end
 
 ----------------------------
 
-function MasterLoot:OnGroupUpdated()
-	if GroupLib.AmILeader() then
-		if self.wndLooter:IsShown() then
-			self:OnCloseLooterWindow()
-			self:OnMasterLootUpdate(true)
-		end
-	else
-		if self.wndMasterLoot:IsShown() then
-			self:OnCloseMasterWindow()
-			self:OnMasterLootUpdate(true)
-		end
-	end
-end
-
 function MasterLoot:OnGroup_Left()
 	if self.wndMasterLoot:IsShown() then
 		self:OnCloseMasterWindow()
-		--self:OnMasterLootUpdate(true)
+	end
+end
+
+----------------------------
+
+function MasterLoot:OnItemGenerateTooltip(wndHandler, wndControl, eToolTipType, x, y)
+	if wndHandler ~= wndControl then
+		return
+	end
+
+	local tItem = wndControl:GetData()	
+	if Tooltip ~= nil and Tooltip.GetItemTooltipForm ~= nil then
+		Tooltip.GetItemTooltipForm(self, wndControl, tItem.itemDrop, {bPrimary = true, bSelling = false, itemCompare = tItem.itemDrop:GetEquippedItemForItemType()})
 	end
 end
 
@@ -356,18 +328,14 @@ function MasterLoot:OnItemCheck(wndHandler, wndControl, eMouseButton)
 	if eMouseButton ~= GameLib.CodeEnumInputMouse.Right then
 		local tItemInfo = wndHandler:GetData()
 		if tItemInfo and tItemInfo.bIsMaster then
-			self.tMasterLootSelectedItem = tItemInfo
-			self.tMasterLootSelectedLooter = nil
-			self:OnMasterLootUpdate(true)
+			self:RefreshMasterLootLooterList(tItemInfo)
 		end
 	end
 end
 
 function MasterLoot:OnItemUncheck(wndHandler, wndControl, eMouseButton)
 	if eMouseButton ~= GameLib.CodeEnumInputMouse.Right then
-		self.tMasterLootSelectedItem = nil
-		self.tMasterLootSelectedLooter = nil
-		self:OnMasterLootUpdate(true)
+		self:RefreshMasterLootLooterList(nil)
 	end
 end
 ----------------------------
@@ -376,8 +344,8 @@ function MasterLoot:OnCharacterMouseButtonUp(wndHandler, wndControl, eMouseButto
 	if eMouseButton == GameLib.CodeEnumInputMouse.Right then
 		local unitPlayer = wndControl:GetData() -- Potentially nil
 		local strPlayer = wndHandler:FindChild("CharacterName"):GetText()
-		if unitPlayer then
-			Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", wndHandler, strPlayer, unitPlayer)
+		if unitPlayer and unitPlayer.unitLooter then
+			Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", wndHandler, strPlayer, unitPlayer.unitLooter)
 		else
 			Event_FireGenericEvent("GenericEvent_NewContextMenuPlayer", wndHandler, strPlayer)
 		end
@@ -386,12 +354,9 @@ end
 
 function MasterLoot:OnCharacterCheck(wndHandler, wndControl, eMouseButton)
 	if eMouseButton ~= GameLib.CodeEnumInputMouse.Right then
-		self.tMasterLootSelectedLooter = wndControl:GetData()
-		if self.tMasterLootSelectedItem ~= nil then
-			self.wndMasterLoot:FindChild("Assignment"):Enable(true)
-		else
-			self.wndMasterLoot:FindChild("Assignment"):Enable(false)
-		end
+		local tData = wndControl:GetData()
+		self.wndMasterLoot:FindChild("Assignment"):SetData(tData)
+		self.wndMasterLoot:FindChild("Assignment"):Enable(true)
 	end
 end
 
@@ -399,7 +364,6 @@ end
 
 function MasterLoot:OnCharacterUncheck(wndHandler, wndControl, eMouseButton)
 	if eMouseButton ~= GameLib.CodeEnumInputMouse.Right then
-		self.tMasterLootSelectedLooter = nil
 		self.wndMasterLoot:FindChild("Assignment"):Enable(false)
 	end
 end
@@ -407,30 +371,16 @@ end
 ----------------------------
 
 function MasterLoot:OnAssignDown(wndHandler, wndControl, eMouseButton)
+	local tData = wndControl:GetData()
 
-	if self.tMasterLootSelectedItem ~= nil and self.tMasterLootSelectedLooter ~= nil then
-
-		-- gotta save before it gets wiped out by event
-		local SelectedLooter = self.tMasterLootSelectedLooter
-		local SelectedItemLootId = self.tMasterLootSelectedItem.nLootId
-
-		self.tMasterLootSelectedLooter = nil
-		self.tMasterLootSelectedItem = nil
-
-		GameLib.AssignMasterLoot(SelectedItemLootId , SelectedLooter)
-
-	end
-
+	GameLib.AssignMasterLoot(tData.tItem.nLootId, tData.unitLooter)
+	self:RefreshMasterLootLooterList(nil)
 end
 
 ----------------------------
 
 function MasterLoot:OnCloseMasterWindow()
 	self.locSavedMasterWindowLoc = self.wndMasterLoot:GetLocation()
-	self.wndMasterLoot_ItemList:DestroyChildren()
-	self.wndMasterLoot_LooterList:DestroyChildren()
-	self.tMasterLootSelectedItem = nil
-	self.tMasterLootSelectedLooter = nil
 	self.wndMasterLoot:Show(false)
 end
 
@@ -438,7 +388,6 @@ end
 
 function MasterLoot:OnCloseLooterWindow()
 	self.locSavedLooterWindowLoc = self.wndLooter:GetLocation()
-	self.wndLooter_ItemList:DestroyChildren()
 	self.wndLooter:Show(false)
 end
 
@@ -489,5 +438,3 @@ end
 
 local MasterLoot_Singleton = MasterLoot:new()
 MasterLoot_Singleton:Init()
-nfirmDelete:FindChild("CancelCREDDListingBtn"):SetData(aucCurrent)
-		self.wndConfirmDelete:FindChild("Title"):SetText(Apollo.GetString("Market

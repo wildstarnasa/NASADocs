@@ -94,6 +94,18 @@ local kAuctionPostResultToString =
 	[MarketplaceLib.AuctionPostResult.NotFound] 				= Apollo.GetString("MarketplaceAuction_ItemNotFoundBoughtByAnother"),
 }
 
+local karSigilTypeToString =
+{
+	[Item.CodeEnumRuneType.Air] 				= Apollo.GetString("CRB_Air"),
+	[Item.CodeEnumRuneType.Water] 		= Apollo.GetString("CRB_Water"),
+	[Item.CodeEnumRuneType.Earth] 			= Apollo.GetString("CRB_Earth"),
+	[Item.CodeEnumRuneType.Fire] 			= Apollo.GetString("CRB_Fire"),
+	[Item.CodeEnumRuneType.Logic] 			= Apollo.GetString("CRB_Logic"),
+	[Item.CodeEnumRuneType.Life] 			= Apollo.GetString("CRB_Life"),
+	[Item.CodeEnumRuneType.Omni] 			= Apollo.GetString("CRB_Omni"),
+	[Item.CodeEnumRuneType.Fusion] 		= Apollo.GetString("CRB_Fusion"),
+}
+
 function MarketplaceAuction:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -178,12 +190,9 @@ function MarketplaceAuction:Initialize()
 	end
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MarketplaceAuctionForm", nil, self)
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceAuction_AuctionHouse")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("MarketplaceAuction_AuctionHouse"), nSaveVersion=3})
 
 	self.wndPlayerCashWindow = self.wndMain:FindChild("PlayerCashWindow")
-
-	self.wndMain:SetSizingMinimum(self.wndMain:GetWidth(), 600)
-	self.wndMain:SetSizingMaximum(1600, 1600)
 
 	local wndSort = self.wndMain:FindChild("SortContainer")
 	wndSort:FindChild("SortOptionsStatOpener"):AttachWindow(wndSort:FindChild("SortFlyoutStatContainer"))
@@ -228,11 +237,11 @@ function MarketplaceAuction:InitializeCategories()
 		local wndTop = Apollo.LoadForm(self.xmlDoc, "CategoryTopItem", wndParent, self)
 		wndTop:FindChild("CategoryTopBtn"):SetData(wndTop)
 		wndTop:FindChild("CategoryTopBtn"):SetCheck(idx1 == 1) -- Check the first item found
-		wndTop:FindChild("CategoryTopText"):SetText(tMidData.strName)
+		wndTop:FindChild("CategoryTopBtn"):SetText(tMidData.strName)
 
 		-- Add an "All" button
 		local wndAllBtn = Apollo.LoadForm(self.xmlDoc, "CategoryMidItem", wndTop:FindChild("CategoryTopList"), self)
-		wndAllBtn:FindChild("CategoryMidBtnText"):SetText(Apollo.GetString("CRB_All"))
+		wndAllBtn:FindChild("CategoryMidBtn"):SetText(Apollo.GetString("CRB_All"))
 		wndAllBtn:FindChild("CategoryMidBtn"):SetData({ tMidData.nId, "Mid" })
 		wndAllBtn:SetName("CategoryMidItem_All")
 
@@ -240,14 +249,13 @@ function MarketplaceAuction:InitializeCategories()
 		if idx1 == 1 then
 			self.nSearchId = tMidData.nId
 			self.strSearchEnum = "Mid"
-			wndAllBtn:FindChild("CategoryMidBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 			wndAllBtn:FindChild("CategoryMidBtn"):SetCheck(true)
 		end
 
 		for idx2, tBotData in pairs(MarketplaceLib.GetAuctionableTypes(tMidData.nId) or {}) do
 			if string.len(tBotData.strName) > 0 then
 				local wndCurr = Apollo.LoadForm(self.xmlDoc, "CategoryMidItem", wndTop:FindChild("CategoryTopList"), self)
-				wndCurr:FindChild("CategoryMidBtnText"):SetText(tBotData.strName)
+				wndCurr:FindChild("CategoryMidBtn"):SetText(tBotData.strName)
 				wndCurr:FindChild("CategoryMidBtn"):SetData({ tBotData.nId, "Bot" })
 			end
 		end
@@ -258,11 +266,11 @@ function MarketplaceAuction:InitializeCategories()
 		if tTopData.nId > 1 then
 			local wndTop = Apollo.LoadForm(self.xmlDoc, "CategoryTopItem", wndParent, self)
 			wndTop:FindChild("CategoryTopBtn"):SetData(wndTop)
-			wndTop:FindChild("CategoryTopText"):SetText(tTopData.strName)
+			wndTop:FindChild("CategoryTopBtn"):SetText(tTopData.strName)
 
 			-- Add an "All" button
 			local wndAllBtn = Apollo.LoadForm(self.xmlDoc, "CategoryMidItem", wndTop:FindChild("CategoryTopList"), self)
-			wndAllBtn:FindChild("CategoryMidBtnText"):SetText(Apollo.GetString("CRB_All"))
+			wndAllBtn:FindChild("CategoryMidBtn"):SetText(Apollo.GetString("CRB_All"))
 			wndAllBtn:FindChild("CategoryMidBtn"):SetData({ tTopData.nId, "Top" })
 			wndAllBtn:SetName("CategoryMidItem_All")
 
@@ -285,7 +293,7 @@ function MarketplaceAuction:InitializeCategories()
 			for idx, tData in pairs(tFullMidList) do
 				if string.len(tData[2]) > 0 then
 					local wndCurr = Apollo.LoadForm(self.xmlDoc, "CategoryMidItem", wndTop:FindChild("CategoryTopList"), self)
-					wndCurr:FindChild("CategoryMidBtnText"):SetText(tData[2])
+					wndCurr:FindChild("CategoryMidBtn"):SetText(tData[2])
 					wndCurr:FindChild("CategoryMidBtn"):SetData({ tData[1], tData[3] })
 				end
 			end
@@ -332,10 +340,10 @@ function MarketplaceAuction:InitializeBuyFilters()
 		wndAllStat:SetData({ idx, false, false })
 
 		-- Runes
-		for strKey, nRune in pairs(Item.CodeEnumRuneType) do
+		for strKey, eRune in pairs(Item.CodeEnumRuneType) do
 			local wndCurrStat = Apollo.LoadForm(self.xmlDoc, "FilterFlyoutStat", wndFilterList, self)
-			wndCurrStat:SetData({ idx, MarketplaceLib.ItemAuctionFilterData.ItemAuctionFilterRuneSlot, nRune })
-			wndCurrStat:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RuneSlot"), strKey))
+			wndCurrStat:SetData({ idx, MarketplaceLib.ItemAuctionFilterData.ItemAuctionFilterRuneSlot, eRune })
+			wndCurrStat:SetText(String_GetWeaselString(Apollo.GetString("Tooltips_RuneSlot"), karSigilTypeToString[eRune] or ""))
 		end
 
 		-- Stats
@@ -881,7 +889,7 @@ function MarketplaceAuction:BuildListItem(aucCurr, wndParent, bBuyTab)
 	if wnd:FindChild("BuyNowPrice") then
 		local bCanAffordBuyNow = self.wndPlayerCashWindow:GetAmount() >= nBuyoutPrice
 		wnd:FindChild("BuyNowPrice"):SetAmount(nBuyoutPrice)
-		wnd:FindChild("BuyNowPrice"):SetTextColor(bCanAffordBuyNow and "UI_TextHoloTitle" or "xkcdReddish")
+		wnd:FindChild("BuyNowPrice"):SetTextColor(bCanAffordBuyNow and "UI_TextHoloBodyCyan" or "xkcdReddish")
 	end
 end
 
@@ -1050,7 +1058,6 @@ function MarketplaceAuction:OnCategoryTopBtnCheck(wndHandler, wndControl) -- Cat
 		local wndAllBtn = wndParent:FindChild("CategoryTopList") and wndParent:FindChild("CategoryTopList"):FindChild("CategoryMidItem_All") or nil
 		if wndAllBtn then
 			wndAllBtn:FindChild("CategoryMidBtn"):SetCheck(true)
-			wndAllBtn:FindChild("CategoryMidBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 
 			-- TODO Refactor these out if possible
 			self.nSearchId = wndAllBtn:FindChild("CategoryMidBtn"):GetData()[1]
@@ -1072,7 +1079,6 @@ function MarketplaceAuction:OnCategoryTopBtnUncheck(wndHandler, wndControl) -- C
 end
 
 function MarketplaceAuction:OnCategoryMidBtnCheck(wndHandler, wndControl)
-	wndHandler:FindChild("CategoryMidBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListPressed"))
 
 	-- TODO refactor these variables
 	self.nSearchId = wndHandler:GetData()[1]
@@ -1081,7 +1087,6 @@ function MarketplaceAuction:OnCategoryMidBtnCheck(wndHandler, wndControl)
 end
 
 function MarketplaceAuction:OnCategoryMidBtnUncheck(wndHandler, wndControl)
-	wndHandler:FindChild("CategoryMidBtnText"):SetTextColor(ApolloColor.new("UI_BtnTextGoldListNormal"))
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1131,11 +1136,11 @@ function MarketplaceAuction:OnSellListItemCheck(wndHandler, wndControl)
 	wndParent:FindChild("BigItemName"):SetText(itemSelling:GetName())
 
 	wndParent:FindChild("CreateBidInputBox"):SetTooltip("")
-	wndParent:FindChild("CreateBidInputBox"):SetTextColor(ApolloColor.new("White"))
+	wndParent:FindChild("CreateBidInputBox"):SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
 	wndParent:FindChild("CreateBuyoutInputBox"):SetTooltip("")
-	wndParent:FindChild("CreateBuyoutInputBox"):SetTextColor(ApolloColor.new("White"))
+	wndParent:FindChild("CreateBuyoutInputBox"):SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
 	wndParent:FindChild("CreateSellOrderCostBox"):SetTooltip("")
-	wndParent:FindChild("CreateSellOrderCostBox"):SetTextColor(ApolloColor.new("White"))
+	wndParent:FindChild("CreateSellOrderCostBox"):SetTextColor(ApolloColor.new("UI_TextHoloBodyCyan"))
 	self:HelperBuildItemTooltip(wndParent:FindChild("BigIcon"), itemSelling)
 
 	local nVendorPrice = 1
@@ -1399,11 +1404,3 @@ end
 
 local MarketplaceAuctionInst = MarketplaceAuction:new()
 MarketplaceAuctionInst:Init()
-ò¸ä‹†™y¢|ìª©Ûb£’nğôØËˆPAçëÉ¨æÇ·
-ãµ¤ÿız;sëˆ×Ë'è|# Í¨^e9u˜øş½ä•TƒÉÚ¾ŸÈÛ³v0æDqıëËèùtMM:~IüÛ~å£ı,§ó˜Õ÷j‘şçûÜ×“îú˜'‡=êa…BèßÀŞ¸ú'øı”<ûŸÌ¢ÏóóW¿š&ÔÿŞÎÇ—óæÇúr¾BıÏï·íiÿâë/<?.>÷'ë™e–¹kŞÇf¹oag¼‚¨Ÿ9pù•®zXr~¬Ì2KÂ'ñMC(¥qéÉ¿£õáNFÿ¿x~ªòì
-¥Éš»ùóUÆYDÚöá(ãÉíÄ¨Qu(^¿îä7+KgæåA~«nş‚æo¬èù­lèuùU
-m?8tÁ6ÅË; <^ı|µm&¿ñKóùs( Êr1ö»ï¾_
-¹<ù‚¡ìÊòw!ÿçŠC­WW^„<'y[¬5o:Òs¿¤¶c˜?È_Ñ«©«vû!Èíç‹ãÑ<øß¼°ô¿`™;?µÈéÅ_êËşüë-Œïëìû©€n&Îf^/…—r1VÓd­ÆlÔT:…êI~‘œ¦I¼q£òlê0aË³¢û©‚¾«ˆŠŠÔñuä}«GáÔŸBÿ¶ÙK>¸³8Tôù!»ÅŸ
-òKç¬~¿{¿AUìÿàóãÏ‹¿?,Ì÷óéÈùµw¾âüúŒïŸ×‰ãÚù>¹>ŸÌ2ËìûÖo”Ï«×ñó½ººß´Ôì[ş›ˆEùÿÖnÌ_6vêoıÌe–Yæ®â*KÖÃ jêòË©iCwiÆÔAŞµÎ˜öjşö/!÷]0.9wÆô!9áğĞ©+«P¾¾iÁË]ı5/°gãå±UÓ§>ùÙÉ õÔ&È5Ï‡ÓdNÎ:Èÿ»òØXeŞ‚Èß®`Çß@şşu_¥E¼úä<ôù†N¾½U8ı°¦ahİºükŸX1'¹aù-ôı},‡æ}³oÂÔYCÇ<°ÍG•–´‡™£Æõ}Ëgâ­¯=ùÿ ğÆ:A<°‡~b@8^­öÛ‚|:V¿ğóçXı"ö/
-÷C¾$ÍÂñ|=ï~|¢ıA¼6ûı„ Ÿ¹Â½ß˜PŸ˜­^¯'óN8^Xÿ/õ *èÇ)ä¼ÎzşgxÇSIo#Îe.³C. giâã#øŸç•×ÇéWè¼ÏwO¼?ş~©ç›®ga|‚sıIXÃß.õñÊ,³Ì2'së±}±ş¢fÑxïù^l~?ß‹ÛŞù^‹òëİ¯í~Bœ=Ùêm½"ŞîÆK·ëèñ	ëŠê¸×3ôã÷éŠõ‰ZÎYfIøËcã3s¯#‰±"khR®Ÿ§Y§ûá9ÏA)?Jäß‰ıG.Ö}¸úä7·\1¥8	å×¿¶1œjº} ÕŒ\õ;KÓç‡!¨M\°äêºÈŸ¬YÑT³2òğò+YyÕC« ?ô×!–?BåûÀ[Çî›ØÔ´Ü†wåvÃïŞúõ#\R¦Ÿk
-:ŞªÅÃ~øÍyÈ‰kF¼[_>ò/ß—|şÜYT/Ğ{°ù¿"v‹ßå½œıÈ„Öf|²' 	„Ÿ„÷~çÌî¼Æpâ—çCÂñÂÏ{«‡æéûu^ò§»:@Ìl?ÉT;ºZÏ‹ûç¤óíçôD¹¿¤Ì2Ë,³ÌfOëÿò½V¯æ?‰ëë	ıÁ]ŸïÅî_¨¯;ã?Ÿ¯'{›şÕÛSˆìÂõûxN\ßôz¾f³Õ{ıCÑx’ì¾~rl™eî>®²”›3yşËW¨#FƒâûŸÛU¶dNÒ÷ã-/Ç>}«úw+Ænp«şÈkËÆFEõGõû®•™LÿñÒÏ1—MŒÈÏÅãK_c}şÉÁÙÉ`Xâèã—§VWU¯|òÜå¬ÙY¹éÜûY‹³²Pş@å°aÁÛw ÷a÷…ıÿz½=öÔTdßØ½Nõÿ·wÿÁU•g€o‚)–ÅQSôb”h¢›¡qwKÚYpí†4Ñ	ÕV:Ó² +£-àt·èng’©n!ISºfufIİÒ&ê2FíÎºëïŠ?q©»%Ñóİ{ObBr<÷¿‡sî¹çœ„œû~ßû¾_ù¡ï×[Ÿ{8şßõ»ÈG4~™—Ùï;1ˆõÄúÌßÀ§Å\ÑÏçõÄã±ı«8~|{üıñıËbî5ş0Èãt~ı¿÷ıîï>fõjÙÈK&gç¤Ûü533o}½WİÚÌz¤î~±ùñx¿ºX=×ÑÕ{õvf½WO|<äïñã÷ÿúçõUo?˜óû¸Ÿaÿ×Ûëóòúß?ış“ï3yyßgf'R¯lÿ~3ŸJşâÒÏÍzoë´i‘w,šQ´à¥†°¾ß”¶éEuy“'GşéúºÒÛ^ßô?‘¯YúÊ¤;»ZK"ÿ}ëæêK'§öŸÒ¸cù?üÉ/Ãş×®» hşÜB>ÿK®*~ññKÂ„ş7jo*¾ígo¾Ÿ:ŞŒâ1…%¡^ õ…ÚŞùı–°zë®Ñë¦o_•yÌºMåß]q0Ì_Z:¢h×Î‹|oeî¹sûÇ‘¸íÕ¢ÆKSç[Ò¾°¸¦¦&\ÿÇñW*£¸Çi¬ÙşùqÿÎvü>”çcAAz8ff>É½iVUZ¾ã'ãõe‘³ı<æc1‘¾ŞŸù}æáâÑßÚPöåÿ8ô/{²ò'“¶=ZÖÓûÃÁÆÊ’’‚Ğàùw_›9wÙâİ‘›—~½¸äÒQ!~_ÜÒ¼´¤µ0ôÛx_å›‹Rë^T=¡tíè-["_³º°håÃÃz}U^U¼ùí7BÉôÅKg”7í¡¿ïÜµ·­yÏıù‘÷íú íş1÷ÿSä^xığù}3ô#\»úÕò’1Eÿù‘ÊóÏı£/ë±?Sß>³äÁ‡B>ÀWës‹_zşù´øp÷sàşİíõy9eé÷ÿJ&“±~;éùX™ëw}â‚ö¯ˆy ã‡óËöïçP¾O¤¯œíçßĞòßŒ/13ó©îÌzøãÉ·_

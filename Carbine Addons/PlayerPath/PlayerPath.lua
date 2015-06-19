@@ -306,7 +306,7 @@ function PlayerPath:PathRefresh(pepEpisode, bFullRedraw) -- A lot of events rout
 
 		local tMissions = pepCurrEpisode:GetMissions()
 		if #tMissions > 0 then nPercent = math.floor(100 * pepCurrEpisode:GetNumCompleted() / #tMissions) end
-		wndBigZone:FindChild("BigZoneTitle"):SetText(strWorldZone .. " - " .. nPercent .. "%")
+		wndBigZone:FindChild("BigZoneBtn"):SetText(strWorldZone .. " - " .. nPercent .. "%")
 		wndBigZone:FindChild("BigZoneBtn"):SetData(pepCurrEpisode)
 
 		-- Selected Episode specific formatting
@@ -782,9 +782,3 @@ end
 ----------------------------------------------------------------------------------------------------------
 local PlayerPathInstance = PlayerPath:new()
 PlayerPathInstance:Init()
-CRB__7" DT_VCENTER="1" DT_CENTER="0" DT_RIGHT="0" DT_BOTTOM="0" TooltipColor=""/>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="24" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="0" RAnchorOffset="51" BAnchorPoint="1" BAnchorOffset="-2" RelativeToClient="1" Font="CRB_HeaderLarge_O" Text="" Template="Default" Name="LocateLbl2" BGColor="white" TextColor="white" TextId="CRB__7" DT_VCENTER="1" DT_CENTER="0" DT_RIGHT="0" DT_BOTTOM="0" TooltipColor=""/>
-                    <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-32" TAnchorPoint="0" TAnchorOffset="19" RAnchorPoint="1" RAnchorOffset="-15" BAnchorPoint="1" BAnchorOffset="9" RelativeToClient="1" Font="CRB_InterfaceLarge_BO" Text="" Template="Default" Name="LocateLbl3" BGColor="white" TextColor="white" TextId="" Picture="1" IgnoreMouse="1" Sprite="CRB_PlayerPathSprites:sprPP_ExpTargetIcon" NewControlDepth="1" TooltipColor=""/>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="6" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="-4" BAnchorPoint="1" BAnchorOffset="-13" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ClaimLocateButtonShade" BGColor="UI_AlphaPercent60" TextColor="white" Picture="1" IgnoreMouse="1" Sprite="ClientSprites:BlackFill" Visible="0" NewControlDepth="2" TooltipColor="" HideInEditor="1"/>
-                </Control>
-                <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoin

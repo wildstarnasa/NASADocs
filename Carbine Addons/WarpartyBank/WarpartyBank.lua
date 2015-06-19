@@ -406,19 +406,16 @@ function WarpartyBank:BuildPermissionIndividualTab(wndParent, guildOwner, bCanEd
 	
     wndTab:FindChild("PermissionGridBtnVisible"):SetData(wndTab)
     wndTab:FindChild("PermissionGridBtnDeposit"):SetData(wndTab)
-	wndTab:FindChild("PermissionGridBtnUse"):SetData(wndTab)
     
     wndTab:FindChild("PermissionGridIconVisible"):SetData(tCurrRankData.arBankTab[nBankTab].bVisible)
     wndTab:FindChild("PermissionGridIconDeposit"):SetData(tCurrRankData.arBankTab[nBankTab].bDeposit)
 	
     wndTab:FindChild("PermissionsGridRowText"):SetText(strBankTabName)
-    wndTab:FindChild("PermissionGridIconUse"):SetSprite(strSpriteUse)
     wndTab:FindChild("PermissionGridIconVisible"):SetSprite(strSpriteVisible)
     wndTab:FindChild("PermissionGridIconDeposit"):SetSprite(strSpriteDeposit)
 	
     wndTab:FindChild("PermissionGridBtnVisible"):Show(bCanEditRanks)
     wndTab:FindChild("PermissionGridBtnDeposit"):Show(bCanEditRanks)
-    wndTab:FindChild("PermissionGridBtnUse"):Show(bCanEditRanks)
 end
 
 function WarpartyBank:OnPermissionGridBtnVisibleDeposit(wndHandler, wndControl)
@@ -429,6 +426,7 @@ function WarpartyBank:OnPermissionGridBtnVisibleDeposit(wndHandler, wndControl)
     local wndTab = wndHandler:GetData()
     local strIcon = "PermissionGridIconVisible"
 	local bChangingVisible = true
+	
     if wndHandler:GetName() == "PermissionGridBtnDeposit" then -- NAME HACK
 		if not wndTab:FindChild(strIcon):GetData() then
 			-- prevent changing if not visible
@@ -443,45 +441,19 @@ function WarpartyBank:OnPermissionGridBtnVisibleDeposit(wndHandler, wndControl)
     else
         wndTab:FindChild(strIcon):SetSprite("ClientSprites:Icon_Windows_UI_CRB_Checkmark")
     end
+
     wndTab:FindChild(strIcon):SetData(not wndTab:FindChild(strIcon):GetData())
     self.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
+
 	if bChangingVisible then
 		if wndTab:FindChild(strIcon):GetData() then
 			wndTab:FindChild("PermissionGridBtnDeposit"):Enable(true)
-			wndTab:FindChild("PermissionGridBtnUse"):Enable(true)
 		else
 			wndTab:FindChild("PermissionGridBtnDeposit"):Enable(false)
 			wndTab:FindChild("PermissionGridIconDeposit"):SetData(false)
     	    wndTab:FindChild("PermissionGridIconDeposit"):SetSprite("ClientSprites:LootCloseBox")
-			wndTab:FindChild("PermissionGridBtnUse"):Enable(false)
-			wndTab:FindChild("PermissionGridIconUse"):SetData(knUsePermissionNone)
-	        wndTab:FindChild("PermissionGridIconUse"):SetSprite("ClientSprites:LootCloseBox")
 		end
 	end
-end
-
-function WarpartyBank:OnPermissionGridBtnUse(wndHandler, wndControl)
-	if not self.wndMain or not self.wndMain:IsValid() or not self.wndMain:GetData() then
-        return
-    end
-	
-	local wndTab = wndHandler:GetData()
-	local wndPermissionGridIconUse = wndTab:FindChild("PermissionGridIconUse")
-
-	if not wndTab:FindChild("PermissionGridIconVisible"):GetData() then
-		-- prevent changing if not visible
-		return
-	end
-	
-	if wndPermissionGridIconUse:GetData() == knUsePermissionNone then
-		wndPermissionGridIconUse:SetData(knUsePermissionAll)
-		wndPermissionGridIconUse:SetSprite("ClientSprites:Icon_Windows_UI_CRB_Checkmark")
-	else
-		wndPermissionGridIconUse:SetData(knUsePermissionNone)
-		wndPermissionGridIconUse:SetSprite("ClientSprites:LootCloseBox")
-	end
-	
-	self.wndMain:FindChild("PermissionsSaveBtn"):Enable(true)
 end
 
 function WarpartyBank:OnPermissionsSaveBtn(wndHandler, wndControl)
@@ -698,90 +670,3 @@ end
 local WarpartyBankInst = WarpartyBank:new()
 WarpartyBankInst:Init()
 
-kSettingsDeleteBtn(wndControl, wndHandler)
-	local wndRankPopout = self.wndMain:FindChild("RankPopout")
-	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
-	local wndSettings = self.wndMain:FindChild("RankPopout"):FindChild("RankSettingsEntry")
-
-	local nRankIdx = wndSettings:GetData().nRankIdx
-	local guildCurr = self.wndMain:GetData()
-	
-	guildCurr:RemoveRank(nRankIdx)
-	
-	wndRankContainer:Show(true)
-	wndSettings:Show(false)
-end
-
-function Warparty:OnRankSettingsNameChanging(wndControl, wndHandler, strText)
-	self:HelperValidateAndRefreshRankSettingsWindow(self.wndRankPopout:FindChild("RankSettingsEntry"))
-end
-
-function Warparty:OnRankSettingsPermissionBtn(wndControl, wndHandler)
-	self:HelperValidateAndRefreshRankSettingsWindow(self.wndRankPopout:FindChild("RankSettingsEntry"))
-end
-
-function Warparty:HelperValidateAndRefreshRankSettingsWindow(wndSettings)
-	local wndLimit = wndSettings:FindChild("Limit")
-	local tRank = wndSettings:GetData()
-	local strName = wndSettings:FindChild("OptionString"):GetText()
-	
-	if wndLimit ~= nil then
-		local nNameLength = string.len(strName or "")
-		
-		wndLimit:SetText(string.format("(%d/%d)", nNameLength, GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName)))
-		
-		if nNameLength < 1 or nNameLength > GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildName) then
-			wndLimit:SetTextColor(crGuildNameLengthError)
-		else
-			wndLimit:SetTextColor(crGuildNameLengthGood)
-		end
-	end
-	
-	local bNameValid = strName ~= nil and strName ~= "" and GameLib.IsTextValid(strName, GameLib.CodeEnumUserText.GuildRankName, GameLib.CodeEnumUserTextFilterClass.Strict)
-	local bNameChanged = strName ~= tRank.strName
-	
-	local bPermissionChanged = false
-	for key, wndPermission in pairs(wndSettings:FindChild("PermissionContainer"):GetChildren()) do
-		local bPermissionChecked = wndPermission:FindChild("PermissionBtn"):IsChecked()
-		if tRank[wndPermission:GetData().strLuaVariable] ~= bPermissionChecked then
-			bPermissionChanged = true
-			break
-		end
-	end
-	
-	wndSettings:FindChild("RankPopoutOkBtn"):Enable((bNew and bNameValid) or (not bNew and bNameValid and (bNameChanged or bPermissionChanged)))
-end
-
-function Warparty:OnRankSettingsCloseBtn(wndControl, wndHandler)
-	local wndRankPopout = self.wndMain:FindChild("RankPopout")
-	local wndRankContainer = wndRankPopout:FindChild("RankContainer")
-	local wndSettings = wndRankPopout:FindChild("RankSettingsEntry")
-
-	wndRankPopout:FindChild("RankContainer"):Show(true)
-	wndSettings:Show(false)
-end
-
-function Warparty:OnGuildRankChange(guildCurr)
-	if guildCurr ~= self.wndMain:GetData() then
-		return
-	end
-	self:OnGuildMemberChange(guildCurr)
-end
-
-function Warparty:OnRankPopoutCloseBtn(wndControl, wndHandler)
-	local wndParent = wndControl:GetParent()
-	wndParent:Show(false)
-end
-
----------------------------------------------------------------------------------------------------
--- WarpartyForm Functions
----------------------------------------------------------------------------------------------------
-
-function Warparty:OnRosterPromoteMemberCloseBtn( wndHandler, wndControl, eMouseButton )
-	self.wndMain:FindChild("PromoteMemberContainer"):Show(false)
-	self.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
-end
-
-function Warparty:OnRosterDemoteMemberClick( wndHandler, wndControl, eMouseButton )
-	local guildCurr = self.wndMain:GetData()
-	local tMember = 

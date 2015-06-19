@@ -201,6 +201,14 @@ function HousingDecorate:OnLoad()
 	self.wndFreePlaceToggleMoveControlBtn:SetCheck(true)
 	self.wndFreePlaceToggleRotateControlBtn:SetCheck(true)
 	
+	self.wndFreePlaceLocalModeBtn = self.wndFreePlaceFrame:FindChild("FreePlaceLocalBtn")
+	self.wndFreePlaceGlobalModeBtn = self.wndFreePlaceFrame:FindChild("FreePlaceGlobalBtn")
+	if HousingLib.GetControlMode() == HousingLib.DecorControlMode.Local then
+	    self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 1)
+	else
+        self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 2)
+    end    
+	
 	self.wndFreePlaceCopyBtn = self.wndFreePlaceFrame:FindChild("FreePlaceCopyBtn")
 	self.wndFreePlacePasteBtn = self.wndFreePlaceFrame:FindChild("FreePlacePasteBtn")
 	self.wndFreePlacePasteBtn:Enable(false)
@@ -1104,6 +1112,16 @@ function HousingDecorate:UpdateFreePlaceControlVisibility()
 end
 
 ---------------------------------------------------------------------------------------------------
+function HousingDecorate:UpdateFreePlaceControlMode()
+    local nControlModeBtnSel = self.wndFreePlaceFrame:FindChild("ScrollContainer"):GetRadioSel("GizmoControlModeBtns")
+    if nControlModeBtnSel == 1 then
+        HousingLib.SetControlMode(HousingLib.DecorControlMode.Local)
+    else
+        HousingLib.SetControlMode(HousingLib.DecorControlMode.Global)
+    end    
+end
+
+---------------------------------------------------------------------------------------------------
 function HousingDecorate:OnFreePlace_Move(wndHandler, wndControl)
 	self.wndFreePlaceFrame:FindChild("FreePlaceBtn"):Enable(true)
 	self.wndFreePlaceFrame:FindChild("CancelFreePlaceBtn"):Enable(true)
@@ -1112,31 +1130,31 @@ function HousingDecorate:OnFreePlace_Move(wndHandler, wndControl)
 	local kfBigMove = 0.5
 		
 	if wndControl == self.wndFreePlaceFrame:FindChild("MoveForwardBtn") then
-		HousingLib.TranslateDecor(kfSmallMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, kfSmallMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveBackBtn") then
-		HousingLib.TranslateDecor(-kfSmallMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, -kfSmallMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveUpBtn") then
 		HousingLib.TranslateDecor(0, kfSmallMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveDownBtn") then
 		HousingLib.TranslateDecor(0, -kfSmallMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveLeftBtn") then
-		HousingLib.TranslateDecor(0, 0, kfSmallMove)
+		HousingLib.TranslateDecor(kfSmallMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveRightBtn") then
-		HousingLib.TranslateDecor(0, 0, -kfSmallMove)
+		HousingLib.TranslateDecor(-kfSmallMove, 0, 0)
 	
 	
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveForwardLongBtn") then
-		HousingLib.TranslateDecor(kfBigMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, kfBigMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveBackLongBtn") then
-		HousingLib.TranslateDecor(-kfBigMove, 0, 0)
+		HousingLib.TranslateDecor(0, 0, -kfBigMove)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveUpLongBtn") then
 		HousingLib.TranslateDecor(0, kfBigMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveDownLongBtn") then
 		HousingLib.TranslateDecor(0, -kfBigMove, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveLeftLongBtn") then
-		HousingLib.TranslateDecor(0, 0, kfBigMove)
+		HousingLib.TranslateDecor(kfBigMove, 0, 0)
 	elseif wndControl == self.wndFreePlaceFrame:FindChild("MoveRightLongBtn") then
-		HousingLib.TranslateDecor(0, 0, -kfBigMove)
+		HousingLib.TranslateDecor(-kfBigMove, 0, 0)
 	end
 end
 
@@ -1309,6 +1327,14 @@ function HousingDecorate:OnHousingAdvancedChecked()
 		self.wndFreePlaceToggleMoveControlBtn:Enable(true)
 		self.wndFreePlaceToggleRotateControlBtn:Enable(true)
 		
+        self.wndFreePlaceLocalModeBtn:Enable(true)
+        self.wndFreePlaceGlobalModeBtn:Enable(true)
+        if HousingLib.GetControlMode() == HousingLib.DecorControlMode.Local then
+            self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 1)
+        else
+            self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 2)
+        end    
+		
 		self:UpdateFreePlaceControlVisibility()
 	end
 end
@@ -1317,6 +1343,10 @@ end
 function HousingDecorate:OnHousingAdvancedUnchecked()
 	self.wndFreePlaceToggleMoveControlBtn:Enable(false)
 	self.wndFreePlaceToggleRotateControlBtn:Enable(false)
+	
+    self.wndFreePlaceLocalModeBtn:Enable(false)
+    self.wndFreePlaceGlobalModeBtn:Enable(false)
+    self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 1)
 		
 	if not self.bIsWarplot then
 		HousingLib.SetCustomizationMode(HousingLib.ResidenceCustomizationMode.Simple)
@@ -1554,6 +1584,13 @@ function HousingDecorate:ReselectPreviousItemById(wndControl)
 			wndControl:SetCurrentRow(idx)
 			self.wndBuyToCrateButton:Enable(true)
 			wndControl:EnsureCellVisible(idx, 1)
+			--If tItemData.eCurrencyType and tItemData.eGroupCurrencyType are both nil then it came from previewing a crated item, which doesn't show currencies.
+			if tItemData.eCurrencyType and tItemData.eGroupCurrencyType then
+				local eCurrencyType = tItemData.eCurrencyType
+				local eGroupCurrencyType = tItemData.eGroupCurrencyType
+				self.wndCashDecorate:SetMoneySystem(eCurrencyType, eGroupCurrencyType)
+				self.wndCashDecorate:SetAmount(GameLib.GetPlayerCurrency(eCurrencyType, eGroupCurrencyType))
+			end
 			return
 		end
 	end
@@ -1945,6 +1982,18 @@ function HousingDecorate:OnActivateDecorIcon(nDecorHandle) --this is second and 
             self.wndFreePlaceFrame:FindChild("BtnHousingAdvancedMode"):SetCheck(bAdvancedChecked)
 			self.wndFreePlaceToggleMoveControlBtn:Enable(bAdvancedChecked)
 			self.wndFreePlaceToggleRotateControlBtn:Enable(bAdvancedChecked)
+			
+			self.wndFreePlaceLocalModeBtn:Enable(bAdvancedChecked)
+	        self.wndFreePlaceGlobalModeBtn:Enable(bAdvancedChecked)
+	        if bAdvancedChecked then
+	        	if HousingLib.GetControlMode() == HousingLib.DecorControlMode.Local then
+                    self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 1)
+                else
+                    self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 2)
+                end    
+	        else
+	            self.wndFreePlaceFrame:FindChild("ScrollContainer"):SetRadioSel("GizmoControlModeBtns", 1)
+	        end
         end
       
         -- start our update timer
@@ -2230,5 +2279,3 @@ end
 -----------------------------------------------------------------------------------------------
 local HousingDecorateInst = HousingDecorate:new()
 HousingDecorateInst:Init()
-ltipType="OnCursor" Name="ButtonInitialYes" BGColor="white" TextColor="white" TooltipColor="" NormalTextColor="UI_BtnTextHoloNormal" PressedTextColor="UI_BtnTextHoloPressed" FlybyTextColor="UI_BtnTextHoloFlyby" PressedFlybyTextColor="UI_BtnTextHoloPressedFlyby" DisabledTextColor="UI_BtnTextHoloDisabled" Text="" TextId="CRB_Accept" AutoScaleText="0" TestAlpha="1" WindowSoundTemplate="HoloButtonLarge">
-                <Event Name="ButtonSignal" Functio

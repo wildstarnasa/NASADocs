@@ -517,16 +517,3 @@ local GuildDesignerInst = GuildDesigner:new()
 GuildDesignerInst:Init()
 
 
-Click"/>
-                <Control Class="Window" LAnchorPoint="0.5" LAnchorOffset="-92" TAnchorPoint="1" TAnchorOffset="-155" RAnchorPoint="0.5" RAnchorOffset="92" BAnchorPoint="1" BAnchorOffset="-36" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="AddMemberContainer" BGColor="ffffffff" TextColor="ffffffff" Picture="0" IgnoreMouse="0" Sprite="" Visible="0" HideInEditor="0" NewWindowDepth="0" NoClip="1" CloseOnExternalClick="1" TooltipColor="">
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="TopLeftRewardsArt" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="" Picture="1" IgnoreMouse="1" HideInEditor="0">
-                        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-20" TAnchorPoint="0" TAnchorOffset="-44" RAnchorPoint="1" RAnchorOffset="20" BAnchorPoint="1" BAnchorOffset="15" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="NoteBG" BGColor="white" TextColor="white" Sprite="BK3:sprHolo_Alert_Flyout" Picture="1" IgnoreMouse="1" TooltipColor="" NoClip="1" Tooltip=""/>
-                    </Control>
-                    <Control Class="Window" LAnchorPoint="0" LAnchorOffset="23" TAnchorPoint="0" TAnchorOffset="-2" RAnchorPoint="1" RAnchorOffset="-35" BAnchorPoint="0" BAnchorOffset="18" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="AddMemberLabel" BGColor="ffffffff" TextColor="UI_WindowTitleYellow" TextId="ArenaRoster_AddLabel" TooltipColor=""/>
-                    <Control Class="EditBox" LAnchorPoint="0" LAnchorOffset="20" TAnchorPoint="0.5" TAnchorOffset="-36" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0.5" BAnchorOffset="-5" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Holo_InputBox" Name="AddMemberEditBox" BGColor="ffffffff" TextColor="UI_TextHoloBodyHighlight" Picture="0" DT_VCENTER="1" IgnoreMouse="1" TooltipColor="" Border="1" UseTemplateBG="1" NewWindowDepth="0" NewControlDepth="3">
-                        <Event Name="EditBoxReturn" Function="OnAddMemberYesClick"/>
-                    </Control>
-                    <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_Close2" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-35" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-17" BAnchorPoint="0" BAnchorOffset="20" DT_VCENTER="1" DT_CENTER="1" Name="AddMemberCloseBtn" BGColor="ffffffff" TextColor="ffffffff" NormalTextColor="ffffffff" PressedTextColor="ffffffff" FlybyTextColor="ffffffff" PressedFlybyTextColor="ffffffff" DisabledTextColor="ffffffff" TooltipColor="">
-                        <Event Name="ButtonSignal" Function="OnRosterAddMemberCloseBtn"/>
-                    </Control>
-                    <Control Class="Button" Base="BK3:btnHolo_Blue_Small" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0.5" LAnchorOffset="-50" TAnchorPoint="1" TAnchorO

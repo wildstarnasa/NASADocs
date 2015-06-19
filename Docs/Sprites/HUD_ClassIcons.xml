@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_Icon_HUD_Class_Engineer" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Class_Engineer.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Class_Esper" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Class_Esper.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Class_Medic" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Class_Medic.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Class_Spellslinger" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Class_Spellslinger.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Class_Stalker" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Class_Stalker.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Class_Warrior" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Class_Warrior.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	
+	<Sprite Name="spr_Icon_HUD_Path_Explorer" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Path_Explorer.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Path_Scientist" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Path_Scientist.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Path_Settler" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Path_Settler.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+	<Sprite Name="spr_Icon_HUD_Path_Soldier" Cycle="1">
+        <Frame Texture="UI\Assets\Textures\Icon_HUD_Path_Soldier.tex" x0="0" x1="0" x2="0" x3="0" x4="0" x5="16" y0="0" y1="0" y2="0" y3="0" y4="0" y5="16" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
+    </Sprite>
+</Sprites>

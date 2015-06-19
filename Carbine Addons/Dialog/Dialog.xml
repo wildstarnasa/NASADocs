@@ -79,35 +79,3 @@
         <Control Class="CashWindow" LAnchorPoint="0" LAnchorOffset="8" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-2" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_Header9" Name="LootCashWindow" BGColor="white" TextColor="UI_TextHoloBody" IgnoreMouse="1" Visible="0" SkipZeroes="1" Text="" TextId="" HideInEditor="0" TooltipColor="" IgnoreTooltipDelay="1" NoClip="1" DT_BOTTOM="1" DT_VCENTER="0"/>
     </Form>
 </Forms>
-rd.nAmount > 0 then
-					tDoThisLast = tCurrReward
-				elseif tCurrReward then
-					local wndCurrReward = nil
-					if tCurrReward.eType ~= Quest.Quest2RewardType_Reputation then
-						wndCurrReward = Apollo.LoadForm(self.xmlDoc, "LootItem", wndArg:FindChild("GivenRewardsItems"), self)
-						self:HelperDrawLootItem(wndCurrReward, tCurrReward, false)
-					else
-						wndCurrReward = Apollo.LoadForm(self.xmlDoc, "GivenLootItemSimple", wndArg:FindChild("GivenRewardsItems"), self)
-						self:HelperDrawLootItem(wndCurrReward, tCurrReward, true)
-					end
-
-					nGivenContainerHeight = nGivenContainerHeight + wndCurrReward:GetHeight()
-				end
-			end
-
-			 -- Given Rewards Only: Draw money at the bottom
-			if tDoThisLast then
-				local wndCurrReward = Apollo.LoadForm(self.xmlDoc, "GivenLootItemSimple", wndArg:FindChild("GivenRewardsItems"), self)
-				self:HelperDrawLootItem(wndCurrReward, tDoThisLast, true)
-				nGivenContainerHeight = nGivenContainerHeight + wndCurrReward:GetHeight()
-			end
-			-- End draw money and xp
-			nGivenContainerHeight = nGivenContainerHeight + (nPadding * 2)
-			wndArg:FindChild("GivenRewardsItems"):ArrangeChildrenVert()
-			wndArg:FindChild("GivenRewardsItems"):SetAnchorOffsets(0, 0, 0, nGivenContainerHeight)
-
-			wndArg:FindChild("GivenRewardsText"):Show(true)
-			nGivenContainerHeight = nGivenContainerHeight + 30 -- +30 for the text label after resizing
-		end
-
-		if tRewardInfo.arRewardChoices and #tRewardInfo.arRewardChoices > 0 and eState ~= DialogSys.DialogState_QuestComplete then -- GOTCHA: Choices are shown in Player, not NPC for Qu

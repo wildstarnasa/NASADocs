@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="spr_Holdouts_Frame" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="0" x1="49" x2="50" x3="159" x4="160" x5="209" y0="0" y1="0" y2="0" y3="0" y4="0" y5="110" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Holdouts_Timed" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="211" x1="267" x2="290" x3="342" x4="365" x5="420" y0="0" y1="0" y2="0" y3="0" y4="0" y5="110" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Holdouts_Fill" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="0" x1="13" x2="14" x3="99" x4="100" x5="114" y0="112" y1="112" y2="112" y3="112" y4="112" y5="156" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Holdouts_WaveDot" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="59" y0="156" y1="156" y2="156" y3="156" y4="156" y5="213" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Holdouts_WaveFill" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="60" x1="60" x2="60" x3="60" x4="60" x5="119" y0="156" y1="156" y2="156" y3="156" y4="156" y5="213" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Holdouts_WaveGlow" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="120" x1="120" x2="120" x3="120" x4="120" x5="179" y0="156" y1="156" y2="156" y3="156" y4="156" y5="213" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="spr_Holdouts_EdgeGlow" Cycle="1">
+        <Frame Texture="ui\assets\textures\UI_Holdouts.tga" x0="180" x1="180" x2="180" x3="180" x4="180" x5="196" y0="156" y1="156" y2="156" y3="156" y4="156" y5="200" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>

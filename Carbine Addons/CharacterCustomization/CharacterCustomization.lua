@@ -17,6 +17,7 @@ local CharacterCustomization = {}
 -- e.g. local kiExampleVariableMax = 999
 
 local knTokenItemId = 50763
+local knStaticAnimationValue = 5612
 
 local ktOverlayTypes =
 {
@@ -93,11 +94,10 @@ function CharacterCustomization:OnDocLoaded()
 		return
 	end
 	
+	Apollo.RegisterEventHandler("ShowDye", "OnInit", self)
+	Apollo.RegisterEventHandler("HideDye", "OnClose", self)
 	Apollo.RegisterEventHandler("UpdateInventory", "CheckForTokens", self)
 	Apollo.RegisterEventHandler("PlayerCurrencyChanged", "CalculateTotalCost", self)
-	Apollo.RegisterEventHandler("GenericEvent_InitializeCustomization", "OnInit", self)
-	Apollo.RegisterEventHandler("GenericEvent_CloseCustomization", "OnCancel", self)
-	Apollo.RegisterEventHandler("Customize_ShowTab", "OnTabShow", self)
 	
 	-- by sequential index
 	self.arCharacterBones = {}
@@ -109,7 +109,8 @@ function CharacterCustomization:OnDocLoaded()
 	self.tOptionWindows = {}
 	self.tBoneWindows = {}
 	self.tChangedBones = {}
-
+	
+	self.tPreviousBonesHolder = {}
 	
 	--just for customization options, not bones
 	self.tCustomizationCosts = {}
@@ -119,48 +120,39 @@ function CharacterCustomization:OnDocLoaded()
 	
 	self.bUseToken = false
 	self.bHasToken = false
+	
+	self.bHideHelm = true
 end
 
 --Init
-function CharacterCustomization:OnInit(wndParent)
-	
-	if not GameLib.IsCharacterLoaded() or (self.wndMain and self.wndMain:IsShown()) then
+function CharacterCustomization:OnInit()
+	if not GameLib.IsCharacterLoaded() or self.wndMain then
 		return
 	end
+
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "CharacterCustomization", nil, self)
+	self.wndPreview = self.wndMain:FindChild("RightContent:Costume")
 	
-	if not self.wndMain or not self.wndMain:IsValid() then	
-		self.wndMain = Apollo.LoadForm(self.xmlDoc, "CharacterCustomizationForm", wndParent, self)		
-		self.wndPreview = self.wndMain:FindChild("RightContent:Costume")
-		self.wndHideHelm = self.wndMain:FindChild("RightContent:HideHelmBtn")
-		
-		self.wndMain:FindChild("Footer:BuyBtn"):Enable(false)		
-		self.wndMain:FindChild("RightContent:SetSheatheBtn"):SetCheck(true)
-	end
+	self.wndMain:FindChild("Footer:BuyBtn"):Enable(false)		
+	self.wndMain:FindChild("RightContent:SetSheatheBtn"):SetCheck(true)
 	
 	local unitPlayer = GameLib.GetPlayerUnit()	
 	self.wndMain:FindChild("ToggleFlyout"):AttachWindow(self.wndMain:FindChild("PreviewChangesFlyout"))
 	self.wndPreview:SetCostume(unitPlayer)
+	self.wndPreview:SetModelSequence(knStaticAnimationValue)
 	self:GetCharacterInfo()
 	self.wndMain:FindChild("LeftContainer:CategoryScrollContainer"):DestroyChildren()
 	
-	--Loads headers, followed by options within the headers
-	self:LoadCustomizationHeaders()
-	self:CheckForTokens()
-	self:ResizePreview()
-	self.wndMain:Invoke()
-end
-
-function CharacterCustomization:OnTabShow()
-	local nCostumeIdx = GameLib.GetCostumeIndex()
+	local costumeDisplayed = CostumesLib.GetCostume(CostumesLib.GetCostumeIndex())
 	local unitPlayer = GameLib.GetPlayerUnit()	
 	self.itemDisplayedHelm = nil
 	
-	if nCostumeIdx > 0 then
-		self.bEnableHelmSwap = GameLib.IsCostumeSlotVisible(GameLib.GetCostumeIndex(), GameLib.CodeEnumItemSlots.Head)
-		self.itemDisplayedHelm = GameLib.GetCostumeItem(nCostumeIdx, GameLib.CodeEnumItemSlots.Head)
+	if costumeDisplayed then
+		self.bEnableHelmSwap = costumeDisplayed:IsSlotVisible(GameLib.CodeEnumItemSlots.Head)
+		self.itemDisplayedHelm = costumeDisplayed:GetSlotItem(GameLib.CodeEnumItemSlots.Head)
 	end
 	
-	if not self.itemDisplayedHelm or nCostumeIdx == 0 then
+	if not self.itemDisplayedHelm or not costumeDisplayed then
 		for idx, itemEquipment in pairs(unitPlayer:GetEquippedItems()) do
 			if itemEquipment:GetSlot() == GameLib.CodeEnumEquippedItems.Head then
 				self.itemDisplayedHelm = itemEquipment
@@ -169,8 +161,22 @@ function CharacterCustomization:OnTabShow()
 		
 		self.bEnableHelmSwap = self.itemDisplayedHelm ~= nil
 	end
-	self:HelperToggleHelm()
+	
+	local wndHideHelm = self.wndMain:FindChild("RightContent:HideHelmBtn")
+	wndHideHelm:Enable(self.bEnableHelmSwap)
+	wndHideHelm:SetCheck(self.bHideHelm)
+	
+	if self.bEnableHelmSwap and self.bHideHelm then
+		self:OnHideHelm()
+	end
+	
 	self:ResetTabs()
+	
+	--Loads headers, followed by options within the headers
+	self:LoadCustomizationHeaders()
+	self:CheckForTokens()
+	self:ResizePreview()
+	self.wndMain:Invoke()
 end
 
 function CharacterCustomization:GetCharacterInfo()
@@ -195,9 +201,8 @@ function CharacterCustomization:LoadCustomizationHeaders()
 				wndHeader = wndBoneHeader,
 				tSliders = {},
 			}
-
+			
 			for idx, tBone in pairs(self.arCharacterBones) do
-				self:LoadBoneCustomizationOption(wndBoneHeader, "BoneOptionItem", tBone)
 				self.tPreviousBones[tBone.sliderId] = tBone.value
 			end
 		end
@@ -232,7 +237,6 @@ function CharacterCustomization:LoadHeader(idSlider, tCategory)
 		wndHeader = wndHeader,
 		tOptions = {},
 	}
-	self:LoadCustomizationOptions(wndHeader, tCategory)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -268,16 +272,20 @@ function CharacterCustomization:LoadCustomizationOptions(wndCategoryHeader, tCat
 			wndOptionPreview:SetCamera("Paperdoll")
 		end
 		
-		wndOptionPreview:SetAnimated(false)
-		
 		wndOption:SetData(tCategory.values[idx])
 		wndOption:FindChild("OptionBtn"):SetData(idx)
+		
+		if self.bEnableHelmSwap and self.wndMain:FindChild("RightContent:HideHelmBtn"):IsChecked() then
+			wndOptionPreview:RemoveItem(GameLib.CodeEnumItemSlots.Head)
+		end
+		
+		wndOptionPreview:SetAnimated(false)
 		
 		if self.tPreviousOptions[tCategory.sliderId] == idx then
 			local tPixieOverlay =
 			{
 				strSprite = "bk3:UI_BK3_Options_Telegraph_Outline",
-				loc = {fPoints = {0, 0, 1, 1}, nOffsets = {-6, -6, 5, 6}}	
+				loc = {fPoints = {0, 0, 1, 1}, nOffsets = {-6, -6, 5, 6}}
 			}
 			wndOptionPreview:AddPixie(tPixieOverlay)
 		end
@@ -309,15 +317,15 @@ function CharacterCustomization:OnCategoryCheck(wndHandler, wndControl)
 	local wndSelectedOption = self.tOptionWindows[tCategory.sliderId].tOptions[tCategory.valueIdx]
 	wndSelectedOption:FindChild("OptionBtn"):SetCheck(true)
 	
-	self:HelperToggleHelm()
 	self.wndMain:FindChild("LeftContainer:CategoryScrollContainer"):ArrangeChildrenVert()
+	
 end
 
 function CharacterCustomization:OnCategoryUncheck(wndHandler, wndControl)
 	self.wndMain:SetGlobalRadioSel("CharacterCustomization_SelectedOption", -1)
 	self.idSelectedCategory = nil
 	
-	wndControl:GetParent():FindChild("GroupContents"):Show(false)
+	wndControl:GetParent():FindChild("GroupContents"):DestroyChildren()
 	self:ResizeTree()
 	
 	self.wndMain:FindChild("LeftContainer:CategoryScrollContainer"):ArrangeChildrenVert()
@@ -334,6 +342,8 @@ function CharacterCustomization:OnOptionCheck(wndHandler, wndControl)
 	local tOptions = wndHeader:GetData()
 	tOptions.valueIdx = idSelectedOption
 	
+	self.wndPreview:SetLook(tOptions.sliderId, tOptions.values[tOptions.valueIdx])
+	
 	local wndCostPreview = self.tCustomizationCosts[tOptions.sliderId] and self.tCustomizationCosts[tOptions.sliderId].wndPreview or nil
 	if self.tPreviousOptions[tOptions.sliderId] ~= idSelectedOption then
 		local monCost = self.wndPreview:GetCostForCustomizationSelection(tOptions.sliderId, tOptions.values[idSelectedOption])
@@ -347,6 +357,17 @@ function CharacterCustomization:OnOptionCheck(wndHandler, wndControl)
 		wndHeader:FindChild("CategorySelectBtn:ElementChangedIcon"):Show(true)
 		self.tCustomizationCosts[tOptions.sliderId] = {strName = tOptions.name, monCost = monCost, wndPreview = wndCostPreview}
 		
+		if ktFaceSliderIds[tOptions.sliderId] then
+			for idBone, nBoneValue in pairs(self.tPreviousBones) do
+				self.tPreviousBonesHolder[idBone] = self.tPreviousBones[idBone]
+				self.tPreviousBones[idBone] = 0
+				self.wndPreview:SetBone(idBone, 0)
+			end
+			
+			for idBone, bChanged in pairs(self.tChangedBones) do
+				self.tChangedBones[idBone] = false
+			end
+		end
 	elseif self.tCustomizationCosts[tOptions.sliderId] then
 		if self.tCustomizationCosts[tOptions.sliderId].wndPreview then
 			self.tCustomizationCosts[tOptions.sliderId].wndPreview:Destroy()
@@ -356,13 +377,22 @@ function CharacterCustomization:OnOptionCheck(wndHandler, wndControl)
 		
 		wndHeader:FindChild("CategorySelectBtn:ElementChangedIcon"):Show(false)
 		self.tCustomizationCosts[tOptions.sliderId] = nil
+		
+		if ktFaceSliderIds[tOptions.sliderId] then
+			for idBone, nBoneValue in pairs(self.tPreviousBones) do
+				self.tPreviousBones[idBone] = self.tPreviousBonesHolder[idBone]
+				self.wndPreview:SetBone(idBone, self.tPreviousBones[idBone])
+				
+				self.tChangedBones[idBone] = false
+			end
+			self.tPreviousBonesHolder = {}
+		end
 	end
 	
 	if wndCostPreview then
 		wndCostPreview:GetParent():ArrangeChildrenVert()
 	end
-	
-	self.wndPreview:SetLook(tOptions.sliderId, tOptions.values[tOptions.valueIdx])
+
 	self:ResizePreview()
 	self:CalculateTotalCost()
 	self.arCurrentCustomizationOptions = self.wndPreview:GetLooks()
@@ -381,22 +411,22 @@ function CharacterCustomization:OnOptionUndo(wndHandler, wndControl)
 		
 		if idSlider == self.idSelectedCategory then
 			self.wndMain:SetGlobalRadioSel("CharacterCustomization_SelectedOption", -1)
+			self.tOptionWindows[idSlider].tOptions[self.tPreviousOptions[idSlider]]:FindChild("OptionBtn"):SetCheck(true)
 		end
 	
 		self.arCurrentCustomizationOptions[nOptionIdx].valueIdx = self.tPreviousOptions[idSlider]
 		self.wndPreview:SetLook(idSlider, self.arCurrentCustomizationOptions[nOptionIdx].values[self.arCurrentCustomizationOptions[nOptionIdx].valueIdx])
 		
-		self.tOptionWindows[idSlider].tOptions[self.tPreviousOptions[idSlider]]:FindChild("OptionBtn"):SetCheck(true)
 		self.tCustomizationCosts[idSlider] = nil
 		
 		wndHeader = self.tOptionWindows[idSlider].wndHeader
+		wndHeader:SetData(self.arCurrentCustomizationOptions[nOptionIdx])
 		
 		wndHandler:GetParent():Destroy()
 		self.wndMain:FindChild("PreviewChangesFlyout:CostPreviewContainer"):ArrangeChildrenVert()
 	else		
 		for idx, tInfo in pairs(self.arCharacterBones) do
-			local wndUndoBtn = self.tBoneWindows.tSliders[tInfo.sliderId]:FindChild("UndoBtn")
-			self:OnUndoBone(wndUndoBtn, wndUndoBtn)
+			self:ResetBone(tInfo.sliderId)
 		end
 		wndHeader = self.tBoneWindows.wndHeader
 	end
@@ -423,7 +453,7 @@ function CharacterCustomization:LoadBoneCustomizationOption(wndCategoryHeader, s
 	wndSlider:SetData(tBone.sliderId)
 	wndSlider:SetMinMax(-1, 1)
 	
-	wndOption:FindChild("UndoBtn"):Enable(false)	
+	wndOption:FindChild("UndoBtn"):Enable(false)
 	
 	self.tBoneWindows.tSliders[tBone.sliderId] = wndOption
 	
@@ -433,13 +463,17 @@ end
 
 function CharacterCustomization:OnBoneCategoryCheck(wndHandler, wndControl)
 	local wndContainer = wndControl:GetParent():FindChild("GroupContents")
+	self.arCharacterBones = self.wndPreview:GetBones()
+	
+	for idx, tBone in pairs(self.arCharacterBones) do
+		self:LoadBoneCustomizationOption(self.tBoneWindows.wndHeader, "BoneOptionItem", tBone)
+	end
 	
 	for idx, tBone in pairs(self.arCharacterBones) do
 		local wndBone = self.tBoneWindows.tSliders[tBone.sliderId]
 		wndBone:FindChild("SliderContainer:SliderBar"):SetValue(tBone.value)
 		wndBone:FindChild("SliderContainer:SliderValue"):SetText(string.format("%.2f", tBone.value))
 	end
-	
 	
 	self.wndPreview:SetCamera("Portrait")
 	wndContainer:Invoke()
@@ -484,18 +518,34 @@ function CharacterCustomization:SetBoneCostPreview()
 end
 
 function CharacterCustomization:OnUndoBone(wndHandler, wndControl)
-	local wndContainer = wndHandler:GetParent():FindChild("SliderContainer")
-	local tBone = wndHandler:GetParent():GetData()
+	if not wndHandler ~= wndControl then
+		return
+	end
 	
-	local wndContainer = wndHandler:GetParent():FindChild("SliderContainer")
+	local wndParent = wndHandler:GetParent()
+	local wndContainer = wndParent:FindChild("SliderContainer")
+	local tBone = wndParent:GetData()
 	
 	wndContainer:FindChild("SliderBar"):SetValue(self.tPreviousBones[tBone.sliderId])
 	wndContainer:FindChild("SliderValue"):SetText(string.format("%.2f", self.tPreviousBones[tBone.sliderId]))
 	wndContainer:GetParent():FindChild("UndoBtn"):Enable(false)
+	for idx, tBoneOption in pairs(self.arCharacterBones) do
+		if tBone.sliderId == tBoneOption.sliderId then
+			wndParent:SetData(tBoneOption)
+		end
+	end
+	
+	self:ResetBone(tBone.sliderId)
+end
 
-	self.wndPreview:SetBone(tBone.sliderId, self.tPreviousBones[tBone.sliderId])
+function CharacterCustomization:ResetBone(idSlider)
+	if not idSlider then
+		return
+	end
+	
+	self.wndPreview:SetBone(idSlider, self.tPreviousBones[idSlider])
 	self.arCharacterBones = self.wndPreview:GetBones()
-	self.tChangedBones[tBone.sliderId] = false
+	self.tChangedBones[idSlider] = false
 	
 	self:SetBoneCostPreview()	
 	self:CalculateTotalCost()
@@ -636,8 +686,8 @@ function CharacterCustomization:OnPurchaseConfirm(wndHandler, wndControl)
 	
 	self.wndMain:FindChild("RightContent:PurchaseConfirmFlash"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
 	self:ToggleOverlay(ktOverlayTypes.Purchase, false)
-	self:ResizePreview()
-	self:HelperToggleHelm()
+	
+	self:OnClose()
 end
 
 function CharacterCustomization:OnPurchaseCancel(wndHandler, wndControl)
@@ -653,44 +703,45 @@ end
 -- Close Confirmation
 -----------------------------------------------------------------------------------------------
 function CharacterCustomization:OnClose()
-	self:UndoAll()
+	self.arCharacterBones = {}
+	self.arCurrentCustomizationOptions = {}
 	
-	self.wndMain:FindChild("PreviewChangesFlyout:CostPreviewContainer"):DestroyChildren()
-	self.wndMain:FindChild("ConfirmationOverlay"):Show(false)
+	self.tPreviousBones = {}
+	self.tPreviousOptions = {}
+	self.tOptionWindows = {}
+	self.tBoneWindows = {}
+	self.tChangedBones = {}
+	
+	self.tPreviousBonesHolder = {}
+	
 	self.tCustomizationCosts = {}
-	self.tBoneChanges = {}
-	self:CalculateTotalCost()
 	
-	if self.idSelectedCategory and self.tOptionWindows[self.idSelectedCategory] then
-		local wndHeaderBtn = self.tOptionWindows[self.idSelectedCategory].wndHeader:FindChild("CategorySelectBtn")
-		wndHeaderBtn:SetCheck(false)
-		self:OnCategoryUncheck(wndHeaderBtn, wndHeaderBtn)
-	end
+	self.wndBonePreviewItem = nil
+	self.idSelectedCategory = nil
 
-	if self.wndMain:IsShown() then
-		self.wndMain:GetParent():Show(false)
-		self:OnRestoreHelm()
+	if self.wndMain then
+		self:UndoAll()
+		self.wndMain:Destroy()
+		self.wndMain = nil
+		self.wndPreview = nil
 	end
 	
-	self.wndMain:SetGlobalRadioSel("CharacterCustomization_SelectedOption", -1)
 	for idx, tCategory in pairs(self.arCurrentCustomizationOptions) do
 		tCategory.valueIdx = self.tPreviousOptions[tCategory.sliderId]
-		self.tOptionWindows[tCategory.sliderId].wndHeader:SetData(tCategory)
 	end
+	
 	Event_CancelDyeWindow()
 end
 
 function CharacterCustomization:OnCancel(wndHandler, wndControl)
-	local wndOverlay = self.wndMain:FindChild("ConfirmationOverlay")
-	local wndCancelConfirm = wndOverlay:FindChild("CancelConfirmation")
+	if wndHandler ~= wndControl then
+		return
+	end
 	
-	local arChanges = self.wndMain:FindChild("PreviewChangesFlyout:CostPreviewContainer"):GetChildren()
-	if not wndOverlay:IsShown() and (arChanges and #arChanges > 0 or self:CheckForBoneChanges()) then
+	local arChanges = self.wndMain and self.wndMain:FindChild("PreviewChangesFlyout:CostPreviewContainer"):GetChildren() or {}
+	
+	if self.wndMain and not self.wndMain:FindChild("ConfirmationOverlay"):IsShown() and (arChanges and #arChanges > 0 or self:CheckForBoneChanges()) then
 		self:ToggleOverlay(ktOverlayTypes.Cancel, true)
-		local wndParent = self.wndMain:GetParent()
-		local wndGrandparent = wndParent:GetParent()
-		wndParent:Show(true)
-		wndGrandparent:Invoke()		
 	else
 		self:OnClose()
 	end
@@ -798,8 +849,10 @@ function CharacterCustomization:OnLoadCode(wndHandler, wndControl)
 		end
 		
 		for idx, tBoneInfo in pairs(self.arCharacterBones) do
-			self.tBoneWindows.tSliders[tBoneInfo.sliderId]:FindChild("SliderContainer:SliderBar"):SetValue(tBoneInfo.value)
-			self.tBoneWindows.tSliders[tBoneInfo.sliderId]:FindChild("SliderContainer:SliderValue"):SetText(string.format("%.2f", tBoneInfo.value))
+			if self.tBoneWindows.tSliders[tBoneInfo.sliderId] then
+				self.tBoneWindows.tSliders[tBoneInfo.sliderId]:FindChild("SliderContainer:SliderBar"):SetValue(tBoneInfo.value)
+				self.tBoneWindows.tSliders[tBoneInfo.sliderId]:FindChild("SliderContainer:SliderValue"):SetText(string.format("%.2f", tBoneInfo.value))
+			end
 			
 			self.tChangedBones[tBoneInfo.sliderId] = self.tPreviousBones[tBoneInfo.sliderId] ~= tBoneInfo.value
 		end
@@ -841,7 +894,8 @@ function CharacterCustomization:ToggleOverlay(eConfirmationType, bShow)
 	
 	local wndFooter = self.wndMain:FindChild("Footer")
 	wndFooter:FindChild("BuyBtn"):Enable(not bShow)
-	wndFooter:FindChild("CancelBtn"):Enable(not bShow)
+	
+	wndFooter:FindChild("UndoAllBtn"):Enable(not bShow)
 	wndFooter:FindChild("CostPreview:ToggleFlyout"):Enable(not bShow)
 	wndFooter:FindChild("UseTokenBtn"):Enable(not bShow and self.bHasToken)
 	self.wndMain:FindChild("PreviewChangesFlyout"):Show(false)
@@ -927,17 +981,19 @@ function CharacterCustomization:ResizeTree()
 				local arOptions = wndOptionContainer:GetChildren()
 				
 				--Customization options are treated differently than Bone options
-				if arOptions[1]:GetName() == "OptionItem" then
-					nCurrentCategoryOffset = arOptions[1]:GetHeight() * (math.ceil(#arOptions / 2))
-				else
-					nCurrentCategoryOffset = arOptions[1]:GetHeight() * #arOptions
-				end
+				if #arOptions > 0 then
+					if arOptions[1]:GetName() == "OptionItem" then
+						nCurrentCategoryOffset = arOptions[1]:GetHeight() * (math.ceil(#arOptions / 2))
+					else
+						nCurrentCategoryOffset = arOptions[1]:GetHeight() * #arOptions
+					end
 
-				if nCurrentCategoryOffset > 0 then
-					nCurrentCategoryOffset = nCurrentCategoryOffset + 6
+					if nCurrentCategoryOffset > 0 then
+						nCurrentCategoryOffset = nCurrentCategoryOffset + 6
+					end
+					
+					nOpenIndex = idx
 				end
-				
-				nOpenIndex = idx
 			end
 
 			local nLeft, nTop, nRight, nBottom = wndOptionContainer:GetAnchorOffsets()
@@ -1015,13 +1071,17 @@ function CharacterCustomization:OnGenerateIconTooltip(wndHandler, wndControl)
 end
 
 function CharacterCustomization:UndoAll()
-	for idx, tBone in pairs(self.tPreviousBones) do
-		local wndBone = self.tBoneWindows.tSliders[idx]:FindChild("UndoBtn")
-		self:OnUndoBone(wndBone, wndBone)
+	if not self.wndMain then
+		return
 	end
 	
 	for idx, tInfo in pairs(self.tCustomizationCosts) do
 		local wndOptionUndo = tInfo.wndPreview:FindChild("UndoBtn")
+		self:OnOptionUndo(wndOptionUndo, wndOptionUndo)
+	end
+	
+	if self.wndBonePreviewItem then
+		local wndOptionUndo = self.wndBonePreviewItem:FindChild("UndoBtn")
 		self:OnOptionUndo(wndOptionUndo, wndOptionUndo)
 	end
 end
@@ -1036,41 +1096,18 @@ function CharacterCustomization:ResetTabs()
 end
 
 function CharacterCustomization:OnHideHelm()
+	self.bHideHelm = true
+	self:ReloadOpenCategory()
 	self.wndPreview:RemoveItem(GameLib.CodeEnumItemSlots.Head)
-	
-	if self.idSelectedCategory and self.tOptionWindows[self.idSelectedCategory] then
-		for idx, wndOption in pairs(self.tOptionWindows[self.idSelectedCategory].tOptions) do
-			wndOption:FindChild("CostumeWindow"):RemoveItem(GameLib.CodeEnumItemSlots.Head)
-		end
-	end
 end
 
 function CharacterCustomization:OnRestoreHelm()
+	self.bHideHelm = false
+	self:ReloadOpenCategory()
 	self.wndPreview:SetItem(self.itemDisplayedHelm)
-	
-	if self.idSelectedCategory and self.tOptionWindows[self.idSelectedCategory] then
-		for idx, wndOption in pairs(self.tOptionWindows[self.idSelectedCategory].tOptions) do
-			wndOption:FindChild("CostumeWindow"):SetItem(self.itemDisplayedHelm)
-		end
-	end
 end
 
-function CharacterCustomization:HelperToggleHelm()
-	local wndHideHelm = self.wndMain:FindChild("RightContent:HideHelmBtn")
-	if self.bEnableHelmSwap then
-		wndHideHelm:Show(true)
-		
-		if wndHideHelm:IsChecked() then
-			self:OnHideHelm()
-		else
-			self:OnRestoreHelm()
-		end
-	else
-		wndHideHelm:Show(false)
-	end
-end
-
-function CharacterCustomization:OnReloadPreviewWindow()	
+function CharacterCustomization:OnReloadPreviewWindow()
 	for idx, tOption in pairs(self.arCurrentCustomizationOptions) do
 		self.wndPreview:SetLook(tOption.sliderId, tOption.values[self.tPreviousOptions[tOption.sliderId]])
 		self.wndPreview:SetLook(tOption.sliderId, tOption.values[tOption.valueIdx])
@@ -1086,18 +1123,3 @@ end
 -----------------------------------------------------------------------------------------------
 local CharacterCustomizationInst = CharacterCustomization:new()
 CharacterCustomizationInst:Init()
-Window" Name="LeftAreaTimeCountdown" LAnchorPoint="0" LAnchorOffset="195" TAnchorPoint="0" TAnchorOffset="63" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="25" RelativeToClient="1" Font="CRB_HeaderGigantic_O" IgnoreMouse="1" NoClip="1" TooltipType="OnCursor" Text="00:09" TextId="" BGColor="white" TextColor="UI_BtnTextRedNormal" TooltipColor=""/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="LeftAreaMouseCatcher" BGColor="white" TextColor="white" Tooltip="" TooltipColor="">
-            <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_Close" Font="CRB_InterfaceMedium" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-36" TAnchorPoint="0" TAnchorOffset="11" RAnchorPoint="1" RAnchorOffset="-18" BAnchorPoint="0" BAnchorOffset="29" DT_VCENTER="1" DT_CENTER="1" Name="TrackerAbandonButton" NoClip="1" NewControlDepth="3" WindowSoundTemplate="CloseWindowPhys" HideInEditor="1" Visible="1" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="">
-                <Event Name="ButtonSignal" Function="OnHideLeftAreaWindow"/>
-            </Control>
-        </Control>
-    </Form>
-    <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-415" TAnchorPoint="0" TAnchorOffset="208" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="348" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ChallengeMinimized" Border="0" Picture="0" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" IgnoreMouse="1" Visible="1" TooltipColor="" Tooltip="">
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-40" TAnchorPoint="0" TAnchorOffset="12" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="140" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="MinimizedContents" BGColor="white" TextColor="white" HideInEditor="0" Visible="0" TooltipType="OnCursor" Tooltip="" TooltipId="Challenges_ChallengeTracker" IgnoreMouse="1" TooltipColor="" TooltipFont="CRB_InterfaceSmall_O">
-            <Control Class="Button" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="SeparatorBG" Picture="0" IgnoreMouse="0" Sprite="" BGColor="white" TextColor="white" HideInEditor="0" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Base="PlayerPathContent_TEMP:btn_Challenge_Expand" TooltipColor="" Visible="1">
-                <Event Name="ButtonSignal" Function="OnMinimizedExpandClick"/>
-            </Control>
-        </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="105" TAnchorPoint="0" TAnchorOffset="24" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="126" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="BlankTrackerMessage" BGColor="white" TextColor="white" Sprite="CRB_ChallengeTrackerSprites:sprChallengeFrame" Picture="1" IgnoreMouse="1" HideInEditor="1" Visible="0" TooltipColor="">
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-1"

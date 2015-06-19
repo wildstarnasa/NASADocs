@@ -25,8 +25,8 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-20" TAnchorPoint="0" TAnchorOffset="17" RAnchorPoint="1" RAnchorOffset="20" BAnchorPoint="0" BAnchorOffset="37" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="Divider" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="CRB_Basekit:kitDivider_Horiz_MetalGold" NoClip="1" NewWindowDepth="0"/>
     </Form>
     <Form Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="80" BAnchorPoint="0" BAnchorOffset="80" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="GridSquare" BGColor="ffffffff" TextColor="00000000" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" RightEdgeControlsAnchor="" BottomEdgeControlsAnchor="" Tooltip="" Overlapped="1"/>
-    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="106" TAnchorPoint="0" TAnchorOffset="65" RAnchorPoint="0" RAnchorOffset="415" BAnchorPoint="0" BAnchorOffset="120" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoScreen" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="" CloseOnExternalClick="1" Tooltip="" NoClip="1" NewWindowDepth="1" TestAlpha="1">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="26" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoScreenBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="kitBase_HoloBlue_PopoutLarge" Picture="1" IgnoreMouse="1" NoClip="0">
+    <Form Class="Window" LAnchorPoint="0" LAnchorOffset="107" TAnchorPoint="0" TAnchorOffset="95" RAnchorPoint="0" RAnchorOffset="416" BAnchorPoint="0" BAnchorOffset="120" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoScreen" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="" CloseOnExternalClick="1" Tooltip="" NoClip="1" NewWindowDepth="1" TestAlpha="1">
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="26" TAnchorPoint="0" TAnchorOffset="-20" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoScreenBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="kitBase_HoloBlue_PopoutLarge" Picture="1" IgnoreMouse="1" NoClip="1" HideInEditor="0">
             <Control Class="Window" LAnchorPoint="0" LAnchorOffset="23" TAnchorPoint="0" TAnchorOffset="25" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoArrangeVert" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="">
                 <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoDescription" BGColor="ffffffff" TextColor="ff7fffb9" TooltipColor="" TextId="" DT_WORDBREAK="1" IgnoreMouse="1"/>
                 <Control Class="Window" LAnchorPoint="0" LAnchorOffset="10" TAnchorPoint="0" TAnchorOffset="15" RAnchorPoint="1" RAnchorOffset="-10" BAnchorPoint="0" BAnchorOffset="155" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoSchemArt" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="" Visible="0" HideInEditor="0">
@@ -41,7 +41,7 @@
                 </Control>
             </Control>
         </Control>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="78" BAnchorPoint="0" BAnchorOffset="125" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoAttachFlairBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_Basekit:kitAccent_RightArrow_Popout" Picture="1" IgnoreMouse="1" NoClip="0" NewControlDepth="2"/>
+        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="-30" RAnchorPoint="0" RAnchorOffset="78" BAnchorPoint="0" BAnchorOffset="95" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="ExtraInfoAttachFlairBG" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" Sprite="CRB_Basekit:kitAccent_RightArrow_Popout" Picture="1" IgnoreMouse="1" NoClip="1" NewControlDepth="2"/>
         <Event Name="WindowClosed" Function="OnExtraInfoScreenWindowClosed"/>
     </Form>
     <Form Class="Button" Base="BK3:btnHolo_ListView_Simple" Font="CRB_InterfaceMedium_B" ButtonType="PushButton" RadioGroup="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="40" DT_VCENTER="1" DT_CENTER="1" TooltipType="OnCursor" Name="ExtraInfoSchemItemBtn" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" NormalTextColor="ff31fcf6" PressedTextColor="ff31fcf6" FlybyTextColor="ff31fcf6" PressedFlybyTextColor="ff31fcf6" DisabledTextColor="ff333333" Text="" TextId="" DT_WORDBREAK="1" Tooltip="" RelativeToClient="1" Overlapped="1" SwallowMouseClicks="1">
@@ -77,38 +77,3 @@
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="40" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="0" RAnchorOffset="60" BAnchorPoint="0" BAnchorOffset="55" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="HAMItemBtnHasTalentPointArt" BGColor="ee31fcf6" TextColor="ffffffff" TooltipColor="" Sprite="ClientSprites:ComboStarFull" Picture="1" IgnoreMouse="1" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="Tradeskills_RewardsTalentPoints"/>
     </Form>
 </Forms>
-temData then
-		local itemCurr = arg1
-		local itemEquipped = itemCurr:GetEquippedItemForItemType()
-		Tooltip.GetItemTooltipForm(self, wndControl, itemCurr, {bPrimary = true, bSelling = self.bVendorOpen, itemCompare = itemEquipped})
-	elseif eType == Tooltip.TooltipGenerateType_Reputation or eType == Tooltip.TooltipGenerateType_TradeSkill then
-		xml = XmlDoc.new()
-		xml:StartTooltip(Tooltip.TooltipWidth)
-		xml:AddLine(arg1)
-		wndControl:SetTooltipDoc(xml)
-	elseif eType == Tooltip.TooltipGenerateType_Money then
-		xml = XmlDoc.new()
-		xml:StartTooltip(Tooltip.TooltipWidth)
-		xml:AddLine(arg1:GetMoneyString(), CColor.new(1, 1, 1, 1), "CRB_InterfaceMedium")
-		wndControl:SetTooltipDoc(xml)
-	else
-		wndControl:SetTooltipDoc(nil)
-	end
-end
-
-function TradeskillTree:FactoryProduce(wndParent, strFormName, tObject)
-	local wnd = wndParent:FindChildByUserData(tObject)
-	if not wnd then
-		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
-		wnd:SetData(tObject)
-	end
-	return wnd
-end
-
-local TradeskillTreeInst = TradeskillTree:new()
-TradeskillTreeInst:Init()
-ŸüÎ Ïjá, 0írPğkzQöÓ°ş	9²¶äÖ.ZÏ—ZõàÏn-Ñ€da;İŒÌ¥)8yô<îh¥ä"åÂÑ~¯ÍÔ¼@À«¶~ŸÂE’Å€_œí‡$sŒ[?ÿ^=çõà§9…úîÏKÄó/êEı%~®ÎÕY/S|5Ó*Âë)Š‡KÉÔ»š"7/D'÷µ`ü•Z\`oÍE_\üÂıÀ5êÊ™ùØâbô˜Ó$´?
-6¿†-¹xòUşÖ½Gşüƒñ·‹ïŒwå‰÷ÿ
-Øõ!V|¥; ¬¾ì¶ƒˆıÖíÅáŞÎğŞ¯Ú~ª–;>Ã‡¾¶Ëm?2I·ğD[÷yÁ"È—áıœ=™0'_«çìI‚°%©Çùã”N÷«¿ç÷è÷òŸbş3EpSSr¼–ã?qÀ¶·×²ıÙvN9íôk°ÙşóœŒHßf~GïÕ¢çäZcE›CF¯ïPqhE˜5•Îw?ö<eûqËÙVC QŸzr™›ïèı;•ãëUñSäáº1 |”ÓãfzŸ;UË]ÿ¤Épş§>z“¢~¬bl¼¿®=ÄøƒûüÃ±èı}4_…ú [=[õÀÔ‹	àDBûGŸ¿	økÄ$èÏóŒŸ lîüo>ñĞ«Ò‰‰~6şı}Çì§˜DøV¨”ÕÜûC½°şV{‰ã«4ÒvÙh_ß“3ÃOùx-—!3æß¯ƒç»´0õü*'~aKÜóY?­çÄ§6}àÁ×™şğ÷K2şpï¿8ÕÉ×‹|ğëv†œişW¿´Cšm§˜yâL_Có³³ƒèçÉ1|Üf;ŸdïaôPËÿìZıYÒ´áz¾p´*Zešp¿ÃÇ?s–¹’Ã¬ÍŸ¶åÓşu˜l”Ü_b€~Îès¨±Pm~¥'¯U”|Uã÷Î¼²¥³jŞäç¥Ãîyˆ‰—òÏXËÙq¾t=±óÒµæ´Ğ*º¾ğ|ä´9÷Ë’ìøù@¸âêr(Â´‹N°ùÖãêƒú„~ü_ô<D¯/J’ÅÃ7>çğFˆVÎ—}øÀñ¢û£¯ÓE‚?[WoÑsëuSDıºŒÒªÓî|“ŞÄómÛvî¤–„ÓóD·;Ÿjæ$ítŸÿò áæ±õÄÏŒÖ&hƒyµ¡ÑõäÖ}x½ ­¥•œÍÆÇü^Ë+—8ıMpŸõŸñ÷+¡›ÜyğE¯…¸_Ôpı|±òÑc¾}!úŠ‰'ğàKïôŒÔÓx*Çøš…TèŸDJ­ƒ`w?Ñü*Ö?pşÙ‡\Z;İ}şRËœ8?"J¤nòè>hóÑ¯|ö@ë=×ŸS…É%Lÿ¦?/ÙŸ_9ÿ2gMÅı÷GËn'Eµ=VíÀÏ3Äëx¥û÷Q¿Dûà|ãóK,´¹ĞöHİ‘”Ï_!{?ãŠïø ouÅÊÚÃÅ+>àú¹ŒÍÏ¨¹bô~…ÑAçB|€î©F_-†Æ¨=r?íÂJ#Ç‘"ä£ƒ×„’ÿ¸8ìŠëßgÿ×şıAÏw"¾@@ûW*p¶7ª´b½Œ›g„9ÿxÇqt²Í˜Ïé"©¼Tì¹ßiÇî?fòå‡ºÿÎ_û3ş“_ËíŸñ(.¥ñ…é×Ä¡ŞÊS4³8OGxWªX>gyÕuıX„–Ë§®S&jºÈºÒhtĞöİº_)Ùú°\Çz@Õ½¥ò>÷à¿GŸ(>|?Û¯yu/ıQ]ïAcİGn{špïA|†(ê…·#|0Ÿcô9êL\ø·Â³>B½¬L¿vóU$ö³“ù1üõT—ó¿¿Şïså{òé_ğ%¦Ôîåı	ò:Ò»ıZNœ1	ø8ƒ¯€G*bò§ØóÇüzÄW{úøQÿM%öBñ/ãõD"òCÙ3ßd'ıÁüy°ûƒ0ı™Ë7tC“ÃğmÚ¶şsù'õrÇƒÑO&Ã¼ÆÄóÏfédô~~c‹óó“úëÜúª{Ş ¾šïÑ¯ÓC7=ôSÍ<H?{Ğú"P%ı¼]¾Şe ^İ|¾P­Náğ(T´ßÍÇ™óõeŸF÷ï=ÔtoİJc›‹Ïgà7·öü…ÇIìüŸŒ~˜~1>~NM_õ»©•|¾=^XåŸÁ"˜‡<ôï™~µªmÅ_uQ×¥W²ü´
-^ŸoÊúó'W_ŸÌßºâ‚‘Ñ·]7©¾0˜ÿN°úÖ§	UÇ…6f¾†q‚€yzÔ—‡ş‹ÆÕ6^>èÆS¾¾…W
-ö·óñˆõ<-ãí´àı*6?-}glŠÈ¼õï:e¢k“ŒL ùa4Ö?Úx}> ©ZºZx„Øï´¾0ŸÛª<È}^ğÈÀö~¾ˆÁù{ğï(?.>¬^|Ç£¿ Ìoò=øtú¸üòoÍ¿‡—…ëòÁ?÷÷û!È·üZİcßñ°EúÅ¼@Æx¥'_K(üı¾x©~ó†„-±Ud

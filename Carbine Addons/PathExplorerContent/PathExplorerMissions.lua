@@ -81,7 +81,7 @@ function PathExplorerMissions:LoadFromList(pmMission)
 		self.wndMain:Destroy()
 	end
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathExplorerMissionMain", g_wndDatachron:FindChild("PathContainer"):FindChild("ExpMissionsMainContainer"), self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathExplorerMissionMain", nil, self)
 	self.wndMain:SetData(pmMission)
 	
 	local strKeybind = GameLib.GetKeyBinding("PathAction")
@@ -223,7 +223,7 @@ function PathExplorerMissions:OnVistaUpdateTimer()
 end
 
 function PathExplorerMissions:SetUplinkSound(nArg)
-	if self.nLastNodeSoundValue == nArg or not g_wndDatachron:IsShown() then
+	if self.nLastNodeSoundValue == nArg then
 		return
 	end
 
@@ -570,7 +570,3 @@ end
 ---------------------------------------------------------------------------------------------------
 local PathExplorerMissionsInst = PathExplorerMissions:new()
 PathExplorerMissionsInst:Init()
-ess" IgnoreMouse="1" TooltipColor="" DT_CENTER="0"/>
-            <Control Class="MLWindow" LAnchorPoint="0" LAnchorOffset="51" TAnchorPoint="1" TAnchorOffset="-35" RAnchorPoint="1" RAnchorOffset="-51" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="CRB_InterfaceSmall" Text="" Template="Default" TooltipType="OnCursor" Name="ListItemSubtitle" BGColor="white" TextColor="UI_TextHoloBodyCyan" TooltipColor="" DT_VCENTER="0" TextId="Challenges_NoProgress" DT_CENTER="0" IgnoreMouse="1"/>
-            <Event Name="ButtonSignal" Function="OnListItemHintArrow"/>
-            <Control Class="Button" Base="CRB_Basekit:kitBtn_Holo_IconBase" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-44" TAnchorPoint="0" TAnchorOffset="14" RAnchorPoint="1" RAnchorOffset="-9" BAnchorPoint="0" BAnchorOffset="46" DT_VCENTER="1" DT_CENTER="1" Name="RightCompleteBtn" BGColor="white" T

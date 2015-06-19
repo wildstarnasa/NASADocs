@@ -327,32 +327,3 @@ end
 
 local CraftingSummaryScreenInst = CraftingSummaryScreen:new()
 CraftingSummaryScreenInst:Init()
-Holder:FindChild("CostumeBtn" .. idx)
-		wndCostumeBtn:SetCheck(false)
-		wndCostumeBtn:SetText(String_GetWeaselString(Apollo.GetString("Character_CostumeNum"), idx)) -- TODO: this will be a real name at some point
-		wndCostumeBtn:Show(idx <= self.nCostumeCount)
-	end
-	
-	
-	self.tEquippedItems = {}
-	local tEquippedItems = unitPlayer and unitPlayer:GetEquippedItems() or {}
-	local tSlotNames = {}
-	
-	for nIdx, tInfo in ipairs(karCostumeSlots) do
-		tSlotNames[tInfo.eSlotId] = tInfo.strSlot
-		
-		local tCostumeItem = nil
-		
-		for nIdx2, tItemInfo in ipairs(tEquippedItems) do
-			if tItemInfo:GetSlotName() == tInfo.strSlot then
-				tCostumeItem = tItemInfo
-				self.tEquippedItems[tInfo.eSlotId] = tItemInfo
-				break
-			end
-		end
-		
-		if tCostumeItem ~= nil then
-			local tDyeChannels = tCostumeItem:GetAvailableDyeChannel()
-			
-			if self.arDyeButtons[1][tInfo.eSlotId] ~= nil then
-				self.arDyeButtons[1][tInfo.eSlotId]:SetData({1, tCostumeItem, self.wndSpacer:FindChild("DyeC

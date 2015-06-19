@@ -251,7 +251,4 @@ function ResourceConversion:HelperBuildItemTooltip(wndArg, itemCurr)
 end
 
 local ResourceConversionInst = ResourceConversion:new()
-ResourceConversionInst:Init()" Base="BK3:btnHolo_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-82" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-40" BAnchorPoint="0" BAnchorOffset="84" DT_VCENTER="1" DT_CENTER="1" Name="NamePickerCloseButton" BGColor="white" TextColor="white" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Text="" TooltipColor="">
-            <Event Name="ButtonSignal" Function="OnNamePickerClose"/>
-        </Control>
-        <Pixie LAnchorPoint="0" LAnchorOffset="100" TAnchorPoint="0" TAnchorOffset="40" RAnchorPoint="1" RAnchorOffset="-100" BAnchorPoint="0" BAnchorOffset="84" BGColor="UI_WindowBGDefault" Font="CRB_HeaderMedium" TextColor="UI_WindowTitleYellow" Text="" TextId="ReportPlayer_Tit
+ResourceConversionInst:Init()

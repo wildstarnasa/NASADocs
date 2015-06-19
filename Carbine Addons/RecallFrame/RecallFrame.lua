@@ -18,7 +18,7 @@ local RecallFrame = {}
 -- Constants
 -----------------------------------------------------------------------------------------------
 -- e.g. local kiExampleVariableMax = 999
-local knBottomPadding = 52
+local knBottomPadding = 30
 local knTopPadding = 42
  
 -----------------------------------------------------------------------------------------------
@@ -46,7 +46,14 @@ function RecallFrame:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("RecallFrame.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 	
-	Apollo.RegisterEventHandler("ActionBarReady", "OnDocumentReady", self)
+	self.bActionBarReady = false
+	
+	Apollo.RegisterEventHandler("ActionBarReady", "OnActionBarReady", self)
+end
+
+function RecallFrame:OnActionBarReady()
+	self.bActionBarReady = true
+	self:OnDocumentReady()
 end
 
 function RecallFrame:OnDocumentReady()
@@ -54,6 +61,11 @@ function RecallFrame:OnDocumentReady()
 		return
 	end
 	
+	if not self.bActionBarReady or self.wndMain then
+		return
+	end
+	
+	self.bFormsLoaded = true
 	Apollo.RegisterEventHandler("ChangeWorld", 					"OnChangeWorld", self)
 	Apollo.RegisterEventHandler("HousingNeighborhoodRecieved", 	"OnNeighborhoodsUpdated", self)
 	Apollo.RegisterEventHandler("GuildResult", 					"OnGuildResult", self)
@@ -67,12 +79,9 @@ function RecallFrame:OnDocumentReady()
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 	"OnTutorial_RequestUIAnchor", self)
 	
 	-- load our forms
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "RecallFrameForm", "FixedHudStratum", self)
-    self.wndMain:Show(false)
-	
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "RecallFrameForm", "FixedHudStratum", self)
 	self.wndMenu = Apollo.LoadForm(self.xmlDoc, "RecallSelectionMenu", nil, self)
 	self.wndMain:FindChild("RecallOptionToggle"):AttachWindow(self.wndMenu)
-	self.wndMenu:Show(false)
     
 	self:RefreshDefaultCommand()
 end
@@ -169,7 +178,7 @@ function RecallFrame:RefreshDefaultCommand()
 			self.wndMain:Show(true)
 		end
 	else
-		self.wndMain:Show(bShowRecallBtn)
+		self.wndMain:Show(false)
 	end
 end
 
@@ -380,11 +389,3 @@ end
 -----------------------------------------------------------------------------------------------
 local RecallFrameInst = RecallFrame:new()
 RecallFrameInst:Init()
-le="0" HideInEditor="0">
-                <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Raid:sprRaidTear_BigAbsorbProgBar" TooltipType="OnCursor" Name="CurrAbsorbBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" Sprite="" IgnoreMouse="1" ProgressEdgeGlow="" EdgeGlow="1" NoClipEdgeGlow="0" Tooltip=""/>
-            </Control>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="0" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="MaxShieldBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" RightEdgeControlsAnchor="" Sprite="CRB_Raid:sprRaidTear_BigShieldEmptyBar" Picture="1" IgnoreMouse="1" HideInEditor="0" Visible="0">
-                <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="0" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Raid:sprRaidTear_BigShieldProgBar" TooltipType="OnCursor" Name="CurrShieldBar" BGColor="ffffffff" TextColor="ffffffff" TooltipColor="" BarColor="" Sprite="" IgnoreMouse="1" ProgressEdgeGlow="" EdgeGlow="1" NoClipEdgeGlow="0" Picture="1"/>
-            </Control>
-        </Control>
-        <Control Class="Window" Font="Thick" LAnchorPoint="0" LAnchorOffset="34" TAnchorPoint="0" TAnchorOffset="26" RAnchorPoint="1" RAnchorOffset="12" BAnchorPoint="0" BAnchor

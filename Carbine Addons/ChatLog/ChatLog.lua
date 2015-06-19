@@ -185,6 +185,7 @@ function ChatLog:OnSave(eType)
 		bShowTimestamp = self.bShowTimestamp,
 		bProfanityFilter = self.bProfanityFilter,
 		eRoleplayOption = self.eRoleplayOption,
+		bEnableChatLineFade = self.bEnableChatLineFade
 	}
 
 	local arWindowGroupMap = {}
@@ -243,7 +244,10 @@ function ChatLog:OnRestore(eType, tSavedData)
 	if tSavedData.eRoleplayOption then
 		self.eRoleplayOption = tSavedData.eRoleplayOption
 	end
-
+	if tSavedData.bEnableChatLineFade then
+		self.bEnableChatLineFade = tSavedData.bEnableChatLineFade
+	end
+	
 	self.nFontSize = tSavedData.nFontSize
 	if tSavedData.tWindow and #tSavedData.tWindow > 0 then
 		self.tWindow = tSavedData.tWindow
@@ -370,6 +374,17 @@ function ChatLog:OnDocumentReady()
 	wndOptionsContainer:FindChild("SaveToLogOn"):SetCheck(Apollo.GetConsoleVariable("chat.saveLog"))
 	wndOptionsContainer:FindChild("SaveToLogOff"):SetCheck(not Apollo.GetConsoleVariable("chat.saveLog"))
 	self.wndChatOptions:FindChild("ChatOptionsContent:RoleplayViewToggle_3"):SetCheck(true)
+	
+	if GameLib.GetGameMode() == GameLib.CodeEnumGameMode.China then
+		local wndOptionsContainer = self.wndChatOptions:FindChild("TwoOptionsContainer")
+		wndOptionsContainer:FindChild("Profanity"):Show(false)
+		
+		wndOptionsContainer:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+		
+		local nHeight = wndOptionsContainer:FindChild("Profanity"):GetHeight()
+		local nLeft, nTop, nRight, nBottom = self.wndChatOptions:GetAnchorOffsets()
+		self.wndChatOptions:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - nHeight)
+	end
 	self.wndChatOptions:Show(false)
 
 	-- Profanity Filter Option
@@ -437,6 +452,14 @@ function ChatLog:OnDocumentReady()
 	wndOptionsContainer:FindChild("EnableFadeBtn"):SetCheck(self.bEnableBGFade) -- Default
 	wndOptionsContainer:FindChild("DisableFadeBtn"):SetCheck(not self.bEnableBGFade)
 	
+	--Chat line format
+	if self.bEnableChatLineFade == nil then
+		self.bEnableChatLineFade = true
+	end
+	wndOptionsContainer:FindChild("EnableLineFadeBtn"):SetData(true)
+	wndOptionsContainer:FindChild("DisableLineFadeBtn"):SetData(false)
+	wndOptionsContainer:FindChild("EnableLineFadeBtn"):SetCheck(self.bEnableBGFade) -- Default
+	wndOptionsContainer:FindChild("DisableLineFadeBtn"):SetCheck(not self.bEnableBGFade)
 	
 	-- Player Chat Bubbles
 	self.bEnablePlayerBubbles = Apollo.GetConsoleVariable("unit.playerTextBubbleEnabled") or false
@@ -454,9 +477,9 @@ function ChatLog:OnDocumentReady()
 	
 
 	if not self.nBGOpacity then
-		self.nBGOpacity = self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):GetValue()
+		self.nBGOpacity = self.wndChatOptions:FindChild("BGOpacitySlider"):GetValue()
 	else
-		self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):SetValue(self.nBGOpacity)
+		self.wndChatOptions:FindChild("BGOpacitySlider"):SetValue(self.nBGOpacity)
 	end
 
 	-- Default Channels
@@ -578,9 +601,11 @@ function ChatLog:OnDocumentReady()
 
 	if self.wndChatOptions then
 		local wndOptionsContainer = self.wndChatOptions:FindChild("TwoOptionsContainer")
+		wndOptionsContainer:FindChild("EnableLineFadeBtn"):SetCheck(self.bEnableNPCBubbles)
+		wndOptionsContainer:FindChild("DisableLineFadeBtn"):SetCheck(not self.bEnableNPCBubbles)
 		wndOptionsContainer:FindChild("EnableFadeBtn"):SetCheck(self.bEnableBGFade)
 		wndOptionsContainer:FindChild("DisableFadeBtn"):SetCheck(not self.bEnableBGFade)
-		self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):SetValue(self.nBGOpacity)
+		self.wndChatOptions:FindChild("BGOpacitySlider"):SetValue(self.nBGOpacity)
 		wndOptionsContainer:FindChild("ChannelShow"):SetCheck(self.bShowChannel)
 		wndOptionsContainer:FindChild("ChannelShowOff"):SetCheck(not self.bShowChannel)
 		wndOptionsContainer:FindChild("TimestampShow"):SetCheck(self.bShowTimestamp)
@@ -619,7 +644,7 @@ function ChatLog:OnWindowManagementReady()
 	end
 
 	if self.wndChatOptions and self.wndChatOptions:FindChild("BGHeaderText") then
-		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndChatOptions, strName = self.wndChatOptions:FindChild("BGHeaderText"):GetText(), nSaveVersion=5})
+		Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndChatOptions, strName = self.wndChatOptions:FindChild("BGHeaderText"):GetText(), nSaveVersion=6})
 	end
 end
 
@@ -1065,7 +1090,7 @@ function ChatLog:RunChatWindowFade(wndChat)
 	local bForceOpaque = (wndChatList:GetVScrollPos() ~= wndChatList:GetVScrollRange())
 		or (strInput ~= nil and strInput ~= "")
 		or wndChat:ContainsMouse()
-		or not self.bEnableBGFade
+		or not self.bEnableChatLineFade
 
 	for idx, wndChatLine in pairs(tChatData.tChildren:GetItems()) do
 		if wndChatLine:IsShown() then
@@ -1448,7 +1473,6 @@ function ChatLog:OnChatInputReturn(wndHandler, wndControl, strText)
 		local tInput = ChatSystemLib.SplitInput(strText)
 		if strText ~= "" and strText ~= Apollo.GetString("ChatLog_RPMarker") and strText ~= Apollo.GetString("ChatLog_Marker") then
 			local channelCurrent = tInput.channelCommand or tChatData.channelCurrent
-			self.channelLastChannel = channelCurrent
 			if channelCurrent:GetType() == ChatSystemLib.ChatChannel_Command then
 				if tInput.bValidCommand then -- good command
 					ChatSystemLib.Command( strText )
@@ -1493,6 +1517,8 @@ end
 function ChatLog:VerifyChannelVisibility(channelChecking, tInput, wndChat)
 	local tChatData = wndChat:GetData()
 
+	local bNewChannel = self.channelLastChannel ~= channelChecking
+	self.channelLastChannel = channelChecking
 	if self.tAllViewedChannels[channelChecking:GetUniqueId()] ~= nil then -- see if this channelChecking is viewed
 		local strMessage = tInput.strMessage
 		if channelChecking:GetType() == ChatSystemLib.ChatChannel_AccountWhisper then
@@ -1504,7 +1530,7 @@ function ChatLog:VerifyChannelVisibility(channelChecking, tInput, wndChat)
 
 		-- if there is a str command, they are changing the channel, or whisper target
 		--the target can be the same as the last target
-		if tInput.strCommand ~= "" then
+		if tInput.strCommand ~= "" or bNewChannel then
 			self.strLastTarget = ""
 		end
 
@@ -2259,8 +2285,6 @@ function ChatLog:OnBGFade(wndHandler, wndControl)
 	local wndParent = wndControl:GetParent()
 	self.bEnableBGFade = wndControl:GetData()
 	self.bEnableNCFade = wndControl:GetData()
-
-	local nCurrentGameTime = GameLib.GetGameTime()
 	
 	for idx, wndChatWindow in pairs(self.tChatWindows) do
 		wndChatWindow:SetStyle("AutoFadeNC", self.bEnableNCFade)
@@ -2275,8 +2299,12 @@ function ChatLog:OnBGFade(wndHandler, wndControl)
 	end
 end
 
+function ChatLog:OnChatLineFade(wndHandler, wndControl, eMouseButton)
+	self.bEnableChatLineFade = wndControl:GetData()
+end
+
 function ChatLog:OnBGDrawSlider(wndHandler, wndControl)
-	self.nBGOpacity = self.wndChatOptions:FindChild("BGOpacity:BGOpacitySlider"):GetValue()
+	self.nBGOpacity = self.wndChatOptions:FindChild("BGOpacitySlider"):GetValue()
 
 	for idx, wndChatWindow in pairs(self.tChatWindows) do
 		wndChatWindow:FindChild("BGArt"):SetBGColor(CColor.new(1.0, 1.0, 1.0, self.nBGOpacity))
@@ -2377,22 +2405,19 @@ function ChatLog:HelperGenerateChatMessage(tQueuedMessage)
 
 		local tPreviousWhisperer = self.tLastWhisperer
 
-		self.tLastWhisperer =
-		{
-			strCharacterName = tMessage.strSender,
-			strRealmName = nil,
-			strDisplayName = nil,
-			eChannelType = ChatSystemLib.ChatChannel_AccountWhisper
-		}
-
 		local tAccountFriends = FriendshipLib.GetAccountList()
 		for idx, tAccountFriend in pairs(tAccountFriends) do
 			if tAccountFriend.arCharacters ~= nil then
 				for idx, tCharacter in pairs(tAccountFriend.arCharacters) do
 					if tCharacter.strCharacterName == tMessage.strSender and (tMessage.strRealmName:len() == 0 or tCharacter.strRealm == tMessage.strRealmName) then
 						if not tMessage.bSelf or (tPreviousWhisperer and tPreviousWhisperer.strCharacterName == tMessage.strSender) then
-							self.tLastWhisperer.strDisplayName = tAccountFriend.strCharacterName
-							self.tLastWhisperer.strRealmName = tCharacter.strRealm
+							self.tLastWhisperer =
+							{
+								strCharacterName = tMessage.strSender,
+								strRealmName = tCharacter.strRealm,
+								strDisplayName = tAccountFriend.strCharacterName,
+								eChannelType = ChatSystemLib.ChatChannel_AccountWhisper
+							}
 						end
 						strDisplayName = tAccountFriend.strCharacterName
 					end
@@ -2776,6 +2801,3 @@ local ChatLogInstance = ChatLog:new()
 ChatLogInstance:Init()
 
 
-int="0" TAnchorOffset="16" RAnchorPoint="1" RAnchorOffset="-13" BAnchorPoint="0" BAnchorOffset="35" RelativeToClient="1" Font="CRB_Header10" Text="Rank X (Max)" Template="Default" TooltipType="OnCursor" Name="AttributeRank" BGColor="white" TextColor="UI_TextHoloBodyCyan" TooltipColor="" TextId="" DT_VCENTER="0" DT_BOTTOM="0" NewControlDepth="3" DT_RIGHT="1" DT_CENTER="0" DT_WORDBREAK="1"/>
-        <Control Class="Window" LAnchorPoint="1" LAnchorOffset="-41" TAnchorPoint="0" TAnchorOffset="35" RAnchorPoint="1" RAnchorOffset="-1" BAnchorPoint="0" BAnchorOffset="56" RelativeToClient="1" Font="CRB_Header9" Text="777" Template="Default" TooltipType="OnCursor" Name="MaxPoints" BGColor="white" TextColor="UI_TextHoloBody" TooltipColor="" TextId="" DT_VCENTER="1" DT_RIGHT="0" DT_CENTER="0" DT_BOTTOM="0" NewControlDepth="3" Tooltip=""/>
-        <Control Class="ProgressBar" Text="" LAnchorPoint="0" LAnchorOffset="71" TAnchorPoint="0" TAnchorOffset="31" RAnchorPoint="0" RAnchorOffset="298" BAnchorPoint="0" BAnchorOffset="62" AutoSetText="0" UseValues="0" RelativeToClient="1" SetTextToProgress="1" DT_CENTER="1" DT_VCENTER="1" ProgressEmpty="" ProgressFull="CRB_Basekit:kitIProgBar_Holo_Fill" TooltipType="OnCursor" 

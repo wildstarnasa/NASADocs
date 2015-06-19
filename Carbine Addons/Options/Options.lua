@@ -628,7 +628,6 @@ function OptionsAddon:OnDocumentReady()
 	Apollo.RegisterEventHandler("TriggerDemoOptions", 	"OnInvokeOptionsScreen", self) --gamescom
 	Apollo.RegisterEventHandler("EnteredCombat", 		"OnEnteredCombat", self)
 	Apollo.RegisterEventHandler("RefreshOptionsDialog", "OnRefreshOptionsDialog", self)
-	Apollo.RegisterEventHandler("InvokeEscapeMenu", 	"OnEscapeMenu", self)
 
 	Apollo.CreateTimer("ResChangedTimer", 1.000, false)
 	Apollo.StopTimer("ResChangedTimer")
@@ -661,6 +660,8 @@ function OptionsAddon:OnDocumentReady()
 	self.wndVideoConfirm = self.wndVideo:FindChild("TimedChangeBlocker")
 	self.wndVideoConfirm:Show(false)
 
+	self.wndRequiresRestartConfirm = self.wndVideo:FindChild("ChangeRestartBlocker")
+	
 	----
 
 	self.wndSounds = Apollo.LoadForm(self.xmlDoc, "SoundOptionsDialog", nil, self)
@@ -681,73 +682,72 @@ function OptionsAddon:OnDocumentReady()
 
 	self.mapCB2CVs =  -- these are auto-mapped options than don't need custom handlers
 	{
-		{wnd = self.wndVideo:FindChild("VerticalSync"), 		consoleVar = "video.verticalSync"},
-		{wnd = self.wndVideo:FindChild("EnableCameraShake"), 	consoleVar = "camera.shake"},
-		{wnd = self.wndVideo:FindChild("EnableFixedCamera"), 	consoleVar = "camera.reorient"},
+		{wnd = self.wndVideo:FindChild("VerticalSync"), 		consoleVar = "video.verticalSync",												requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("EnableCameraShake"), 	consoleVar = "camera.shake",													requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("EnableFixedCamera"), 	consoleVar = "camera.reorient",													requiresRestart = false},
 
 		-- Combat
-		{wnd = self.wndTargeting:FindChild("UseButtonDownBtn"), 				consoleVar = "spell.useButtonDownForAbilities"},
-		{wnd = self.wndTargeting:FindChild("HoldToContinueCastingBtn"), 		consoleVar = "spell.holdToContinueCasting"},
-		{wnd = self.wndTargeting:FindChild("AutoSelfCastBtn"), 					consoleVar = "spell.autoSelectCharacter"},
-		{wnd = self.wndTargeting:FindChild("MoveToBtn"), 						consoleVar = "player.moveToTargetOnSelfAOE"},
-		{wnd = self.wndTargeting:FindChild("MoveActivateBtn"), 					consoleVar = "player.moveToActivate"},
-		{wnd = self.wndTargeting:FindChild("StickyTargetingBtn"),				consoleVar = "player.stickyTargeting"},
-		{wnd = self.wndTargeting:FindChild("ClickToMoveBtn"),					consoleVar = "player.clickToMove"},
-		{wnd = self.wndTargeting:FindChild("AutoPushTarget"), 					consoleVar = "spell.disableAutoTargeting"},
-		{wnd = self.wndTargeting:FindChild("DashDirectionalBtn"), 				consoleVar = "player.directionalDashBackward"},
-		{wnd = self.wndTargeting:FindChild("SelfDisplayBtn"), 					consoleVar = "spell.selfTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyDisplayBtn"), 					consoleVar = "spell.enemyTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyNPCDisplayBtn"), 				consoleVar = "spell.enemyNPCTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyNPCBeneficialDisplayBtn"), 	consoleVar = "spell.enemyNPCBeneficialTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyNPCDetrimentalDisplayBtn"),	consoleVar = "spell.enemyNPCDetrimentalTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyPlayerDisplayBtn"), 			consoleVar = "spell.enemyPlayerTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyPlayerBeneficialDisplayBtn"), 	consoleVar = "spell.enemyPlayerBeneficialTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("EnemyPlayerDetrimentalDisplayBtn"), consoleVar = "spell.enemyPlayerDetrimentalTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyDisplayBtn"), 					consoleVar = "spell.allyTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("PartyAllyDisplayBtn"), 				consoleVar = "spell.partyMemberAllyTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyNPCDisplayBtn"), 				consoleVar = "spell.allyNPCTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyNPCBeneficialDisplayBtn"), 		consoleVar = "spell.allyNPCBeneficialTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyNPCDetrimentalDisplayBtn"), 	consoleVar = "spell.allyNPCDetrimentalTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyPlayerDisplayBtn"), 			consoleVar = "spell.allyPlayerTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyPlayerBeneficialDisplayBtn"), 	consoleVar = "spell.allyPlayerBeneficialTelegraphDisplay"},
-		{wnd = self.wndTargeting:FindChild("AllyPlayerDetrimentalDisplayBtn"), 	consoleVar = "spell.allyPlayerDetrimentalTelegraphDisplay"},
+		{wnd = self.wndTargeting:FindChild("UseButtonDownBtn"), 				consoleVar = "spell.useButtonDownForAbilities",					requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("HoldToContinueCastingBtn"), 		consoleVar = "spell.holdToContinueCasting",						requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("MoveToBtn"), 						consoleVar = "player.moveToTargetOnSelfAOE",					requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("MoveActivateBtn"), 					consoleVar = "player.moveToActivate",							requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("StickyTargetingBtn"),				consoleVar = "player.stickyTargeting",							requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("ClickToMoveBtn"),					consoleVar = "player.clickToMove",								requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AutoPushTarget"), 					consoleVar = "spell.disableAutoTargeting",						requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("DashDirectionalBtn"), 				consoleVar = "player.directionalDashBackward",					requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("SelfDisplayBtn"), 					consoleVar = "spell.selfTelegraphDisplay",						requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyDisplayBtn"), 					consoleVar = "spell.enemyTelegraphDisplay",						requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyNPCDisplayBtn"), 				consoleVar = "spell.enemyNPCTelegraphDisplay",					requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyNPCBeneficialDisplayBtn"), 	consoleVar = "spell.enemyNPCBeneficialTelegraphDisplay",			requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyNPCDetrimentalDisplayBtn"),	consoleVar = "spell.enemyNPCDetrimentalTelegraphDisplay",			requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyPlayerDisplayBtn"), 			consoleVar = "spell.enemyPlayerTelegraphDisplay",				requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyPlayerBeneficialDisplayBtn"), 	consoleVar = "spell.enemyPlayerBeneficialTelegraphDisplay",		requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("EnemyPlayerDetrimentalDisplayBtn"), consoleVar = "spell.enemyPlayerDetrimentalTelegraphDisplay",		requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyDisplayBtn"), 					consoleVar = "spell.allyTelegraphDisplay",						requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("PartyAllyDisplayBtn"), 				consoleVar = "spell.partyMemberAllyTelegraphDisplay",			requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyNPCDisplayBtn"), 				consoleVar = "spell.allyNPCTelegraphDisplay",					requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyNPCBeneficialDisplayBtn"), 		consoleVar = "spell.allyNPCBeneficialTelegraphDisplay",			requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyNPCDetrimentalDisplayBtn"), 	consoleVar = "spell.allyNPCDetrimentalTelegraphDisplay",			requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyPlayerDisplayBtn"), 			consoleVar = "spell.allyPlayerTelegraphDisplay",				requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyPlayerBeneficialDisplayBtn"), 	consoleVar = "spell.allyPlayerBeneficialTelegraphDisplay",		requiresRestart = false},
+		{wnd = self.wndTargeting:FindChild("AllyPlayerDetrimentalDisplayBtn"), 	consoleVar = "spell.allyPlayerDetrimentalTelegraphDisplay",		requiresRestart = false},
 	}
 
 	self.mapSB2CVs =  -- these are auto-mapped sliders that don't need custom handlers
 	{
 		-- video options
-		{wnd = self.wndVideo:FindChild("MaxFPSSlider"), 			consoleVar = "video.framerateMax",			buddy = self.wndVideo:FindChild("MaxFPSEditBox")},
-		{wnd = self.wndVideo:FindChild("ViewDistanceSlider"), 		consoleVar = "lod.viewDistance",			buddy = self.wndVideo:FindChild("ViewDistanceEditBox")},
-		{wnd = self.wndVideo:FindChild("VDFogSlider"), 				consoleVar = "lod.farFogDistance",			buddy = self.wndVideo:FindChild("VDFogEditBox")},
-		{wnd = self.wndVideo:FindChild("ClutterDistanceSlider"), 	consoleVar = "lod.clutterDistance",			buddy = self.wndVideo:FindChild("ClutterDistanceEditBox")},
-		{wnd = self.wndVideo:FindChild("CameraDistanceSlider"),		consoleVar = "camera.distanceMax",			buddy = self.wndVideo:FindChild("CameraDistanceEditBox")},
-		{wnd = self.wndVideo:FindChild("FieldOfVisionSlider"),		consoleVar = "camera.fovY",					buddy = self.wndVideo:FindChild("FieldOfVisionEditBox")},
-		{wnd = self.wndVideo:FindChild("GammaScaleSlider"),			consoleVar = "ppp.gamma",					buddy = self.wndVideo:FindChild("GammaScaleEditBox"), 			format = "%.02f"},
-		{wnd = self.wndVideo:FindChild("VisualSupressionSlider"),	consoleVar = "spell.visualSuppression",		buddy = self.wndVideo:FindChild("VisualSupressionEditBox"), 	format = "%.02f"},
+		{wnd = self.wndVideo:FindChild("MaxFPSSlider"), 			consoleVar = "video.framerateMax",			buddy = self.wndVideo:FindChild("MaxFPSEditBox"),								requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("ViewDistanceSlider"), 		consoleVar = "lod.viewDistance",			buddy = self.wndVideo:FindChild("ViewDistanceEditBox"),							requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("VDFogSlider"), 				consoleVar = "lod.farFogDistance",			buddy = self.wndVideo:FindChild("VDFogEditBox"),								requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("ClutterDistanceSlider"), 	consoleVar = "lod.clutterDistance",			buddy = self.wndVideo:FindChild("ClutterDistanceEditBox"),						requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("CameraDistanceSlider"),		consoleVar = "camera.distanceMax",			buddy = self.wndVideo:FindChild("CameraDistanceEditBox"),						requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("FieldOfVisionSlider"),		consoleVar = "camera.fovY",					buddy = self.wndVideo:FindChild("FieldOfVisionEditBox"),						requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("GammaScaleSlider"),			consoleVar = "ppp.gamma",					buddy = self.wndVideo:FindChild("GammaScaleEditBox"), 			format = "%.02f",		requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("VisualSupressionSlider"),	consoleVar = "spell.visualSuppression",		buddy = self.wndVideo:FindChild("VisualSupressionEditBox"), 		format = "%.02f",		requiresRestart = false},
 
 		-- audio options
-		{wnd = self.wndSounds:FindChild("MasterVolumeSliderBar"), 	consoleVar = "sound.volumeMaster",		buddy = self.wndSounds:FindChild("MasterVolumeEditBox"), 		 format = "%.02f"},
-		{wnd = self.wndSounds:FindChild("MusicVolumeSliderBar"), 	consoleVar = "sound.volumeMusic",		buddy = self.wndSounds:FindChild("MusicVolumeEditBox"), 		 format = "%.02f"},
-		{wnd = self.wndSounds:FindChild("UIVolumeSliderBar"), 		consoleVar = "sound.volumeUI",			buddy = self.wndSounds:FindChild("UIVolumeEditBox"), 			 format = "%.02f"},
-		{wnd = self.wndSounds:FindChild("SoundFXVolumeSliderBar"), 	consoleVar = "sound.volumeSfx",			buddy = self.wndSounds:FindChild("SoundFXVolumeEditBox"), 		 format = "%.02f"},
-		{wnd = self.wndSounds:FindChild("AmbientVolumeSliderBar"), 	consoleVar = "sound.volumeAmbient",		buddy = self.wndSounds:FindChild("AmbientVolumeEditBox"), 		 format = "%.02f"},
-		{wnd = self.wndSounds:FindChild("VoiceVolumeSliderBar"), 	consoleVar = "sound.volumeVoice",		buddy = self.wndSounds:FindChild("VoiceVolumeEditBox"), 		 format = "%.02f"},
+		{wnd = self.wndSounds:FindChild("MasterVolumeSliderBar"), 	consoleVar = "sound.volumeMaster",		buddy = self.wndSounds:FindChild("MasterVolumeEditBox"), 		 format = "%.02f",		requiresRestart = false, bSoundSlider = true},
+		{wnd = self.wndSounds:FindChild("MusicVolumeSliderBar"), 	consoleVar = "sound.volumeMusic",		buddy = self.wndSounds:FindChild("MusicVolumeEditBox"), 		 format = "%.02f",		requiresRestart = false, bSoundSlider = true},
+		{wnd = self.wndSounds:FindChild("UIVolumeSliderBar"), 		consoleVar = "sound.volumeUI",			buddy = self.wndSounds:FindChild("UIVolumeEditBox"), 			 format = "%.02f",		requiresRestart = false, bSoundSlider = true},
+		{wnd = self.wndSounds:FindChild("SoundFXVolumeSliderBar"), 	consoleVar = "sound.volumeSfx",			buddy = self.wndSounds:FindChild("SoundFXVolumeEditBox"), 		 format = "%.02f",		requiresRestart = false, bSoundSlider = true},
+		{wnd = self.wndSounds:FindChild("AmbientVolumeSliderBar"), 	consoleVar = "sound.volumeAmbient",		buddy = self.wndSounds:FindChild("AmbientVolumeEditBox"), 		 format = "%.02f",		requiresRestart = false, bSoundSlider = true},
+		{wnd = self.wndSounds:FindChild("VoiceVolumeSliderBar"), 	consoleVar = "sound.volumeVoice",		buddy = self.wndSounds:FindChild("VoiceVolumeEditBox"), 		 format = "%.02f",		requiresRestart = false, bSoundSlider = true},
 	}
 
 	self.mapDDParents =
 	{
 		-- video options
-		{wnd = self.wndVideo:FindChild("DropToggleRenderTarget"),		consoleVar = "lod.renderTargetScale",				radio = "RenderTargetScale"},
-		{wnd = self.wndVideo:FindChild("DropToggleResolution"),			consoleVar = "video.fullscreen", 					radio = "ResolutionMode"},
-		{wnd = self.wndVideo:FindChild("DropToggleTexLOD"),				consoleVar = "lod.textureLodMin",					radio = "TextureResolution"},
-		{wnd = self.wndVideo:FindChild("DropToggleTexFilter"),			consoleVar = "lod.textureFilter", 					radio = "TextureFiltering"},
-		{wnd = self.wndVideo:FindChild("DropToggleFXAA"),				consoleVar = "fxaa.preset", 						radio = "FXAA"},
-		{wnd = self.wndVideo:FindChild("DropToggleClutterDensity"),		consoleVar = "lod.clutterDensity", 					radio = "ClutterDensity"},
-		{wnd = self.wndVideo:FindChild("DropToggleSceneDetail"),		consoleVar = "world.propScreenHeightPercentMin", 	radio = "SceneDetail"},
-		{wnd = self.wndVideo:FindChild("DropToggleLandLOD"),			consoleVar = "lod.landlod", 						radio = "LandLOD"},
-		{wnd = self.wndVideo:FindChild("DropToggleShadow"),				consoleVar = "draw.shadows", 						radio = "ShadowSetting"},
-		{wnd = self.wndVideo:FindChild("DropToggleParticleScale"),		consoleVar = "particle.envParticleScale", 			radio = "ParticleScale"},
-		{wnd = self.wndVideo:FindChild("DropToggleVisualSupression"),	consoleVar = "spell.visualSuppression", 			radio = "VisualSupression"},
+		{wnd = self.wndVideo:FindChild("DropToggleRenderTarget"),		consoleVar = "lod.renderTargetScale",				radio = "RenderTargetScale",		requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleResolution"),			consoleVar = "video.fullscreen", 					radio = "ResolutionMode",			requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleTexLOD"),				consoleVar = "lod.textureLodMin",					radio = "TextureResolution",		requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleTexFilter"),			consoleVar = "lod.textureFilter", 					radio = "TextureFiltering",		requiresRestart = true},
+		{wnd = self.wndVideo:FindChild("DropToggleFXAA"),				consoleVar = "fxaa.preset", 						radio = "FXAA",				requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleClutterDensity"),		consoleVar = "lod.clutterDensity", 					radio = "ClutterDensity",			requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleSceneDetail"),		consoleVar = "world.propScreenHeightPercentMin", 	radio = "SceneDetail",			requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleLandLOD"),			consoleVar = "lod.landlod", 						radio = "LandLOD",				requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleShadow"),				consoleVar = "draw.shadows", 						radio = "ShadowSetting",			requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleParticleScale"),		consoleVar = "particle.envParticleScale", 			radio = "ParticleScale",			requiresRestart = false},
+		{wnd = self.wndVideo:FindChild("DropToggleVisualSupression"),	consoleVar = "spell.visualSuppression", 			radio = "VisualSupression",		requiresRestart = false},
 	}
 
 	local wndDropToggleTelegraphPresetSettings = self.wndTargeting:FindChild("GroupContainer:TargettingDialogControls:TargettingOptionsControls:TelegraphOptionsFrame:TelelgraphColorsHeader:DropToggleTelegraphPresetSettings")
@@ -832,6 +832,16 @@ function OptionsAddon:OnDocumentReady()
 
 		Apollo.SetConsoleVariable("video.exclusiveDisplayMode", tModeDisplay.vec)
 		self.wndVideo:FindChild("DropToggleExclusive"):Enable(Apollo.GetConsoleVariable("video.exclusive"))
+	end
+	
+	
+	if not Is64BitClient() then
+		self.wndVideo:FindChild("ViewDistanceSlider"):SetMinMax(256, 512, 4)
+		local wndTextureResolutionChoiceContainer = self.wndVideo:FindChild("ScrollPanel:VideoOptionsControls:RenderQualityFrame:TextureLOD:DropToggleTexLOD:ChoiceContainer")
+		local wndTextureResolutionHigh = wndTextureResolutionChoiceContainer:FindChild("TextureResolutionHigh")
+		wndTextureResolutionHigh:Show(false)
+		local nLeft, nTop, nRight, nBottom = wndTextureResolutionChoiceContainer:GetAnchorOffsets()
+		wndTextureResolutionChoiceContainer:SetAnchorOffsets(nLeft, nTop, nRight, nBottom - wndTextureResolutionHigh:GetHeight())
 	end
 end
 
@@ -1093,9 +1103,8 @@ function OptionsAddon:OnAddonsCheck(bReload)
 	local bAscending = wndGrid:IsSortAscending()
 
 	wndGrid:DeleteAll()
-	for idx, tAddon in pairs(self.tAddons) do
-		self:HelperAddToGrid(wndGrid, tAddon)
-	end
+	--Check for Filter Results!
+	self:OnSearchEditBoxChanged(self.wndSearchEditBox, self.wndSearchEditBox, self.wndSearchEditBox:GetText())
 	wndGrid:SetSortColumn(nSortCol, bAscending)
 	wndGrid:SetVScrollPos(nPos)
 end
@@ -1222,8 +1231,17 @@ function OptionsAddon:InvokeAddonLoadOnStartDlg(tAddon)
 end
 
 function OptionsAddon:OnSetToDefault()
+	self.wndAddons:FindChild("ConfirmationOverlay"):Show(true)
+end
+
+function OptionsAddon:OnSetToDefaultConfirm()
 	self:HelperUncheckAllInnerFrame()
 	ResetToDefaultAddons()
+	self.wndAddons:FindChild("ConfirmationOverlay"):Show(false)
+end
+
+function OptionsAddon:OnCloseCancel()
+	self.wndAddons:FindChild("ConfirmationOverlay"):Show(false)
 end
 
 function OptionsAddon:HelperUncheckAllInnerFrame()
@@ -1417,6 +1435,7 @@ function OptionsAddon:OnOptionsClose()
 
 	self.wndTargeting:Show(false) -- TODO Hack for F&F: We hide the window to force a button click to bring it back up (as there's some state initialization there)
 	--self.OptionsDlg:FindChild("InnerFrame"):FindChild("TargetingBtn"):SetCheck(false)
+	self.wndAddons:FindChild("ConfirmationOverlay"):Show(false)
 	CloseOptions()
 end
 
@@ -1446,7 +1465,11 @@ function OptionsAddon:InitOptionsControls()
 			if type(mapping.consoleVar) == "table" then
 				mapping.wnd:SetValue(Apollo.GetConsoleVariable(mapping.consoleVar[1]))
 			else
-				mapping.wnd:SetValue(not bMute and Apollo.GetConsoleVariable(mapping.consoleVar) or 0)
+				local nValue =  Apollo.GetConsoleVariable(mapping.consoleVar)
+				if mapping.bSoundSlider and bMute then
+					nValue = 0
+				end
+				mapping.wnd:SetValue(nValue)
 			end
 
 			mapping.wnd:SetData(mapping)
@@ -1459,12 +1482,17 @@ function OptionsAddon:InitOptionsControls()
 				if type(mapping.consoleVar) == "table" then
 					mapping.buddy:SetText(string.format(strFormat, Apollo.GetConsoleVariable(mapping.consoleVar[1])))
 				else
-					mapping.buddy:SetText(string.format(strFormat, not bMute and Apollo.GetConsoleVariable(mapping.consoleVar) or 0))
+					local nValue =  Apollo.GetConsoleVariable(mapping.consoleVar)
+					if mapping.bSoundSlider and bMute then
+						nValue = 0
+					end
+					
+					mapping.buddy:SetText(string.format(strFormat, nValue))
 				end
 			end
 			
 			local wndBlocker = mapping.wnd:GetParent():FindChild("SliderBlocker")
-			if wndBlocker then
+			if mapping.bSoundSlider and wndBlocker then
 				wndBlocker:Show(bMute)
 				mapping.wnd:Enable(not bMute)
 				self.wndSounds:FindChild("PlayInBackground"):Enable(not bMute)
@@ -1736,9 +1764,14 @@ function OptionsAddon:FillDisplayList()
 end
 
 function OptionsAddon:OnMappedOptionsCheckbox(wndHandler, wndControl)
-	Apollo.SetConsoleVariable(wndControl:GetData().consoleVar, wndControl:IsChecked())
+	local tMapping = wndControl:GetData()
+	Apollo.SetConsoleVariable(tMapping.consoleVar, wndControl:IsChecked())
 	self:EnableVideoControls()
 	self:OnMappedOptionsCheckboxHider()
+	
+	if tMapping.requiresRestart then
+		self:ShowChangeRestartBlocker()
+	end
 end
 
 function OptionsAddon:OnMappedOptionsCheckboxHider(wndHandler, wndControl)
@@ -1778,6 +1811,10 @@ function OptionsAddon:OnOptionsSliderChanged(wndHandler, wndControl, fValue, fOl
 	end
 
 	self:RefreshPresetVideoSelection()
+	
+	if tMapping.requiresRestart then
+		self:ShowChangeRestartBlocker()
+	end
 end
 
 function OptionsAddon:OnTextureFilteringRadio(wndHandler, wndControl)
@@ -1791,6 +1828,8 @@ function OptionsAddon:OnTextureFilteringRadio(wndHandler, wndControl)
 	end
 	wndControl:GetParent():GetParent():SetText(wndControl:GetText())
 	wndControl:GetParent():Close()
+	
+	self:ShowChangeRestartBlocker()
 end
 
 function OptionsAddon:OnClutterDensityRadio(wndHandler, wndControl)
@@ -2081,6 +2120,19 @@ function OptionsAddon:OnChangeCancelBtn(wndHandler, wndControl)
 	end
 end
 
+function OptionsAddon:ShowChangeRestartBlocker()
+	self.wndRequiresRestartConfirm:Show(IsInGame())
+end
+
+function OptionsAddon:OnChangeRestartConfirmBtn(wndHandler, wndControl, eMouseButton)
+	self.wndRequiresRestartConfirm:Show(false)
+	RequestCamp()
+end
+
+function OptionsAddon:OnChangeRestartCancelBtn(wndHandler, wndControl, eMouseButton)
+	self.wndRequiresRestartConfirm:Show(false)
+end
+
 -- Free form Targetting
 function OptionsAddon:OnAlwaysFaceCheck(wndHandler, wndControl, eMouseButton)
 	Apollo.SetConsoleVariable("Player.ignoreAlwaysFaceTarget", false)
@@ -2144,14 +2196,17 @@ function OptionsAddon:OnRestoreDefaults()
 	for iTable, tTable in pairs({ self.mapCB2CVs, self.mapSB2CVs, self.mapDDParents }) do
 		for idx, tVar in pairs(tTable) do
 			if tVar.wnd and tVar.wnd:IsVisible() then
+				local oldValue = Apollo.GetConsoleVariable(tVar.consoleVar)
 				Apollo.ResetConsoleVariable(tVar.consoleVar)
+				if tVar.requiresRestart and oldValue ~= Apollo.GetConsoleVariable(tVar.consoleVar) then
+					self:ShowChangeRestartBlocker()
+				end
 			end
 		end
 	end
 	self:OnOptionsCheck()
 
 	self.wndVideo:FindChild("RefreshAnimation"):SetSprite("CRB_WindowAnimationSprites:sprWinAnim_BirthSmallTemp")
-
 end
 
 function OptionsAddon:OnCheckCombatMusicFlair( wndHandler, wndControl, eMouseButton )
@@ -2515,4 +2570,3 @@ end
 ---------------------------------------------------------------------------------------------------
 local OptionsInst = OptionsAddon:new()
 OptionsAddon:Init()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 

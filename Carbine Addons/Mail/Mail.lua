@@ -15,8 +15,8 @@ local kstrNPCIcon 		= "Icon_Windows_UI_NPCIcon"
 
 local kstrInvalidAttachmentIcon = "ClientSprites:WhiteFlash"
 
-local kcrAttachmentIconValidColor 	= CColor.new(1, 1, 1, 1)
-local kcrAttachmentIconInvalidColor = CColor.new(.75, .1, .1, 1)
+local kcrAttachmentIconValidColor 	= ApolloColor.new("UI_TextHoloBodyCyan")
+local kcrAttachmentIconInvalidColor = ApolloColor.new("xkcdReddish")
 
 local kcrTextDefaultColor 	= CColor.new(0.7, 0.7, 0.7, 1.0)
 local kcrTextWarningColor 	= CColor.new(0.7, 0.7, 0.0, 1.0)
@@ -198,62 +198,6 @@ function Mail:OnMailBoxDeactivate()
 	end
 end
 
-function Mail:UpdateAllListItems()
-	local nScrollPos = self.wndMailList:GetVScrollPos()
-
-	local bItemsSelected = false
-	local bCanDelete = true
-
-	local tInvalidMail = {}
-	
-	for strId, wndMail in pairs(self.tMailItemWnds) do
-		if wndMail:FindChild("SelectMarker"):IsChecked() then
-			bItemsSelected = true
-		end
-		local msgMail = wndMail:GetData()
-		if msgMail then
-			local tMessageInfo = msgMail:GetMessageInfo()
-			if tMessageInfo ~= nil then
-				if wndMail:FindChild("SelectMarker"):IsChecked() then
-					if (#tMessageInfo.arAttachments > 0) or (tMessageInfo.monGift and tMessageInfo.monGift:GetAmount() > 0) then
-						bCanDelete = false
-					end
-				end
-				self:UpdateListItem(wndMail, msgMail)
-			else
-				tInvalidMail[strId] = wndMail
-			end
-		else
-			tInvalidMail[strId] = wndMail
-		end
-	end
-	
-	if next(tInvalidMail) ~= nil then
-		for strId, wndMail in pairs(tInvalidMail) do
-			self.tMailItemWnds[strId]:Destroy()
-			self.tMailItemWnds[strId] = nil
-		end
-	
-		self.wndMailList:ArrangeChildrenVert()
-		self.wndMailList:SetVScrollPos(nScrollPos)
-	
-		self:CalculateMailAlert()
-	end
-	tInvalidMail = nil
-
-	local arMessages = MailSystemLib.GetInbox()
-	table.sort(arMessages, Mail.SortMailItems)
-
-	self:RefreshActionsButton()
-	
-	for idx, msgMail in ipairs(arMessages) do
-		if self.tMailItemWnds[msgMail:GetIdStr()] == nil then
-			self:PopulateList()
-			return
-		end
-	end
-end
-
 function Mail:DestroyList()
 	for idx, wndListItem in pairs(self.tMailItemWnds) do
 		wndListItem:Destroy()
@@ -339,7 +283,7 @@ function Mail:PopulateList()
 		self.tMailItemWnds[strId] = nil
 		
 		if self.tOpenMailMessages[strId] ~= nil then
-			self.tOpenMailMessages[strId]:Destroy()
+			self.tOpenMailMessages[strId].wndMain:Destroy()
 			self.tOpenMailMessages[strId] = nil
 		end
 	end
@@ -531,8 +475,19 @@ function Mail:OnMailResult(eResult)
 		end
 
 		local strErrorHeader = tMailHeaderError[eResult] and Apollo.GetString(tMailHeaderError[eResult]) or Apollo.GetString("CRB_Mail_ErrorGeneric")
-		self.wndErrorMsg:FindChild("ErrorMessageBody"):SetText(Apollo.GetString(tMailResultError[eResult]))
 		self.wndErrorMsg:FindChild("ErrorMessageHeader"):SetText(strErrorHeader)
+		local wndErrorMessageBodyText = self.wndErrorMsg:FindChild("ErrorMessageBodyText")
+		
+		local nOrigHeight = wndErrorMessageBodyText:GetHeight()
+		wndErrorMessageBodyText:SetAML("<P Font=\"CRB_InterfaceMedium\" TextColor=\"UI_TextHoloBody\">"..Apollo.GetString(tMailResultError[eResult]).."</P>")
+		wndErrorMessageBodyText:SetHeightToContentHeight()
+		local nNewHeight = wndErrorMessageBodyText:GetHeight()
+		
+		--If enough text to require a resizing then make bigger.
+		if nOrigHeight < nNewHeight then
+			local nLeft, nTop, nRight, nBottom = self.wndErrorMsg:GetAnchorOffsets()
+			self.wndErrorMsg:SetAnchorOffsets(nLeft, nTop, nRight, nBottom + (nNewHeight - nOrigHeight))
+		end
 		self.wndErrorMsg:Invoke()
 	end
 end
@@ -897,7 +852,7 @@ function MailCompose:Init(luaMailSystem)
 	self.luaMailSystem 			= luaMailSystem
 	self.tMyBlocks 				= {}
 	self.wndMain 				= Apollo.LoadForm(self.luaMailSystem.xmlDoc, "ComposeMessage", nil, self) --The compose mail form.
-	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Mail_ComposeLabel")})
+	Event_FireGenericEvent("WindowManagementAdd", {wnd = self.wndMain, strName = Apollo.GetString("Mail_ComposeLabel"), nSaveVersion=2})
 	
 	Apollo.RegisterEventHandler("SuggestedMenuResult",					"OnSuggestedMenuResult", self)
 
@@ -1025,6 +980,13 @@ function MailCompose:AppendAttachment(nValue)
 		if nAttachmentValue == nValue then
 			return
 		end
+	end
+	
+	--Not allowed to send soulbound items.
+	local itemAttach = Item.GetItemFromInventoryLoc(nValue)
+	if itemAttach and itemAttach:IsSoulbound() then
+		self.luaMailSystem:OnMailResult(GameLib.CodeEnumGenericError.Mail_CannotTransferItem)
+		return
 	end
 
 	GameLib.GetPlayerUnit():LockInventorySlot(nValue)
@@ -1319,7 +1281,7 @@ end
 
 function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 
-	if  luaMailSystem.xmlDoc == nil then
+	if luaMailSystem.xmlDoc == nil then
 		return
 	end
 
@@ -1355,7 +1317,6 @@ function MailReceived:Init(luaMailSystem, msgMail) -- Reading, not composing
 	self.wndCODCash				= self.wndMain:FindChild("CODCash")
 	self.wndCODFrame 			= self.wndMain:FindChild("CODFrame")
 	self.wndGift 				= self.wndMain:FindChild("Gift")
-	--self.wndReceiveTakeAllBtn = self.wndMain:FindChild("ReceiveTakeAllBtn")
 	self.wndReceiveTakeCashBtn 	= self.wndMain:FindChild("ReceiveTakeCashBtn")
 	self.wndReceiveReplyBtn 	= self.wndMain:FindChild("ReceiveReplyBtn") -- not active if npc mail
 	self.wndReceiveReturnBtn 	= self.wndMain:FindChild("ReceiveReturnBtn") -- not enabled if ncp mail
@@ -1462,6 +1423,7 @@ function MailReceived:UpdateControls()
 		self.wndReceiveReturnBtn:Show(false)
 		self.wndCODCash:SetAmount(tMessageInfo.monCod)
 		self.wndAcceptCODBtn:Enable(monCash:GetAmount() >= tMessageInfo.monCod:GetAmount() and MailSystemLib.AtMailbox())
+		self.wndMain:FindChild("CODCostText"):Show(not MailSystemLib.AtMailbox())
 		if monCash:GetAmount() >= tMessageInfo.monCod:GetAmount() then
 			self.wndCODCash:SetTextColor(kcrAttachmentIconValidColor)
 		else
@@ -1524,9 +1486,12 @@ function MailReceived:OnTooltipAttachment( wndHandler, wndControl, eToolTipType,
 		return
 	end
 	local tMessageInfo = self.msgMail:GetMessageInfo()
-	local tAttachment = tMessageInfo.arAttachments[wndControl:GetData()]
-	if tAttachment ~= nil and tAttachment.itemAttached ~= nil then
-		Tooltip.GetItemTooltipForm(self, wndControl, tAttachment.itemAttached, { bPrimary = true, bSelling = false, itemModData = tAttachment.itemModData, nStackCount = tAttachment.nStackCount })
+	
+	if tMessageInfo then
+		local tAttachment = tMessageInfo.arAttachments[wndControl:GetData()]
+		if tAttachment ~= nil and tAttachment.itemAttached ~= nil then
+			Tooltip.GetItemTooltipForm(self, wndControl, tAttachment.itemAttached, { bPrimary = true, bSelling = false, itemModData = tAttachment.itemModData, nStackCount = tAttachment.nStackCount })
+		end
 	end
 end
 
@@ -1587,7 +1552,7 @@ function MailReceived:OnReturnBtn(wndHandler, wndControl)
 	end
 
 	self.msgMail:ReturnToSender()
-	-- OnMailUnavailable handels cleanup if message is removed
+	self:OnCloseBtn()
 end
 
 function MailReceived:OnDeleteBtn(wndHandler, wndControl)
@@ -1596,6 +1561,9 @@ function MailReceived:OnDeleteBtn(wndHandler, wndControl)
 	end
 
 	self.msgMail:DeleteMessage()
+	
+	self.wndMain:Close()
+	self:OnClosed()
 end
 
 function MailReceived:OnSubCloseBtn(wndHandler, wndControl)
@@ -1622,7 +1590,8 @@ function MailReceived:OnRejectCODBtn(wndHandler, wndControl)
 
 	--Rejects the COD cost, returns the message to sender.
 	self.msgMail:ReturnToSender()
-	-- OnMailUnavailable handels cleanup if message is removed
+	
+	self:OnCloseBtn()
 end
 
 function MailReceived:OnPlayerCurrencyChanged()
@@ -1639,10 +1608,3 @@ end
 ---------------------------------------------------------------------------------------------------
 Mail:Init()
 local MailInstance = Mail:new()
-
-horOffset="63" DT_VCENTER="1" DT_CENTER="1" Name="CloseBtn" BGColor="white" TextColor="white" NoClip="1" NewControlDepth="3" WindowSoundTemplate="CloseWindowPhys" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" TooltipColor="">
-            <Event Name="ButtonSignal" Function="OnSalvageCancel"/>
-        </Control>
-    </Form>
-    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-162" TAnchorPoint=".5" TAnchorOffset="-224" RAnchorPoint=".5" RAnchorOffset="161" BAnchorPoint=".5" BAnchorOffset="-31" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="InventoryDeleteNotice" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" NoClip="0" Visible="0" Sprite="" TooltipColor="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnc

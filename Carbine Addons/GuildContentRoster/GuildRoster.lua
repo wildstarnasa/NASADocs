@@ -13,8 +13,8 @@ require "GameLib"
 
 local GuildRoster = {}
 local knMaxNumberOfCircles = 5
-local crGuildNameLengthError = ApolloColor.new("red")
-local crGuildNameLengthGood = ApolloColor.new("ffffffff")
+local crGuildNameLengthError = ApolloColor.new("AlertOrangeYellow")
+local crGuildNameLengthGood = ApolloColor.new("UI_TextHoloBodyCyan")
 
 function GuildRoster:new(o)
     o = o or {}
@@ -98,21 +98,30 @@ function GuildRoster:Initialize(wndParent)
 		return
 	end
 	
-	self.tWndRefs.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildRosterForm", wndParent, self)
-    self.tWndRefs.wndEditRankPopout = self.tWndRefs.wndMain:FindChild("EditRankPopout")
-	self.tWndRefs.wndMain:Show(true)
+	local wndMain = Apollo.LoadForm(self.xmlDoc, "GuildRosterForm", wndParent, self)
+	self.tWndRefs.wndMain = wndMain
+    self.tWndRefs.wndEditRankPopout = wndMain:FindChild("EditRankPopout")
+	self.tWndRefs.wndRosterOptionBtnAdd = wndMain:FindChild("RosterOptionBtnAdd")
+	self.tWndRefs.wndRosterOptionBtnRemove = wndMain:FindChild("RosterOptionBtnRemove")
+	self.tWndRefs.wndRosterOptionBtnDemote = wndMain:FindChild("RosterOptionBtnDemote")
+	self.tWndRefs.wndRosterOptionBtnPromote = wndMain:FindChild("RosterOptionBtnPromote")
+	self.tWndRefs.wndRosterOptionBtnLeaveFlyout = wndMain:FindChild("RosterOptionBtnLeaveFlyout")
+	self.tWndRefs.wndRosterBottom = wndMain:FindChild("RosterBottom")
+	self.tWndRefs.wndPermissionContainer = wndMain:FindChild("PermissionContainer")
 	
-	self.tWndRefs.wndMain:FindChild(self.strRosterSort):SetCheck(true)
-	self.tWndRefs.wndMain:FindChild("RosterBottom"):ArrangeChildrenHorz(0)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):AttachWindow(self.tWndRefs.wndMain:FindChild("AddMemberContainer"))
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):AttachWindow(self.tWndRefs.wndMain:FindChild("LeaveFlyoutBtnContainer"))
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):AttachWindow(self.tWndRefs.wndMain:FindChild("RemoveMemberContainer"))
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnEditNotes"):AttachWindow(self.tWndRefs.wndMain:FindChild("EditNotesContainer"))
+	wndMain:Show(true)
+	
+	wndMain:FindChild(self.strRosterSort):SetCheck(true)
+	self.tWndRefs.wndRosterBottom:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	self.tWndRefs.wndRosterOptionBtnAdd:AttachWindow(wndMain:FindChild("AddMemberContainer"))
+	self.tWndRefs.wndRosterOptionBtnLeaveFlyout:AttachWindow(wndMain:FindChild("LeaveFlyoutBtnContainer"))
+	self.tWndRefs.wndRosterOptionBtnRemove:AttachWindow(wndMain:FindChild("RemoveMemberContainer"))
+	wndMain:FindChild("RosterOptionBtnEditNotes"):AttachWindow(wndMain:FindChild("EditNotesContainer"))
 
-	self.tWndRefs.wndMain:FindChild("OptionsBtn"):AttachWindow(self.tWndRefs.wndMain:FindChild("AdvancedOptionsContainer"))
-	self.tWndRefs.wndMain:FindChild("ShowOffline"):SetCheck(self.bShowOffline)	
-	
-	local wndPermissionContainer = self.tWndRefs.wndMain:FindChild("PermissionContainer")
+	wndMain:FindChild("OptionsBtn"):AttachWindow(wndMain:FindChild("AdvancedOptionsContainer"))
+	wndMain:FindChild("ShowOffline"):SetCheck(self.bShowOffline)
+
+	local wndPermissionContainer = self.tWndRefs.wndPermissionContainer
 	for idx, tPermission in pairs(GuildLib.GetPermissions(GuildLib.GuildType_Guild)) do
 		local wndPermission = Apollo.LoadForm(self.xmlDoc, "PermissionEntry", wndPermissionContainer, self)
 		local wndPermissionBtn = wndPermission:FindChild("PermissionBtn")
@@ -125,8 +134,8 @@ function GuildRoster:Initialize(wndParent)
 	end
 	wndPermissionContainer:ArrangeChildrenVert()
 	
-	self.tWndRefs.wndMain:SetData(guildOwner)
-	self.tWndRefs.wndMain:FindChild("EditNotesEditbox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildMemberNote))
+	wndMain:SetData(guildOwner)
+	wndMain:FindChild("EditNotesEditbox"):SetMaxTextLength(GameLib.GetTextTypeMaxLength(GameLib.CodeEnumUserText.GuildMemberNote))
 end
 
 function GuildRoster:OnToggleRoster(wndParent)
@@ -137,12 +146,12 @@ function GuildRoster:OnToggleRoster(wndParent)
 	
 	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() then
 		self:Initialize(wndParent)
+		
+		guildOwner:RequestMembers()
+		self:FullRedrawOfRoster(false)
 	else
 		self.tWndRefs.wndMain:Show(true)
 	end
-
-	guildOwner:RequestMembers()
-	self:FullRedrawOfRoster()
 end
 
 function GuildRoster:OnClose()
@@ -156,7 +165,7 @@ end
 -- Roster Methods
 -----------------------------------------------------------------------------------------------
 
-function GuildRoster:FullRedrawOfRoster()
+function GuildRoster:FullRedrawOfRoster(bDrawRoster)
 	if self.tWndRefs.wndMain == nil or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
 		return
 	end
@@ -172,7 +181,9 @@ function GuildRoster:FullRedrawOfRoster()
 		self:OnRosterPromoteMemberCloseBtn()
 	end
 
-	self:BuildRosterList(guildCurr, self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):GetData()))
+	if bDrawRoster then
+		self:BuildRosterList(guildCurr, self:SortRoster(self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):GetData()))
+	end
 	
 	self.tWndRefs.wndEditRankPopout:FindChild("RankContainer"):DestroyChildren()
 	
@@ -195,7 +206,7 @@ function GuildRoster:FullRedrawOfRoster()
 		end
 	end
 
-	self.tWndRefs.wndEditRankPopout:FindChild("RankContainer"):ArrangeChildrenVert()
+	self.tWndRefs.wndEditRankPopout:FindChild("RankContainer"):ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
 end
 
 function GuildRoster:OnGuildRoster(guildCurr, tRoster) -- Event from CPP
@@ -226,7 +237,7 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 	wndGrid:DeleteAll() -- TODO remove this for better performance eventually
 	
 	local tRosterDiff = self:CompareRoster(tRoster)
-
+	
 	for key, tCurr in pairs(tRosterDiff) do
 		tCurr.nRowIndex = key
 		
@@ -276,7 +287,7 @@ function GuildRoster:BuildRosterList(guildCurr, tRoster)
 			wndGrid:SetCellLuaData(iCurrRow, 8, String_GetWeaselString(Apollo.GetString("GuildRoster_ActiveNoteTooltip"), tCurr.strName, string.len(tCurr.strNote) > 0 and tCurr.strNote or "N/A")) -- For tooltip
 		end
 	end
-
+	
 	self.tWndRefs.wndMain:FindChild("AddMemberYesBtn"):SetData(self.tWndRefs.wndMain:FindChild("AddMemberEditBox"))
 	self.tWndRefs.wndMain:FindChild("AddMemberEditBox"):SetData(self.tWndRefs.wndMain:FindChild("AddMemberEditBox")) -- Since they have the same event handler
 	self.tWndRefs.wndMain:FindChild("RosterHeaderContainer"):SetData(tRoster)
@@ -324,20 +335,27 @@ end
 
 function GuildRoster:OnRosterGridItemClick(wndControl, wndHandler, iRow, iCol, eMouseButton)
 	local wndGrid = self.tWndRefs.wndMain:FindChild("RosterGrid")
-	local wndData = wndGrid:GetCellData(iRow, 1)
+	local tRowData = wndGrid:GetCellData(iRow, 1)
 	
-	if eMouseButton == GameLib.CodeEnumInputMouse.Right and wndData and wndData.strName and wndData.strName ~= GameLib.GetPlayerUnit():GetName() then
+	if eMouseButton == GameLib.CodeEnumInputMouse.Right and tRowData and tRowData.strName and tRowData.strName ~= GameLib.GetPlayerUnit():GetName() then
 		local unitTarget = nil
-		local tOptionalCharacterData = { guildCurr = self.tWndRefs.wndMain:GetData(), tPlayerGuildData = wndData }
-		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", self.tWndRefs.wndMain, wndData.strName, unitTarget, tOptionalCharacterData)
+		local tOptionalCharacterData = { guildCurr = self.tWndRefs.wndMain:GetData(), tPlayerGuildData = tRowData }
+		Event_FireGenericEvent("GenericEvent_NewContextMenuPlayerDetailed", self.tWndRefs.wndMain, tRowData.strName, unitTarget, tOptionalCharacterData)
 		return
 	end
 	
-	if wndGrid:GetData() == wndData then
-		wndData = nil
+	if wndGrid:GetData() == tRowData then
+		tRowData = nil
 	end
 	
-	self:HelperSelectRow(wndData)
+	self.strSelectedName = tRowData and tRowData.strName or nil
+	self.nSelectedIndex = tRowData and tRowData.nRowIndex or 0
+	wndGrid:SetData(tRowData)
+	if tRowData then
+		self:ResetRosterMemberButtons()
+	else
+		wndGrid:SetCurrentRow(self.nSelectedIndex)
+	end
 end
 
 function GuildRoster:HelperSelectRow(tRowData)
@@ -375,7 +393,7 @@ function GuildRoster:OnAddRankBtnSignal(wndControl, wndHandler)
 
 	--Default to nothing
 	wndSettings:FindChild("OptionString"):SetText("")
-	local wndPermissionContainer = self.tWndRefs.wndMain:FindChild("PermissionContainer")
+	local wndPermissionContainer = self.tWndRefs.wndPermissionContainer
 	for key, wndPermission in pairs(wndPermissionContainer:GetChildren()) do
 		wndPermission:FindChild("PermissionBtn"):SetCheck(false)
 	end
@@ -397,7 +415,7 @@ function GuildRoster:OnRemoveRankBtnSignal(wndHandler, wndControl)
 	wndSettings:FindChild("RankSettingsNameBlocker"):Show(not tMyRankPermissions.bRankRename)
 	wndSettings:FindChild("PermissionContainerBlocker"):Show(tRank.nRankId == 1 or not tMyRankPermissions.bChangeRankPermissions)
 
-	local wndPermissionContainer = self.tWndRefs.wndMain:FindChild("PermissionContainer")
+	local wndPermissionContainer = self.tWndRefs.wndPermissionContainer
 	for idx, wndPermission in pairs(wndPermissionContainer:GetChildren()) do
 		wndPermission:FindChild("PermissionBtn"):SetCheck(tRank.tRankInfo[wndPermission:GetData().strLuaVariable])
 	end
@@ -444,7 +462,7 @@ function GuildRoster:OnRankSettingsSaveBtn(wndControl, wndHandler)
 	end
 
 	local bDirtyRank = false
-	for key, wndPermission in pairs(self.tWndRefs.wndMain:FindChild("PermissionContainer"):GetChildren()) do
+	for key, wndPermission in pairs(self.tWndRefs.wndPermissionContainer:GetChildren()) do
 		local bPermissionChecked = wndPermission:FindChild("PermissionBtn"):IsChecked()
 		if tRankInfo[wndPermission:GetData().strLuaVariable] ~= bPermissionChecked then
 			bDirtyRank = true
@@ -509,6 +527,7 @@ function GuildRoster:HelperValidateAndRefreshRankSettingsWindow()
 	
 	--New ranks only require a valid name otherwise require the name to change (while still valid) or the permissions change
 	wndSettings:FindChild("RankPopoutOkBtn"):Enable((bNew and bNameValid) or (not bNew and bNameValid and (bNameChanged or bPermissionChanged)))
+	wndSettings:FindChild("ValidAlert"):Show(not bNameValid)
 end
 
 function GuildRoster:OnPlayerNoteChanged(wndControl, wndHandler, strNewNote)
@@ -555,7 +574,7 @@ function GuildRoster:OnGuildRankChange(guildCurr)
 		return
 	end
 	
-	self:FullRedrawOfRoster()
+	self:FullRedrawOfRoster(true)
 end
 
 function GuildRoster:OnRankPopoutCloseBtn(wndControl, wndHandler)
@@ -565,7 +584,7 @@ end
 function GuildRoster:OnOfflineBtn(wndHandler, wndControl)
 	self.bShowOffline = wndControl:IsChecked()
 	
-	self:FullRedrawOfRoster()
+	self:FullRedrawOfRoster(true)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -577,41 +596,43 @@ function GuildRoster:ResetRosterMemberButtons()
 	local guildCurr = self.tWndRefs.wndMain:GetData()
 	local eMyRank = guildCurr:GetMyRank()
 	if guildCurr and eMyRank then
+		local wndRosterGrid = self.tWndRefs.wndMain:FindChild("RosterGrid")
+	
 		local tMyRankPermissions = guildCurr:GetRanks()[eMyRank]
-		local bSomeRowIsPicked = self.tWndRefs.wndMain:FindChild("RosterGrid"):GetCurrentRow()
-		local bTargetIsUnderMyRank = bSomeRowIsPicked and eMyRank < self.tWndRefs.wndMain:FindChild("RosterGrid"):GetData().nRank
+		local bSomeRowIsPicked = wndRosterGrid:GetCurrentRow()
+		local bTargetIsUnderMyRank = bSomeRowIsPicked and eMyRank < wndRosterGrid:GetData().nRank
 
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):Enable(bSomeRowIsPicked and bTargetIsUnderMyRank)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):Enable(bSomeRowIsPicked and bTargetIsUnderMyRank)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):Enable(bSomeRowIsPicked and bTargetIsUnderMyRank and self.tWndRefs.wndMain:FindChild("RosterGrid"):GetData().nRank ~= 10) -- Can't go below 10
+		self.tWndRefs.wndRosterOptionBtnRemove:Enable(bSomeRowIsPicked and bTargetIsUnderMyRank)
+		self.tWndRefs.wndRosterOptionBtnPromote:Enable(bSomeRowIsPicked and bTargetIsUnderMyRank)
+		self.tWndRefs.wndRosterOptionBtnDemote:Enable(bSomeRowIsPicked and bTargetIsUnderMyRank and wndRosterGrid:GetData().nRank ~= 10) -- Can't go below 10
 
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):Show(tMyRankPermissions and tMyRankPermissions.bInvite)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):Show(tMyRankPermissions and tMyRankPermissions.bKick)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
+		self.tWndRefs.wndRosterOptionBtnAdd:Show(tMyRankPermissions and tMyRankPermissions.bInvite)
+		self.tWndRefs.wndRosterOptionBtnRemove:Show(tMyRankPermissions and tMyRankPermissions.bKick)
+		self.tWndRefs.wndRosterOptionBtnDemote:Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
+		self.tWndRefs.wndRosterOptionBtnPromote:Show(tMyRankPermissions and tMyRankPermissions.bChangeMemberRank)
 
 		if tMyRankPermissions.bDisband then
-			self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):SetText(Apollo.GetString("GuildRoster_DisbandGuild"))
+			self.tWndRefs.wndRosterOptionBtnLeaveFlyout:SetText(Apollo.GetString("GuildRoster_DisbandGuild"))
 		else
-			self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):SetText(Apollo.GetString("GuildRoster_LeaveGuild"))
+			self.tWndRefs.wndRosterOptionBtnLeaveFlyout:SetText(Apollo.GetString("GuildRoster_LeaveGuild"))
 		end
 	else
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):Show(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):Show(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):Show(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):Show(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):SetCheck(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):SetCheck(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnDemote"):SetCheck(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnLeaveFlyout"):SetCheck(false)
+		self.tWndRefs.wndRosterOptionBtnAdd:Show(false)
+		self.tWndRefs.wndRosterOptionBtnRemove:Show(false)
+		self.tWndRefs.wndRosterOptionBtnDemote:Show(false)
+		self.tWndRefs.wndRosterOptionBtnPromote:Show(false)
+		self.tWndRefs.wndRosterOptionBtnAdd:SetCheck(false)
+		self.tWndRefs.wndRosterOptionBtnRemove:SetCheck(false)
+		self.tWndRefs.wndRosterOptionBtnDemote:SetCheck(false)
+		self.tWndRefs.wndRosterOptionBtnPromote:SetCheck(false)
+		self.tWndRefs.wndRosterOptionBtnLeaveFlyout:SetCheck(false)
 	end
 
 	-- If it is just one button, arrange to the right instead
-	if self.tWndRefs.wndMain:FindChild("RosterOptionBtnAdd"):IsShown() or self.tWndRefs.wndMain:FindChild("RosterOptionBtnRemove"):IsShown() then
-		self.tWndRefs.wndMain:FindChild("RosterBottom"):ArrangeChildrenHorz(0)
+	if self.tWndRefs.wndRosterOptionBtnAdd:IsShown() or self.tWndRefs.wndRosterOptionBtnRemove:IsShown() then
+		self.tWndRefs.wndRosterBottom:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
 	else
-		self.tWndRefs.wndMain:FindChild("RosterBottom"):ArrangeChildrenHorz(0)
+		self.tWndRefs.wndRosterBottom:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
 	end
 end
 
@@ -629,11 +650,11 @@ function GuildRoster:OnRosterPromoteMemberClick(wndHandler, wndControl) -- wndHa
 	local tMember = self.tWndRefs.wndMain:FindChild("RosterGrid"):GetData()
 	if tMember.nRank == 2 then
 		self.tWndRefs.wndMain:FindChild("PromoteMemberContainer"):Show(true)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(true)
+		self.tWndRefs.wndRosterOptionBtnPromote:SetCheck(true)
 	else
 		guildCurr:Promote(tMember.strName) -- TODO: More error checking
 		self.tWndRefs.wndMain:FindChild("PromoteMemberContainer"):Show(false)
-		self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false)
+		self.tWndRefs.wndRosterOptionBtnPromote:SetCheck(false)
 	end
 end
 
@@ -653,7 +674,7 @@ end
 
 function GuildRoster:OnRosterPromoteMemberCloseBtn()
 	self.tWndRefs.wndMain:FindChild("PromoteMemberContainer"):Show(false)
-	self.tWndRefs.wndMain:FindChild("RosterOptionBtnPromote"):SetCheck(false) -- Since we aren't using AttachWindow
+	self.tWndRefs.wndRosterOptionBtnPromote:SetCheck(false) -- Since we aren't using AttachWindow
 end
 
 function GuildRoster:OnRosterRemoveMemberCloseBtn()
@@ -708,10 +729,10 @@ function GuildRoster:OnRosterLeaveYesClick(wndHandler, wndControl) -- wndHandler
 	end
 end
 
-function GuildRoster:OnGuildMemberChange( guildCurr )
+function GuildRoster:OnGuildMemberChange(guildCurr)
 	if guildCurr and guildCurr:GetType() == GuildLib.GuildType_Guild then
 		guildCurr:RequestMembers()
-		self:FullRedrawOfRoster()
+		self:FullRedrawOfRoster(false)
 	end
 end
 
@@ -822,77 +843,4 @@ function GuildRoster:HelperConvertToTime(fDays)
 end
 
 local GuildRosterInst = GuildRoster:new()
-GuildRosterInst:Init()t, nFrameTop, nFrameRight, bFrame = self.wndMoreInfo:GetAnchorOffsets()
-	local nSortLeft, nSortTop, nSortRight, nSortBottom = self.wndMoreInfo:FindChild("LowerSortContainer"):GetAnchorOffsets()
-	local nBaseLeft, nBaseTop, nBaseRight, nBaseBottom = self.wndMoreInfo:FindChild("LowerBound"):GetAnchorOffsets()
-	self.wndMoreInfo:SetAnchorOffsets(nFrameLeft, nFrameTop, nFrameRight, nSortTop + nBaseBottom)
-
-	local nWidth = self.wndMoreInfo:GetWidth()
-	local nHeight = self.wndMoreInfo:GetHeight()
-
-	self.wndMoreInfo:Move(nLeft, nTop, nWidth, nHeight)
-end
-
------------------------------------------------------------------------------------------------
--- GuildPerksForm Functions
------------------------------------------------------------------------------------------------
-
-function GuildPerks:OnEntryMouseEnter(wndHandler, wndControl)
-
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	local wndEntry = wndControl:GetParent()
-	local nId = wndEntry:GetData()
-
-	-- dicey if windows get moved/added
-	local nEntryLeft, nEntryTop, nEntryRight, nEntryBottom = wndEntry:GetRect()
-	local nListLeft, nListTop, nListRight, nListBottom = wndEntry:GetParent():GetRect()
-	local nTierLeft, nTierTop, nTierRight, nTierBottom = wndEntry:GetParent():GetParent():GetRect()
-
-	local nLeft = nEntryLeft + nListLeft + nTierLeft
-	local nTop = nEntryTop + nListTop + nTierTop
-
-	if wndControl:ContainsMouse() and nId ~= nil then
-		self:DrawMoreInfoWindow(nId, nLeft, nTop)
-	end
-end
-
-function GuildPerks:OnEntryMouseExit(wndHandler, wndControl)
-	if wndHandler ~= wndControl or wndControl:ContainsMouse() == true then
-		return
-	end
-
-	local wndEntry = wndControl:GetParent()
-	local nId = wndEntry:GetData()
-
-	if self.wndMoreInfo ~= nil and nId == self.wndMoreInfo:GetData() then
-		self.wndMoreInfo:Destroy()
-		self.wndMoreInfo = nil
-	end
-end
-
-function GuildPerks:OnUnlockBtn(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	local nId = wndControl:GetData()
-	if nId ~= nil then
-		self:DrawConfirmWindow(wndControl, nId, self.tPerkEntries[nId].strTitle, false)
-	end
-end
-
-function GuildPerks:OnUnlockTierBtn(wndHandler, wndControl)
-	if wndHandler ~= wndControl then
-		return false
-	end
-
-	local nId = wndControl:GetData()
-	if nId ~= nil then
-		self:DrawConfirmWindow(wndControl, nId, self.tTierContainers[nId].strTitle, false)
-	end
-end
-
-function Guil
+GuildRosterInst:Init()

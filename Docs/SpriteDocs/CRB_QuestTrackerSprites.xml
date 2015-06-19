@@ -317,6 +317,12 @@
     <Sprite Name="sprQT_NumBackerCompletedPE" Cycle="1">
         <Frame Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tracker_403_98.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="24" y0="0" y1="0" y2="0" y3="0" y4="0" y5="23" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="ffffffff" EndColor="ffffffff"/>
     </Sprite>
+    <Sprite Name="sprQT_BronzeIcon" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_HUD_ChallengeTracker.tex" x0="40" x1="40" x2="40" x3="40" x4="40" x5="55" y0="334" y1="334" y2="334" y3="334" y4="334" y5="351" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="sprQT_GoldIcon" Cycle="1">
+        <Frame Texture="UI\Textures\UI_CRB_HUD_ChallengeTracker.tex" x0="72" x1="72" x2="72" x3="72" x4="72" x5="87" y0="334" y1="334" y2="334" y3="334" y4="334" y5="351" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
     <AutoButton Name="btnTRK_ActiveQuest" Texture="UI\Assets\TexPieces\UI_CRB_Datachron_Pulse_0_914.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="27" y0="0" y1="0" y2="0" y3="0" y4="0" y5="25" Stretchy="1" StateBits="15" Direction="Across"/>
     <AutoButton Name="btnQT_ScrollUp" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tracker_0_49.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="14" Stretchy="1" StateBits="31" Direction="Across"/>
     <AutoButton Name="btnQT_ScrollDown" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tracker_0_64.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="18" y0="0" y1="0" y2="0" y3="0" y4="0" y5="13" Stretchy="1" StateBits="31" Direction="Across"/>
@@ -335,10 +341,6 @@
     <AutoButton Name="btnQT_EpisodeBack" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tracker_0_127.tga" x0="0" x1="0" x2="0" x3="0" x4="10" x5="293" y0="0" y1="0" y2="0" y3="0" y4="0" y5="30" StateBits="5" Direction="Down"/>
     <AutoButton Name="btnQT_QuestBack" Texture="UI\Assets\TexPieces\UI_CRB_HUD_Tracker_296_133.tga" x0="0" x1="0" x2="0" x3="32" x4="44" x5="76" y0="0" y1="10" y2="10" y3="10" y4="15" y5="24" StateBits="5" Direction="Down"/>
     <AutoButton Name="btnQT_OpenMap" Texture="UI\Assets\TexPieces\UI_CRB_HUD_MiniMap_121_418_Blank.tex" x0="0" x1="0" x2="0" x3="0" x4="24" x5="24" y0="0" y1="0" y2="0" y3="0" y4="24" y5="24" Stretchy="1" StateBits="31" Direction="Across"/>
-    <Sprite Name="sprQT_BronzeIcon" Cycle="1">
-        <Frame Texture="UI\Textures\UI_CRB_HUD_ChallengeTracker.tex" x0="40" x1="40" x2="40" x3="40" x4="40" x5="55" y0="334" y1="334" y2="334" y3="334" y4="334" y5="351" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
-    </Sprite>
-    <Sprite Name="sprQT_GoldIcon" Cycle="1">
-        <Frame Texture="UI\Textures\UI_CRB_HUD_ChallengeTracker.tex" x0="72" x1="72" x2="72" x3="72" x4="72" x5="87" y0="334" y1="334" y2="334" y3="334" y4="334" y5="351" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
-    </Sprite>
+    <AutoButton Name="btnQT_Detatch" Texture="ui\assets\textures\UI_Btn_Holo_Detach.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="32" y2="32" y3="32" y4="32" y5="32" StateBits="31" Direction="Across"/>
+    <AutoButton Name="btnQT_Dock" Texture="ui\assets\textures\UI_Btn_Holo_Dock.tga" x0="0" x1="0" x2="0" x3="0" x4="0" x5="32" y0="0" y1="32" y2="32" y3="32" y4="32" y5="32" StateBits="31" Direction="Across"/>
 </Sprites>

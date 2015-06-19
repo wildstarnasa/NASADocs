@@ -996,22 +996,3 @@ end
 -----------------------------------------------------------------------------------------------
 local GuildPerksInst = GuildPerks:new()
 GuildPerksInst:Init()
----------------------------
-
-function GuildBank:OnBankTabBtnMgmt()
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
-		return
-	end
-
-	self.tWndRefs.wndMain:SetFocus()
-	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_Management")))
-
-	local guildOwner = self.tWndRefs.wndMain:GetData()
-	local wndParent = self.tWndRefs.wndMain:FindChild("LeaderScreenMain")
-	local nGuildInfluence = guildOwner:GetInfluence()
-	wndParent:FindChild("MgmtBankTabInfluenceText"):SetText(String_GetWeaselString(Apollo.GetString("GuildBank_GuildInfluence"), nGuildInfluence))
-
-	self:HelperLoadTabPerks(guildOwner)
-
-	-- Tabs
-	wn

@@ -178,10 +178,15 @@ function Dialog:DrawResponses(eState, idQuest, tResponseList)
 			wndCurr:FindChild("ResponseItemBtn"):SetData(drResponse)
 			nResponseHeight = nResponseHeight + wndCurr:GetHeight()
 		else
+			
+			local queResponse = DialogSys.GetViewableQuest(drResponse:GetQuestId())
+			local nConLevel = queResponse and queResponse:GetTitle() == drResponse:GetText() and queResponse:GetConLevel() or 0
+			local strText = nConLevel > 0 and string.format("%s (%s)", drResponse:GetText(), nConLevel) or drResponse:GetText()
+			
 			local crTextColor = eResponseType == DialogResponse.DialogResponseType_QuestMoreInfo and kcrMoreInfoColor or kcrDefaultColor
 			wndCurr = Apollo.LoadForm(self.xmlDoc, "ResponseItem", self.wndPlayer:FindChild("ResponseItemContainer"), self)
 			wndCurr:FindChild("ResponseItemIcon"):SetSprite(self:HelperComputeIconPath(eResponseType))
-			wndCurr:FindChild("ResponseItemText"):SetText(drResponse:GetText())
+			wndCurr:FindChild("ResponseItemText"):SetText(strText)
 			wndCurr:FindChild("ResponseItemText"):SetFont("CRB_InterfaceMedium")
 			wndCurr:FindChild("ResponseItemText"):SetTextColor(crTextColor)
 			wndCurr:FindChild("ResponseItemBtn"):SetData(drResponse)
@@ -673,13 +678,3 @@ end
 ---------------------------------------------------------------------------------------------------
 local DialogInst = Dialog:new()
 DialogInst:Init()
-5ÌóÄ´­5{:¿ 9}j•|
-'_NŸºZnz9“y~w@-ÛúÒÞ£ˆ¼ea©-2Kc³ñ+Ñº¸ŽñáhýŸ4ØÁŽÇšŠ6è6´Òïot…	²ÁƒRå¿PæúÛr
-¤V}¦‰fIDTYÍä¥“Ã‚Nçæ3ùÕ*å¯…6“Áêì¡Pæ•š#õ“túwBÐz7™izÒ˜¶ožy‚yÆ>(Z*Ñ=Þ¯ÑÔ–0ùîœ×‚Ž56Ð¼TÓ.—Dsô½ÏP­i:ÉØ³&ÂfÏcúç¨ñ[Õ&Ã‘NÇ£@| øk¦ÁüÛó½xÌ¸3üåfÆþ9¡¶hdSéÇ(ÿÔ”XIçÑÙR°*§\jÌn`žgOVÕZY½wÕ¢!’è†;E1¸¬µÿ¤rifšµ¶»ÌÀ7
-åÿ9¦ôÿ´‡„/9Ì¼¿³AàŠÔ>T<<d(¶å4Ãx0ñà=£"°§ç'æyÿ¢T…ŽŸ˜ú:óÝÌL“_mÑRÏãz¿¢ã¯µ4¿•1ñ0WO’0ÿ-§÷_âóžyv}úK_tíO0Dq÷õËsßzW"š½)ŽL¤™ZïM!ò8WÿqÆÿbêEPÊ?…~[Äa‘ûñ3pÝ@ñÿçÃýÓß\o~å“ÔX×ÃæW«ä
-9÷ùäÓ¼æWŽ,²¤¿ò«§”¿–‚ÊL~ó´ò°@Œ¾3U™(4gß¾üjÎ‚ cél~u:òU¹¸¦‡±_e‰ •N¦üEùD”9ò™üb{êV¹áHI5_¡üÆhºùüjì„©’“_½¤i“síÓ4JÍí½L~µ#¦\šþeÿåW›GÁ(ž®Äw;¿º’¾èÉv¹”h*VóšÖ'	v®ïÛµg#³pf¾îØäÚ×sÙù	ŸÏØ¯æÄ»vXÔW•B`JésQðzÊ¤œÓ‡0z¾ÜV-ÆñõfõÅ]á^×õ(}Ôñ0l//)x>¶MKDÌüÉ)›ž¿âÔKŒiS¢Æ—qâe×¬YãƒkØüüÛÏ¥Ò³HÒî“@„f—‡·iO÷8z¿LFÙ»–>wy†ýGáÃº·¦Ï·‹|¤¸ºPˆæú…²zºïø£ª…íìûUSfÆ‚2Ö_Íßñ8ÇÿçcjôÎJ`Þõf|B€F7Îd2ÀéññÝ-ám‰º¥D"vé‹×ã?ŸßóÌ3Ï<ßOû/©@W(£ÿ&–¢Íº÷ØüOò Q²¬äãÐÔÒ¯zë¨£°U9„ÜT ÙC÷7¿:98ßÁæ7¡©«÷ÔE çŽFù
-·åvM ÞïK£cP¾™nÐ“‹ˆ…;ÃgŸeìÁñUáJØŸ2ë]»
-—7­o¥ò?”-(CûÊ‰ŠÉ7§eHÉ<s“gäIk% óÝP˜ïÖJ@ÙÅ…@]_©Aë©g›ä‡^eÆ½Âæ›Xßü}š_,£ò?:wL	à—ÒÇÑzAX!®ëKÁ‚E?¸•?lÆØ}åv¦¿öJ}6¸³&ôlF$T#=±ÀfÒ¥GÇÿ·ëy6z
-˜+æ°öÂ,h<ÀpWÀ†*\ŠòOJO<éj§23mx$[BR¿]È¶G…¬ÅAïaD‚¨Ph_d¶ìõâ•'Ç£çÙ™0ßŒÀŒá³Yû—ÆC¸ÑYéÇ¨þB¡ýž/Ó2r«þ/2†Sr½ÆÃ)&”Üxðšqùx ã’×yæ™å›Õ…@W¼×òn Íaºâ¯—>#¦9ÎKwÖ9ßo!Ír ;þî¸[zËßáÃiOPþ¢õ¹ibÝó_†q8çbˆd:Íc‰99ñUþ¢Ï÷ºfE-ñÕò­÷¶YWú ­þÓ½÷õÒÿÕ>º³_«´Œÿã„Ð…$æúÿ¾ÿŸèó…`Nsüù7»h¾þ£õúhVÀxqÖ]D³’€ñò/hýçK±‡ÏÆWûWsÛí÷q÷õÃ»£/Þl~…úSÒ£?%­w2¿ú5Ê¯Ìl~•xGó«§2ÈõvÀè}¡ûåhÿd¶>¶*a~SFçWa®ü*ëöåWùU¹G~U~Çó«ËÆÃ É¯®W_üÂ›ž_·Ÿš_×ýü’‚±3÷«³œ*fþßØ™¯ªI'»ÞçØ™´SóCÁü±3_S[63Òç¦,,W´i+Ç‰0\Ëþ2/
-8zŸÝ'é£è}æc}=£wÏ´Ä$ÁÄ§zæ31h¿d–-;â	ecŽ;•ÿrz±`úaJÕµ©wTÝº¿žl÷Ñeê~ßÚ¦]=é£ÎoÐ·¨¾GËrú‹<ý»Äÿ³
-›¹z\§Õ˜mZ6ã0¬ïJ=“†„ÍDó-Û{9ñumÿøüžgžyæù~b4Q–Èê‹ô‡Î?´Ø²¢9ùàIñÆÓ‹w¯§ž¿‡Â|ö2ì»w¾Eù¬¸æ§ HÙØœO’†›Ãªß?Eåw™ðø·ëæÄsò;põ§WÚOï˜íå|ÿoŸï—6mT õÑàõº"ÁXÑ˜Òc(?Æ;¡ýßÂ“ï*}ô|ßkç¤Ö7Áãë½¤{âòØëÆæ«Ù÷ö°¿IðSázn>8¯×-}—²¯Bùù3ðäÖwœ´}‡€…!ÇãÑzKí0¿üFx(ÆÑyNAçÓÑØÂ«ÚÇúÖ¯¡ùYBÛƒµß)š={é»ÝóaùT¨=H °=P>)FöS ˜>Òe¿,‹$dÞþ¯óçÂQý¡öÈÆÛÿ>çÊö¯'8ñ ñˆ‡N<|z‹ñÀë‹<óÌòÍê‹ «ô‰eEOÐÜÜ´ñqmÑãÎüY«©uÌ¸òðÎvÖ½…“¹õO	;?Œ+'g±bŒ$õsàQô¾SèÒ{ÀîwõËŠ†Ò|ò—M—j‹

@@ -16,6 +16,9 @@ function GuildInfo:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+	o.tWndRefs = {}
+
     return o
 end
 
@@ -50,9 +53,12 @@ function GuildInfo:Initialize(wndParent)
 	if not guildOwner then
 		return
 	end
-
+	
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "GuildInfoForm", wndParent, self)
     self.wndMain:Show(true)
+
+	self.tWndRefs.wndNewsGrid = self.wndMain:FindChild("NewsPane:NewsFraming:NewsPaneList:NewsGrid")
+	self.tWndRefs.wndGuildMemberGuildTaxLabel = self.wndMain:FindChild("GuildMemberGuildTaxLabel")
 
 	self.tGuildLeader = nil
 	
@@ -71,17 +77,10 @@ function GuildInfo:OnToggleInfo(wndParent)
 	
 	if not self.wndMain or not self.wndMain:IsValid() then
 		self:Initialize(wndParent)
+		guildOwner:RequestMembers()
+		guildOwner:RequestEventLogList()
 	else
 		self.wndMain:Show(true)
-	end
-	
-	guildOwner:RequestMembers()
-	guildOwner:RequestEventLogList()
-end
-
-function GuildInfo:OnRosterTimer()
-	if self.tGuildLeader then
-		self:PopulateInfoPane()
 	end
 end
 
@@ -89,6 +88,7 @@ function GuildInfo:OnClose()
 	if self.wndMain and self.wndMain:IsValid() then
 		self.wndMain:Destroy()
 		self.wndMain = nil
+		self.tWndRefs = {}
 	end
 end
 
@@ -100,7 +100,10 @@ function GuildInfo:OnGuildRoster(guildOwner, tRoster)
 				break
 			end
 		end
-		self:OnRosterTimer()
+		
+		if self.tGuildLeader then
+			self:PopulateInfoPane()
+		end
 	end
 end
 
@@ -120,7 +123,7 @@ function GuildInfo:PopulateInfoPane()
 	local tGuildFlags = guildOwner:GetFlags()
 	self.wndMain:FindChild("GuildTaxOnBtn"):SetCheck(tGuildFlags.bTax)
 	self.wndMain:FindChild("GuildTaxOffBtn"):SetCheck(not tGuildFlags.bTax)
-	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), tGuildFlags.bTax and Apollo.GetString("MatchMaker_FlagOn") or Apollo.GetString("MatchMaker_FlagOff")))
+	self.tWndRefs.wndGuildMemberGuildTaxLabel:SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), tGuildFlags.bTax and Apollo.GetString("MatchMaker_FlagOn") or Apollo.GetString("MatchMaker_FlagOff")))
 	self.wndMain:FindChild("GuildTaxBtnContainer"):Show(tMyRankPermissions.bChangeRankPermissions) -- GOTCHA: This is actually guild tax, it uses an existing
 	-- More data
 	self.wndMain:FindChild("EditMessageBtn"):Show(tMyRankPermissions.bMessageOfTheDay)
@@ -132,18 +135,14 @@ function GuildInfo:PopulateInfoPane()
 	self.wndMain:FindChild("GuildInfoText"):SetText(guildOwner:GetInfoMessage())
 	self.wndMain:FindChild("GuildName"):SetText(guildOwner:GetName())
 	self.wndMain:FindChild("HolomarkCostume"):SetCostumeToGuildStandard(guildOwner:GetStandard())
-	self.wndMain:FindChild("NewsPaneList"):DestroyChildren()
-
-	guildOwner:RequestEventLogList()
 end
 
-function GuildInfo:AddNewsListItem(tEventLog, index)
+function GuildInfo:GetNewsListItemText(tEventLog, index)
 	local guildOwner = self.wndMain:GetData()
 	if not guildOwner or not tEventLog then
 		return
 	end
 
-	-- TODO: Need to get the GuildEventType values to Lua
 	local strMessage = ""
 	if tEventLog.eType == GuildLib.CodeEnumGuildEventType.Achievement and tEventLog.achEarned ~= nil then
 		strMessage = String_GetWeaselString(Apollo.GetString("Guild_AchievementEarned"), guildOwner:GetName(), tEventLog.achEarned:GetName())
@@ -166,13 +165,10 @@ function GuildInfo:AddNewsListItem(tEventLog, index)
 	else
 		-- Error: Unhandled EventLog type
 		guildOwner:GetChannel():Post(String_GetWeaselString(Apollo.GetString("Guild_UnknownLogType"), tEventLog.eType, "" ))
-		return
+		return nil
 	end
-
-	-- NOTE: The time is also stored as a relative float in the parameter "fCreationTime"
-	local strTimestamp = String_GetWeaselString(Apollo.GetString("Guild_NewsListItem"), self:HelperRelativeTimeToString(tEventLog.fCreationTime), strMessage)
-	local wndListItem = Apollo.LoadForm(self.xmlDoc, "GuildNewsListItem", self.wndMain:FindChild("NewsPaneList"), self)
-	wndListItem:FindChild("GuildNewsItemText"):SetText(strTimestamp)
+	
+	return String_GetWeaselString(Apollo.GetString("Guild_NewsListItem"), self:HelperRelativeTimeToString(tEventLog.fCreationTime), strMessage)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -190,7 +186,7 @@ function GuildInfo:OnGuildTaxOn(wndHandler, wndControl)
 		bTax = true
 	}
 	guildOwner:SetFlags(tLocalTable)
-	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), Apollo.GetString("MatchMaker_FlagOn")))
+	self.tWndRefs.wndGuildMemberGuildTaxLabel:SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), Apollo.GetString("MatchMaker_FlagOn")))
 end
 
 function GuildInfo:OnGuildTaxOff(wndHandler, wndControl)
@@ -204,7 +200,7 @@ function GuildInfo:OnGuildTaxOff(wndHandler, wndControl)
 		bTax = false
 	}
 	guildOwner:SetFlags(tLocalTable)
-	self.wndMain:FindChild("GuildMemberGuildTaxLabel"):SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), Apollo.GetString("MatchMaker_FlagOff")))
+	self.tWndRefs.wndGuildMemberGuildTaxLabel:SetText(String_GetWeaselString(Apollo.GetString("Guild_GuildTaxLabel"), Apollo.GetString("MatchMaker_FlagOff")))
 end
 
 function GuildInfo:OnMotDEditClick(wndHandler, wndControl)
@@ -391,7 +387,7 @@ function GuildInfo:OnGuildNameplateChange(guildShown)
 end
 
 function GuildInfo:OnGuildMessageUpdated(guildOwner)
-	if self.wndMain and self.wndMain:GetData() == guildOwner and self.wndMain:IsValid() then
+	if self.wndMain and self.wndMain:IsValid() and self.wndMain:GetData() == guildOwner then
 		self:PopulateInfoPane()
 	end
 end
@@ -404,12 +400,18 @@ function GuildInfo:OnGuildEventLogChanged(guildUpdated)
 	if self.wndMain:GetData() ~= guildUpdated then
 		return
 	end
-
-	self.wndMain:FindChild("NewsPaneList"):DestroyChildren()
+	
+	local wndNewsGrid = self.tWndRefs.wndNewsGrid
+	
+	wndNewsGrid:DeleteAll()
+	
 	for idx, tEventLog in pairs(guildUpdated:GetEventLogs()) do
-		self:AddNewsListItem(tEventLog, idx)
+		local strText = self:GetNewsListItemText(tEventLog, idx)
+		if strText ~= nil then
+			local iCurrRow = wndNewsGrid:AddRow("", "CRB_Basekit:kitIcon_Gold_Exclamation")
+			wndNewsGrid:SetCellDoc(iCurrRow, 2, '<T Font="CRB_InterfaceSmall" TextColor="WindowTitleColor">'.. strText .."</T>")
+		end
 	end
-	self.wndMain:FindChild("NewsPaneList"):ArrangeChildrenVert(0)
 end
 
 function GuildInfo:OnGuildResult(guildSender, strName, nRank, eResult)
@@ -473,24 +475,3 @@ end
 
 local GuildInst = GuildInfo:new()
 GuildInst:Init()
------------------------------------------------------------------------------------------
--- Cash
------------------------------------------------------------------------------------------------
-
-function GuildBank:OnBankTabBtnCash()
-	if not self.tWndRefs.wndMain or not self.tWndRefs.wndMain:IsValid() or not self.tWndRefs.wndMain:GetData() then
-		return
-	end
-
-	self.tWndRefs.wndMain:SetFocus()
-	self:HelperUpdateHeaderText(String_GetWeaselString(Apollo.GetString("GuildBank_TitleWithTabName"), Apollo.GetString("GuildBank_MoneyAppend")))
-
-	local guildOwner = self.tWndRefs.wndMain:GetData()
-	local wndParent = self.tWndRefs.wndMain:FindChild("CashScreenMain")
-
-	local nTransactionAmount = wndParent:FindChild("GuildCashInteractEditCashWindow"):GetAmount()
-	wndParent:FindChild("GuildCashDeposit"):Enable(nTransactionAmount > 0)
-	wndParent:FindChild("GuildCashWithdraw"):Enable(nTransactionAmount > 0)
-	wndParent:FindChild("GuildCashInteractEditHelpText"):Show(nTransactionAmount == 0)
-
-	wndParent:FindChild("GuildCashAmountWindow"):S

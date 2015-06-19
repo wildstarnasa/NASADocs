@@ -11,6 +11,7 @@ require "PetCustomizationLib"
 local MountScreen = {}
 
 local knSaveVersion = 5
+local kstrContainerEventName = "Mounts"
 
 function MountScreen:new(o)
     o = o or {}
@@ -54,268 +55,295 @@ function MountScreen:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
-
-	Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
-
-	Apollo.RegisterEventHandler("GenericEvent_InitializeMountsCustomization", "OnGenericEvent_InitializeMountsCustomization", self)
-	Apollo.RegisterEventHandler("GenericEvent_DestroyMountsCustomization", "OnGenericEvent_DestroyMountsCustomization", self)
+	
+	Apollo.RegisterEventHandler("GenericEvent_CollectablesReady", 					"OnCollectablesReady", self)
+	Apollo.RegisterEventHandler("GenericEvent_MountsChecked",						"OnMountsChecked", self)
+	Apollo.RegisterEventHandler("GenericEvent_MountsUnchecked", 					"OnMountsUnchecked", self)
+	Apollo.RegisterEventHandler("GenericEvent_CollectablesClose",					"OnClose", self)
+	Apollo.RegisterEventHandler("MountUnlocked",									"BuildMountList", self)
+	Apollo.RegisterEventHandler("PetFlairUnlocked", 								"RebuildFlairList", self)
+	
+	self.bShowUnknown = true
+	self.tKnownMounts = {}
+	self.tUnknownMounts = {}
+	self.wndParent = nil
+	
+	Event_FireGenericEvent("GenericEvent_RequestCollectablesReady")
 end
 
-function MountScreen:OnInterfaceMenuListHasLoaded()
-	local strEvent = "GenericEvent_ToggleMountCustomize"
-	local strIcon = "Icon_Windows32_UI_CRB_InterfaceMenu_MountCustomization"
-	Event_FireGenericEvent("InterfaceMenuList_NewAddOn", Apollo.GetString("InterfaceMenu_MountCustomization"), {strEvent, "", strIcon})
-end
-
-function MountScreen:OpenMounts()
-	-- TODO: This needs to open character panel to the right tab
-end
-
-function MountScreen:OnGenericEvent_DestroyMountCustomization()
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
-		self.wndMain = nil
+function MountScreen:OnCollectablesReady(wndParent)
+	if not self.bRegistered then
+		Event_FireGenericEvent("GenericEvent_RegisterCollectableWindow", 100, kstrContainerEventName, Apollo.GetString("InterfaceMenu_Mounts"))
+		self.wndParent = wndParent
+		
+		self.bRegistered = true
 	end
 end
 
-function MountScreen:OnGenericEvent_InitializeMountsCustomization(wndParent, idMount)
-	if self.wndMain and self.wndMain:IsValid() then
-		self.wndMain:Destroy()
-	end
+function MountScreen:OnMountsUnchecked()
+	self.wndMain:Show(false)
+end
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MountScreenForm", wndParent, self)
-
-	-- The pet lib might not be loaded yet. It is quite slow.
-	self.ktGroundMountFlairWindows =
-	{
-		["CustomizeFrontList"]	=	{ PetCustomizationLib.PetFlairType_GroundMountFront, PetCustomizationLib.MountSlot.Front, Apollo.GetString("MountScreen_FrontFlair") },
-		["CustomizeBackList"]	=	{ PetCustomizationLib.PetFlairType_GroundMountBack, PetCustomizationLib.MountSlot.Back, Apollo.GetString("MountScreen_BackFlair") },
-		["CustomizeLeftList"]	=	{ PetCustomizationLib.PetFlairType_GroundMountSide, PetCustomizationLib.MountSlot.Left, Apollo.GetString("MountScreen_LeftFlair") },
-		["CustomizeRightList"]	=	{ PetCustomizationLib.PetFlairType_GroundMountSide, PetCustomizationLib.MountSlot.Right, Apollo.GetString("MountScreen_RightFlair") },
-	}
-
-	self.ktHoverMountFlairWindows =
-	{
-		["CustomizeFrontList"]	=	{ PetCustomizationLib.PetFlairType_HoverMountFront, PetCustomizationLib.HoverboardSlot.Front, Apollo.GetString("MountScreen_FrontFlair") },
-		["CustomizeBackList"]	=	{ PetCustomizationLib.PetFlairType_HoverMountBack, PetCustomizationLib.HoverboardSlot.Back, Apollo.GetString("MountScreen_BackFlair") },
-		["CustomizeLeftList"]	=	{ PetCustomizationLib.PetFlairType_HoverMountSide, PetCustomizationLib.HoverboardSlot.Sides, Apollo.GetString("MountScreen_LeftFlair") },
-		["CustomizeRightList"]	=	{ PetCustomizationLib.PetFlairType_HoverMountSide, PetCustomizationLib.HoverboardSlot.Sides, Apollo.GetString("MountScreen_RightFlair") },
-	}
-
-	-- Stable
-	local bFirstMountInList = nil
-	local wndSelected = nil
-	local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
-	for idx, tMountData in pairs(tMountList) do
-		if tMountData.bIsActive then
-			local wndCurr = Apollo.LoadForm(self.xmlDoc, "MountItem", self.wndMain:FindChild("StableList"), self)
-			wndCurr:FindChild("MountItemMouseCatcher"):SetData(tMountData)
-			wndCurr:FindChild("MountItemActionBarBtn"):SetData(tMountData.nId)
-			wndCurr:FindChild("MountItemActionBarBtn"):SetContentId(tMountData.nId)
-			wndCurr:SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\">%s</P><P Font=\"CRB_InterfaceSmall\" TextColor=\"ff9d9d9d\">%s</P>", tMountData.strName, tMountData.strAbilityDescription))
-
-			local tMountTierData = tMountData.tTiers[tMountData.nCurrentTier]
-			wndCurr:FindChild("MountItemActionBarBtn"):SetSprite(tMountTierData.splObject and tMountTierData.splObject:GetIcon() or "Icon_ItemArmorWaist_Unidentified_Buckle_0001")
-			if not bFirstMountInList then
-				bFirstMountInList = true
-				wndSelected = wndCurr
-			end
-			
-			if self.tLastSelectedData and tMountData.strName  == self.tLastSelectedData.strName then
-				wndSelected = wndCurr
-			end
-			
-			if idMount and tMountData.tTiers[1] and tMountData.tTiers[1].splObject:GetId() == idMount then
-				local wndMouseCatcher = wndCurr:FindChild("MountItemMouseCatcher")
-				self:OnMountItemClick(wndMouseCatcher, wndMouseCatcher)
-			end
-		end
-	end
-
-	if wndSelected then
-		self:DrawNewMount(wndSelected:FindChild("MountItemMouseCatcher"):GetData())
-		wndSelected:FindChild("MountItemMouseCatcherArt"):Show(true)
+function MountScreen:OnMountsChecked()
+	if not self.wndMain and self.wndParent then
+		self:BuildMountWindow()
 	end
 	
-	self.wndMain:FindChild("StableList"):ArrangeChildrenTiles(0)
-	self.wndMain:FindChild("PortraitContainer"):SetText(#self.wndMain:FindChild("StableList"):GetChildren() == 0 and Apollo.GetString("MountScreen_NothingUnlocked") or "")
+	self:BuildMountList()
+	self.wndMain:Show(true)
 end
 
-function MountScreen:DrawNewMount(tMountData)
+function MountScreen:BuildMountWindow()
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "MountScreenForm", self.wndParent, self)
+	self.wndMain:Show(false)
+	
+	self.wndMain:FindChild("FooterBG:ShowUnknown:ShowUnknownBtn"):SetCheck(self.bShowUnknown)
+	
+	--Initialize flair data
+	self.wndGroundFlairSlots = self.wndMain:FindChild("GroundMountFlair")
+	self.wndGroundFlairSlots:FindChild("CustomizeFront"):SetData({eTypeId = PetCustomizationLib.PetFlairType_GroundMountFront, eSlotId = PetCustomizationLib.MountSlot.Front})
+	self.wndGroundFlairSlots:FindChild("CustomizeBack"):SetData({eTypeId = PetCustomizationLib.PetFlairType_GroundMountBack, eSlotId = PetCustomizationLib.MountSlot.Back})
+	self.wndGroundFlairSlots:FindChild("CustomizeLeft"):SetData({eTypeId = PetCustomizationLib.PetFlairType_GroundMountSide, eSlotId = PetCustomizationLib.MountSlot.Left})
+	self.wndGroundFlairSlots:FindChild("CustomizeRight"):SetData({eTypeId = PetCustomizationLib.PetFlairType_GroundMountSide, eSlotId = PetCustomizationLib.MountSlot.Right})
+	
+	self.wndHoverFlairSlots = self.wndMain:FindChild("HoverMountFlair")
+	self.wndHoverFlairSlots:FindChild("CustomizeFront"):SetData({eTypeId = PetCustomizationLib.PetFlairType_HoverMountFront, eSlotId = PetCustomizationLib.HoverboardSlot.Front})
+	self.wndHoverFlairSlots:FindChild("CustomizeBack"):SetData({eTypeId = PetCustomizationLib.PetFlairType_HoverMountBack, eSlotId = PetCustomizationLib.HoverboardSlot.Back})
+	self.wndHoverFlairSlots:FindChild("CustomizeSide"):SetData({eTypeId = PetCustomizationLib.PetFlairType_HoverMountSide, eSlotId = PetCustomizationLib.HoverboardSlot.Sides})
+end
+
+function MountScreen:OnClose()
+	if self.wndMain then
+		self.wndMain:Destroy()
+		self.wndMain = nil
+		
+		self.tKnownMounts = {}
+		self.tUnknownMounts = {}
+	end
+end
+
+function MountScreen:BuildMountList()
+	if not self.wndMain then
+		return
+	end
+	
+	local arMountList = GameLib.GetMountList()
+	table.sort(arMountList, function(a,b) return (a.bIsKnown and not b.bIsKnown) or (a.bIsKnown == b.bIsKnown and a.strName < b.strName) end)
+	
+	local wndMountList = self.wndMain:FindChild("StableList")
+	for idx = 1, table.getn(arMountList) do
+		local tMountData = arMountList[idx]
+		local wndMount = nil
+
+		if self.tKnownMounts[tMountData.nSpellId] then
+			wndMount = self.tKnownMounts[tMountData.nSpellId]
+		elseif self.tUnknownMounts[tMountData.nSpellId] then
+			wndMount = self.tUnknownMounts[tMountData.nSpellId]
+		else		
+			wndMount = Apollo.LoadForm(self.xmlDoc, "MountItem", wndMountList, self)
+			local wndActionBarBtn = wndMount:FindChild("ActionBarButton")
+			
+			wndMount:FindChild("MountName"):SetText(tMountData.strName)
+			wndActionBarBtn:SetData(tMountData.nId)
+			wndMount:SetTooltip(string.format("<P Font=\"CRB_InterfaceSmall\">%s</P><P Font=\"CRB_InterfaceSmall\" TextColor=\"ff9d9d9d\">%s</P>", tMountData.strName, tMountData.strDescription))
+			wndActionBarBtn:SetSprite(tMountData.splObject and tMountData.splObject:GetIcon() or "Icon_ItemArmorWaist_Unidentified_Buckle_0001")
+		end
+		
+		wndMount:SetData(tMountData)
+		
+		if not self.tLastSelectedData or self.tLastSelectedData.nId == tMountData.nId then
+			wndMount:SetCheck(true)
+			self:OnMountSelected(tMountData)
+		end
+		
+		if tMountData.bIsKnown then
+			self.tUnknownMounts[tMountData.nSpellId] = nil
+			self.tKnownMounts[tMountData.nSpellId] = wndMount
+			wndMount:FindChild("DisabledShade"):Show(false)
+			wndMount:FindChild("MountName"):SetTextColor(ApolloColor.new("UI_BtnTextHoloListNormal"))
+			wndMount:FindChild("ActionBarButton"):Enable(true)
+		else
+			self.tUnknownMounts[tMountData.nSpellId] = wndMount
+			self.tKnownMounts[tMountData.nSpellId] = nil
+			wndMount:FindChild("DisabledShade"):Show(true)
+			wndMount:FindChild("MountName"):SetTextColor(ApolloColor.new("UI_BtnTextHoloDisabled"))
+			wndMount:FindChild("ActionBarButton"):Enable(false)
+		end
+	end
+	
+	self.wndMain:FindChild("PortraitContainer"):SetText(table.getn(self.wndMain:FindChild("StableList"):GetChildren()) == 0 and Apollo.GetString("MountScreen_NothingUnlocked") or "")
+	
+	for idx, wndMount in pairs(self.tUnknownMounts) do
+		wndMount:Show(self.bShowUnknown)
+	end
+	
+	self:ArrangeList()
+end
+
+function MountScreen:OnMountSelected(tMountData)
 	if not tMountData then
 		return
 	end
 
-	local tMountTierData = tMountData.tTiers[tMountData.nCurrentTier]
-	if not tMountTierData or not tMountTierData.nTierSpellId then
-		return
-	end
-
-	local eTableToUse = nil
+	local wndOptionContainers = nil
 	local bCanCustomize = false -- Some mounts simply can't be customized ever
-	local objPetCustomization = nil
+	local custCurrentCustomization = nil
+	
+	self.tLastSelectedData = tMountData
 
-	local nLeft, nTop, nRight, nBottom = self.wndMain:FindChild("CustomizeBackBG"):GetAnchorOffsets()
-	local nLeft3, nTop3, nRight3, nBottom3 = self.wndMain:FindChild("CustomizeLeftBG"):GetAnchorOffsets()
-	local nLeft2, nTop2, nRight2, nBottom2 = self.wndMain:FindChild("CustomizeFrontBG"):GetAnchorOffsets()
-
-	local nLeft4, nTop4, nRight4, nBottom4 = self.wndMain:FindChild("MouseBlocker1"):GetAnchorOffsets()
-	local nLeft5, nTop5, nRight5, nBottom5 = self.wndMain:FindChild("MouseBlocker2"):GetAnchorOffsets()
-	local nLeft6, nTop6, nRight6, nBottom6 = self.wndMain:FindChild("MouseBlocker4"):GetAnchorOffsets()
-
-	if tMountTierData.bIsHoverboard then
-		eTableToUse = self.ktHoverMountFlairWindows
-		bCanCustomize = PetCustomizationLib.CanCustomize(2, tMountTierData.nTierSpellId)
-		objPetCustomization = PetCustomizationLib.GetCustomization(2, tMountTierData.nTierSpellId)
-		self.wndMain:FindChild("CustomizeRightBG"):Show(false)
-		self.wndMain:FindChild("MouseBlocker3"):Show(false)
-		self.wndMain:FindChild("CustomizeBackBG"):SetAnchorOffsets(nLeft, 207, nRight, 398)
-		self.wndMain:FindChild("CustomizeFrontBG"):SetAnchorOffsets(nLeft2, 14, nRight2, 205)
-		self.wndMain:FindChild("CustomizeLeftBG"):SetAnchorOffsets(nLeft3, 400, nRight3, 602)
-		self.wndMain:FindChild("MouseBlocker1"):SetAnchorOffsets(nLeft4, 0, nRight4, 155)
-		self.wndMain:FindChild("MouseBlocker2"):SetAnchorOffsets(nLeft5, 194, nRight5, 348)
-		self.wndMain:FindChild("MouseBlocker4"):SetAnchorOffsets(nLeft6, 386, nRight6, 551)
-		self.wndMain:FindChild("LeftFlairTitle"):SetText(Apollo.GetString("MountScreen_SideFlair"))
+	if tMountData.bIsHoverboard then
+		wndOptionContainers = self.wndMain:FindChild("HoverMountFlair")
+		self.wndMain:FindChild("GroundMountFlair"):Show(false)
+		bCanCustomize = PetCustomizationLib.CanCustomize(PetCustomizationLib.PetType.HoverBoard, tMountData.nSpellId) and tMountData.bIsKnown
+		custCurrentCustomization = PetCustomizationLib.GetCustomization(PetCustomizationLib.PetType.HoverBoard, tMountData.nSpellId)
 	else
-		eTableToUse = self.ktGroundMountFlairWindows
-		bCanCustomize = PetCustomizationLib.CanCustomize(1, tMountTierData.nTierSpellId)
-		objPetCustomization = PetCustomizationLib.GetCustomization(1, tMountTierData.nTierSpellId)
-		self.wndMain:FindChild("CustomizeRightBG"):Show(true)
-		self.wndMain:FindChild("MouseBlocker3"):Show(true)
-		self.wndMain:FindChild("CustomizeBackBG"):SetAnchorOffsets(nLeft, 161, nRight, 306)
-		self.wndMain:FindChild("CustomizeFrontBG"):SetAnchorOffsets(nLeft2, 14, nRight2, 159)
-		self.wndMain:FindChild("CustomizeLeftBG"):SetAnchorOffsets(nLeft3, 309, nRight3, 454)
-		self.wndMain:FindChild("MouseBlocker1"):SetAnchorOffsets(nLeft4, 0, nRight4, 108)
-		self.wndMain:FindChild("MouseBlocker2"):SetAnchorOffsets(nLeft5, 148, nRight5, 256)
-		self.wndMain:FindChild("MouseBlocker4"):SetAnchorOffsets(nLeft6, 296, nRight6, 404)
-		self.wndMain:FindChild("LeftFlairTitle"):SetText(Apollo.GetString("MountScreen_LeftFlair"))
+		wndOptionContainers = self.wndMain:FindChild("GroundMountFlair")
+		self.wndMain:FindChild("HoverMountFlair"):Show(false)
+		bCanCustomize = PetCustomizationLib.CanCustomize(PetCustomizationLib.PetType.GroundMount, tMountData.nSpellId) and tMountData.bIsKnown
+		custCurrentCustomization = PetCustomizationLib.GetCustomization(PetCustomizationLib.PetType.GroundMount, tMountData.nSpellId)
 	end
+	wndOptionContainers:Show(true)
 
 	-- Costume Preview
-	self.wndMain:FindChild("MountName"):SetText(tMountData.strName)
-	self.wndMain:FindChild("MountPortrait"):SetCostumeToCreatureId(tMountTierData.nPreviewCreatureId)
+	self.wndMain:FindChild("PortraitContainer:MountName"):SetText(tMountData.strName)
+	self.wndMain:FindChild("MountPortrait"):SetCostumeToCreatureId(tMountData.nPreviewCreatureId)
 	
-	if tMountTierData.bIsHoverboard then
-		self.wndMain:FindChild("MountPortrait"):SetAttachment(PetCustomizationLib.HoverboardAttachmentPoint, tMountTierData.nPreviewHoverboardItemDisplay)
+	if tMountData.bIsHoverboard then
 		self.wndMain:FindChild("MountPortrait"):SetCamera("HoverboardTarget")
 	else
 		self.wndMain:FindChild("MountPortrait"):SetCamera("Paperdoll")
 	end
 	
-	self.wndMain:FindChild("MountPortrait"):SetModelSequence(150)
-	self.wndMain:FindChild("MountCanCustomizeBlockers"):Show(not bCanCustomize)
-
-	if not bCanCustomize then
-		return
+	if tMountData.bIsHoverboard then
+		self.wndMain:FindChild("MountPortrait"):SetAttachment(PetCustomizationLib.HoverboardAttachmentPoint, tMountData.nPreviewHoverboardItemDisplay)
 	end
+	
+	self.wndMain:FindChild("MountPortrait"):SetModelSequence(150)
+	
+	self:BuildFlairList(wndOptionContainers, custCurrentCustomization, bCanCustomize)
+end
 
-	-- Detect previous flairs
-	for strWindowName, tTableData in pairs(eTableToUse) do
-		local eFlairType = tTableData[1]
-		local eCurrSlot = tTableData[2]
-		local strHeaderLabel = tTableData[3]
-		local tCurrFlairInThatSlot = objPetCustomization:GetSlotFlair(eCurrSlot)
-
-		-- 4x Flair Lists (Front, Back, Left, Right)
-		local wndFlairList = self.wndMain:FindChild(strWindowName)
+function MountScreen:BuildFlairList(wndFlairContainers, custCurrentCustomization, bCanCustomize)
+	for idx, wndCustomization in pairs(wndFlairContainers:GetChildren()) do
+		local wndFlairList = wndCustomization:FindChild("CustomizationList")
+		
+		wndCustomization:FindChild("Blocker"):Show(not bCanCustomize)
 		wndFlairList:DestroyChildren()
+		
+		if bCanCustomize then
+			local tData = wndCustomization:GetData()
+			local eFlairType = tData.eTypeId
+			local eCurrSlot = tData.eSlotId
+			local custEquippedFlair = custCurrentCustomization:GetSlotFlair(eCurrSlot)
 
-		-- Flair Header
-		--local wndHeader = Apollo.LoadForm("MountCustomization.xml", "CustomizeFrontLabel", wndFlairList, self)
-		--wndHeader:SetText(strHeaderLabel)
+			-- Flair Items
+			for idx, custFlair in pairs(PetCustomizationLib.GetUnlockedPetFlairByType(eFlairType) or {}) do
+				local wndCurr = Apollo.LoadForm(self.xmlDoc, "CustomizeFlairItem", wndFlairList, self)
+				wndCurr:FindChild("CustomizeFlairBtn"):SetData({ custFlair = custFlair, eSlotId = eCurrSlot, custEquipped = custCurrentCustomization, wndList = wndFlairList })
+				wndCurr:FindChild("CustomizeFlairBtn"):SetCheck(custEquippedFlair and custEquippedFlair:GetId() == custFlair:GetId())
+				wndCurr:FindChild("CustomizeFlairBtn"):SetTooltip(custFlair:GetTooltip())
 
-		-- Flair Items
-		for idx, tFlairData in pairs(PetCustomizationLib.GetUnlockedPetFlairByType(eFlairType) or {}) do
-			local wndCurr = Apollo.LoadForm(self.xmlDoc, "CustomizeFlairItem", wndFlairList, self)
-			wndCurr:FindChild("CustomizeFlairBtn"):SetData({ tFlairData, tTableData[2], objPetCustomization, wndFlairList })
-			wndCurr:FindChild("CustomizeFlairBtn"):SetCheck(tCurrFlairInThatSlot and tCurrFlairInThatSlot:GetId() == tFlairData:GetId())
-			wndCurr:FindChild("CustomizeFlairBtn"):SetTooltip(tFlairData:GetTooltip())
-			--wndCurr:FindChild("CustomizeFlairBtn"):AttachWindow(wndCurr:FindChild("CustomizeFlairCheck"))
-			--wndCurr:FindChild("CustomizeFlairIcon"):SetSprite(tFlairData:GetIconPath())
-
-			if eFlairType ~= PetCustomizationLib.PetFlairType_GroundMountSide then
-				wndCurr:FindChild("CustomizeFlairBtn"):SetText(tFlairData:GetName() or "")
-			else
-				wndCurr:FindChild("CustomizeFlairBtn"):SetText((tFlairData:GetName() .. " (" .. tFlairData:GetUnlockCount() .. ")") or "")
-				if tFlairData:GetUnlockCount() == 1 then
-					if tCurrFlairInThatSlot == nil or tCurrFlairInThatSlot:GetId() ~= tFlairData:GetId() then
-						local eOtherSideSlot = eCurrSlot == PetCustomizationLib.MountSlot.Left and PetCustomizationLib.MountSlot.Right or PetCustomizationLib.MountSlot.Left
-						local tOtherSideFlair = objPetCustomization:GetSlotFlair(eOtherSideSlot)
-						if tOtherSideFlair and tOtherSideFlair:GetId() == tFlairData:GetId() then
-							wndCurr:FindChild("CustomizeFlairBtn"):Enable(false)
-							wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
+				if eFlairType ~= PetCustomizationLib.PetFlairType_GroundMountSide then
+					wndCurr:FindChild("CustomizeFlairBtn"):SetText(custFlair:GetName() or "")
+				else
+					wndCurr:FindChild("CustomizeFlairBtn"):SetText((custFlair:GetName() .. " (" .. custFlair:GetUnlockCount() .. ")") or "")
+					if custFlair:GetUnlockCount() == 1 then
+						if custEquippedFlair == nil or custEquippedFlair:GetId() ~= custFlair:GetId() then
+							local eOtherSideSlot = eCurrSlot == PetCustomizationLib.MountSlot.Left and PetCustomizationLib.MountSlot.Right or PetCustomizationLib.MountSlot.Left
+							local custOtherSideFlair = custCurrentCustomization:GetSlotFlair(eOtherSideSlot)
+							if custOtherSideFlair and custOtherSideFlair:GetId() == custFlair:GetId() then
+								wndCurr:FindChild("CustomizeFlairBtn"):Enable(false)
+								wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
+							end
 						end
 					end
 				end
 			end
-		end
 
-		if tCurrFlairInThatSlot then
-			self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCurrSlot), tCurrFlairInThatSlot:GetItemDisplay(eCurrSlot))
-		end
+			if custEquippedFlair then
+				self.wndMain:FindChild("MountPortrait"):SetAttachment(custCurrentCustomization:GetPreviewAttachSlot(eCurrSlot), custEquippedFlair:GetItemDisplay(eCurrSlot))
+			end
 
-		wndFlairList:ArrangeChildrenVert(0)
-		wndFlairList:Show(#wndFlairList:GetChildren() > 0)
+			wndFlairList:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+			wndFlairList:Show(table.getn(wndFlairList:GetChildren()) > 0)
+		end
 	end
 end
 
------------------------------------------------------------------------------------------------
+function MountScreen:RebuildFlairList()
+	if not self.tLastSelectedData or not self.wndMain then
+		return
+	end
+	
+	local wndOptionContainers = nil
+	local custCurrentCustomization = nil
+	local bCanCustomize = nil
+	
+	if self.tLastSelectedData.bIsHoverboard then
+		wndOptionContainers = self.wndMain:FindChild("HoverMountFlair")
+		bCanCustomize = PetCustomizationLib.CanCustomize(PetCustomizationLib.PetType.HoverBoard, self.tLastSelectedData.nSpellId) and self.tLastSelectedData.bIsKnown
+		custCurrentCustomization = PetCustomizationLib.GetCustomization(PetCustomizationLib.PetType.HoverBoard, self.tLastSelectedData.nSpellId)
+	else
+		wndOptionContainers = self.wndMain:FindChild("GroundMountFlair")
+		bCanCustomize = PetCustomizationLib.CanCustomize(PetCustomizationLib.PetType.GroundMount, self.tLastSelectedData.nSpellId) and self.tLastSelectedData.bIsKnown
+		custCurrentCustomization = PetCustomizationLib.GetCustomization(PetCustomizationLib.PetType.GroundMount, self.tLastSelectedData.nSpellId)
+	end
+		
+	self:BuildFlairList(wndOptionContainers, custCurrentCustomization, bCanCustomize)
+end
+
+----------------------------------------------------------------------------------------------
 -- Interaction
 -----------------------------------------------------------------------------------------------
 
 function MountScreen:OnMountItemClick(wndHandler, wndControl) -- MountItemMouseCatcher
-	for idx, wndCurr in pairs(self.wndMain:FindChild("StableList"):GetChildren()) do
-		if wndCurr:FindChild("MountItemMouseCatcherArt") then
-			wndCurr:FindChild("MountItemMouseCatcherArt"):Show(false)
-		end
-	end
-	wndHandler:FindChild("MountItemMouseCatcherArt"):Show(true)
-
-	self.tLastSelectedData = wndHandler:GetData()
-	self:DrawNewMount(wndHandler:GetData())
+	local tMountData = wndHandler:GetData()
+	self.tLastSelectedData = tMountData
+	self:OnMountSelected(tMountData)
 end
 
 function MountScreen:OnCustomizeFlairCheck(wndHandler, wndControl) -- CustomizeFlairBtn, data is { tFlairData, nSlotIndex }
-	local objFlair = wndHandler:GetData()[1]
-	local eCustomizationSlot = wndHandler:GetData()[2]
-	local objPetCustomization = wndHandler:GetData()[3]
-	local wndFlairList = wndHandler:GetData()[4]
-	objPetCustomization:SetFlairInSlot(objFlair, eCustomizationSlot)
+	local tData = wndHandler:GetData()
+	
+	tData.custEquipped:SetFlairInSlot(tData.custFlair, tData.eSlotId)
 
 	-- Update the preview window
-	self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCustomizationSlot), objFlair:GetItemDisplay(eCustomizationSlot))
+	self.wndMain:FindChild("MountPortrait"):SetAttachment(tData.custEquipped:GetPreviewAttachSlot(tData.eSlotId), tData.custFlair:GetItemDisplay(tData.eSlotId))
 
-	local objPrevFlair = nil
+	local custPrevFlair = nil
 	-- Uncheck other buttons (can't use global radio group as there's 4 buckets)
-	for idx, wndCurr in pairs(wndFlairList:GetChildren()) do
+	for idx, wndCurr in pairs(tData.wndList:GetChildren()) do
 		if wndCurr and wndCurr:FindChild("CustomizeFlairBtn") then
 			if wndCurr:FindChild("CustomizeFlairBtn"):IsChecked() and wndCurr:FindChild("CustomizeFlairBtn") ~= wndHandler then
-				objPrevFlair = wndCurr:FindChild("CustomizeFlairBtn"):GetData()[1]
+				custPrevFlair = wndCurr:FindChild("CustomizeFlairBtn"):GetData().custFlair
 			end
 			wndCurr:FindChild("CustomizeFlairBtn"):SetCheck(wndCurr:FindChild("CustomizeFlairBtn") == wndHandler)
 		end
 	end
 
-	local nUnlockCount = objFlair:GetUnlockCount()
-	local nPrevUnlockCount = objPrevFlair and objPrevFlair:GetUnlockCount() or 0
-	if objFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and (nUnlockCount == 1 or nPrevUnlockCount == 1) then
+	local nUnlockCount = tData.custFlair:GetUnlockCount()
+	local nPrevUnlockCount = custPrevFlair and custPrevFlair:GetUnlockCount() or 0
+	if tData.custFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and (nUnlockCount == 1 or nPrevUnlockCount == 1) and not self.tLastSelectedData.bIsHoverboard then
 		local wndOtherFlairList = nil
-		if eCustomizationSlot == PetCustomizationLib.MountSlot.Left then
-			wndOtherFlairList = self.wndMain:FindChild("CustomizeRightList")
-		elseif eCustomizationSlot == PetCustomizationLib.MountSlot.Right then
-			wndOtherFlairList = self.wndMain:FindChild("CustomizeLeftList")
+		
+		if tData.eSlotId == PetCustomizationLib.MountSlot.Left then
+			wndOtherFlairList = self.wndGroundFlairSlots:FindChild("CustomizeRight")
+		elseif tData.eSlotId == PetCustomizationLib.MountSlot.Right then
+			wndOtherFlairList = self.wndGroundFlairSlots:FindChild("CustomizeLeft")
 		end
 
-		for idx, wndCurr in pairs(wndOtherFlairList:GetChildren()) do
-			local wndCustomizeBtn = wndCurr:FindChild("CustomizeFlairBtn")
-			if wndCustomizeBtn then
-				if nUnlockCount == 1 and wndCustomizeBtn:GetData()[1] == objFlair then
-					wndCustomizeBtn:Enable(false)
-					wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
-				end
+		if wndOtherFlairList then
+			for idx, wndCurr in pairs(wndOtherFlairList:GetChildren()) do
+				local wndCustomizeBtn = wndCurr:FindChild("CustomizeFlairBtn")
+				if wndCustomizeBtn then
+					if nUnlockCount == 1 and wndCustomizeBtn:GetData().custFlair == tData.custFlair then
+						wndCustomizeBtn:Enable(false)
+						wndCurr:SetTooltip(Apollo.GetString("MountCustomization_FlairAlreadyAssigned"))
+					end
 
-				if nPrevUnlockCount == 1 and wndCustomizeBtn:GetData()[1] == objPrevFlair then
-					wndCustomizeBtn:Enable(true)
+					if nPrevUnlockCount == 1 and wndCustomizeBtn:GetData().custFlair == custPrevFlair then
+						wndCustomizeBtn:Enable(true)
+					end
 				end
 			end
 		end
@@ -323,25 +351,25 @@ function MountScreen:OnCustomizeFlairCheck(wndHandler, wndControl) -- CustomizeF
 end
 
 function MountScreen:OnCustomizeFlairUncheck(wndHandler, wndControl) -- CustomizeFlairBtn, data is { tFlairData, nSlotIndex }
-	local objFlair = wndHandler:GetData()[1]
-	local eCustomizationSlot = wndHandler:GetData()[2]
-	local objPetCustomization = wndHandler:GetData()[3]
-	objPetCustomization:ClearFlairInSlot(eCustomizationSlot)
+	local tData = wndHandler:GetData()
+
+	tData.custEquipped:ClearFlairInSlot(tData.eSlotId)
 
 	-- Update the preview window
-	self.wndMain:FindChild("MountPortrait"):SetAttachment(objPetCustomization:GetPreviewAttachSlot(eCustomizationSlot), 0)
+	self.wndMain:FindChild("MountPortrait"):SetAttachment(tData.custEquipped:GetPreviewAttachSlot(tData.eSlotId), 0)
 
-	if objFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and objFlair:GetUnlockCount() == 1 then
+	if tData.custFlair:GetFlairType() == PetCustomizationLib.PetFlairType_GroundMountSide and tData.custFlair:GetUnlockCount() == 1 and not self.tLastSelectedData.bIsHoverboard then
 		local wndOtherFlairList = nil
-		if eCustomizationSlot == PetCustomizationLib.MountSlot.Left then
-			wndOtherFlairList = self.wndMain:FindChild("CustomizeRightList")
-		elseif eCustomizationSlot == PetCustomizationLib.MountSlot.Right then
-			wndOtherFlairList = self.wndMain:FindChild("CustomizeLeftList")
+		if tData.eSlotId == PetCustomizationLib.MountSlot.Left then
+			wndOtherFlairList = self.wndGroundFlairSlots:FindChild("CustomizeRight")
+		elseif tData.eSlotId == PetCustomizationLib.MountSlot.Right then
+			wndOtherFlairList = self.wndGroundFlairSlots:FindChild("CustomizeLeft")
 		end
 
+		
 		for idx, wndCurr in pairs(wndOtherFlairList:GetChildren()) do
 			local wndCustomizeBtn = wndCurr:FindChild("CustomizeFlairBtn")
-			if wndCustomizeBtn and wndCustomizeBtn:GetData()[1] == objFlair then
+			if wndCustomizeBtn and wndCustomizeBtn:GetData().custFlair == tData.custFlair then
 				wndCustomizeBtn:Enable(true)
 			end
 		end
@@ -352,6 +380,7 @@ function MountScreen:OnMountBeginDragDrop(wndHandler, wndControl)
 	if wndHandler ~= wndControl then
 		return false
 	end
+
 	Apollo.BeginDragDrop(wndControl, "DDNonCombat", wndControl:GetSprite(), wndControl:GetData())
 	return true
 end
@@ -376,90 +405,63 @@ function MountScreen:OnRotateLeftCancel()
 	self.wndMain:FindChild("MountPortrait"):ToggleRightSpin(false)
 end
 
+function MountScreen:OnShowUnknown(wndControl, wndHandler)
+	for idx, wndMount in pairs(self.tUnknownMounts) do
+		-- Only show the ones that are both unknown and meet the current search criteria
+		local tSearchIndices = string.find(string.lower(wndMount:GetData().strName), string.lower(self.wndMain:FindChild("SearchField"):GetText()))
+		wndMount:Show(tSearchIndices)
+	end
+	self.bShowUnknown = true
+	
+	self:ArrangeList()
+end
+
+function MountScreen:OnHideUnknown(wndControl, wndHandler)
+	for idx, wndMount in pairs(self.tUnknownMounts) do
+		wndMount:Show(false)
+	end
+	
+	self.bShowUnknown = false
+	
+	self.wndMain:FindChild("StableList"):SetVScrollPos(0)
+	self.wndMain:FindChild("StableList"):RecalculateContentExtents()
+end
+
+function MountScreen:OnSearchFieldChanged(wndHandler, wndControl, strText)
+	local wndMountList = self.wndMain:FindChild("StableList")
+	strText = string.lower(strText)
+	
+	wndHandler:GetParent():FindChild("SearchClearBtn"):Show(strText ~= "")
+	
+	for idx, wndMount in pairs(wndMountList:GetChildren()) do
+		local tData = wndMount:GetData()
+		
+		if (tData.bIsKnown or self.bShowUnknown) and string.find(string.lower(tData.strName), strText) then
+			wndMount:Show(true)
+		else
+			wndMount:Show(false)
+		end
+	end	
+	
+	self:ArrangeList()
+end
+
+function MountScreen:OnClearSearch(wndHandler, wndControl)
+	local wndSearchField = wndHandler:GetParent():FindChild("SearchField")
+	wndSearchField:ClearText()
+	self:OnSearchFieldChanged(wndSearchField, wndSearchField, "")
+	wndHandler:Show(false)
+end
+
+function MountScreen:ArrangeList()
+	local wndMountList = self.wndMain:FindChild("StableList")
+	
+	wndMountList:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop,
+		function(a,b) return (a:GetData().bIsKnown and not b:GetData().bIsKnown) or (a:GetData().bIsKnown == b:GetData().bIsKnown and a:GetData().strName < b:GetData().strName) end)	
+	
+	wndMountList:SetVScrollPos(0)
+	wndMountList:RecalculateContentExtents()
+end
+
 local MountScreenInst = MountScreen:new()
 MountScreenInst:Init()
- 
-            if ktMessageSettings[eCurrMessageType].bPreemptable or ktMessageSettings[eCurrMessageType].bDestroyable then
-				-- if so, then show the tMessage, 
-				self:ShowMessage(eMessageType, tParams)
-            else
-				-- else add the tMessage to front of queue (behind all the other preempt messages in the queue)
-				local nInsert = 0
-				for key, tValue in pairs(self.tDisplayQueue[eField]:GetItems()) do
-					if not ktMessageSettings[tValue.eMessageType].bPreempt then
-						nInsert = key
-						break
-					end
-				end
-				if nInsert > 0 then
-					self.tDisplayQueue[eField]:InsertAbsolute( nInsert, tParams )
-				else
-					self.tDisplayQueue[eField]:Push( tParams )
-				end
-            end
-        end
-    end
-        
-end
-
----------------------------------------------------------------------------------------------------
-function MessageManager:ShowMessage(eMessageType, tParams)
-    local eField = ktMessageSettings[eMessageType].eField
-    -- hide the tMessage that is currently being displayed
-    self:HideMessage(eField, true)
-
-    -- display the tMessage according to the tMessage type
-    local oMessage = nil
-    local eDisplayType = tParams.eDisplayType 
-    local bReposition = ktMessageSettings[eMessageType].bReposition
-    tParams.bReposition = bReposition
-
-    if eDisplayType == LuaEnumMessageDisplayType.TextFloater then
-		if bReposition then
-			tParams.tTextOption.bReposition = true
-		end
-        oMessage = CombatFloater.ShowTextFloater(tParams.unitTarget, tParams.strText, tParams.tTextOption)
-        if oMessage == nil then
-			return -- nothing is shown
-		end
-    elseif eDisplayType == LuaEnumMessageDisplayType.Window then
-        oMessage = tParams.wndMessage
-        if bReposition then
-			oMessage:Reposition()
-		end
-        oMessage:Show(true)
-    else 
-        Print(Apollo.GetString("MessageManager_UnknownType"))
-        return -- nothing is shown
-    end
-
-    -- keep track of the ref of the messsage in the tMessagesOnScreen list
-    self.tMessagesOnScreen[eField] = 
-	{
-		eMessageType 	= eMessageType,
-		oMessage 		= oMessage,
-		tParams 		= tParams,
-	}
-    
-end
----------------------------------------------------------------------------------------------------
-function MessageManager:HideMessage(eField)
-    
-    if self.tMessagesOnScreen[eField] == nil then
-        return
-    end
-    
-    local eMessageType = self.tMessagesOnScreen[eField].eMessageType
-    local oMessage = self.tMessagesOnScreen[eField].oMessage
-    local eDisplayType = self.tMessagesOnScreen[eField].tParams.eDisplayType -- ktMessageSettings[eMessageType].eDisplayType
-    
-    -- hide the tMessage according to the tMessage display type
-    if eDisplayType == LuaEnumMessageDisplayType.TextFloater then
-        CombatFloater.HideTextFloater(oMessage)
-    elseif eDisplayType == LuaEnumMessageDisplayType.Window then
-        oMessage:Show(false)
-    end
-    
-    if  ktMessageSettings[eMessageType].bPreemptable == true then
-       -- add it back into the front of queue
-       self.tDisplayQueue[ eField ]:Insert( 1, self.tMessagesOnScreen[ eFiel

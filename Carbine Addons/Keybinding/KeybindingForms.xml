@@ -77,17 +77,17 @@
         <Control Class="Button" Base="CRB_Basekit:kitBtn_Close" Font="Thick" ButtonType="PushButton" RadioGroup="" LAnchorPoint="1" LAnchorOffset="-52" TAnchorPoint="0" TAnchorOffset="25" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="59" DT_VCENTER="1" DT_CENTER="1" Name="CloseButton" BGColor="white" TextColor="white" NewControlDepth="2" WindowSoundTemplate="CloseWindowPhys" TooltipColor="" NormalTextColor="white" PressedTextColor="white" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white">
             <Event Name="ButtonSignal" Function="OnCancelBtn"/>
         </Control>
-        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-320" TAnchorPoint="0" TAnchorOffset="74" RAnchorPoint=".5" RAnchorOffset="320" BAnchorPoint="0" BAnchorOffset="670" RelativeToClient="1" Font="Default" Text="" Template="" Name="OkForm" BGColor="white" TextColor="white" Border="0" UseTemplateBG="0" HideInEditor="0" NewControlDepth="4" IgnoreMouse="1" Escapable="1" TooltipColor="" Sprite="BK3:UI_BK3_Metal_Framing_BlockerFull" Picture="1" NewWindowDepth="0" CloseOnExternalClick="1">
+        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-320" TAnchorPoint="0" TAnchorOffset="74" RAnchorPoint=".5" RAnchorOffset="320" BAnchorPoint="0" BAnchorOffset="670" RelativeToClient="1" Font="Default" Text="" Template="" Name="OkForm" BGColor="white" TextColor="white" Border="0" UseTemplateBG="0" HideInEditor="1" NewControlDepth="4" IgnoreMouse="1" Escapable="1" TooltipColor="" Sprite="BK3:UI_BK3_Metal_Framing_BlockerFull" Picture="1" NewWindowDepth="0" CloseOnExternalClick="1">
             <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-220" TAnchorPoint=".5" TAnchorOffset="-80" RAnchorPoint=".5" RAnchorOffset="220" BAnchorPoint=".5" BAnchorOffset="133" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ConfirmHeaderUnderlay" BGColor="white" TextColor="white" Picture="1" Sprite="BK3:sprHolo_Alert_Confirm" TooltipColor="" IgnoreMouse="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="150" TAnchorPoint=".5" TAnchorOffset="-37" RAnchorPoint="1" RAnchorOffset="-150" BAnchorPoint=".5" BAnchorOffset="39" RelativeToClient="1" Font="CRB_InterfaceMedium" Template="Holo_TextCallout" Name="MessageText" BGColor="white" TextColor="UI_TextHoloTitle" DT_WORDBREAK="1" DT_VCENTER="1" NewControlDepth="1" TextId="CRB_Message" IgnoreMouse="1" Escapable="0" TooltipColor="" Text="" DT_CENTER="1" Picture="0" Border="1" UseTemplateBG="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="150" TAnchorPoint=".5" TAnchorOffset="-37" RAnchorPoint="1" RAnchorOffset="-150" BAnchorPoint=".5" BAnchorOffset="39" RelativeToClient="1" Font="CRB_InterfaceMedium" Template="Holo_TextCallout" Name="MessageText" BGColor="white" TextColor="UI_TextHoloBody" DT_WORDBREAK="1" DT_VCENTER="1" NewControlDepth="1" TextId="CRB_Message" IgnoreMouse="1" Escapable="0" TooltipColor="" Text="" DT_CENTER="1" Picture="0" Border="1" UseTemplateBG="1"/>
             <Event Name="WindowClosed" Function="OnEscapeYesNoDialog"/>
             <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-70" TAnchorPoint="1" TAnchorOffset="-256" RAnchorPoint=".5" RAnchorOffset="70" BAnchorPoint="1" BAnchorOffset="-183" DT_VCENTER="1" DT_CENTER="1" Name="OkButton" BGColor="white" TextColor="white" NoClip="1" NewControlDepth="10" WindowSoundTemplate="PushbuttonDigi02" TextId="CRB_Okay" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Visible="1" HideInEditor="0" Text="">
                 <Event Name="ButtonSignal" Function="OnOkFormOk"/>
             </Control>
         </Control>
-        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-320" TAnchorPoint="0" TAnchorOffset="74" RAnchorPoint=".5" RAnchorOffset="320" BAnchorPoint="0" BAnchorOffset="670" RelativeToClient="1" Font="Default" Text="" Template="" Name="YesNoForm" BGColor="white" TextColor="white" Border="0" UseTemplateBG="0" HideInEditor="0" NewControlDepth="12" IgnoreMouse="1" Escapable="1" TooltipColor="" Picture="1" Sprite="BK3:UI_BK3_Metal_Framing_BlockerFull" Tooltip="" Visible="0" NewWindowDepth="0">
+        <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-320" TAnchorPoint="0" TAnchorOffset="74" RAnchorPoint=".5" RAnchorOffset="320" BAnchorPoint="0" BAnchorOffset="670" RelativeToClient="1" Font="Default" Text="" Template="" Name="YesNoForm" BGColor="white" TextColor="white" Border="0" UseTemplateBG="0" HideInEditor="1" NewControlDepth="12" IgnoreMouse="1" Escapable="1" TooltipColor="" Picture="1" Sprite="BK3:UI_BK3_Metal_Framing_BlockerFull" Tooltip="" Visible="0" NewWindowDepth="0">
             <Control Class="Window" LAnchorPoint=".5" LAnchorOffset="-220" TAnchorPoint=".5" TAnchorOffset="-80" RAnchorPoint=".5" RAnchorOffset="220" BAnchorPoint=".5" BAnchorOffset="133" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="ConfirmHeaderUnderlay" BGColor="white" TextColor="white" Picture="1" Sprite="BK3:sprHolo_Alert_Confirm" TooltipColor="" IgnoreMouse="1"/>
-            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="150" TAnchorPoint=".5" TAnchorOffset="-37" RAnchorPoint="1" RAnchorOffset="-150" BAnchorPoint=".5" BAnchorOffset="37" RelativeToClient="1" Font="CRB_InterfaceMedium" Template="Holo_TextCallout" Name="QuestionText" BGColor="white" TextColor="UI_TextHoloTitle" DT_WORDBREAK="1" DT_VCENTER="1" NewControlDepth="1" TextId="CRB_This_will_replace_all_keybinds" IgnoreMouse="1" Escapable="0" TooltipColor="" Text="" Border="1" UseTemplateBG="1" DT_CENTER="1"/>
+            <Control Class="Window" LAnchorPoint="0" LAnchorOffset="150" TAnchorPoint=".5" TAnchorOffset="-37" RAnchorPoint="1" RAnchorOffset="-150" BAnchorPoint=".5" BAnchorOffset="37" RelativeToClient="1" Font="CRB_InterfaceMedium" Template="Holo_TextCallout" Name="QuestionText" BGColor="white" TextColor="UI_TextHoloBody" DT_WORDBREAK="1" DT_VCENTER="1" NewControlDepth="1" TextId="CRB_This_will_replace_all_keybinds" IgnoreMouse="1" Escapable="0" TooltipColor="" Text="" Border="1" UseTemplateBG="1" DT_CENTER="1"/>
             <Event Name="WindowClosed" Function="OnEscapeYesNoDialog"/>
             <Control Class="Button" Base="BK3:btnHolo_Blue_Med" Font="CRB_Button" ButtonType="PushButton" RadioGroup="" LAnchorPoint=".5" LAnchorOffset="-111" TAnchorPoint="1" TAnchorOffset="-256" RAnchorPoint=".5" RAnchorOffset="1" BAnchorPoint="1" BAnchorOffset="-183" DT_VCENTER="1" DT_CENTER="1" Name="YesButton" BGColor="white" TextColor="white" NoClip="1" NewControlDepth="10" WindowSoundTemplate="PushbuttonDigi02" TextId="CRB_Yes" TooltipColor="" NormalTextColor="UI_BtnTextBlueNormal" PressedTextColor="UI_BtnTextBluePressed" FlybyTextColor="UI_BtnTextBlueFlyby" PressedFlybyTextColor="UI_BtnTextBluePressedFlyby" DisabledTextColor="UI_BtnTextBlueDisabled" Visible="1" HideInEditor="0" Text="">
                 <Event Name="ButtonSignal" Function="OnYesNoFormYes"/>
@@ -149,7 +149,7 @@
             <Event Name="ButtonCheck" Function="OnCopySetSelected"/>
         </Control>
     </Form>
-    <Form Class="Button" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="40" RelativeToClient="0" Font="CRB_Header12" Text="" Template="CRB_Normal" Name="KeybindCategoryItem" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="UI_WindowTitleYellow" TooltipColor="" Tooltip="" NormalTextColor="UI_WindowTitleYellow" PressedTextColor="UI_WindowTitleYellow" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Base="BK3:btnHolo_ExpandCollapse_Inverted" UseTemplateBG="1" DT_CENTER="1" DT_VCENTER="1" Sprite="" NoClip="0" ButtonType="Check">
+    <Form Class="Button" LAnchorPoint="0" LAnchorOffset="2" TAnchorPoint="0" TAnchorOffset="2" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="0" BAnchorOffset="40" RelativeToClient="0" Font="CRB_HeaderTiny" Text="HEy NOwe" Template="CRB_Normal" Name="KeybindCategoryItem" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="0" BGColor="white" TextColor="white" TooltipColor="" Tooltip="" NormalTextColor="UI_TextHoloTitle" PressedTextColor="UI_TextHoloTitle" FlybyTextColor="white" PressedFlybyTextColor="white" DisabledTextColor="white" Base="BK3:btnHolo_ExpandCollapse_Inverted" UseTemplateBG="1" DT_CENTER="0" DT_VCENTER="1" Sprite="" NoClip="0" ButtonType="Check" TextId="" ButtonTextXMargin="10">
         <Event Name="ButtonUp" Function="OnCategoryClick"/>
         <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="1" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="0" BAnchorOffset="100" Sprite="BK3:UI_BK3_Holo_InsetHeaderThin" BGColor="white" TextColor="black" Rotation="0" Font="CRB_Interface11"/>
     </Form>
@@ -181,34 +181,3 @@
     </Form>
     <Form Class="Window" LAnchorPoint="1" LAnchorOffset="-410" TAnchorPoint="0.5" TAnchorOffset="-15" RAnchorPoint="1" RAnchorOffset="-380" BAnchorPoint="0.5" BAnchorOffset="15" RelativeToClient="1" Font="Default" Text="" BGColor="UI_WindowBGDefault" TextColor="UI_WindowTextDefault" Template="Default" TooltipType="OnCursor" Name="MultiBindIcon" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="0" Escapable="0" Overlapped="1" TooltipColor="white" IgnoreMouse="1" Sprite="IconSprites:Icon_Windows32_UI_CRB_InterfaceMenu_Keybindings" TooltipFont="CRB_InterfaceSmall_O" Tooltip="" TooltipId="Keybinding_MultiBindTooltip"/>
 </Forms>
-elf:PopulateKeybindList()
-end
-
----------------------------------------------------------------------------------------------------
--- Factory
----------------------------------------------------------------------------------------------------
-
-function Keybind:FactoryCacheProduce(wndParent, strFormName, strKey)
-	local wnd = self.tWindowCache[strKey]
-	if not wnd or not wnd:IsValid() then
-		wnd = Apollo.LoadForm(self.xmlDoc, strFormName, wndParent, self)
-		self.tWindowCache[strKey] = wnd
-
-		for strKey, wndCached in pairs(self.tWindowCache) do
-		if not self.tWindowCache[strKey]:IsValid() then
-				self.tWindowCache[strKey] = nil
-			end
-		end
-	end
-
-	return wnd
-end
-
-local KeybindInst = Keybind:new()
-KeybindInst:Init()
-set="69" BAnchorPoint="0" BAnchorOffset="53" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="VirtualItem" Picture="1" SwallowMouseClicks="1" Overlapped="1" BGColor="white" TextColor="white" IgnoreMouse="1" Sprite="BK3:UI_BK3_Holo_InsetSimple" Tooltip="" TooltipType="OnCursor" IgnoreTooltipDelay="1" TooltipColor="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-6" TAnchorPoint="0" TAnchorOffset="13" RAnchorPoint="1" RAnchorOffset="-12" BAnchorPoint="1" BAnchorOffset="7" RelativeToClient="1" Font="Default" Text="" Template="Default" Name="VirtualItemDisplay" BGColor="white" TextColor="white" Picture="1" IgnoreMouse="1" IgnoreTooltipDelay="1" TooltipType="OnCursor" TooltipColor="" DT_BOTTOM="1"/>
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="-16" TAnchorPoint="0" TAnchorOffset="-9" RAnchorPoint="1" RAnchorOffset="-20" BAnchorPoint="1" BAnchorOffset="-13" RelativeToClient="1" Font="CRB_Header9_O" Text="" Template="Default" Name="VirtualItemCount" BGColor="white" TextColor="white" DT_BOTTOM="0" DT_RIGHT="0" TextId="" Tooltip="" TooltipColor="" DT_CENTER="0" DT_VCENTER="0"/>
-    </Form>
-    <Form Class="Window" LAnchorPoint=".5" LAnchorOffset="-162" TAnchorPoint=".5" TAnchorOffset="-224" RAnchorPoint=".5" RAnchorOffset="161" BAnchorPoint=".5" BAnchorOffset="-31" RelativeToClient="1" Font="CRB_InterfaceMedium" Text="" Template="Default" Name="InventorySalvageNotice" Border="0" Picture="1" SwallowMouseClicks="1" Moveable="1" Escapable="1" Overlapped="1" BGColor="white" TextColor="white" NoClip="0" Visible="0" Sprite="" TooltipColor="" Tooltip="">
-        <Control Class="Window" LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint=
