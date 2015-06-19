@@ -1,0 +1,242 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		GridWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="GridDoubleClick"><h3>Event</h3><br><h2>GridDoubleClick</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>iRow</b><b> (Integer)</b>
+<li><b>iCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="GridSelChange"><h3>Event</h3><br><h2>GridSelChange</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>iRow</b><b> (Integer)</b>
+<li><b>iCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="GridSelChanging"><h3>Event</h3><br><h2>GridSelChanging</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>iRow</b><b> (Integer)</b>
+<li><b>iCol</b><b> (Integer)</b>
+<li><b>iCurrRow</b><b> (Integer)</b>
+<li><b>iCurrCol</b><b> (Integer)</b>
+<li><b>bAllowChange</b><b> (Boolean)</b>
+</ul>
+<hr><a name="GridSort"><h3>Event</h3><br><h2>GridSort</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>iCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="QueryBeginClickStick"><h3>Event</h3><br><h2>QueryBeginClickStick</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="QueryBeginDragDrop"><h3>Event</h3><br><h2>QueryBeginDragDrop</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="AddRow"><h3>Method</h3><br><h2>AddRow(strText, strImage, newLuaData)</h2>
+<h3>Description</h3>
+<p>Adds a row to the caller. If newLuaData is set, this will push it on the stack and ref it as well.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strText</b><b> (String)</b>
+<li><b>strImage</b><b> (String)</b> - (Default value: '')
+<li><b>newLuaData</b><b> (LuaData)</b> - (Default value: LUA_NOREF)
+</ul>
+<hr><a name="DeleteAll"><h3>Method</h3><br><h2>DeleteAll()</h2>
+<h3>Description</h3>
+<p>Deletes all rows and resets the count, current selection, the focus, and the tooltip.</p>
+<hr><a name="DeleteRow"><h3>Method</h3><br><h2>DeleteRow(nRow)</h2>
+<h3>Description</h3>
+<p>Deletes the row at iRow if found and updates the caller's rowMax.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (UINT)</b>
+</ul>
+<hr><a name="DeleteRowsByData"><h3>Method</h3><br><h2>DeleteRowsByData(luaData)</h2>
+<h3>Description</h3>
+<p>Deletes the row that lua_equals luaData if found and updates the caller's rowMax.</p>
+<h3>Params</h3>
+<ul>
+<li><b>luaData</b><b> (LuaData)</b>
+</ul>
+<hr><a name="EnableCell"><h3>Method</h3><br><h2>EnableCell(nRow, nCol, newEnable)</h2>
+<h3>Description</h3>
+<p>Sets the enable of the caller's cell at iRow and iCol to newEnable.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>newEnable</b><b> (bool)</b>
+</ul>
+<hr><a name="EnableRow"><h3>Method</h3><br><h2>EnableRow(nRow, newEnable)</h2>
+<h3>Description</h3>
+<p>Sets all enable of all the caller's cell at iRow to newEnable.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>newEnable</b><b> (bool)</b>
+</ul>
+<hr><a name="EnsureCellVisible"><h3>Method</h3><br><h2>EnsureCellVisible(nRow, nCol)</h2>
+<h3>Description</h3>
+<p>Insures the right, left, bottom, and top of the caller's cell at iRow and iCol are visible in the clip area.<br>
+Updates the HScrollPos and VScrollPos.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetCellData"><h3>Method</h3><br><h2>GetCellData()</h2>
+<hr><a name="GetCellLuaData"><h3>Method</h3><br><h2>GetCellLuaData()</h2>
+<hr><a name="GetCellText"><h3>Method</h3><br><h2>GetCellText()</h2>
+<hr><a name="GetColumnCount"><h3>Method</h3><br><h2>GetColumnCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's column count as an integer.</p>
+<hr><a name="GetColumnWidth"><h3>Method</h3><br><h2>GetColumnWidth()</h2>
+<hr><a name="GetCurrentColumn"><h3>Method</h3><br><h2>GetCurrentColumn()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's current column as an integer, will do a lua_pushnil if the current column is -1.</p>
+<hr><a name="GetCurrentRow"><h3>Method</h3><br><h2>GetCurrentRow()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's current row as an integer, will do a lua_pushnil if the current row is -1.</p>
+<hr><a name="GetFocusColumn"><h3>Method</h3><br><h2>GetFocusColumn()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's focus column as an integer, will do a lua_pushnil if the focus column is -1.</p>
+<hr><a name="GetFocusRow"><h3>Method</h3><br><h2>GetFocusRow()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's focus row as an integer, will do a lua_pushnil if the focus row is -1.</p>
+<hr><a name="GetRowCount"><h3>Method</h3><br><h2>GetRowCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's row count as an integer.</p>
+<hr><a name="GetSortColumn"><h3>Method</h3><br><h2>GetSortColumn()</h2>
+<hr><a name="HitTest"><h3>Method</h3><br><h2>HitTest(ptX, ptY)</h2>
+<h3>Description</h3>
+<p>Determines if ptX and ptY are a validCell of the caller and determines the iRow and iCol if possible.</p>
+<h3>Params</h3>
+<ul>
+<li><b>ptX</b><b> (Integer)</b>
+<li><b>ptY</b><b> (Integer)</b>
+</ul>
+<hr><a name="IsCellSelected"><h3>Method</h3><br><h2>IsCellSelected(nRow, nCol)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the caller's cell at iRow and iCol is selected.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="IsSortAscending"><h3>Method</h3><br><h2>IsSortAscending()</h2>
+<hr><a name="SelectCell"><h3>Method</h3><br><h2>SelectCell(nRow, nCol)</h2>
+<h3>Description</h3>
+<p>Selects the caller's cell at iRow and iCol.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="SelectCellByData"><h3>Method</h3><br><h2>SelectCellByData(bEqual, bFireEvent)</h2>
+<h3>Description</h3>
+<p>Scans through the caller's cells trying to match bEqual. If a match is found and bFireEvent is true, the cell is selected.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bEqual</b><b> (bool)</b>
+<li><b>bFireEvent</b><b> (bool)</b>
+</ul>
+<hr><a name="SetCellBGBase"><h3>Method</h3><br><h2>SetCellBGBase()</h2>
+<hr><a name="SetCellData"><h3>Method</h3><br><h2>SetCellData(nRow, nCol, strText, strImage, newLuaData)</h2>
+<h3>Description</h3>
+<p>Sets the data at the caller's cell at iRow and iCol to sText, sImage, and luaData. If newLuaData is set, this will push it on the stack and ref it as well.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>strText</b><b> (String)</b>
+<li><b>strImage</b><b> (String)</b> - (Default value: '')
+<li><b>newLuaData</b><b> (LuaData)</b> - (Default value: LUA_NOREF)
+</ul>
+<hr><a name="SetCellDoc"><h3>Method</h3><br><h2>SetCellDoc(nRow, nCol, strText)</h2>
+<h3>Description</h3>
+<p>Loads an xml document into buffer at sText, then sets the caller's cell at iRow and iCol to the document, creating a new one if not allocated.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="SetCellIconOverlays"><h3>Method</h3><br><h2>SetCellIconOverlays(nRow, nCol, strLeft, strRight)</h2>
+<h3>Description</h3>
+<p>Sets the icon overlay at the caller's cell at iRow and iCol to strLeft and strRight.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>strLeft</b><b> (String)</b> - (Default value: '')
+<li><b>strRight</b><b> (String)</b> - (Default value: '')
+</ul>
+<hr><a name="SetCellImage"><h3>Method</h3><br><h2>SetCellImage(nRow, nCol, strImage)</h2>
+<h3>Description</h3>
+<p>Sets the cellimage of the caller's cell at iRow and iCol to sImage.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>strImage</b><b> (String)</b>
+</ul>
+<hr><a name="SetCellImageColor"><h3>Method</h3><br><h2>SetCellImageColor()</h2>
+<hr><a name="SetCellLuaData"><h3>Method</h3><br><h2>SetCellLuaData()</h2>
+<hr><a name="SetCellSortText"><h3>Method</h3><br><h2>SetCellSortText()</h2>
+<hr><a name="SetCellText"><h3>Method</h3><br><h2>SetCellText(nRow, nCol, strText)</h2>
+<h3>Description</h3>
+<p>Sets the celltext of the caller's cell at iRow and iCol to sText.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="SetColumnText"><h3>Method</h3><br><h2>SetColumnText(nCol, strText)</h2>
+<h3>Description</h3>
+<p>Sets the column text of the caller's cell at iCol to sText.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="SetColumnWidth"><h3>Method</h3><br><h2>SetColumnWidth()</h2>
+<hr><a name="SetCurrentColumn"><h3>Method</h3><br><h2>SetCurrentColumn(nCol)</h2>
+<h3>Description</h3>
+<p>Sets the selection to caller's column at iCol.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nCol</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetCurrentRow"><h3>Method</h3><br><h2>SetCurrentRow(nRow)</h2>
+<h3>Description</h3>
+<p>Sets the selection to caller's column at iRow.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nRow</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetHeaderBGBase"><h3>Method</h3><br><h2>SetHeaderBGBase()</h2>
+<hr><a name="SetSortColumn"><h3>Method</h3><br><h2>SetSortColumn()</h2>
+	</body>
+</html>

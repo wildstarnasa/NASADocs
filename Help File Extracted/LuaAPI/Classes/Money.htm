@@ -1,0 +1,83 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Money	</h1>
+<h3>Prefix: mon</h3>
+<a name="Enums"/><hr><a name="CodeEnumCurrencyType"><h3>Enum</h3><br><h2>CodeEnumCurrencyType</h2>
+<ul>
+<li><b>Credits</b>
+<li><b>Renown</b>
+<li><b>ElderGems</b>
+<li><b>CraftingVouchers</b>
+<li><b>Prestige</b>
+<li><b>GroupCurrency</b>
+</ul>
+<hr><a name="CodeEnumGroupCurrencyType"><h3>Enum</h3><br><h2>CodeEnumGroupCurrencyType</h2>
+<ul>
+<li><b>None</b>
+<li><b>WarCoins</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<hr><a name="new"><h3>Function</h3><br><h2>new()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="AddToTooltip"><h3>Method</h3><br><h2>AddToTooltip(self, strText, strColor, strSize, strAlign)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>self</b><b> (XmlDocumentRef)</b>
+<li><b>strText</b><b> (String)</b>
+<li><b>strColor</b><b> (String)</b> - (Default value: FFFFFFFF)
+<li><b>strSize</b><b> (String)</b> - (Default value: Header4)
+<li><b>strAlign</b><b> (String)</b> - (Default value: Left)
+</ul>
+<hr><a name="AppendToTooltip"><h3>Method</h3><br><h2>AppendToTooltip(self)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>self</b><b> (XmlDocumentRef)</b>
+</ul>
+<hr><a name="GetAltType"><h3>Method</h3><br><h2>GetAltType()</h2>
+<hr><a name="GetAmount"><h3>Method</h3><br><h2>GetAmount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the amount specified by currencyValue.</p>
+<hr><a name="GetDenomAmounts"><h3>Method</h3><br><h2>GetDenomAmounts()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index and the denom amounts.</p>
+<hr><a name="GetDenomInfo"><h3>Method</h3><br><h2>GetDenomInfo()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index, amount, name, rate, textWidth, and sprite.</p>
+<hr><a name="GetMoneyString"><h3>Method</h3><br><h2>GetMoneyString(bSkipZeros)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the localized money amount.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bSkipZeros</b><b> (Boolean)</b> - (Default value: true)
+</ul>
+<hr><a name="GetMoneyType"><h3>Method</h3><br><h2>GetMoneyType()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the type.</p>
+<hr><a name="GetTypeString"><h3>Method</h3><br><h2>GetTypeString()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the localized id type.</p>
+<hr><a name="IsZero"><h3>Method</h3><br><h2>IsZero()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the amount equals 0 specified by currencyValue.</p>
+<hr><a name="Multiply"><h3>Method</h3><br><h2>Multiply()</h2>
+<hr><a name="SetAltType"><h3>Method</h3><br><h2>SetAltType()</h2>
+<hr><a name="SetAmount"><h3>Method</h3><br><h2>SetAmount(nNewAmount)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nNewAmount</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetMoneyType"><h3>Method</h3><br><h2>SetMoneyType(nNewType)</h2>
+<h3>Description</h3>
+<p>Sets the type to an enum ECurrencyType specified by nNewType.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nNewType</b><b> (Integer for enum ECurrencyType. A mapping is available earlier in the page.)</b>
+</ul>
+	</body>
+</html>

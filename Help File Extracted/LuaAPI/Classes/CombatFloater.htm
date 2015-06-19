@@ -1,0 +1,136 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		CombatFloater	</h1>
+<a name="Enums"/><hr><a name="CodeEnumCCStateApplyRulesResult"><h3>Enum</h3><br><h2>CodeEnumCCStateApplyRulesResult</h2>
+<ul>
+<li><b>Ok</b>
+<li><b>InvalidCCState</b>
+<li><b>NoTargetSpecified</b>
+<li><b>Target_Immune</b>
+<li><b>Target_InfiniteInterruptArmor</b>
+<li><b>Stacking_DoesNotStack</b>
+<li><b>Stacking_ShorterDuration</b>
+<li><b>Target_InterruptArmorReduced</b>
+<li><b>Target_InterruptArmorBlocked</b>
+<li><b>DiminishingReturns_TriggerCap</b>
+</ul>
+<hr><a name="CodeEnumCombatMomentum"><h3>Enum</h3><br><h2>CodeEnumCombatMomentum</h2>
+<ul>
+<li><b>Impulse</b>
+<li><b>KillingPerformance</b>
+<li><b>KillChain</b>
+<li><b>Evade</b>
+<li><b>Interrupt</b>
+<li><b>CCBreak</b>
+</ul>
+<hr><a name="CodeEnumExpReason"><h3>Enum</h3><br><h2>CodeEnumExpReason</h2>
+<ul>
+<li><b>Invalid</b>
+<li><b>Load</b>
+<li><b>Cheat</b>
+<li><b>KillCreature</b>
+<li><b>Quest</b>
+<li><b>ClusterBonus</b>
+<li><b>Spell</b>
+<li><b>Exploration</b>
+<li><b>QuestEpisodeCompletion</b>
+<li><b>PathMission</b>
+<li><b>PathEpisode</b>
+<li><b>KillPerformance</b>
+<li><b>MultiKill</b>
+<li><b>KillingSpree</b>
+<li><b>TelegraphInterrupt</b>
+<li><b>TelegraphEvade</b>
+<li><b>Momentum</b>
+<li><b>Rested</b>
+<li><b>PublicEvent</b>
+<li><b>PeriodicQuest</b>
+</ul>
+<hr><a name="CodeEnumFloaterCollisionMode"><h3>Enum</h3><br><h2>CodeEnumFloaterCollisionMode</h2>
+<ul>
+<li><b>IgnoreCollision</b>
+<li><b>Horizontal</b>
+<li><b>Vertical</b>
+</ul>
+<hr><a name="CodeEnumFloaterEffect"><h3>Enum</h3><br><h2>CodeEnumFloaterEffect</h2>
+<ul>
+<li><b>Flames</b>
+<li><b>BluishWhite</b>
+<li><b>Sparks</b>
+<li><b>Spiral</b>
+<li><b>Cloud</b>
+<li><b>Splotches</b>
+<li><b>SlashBlood</b>
+<li><b>Impact</b>
+<li><b>SplatBlood</b>
+<li><b>Helix</b>
+<li><b>ShadowFire</b>
+<li><b>Cold</b>
+<li><b>Stars</b>
+</ul>
+<hr><a name="CodeEnumFloaterLocation"><h3>Enum</h3><br><h2>CodeEnumFloaterLocation</h2>
+<ul>
+<li><b>Top</b>
+<li><b>Head</b>
+<li><b>Chest</b>
+<li><b>Back</b>
+<li><b>Bottom</b>
+</ul>
+<a name="Events"/><hr><a name="DamageOrHealingDone"><h3>Event</h3><br><h2>DamageOrHealingDone</h2>
+<a name=">Functions"/>
+<hr><a name="AddDigitSpriteSet"><h3>Function</h3><br><h2>AddDigitSpriteSet(strSpriteSetName)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the index from an AddDigitSpriteSet specified by strSpriteSetName.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strSpriteSetName</b><b> (String)</b>
+</ul>
+<hr><a name="AddTextBGSprite"><h3>Function</h3><br><h2>AddTextBGSprite(strSpriteName)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the index from an AddTextBGSprite specified by strSpriteName.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strSpriteName</b><b> (String)</b>
+</ul>
+<hr><a name="HideTextFloater"><h3>Function</h3><br><h2>HideTextFloater(pTextFloater)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>pTextFloater</b><b> (UserData)</b> - converted to a CTextFloater
+</ul>
+<hr><a name="SetMaxFloaterCount"><h3>Function</h3><br><h2>SetMaxFloaterCount(nMaxFloaterCount)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nMaxFloaterCount</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetMaxFloaterPerUnitCount"><h3>Function</h3><br><h2>SetMaxFloaterPerUnitCount(nMaxFloaterPerUnitCount)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nMaxFloaterPerUnitCount</b><b> (Integer)</b>
+</ul>
+<hr><a name="ShowParticleEffect"><h3>Function</h3><br><h2>ShowParticleEffect(unitP, tMetaTable)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>unitP</b><b> (CUnit)</b>
+<li><b>tMetaTable</b><b> (LuaTable)</b> - containing eEffect, nDuration, eLocation
+</ul>
+<hr><a name="ShowTextFloater"><h3>Function</h3><br><h2>ShowTextFloater(unitP, nDamage)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>unitP</b><b> (CUnit)</b>
+<li><b>nDamage</b><b> (Integer)</b> - (Default value: null)
+</ul>
+<hr><a name="TestTextFloater"><h3>Function</h3><br><h2>TestTextFloater(nDamageType, nDamage, bCritical)</h2>
+<h3>Description</h3>
+<p>Tester function for triggering damage floaters.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nDamageType</b><b> (UINT)</b>
+<li><b>nDamage</b><b> (Integer)</b>
+<li><b>bCritical</b><b> (Boolean)</b>
+</ul>
+	</body>
+</html>

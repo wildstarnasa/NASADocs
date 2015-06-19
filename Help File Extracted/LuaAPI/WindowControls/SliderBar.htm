@@ -1,0 +1,48 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		SliderBar	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="SliderBarChanged"><h3>Event</h3><br><h2>SliderBarChanged</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>fNewValue</b><b> (Float)</b>
+<li><b>fOldValue</b><b> (Float)</b>
+</ul>
+<hr><a name="SliderBarChanging"><h3>Event</h3><br><h2>SliderBarChanging</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>fNewValue</b><b> (Float)</b>
+<li><b>fOldValue</b><b> (Float)</b>
+<li><b>bOkToChange</b><b> (Boolean)</b>
+</ul>
+<a name=">Methods"/>
+<hr><a name="GetValue"><h3>Method</h3><br><h2>GetValue()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the caller's value as a float.</p>
+<hr><a name="IsThumbDragging"><h3>Method</h3><br><h2>IsThumbDragging()</h2>
+<hr><a name="SetMinMax"><h3>Method</h3><br><h2>SetMinMax(fMin, fMax, fTickAmount)</h2>
+<h3>Description</h3>
+<p>Sets the caller's properties to fMin, fMax, and fTickAmount.</p>
+<h3>Params</h3>
+<ul>
+<li><b>fMin</b><b> (Float)</b>
+<li><b>fMax</b><b> (Float)</b>
+<li><b>fTickAmount</b><b> (Float)</b> - (Default value: 1)
+</ul>
+<hr><a name="SetValue"><h3>Method</h3><br><h2>SetValue(fValue)</h2>
+<h3>Description</h3>
+<p>Set the caller's value to fValue.</p>
+<h3>Params</h3>
+<ul>
+<li><b>fValue</b><b> (Float)</b>
+</ul>
+	</body>
+</html>

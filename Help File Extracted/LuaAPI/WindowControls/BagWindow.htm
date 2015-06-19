@@ -1,0 +1,126 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		BagWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name=">Methods"/>
+<hr><a name="AreAnyItemsNew"><h3>Method</h3><br><h2>AreAnyItemsNew(nNewBagSlot)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if there are new items in a bag slot specified by nNewBagSlot.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nNewBagSlot</b><b> (Integer)</b>
+</ul>
+<hr><a name="AssignBag"><h3>Method</h3><br><h2>AssignBag(nData, nWhichBag)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nData</b><b> (Integer)</b>
+<li><b>nWhichBag</b><b> (Integer)</b>
+</ul>
+<hr><a name="CanAssignBag"><h3>Method</h3><br><h2>CanAssignBag(nSource, nDest)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the bag can be assigned.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nSource</b><b> (Integer)</b>
+<li><b>nDest</b><b> (Integer)</b>
+</ul>
+<hr><a name="CanDropItemInBag"><h3>Method</h3><br><h2>CanDropItemInBag(nData, nWhichBag)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if an item can be dropped in a bag.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nData</b><b> (Integer)</b>
+<li><b>nWhichBag</b><b> (Integer)</b>
+</ul>
+<hr><a name="CanRemoveBag"><h3>Method</h3><br><h2>CanRemoveBag(nWhichBag)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the bag can be removed.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nWhichBag</b><b> (Integer)</b>
+</ul>
+<hr><a name="DoAnyItemsBeginQuest"><h3>Method</h3><br><h2>DoAnyItemsBeginQuest()</h2>
+<hr><a name="DropItemInBag"><h3>Method</h3><br><h2>DropItemInBag(nData, nWhichBag)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of true if successful (was not trying to drop a bag in a bag or etc.)</p>
+<h3>Params</h3>
+<ul>
+<li><b>nData</b><b> (Integer)</b>
+<li><b>nWhichBag</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetBagCapacity"><h3>Method</h3><br><h2>GetBagCapacity()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's capacity.</p>
+<hr><a name="GetBagId"><h3>Method</h3><br><h2>GetBagId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's id.</p>
+<hr><a name="GetBagItem"><h3>Method</h3><br><h2>GetBagItem()</h2>
+<hr><a name="GetInventoryIdForBag"><h3>Method</h3><br><h2>GetInventoryIdForBag(nBag)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the inventory id.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nBag</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetItem"><h3>Method</h3><br><h2>GetItem(nData)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nData</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetTotalBagSlots"><h3>Method</h3><br><h2>GetTotalBagSlots()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the total bag slots.</p>
+<hr><a name="GetTotalEmptyBagSlots"><h3>Method</h3><br><h2>GetTotalEmptyBagSlots()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the total empty bag slots.</p>
+<hr><a name="IsBagEquipped"><h3>Method</h3><br><h2>IsBagEquipped(nWhichBag)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if a bag is equipped.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nWhichBag</b><b> (Integer)</b>
+</ul>
+<hr><a name="IsItemABag"><h3>Method</h3><br><h2>IsItemABag(nData)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if nData is a bag.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nData</b><b> (Integer)</b>
+</ul>
+<hr><a name="MarkAllItemsAsSeen"><h3>Method</h3><br><h2>MarkAllItemsAsSeen()</h2>
+<h3>Description</h3>
+<p>Runs the caller's MarkAllItems method.</p>
+<hr><a name="SetBagId"><h3>Method</h3><br><h2>SetBagId(nBagSlot)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nBagSlot</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetBoxesPerRow"><h3>Method</h3><br><h2>SetBoxesPerRow(nBoxesPerRow)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nBoxesPerRow</b><b> (Integer)</b> - (Default value: 4)
+</ul>
+<hr><a name="SetCannotUseColor"><h3>Method</h3><br><h2>SetCannotUseColor()</h2>
+<hr><a name="SetCannotUseSprite"><h3>Method</h3><br><h2>SetCannotUseSprite()</h2>
+<hr><a name="SetItemSortComparer"><h3>Method</h3><br><h2>SetItemSortComparer()</h2>
+<hr><a name="SetNewItemOverlaySprite"><h3>Method</h3><br><h2>SetNewItemOverlaySprite()</h2>
+<hr><a name="SetNewQuestOverlaySprite"><h3>Method</h3><br><h2>SetNewQuestOverlaySprite()</h2>
+<hr><a name="SetSort"><h3>Method</h3><br><h2>SetSort()</h2>
+<hr><a name="SetSquareSize"><h3>Method</h3><br><h2>SetSquareSize(nX, nY)</h2>
+<h3>Description</h3>
+<p>Sets the square size of the caller to nX and nY.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nX</b><b> (Integer)</b> - (Default value: current X)
+<li><b>nY</b><b> (Integer)</b> - (Default value: current Y)
+</ul>
+<hr><a name="StartSplitStack"><h3>Method</h3><br><h2>StartSplitStack()</h2>
+<hr><a name="SwapBagItems"><h3>Method</h3><br><h2>SwapBagItems()</h2>
+<h3>Description</h3>
+<p>Currently has no implementation</p>
+	</body>
+</html>

@@ -1,0 +1,293 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Achievement	</h1>
+<h3>Prefix: ach</h3>
+<h3>Description</h3>
+<p>Achievements are tasks that can be completed to gain various rewards.  These include the standard Achievements that you find in the AchievementLog,<br>
+as well as the elements of the Tradeskill Tech Tree.</p>
+<a name=">Functions"/>
+<hr><a name="is"><h3>Function</h3><br><h2>is(Variable)</h2>
+<h3>Description</h3>
+<p>Determines whether the given variable is an Achievement</p>
+<h3>Params</h3>
+<ul>
+<li><b>Variable</b> - The variable you want to check
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="GetCategory"><h3>Method</h3><br><h2>GetCategory()</h2>
+<h3>Description</h3>
+<p>Returns the name of the category that the achievement belongs to.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the achievement's parent category
+</ul>
+<h3>Usage/Example</h3>
+<pre>function Example:IsTradeskillAchievement(achSource)
+    
+    strCategoryName = achSource:GetCagetory() or ""
+    
+    if strCategoryName == "Tradeskill" or strCategoryName == "Hobby" then
+       
+        return true
+    
+    else
+       
+        return false
+    
+    end
+
+end</pre>
+<hr><a name="GetCategoryFullName"><h3>Method</h3><br><h2>GetCategoryFullName()</h2>
+<h3>Description</h3>
+<p>Returns the long version of the name of the category that the achievement belongs to</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetCategoryId"><h3>Method</h3><br><h2>GetCategoryId()</h2>
+<h3>Description</h3>
+<p>Returns the id number for the category that the achievement belongs to</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The Id number for the Achievement's category
+</ul>
+<hr><a name="GetChecklistItems"><h3>Method</h3><br><h2>GetChecklistItems()</h2>
+<h3>Description</h3>
+<p>Returns a list of things required to complete this achievement</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>strChecklistEntry</b><b> (String)</b> - The name of this checklist item.  This can be a description of a step of<br>
+the achievement, the name of an item that must be crafted, or the name<br>
+of a schematic that must be learned.
+<li><b>bIsComplete</b><b> (Boolean)</b> - Whether or not this step of the achievement is complete
+<li><b>idSchematic</b><b> (Integer)</b> - The id number of the schematic that must be learned or is the source<br>
+of the item required for this part of the achievement.
+</ul>
+</ul>
+<hr><a name="GetChildTier"><h3>Method</h3><br><h2>GetChildTier()</h2>
+<h3>Description</h3>
+<p>Returns the current step of a multi-stage achievement.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Achievement.htm">Achievement</a></b>
+</ul>
+<h3>Remarks</h3>
+<p>Multi-stage achievements are ones that have multiple tiers of progression.  A good example of this is the PvP Achievement "Cracked Your First Skull".</p>
+<hr><a name="GetCurrencySystem"><h3>Method</h3><br><h2>GetCurrencySystem()</h2>
+<hr><a name="GetDateCompleted"><h3>Method</h3><br><h2>GetDateCompleted()</h2>
+<h3>Description</h3>
+<p>Returns a string with the date that the achievement was completed.  The formatting for the date varies based on which language is being used on the <br>
+client</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetDescription"><h3>Method</h3><br><h2>GetDescription()</h2>
+<h3>Description</h3>
+<p>Returns the description text for the achievement when it is completed.    This function is not to be confused with Achievement:GetProgressText(), which <br>
+returns the description text for the achievement before it is complete</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The text for the completed achievement
+</ul>
+<h3>Usage/Example</h3>
+<pre>function Example:PrintAchievementText(achSource)
+    
+    if achSource:IsComplete() then
+       
+        Print(achSource:GetDescription())
+    
+    else
+        
+        Print(achSource:GetProgressText())
+    
+    end
+
+end</pre>
+<hr><a name="GetGroup"><h3>Method</h3><br><h2>GetGroup() (Deprecated)</h2>
+<h3>Description</h3>
+<p>This function is depricated</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<h3>Description</h3>
+<p>Returns the achievement's ID number</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The ID number of the Achievement
+</ul>
+<h3>Usage/Example</h3>
+<pre>function Example::GetAchievement(idSource)
+    local tAchievements = AchievementsLib.GetAchievements()
+    for idx = 1, #tAchievements do
+        achCurrent = tAchievements[idx]
+        if achCurrent:GetId() == idSource then
+            return achCurrent
+        end
+    end</pre>
+<hr><a name="GetName"><h3>Method</h3><br><h2>GetName()</h2>
+<h3>Description</h3>
+<p>Returns the name of the achievement</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the achievement calling this function
+</ul>
+<h3>Usage/Example</h3>
+<pre>function Example::DisplayNames()
+local tAchievements = AchievementsLib.GetAchievements()
+for idx = 1, #tAchievements do
+    local achCurrent = tAchievements[idx]
+    Print(achCurrent:GetName()
+end</pre>
+<hr><a name="GetNumCompleted"><h3>Method</h3><br><h2>GetNumCompleted()</h2>
+<h3>Description</h3>
+<p>Returns the character's progress on this achievement.  </p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetNumNeeded"><h3>Method</h3><br><h2>GetNumNeeded()</h2>
+<h3>Description</h3>
+<p>Returns the amount of progress that is required to complete this achievement</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetParentTier"><h3>Method</h3><br><h2>GetParentTier()</h2>
+<h3>Description</h3>
+<p>Returns the parent achievement of a multi-tier achievement.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Achievement.htm">Achievement</a></b>
+</ul>
+<hr><a name="GetPoints"><h3>Method</h3><br><h2>GetPoints()</h2>
+<h3>Description</h3>
+<p>Returns the number of achievement points granted when the achievement is completed</p>
+<hr><a name="GetProgressText"><h3>Method</h3><br><h2>GetProgressText()</h2>
+<h3>Description</h3>
+<p>Returns the description text that the achievement shows when it is not complete.  This function is not to be confused with Achievement:GetDescription(), <br>
+which returns the text for the achievement when it is complete</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The text for the incomplete achievement
+</ul>
+<h3>Usage/Example</h3>
+<pre>function Example:PrintAchievementText(achSource)
+    if achSource:IsComplete() then
+        Print(achSource:GetDescription())
+    else
+        Print(achSource:GetProgressText())
+    end
+end</pre>
+<hr><a name="GetRewards"><h3>Method</h3><br><h2>GetRewards()</h2>
+<h3>Description</h3>
+<p>Returns any title that is granted when the achievement is completed</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/CharacterTitle.htm">CharacterTitle</a></b>
+</ul>
+<hr><a name="GetSubGroup"><h3>Method</h3><br><h2>GetSubGroup()</h2>
+<h3>Description</h3>
+<p>Returns the name of the subgroup that the achievement belongs to</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetSubGroupId"><h3>Method</h3><br><h2>GetSubGroupId()</h2>
+<h3>Description</h3>
+<p>Returns the id number of the subgroup that the achievement belongs to</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetTradeskillLayout"><h3>Method</h3><br><h2>GetTradeskillLayout()</h2>
+<h3>Description</h3>
+<p>Returns the position information for the achievement and its parents</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>nX</b><b> (Integer)</b> - The X coordinate of the Achievement node
+<li><b>nY</b><b> (Integer)</b> - The Y coordinate of the Achievement node
+<li><b>arParents</b><b> (Array of Table)</b> - The position of the parent
+<ul>
+<li><b>x</b><b> (Integer)</b> - The X coordinate of the parent
+<li><b>y</b><b> (Integer)</b> - The Y coordinate of the parent
+</ul>
+</ul>
+</ul>
+<hr><a name="GetTradeskillRewards"><h3>Method</h3><br><h2>GetTradeskillRewards()</h2>
+<h3>Description</h3>
+<p>Returns a description of various rewards that a tradeskill achievement grants</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>idFaction</b><b> (Integer)</b> - The id for the faction that the achievement gives rep with
+<li><b>nFactionAmount</b><b> (Integer)</b> - The amount of reputation granted by the tradeskill
+<li><b>nTalentPoints</b><b> (Integer)</b> - The number of tradeskill talent points granted by the Achievement
+<li><b>arSchematics</b><b> (Array of Table)</b> - A list of tradeskill schematics that are unlocked by this Achievement
+<ul>
+<li><b>idSchematic</b><b> (Integer)</b> - The id number for the schematic that the Achievement grants
+<li><b>itemCrafted</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item created by the schematic that is granted by the Achievement
+</ul>
+<li><b>arBonuses</b><b> (Array of Table)</b> - A list of Tradeskill bonuses granted by this Achievement
+<ul>
+<li><b>strIcon</b><b> (String)</b> - The name of the icon used for the bonus granted by this Achievement
+<li><b>strName</b><b> (String)</b> - The name of the bonus granted by this Achievement
+<li><b>strTooltip</b><b> (String)</b> - The tooltip string for the bonus granted by this Achievement
+</ul>
+</ul>
+</ul>
+<hr><a name="GetTradeskillSchematicsRequired"><h3>Method</h3><br><h2>GetTradeskillSchematicsRequired()</h2>
+<h3>Description</h3>
+<p>Returns a list of schematic ids that the character must know before unlocking this Achievement</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Integer</b>
+</ul>
+<hr><a name="GetWorldZoneId"><h3>Method</h3><br><h2>GetWorldZoneId()</h2>
+<h3>Description</h3>
+<p>Returns the zone id where this achievement can be completed</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="IsChecklist"><h3>Method</h3><br><h2>IsChecklist()</h2>
+<h3>Description</h3>
+<p>Determines if the Achievement requires multiple different steps to complete it</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsComplete"><h3>Method</h3><br><h2>IsComplete()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the Achievement has been completed</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsCurrencyShown"><h3>Method</h3><br><h2>IsCurrencyShown()</h2>
+<hr><a name="IsGuildAchievement"><h3>Method</h3><br><h2>IsGuildAchievement()</h2>
+<h3>Description</h3>
+<p>Determines if an Achievement is a Guild Achievement</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+	</body>
+</html>

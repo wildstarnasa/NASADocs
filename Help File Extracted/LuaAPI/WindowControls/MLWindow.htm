@@ -1,0 +1,61 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		MLWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="MLNodeClick"><h3>Event</h3><br><h2>MLNodeClick</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="BeginDoogie"><h3>Method</h3><br><h2>BeginDoogie(fRate)</h2>
+<h3>Description</h3>
+<p>Starts printing text character by character at a rate of fRate.</p>
+<h3>Params</h3>
+<ul>
+<li><b>fRate</b><b> (Float)</b> - (Default value: 50.f)
+</ul>
+<hr><a name="GetContentSize"><h3>Method</h3><br><h2>GetContentSize()</h2>
+<h3>Description</h3>
+<p>Does lua_pushintegers of the caller's size.x and size.y as integers.</p>
+<hr><a name="IsReadyToDraw"><h3>Method</h3><br><h2>IsReadyToDraw()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if there is a wait for load as a boolean.</p>
+<hr><a name="PauseDoogie"><h3>Method</h3><br><h2>PauseDoogie(bPauseDoogie)</h2>
+<h3>Description</h3>
+<p>Pauses a character by character text printing animation if bPauseDoogie is true.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bPauseDoogie</b><b> (Bool)</b>
+</ul>
+<hr><a name="SetAML"><h3>Method</h3><br><h2>SetAML(strAMLString)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_doc's text to a UTF8ToUCS2 conversion of sAMLString.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strAMLString</b><b> (String)</b>
+</ul>
+<hr><a name="SetDoc"><h3>Method</h3><br><h2>SetDoc(pDoc)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_doc's doc to pDoc and parses the doc.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pDoc</b><b> (XmlDocumentRef)</b>
+</ul>
+<hr><a name="SetHeightToContentHeight"><h3>Method</h3><br><h2>SetHeightToContentHeight(nBuffer)</h2>
+<h3>Description</h3>
+<p>Sets the caller's height size to iBuffer. Does lua_pushintegers of the caller's size.x and size.y as integers.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nBuffer</b><b> (INT32)</b>
+</ul>
+<hr><a name="StopDoogie"><h3>Method</h3><br><h2>StopDoogie()</h2>
+<h3>Description</h3>
+<p>Stops a character by character text printing animation.</p>
+	</body>
+</html>

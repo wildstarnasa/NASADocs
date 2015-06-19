@@ -1,0 +1,81 @@
+<html>
+	<HEAD>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</HEAD>
+<body>
+		<h1>
+			Event-Driven Programming</h1>
+		<ul>
+			<li>
+				Anything that can happen in the game that we may want to respond to is called an &quot;Event&quot;</li>
+			<li>
+				Window Events include general things like Mouse clicks or key presses</li>
+			<li>
+				Game Events include game-specific events like taking damage, dying</li>
+			<li >
+				All functionality in an Addon is performed in response to an event, and only in response to an event.</li>
+			<li>
+				The Lua code that is called in response to an event is called a &quot;Handler&quot;</li>
+			<li>
+				There is only one thread of execution, so if you write an infinite loop in Lua, you will halt the game!</li>
+		</ul>
+		<h2>
+			Window Events</h2>
+		<ul>
+			<li>
+				All Window events will always have at least two parameters passed in, each a Window object</li>
+			<li>
+				These first two parameters often refer to the same window</li>
+		</ul>
+		<p>Example:</p>
+		<p>
+			MyTestAddon.lua
+		<table border="1" cellpadding="10" cellspacing="0">
+			<tbody>
+				<tr>
+					<td>
+						<pre>
+
+...
+-----------------------------------------------------------
+-- MyTestAddonFormFunctions
+-----------------------------------------------------------
+-- when the OK button is clicked
+function MyTestAddon:OnOK(wndHandler, wndControl)
+  self.wndMain:Show(false) -- hide the window
+end
+...
+					</td>
+				</tr>
+			</tbody>
+		</table></p>
+		<h2>
+			Game Events</h2>
+		<ul>
+			<li>
+				You must register for these events in Lua code, usually in the Addon&#39;sOnLoadevent handler</li>
+			<li>
+				These events may have zero or more parameters</li>
+		</ul>
+		<p>Example:</p>
+		<p>
+			MyTestAddon.lua
+		<table border="1" cellpadding="10" cellspacing="0">
+			<tbody>
+				<tr>
+					<td>
+						<pre>
+
+function MyTestAddon:OnLoad()
+    -- Register handlers for events, slash commands and timer, etc.
+    -- e.g. Apollo.RegisterEventHandler(&quot;KeyDown&quot;, &quot;OnKeyDown&quot;, self)
+    Apollo.RegisterSlashCommand(&quot;MyTest&quot;, &quot;OnMyTestAddonOn&quot;, self)
+    Apollo.RegisterTimerHandler(&quot;OneSecTimer&quot;, &quot;OnTimer&quot;, self)
+    Apollo.RegisterEventHandler(&quot;DamageOrHealingDone&quot;, &quot;OnDamage&quot; self)
+end</pre>
+					</td>
+				</tr>
+			</tbody>
+		</table></p>
+	</body>
+</HTML>

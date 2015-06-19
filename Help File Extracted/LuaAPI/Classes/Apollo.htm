@@ -1,0 +1,344 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Apollo	</h1>
+<a name="Enums"/><hr><a name="AddonLoadStatus"><h3>Enum</h3><br><h2>AddonLoadStatus</h2>
+<ul>
+<li><b>Loading</b>
+<li><b>Loaded</b>
+<li><b>LoadingError</b>
+</ul>
+<hr><a name="DragDropCancelReason"><h3>Enum</h3><br><h2>DragDropCancelReason</h2>
+<ul>
+<li><b>EscapeKey</b>
+<li><b>DroppedOnNothing</b>
+<li><b>ClickedOnNothing</b>
+<li><b>ClickedOnWorld</b>
+<li><b>WindowMove</b>
+</ul>
+<hr><a name="DragDropQueryResult"><h3>Enum</h3><br><h2>DragDropQueryResult</h2>
+<ul>
+<li><b>PassOn</b>
+<li><b>Ignore</b>
+<li><b>Accept</b>
+<li><b>Invalid</b>
+</ul>
+<a name="Events"/><hr><a name="DragDropSysBegin"><h3>Event</h3><br><h2>DragDropSysBegin</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndSource</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+</ul>
+<hr><a name="DragDropSysEnd"><h3>Event</h3><br><h2>DragDropSysEnd</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+</ul>
+<hr><a name="LuaError"><h3>Event</h3><br><h2>LuaError</h2>
+<h3>Params</h3>
+<ul>
+<li><b>tAddon</b><b> (Table)</b>
+<li><b>strError</b><b> (String)</b>
+<li><b>bCanIgnore</b><b> (Boolean)</b>
+</ul>
+<hr><a name="ModuleLoaded"><h3>Event</h3><br><h2>ModuleLoaded</h2>
+<hr><a name="ModuleRestore"><h3>Event</h3><br><h2>ModuleRestore</h2>
+<hr><a name="SaveModules"><h3>Event</h3><br><h2>SaveModules</h2>
+<hr><a name="SystemKeyDown"><h3>Event</h3><br><h2>SystemKeyDown</h2>
+<h3>Params</h3>
+<ul>
+<li><b>iKey</b><b> (Integer)</b>
+</ul>
+<hr><a name="TextMessage"><h3>Event</h3><br><h2>TextMessage</h2>
+<h3>Params</h3>
+<ul>
+<li><b>iType</b><b> (Integer)</b>
+<li><b>strMessage</b><b> (String)</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="AddAddonErrorText"><h3>Function</h3><br><h2>AddAddonErrorText()</h2>
+<hr><a name="AlertAppWindow"><h3>Function</h3><br><h2>AlertAppWindow()</h2>
+<hr><a name="AssetFileSizeString"><h3>Function</h3><br><h2>AssetFileSizeString(strFilename)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of of the size.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strFilename</b><b> (String)</b>
+</ul>
+<hr><a name="AssetFileTimeString"><h3>Function</h3><br><h2>AssetFileTimeString(strFilename)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the datetime.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strFilename</b><b> (String)</b>
+</ul>
+<hr><a name="BeginClickStick"><h3>Function</h3><br><h2>BeginClickStick(wndSource, strType, strSprite, nData)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndSource</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+<li><b>strType</b><b> (String)</b>
+<li><b>strSprite</b><b> (String)</b>
+<li><b>nData</b><b> (Integer)</b>
+</ul>
+<hr><a name="BeginDragDrop"><h3>Function</h3><br><h2>BeginDragDrop(wndSource, strType, strSprite, nData)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndSource</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+<li><b>strType</b><b> (String)</b>
+<li><b>strSprite</b><b> (String)</b>
+<li><b>nData</b><b> (Integer)</b>
+</ul>
+<hr><a name="CloseEscapableWindows"><h3>Function</h3><br><h2>CloseEscapableWindows()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of CloseAllEscapableWindows success.</p>
+<hr><a name="CreateTimer"><h3>Function</h3><br><h2>CreateTimer(strTimerName, nInterval, bContinuous)</h2>
+<h3>Description</h3>
+<p>Runs the CreateTimer method specified with strTimerName, nInterval, bContinuous.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strTimerName</b><b> (String)</b>
+<li><b>nInterval</b><b> (Integer)</b>
+<li><b>bContinuous</b><b> (Boolean)</b> - (Default value: true)
+</ul>
+<hr><a name="DisableAddon"><h3>Function</h3><br><h2>DisableAddon()</h2>
+<hr><a name="DoesSpriteExist"><h3>Function</h3><br><h2>DoesSpriteExist()</h2>
+<hr><a name="DPF"><h3>Function</h3><br><h2>DPF()</h2>
+<h3>Description</h3>
+<p>Runs the caller's DebugPrintF on the buffer of the caller.</p>
+<hr><a name="FindWindowByName"><h3>Function</h3><br><h2>FindWindowByName(strWindowName)</h2>
+<h3>Description</h3>
+<p>Returns a new window that is a copy of a window specified by strWindowName.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strWindowName</b><b> (String)</b>
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../WindowControls/Window.htm">Window</a></b> - a copy of a window specified by strWindowName
+</ul>
+<hr><a name="FormatNumber"><h3>Function</h3><br><h2>FormatNumber(oNumber, nDecimals, bCommas)</h2>
+<h3>Description</h3>
+<p>Formats a number to include region-specific notations, such as commas/periods in integers with 4+ digits, and truncates the value to a specific number of decimal places.</p>
+<h3>Params</h3>
+<ul>
+<li><b>oNumber</b><b> (Integer)</b> - The number that needs to be formatted.  This can be either an integer or float.
+<li><b>nDecimals</b><b> (Integer)</b> - The number of decimal places to display
+<li><b>bCommas</b><b> (Boolean)</b> - Determines whether or not commas should be shown in numbers with 4 or more digits
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The formatted number with all relevant punctuation
+</ul>
+<hr><a name="GetAddon"><h3>Function</h3><br><h2>GetAddon()</h2>
+<hr><a name="GetAddonInfo"><h3>Function</h3><br><h2>GetAddonInfo()</h2>
+<hr><a name="GetAPIVersion"><h3>Function</h3><br><h2>GetAPIVersion()</h2>
+<hr><a name="GetAssetFolder"><h3>Function</h3><br><h2>GetAssetFolder()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the asset root folder.</p>
+<hr><a name="GetConsoleVariable"><h3>Function</h3><br><h2>GetConsoleVariable(strVar)</h2>
+<h3>Description</h3>
+<p>Does a lua_push of the variable corresponding to strVar of either type String, CColor, Boolean, Int, UInt, Float, or DWord. Else, nil.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strVar</b><b> (String)</b>
+</ul>
+<hr><a name="GetDisplaySize"><h3>Function</h3><br><h2>GetDisplaySize()</h2>
+<hr><a name="GetGameFonts"><h3>Function</h3><br><h2>GetGameFonts()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with corresponding values to index, name, face, and size.</p>
+<hr><a name="GetMaxResolutionWidth"><h3>Function</h3><br><h2>GetMaxResolutionWidth()</h2>
+<hr><a name="GetMetaKeysDown"><h3>Function</h3><br><h2>GetMetaKeysDown()</h2>
+<hr><a name="GetMinResolutionWidth"><h3>Function</h3><br><h2>GetMinResolutionWidth()</h2>
+<hr><a name="GetMouse"><h3>Function</h3><br><h2>GetMouse()</h2>
+<hr><a name="GetMouseTargetWindow"><h3>Function</h3><br><h2>GetMouseTargetWindow()</h2>
+<hr><a name="GetMoveMetaKey"><h3>Function</h3><br><h2>GetMoveMetaKey()</h2>
+<hr><a name="GetObjectSize"><h3>Function</h3><br><h2>GetObjectSize()</h2>
+<hr><a name="GetPackage"><h3>Function</h3><br><h2>GetPackage()</h2>
+<hr><a name="GetScreenSize"><h3>Function</h3><br><h2>GetScreenSize()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the width then height, or x then y in the case of an AuthoredResolution.</p>
+<hr><a name="GetStrata"><h3>Function</h3><br><h2>GetStrata()</h2>
+<hr><a name="GetString"><h3>Function</h3><br><h2>GetString(strCheck)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the string corresponding to strCheck or strCheck as an int representing stringID.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strCheck</b><b> (Varies)</b> - String or Integer
+</ul>
+<hr><a name="GetTextWidth"><h3>Function</h3><br><h2>GetTextWidth()</h2>
+<hr><a name="GetTickCount"><h3>Function</h3><br><h2>GetTickCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the tick count.</p>
+<hr><a name="GetWindowsInStratum"><h3>Function</h3><br><h2>GetWindowsInStratum()</h2>
+<hr><a name="IsAltKeyDown"><h3>Function</h3><br><h2>IsAltKeyDown()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if alt is down.</p>
+<hr><a name="IsCapsLockOn"><h3>Function</h3><br><h2>IsCapsLockOn()</h2>
+<hr><a name="IsControlKeyDown"><h3>Function</h3><br><h2>IsControlKeyDown()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if ctrl is down.</p>
+<hr><a name="IsShiftKeyDown"><h3>Function</h3><br><h2>IsShiftKeyDown()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if shift is down.</p>
+<hr><a name="IsSpriteLoaded"><h3>Function</h3><br><h2>IsSpriteLoaded()</h2>
+<hr><a name="IsWindowSubclassRegistered"><h3>Function</h3><br><h2>IsWindowSubclassRegistered()</h2>
+<hr><a name="LinkAddon"><h3>Function</h3><br><h2>LinkAddon(pModuleToLink, nLuaHandlerRef)</h2>
+<h3>Description</h3>
+<p>(lives in UiModuleManager of UiModule.cpp)<br>
+Runs pModuleToLink's AddPodInfo specified with nLuaHandlerRef.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pModuleToLink</b><b> (LuaTable)</b>
+<li><b>nLuaHandlerRef</b><b> (LuaTable)</b> - but the Registry Index is immediately converted to an Integer.
+</ul>
+<hr><a name="LoadAnimations"><h3>Function</h3><br><h2>LoadAnimations(strFile)</h2>
+<h3>Description</h3>
+<p>Return the result of an apollo animation manager's ReadXML specified with strFile.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strFile</b><b> (String)</b>
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="LoadForm"><h3>Function</h3><br><h2>LoadForm(strFile, strForm, wndParent, tLuaEventHandler)</h2>
+<h3>Description</h3>
+<p>Loads a window insided the specified form file</p>
+<h3>Params</h3>
+<ul>
+<li><b>strFile</b><b> (String)</b> - Path to the specified xml form file
+<li><b>strForm</b><b> (String)</b> - The name of the window form to be loaded
+<li><b>wndParent</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The parent window of the window to be loaded - The parent window of the window to be loaded
+<li><b>tLuaEventHandler</b><b> (Table)</b> - The Lua object with the window's event handler. Usually "self" - The Lua object with the window's event handler. Usually "self"
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../WindowControls/Window.htm">Window</a></b> - The window object loaded
+</ul>
+<h3>Usage/Example</h3>
+<pre>self.wndMain = Apollo.LoadForm("SampleAddon.xml", "SampleAddonForm", nil, self)
+    
+self.wndMain:Show(false)</pre>
+<hr><a name="LoadGlobalAnchors"><h3>Function</h3><br><h2>LoadGlobalAnchors(strFile)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strFile</b><b> (String)</b>
+</ul>
+<hr><a name="LoadSprites"><h3>Function</h3><br><h2>LoadSprites(strFile, strDoc)</h2>
+<h3>Description</h3>
+<p>Runs the ReadXML method on the apollo manager specified with strFile and strDoc.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strFile</b><b> (String)</b>
+<li><b>strDoc</b><b> (String)</b>
+</ul>
+<hr><a name="LoadTemplates"><h3>Function</h3><br><h2>LoadTemplates()</h2>
+<hr><a name="NoOp"><h3>Function</h3><br><h2>NoOp()</h2>
+<h3>Description</h3>
+<p>Returns 0 and does nothing.</p>
+<hr><a name="ParseInput"><h3>Function</h3><br><h2>ParseInput(strInput)</h2>
+<h3>Description</h3>
+<p>Process the input and return the result  (such as a successful input of a slash command or etc.)</p>
+<h3>Params</h3>
+<ul>
+<li><b>strInput</b><b> (String)</b>
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="RegisterAddon"><h3>Function</h3><br><h2>RegisterAddon(nLuaEventHandler, strLoad, strSave, strRestore)</h2>
+<h3>Description</h3>
+<p>(lives in UiModuleManager of UiModule.cpp)</p>
+<h3>Params</h3>
+<ul>
+<li><b>nLuaEventHandler</b><b> (LuaTable but the Id is immediately converted to an Integer)</b>
+<li><b>strLoad</b><b> (String)</b> - (Default value: OnLoad)
+<li><b>strSave</b><b> (String)</b> - (Default value: OnSave)
+<li><b>strRestore</b><b> (String)</b> - (Default value: OnRestore)
+</ul>
+<hr><a name="RegisterEventHandler"><h3>Function</h3><br><h2>RegisterEventHandler(strEvent, strFunction, tLuaEventHandler)</h2>
+<h3>Description</h3>
+<p>Runs AddEventMapping on an apollo lua event specified by strEvent and strFunction.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strEvent</b><b> (String)</b>
+<li><b>strFunction</b><b> (String)</b>
+<li><b>tLuaEventHandler</b><b> (Table)</b> - (Default value: LUA_NOREF)
+</ul>
+<hr><a name="RegisterPackage"><h3>Function</h3><br><h2>RegisterPackage()</h2>
+<hr><a name="RegisterSlashCommand"><h3>Function</h3><br><h2>RegisterSlashCommand(strCommand, strFunction, tLuaEventHandler)</h2>
+<h3>Description</h3>
+<p>Runs AddEventMapping on an apollo manager specified by strCommand and strFunction.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strCommand</b><b> (String)</b>
+<li><b>strFunction</b><b> (String)</b>
+<li><b>tLuaEventHandler</b><b> (Table)</b> - (Default value: LUA_NOREF)
+</ul>
+<hr><a name="RegisterTimerHandler"><h3>Function</h3><br><h2>RegisterTimerHandler(strTimerName, strFunction, tLuaEventHandler)</h2>
+<h3>Description</h3>
+<p>Runs the RegisterTimerHandler specified with strTimerName and strFunction.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strTimerName</b><b> (String)</b>
+<li><b>strFunction</b><b> (String)</b>
+<li><b>tLuaEventHandler</b><b> (Table)</b> - (Default value: LUA_NOREF)
+</ul>
+<hr><a name="RegisterWindowSubclass"><h3>Function</h3><br><h2>RegisterWindowSubclass()</h2>
+<hr><a name="RemoveEventHandler"><h3>Function</h3><br><h2>RemoveEventHandler()</h2>
+<hr><a name="ResetConsoleVariable"><h3>Function</h3><br><h2>ResetConsoleVariable()</h2>
+<hr><a name="SetConsoleVariable"><h3>Function</h3><br><h2>SetConsoleVariable(strVar, pMD)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strVar</b><b> (String)</b>
+<li><b>pMD</b><b> (Varies)</b> - Checked to see if it is a Number or String or Boolean or CColor
+</ul>
+<hr><a name="SetCursor"><h3>Function</h3><br><h2>SetCursor(pCursor)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>pCursor</b><b> (<a href="../Classes/ApolloCursor.htm">ApolloCursor</a>)</b>
+</ul>
+<hr><a name="SetGlobalAnchor"><h3>Function</h3><br><h2>SetGlobalAnchor(strName, fPoint, nOffset, bOverwrite)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strName</b><b> (String)</b>
+<li><b>fPoint</b><b> (Float)</b> - (Default value: 0.f)
+<li><b>nOffset</b><b> (Integer)</b> - (Default value: 0)
+<li><b>bOverwrite</b><b> (Boolean)</b> - (Default value: true)
+</ul>
+<hr><a name="SetMaxResolutionWidth"><h3>Function</h3><br><h2>SetMaxResolutionWidth()</h2>
+<hr><a name="SetMinResolutionWidth"><h3>Function</h3><br><h2>SetMinResolutionWidth()</h2>
+<hr><a name="SetMoveMetaKey"><h3>Function</h3><br><h2>SetMoveMetaKey()</h2>
+<hr><a name="SetNavTextAnchor"><h3>Function</h3><br><h2>SetNavTextAnchor()</h2>
+<hr><a name="StartTimer"><h3>Function</h3><br><h2>StartTimer(strTimerName)</h2>
+<h3>Description</h3>
+<p>Runs the StartTimer method specified with strTimerName.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strTimerName</b><b> (String)</b>
+</ul>
+<hr><a name="StopTimer"><h3>Function</h3><br><h2>StopTimer(strTimerName)</h2>
+<h3>Description</h3>
+<p>Runs the StopTimer method specified with strTimerName.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strTimerName</b><b> (String)</b>
+</ul>
+<hr><a name="StringToLower"><h3>Function</h3><br><h2>StringToLower()</h2>
+<hr><a name="SuspendAddon"><h3>Function</h3><br><h2>SuspendAddon(nId)</h2>
+<h3>Description</h3>
+<p>(lives in UiModuleManager of UiModule.cpp)</p>
+<h3>Params</h3>
+<ul>
+<li><b>nId</b><b> (Integer converted to a UINT)</b>
+</ul>
+<hr><a name="UnlinkAddon"><h3>Function</h3><br><h2>UnlinkAddon()</h2>
+	</body>
+</html>

@@ -1,0 +1,119 @@
+<html>
+	<HEAD>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</HEAD>
+<html>
+	<head>
+		<title></title>
+		<link href="../style.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<h1>
+			Form Editor</h1>
+		<p>
+			A proprietary visual .xml editor that allows the user to define forms, controls, and their properties.</p>
+		<p>
+			Primary interactions:</p>
+		<ul>
+			<li>
+				The <strong>form list</strong> in the left list pane contains all forms present within the open file with toggles to show or hide their controls.</li>
+			<li>
+				The <strong>canvas</strong> area is used for the creation, modification, and selection of forms and controls.</li>
+			<li>
+				The borders on the canvas represent the <strong>screen space</strong> as it will appear in-game.</li>
+		</ul>
+		<h2>
+			Top Control Panel</h2>
+		<p>
+			The primary controls for creating, ordering, and aligning forms are found along the top of the Houston interface. <strong><em>Note: </em></strong>Using the window creation buttons will add a form to the canvas with any class-specific properties already defined &ndash; this eliminates the guesswork of adding the necessary attributes to a basic window form.</p>
+		<h3>
+			Creation Buttons and Classes: <img alt="" src="FormEditorCreationToolbar.jpg" /></h3>
+		<ul>
+			<li>
+				Create Window</li>
+			<li>
+				Create Button</li>
+			<li>
+				Create Text Edit Box</li>
+			<li>
+				Create Combo Box</li>
+			<li>
+				Create Grid Window</li>
+			<li>
+				Create Progress Bar</li>
+			<li>
+				Create Slider Bar</li>
+			<li>
+				Create Tree Control</li>
+			<li>
+				Create Tab Window</li>
+			<li>
+				Create Game-Specific Control</li>
+		</ul>
+		<h3>
+			List Order Controls: <img alt="" src="FormEditorOrderToolbar.jpg" /></h3>
+		<ul>
+			<li>
+				<strong>Delete Form/Control:</strong> Clicking this button deletes the currently-highlighted form or control and all of its children.</li>
+			<li>
+				<strong>Up:</strong> Moves the highlighted control up one layer in the form list, effectively lowering its position in the draw order.</li>
+			<li>
+				<strong>Down:</strong> Moves the highlighted control down one layer in the form list, placing it higher in the draw order.</li>
+		</ul>
+		<h3>
+			Align Window Controls: <img alt="" src="FormEditorAlignToolbar.jpg" /></h3>
+		<ul>
+			<li>
+				<strong>Align Left Edges:</strong> Aligns multiple selected windows on the left.</li>
+			<li>
+				<strong>Align Right edges: </strong>Aligns multiple selected windows on the right.</li>
+			<li>
+				<strong>Align Top Edges:</strong> Aligns multiple selected windows by their top edge.</li>
+			<li>
+				<strong>Align Bottom Edges: </strong>Aligns multiple selected windows by their bottom edge.</li>
+			<li>
+				<strong>Center Vertically: </strong>Centers all selected windows vertically within their parent.</li>
+			<li>
+				<strong>Center Horizontally: </strong>Centers all selected windows horizontally within their parent.</li>
+			<li>
+				<strong>Distribute Horizontally: </strong>Evenly spaces out three or more selected windows (horizontally).</li>
+			<li>
+				<strong>Distribute Vertically: </strong>Evenly spaces out three or more selected windows (vertically).</li>
+			<li>
+				<strong>Match Width: </strong>Sets all selected windows to the same width as the highest in the form list.</li>
+			<li>
+				<strong>Match Height: </strong>Sets all selected windows to the same height as the highest in the form list.</li>
+			<li>
+				<strong>Match Size:</strong> Sets all selected windows to the same height and width as the highest in the form list.<span _fck_bookmark="1" id="cke_bm_1499E" style="display: none;">&nbsp;</span></li>
+		</ul>
+		<h2>
+			Canvas View Controls</h2>
+		<p>
+			The canvas area of Houston is used for defining the position and sizes of forms and controls. It contains a white outline meant to represent the screen space when the game is run &ndash; as the client can be resized, this simply a guide and not a 1:1 representation of the screen resolution. The margins of the screen space border can be adjusted under <em>View &gt; Margins</em>; in addition, the following keyboard and mouse inputs are available for altering the canvas view:</p>
+		<ul>
+			<li>
+				<strong>Mouse Wheel Up:</strong> Zoom in.</li>
+			<li>
+				<strong>Mouse Wheel Down:</strong> Zoom out.</li>
+			<li>
+				<strong>Mouse Wheel Click + Drag:</strong> Pan across the canvas.</li>
+			<li>
+				<strong>Spacebar:</strong> Resets the canvas view.</li>
+		</ul>
+		<h2>
+			Selecting Forms and Controls</h2>
+		<p>
+			Forms and controls can be selecting by clicking directly on them, clicking them in the form list, or by click-dragging to create a marquee which will select all forms/controls within it.</p>
+		<h2>
+			Form List</h2>
+		<p>
+			Appearing on the left side of the screen is the form list &ndash; a tree listing of all forms and the children (controls) they contain. Controls can have children, as well, though it&rsquo;s inadvisable to layer further down than the grandchild level.</p>
+		<p>
+			Controls are listed in their approximate draw order<a href="#_ftn1" name="_ftnref1" title=""></a>, with the lowest level (drawn first) at the top and the highest (drawn last) level at the bottom. The up and down buttons located within the top control panel will shift controls higher or lower amongst controls with the same parent.</p>
+		<h2>
+			Includes</h2>
+		<p>
+			&ldquo;Includes&rdquo; are sprite, template, and font files that are referenced to supply their contents to one or more .xml form files. Templates and fonts rarely need to be changed when creating standard UI components; some sprite files are referenced for all form files (including the BaseKit and ClientSprites), though newly-created sprites will have to be added to properly appear. To accomplish this, simply access <em>Files &gt; Add&nbsp; </em>and select the necessary file.</p></body>
+</html>
+
+</html>

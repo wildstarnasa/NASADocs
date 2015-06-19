@@ -1,0 +1,101 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		CommunicatorLib	</h1>
+<a name="Events"/><hr><a name="Communicator_EndIncoming"><h3>Event</h3><br><h2>Communicator_EndIncoming</h2>
+<hr><a name="Communicator_ShowQuestMsg"><h3>Event</h3><br><h2>Communicator_ShowQuestMsg</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nMsgId</b><b> (Integer)</b>
+<li><b>nCreatureId</b><b> (Integer)</b>
+<li><b>nItemId</b><b> (Integer)</b>
+<li><b>nQuestId</b><b> (Integer)</b>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="Communicator_ShowSpamMsg"><h3>Event</h3><br><h2>Communicator_ShowSpamMsg</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nMsgId</b><b> (Integer)</b>
+<li><b>nCreatureId</b><b> (Integer)</b>
+<li><b>nItemId</b><b> (Integer)</b>
+<li><b>strText</b><b> (String)</b>
+<li><b>bPriorty</b><b> (Boolean)</b>
+</ul>
+<hr><a name="Communicator_SpamVOEnded"><h3>Event</h3><br><h2>Communicator_SpamVOEnded</h2>
+<hr><a name="Communicator_UpdateCallback"><h3>Event</h3><br><h2>Communicator_UpdateCallback</h2>
+<h3>Params</h3>
+<ul>
+<li><b>bHasCallback</b><b> (Boolean)</b>
+<li><b>bRedeemsQuest</b><b> (Boolean)</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="CallbackLastContact"><h3>Function</h3><br><h2>CallbackLastContact()</h2>
+<h3>Description</h3>
+<p>Begin a communicator message (offering a quest) for the last message received.</p>
+<hr><a name="CallContact"><h3>Function</h3><br><h2>CallContact(pQuest)</h2>
+<h3>Description</h3>
+<p>Begin a communicator message (offering a quest) for the specified quest.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pQuest</b><b> (<a href="../Classes/Quest.htm">Quest</a>)</b>
+</ul>
+<hr><a name="Close"><h3>Function</h3><br><h2>Close()</h2>
+<h3>Description</h3>
+<p>Closes the communicator message dialog</p>
+<hr><a name="GetMessageLayoutForQuest"><h3>Function</h3><br><h2>GetMessageLayoutForQuest(quest)</h2>
+<h3>Description</h3>
+<p>Returns a new table containing information about how a quest communicator call should appear</p>
+<h3>Params</h3>
+<ul>
+<li><b>quest</b><b> (<a href="../Classes/Quest.htm">Quest</a>)</b>
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>portraitPlacement</b>
+<li><b>overlay</b>
+<li><b>background</b>
+</ul>
+</ul>
+<hr><a name="GetMessageLayoutForSpam"><h3>Function</h3><br><h2>GetMessageLayoutForSpam(msgId)</h2>
+<h3>Description</h3>
+<p>Returns a new table containing information about how a spam communicator call should appear</p>
+<h3>Params</h3>
+<ul>
+<li><b>msgId</b><b> (Integer)</b>
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>duration</b>
+<li><b>portraitPlacement</b>
+<li><b>overlay</b>
+<li><b>background</b>
+</ul>
+</ul>
+<hr><a name="GetPathMissionDelivered"><h3>Function</h3><br><h2>GetPathMissionDelivered()</h2>
+<hr><a name="IgnoreCallback"><h3>Function</h3><br><h2>IgnoreCallback()</h2>
+<h3>Description</h3>
+<p>Cancel an incoming communicator message.</p>
+<hr><a name="IsVisible"><h3>Function</h3><br><h2>IsVisible()</h2>
+<h3>Description</h3>
+<p>Returns whether or not a communicator message is currently being displayed.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="PlaySpamVo"><h3>Function</h3><br><h2>PlaySpamVo(msgId)</h2>
+<h3>Description</h3>
+<p>Plays the specified spam communicator message.</p>
+<h3>Params</h3>
+<ul>
+<li><b>msgId</b><b> (Integer)</b>
+</ul>
+<hr><a name="QueueNextCall"><h3>Function</h3><br><h2>QueueNextCall()</h2>
+	</body>
+</html>

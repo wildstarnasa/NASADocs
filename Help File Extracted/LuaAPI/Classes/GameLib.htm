@@ -1,0 +1,1408 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		GameLib	</h1>
+<a name="Enums"/><hr><a name="CityDirectionType"><h3>Enum</h3><br><h2>CityDirectionType</h2>
+<ul>
+<li><b>Mailbox</b>
+<li><b>Bank</b>
+<li><b>AuctionHouse</b>
+<li><b>CommodityMarket</b>
+<li><b>AbilityVendor</b>
+<li><b>Tradeskill</b>
+<li><b>General</b>
+<li><b>HousingNpc</b>
+<li><b>Transport</b>
+</ul>
+<hr><a name="CodeEnumAddonSaveLevel"><h3>Enum</h3><br><h2>CodeEnumAddonSaveLevel</h2>
+<ul>
+<li><b>General</b>
+<li><b>Account</b>
+<li><b>Realm</b>
+<li><b>Character</b>
+</ul>
+<hr><a name="CodeEnumClass"><h3>Enum</h3><br><h2>CodeEnumClass</h2>
+<ul>
+<li><b>Warrior</b>
+<li><b>Engineer</b>
+<li><b>Esper</b>
+<li><b>Medic</b>
+<li><b>Stalker</b>
+<li><b>Spellslinger</b>
+</ul>
+<hr><a name="CodeEnumCombatResult"><h3>Enum</h3><br><h2>CodeEnumCombatResult</h2>
+<ul>
+<li><b>Avoid</b>
+<li><b>Critical</b>
+<li><b>Hit</b>
+<li><b>NeedsTelegraphEvaluation</b>
+<li><b>OutsideTelegraph</b>
+<li><b>OutsideTelegraphInvalid</b>
+<li><b>InsideTelegraph</b>
+<li><b>NeedsHitResultCalc</b>
+</ul>
+<hr><a name="CodeEnumConfirmButtonType"><h3>Enum</h3><br><h2>CodeEnumConfirmButtonType</h2>
+<ul>
+<li><b>SendMail</b>
+<li><b>CommitTrade</b>
+<li><b>DeleteItem</b>
+<li><b>SalvageItem</b>
+<li><b>EquipItem</b>
+<li><b>CraftingAbandon</b>
+<li><b>MarketplaceAuctionSellSubmit</b>
+<li><b>MarketplaceAuctionBuySubmit</b>
+<li><b>MarketplaceCommoditiesSubmit</b>
+<li><b>AccountClaimItem</b>
+<li><b>AccountTakeItem</b>
+<li><b>AccountGiftItem</b>
+<li><b>AccountGiftItemReturn</b>
+<li><b>CREDDExchangeSubmit</b>
+<li><b>AccountCreddRedeem</b>
+<li><b>CopyToClipboard</b>
+<li><b>MatchingGameRespondToPending</b>
+<li><b>ReportPlayer</b>
+<li><b>GenericMapNodeChoose</b>
+<li><b>SubmitSupportTicket</b>
+<li><b>LootItem</b>
+</ul>
+<hr><a name="CodeEnumDamageType"><h3>Enum</h3><br><h2>CodeEnumDamageType</h2>
+<ul>
+<li><b>Heal</b>
+<li><b>Fall</b>
+<li><b>Suffocate</b>
+<li><b>Physical</b>
+<li><b>Tech</b>
+<li><b>Magic</b>
+<li><b>HealShields</b>
+</ul>
+<hr><a name="CodeEnumDuelState"><h3>Enum</h3><br><h2>CodeEnumDuelState</h2>
+<ul>
+<li><b>None</b>
+<li><b>Pending</b>
+<li><b>WaitingToAccept</b>
+<li><b>Dueling</b>
+</ul>
+<hr><a name="CodeEnumEquippedItems"><h3>Enum</h3><br><h2>CodeEnumEquippedItems</h2>
+<ul>
+<li><b>Chest</b>
+<li><b>Legs</b>
+<li><b>Head</b>
+<li><b>Shoulder</b>
+<li><b>Feet</b>
+<li><b>Hands</b>
+<li><b>WeaponTool</b>
+<li><b>WeaponAttachment</b>
+<li><b>System</b>
+<li><b>Augment</b>
+<li><b>Implant</b>
+<li><b>Gadget</b>
+<li><b>Shields</b>
+<li><b>WeaponPrimary</b>
+<li><b>Bag0</b>
+<li><b>Bag1</b>
+<li><b>Bag2</b>
+<li><b>Bag3</b>
+<li><b>BankBag0</b>
+<li><b>BankBag1</b>
+<li><b>BankBag2</b>
+<li><b>BankBag3</b>
+<li><b>BankBag4</b>
+</ul>
+<hr><a name="CodeEnumExitEvent"><h3>Enum</h3><br><h2>CodeEnumExitEvent</h2>
+<ul>
+<li><b>None</b>
+<li><b>Camp</b>
+<li><b>Quit</b>
+</ul>
+<hr><a name="CodeEnumGameCommandType"><h3>Enum</h3><br><h2>CodeEnumGameCommandType</h2>
+<ul>
+<li><b>GadgetAbility</b>
+<li><b>DefaultAttack</b>
+<li><b>ClassInnateAbility</b>
+<li><b>ActivateTarget</b>
+<li><b>FollowTarget</b>
+<li><b>Sprint</b>
+<li><b>ToggleWalk</b>
+<li><b>Dismount</b>
+<li><b>Vacuum</b>
+<li><b>PathAction</b>
+<li><b>ToggleScannerBot</b>
+<li><b>DashForward</b>
+<li><b>DashBackward</b>
+<li><b>DashLeft</b>
+<li><b>DashRight</b>
+<li><b>PathAction2</b>
+<li><b>Interact</b>
+<li><b>GoToBind</b>
+<li><b>GoToHouse</b>
+<li><b>EscapeHouse</b>
+<li><b>GoToWarplot</b>
+<li><b>WarplotBossTokenUI</b>
+<li><b>SummonMount</b>
+<li><b>UsePotion</b>
+<li><b>GoToIllium</b>
+<li><b>GoToThayd</b>
+<li><b>HousingLandscape</b>
+<li><b>HousingRemodel</b>
+<li><b>HousingCrate</b>
+<li><b>HousingVendor</b>
+<li><b>HousingList</b>
+<li><b>HousingEditMode</b>
+</ul>
+<hr><a name="CodeEnumGenericError"><h3>Enum</h3><br><h2>CodeEnumGenericError</h2>
+<ul>
+<li><b>Ok</b>
+<li><b>Params</b>
+<li><b>PlayerBusy</b>
+<li><b>UnknownTargetUnit</b>
+<li><b>TargetFaction</b>
+<li><b>DbFailure</b>
+<li><b>Item_BadId</b>
+<li><b>Vendor_StackSize</b>
+<li><b>Vendor_SoldOut</b>
+<li><b>Vendor_UnknownItem</b>
+<li><b>Vendor_FailedPreReq</b>
+<li><b>Vendor_NotAVendor</b>
+<li><b>Vendor_TooFar</b>
+<li><b>Vendor_BadItemRec</b>
+<li><b>Vendor_NotEnoughToFillQuantity</b>
+<li><b>Vendor_NotEnoughCash</b>
+<li><b>Vendor_UniqueConstraint</b>
+<li><b>Vendor_ItemLocked</b>
+<li><b>Vendor_IWontBuyThat</b>
+<li><b>Vendor_NoQuantity</b>
+<li><b>Vendor_BagIsNotEmpty</b>
+<li><b>Item_OverFlowChestCreated</b>
+<li><b>Item_InventoryFull</b>
+<li><b>Item_UnknownItem</b>
+<li><b>Item_QuestViolation</b>
+<li><b>Item_Unique</b>
+<li><b>Item_NotValidforSlot</b>
+<li><b>Item_Locked</b>
+<li><b>Item_AlreadyEquipped</b>
+<li><b>Item_NotEquipped</b>
+<li><b>Item_BagMustBeEmpty</b>
+<li><b>Item_CannotFindBag</b>
+<li><b>Item_BagToSmall</b>
+<li><b>Item_CantPutBagInItself</b>
+<li><b>Item_WrongRace</b>
+<li><b>Item_WrongClass</b>
+<li><b>Item_FailedProficiency</b>
+<li><b>Item_LevelToLow</b>
+<li><b>Embark_PlayerAlreadyinSeat</b>
+<li><b>Embark_PlayerUnableToEmbark</b>
+<li><b>Embark_InvalidVehicleUnit</b>
+<li><b>Embark_NoSplineForTaxi</b>
+<li><b>Embark_VehicleIsBroken</b>
+<li><b>Embark_InvalidSeat</b>
+<li><b>Embark_SeatTaken</b>
+<li><b>Embark_SeatEmpty</b>
+<li><b>Embark_NotInRange</b>
+<li><b>Embark_CannotDoWhileOnTaxi</b>
+<li><b>Mail_CannotFindPlayer</b>
+<li><b>Mail_FailedToCreate</b>
+<li><b>Vendor_CuratorOnlyBuysRelics</b>
+<li><b>Vendor_CannotBuyRelics</b>
+<li><b>Player_CantDoWhileDead</b>
+<li><b>Vendor_NoBuyer</b>
+<li><b>Vendor_NoVendor</b>
+<li><b>Vendor_Buyer_NoActionCC</b>
+<li><b>Vendor_Vendor_NoActionCC</b>
+<li><b>Vendor_Vendor_Disposition</b>
+<li><b>Player_CannotWhileInCombat</b>
+<li><b>Mail_Busy</b>
+<li><b>Mail_MailBoxOutOfRange</b>
+<li><b>Mail_NoAttachment</b>
+<li><b>Mail_InsufficientFunds</b>
+<li><b>Mail_InvalidInventorySlot</b>
+<li><b>Mail_UniqueExists</b>
+<li><b>Mail_CannotDelete</b>
+<li><b>Mail_DoesNotExist</b>
+<li><b>Item_CannotBeSalvaged</b>
+<li><b>Conversion_BadConversionRec</b>
+<li><b>Conversion_CannotRemoveSource</b>
+<li><b>Conversion_CannotAddTarget</b>
+<li><b>Faction_NotEnoughRep</b>
+<li><b>Item_NoItems</b>
+<li><b>Craft_TierTooLow</b>
+<li><b>Craft_MissingMaterials</b>
+<li><b>Craft_IncompleteCircuit</b>
+<li><b>Craft_SocketNotModdable</b>
+<li><b>Craft_DuplicateChip</b>
+<li><b>DisEmbark_PlayerNotInWorld</b>
+<li><b>Item_NeedsRepair</b>
+<li><b>Craft_TooManyAdditives</b>
+<li><b>Item_SlotDisabled</b>
+<li><b>Matching_NoRoleSelected</b>
+<li><b>Instance_NotFound</b>
+<li><b>Mail_CannotTransferItem</b>
+<li><b>Mail_InvalidText</b>
+<li><b>Mail_CanNotHaveCoDAndGift</b>
+<li><b>Reserved02</b>
+<li><b>Reserved03</b>
+<li><b>Reserved04</b>
+<li><b>Auction_NotReady</b>
+<li><b>Auction_CannotFillOrder</b>
+<li><b>Auction_TooManyOrders</b>
+<li><b>Auction_OrderTooBig</b>
+<li><b>Auction_NotFound</b>
+<li><b>Auction_BidTooLow</b>
+<li><b>Auction_OwnItem</b>
+<li><b>Auction_BidTooHigh</b>
+<li><b>Auction_AlreadyHasBid</b>
+<li><b>Mail_InvalidDeliverySpeed</b>
+<li><b>Housing_InvalidDecorPlacement</b>
+<li><b>Instance_LimitExceeded</b>
+<li><b>Craft_UnknownSchematic</b>
+<li><b>Craft_MicrochipInvalidSocket</b>
+<li><b>Craft_MicrochipInvalidSlot</b>
+<li><b>Craft_FailChanceTooHigh</b>
+<li><b>Instance_EncounterInProgress</b>
+<li><b>Instance_Full</b>
+<li><b>Housing_CrateFull</b>
+<li><b>TargetBusy</b>
+<li><b>Mail_CannotReturn</b>
+<li><b>Mail_CannotMailSelf</b>
+<li><b>Faction_AtMax</b>
+<li><b>Housing_MaxDecor</b>
+<li><b>Auction_ItemAuctionDisabled</b>
+<li><b>Auction_CommodityDisabled</b>
+<li><b>Mail_CannotMailTrialAccount</b>
+<li><b>MissingEntitlement</b>
+<li><b>Instance_TransferPending</b>
+<li><b>Instance_InvalidDestination</b>
+<li><b>Instance_NotInGroup</b>
+<li><b>Instance_DifferentSavedInstance</b>
+<li><b>Instance_InstanceInUse</b>
+<li><b>Item_WrongFaction</b>
+<li><b>Instance_WrongLevel</b>
+<li><b>Mail_Squelched</b>
+</ul>
+<hr><a name="CodeEnumInputAction"><h3>Enum</h3><br><h2>CodeEnumInputAction</h2>
+<ul>
+<li><b>Nothing</b>
+<li><b>Options</b>
+<li><b>CharacterPanel</b>
+<li><b>Inventory</b>
+<li><b>QuestLog</b>
+<li><b>Communicator</b>
+<li><b>Escape</b>
+<li><b>Shift</b>
+<li><b>Control</b>
+<li><b>Select</b>
+<li><b>MouseInteract</b>
+<li><b>Interact</b>
+<li><b>HostileInteract</b>
+<li><b>TargetSelf</b>
+<li><b>TargetParty1</b>
+<li><b>TargetParty2</b>
+<li><b>TargetParty3</b>
+<li><b>TargetParty4</b>
+<li><b>TargetNextEnemy</b>
+<li><b>TargetPreviousEnemy</b>
+<li><b>TargetNextFriend</b>
+<li><b>TargetPreviousFriend</b>
+<li><b>AssistTarget</b>
+<li><b>MoveForward</b>
+<li><b>MoveBackward</b>
+<li><b>StrafeLeft</b>
+<li><b>StrafeRight</b>
+<li><b>TurnLeft</b>
+<li><b>TurnRight</b>
+<li><b>PitchUp</b>
+<li><b>PitchDown</b>
+<li><b>MouseTurn</b>
+<li><b>SprintModifier</b>
+<li><b>VacuumLoot</b>
+<li><b>PathAction</b>
+<li><b>Jump</b>
+<li><b>Dismount</b>
+<li><b>ToggleSit</b>
+<li><b>ToggleWalk</b>
+<li><b>ToggleAutoRun</b>
+<li><b>CameraUp</b>
+<li><b>CameraDown</b>
+<li><b>CameraLeft</b>
+<li><b>CameraRight</b>
+<li><b>CameraIn</b>
+<li><b>CameraOut</b>
+<li><b>MouseLook</b>
+<li><b>CastObjectiveAbility</b>
+<li><b>LimitedActionSet1</b>
+<li><b>LimitedActionSet2</b>
+<li><b>LimitedActionSet3</b>
+<li><b>LimitedActionSet4</b>
+<li><b>LimitedActionSet5</b>
+<li><b>LimitedActionSet6</b>
+<li><b>LimitedActionSet7</b>
+<li><b>LimitedActionSet8</b>
+<li><b>CastGadgetAbility</b>
+<li><b>CastPathAbility</b>
+<li><b>ActionBar0_Unused1</b>
+<li><b>ActionBar0_Unused2</b>
+<li><b>ActionBar1_Slot1</b>
+<li><b>ActionBar1_Slot2</b>
+<li><b>ActionBar1_Slot3</b>
+<li><b>ActionBar1_Slot4</b>
+<li><b>ActionBar1_Slot5</b>
+<li><b>ActionBar1_Slot6</b>
+<li><b>ActionBar1_Slot7</b>
+<li><b>ActionBar1_Slot8</b>
+<li><b>ActionBar1_Slot9</b>
+<li><b>ActionBar1_Slot10</b>
+<li><b>ActionBar1_Slot11</b>
+<li><b>ActionBar1_Slot12</b>
+<li><b>ActionBar2_Slot1</b>
+<li><b>ActionBar2_Slot2</b>
+<li><b>ActionBar2_Slot3</b>
+<li><b>ActionBar2_Slot4</b>
+<li><b>ActionBar2_Slot5</b>
+<li><b>ActionBar2_Slot6</b>
+<li><b>ActionBar2_Slot7</b>
+<li><b>ActionBar2_Slot8</b>
+<li><b>ActionBar2_Slot9</b>
+<li><b>ActionBar2_Slot10</b>
+<li><b>ActionBar2_Slot11</b>
+<li><b>ActionBar2_Slot12</b>
+<li><b>ActionBar3_Slot1</b>
+<li><b>ActionBar3_Slot2</b>
+<li><b>ActionBar3_Slot3</b>
+<li><b>ActionBar3_Slot4</b>
+<li><b>ActionBar3_Slot5</b>
+<li><b>ActionBar3_Slot6</b>
+<li><b>ActionBar3_Slot7</b>
+<li><b>ActionBar3_Slot8</b>
+<li><b>ActionBar3_Slot9</b>
+<li><b>ActionBar3_Slot10</b>
+<li><b>ActionBar3_Slot11</b>
+<li><b>ActionBar3_Slot12</b>
+<li><b>Unused1</b>
+<li><b>Unused2</b>
+<li><b>Unused3</b>
+<li><b>Unused4</b>
+<li><b>Unused5</b>
+<li><b>Unused6</b>
+<li><b>SetStance1</b>
+<li><b>SetStance2</b>
+<li><b>SetStance3</b>
+<li><b>Unused7</b>
+<li><b>Unused20</b>
+<li><b>Unused11</b>
+<li><b>ToggleInterface</b>
+<li><b>ToggleFramerate</b>
+<li><b>Unused21</b>
+<li><b>Unused23</b>
+<li><b>Unused22</b>
+<li><b>WorldMap</b>
+<li><b>LimitedActionSetBuilder</b>
+<li><b>Unused8</b>
+<li><b>Unused9</b>
+<li><b>ExplicitMouseLook</b>
+<li><b>ToggleWeapons</b>
+<li><b>LeftMouseHold</b>
+<li><b>RightMouseHold</b>
+<li><b>CenterMouseHold</b>
+<li><b>CastInnateAbility</b>
+<li><b>MarkingMenuLeftClick</b>
+<li><b>MarkingMenuLeftHold</b>
+<li><b>MarkingMenuRightClick</b>
+<li><b>MarkingMenuRightHold</b>
+<li><b>HUDShowQuests</b>
+<li><b>ToggleCameraAngle</b>
+<li><b>ToggleScannerBot</b>
+<li><b>Codex</b>
+<li><b>PathAction2</b>
+<li><b>FloatingActionBar_Slot1</b>
+<li><b>FloatingActionBar_Slot2</b>
+<li><b>FloatingActionBar_Slot3</b>
+<li><b>FloatingActionBar_Slot4</b>
+<li><b>FloatingActionBar_Slot5</b>
+<li><b>FloatingActionBar_Slot6</b>
+<li><b>ScaleRampedMotion</b>
+<li><b>ScaleRampedRotation</b>
+<li><b>BrakeRampedMotion</b>
+<li><b>BrakeRampedRotation</b>
+<li><b>MoveDown</b>
+<li><b>GroupFinder</b>
+<li><b>CastMiscSpell</b>
+<li><b>SetTargetMark1</b>
+<li><b>SetTargetMark2</b>
+<li><b>SetTargetMark3</b>
+<li><b>SetTargetMark4</b>
+<li><b>SetTargetMark5</b>
+<li><b>SetTargetMark6</b>
+<li><b>SetTargetMark7</b>
+<li><b>SetTargetMark8</b>
+<li><b>DashForward</b>
+<li><b>DashBackward</b>
+<li><b>DashLeft</b>
+<li><b>DashRight</b>
+<li><b>Unused12</b>
+<li><b>Unused13</b>
+<li><b>ChatReply</b>
+<li><b>ChatReWhisper</b>
+<li><b>Unused14</b>
+<li><b>Unused15</b>
+<li><b>Unused16</b>
+<li><b>Unused17</b>
+<li><b>Unused18</b>
+<li><b>Unused19</b>
+<li><b>TargetNearestEnemy</b>
+<li><b>TargetNearestFriend</b>
+<li><b>Achievements</b>
+<li><b>AuctionListings</b>
+<li><b>Challenges</b>
+<li><b>Unused10</b>
+<li><b>FriendsList</b>
+<li><b>Lore</b>
+<li><b>Mail</b>
+<li><b>Path</b>
+<li><b>Reputation</b>
+<li><b>Social</b>
+<li><b>Tradeskills</b>
+<li><b>DirectionalDash</b>
+<li><b>PrimaryPetActionBar_Slot1</b>
+<li><b>PrimaryPetActionBar_Slot2</b>
+<li><b>PrimaryPetActionBar_Slot3</b>
+<li><b>PrimaryPetActionBar_Slot4</b>
+<li><b>PrimaryPetActionBar_Slot5</b>
+<li><b>PrimaryPetActionBar_Slot6</b>
+<li><b>GhostModeMap</b>
+<li><b>Mount</b>
+<li><b>UsePotion</b>
+<li><b>Guild</b>
+<li><b>StunBreakoutUp</b>
+<li><b>StunBreakoutDown</b>
+<li><b>StunBreakoutLeft</b>
+<li><b>StunBreakoutRight</b>
+</ul>
+<hr><a name="CodeEnumInputDevice"><h3>Enum</h3><br><h2>CodeEnumInputDevice</h2>
+<ul>
+<li><b>None</b>
+<li><b>Keyboard</b>
+<li><b>Mouse</b>
+</ul>
+<hr><a name="CodeEnumInputEventType"><h3>Enum</h3><br><h2>CodeEnumInputEventType</h2>
+<ul>
+<li><b>Raw</b>
+<li><b>Click</b>
+<li><b>Hold</b>
+<li><b>DoubleClick</b>
+<li><b>DoubleHold</b>
+<li><b>Rapid</b>
+</ul>
+<hr><a name="CodeEnumInputKeyLookupGroup"><h3>Enum</h3><br><h2>CodeEnumInputKeyLookupGroup</h2>
+<ul>
+<li><b>Main</b>
+<li><b>StunBreakoutGameplay</b>
+<li><b>Count</b>
+<li><b>First</b>
+<li><b>Last</b>
+</ul>
+<hr><a name="CodeEnumInputModifier"><h3>Enum</h3><br><h2>CodeEnumInputModifier</h2>
+<ul>
+<li><b>Shift</b>
+<li><b>Control</b>
+<li><b>Alt</b>
+</ul>
+<hr><a name="CodeEnumInputModifierScancode"><h3>Enum</h3><br><h2>CodeEnumInputModifierScancode</h2>
+<ul>
+<li><b>LeftShift</b>
+<li><b>LeftCtrl</b>
+<li><b>LeftAlt</b>
+<li><b>RightShift</b>
+<li><b>RightCtrl</b>
+<li><b>RightAlt</b>
+</ul>
+<hr><a name="CodeEnumInputMouse"><h3>Enum</h3><br><h2>CodeEnumInputMouse</h2>
+<ul>
+<li><b>Left</b>
+<li><b>Right</b>
+<li><b>Middle</b>
+<li><b>X1</b>
+<li><b>X2</b>
+<li><b>WheelUp</b>
+<li><b>WheelDown</b>
+</ul>
+<hr><a name="CodeEnumInputSets"><h3>Enum</h3><br><h2>CodeEnumInputSets</h2>
+<ul>
+<li><b>Default1</b>
+<li><b>Default2</b>
+<li><b>Default3</b>
+<li><b>Account</b>
+<li><b>Character</b>
+<li><b>Count</b>
+</ul>
+<hr><a name="CodeEnumItemSlots"><h3>Enum</h3><br><h2>CodeEnumItemSlots</h2>
+<ul>
+<li><b>Chest</b>
+<li><b>Legs</b>
+<li><b>Head</b>
+<li><b>Shoulder</b>
+<li><b>Feet</b>
+<li><b>Hands</b>
+<li><b>Tool</b>
+<li><b>Weapon</b>
+<li><b>Shields</b>
+<li><b>Gadget</b>
+<li><b>Attachment</b>
+<li><b>System</b>
+<li><b>Augment</b>
+<li><b>Implant</b>
+</ul>
+<hr><a name="CodeEnumMapOverlayType"><h3>Enum</h3><br><h2>CodeEnumMapOverlayType</h2>
+<ul>
+<li><b>Unit</b>
+<li><b>Object</b>
+<li><b>PathObjective</b>
+<li><b>QuestObjective</b>
+</ul>
+<hr><a name="CodeEnumMissType"><h3>Enum</h3><br><h2>CodeEnumMissType</h2>
+<ul>
+<li><b>Dodge</b>
+</ul>
+<hr><a name="CodeEnumPetStance"><h3>Enum</h3><br><h2>CodeEnumPetStance</h2>
+<ul>
+<li><b>Assist</b>
+<li><b>Stay</b>
+<li><b>Passive</b>
+<li><b>Defensive</b>
+<li><b>Aggressive</b>
+</ul>
+<hr><a name="CodeEnumRace"><h3>Enum</h3><br><h2>CodeEnumRace</h2>
+<ul>
+<li><b>Human</b>
+<li><b>Granok</b>
+<li><b>Aurin</b>
+<li><b>Draken</b>
+<li><b>Mechari</b>
+<li><b>Mordesh</b>
+<li><b>Chua</b>
+</ul>
+<hr><a name="CodeEnumRecallCommand"><h3>Enum</h3><br><h2>CodeEnumRecallCommand</h2>
+<ul>
+<li><b>BindPoint</b>
+<li><b>House</b>
+<li><b>Warplot</b>
+<li><b>Illium</b>
+<li><b>Thayd</b>
+</ul>
+<hr><a name="CodeEnumStoryPanel"><h3>Enum</h3><br><h2>CodeEnumStoryPanel</h2>
+<ul>
+<li><b>Default</b>
+<li><b>Low</b>
+<li><b>Center</b>
+<li><b>FullScreen</b>
+<li><b>Whiteout</b>
+<li><b>Urgent</b>
+<li><b>FullScreenBlackNoFlash</b>
+<li><b>Informational</b>
+</ul>
+<hr><a name="CodeEnumStoryPanelStyle"><h3>Enum</h3><br><h2>CodeEnumStoryPanelStyle</h2>
+<ul>
+<li><b>Default</b>
+<li><b>Paper</b>
+<li><b>Electronic</b>
+<li><b>Eldan</b>
+<li><b>Arcane</b>
+<li><b>Natural</b>
+<li><b>Exile</b>
+<li><b>Dominion</b>
+</ul>
+<hr><a name="CodeEnumTutorial"><h3>Enum</h3><br><h2>CodeEnumTutorial</h2>
+<ul>
+<li><b>Codex</b>
+<li><b>CharacterPanel</b>
+<li><b>AbilityWindow</b>
+<li><b>Crafting_UI_Tutorial</b>
+<li><b>Special_Ability_Chips</b>
+<li><b>Tradeskill_Codex_Tutorial</b>
+<li><b>Crafting_Components_Tutorial</b>
+<li><b>Crafting_Station_Tutorial</b>
+<li><b>Basic_Salvaging_Tutorial</b>
+<li><b>QuestCommunicatorGiven</b>
+<li><b>QuestAccepted</b>
+<li><b>QuestAchieved</b>
+<li><b>QuestBotched</b>
+<li><b>QuestCommunicatorReceived</b>
+<li><b>ChallengeUnlocked</b>
+<li><b>ChallengeCompleted</b>
+<li><b>ChallengeRewardPanel</b>
+<li><b>AchievementCompleted</b>
+<li><b>Telegraphs</b>
+<li><b>NewBindpoint</b>
+<li><b>Path_MissionComplete</b>
+<li><b>Path_EpisodeComplete</b>
+<li><b>Soldier_MissionUnlock</b>
+<li><b>Soldier_TowerDefense</b>
+<li><b>Soldier_Assassinate</b>
+<li><b>Soldier_SWAT</b>
+<li><b>Soldier_Demolition</b>
+<li><b>Soldier_Rescue</b>
+<li><b>Explorer_MissionUnlock</b>
+<li><b>Explorer_Vista</b>
+<li><b>Explorer_ClaimTerritory</b>
+<li><b>Explorer_Door</b>
+<li><b>Explorer_ScavengerHunt</b>
+<li><b>Explorer_PowerMap</b>
+<li><b>Scientist_FieldStudy</b>
+<li><b>Settler_MissionUnlock</b>
+<li><b>Settler_Infrastructure</b>
+<li><b>Settler_DepotActivate</b>
+<li><b>Death</b>
+<li><b>Hazards</b>
+<li><b>PublicEventStart</b>
+<li><b>GalacticArchive_NewEntry</b>
+<li><b>Soldier_StopTheThieves</b>
+<li><b>Soldier_WhackAMole</b>
+<li><b>Farmer_Powershrooms</b>
+<li><b>General_Quest_SpellShortcut</b>
+<li><b>CoordinateCrafting</b>
+<li><b>CombatBuff</b>
+<li><b>General_Social</b>
+<li><b>QuestCommunicatorMissed</b>
+<li><b>MailMenu</b>
+<li><b>CSI_PressAndHold</b>
+<li><b>CSI_RapidTapping</b>
+<li><b>CSI_PrecisionTapping</b>
+<li><b>CSI_Memory</b>
+<li><b>CSI_KeyPad</b>
+<li><b>CSI_Metronome</b>
+<li><b>QuestCommunicatorDeclined</b>
+<li><b>General_Lore</b>
+<li><b>GroupFinderMenu</b>
+<li><b>Renown</b>
+<li><b>AMPs</b>
+<li><b>Reputation</b>
+<li><b>Housing_Landscape</b>
+<li><b>Housing_House</b>
+<li><b>Housing_Crate</b>
+<li><b>Housing_Vendor</b>
+<li><b>Housing_Room</b>
+<li><b>General_CREDD</b>
+<li><b>General_AccountServices</b>
+</ul>
+<hr><a name="CodeEnumTutorialAnchor"><h3>Enum</h3><br><h2>CodeEnumTutorialAnchor</h2>
+<ul>
+<li><b>Codex</b>
+<li><b>Inventory</b>
+<li><b>None</b>
+<li><b>Abilities</b>
+<li><b>Character</b>
+<li><b>Mail</b>
+<li><b>GalacticArchive</b>
+<li><b>Social</b>
+<li><b>GroupFinder</b>
+<li><b>Challenge</b>
+<li><b>Datachron</b>
+<li><b>AbilityBar</b>
+<li><b>MiniMap</b>
+<li><b>QuestTracker</b>
+<li><b>HUDAlert</b>
+<li><b>PressAndHold</b>
+<li><b>RapidTapping</b>
+<li><b>PrecisionTapping</b>
+<li><b>Memory</b>
+<li><b>Keypad</b>
+<li><b>Metronome</b>
+<li><b>ShieldBar</b>
+<li><b>InnateAbility</b>
+<li><b>DashMeter</b>
+<li><b>SprintMeter</b>
+<li><b>HealthBar</b>
+<li><b>BuffFrame</b>
+<li><b>ClassResource</b>
+<li><b>QuestCommunicatorReceived</b>
+<li><b>DatachronBody</b>
+<li><b>Recall</b>
+</ul>
+<hr><a name="CodeEnumTutorialCategory"><h3>Enum</h3><br><h2>CodeEnumTutorialCategory</h2>
+<ul>
+<li><b>General</b>
+<li><b>Beginner</b>
+<li><b>Combat</b>
+<li><b>PVP</b>
+<li><b>Housing</b>
+<li><b>Challenges</b>
+<li><b>PublicEvents</b>
+<li><b>Adventures</b>
+<li><b>Path_Soldier</b>
+<li><b>Path_Settler</b>
+<li><b>Path_Scientist</b>
+<li><b>Path_Explorer</b>
+<li><b>UNUSED12</b>
+<li><b>UNUSED13</b>
+<li><b>UNUSED14</b>
+<li><b>UNUSED15</b>
+<li><b>UNUSED16</b>
+<li><b>UNUSED17</b>
+<li><b>UNUSED18</b>
+<li><b>UNUSED19</b>
+<li><b>UNUSED20</b>
+<li><b>UNUSED21</b>
+<li><b>UNUSED22</b>
+<li><b>UNUSED23</b>
+<li><b>UNUSED24</b>
+<li><b>UNUSED25</b>
+<li><b>UNUSED26</b>
+<li><b>UNUSED27</b>
+<li><b>Tradeskills</b>
+<li><b>Zones</b>
+<li><b>Classes</b>
+</ul>
+<hr><a name="CodeEnumUserText"><h3>Enum</h3><br><h2>CodeEnumUserText</h2>
+<ul>
+<li><b>CharacterName</b>
+<li><b>ScientistScanbotName</b>
+<li><b>GuildName</b>
+<li><b>GuildRankName</b>
+<li><b>GuildBankTabName</b>
+<li><b>HousingResidenceName</b>
+<li><b>Chat</b>
+<li><b>MailSubject</b>
+<li><b>MailBody</b>
+<li><b>ChatCustomChannelName</b>
+<li><b>FriendshipNote</b>
+<li><b>ReadyCheck</b>
+<li><b>ChatCustomChannelPassword</b>
+<li><b>GuildMessageOfTheDay</b>
+<li><b>GuildMemberNote</b>
+<li><b>GuildRercuitDescription</b>
+<li><b>GuildInfoMessage</b>
+<li><b>FriendshipAccountName</b>
+<li><b>FriendshipAccountPrivateNote</b>
+<li><b>FriendshipAccountPublicNote</b>
+<li><b>FriendshipAccountEmail</b>
+<li><b>FriendshipInviteNote</b>
+<li><b>PlayerTicketText</b>
+</ul>
+<hr><a name="CodeEnumUserTextFilterClass"><h3>Enum</h3><br><h2>CodeEnumUserTextFilterClass</h2>
+<ul>
+<li><b>Strict</b>
+<li><b>Standard</b>
+<li><b>Low</b>
+</ul>
+<hr><a name="CodeEnumVital"><h3>Enum</h3><br><h2>CodeEnumVital</h2>
+<ul>
+<li><b>Invalid</b>
+<li><b>Health</b>
+<li><b>Breath</b>
+<li><b>ShieldCapacity</b>
+<li><b>KineticCell</b>
+<li><b>Resource0</b>
+<li><b>Resource1</b>
+<li><b>Resource2</b>
+<li><b>Resource3</b>
+<li><b>Resource4</b>
+<li><b>Resource5</b>
+<li><b>Resource6</b>
+<li><b>StalkerA</b>
+<li><b>StalkerB</b>
+<li><b>StalkerC</b>
+<li><b>Mana</b>
+<li><b>Resource7</b>
+<li><b>MedicCore</b>
+<li><b>SpellSurge</b>
+<li><b>InterruptArmor</b>
+<li><b>Absorption</b>
+<li><b>PublicResource0</b>
+<li><b>PublicResource1</b>
+<li><b>PublicResource2</b>
+<li><b>Volatility</b>
+</ul>
+<hr><a name="CodeEnumWhoResult"><h3>Enum</h3><br><h2>CodeEnumWhoResult</h2>
+<ul>
+<li><b>OK</b>
+<li><b>Partial</b>
+<li><b>UnderCooldown</b>
+</ul>
+<hr><a name="CodeEnumZoneCompletionType"><h3>Enum</h3><br><h2>CodeEnumZoneCompletionType</h2>
+<ul>
+<li><b>EpisodeQuest</b>
+<li><b>TaskQuest</b>
+<li><b>Challenge</b>
+<li><b>TaxiNode</b>
+<li><b>Datacube</b>
+<li><b>Tale</b>
+<li><b>Journal</b>
+</ul>
+<hr><a name="CodeEnumZonePvpRules"><h3>Enum</h3><br><h2>CodeEnumZonePvpRules</h2>
+<ul>
+<li><b>None</b>
+<li><b>ExileStronghold</b>
+<li><b>DominionStronghold</b>
+<li><b>Sanctuary</b>
+<li><b>Pvp</b>
+<li><b>ExilePVPStronghold</b>
+<li><b>DominionPVPStronghold</b>
+</ul>
+<hr><a name="DuelStateDuelState"><h3>Enum</h3><br><h2>DuelStateDuelState</h2>
+<ul>
+<li><b>None</b>
+<li><b>WaitingToAccept</b>
+<li><b>Pending</b>
+<li><b>Dueling</b>
+</ul>
+<hr><a name="GuildHolomark"><h3>Enum</h3><br><h2>GuildHolomark</h2>
+<ul>
+<li><b>Left</b>
+<li><b>Right</b>
+<li><b>Back</b>
+</ul>
+<hr><a name="LevelUpUnlock"><h3>Enum</h3><br><h2>LevelUpUnlock</h2>
+<ul>
+<li><b>Builder_NewTierPoint</b>
+<li><b>Builder_LASSlot2</b>
+<li><b>Character_GearSlot_Shield</b>
+<li><b>WorldMapNewZone_Deradune</b>
+<li><b>WorldMapAdventure_Astrovoid</b>
+<li><b>Character_GearSlot_Implants</b>
+<li><b>GroupFinder_Dungeons</b>
+<li><b>Character_CostumeSlot6</b>
+<li><b>Builder_AMPPoint</b>
+<li><b>Customization_Mount</b>
+<li><b>WorldMapNewZone_Ellevar</b>
+<li><b>Inventory_Salvage</b>
+<li><b>Character_GearSlot_Gloves</b>
+<li><b>GroupFinder_Warplots</b>
+<li><b>WorldMapNewZone_Malgrave</b>
+<li><b>Builder_LASSlot8</b>
+<li><b>Builder_LASSlot7</b>
+<li><b>Builder_LASSlot4</b>
+<li><b>Builder_AbilityTier2</b>
+<li><b>WorldMapDungeon_Stormtalon</b>
+<li><b>WorldMapAdventure_Galeras</b>
+<li><b>Character_GearSlot_Shoulders</b>
+<li><b>WorldMapDungeon_KelVoreth</b>
+<li><b>GroupFinder_Arenas</b>
+<li><b>Character_GearSlot_Gadgets</b>
+<li><b>Customization_Scanbot</b>
+<li><b>WorldMapNewZone_Grimvault</b>
+<li><b>Character_CostumeSlot2</b>
+<li><b>WorldMapNewZone_Wilderrun</b>
+<li><b>Character_CostumeSlot4</b>
+<li><b>WorldMapAdventure_Whitevale</b>
+<li><b>Character_GearSlot_Helm</b>
+<li><b>WorldMapNewZone_Farside</b>
+<li><b>WorldMapNewZone_Algoroc</b>
+<li><b>Builder_LASSlot6</b>
+<li><b>WorldMapNewZone_NorthernWilds</b>
+<li><b>Builder_AbilityTier8</b>
+<li><b>WorldMapNewZone_EverstarGrove</b>
+<li><b>WorldMapNewZone_Whitevale</b>
+<li><b>Character_GearSlot_WeaponAttachment</b>
+<li><b>GroupFinder_General</b>
+<li><b>WorldMapDungeon_Skullcano</b>
+<li><b>WorldMapNewZone_CrimsonIsle</b>
+<li><b>WorldMapCapital_Illium</b>
+<li><b>Builder_LASSlot5</b>
+<li><b>Builder_AbilityTier5</b>
+<li><b>Character_GearSlot_SupportSystem</b>
+<li><b>WorldMapAdventure_Hycrest</b>
+<li><b>Character_CostumeSlot3</b>
+<li><b>WorldMapNewZone_LevianBay</b>
+<li><b>Builder_AbilityTier6</b>
+<li><b>WorldMapNewZone_Celestion</b>
+<li><b>WorldMapNewZone_Auroria</b>
+<li><b>WorldMapAdventure_NorthernWilds</b>
+<li><b>Builder_AbilityTier4</b>
+<li><b>WorldMapNewZone_Galeras</b>
+<li><b>Builder_AbilityTier3</b>
+<li><b>Character_CostumeSystem</b>
+<li><b>WorldMapCapital_Thayd</b>
+<li><b>Builder_LASSlot3</b>
+<li><b>WorldMapAdventure_Malgrave</b>
+<li><b>Builder_AMPSystem</b>
+<li><b>Character_CostumeSlot5</b>
+<li><b>Builder_TierPointSystem</b>
+<li><b>Builder_AbilityTier7</b>
+<li><b>WorldMapDungeon_SwordMaiden</b>
+<li><b>GroupFinder_Adventures</b>
+<li><b>Character_GearSlot_RaidKey</b>
+</ul>
+<hr><a name="LevelUpUnlockSystem"><h3>Enum</h3><br><h2>LevelUpUnlockSystem</h2>
+<ul>
+<li><b>Path</b>
+<li><b>Level</b>
+</ul>
+<hr><a name="LevelUpUnlockType"><h3>Enum</h3><br><h2>LevelUpUnlockType</h2>
+<ul>
+<li><b>Dungeon_New</b>
+<li><b>Raid_40</b>
+<li><b>Adventure_New</b>
+<li><b>Content_Capital</b>
+<li><b>Content_Feature</b>
+<li><b>Class_LAS_Slot</b>
+<li><b>General_Expanded_Feature</b>
+<li><b>Class_Feature</b>
+<li><b>Class_Attribute</b>
+<li><b>Path_ScanBot</b>
+<li><b>Path_Spell</b>
+<li><b>Path_Title</b>
+<li><b>Gear_Slot</b>
+<li><b>Path_Quest</b>
+<li><b>Social_Feature</b>
+<li><b>Class_Improvement</b>
+<li><b>Raid_20</b>
+<li><b>Path_Item</b>
+<li><b>Class_Tier</b>
+<li><b>Class_Ability</b>
+<li><b>PvP_Battleground</b>
+<li><b>General_Feature</b>
+<li><b>Content_Zone</b>
+<li><b>PvP_Feature</b>
+</ul>
+<hr><a name="MapZone"><h3>Enum</h3><br><h2>MapZone</h2>
+<ul>
+<li><b>PublicEventIslandStage2</b>
+<li><b>LevianBay</b>
+<li><b>Thayd</b>
+<li><b>Ellevar</b>
+<li><b>halonring</b>
+<li><b>Grimvault</b>
+<li><b>Galeras</b>
+<li><b>LevianBayStarComm1</b>
+<li><b>EasternGrimvault</b>
+<li><b>HalonRingIsland2</b>
+<li><b>Malgrave</b>
+<li><b>LevianBayStarComm3</b>
+<li><b>WesternGrimvault</b>
+<li><b>NorthernGrimvault</b>
+<li><b>EverstarGrove</b>
+<li><b>EternityIslands</b>
+<li><b>Celestion</b>
+<li><b>CrimsonIsle</b>
+<li><b>Auroria</b>
+<li><b>Illium</b>
+<li><b>NorthernWilds</b>
+<li><b>Wilderrun</b>
+<li><b>LevianBayStarComm2</b>
+<li><b>HalonRingIsland3</b>
+<li><b>Whitevale</b>
+<li><b>Algoroc</b>
+<li><b>Deradune</b>
+<li><b>HalonRingBCChamberofNurielDom</b>
+<li><b>HalonRingBCChamberoftheEntityDom</b>
+<li><b>BlighthavenChamberEarth</b>
+<li><b>NorthernWildsExoLab729</b>
+<li><b>HalonRingBCChamberofMadocExile</b>
+<li><b>BlighthavenQueensDen</b>
+<li><b>HalonRingBCCrystalCavernsExile</b>
+<li><b>HalonRingBCCrystalCavernsDominion</b>
+<li><b>BlighthavenDecrepitExoLab</b>
+<li><b>HalonRingBCDoomfarer</b>
+<li><b>SouthernGrimvaultCreepingCaverns</b>
+<li><b>HalonRingBCTerminiteMound</b>
+<li><b>BlighthavenTransfusionChamber</b>
+<li><b>BlighthavenChamberAir</b>
+<li><b>BlighthavenRecontaminationRoom</b>
+<li><b>HalonRingBCChamberofAradelExile</b>
+<li><b>BlighthavenEmpyrealCaverns</b>
+<li><b>HalonRingBCCaptainKrull</b>
+<li><b>HalonRingBloodCrater</b>
+<li><b>HalonRingBCChamberofAradelDom</b>
+<li><b>SouthernGrimvaultEtherealCavity</b>
+<li><b>HalonRingBCChamberofEnochDom</b>
+<li><b>HalonRingBCChamberofEnochExile</b>
+<li><b>HalonRingBCRoughrockUnderground</b>
+<li><b>HalonRingBCChamberofEshiaDom</b>
+<li><b>BlighthavenDecontaminationRoom</b>
+<li><b>SouthernGrimvaultStrainTunnels</b>
+<li><b>SouthernGrimvaultEtherealHollow</b>
+<li><b>BlighthavenGenesisChamber</b>
+<li><b>BlighthavenChamberLife</b>
+<li><b>HalonRingBCChamberoftheEntityExile</b>
+<li><b>HalongRingBCCraterofCarnage</b>
+<li><b>BlighthavenChamberWater</b>
+<li><b>BlighthavenChamberLogic</b>
+<li><b>BlighthavenChamberFire</b>
+<li><b>HalonRingBCChamberofMadocDom</b>
+<li><b>BlighthavenNurseryObservationRoom</b>
+<li><b>HalonRingBCBlightmuckAbscess</b>
+<li><b>BlighthavenNurseryChecpoint</b>
+<li><b>BlighthavenMindoftheGlobellum</b>
+<li><b>HalonRingBCChamberofEshiaExile</b>
+<li><b>BlighthavenEtherealCaverns</b>
+<li><b>BlighthavenAbandonedExoLab</b>
+<li><b>HalonRingBCGoldenhandsReach</b>
+<li><b>HalonRingBCChamberofNurielExile</b>
+<li><b>HalonRingBCGrimvoidDreadvault</b>
+<li><b>HalonRingBCChamberofYuriaExile</b>
+<li><b>NorthernWildsColdburrowCavern</b>
+<li><b>HalonRingBCChamberofYuriaDom</b>
+</ul>
+<hr><a name="SharedChallengePreference"><h3>Enum</h3><br><h2>SharedChallengePreference</h2>
+<ul>
+<li><b>AutoAccept</b>
+<li><b>Prompt</b>
+<li><b>AutoReject</b>
+</ul>
+<hr><a name="SupportStuckAction"><h3>Enum</h3><br><h2>SupportStuckAction</h2>
+<ul>
+<li><b>RecallBind</b>
+<li><b>RecallDeath</b>
+<li><b>RecallHouse</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="AcceptDuel"><h3>Function</h3><br><h2>AcceptDuel()</h2>
+<hr><a name="AreAnyItemsNew"><h3>Function</h3><br><h2>AreAnyItemsNew()</h2>
+<hr><a name="AreQuestUnitCalloutsVisible"><h3>Function</h3><br><h2>AreQuestUnitCalloutsVisible()</h2>
+<hr><a name="AssignMasterLoot"><h3>Function</h3><br><h2>AssignMasterLoot()</h2>
+<hr><a name="BuyBankBagSlot"><h3>Function</h3><br><h2>BuyBankBagSlot()</h2>
+<hr><a name="CanDisembarkVehicle"><h3>Function</h3><br><h2>CanDisembarkVehicle()</h2>
+<hr><a name="CanDye"><h3>Function</h3><br><h2>CanDye()</h2>
+<hr><a name="CanEditKeySet"><h3>Function</h3><br><h2>CanEditKeySet(nKeySet)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if nKeySet is NOT any of the default 3 input key sets.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nKeySet</b><b> (Integer)</b>
+</ul>
+<hr><a name="CanRepairAll"><h3>Function</h3><br><h2>CanRepairAll()</h2>
+<hr><a name="CanVacuum"><h3>Function</h3><br><h2>CanVacuum()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of GetCanVacuum.</p>
+<hr><a name="Cheat_MakeMeLevel50"><h3>Function</h3><br><h2>Cheat_MakeMeLevel50()</h2>
+<hr><a name="ClearAllTargetMarkers"><h3>Function</h3><br><h2>ClearAllTargetMarkers()</h2>
+<hr><a name="ClearCityDirection"><h3>Function</h3><br><h2>ClearCityDirection()</h2>
+<hr><a name="CurrencyCap"><h3>Function</h3><br><h2>CurrencyCap()</h2>
+<hr><a name="DeclineDuel"><h3>Function</h3><br><h2>DeclineDuel()</h2>
+<hr><a name="DisableTutorialType"><h3>Function</h3><br><h2>DisableTutorialType()</h2>
+<hr><a name="Disembark"><h3>Function</h3><br><h2>Disembark()</h2>
+<hr><a name="DoAnyItemsBeginQuest"><h3>Function</h3><br><h2>DoAnyItemsBeginQuest()</h2>
+<hr><a name="DragDropDataToItemLocation"><h3>Function</h3><br><h2>DragDropDataToItemLocation(nData)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with eType, nBagIndex, and nBagSlot.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nData</b><b> (Integer)</b>
+</ul>
+<hr><a name="DyeItems"><h3>Function</h3><br><h2>DyeItems()</h2>
+<hr><a name="ForfeitDuel"><h3>Function</h3><br><h2>ForfeitDuel()</h2>
+<hr><a name="GetAbilityPoints"><h3>Function</h3><br><h2>GetAbilityPoints()</h2>
+<hr><a name="GetAccountRealmCharacter"><h3>Function</h3><br><h2>GetAccountRealmCharacter()</h2>
+<hr><a name="GetAllTutorials"><h3>Function</h3><br><h2>GetAllTutorials()</h2>
+<hr><a name="GetAllZoneCompletionMapZones"><h3>Function</h3><br><h2>GetAllZoneCompletionMapZones()</h2>
+<hr><a name="GetAttributePoints"><h3>Function</h3><br><h2>GetAttributePoints()</h2>
+<hr><a name="GetAvailableTargetMarkers"><h3>Function</h3><br><h2>GetAvailableTargetMarkers()</h2>
+<hr><a name="GetBindPoint"><h3>Function</h3><br><h2>GetBindPoint()</h2>
+<hr><a name="GetCCStateStunTimeRemaining"><h3>Function</h3><br><h2>GetCCStateStunTimeRemaining()</h2>
+<hr><a name="GetCharacterList"><h3>Function</h3><br><h2>GetCharacterList()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable of a counter as an integer and a character name list entry as a string.</p>
+<hr><a name="GetCharInputKeySet"><h3>Function</h3><br><h2>GetCharInputKeySet(nCharIndex)</h2>
+<h3>Description</h3>
+<p>Runs the GetKeyBindingsFromTable specified by nCharIndex. Also does a lua_pushnil if a wait is needed for the server to reply for the key binding list.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nCharIndex</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetClassInnateAbilitySpells"><h3>Function</h3><br><h2>GetClassInnateAbilitySpells()</h2>
+<hr><a name="GetClassName"><h3>Function</h3><br><h2>GetClassName()</h2>
+<h3>Description</h3>
+<p>Does a localized lua_pushwstring corresponding to nId from DbFileTable_Class_GetByID, or nil if null.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetControlledUnit"><h3>Function</h3><br><h2>GetControlledUnit()</h2>
+<h3>Description</h3>
+<p>Returns a new unit that is a copy of the controlled unit, or nil if null.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b>
+</ul>
+<hr><a name="GetCostumeCount"><h3>Function</h3><br><h2>GetCostumeCount()</h2>
+<hr><a name="GetCostumeIndex"><h3>Function</h3><br><h2>GetCostumeIndex()</h2>
+<hr><a name="GetCostumeItem"><h3>Function</h3><br><h2>GetCostumeItem()</h2>
+<hr><a name="GetCostumeItemIcon"><h3>Function</h3><br><h2>GetCostumeItemIcon()</h2>
+<hr><a name="GetCostumeUnlockLevel"><h3>Function</h3><br><h2>GetCostumeUnlockLevel()</h2>
+<hr><a name="GetCredits"><h3>Function</h3><br><h2>GetCredits()</h2>
+<hr><a name="GetCurrentClassInnateAbilityIndex"><h3>Function</h3><br><h2>GetCurrentClassInnateAbilityIndex()</h2>
+<hr><a name="GetCurrentClassInnateAbilitySpell"><h3>Function</h3><br><h2>GetCurrentClassInnateAbilitySpell()</h2>
+<hr><a name="GetCurrentWorldId"><h3>Function</h3><br><h2>GetCurrentWorldId()</h2>
+<hr><a name="GetCurrentZoneId"><h3>Function</h3><br><h2>GetCurrentZoneId()</h2>
+<hr><a name="GetCurrentZoneMap"><h3>Function</h3><br><h2>GetCurrentZoneMap()</h2>
+<hr><a name="GetCurrentZonePvpRules"><h3>Function</h3><br><h2>GetCurrentZonePvpRules()</h2>
+<hr><a name="GetCurrInputKeySet"><h3>Function</h3><br><h2>GetCurrInputKeySet()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of CurrInputSet.</p>
+<hr><a name="GetDefaultRecallCommand"><h3>Function</h3><br><h2>GetDefaultRecallCommand()</h2>
+<hr><a name="GetDuelOpponent"><h3>Function</h3><br><h2>GetDuelOpponent()</h2>
+<hr><a name="GetDuelState"><h3>Function</h3><br><h2>GetDuelState()</h2>
+<hr><a name="GetDyeCost"><h3>Function</h3><br><h2>GetDyeCost()</h2>
+<hr><a name="GetDyeUnlockLevel"><h3>Function</h3><br><h2>GetDyeUnlockLevel()</h2>
+<hr><a name="GetEmptyInventorySlots"><h3>Function</h3><br><h2>GetEmptyInventorySlots()</h2>
+<hr><a name="GetErrorCategories"><h3>Function</h3><br><h2>GetErrorCategories()</h2>
+<hr><a name="GetFrameRate"><h3>Function</h3><br><h2>GetFrameRate()</h2>
+<hr><a name="GetGadgetAbility"><h3>Function</h3><br><h2>GetGadgetAbility()</h2>
+<hr><a name="GetGameCommand"><h3>Function</h3><br><h2>GetGameCommand()</h2>
+<hr><a name="GetGameExitInfo"><h3>Function</h3><br><h2>GetGameExitInfo()</h2>
+<hr><a name="GetGameTime"><h3>Function</h3><br><h2>GetGameTime()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushdouble of GetGameTime / 1000.0 as a double.</p>
+<hr><a name="GetGearScore"><h3>Function</h3><br><h2>GetGearScore()</h2>
+<hr><a name="GetGuildHolomarkDistance"><h3>Function</h3><br><h2>GetGuildHolomarkDistance()</h2>
+<hr><a name="GetGuildHolomarkVisible"><h3>Function</h3><br><h2>GetGuildHolomarkVisible()</h2>
+<hr><a name="GetInputActionCategories"><h3>Function</h3><br><h2>GetInputActionCategories()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with id, strName of action categories.</p>
+<hr><a name="GetInputActionNameByEnum"><h3>Function</h3><br><h2>GetInputActionNameByEnum()</h2>
+<hr><a name="GetInputKeyNameText"><h3>Function</h3><br><h2>GetInputKeyNameText(inputKey)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the input key's name.</p>
+<h3>Params</h3>
+<ul>
+<li><b>inputKey</b><b> (SInputKey)</b>
+</ul>
+<hr><a name="GetInputKeySet"><h3>Function</h3><br><h2>GetInputKeySet(nInputSet)</h2>
+<h3>Description</h3>
+<p>Runs the GetKeyBindingsFromTable specified by nInputSet. Also does a lua_pushnil if a wait is needed for the server to reply for the key binding list.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nInputSet</b><b> (EInputKeySet)</b>
+</ul>
+<hr><a name="GetInstanceSettings"><h3>Function</h3><br><h2>GetInstanceSettings()</h2>
+<hr><a name="GetInteractiveUnit"><h3>Function</h3><br><h2>GetInteractiveUnit()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of g_game's ClosestInteractiveUnit.</p>
+<hr><a name="GetKeyBinding"><h3>Function</h3><br><h2>GetKeyBinding()</h2>
+<hr><a name="GetKeyBindingByEnum"><h3>Function</h3><br><h2>GetKeyBindingByEnum()</h2>
+<hr><a name="GetKeyBindings"><h3>Function</h3><br><h2>GetKeyBindings()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable that describes the current key bindings.</p>
+<hr><a name="GetKnownDyes"><h3>Function</h3><br><h2>GetKnownDyes()</h2>
+<hr><a name="GetLastTargetedPlayerName"><h3>Function</h3><br><h2>GetLastTargetedPlayerName()</h2>
+<hr><a name="GetLatency"><h3>Function</h3><br><h2>GetLatency()</h2>
+<hr><a name="GetLevelCap"><h3>Function</h3><br><h2>GetLevelCap()</h2>
+<hr><a name="GetLevelUpFanfareDuration"><h3>Function</h3><br><h2>GetLevelUpFanfareDuration()</h2>
+<hr><a name="GetLevelUpUnlock"><h3>Function</h3><br><h2>GetLevelUpUnlock()</h2>
+<hr><a name="GetLevelUpUnlockTypes"><h3>Function</h3><br><h2>GetLevelUpUnlockTypes()</h2>
+<hr><a name="GetLocalTime"><h3>Function</h3><br><h2>GetLocalTime()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with year, month, day, dayOfWeek, hour, minute, second.</p>
+<hr><a name="GetLootRolls"><h3>Function</h3><br><h2>GetLootRolls()</h2>
+<hr><a name="GetMasterLoot"><h3>Function</h3><br><h2>GetMasterLoot()</h2>
+<hr><a name="GetNextBankBagCost"><h3>Function</h3><br><h2>GetNextBankBagCost()</h2>
+<hr><a name="GetNumBankBagSlots"><h3>Function</h3><br><h2>GetNumBankBagSlots()</h2>
+<hr><a name="GetNumClassInnateAbilitySpells"><h3>Function</h3><br><h2>GetNumClassInnateAbilitySpells()</h2>
+<hr><a name="GetPendingLevelUpUnlocks"><h3>Function</h3><br><h2>GetPendingLevelUpUnlocks()</h2>
+<hr><a name="GetPendingRemovalWarningRemaining"><h3>Function</h3><br><h2>GetPendingRemovalWarningRemaining()</h2>
+<hr><a name="GetPendingTutorials"><h3>Function</h3><br><h2>GetPendingTutorials()</h2>
+<hr><a name="GetPetDismissCommand"><h3>Function</h3><br><h2>GetPetDismissCommand()</h2>
+<hr><a name="GetPingTime"><h3>Function</h3><br><h2>GetPingTime()</h2>
+<hr><a name="GetPlayerCurrency"><h3>Function</h3><br><h2>GetPlayerCurrency(nType)</h2>
+<h3>Description</h3>
+<p>Returns a new LuaGameTypes_Money that is a copy of nType's money value.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nType</b><b> (ECurrencyType)</b>
+</ul>
+<hr><a name="GetPlayerGenericVehicleUnit"><h3>Function</h3><br><h2>GetPlayerGenericVehicleUnit()</h2>
+<hr><a name="GetPlayerLevel"><h3>Function</h3><br><h2>GetPlayerLevel()</h2>
+<hr><a name="GetPlayerMountUnit"><h3>Function</h3><br><h2>GetPlayerMountUnit()</h2>
+<h3>Description</h3>
+<p>Returns a new unit that is a copy of the mount unit, else 1 and nil if null.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b>
+</ul>
+<hr><a name="GetPlayerPets"><h3>Function</h3><br><h2>GetPlayerPets()</h2>
+<hr><a name="GetPlayerTaxiUnit"><h3>Function</h3><br><h2>GetPlayerTaxiUnit()</h2>
+<h3>Description</h3>
+<p>Returna the taxi that the player is currently on.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The taxi that the player is riding
+</ul>
+<hr><a name="GetPlayerUnit"><h3>Function</h3><br><h2>GetPlayerUnit()</h2>
+<h3>Description</h3>
+<p>Returns a new unit that is a copy of the character unit, or nil if null.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b>
+</ul>
+<hr><a name="GetPlayerUnitByName"><h3>Function</h3><br><h2>GetPlayerUnitByName()</h2>
+<hr><a name="GetPlayerVehicleUnit"><h3>Function</h3><br><h2>GetPlayerVehicleUnit()</h2>
+<h3>Description</h3>
+<p>Returns a new unit that is a copy of the vehicle unit, else 1 and nil if null.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b>
+</ul>
+<hr><a name="GetPvpFlagInfo"><h3>Function</h3><br><h2>GetPvpFlagInfo()</h2>
+<hr><a name="GetRealmName"><h3>Function</h3><br><h2>GetRealmName()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of GetRealmName.</p>
+<hr><a name="GetRepairAllCost"><h3>Function</h3><br><h2>GetRepairAllCost()</h2>
+<hr><a name="GetReputationInfo"><h3>Function</h3><br><h2>GetReputationInfo()</h2>
+<hr><a name="GetReputationLevels"><h3>Function</h3><br><h2>GetReputationLevels()</h2>
+<hr><a name="GetServerTime"><h3>Function</h3><br><h2>GetServerTime()</h2>
+<hr><a name="GetShortcutMount"><h3>Function</h3><br><h2>GetShortcutMount()</h2>
+<hr><a name="GetShortcutPotion"><h3>Function</h3><br><h2>GetShortcutPotion()</h2>
+<hr><a name="GetSpell"><h3>Function</h3><br><h2>GetSpell()</h2>
+<hr><a name="GetSpellThresholdTimePrcntDone"><h3>Function</h3><br><h2>GetSpellThresholdTimePrcntDone()</h2>
+<hr><a name="GetStuckCooldowns"><h3>Function</h3><br><h2>GetStuckCooldowns()</h2>
+<hr><a name="GetTargetMarkerIcon"><h3>Function</h3><br><h2>GetTargetMarkerIcon()</h2>
+<hr><a name="GetTargetUnit"><h3>Function</h3><br><h2>GetTargetUnit()</h2>
+<h3>Description</h3>
+<p>Returns a new unit that is a copy of the target unit, else 0 if null.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b>
+</ul>
+<hr><a name="GetTeleportIlliumSpell"><h3>Function</h3><br><h2>GetTeleportIlliumSpell()</h2>
+<hr><a name="GetTeleportThaydSpell"><h3>Function</h3><br><h2>GetTeleportThaydSpell()</h2>
+<hr><a name="GetTextTypeMaxLength"><h3>Function</h3><br><h2>GetTextTypeMaxLength()</h2>
+<hr><a name="GetTickCount"><h3>Function</h3><br><h2>GetTickCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushint of GetTickCount casted as an integer.</p>
+<hr><a name="GetTotalAbilityPoints"><h3>Function</h3><br><h2>GetTotalAbilityPoints()</h2>
+<hr><a name="GetTotalInventorySlots"><h3>Function</h3><br><h2>GetTotalInventorySlots()</h2>
+<hr><a name="GetTutorial"><h3>Function</h3><br><h2>GetTutorial()</h2>
+<hr><a name="GetTutorialLayouts"><h3>Function</h3><br><h2>GetTutorialLayouts()</h2>
+<hr><a name="GetTutorialPopupContext"><h3>Function</h3><br><h2>GetTutorialPopupContext()</h2>
+<hr><a name="GetTutorialsForCategory"><h3>Function</h3><br><h2>GetTutorialsForCategory()</h2>
+<hr><a name="GetTutorialVisibilityFlags"><h3>Function</h3><br><h2>GetTutorialVisibilityFlags()</h2>
+<hr><a name="GetUnitById"><h3>Function</h3><br><h2>GetUnitById()</h2>
+<hr><a name="GetUnitScreenPosition"><h3>Function</h3><br><h2>GetUnitScreenPosition()</h2>
+<hr><a name="GetUnlockedLevelCap"><h3>Function</h3><br><h2>GetUnlockedLevelCap()</h2>
+<hr><a name="GetUnlocksForLevel"><h3>Function</h3><br><h2>GetUnlocksForLevel()</h2>
+<hr><a name="GetVersionInfo"><h3>Function</h3><br><h2>GetVersionInfo()</h2>
+<hr><a name="GetWorldCompletionPercent"><h3>Function</h3><br><h2>GetWorldCompletionPercent()</h2>
+<hr><a name="GetWorldDifficulty"><h3>Function</h3><br><h2>GetWorldDifficulty()</h2>
+<hr><a name="GetWorldTimeOfDay"><h3>Function</h3><br><h2>GetWorldTimeOfDay()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushdouble of GetWorldTimeOfDay as a double. (This is not divided by 1000.0)</p>
+<hr><a name="GetWorldTooltipContainer"><h3>Function</h3><br><h2>GetWorldTooltipContainer()</h2>
+<hr><a name="GetXpBonusData"><h3>Function</h3><br><h2>GetXpBonusData(nWho)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable that describes an xp bonus.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nWho</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetZoneCompletion"><h3>Function</h3><br><h2>GetZoneCompletion()</h2>
+<hr><a name="GetZoneCompletionTypes"><h3>Function</h3><br><h2>GetZoneCompletionTypes()</h2>
+<hr><a name="GetZoneExplorationPercent"><h3>Function</h3><br><h2>GetZoneExplorationPercent()</h2>
+<hr><a name="GetZoneMap"><h3>Function</h3><br><h2>GetZoneMap()</h2>
+<hr><a name="HasBindPoint"><h3>Function</h3><br><h2>HasBindPoint()</h2>
+<hr><a name="HasTutorialSound"><h3>Function</h3><br><h2>HasTutorialSound()</h2>
+<hr><a name="InitiateDuel"><h3>Function</h3><br><h2>InitiateDuel()</h2>
+<hr><a name="InvokePreOrder"><h3>Function</h3><br><h2>InvokePreOrder()</h2>
+<hr><a name="IsCharacterLoaded"><h3>Function</h3><br><h2>IsCharacterLoaded()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of g_game's IsLoaded as a boolean.</p>
+<hr><a name="IsControlledUnit"><h3>Function</h3><br><h2>IsControlledUnit()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean whether pUnit is equal to GetControlledUnit.<br>
+Parameter:<br>
+unitToCheck: CUnit</p>
+<hr><a name="IsCostumeSlotVisible"><h3>Function</h3><br><h2>IsCostumeSlotVisible()</h2>
+<hr><a name="IsCurrentInnateAbilityActive"><h3>Function</h3><br><h2>IsCurrentInnateAbilityActive()</h2>
+<hr><a name="IsIgnoringDuelRequests"><h3>Function</h3><br><h2>IsIgnoringDuelRequests()</h2>
+<hr><a name="IsInLocation"><h3>Function</h3><br><h2>IsInLocation()</h2>
+<hr><a name="IsInWorldZone"><h3>Function</h3><br><h2>IsInWorldZone()</h2>
+<hr><a name="IsKeyBindable"><h3>Function</h3><br><h2>IsKeyBindable()</h2>
+<hr><a name="IsLevelUpUnlockViewed"><h3>Function</h3><br><h2>IsLevelUpUnlockViewed()</h2>
+<hr><a name="IsMouseLockOn"><h3>Function</h3><br><h2>IsMouseLockOn()</h2>
+<hr><a name="IsNeedRollAllowed"><h3>Function</h3><br><h2>IsNeedRollAllowed()</h2>
+<hr><a name="IsOverdriveActive"><h3>Function</h3><br><h2>IsOverdriveActive()</h2>
+<hr><a name="IsPvpFlagged"><h3>Function</h3><br><h2>IsPvpFlagged()</h2>
+<hr><a name="IsPvpServer"><h3>Function</h3><br><h2>IsPvpServer()</h2>
+<hr><a name="IsSpellSurgeActive"><h3>Function</h3><br><h2>IsSpellSurgeActive()</h2>
+<hr><a name="IsTextValid"><h3>Function</h3><br><h2>IsTextValid()</h2>
+<hr><a name="IsTutorialCategoryVisible"><h3>Function</h3><br><h2>IsTutorialCategoryVisible()</h2>
+<hr><a name="IsTutorialNoPageAlert"><h3>Function</h3><br><h2>IsTutorialNoPageAlert()</h2>
+<hr><a name="IsTutorialViewed"><h3>Function</h3><br><h2>IsTutorialViewed()</h2>
+<hr><a name="IsZoneInZone"><h3>Function</h3><br><h2>IsZoneInZone()</h2>
+<hr><a name="ItemLocationToDragDropData"><h3>Function</h3><br><h2>ItemLocationToDragDropData(nLocationType, nBagIndex, nBagSlot)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetDragDropData specified by nLocationType, nBagIndex, and nBagSlot.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nLocationType</b><b> (Integer for enum EInventoryLocation)</b>
+<li><b>nBagIndex</b><b> (Integer)</b>
+<li><b>nBagSlot</b><b> (EBagSlot)</b>
+</ul>
+<hr><a name="LeavePendingRemovalInstance"><h3>Function</h3><br><h2>LeavePendingRemovalInstance()</h2>
+<hr><a name="MarkCityDirection"><h3>Function</h3><br><h2>MarkCityDirection()</h2>
+<hr><a name="MarkLevelUpUnlockViewed"><h3>Function</h3><br><h2>MarkLevelUpUnlockViewed()</h2>
+<hr><a name="MarkTutorialViewed"><h3>Function</h3><br><h2>MarkTutorialViewed()</h2>
+<hr><a name="OnClosedInstanceSettings"><h3>Function</h3><br><h2>OnClosedInstanceSettings()</h2>
+<hr><a name="PassOnLoot"><h3>Function</h3><br><h2>PassOnLoot()</h2>
+<hr><a name="PauseGameActionInput"><h3>Function</h3><br><h2>PauseGameActionInput(bPaused)</h2>
+<h3>Description</h3>
+<p>Runs the PauseGameAction with bPaused.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bPaused</b><b> (Boolean)</b>
+</ul>
+<hr><a name="PlayTutorialSound"><h3>Function</h3><br><h2>PlayTutorialSound()</h2>
+<hr><a name="PrepareInfractionReport"><h3>Function</h3><br><h2>PrepareInfractionReport()</h2>
+<hr><a name="ReportBug"><h3>Function</h3><br><h2>ReportBug()</h2>
+<hr><a name="ResetAttributePoints"><h3>Function</h3><br><h2>ResetAttributePoints()</h2>
+<hr><a name="ResetLevelUpUnlocks"><h3>Function</h3><br><h2>ResetLevelUpUnlocks()</h2>
+<hr><a name="ResetSingleInstance"><h3>Function</h3><br><h2>ResetSingleInstance()</h2>
+<hr><a name="ResetTutorials"><h3>Function</h3><br><h2>ResetTutorials()</h2>
+<hr><a name="RollOnLoot"><h3>Function</h3><br><h2>RollOnLoot()</h2>
+<hr><a name="SearchRelationshipStatusByCharacterName"><h3>Function</h3><br><h2>SearchRelationshipStatusByCharacterName()</h2>
+<hr><a name="SetCostumeIndex"><h3>Function</h3><br><h2>SetCostumeIndex()</h2>
+<hr><a name="SetCostumeItem"><h3>Function</h3><br><h2>SetCostumeItem()</h2>
+<hr><a name="SetCostumeSlotVisible"><h3>Function</h3><br><h2>SetCostumeSlotVisible()</h2>
+<hr><a name="SetCurrentClassInnateAbilityIndex"><h3>Function</h3><br><h2>SetCurrentClassInnateAbilityIndex()</h2>
+<hr><a name="SetCurrInputKeySet"><h3>Function</h3><br><h2>SetCurrInputKeySet(nInputSet)</h2>
+<h3>Description</h3>
+<p>Does an update of InputSet specified by nInputSet. Also does a lua_pushboolean of false if a wait is needed for the server to reply for the key binding list.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nInputSet</b><b> (EInputKeySet)</b>
+</ul>
+<hr><a name="SetDefaultRecallCommand"><h3>Function</h3><br><h2>SetDefaultRecallCommand()</h2>
+<hr><a name="SetIgnoreDuelRequests"><h3>Function</h3><br><h2>SetIgnoreDuelRequests()</h2>
+<hr><a name="SetInstanceSettings"><h3>Function</h3><br><h2>SetInstanceSettings()</h2>
+<hr><a name="SetKeyBindings"><h3>Function</h3><br><h2>SetKeyBindings(tInputTable)</h2>
+<h3>Description</h3>
+<p>Runs the SaveInputKeySet after updating the key bindings table.</p>
+<h3>Params</h3>
+<ul>
+<li><b>tInputTable</b><b> (LuaTable)</b>
+</ul>
+<hr><a name="SetMouseLock"><h3>Function</h3><br><h2>SetMouseLock()</h2>
+<hr><a name="SetSharedChallengePreference"><h3>Function</h3><br><h2>SetSharedChallengePreference()</h2>
+<hr><a name="SetShortcutMount"><h3>Function</h3><br><h2>SetShortcutMount()</h2>
+<hr><a name="SetShortcutPotion"><h3>Function</h3><br><h2>SetShortcutPotion()</h2>
+<hr><a name="SetTargetUnit"><h3>Function</h3><br><h2>SetTargetUnit(pUnitToSelect)</h2>
+<h3>Description</h3>
+<p>Runs the set target id method on pUnitToSelect's unit id.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pUnitToSelect</b><b> (CUnit)</b>
+</ul>
+<hr><a name="SetWorldTooltipContainer"><h3>Function</h3><br><h2>SetWorldTooltipContainer()</h2>
+<hr><a name="ShowGuildHolomark"><h3>Function</h3><br><h2>ShowGuildHolomark()</h2>
+<hr><a name="ShowUI"><h3>Function</h3><br><h2>ShowUI()</h2>
+<hr><a name="SpendAttributePoints"><h3>Function</h3><br><h2>SpendAttributePoints()</h2>
+<hr><a name="StopTutorialSound"><h3>Function</h3><br><h2>StopTutorialSound()</h2>
+<hr><a name="SupportStuck"><h3>Function</h3><br><h2>SupportStuck()</h2>
+<hr><a name="TogglePvpFlags"><h3>Function</h3><br><h2>TogglePvpFlags()</h2>
+<hr><a name="ToggleQuestUnitCallouts"><h3>Function</h3><br><h2>ToggleQuestUnitCallouts()</h2>
+<hr><a name="ToggleTutorialVisibilityFlags"><h3>Function</h3><br><h2>ToggleTutorialVisibilityFlags()</h2>
+<hr><a name="UIExitCinematics"><h3>Function</h3><br><h2>UIExitCinematics()</h2>
+<h3>Description</h3>
+<p>Runs g_game's UIExitCinematicsMode method with 100 as the parameter.</p>
+<hr><a name="UIStartCinematics"><h3>Function</h3><br><h2>UIStartCinematics()</h2>
+<h3>Description</h3>
+<p>Runs g_game's UIEnterCinematicsMode method.</p>
+<hr><a name="WhiteOutFadeIn"><h3>Function</h3><br><h2>WhiteOutFadeIn()</h2>
+<h3>Description</h3>
+<p>Runs g_game's WhiteOutFadeIn method.</p>
+<hr><a name="WhiteOutFadeOut"><h3>Function</h3><br><h2>WhiteOutFadeOut()</h2>
+<h3>Description</h3>
+<p>Runs g_game's WhiteOutFadeOut method with 3000 as the parameter.</p>
+<hr><a name="WorldLocToScreenPoint"><h3>Function</h3><br><h2>WorldLocToScreenPoint()</h2>
+	</body>
+</html>

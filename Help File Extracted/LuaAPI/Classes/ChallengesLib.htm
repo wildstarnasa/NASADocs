@@ -1,0 +1,132 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		ChallengesLib	</h1>
+<a name="Events"/><hr><a name="ChallengeAbandon"><h3>Event</h3><br><h2>ChallengeAbandon</h2>
+<h3>Params</h3>
+<ul>
+<li><b>challengeId</b><b> (Integer)</b>
+<li><b>description</b><b> (String)</b>
+</ul>
+<hr><a name="ChallengeActivate"><h3>Event</h3><br><h2>ChallengeActivate</h2>
+<h3>Params</h3>
+<ul>
+<li><b>challengeId</b><b> (Integer)</b>
+<li><b>pszDescription</b><b> (String)</b>
+<li><b>nTableRef</b><b> (Table)</b>
+</ul>
+<hr><a name="ChallengeCompleted"><h3>Event</h3><br><h2>ChallengeCompleted</h2>
+<h3>Params</h3>
+<ul>
+<li><b>challengeId</b><b> (Integer)</b>
+<li><b>header</b><b> (String)</b>
+<li><b>description</b><b> (String)</b>
+<li><b>duration</b><b> (Integer)</b>
+</ul>
+<hr><a name="ChallengeFlashStartLocation"><h3>Event</h3><br><h2>ChallengeFlashStartLocation</h2>
+<h3>Params</h3>
+<ul>
+<li><b>challengeId</b><b> (Integer)</b>
+<li><b>description</b><b> (String)</b>
+<li><b>duration</b><b> (Integer)</b>
+<li><b>nTableRef</b><b> (Table)</b>
+</ul>
+<hr><a name="ChallengeLeftArea"><h3>Event</h3><br><h2>ChallengeLeftArea</h2>
+<h3>Params</h3>
+<ul>
+<li><b>challengeId</b><b> (Integer)</b>
+<li><b>header</b><b> (String)</b>
+<li><b>description</b><b> (String)</b>
+<li><b>bShow</b><b> (Boolean)</b>
+</ul>
+<hr><a name="ChallengeTypeAlreadyActive"><h3>Event</h3><br><h2>ChallengeTypeAlreadyActive</h2>
+<h3>Params</h3>
+<ul>
+<li><b>toActivateId</b><b> (Integer)</b>
+<li><b>toAbandonId</b><b> (Integer)</b>
+<li><b>description</b><b> (String)</b>
+</ul>
+<hr><a name="ChallengeUnlocked"><h3>Event</h3><br><h2>ChallengeUnlocked</h2>
+<h3>Params</h3>
+<ul>
+<li><b>challengeId</b><b> (Integer)</b>
+<li><b>header</b><b> (String)</b>
+<li><b>title</b><b> (String)</b>
+<li><b>description</b><b> (String)</b>
+<li><b>duration</b><b> (Integer)</b>
+</ul>
+<hr><a name="ChallengeUpdated"><h3>Event</h3><br><h2>ChallengeUpdated</h2>
+<a name=">Functions"/>
+<hr><a name="AbandonChallenge"><h3>Function</h3><br><h2>AbandonChallenge(nChallengeId)</h2>
+<h3>Description</h3>
+<p>Runs the challenge manager's AbandonChallenge specified by nChallengeId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nChallengeId</b><b> (Integer)</b>
+</ul>
+<hr><a name="AcceptRewards"><h3>Function</h3><br><h2>AcceptRewards()</h2>
+<hr><a name="AcceptSharedChallenge"><h3>Function</h3><br><h2>AcceptSharedChallenge()</h2>
+<hr><a name="ActivateChallenge"><h3>Function</h3><br><h2>ActivateChallenge(nChallengeId)</h2>
+<h3>Description</h3>
+<p>Runs the challenge manager's ActivateChallenge specified by nChallengeId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nChallengeId</b><b> (Integer)</b>
+</ul>
+<hr><a name="GenerateRewardList"><h3>Function</h3><br><h2>GenerateRewardList()</h2>
+<hr><a name="GetActiveChallengeList"><h3>Function</h3><br><h2>GetActiveChallengeList()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable describing many (10+) fields relating to the active challenges.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>id</b><b> (Integer)</b>
+<li><b>type</b><b> (Integer)</b>
+<li><b>currentCount</b><b> (Integer)</b>
+<li><b>totalCount</b><b> (Integer)</b>
+<li><b>currentTier</b><b> (Integer)</b>
+<li><b>completionCount</b><b> (Integer)</b>
+<li><b>completionTotal</b><b> (Integer)</b>
+<li><b>lastRewardTier</b><b> (Integer)</b>
+<li><b>bActivated</b><b> (Boolean)</b>
+<li><b>bUnlocked</b><b> (Boolean)</b>
+<li><b>bInCooldown</b><b> (Boolean)</b>
+<li><b>bCollectReward</b><b> (Boolean)</b>
+<li><b>strTitle</b><b> (String)</b>
+<li><b>strDesc</b><b> (String)</b>
+<li><b>timeStr</b><b> (String)</b>
+</ul>
+</ul>
+<hr><a name="GetLootBonusMultiplier"><h3>Function</h3><br><h2>GetLootBonusMultiplier()</h2>
+<hr><a name="GetRewardList"><h3>Function</h3><br><h2>GetRewardList()</h2>
+<hr><a name="GetTierName"><h3>Function</h3><br><h2>GetTierName()</h2>
+<hr><a name="GetTimeRemaining"><h3>Function</h3><br><h2>GetTimeRemaining(nChallengeId, eTimerFlags)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the time remaining specified by nChallengeId and eTimerFlags.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nChallengeId</b><b> (Integer)</b>
+<li><b>eTimerFlags</b><b> (EChallengeTimerFlags)</b>
+</ul>
+<hr><a name="ProcessRewards"><h3>Function</h3><br><h2>ProcessRewards(nChallengeId)</h2>
+<h3>Description</h3>
+<p>Runs the challenge manager's ProcessRewards specified by nChallengeId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nChallengeId</b><b> (Integer)</b>
+</ul>
+<hr><a name="RejectSharedChallenge"><h3>Function</h3><br><h2>RejectSharedChallenge()</h2>
+<hr><a name="ShowAbandonChallenge"><h3>Function</h3><br><h2>ShowAbandonChallenge(nChallengeId)</h2>
+<h3>Description</h3>
+<p>Runs the challenge manager's ShowAbandonChallenge specified by nChallengeId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nChallengeId</b><b> (Integer)</b>
+</ul>
+<hr><a name="ShowHintArrow"><h3>Function</h3><br><h2>ShowHintArrow()</h2>
+	</body>
+</html>

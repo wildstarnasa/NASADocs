@@ -1,0 +1,60 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		CSIsLib	</h1>
+<a name=">Functions"/>
+<hr><a name="CancelActiveCSI"><h3>Function</h3><br><h2>CancelActiveCSI()</h2>
+<h3>Description</h3>
+<p>Stops the current Client Side Interaction</p>
+<hr><a name="CSIProcessInteraction"><h3>Function</h3><br><h2>CSIProcessInteraction(mouseDown)</h2>
+<h3>Description</h3>
+<p>Processes the user's input for the Client Side Interaction.  Different types of Client Side Interactions behave differently</p>
+<h3>Params</h3>
+<ul>
+<li><b>mouseDown</b><b> (Boolean)</b> - Determines how to update the Client Side Interaction.<br>
+For Yes/No Interactions:  true indicates that the user clicked yes, false indicates no<br>
+For PressAndHold:  true indicates that the button was pressed down, false indicates that the button is up<br>
+For RapidTapping: true indicates that the button was pressed down<br>
+
+</ul>
+<hr><a name="GetActiveCSI"><h3>Function</h3><br><h2>GetActiveCSI()</h2>
+<h3>Description</h3>
+<p>Returns a table containing information on the current Client Side Interaction minigame.  Returns nil if there is no Client Side Interaction taking place.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b> - A table containing information on the current Client Side Interaction.  
+<ul>
+<li><b>type</b><b> (CSIsLib.ClientSideInteractionType)</b> - The type of Client Side Interaction being returned
+<li><b>context</b><b> (String)</b> - A string containing the text that should be displayed for the current Client Side Interaction
+<li><b>threshold</b><b> (Integer)</b> - The number of misses allowed for this Client Side Interaction before the user fails.  This variable only exists when for Metronome CSIs
+</ul>
+</ul>
+<hr><a name="GetTimeRemainingForActiveCSI"><h3>Function</h3><br><h2>GetTimeRemainingForActiveCSI()</h2>
+<h3>Description</h3>
+<p>Returns the time remaining before the user fails the current Client Side Interaction</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The time remaining before the user fails, in seconds
+</ul>
+<hr><a name="IsCSIRunning"><h3>Function</h3><br><h2>IsCSIRunning()</h2>
+<h3>Description</h3>
+<p>Determines if a Client Side Interaction is currently running</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="SelectCSIOption"><h3>Function</h3><br><h2>SelectCSIOption(option)</h2>
+<h3>Description</h3>
+<p>Enters the user's input for the current Client Side Interaction.  This includes final keypad entries for the Keypad interactions and the Id of the buttons pressed in Memory interactions</p>
+<h3>Params</h3>
+<ul>
+<li><b>option</b><b> (Integer)</b> - The number that was input for the Client Side Interaction.  This includes the number for keypad entries and the Id number for Memory selections
+</ul>
+<hr><a name="StartActiveCSI"><h3>Function</h3><br><h2>StartActiveCSI()</h2>
+<h3>Description</h3>
+<p>Starts the current Client Side Interaction</p>
+	</body>
+</html>

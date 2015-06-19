@@ -1,0 +1,70 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Episode	</h1>
+<h3>Prefix: epi</h3>
+<a name=">Functions"/>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="GetAllQuests"><h3>Method</h3><br><h2>GetAllQuests()</h2>
+<hr><a name="GetCategories"><h3>Method</h3><br><h2>GetCategories()</h2>
+<hr><a name="GetConLevel"><h3>Method</h3><br><h2>GetConLevel()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pLuaEpisode's con level.</p>
+<hr><a name="GetDesc"><h3>Method</h3><br><h2>GetDesc()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of pLuaEpisode's localized desc string.</p>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pLuaEpisode's id.</p>
+<hr><a name="GetProgress"><h3>Method</h3><br><h2>GetProgress()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pLuaEpisode's quest count and quest count with state QuestState_Completed.</p>
+<hr><a name="GetQuest"><h3>Method</h3><br><h2>GetQuest(nQuestId)</h2>
+<h3>Description</h3>
+<p>Returns a new LuaGameTypes_Quest that is a copy of a quest specified by pLuaEpisode and nQuestId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nQuestId</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetState"><h3>Method</h3><br><h2>GetState()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pLuaEpisode's state.</p>
+<hr><a name="GetSummary"><h3>Method</h3><br><h2>GetSummary()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of pLuaEpisode's localized summary string.</p>
+<hr><a name="GetTitle"><h3>Method</h3><br><h2>GetTitle()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of pLuaEpisode's localized title string.</p>
+<hr><a name="GetTrackedQuests"><h3>Method</h3><br><h2>GetTrackedQuests()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable describing the tracked quests.</p>
+<hr><a name="GetVisibleQuests"><h3>Method</h3><br><h2>GetVisibleQuests(bShowCompleted, bShowOutLeveled, bShowMentioned, bSortByName)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable describing many (10+) fields relating to the visible quests.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bShowCompleted</b><b> (Boolean)</b>
+<li><b>bShowOutLeveled</b><b> (Boolean)</b>
+<li><b>bShowMentioned</b><b> (Boolean)</b>
+<li><b>bSortByName</b><b> (Boolean)</b>
+</ul>
+<hr><a name="GetZoneId"><h3>Method</h3><br><h2>GetZoneId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pLuaEpisode's zone id.</p>
+<hr><a name="GetZoneName"><h3>Method</h3><br><h2>GetZoneName()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of pLuaEpisode's localized zone text, or empty string if empty, or nothing if pLuaEpisode is null.</p>
+<hr><a name="IsRegionalStory"><h3>Method</h3><br><h2>IsRegionalStory()</h2>
+<hr><a name="IsTaskOnly"><h3>Method</h3><br><h2>IsTaskOnly()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of pLuaEpisode's IsTaskOnly.</p>
+<hr><a name="IsWorldStory"><h3>Method</h3><br><h2>IsWorldStory()</h2>
+<hr><a name="IsZoneStory"><h3>Method</h3><br><h2>IsZoneStory()</h2>
+	</body>
+</html>

@@ -1,0 +1,74 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		P2PTrading	</h1>
+<a name="Events"/><hr><a name="P2PCancelTrade"><h3>Event</h3><br><h2>P2PCancelTrade</h2>
+<hr><a name="P2PTradeChange"><h3>Event</h3><br><h2>P2PTradeChange</h2>
+<hr><a name="P2PTradeInvite"><h3>Event</h3><br><h2>P2PTradeInvite</h2>
+<h3>Params</h3>
+<ul>
+<li><b>idInvitor</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b>
+</ul>
+<hr><a name="P2PTradeResult"><h3>Event</h3><br><h2>P2PTradeResult</h2>
+<h3>Description</h3>
+<p>nTradeResult: Integer</p>
+<a name=">Functions"/>
+<hr><a name="AcceptInvite"><h3>Function</h3><br><h2>AcceptInvite()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of P2PTradeAcceptInvite.</p>
+<hr><a name="AddItem"><h3>Function</h3><br><h2>AddItem(nInventoryItem)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the result of P2PTradeAddItem of item location specified by nInventoryItem.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nInventoryItem</b><b> (Integer)</b>
+</ul>
+<hr><a name="AmICommitted"><h3>Function</h3><br><h2>AmICommitted()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of GetCharacterUnit's trade bCommited.</p>
+<hr><a name="CancelTrade"><h3>Function</h3><br><h2>CancelTrade()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the result of P2PTradeCancel.</p>
+<hr><a name="CanInitiateTrade"><h3>Function</h3><br><h2>CanInitiateTrade(unitP)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the result of CanInitiateP2PTrade, or a boolean false if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitP</b><b> (CUnit)</b>
+</ul>
+<hr><a name="DeclineInvite"><h3>Function</h3><br><h2>DeclineInvite()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of P2PTradeDeclineInvite.</p>
+<hr><a name="GetMyTradeMoney"><h3>Function</h3><br><h2>GetMyTradeMoney()</h2>
+<hr><a name="GetPartnerTradeMoney"><h3>Function</h3><br><h2>GetPartnerTradeMoney()</h2>
+<hr><a name="GetTradeItems"><h3>Function</h3><br><h2>GetTradeItems()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index and tradeable items.</p>
+<hr><a name="InitiateTrade"><h3>Function</h3><br><h2>InitiateTrade(unitP)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the result of P2PTradeInitiate.</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitP</b><b> (CUnit)</b>
+</ul>
+<hr><a name="IsPartnerCommitted"><h3>Function</h3><br><h2>IsPartnerCommitted()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the trade partner's bCommited.</p>
+<hr><a name="IsTrading"><h3>Function</h3><br><h2>IsTrading()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of IsP2PTrading.</p>
+<hr><a name="PrepareInfractionReport"><h3>Function</h3><br><h2>PrepareInfractionReport()</h2>
+<hr><a name="RemoveItem"><h3>Function</h3><br><h2>RemoveItem(nInventoryItem)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the result of P2PTradeRemoveItem of item location specified by nInventoryItem.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nInventoryItem</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetMoney"><h3>Function</h3><br><h2>SetMoney()</h2>
+<hr><a name="UnCommit"><h3>Function</h3><br><h2>UnCommit()</h2>
+	</body>
+</html>

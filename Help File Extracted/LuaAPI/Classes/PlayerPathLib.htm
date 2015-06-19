@@ -1,0 +1,100 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		PlayerPathLib	</h1>
+<a name="Events"/><hr><a name="PlayerPathExplorerPlaceBeacon"><h3>Event</h3><br><h2>PlayerPathExplorerPlaceBeacon</h2>
+<h3>Params</h3>
+<ul>
+<li><b>state</b><b> (Integer)</b>
+<li><b>complete</b><b> (Boolean)</b>
+</ul>
+<hr><a name="PlayerPathMissionActivate"><h3>Event</h3><br><h2>PlayerPathMissionActivate</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<hr><a name="PlayerPathMissionDeactivate"><h3>Event</h3><br><h2>PlayerPathMissionDeactivate</h2>
+<h3>Params</h3>
+<ul>
+<li><b>missionId</b><b> (Integer)</b>
+</ul>
+<hr><a name="PlayerPathScientistScanData"><h3>Event</h3><br><h2>PlayerPathScientistScanData</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<hr><a name="PlayerPathShow"><h3>Event</h3><br><h2>PlayerPathShow</h2>
+<a name=">Functions"/>
+<hr><a name="CanExplorerShowHint"><h3>Function</h3><br><h2>CanExplorerShowHint()</h2>
+<hr><a name="ExplorerApplyRelicSpell"><h3>Function</h3><br><h2>ExplorerApplyRelicSpell()</h2>
+<hr><a name="ExplorerShowHint"><h3>Function</h3><br><h2>ExplorerShowHint()</h2>
+<h3>Description</h3>
+<p>Displays a hint for the passed path mission</p>
+<hr><a name="GetCurrentEpisode"><h3>Function</h3><br><h2>GetCurrentEpisode()</h2>
+<h3>Description</h3>
+<p>Returns the PathEpisode that is currently active for the player<br>
+<br>
+</p>
+<hr><a name="GetCurrentSettlerHubMission"><h3>Function</h3><br><h2>GetCurrentSettlerHubMission()</h2>
+<hr><a name="GetCurrentSettlerInfrastructure"><h3>Function</h3><br><h2>GetCurrentSettlerInfrastructure()</h2>
+<hr><a name="GetEpisodes"><h3>Function</h3><br><h2>GetEpisodes()</h2>
+<h3>Description</h3>
+<p>Returns a table with all of the PathEpisodes where the player has unlocked at least one PathMission<br>
+</p>
+<hr><a name="GetInfrastructureStatusForMission"><h3>Function</h3><br><h2>GetInfrastructureStatusForMission()</h2>
+<hr><a name="GetPathEpisodeForZone"><h3>Function</h3><br><h2>GetPathEpisodeForZone()</h2>
+<h3>Description</h3>
+<p>Does a PushEpisodeInfo of the episode Id at the current zone.</p>
+<hr><a name="GetPathLevel"><h3>Function</h3><br><h2>GetPathLevel()</h2>
+<h3>Description</h3>
+<p>Returns the character's current path level<br>
+<br>
+</p>
+<hr><a name="GetPathLevelCap"><h3>Function</h3><br><h2>GetPathLevelCap()</h2>
+<hr><a name="GetPathLevelData"><h3>Function</h3><br><h2>GetPathLevelData(nLevel)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with level, xp, and the rewards specified at nLevel, or nil if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nLevel</b><b> (Integer)</b>
+</ul>
+<h3>Usage/Example</h3>
+<pre>test usage</pre>
+<h3>Remarks</h3>
+<p>a remark!</p>
+<hr><a name="GetPathXP"><h3>Function</h3><br><h2>GetPathXP()</h2>
+<h3>Description</h3>
+<p>Returns the total path XP that the player has earned</p>
+<hr><a name="GetPathXPAtLevel"><h3>Function</h3><br><h2>GetPathXPAtLevel()</h2>
+<h3>Description</h3>
+<p>Returns the amount of path XP needed to reach a given path level<br>
+<br>
+</p>
+<hr><a name="GetPathXPForLevel"><h3>Function</h3><br><h2>GetPathXPForLevel()</h2>
+<h3>Description</h3>
+<p>Returns the amount of path XP the player has earned during the current path level</p>
+<hr><a name="GetPathXPForNextLevel"><h3>Function</h3><br><h2>GetPathXPForNextLevel()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the character's path xp for next level</p>
+<hr><a name="GetPlayerPathType"><h3>Function</h3><br><h2>GetPlayerPathType()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetPathType, or nil if null.</p>
+<hr><a name="GetScannerName"><h3>Function</h3><br><h2>GetScannerName()</h2>
+<hr><a name="GetSettlerHubValues"><h3>Function</h3><br><h2>GetSettlerHubValues()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index, name, value, and max of a settler's hub.</p>
+<hr><a name="GetUnlockedPathLevelCap"><h3>Function</h3><br><h2>GetUnlockedPathLevelCap()</h2>
+<hr><a name="PathAction"><h3>Function</h3><br><h2>PathAction()</h2>
+<hr><a name="PathAction2"><h3>Function</h3><br><h2>PathAction2()</h2>
+<hr><a name="ScientistAllGetScanBotProfiles"><h3>Function</h3><br><h2>ScientistAllGetScanBotProfiles()</h2>
+<hr><a name="ScientistGetScanBotProfile"><h3>Function</h3><br><h2>ScientistGetScanBotProfile()</h2>
+<hr><a name="ScientistGetScanBotUnit"><h3>Function</h3><br><h2>ScientistGetScanBotUnit()</h2>
+<hr><a name="ScientistHasScanBot"><h3>Function</h3><br><h2>ScientistHasScanBot()</h2>
+<hr><a name="ScientistSetScanBotProfile"><h3>Function</h3><br><h2>ScientistSetScanBotProfile()</h2>
+<hr><a name="ScientistToggleScanBot"><h3>Function</h3><br><h2>ScientistToggleScanBot()</h2>
+<hr><a name="SetScannerName"><h3>Function</h3><br><h2>SetScannerName()</h2>
+	</body>
+</html>

@@ -1,0 +1,80 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		MailSystemLib	</h1>
+<a name=">Functions"/>
+<hr><a name="AtMailbox"><h3>Function</h3><br><h2>AtMailbox()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if CharacterUnit is in range of a mailbox.</p>
+<hr><a name="DeleteMultipleMessages"><h3>Function</h3><br><h2>DeleteMultipleMessages()</h2>
+<hr><a name="GetAttachmentMaxCount"><h3>Function</h3><br><h2>GetAttachmentMaxCount()</h2>
+<hr><a name="GetInbox"><h3>Function</h3><br><h2>GetInbox()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable of the inbox contents.</p>
+<hr><a name="GetItemFromInventoryId"><h3>Function</h3><br><h2>GetItemFromInventoryId(nSlot)</h2>
+<h3>Description</h3>
+<p>Returns a new instance of an item that is a copy of an Inventory item specified by nSlot.<br>
+// NOTE: This function should be moved to a LuaGameLibrary_InventorySystem</p>
+<h3>Params</h3>
+<ul>
+<li><b>nSlot</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetMessageCharacterLimit"><h3>Function</h3><br><h2>GetMessageCharacterLimit()</h2>
+<hr><a name="GetNameCharacterLimit"><h3>Function</h3><br><h2>GetNameCharacterLimit()</h2>
+<hr><a name="GetRealmCharacterLimit"><h3>Function</h3><br><h2>GetRealmCharacterLimit()</h2>
+<hr><a name="GetSendCost"><h3>Function</h3><br><h2>GetSendCost()</h2>
+<hr><a name="GetSubjectCharacterLimit"><h3>Function</h3><br><h2>GetSubjectCharacterLimit()</h2>
+<hr><a name="Is"><h3>Function</h3><br><h2>Is()</h2>
+<hr><a name="IsThereUnreadMail"><h3>Function</h3><br><h2>IsThereUnreadMail()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if there is unread mail.</p>
+<a name=">Methods"/>
+<hr><a name="DeleteMessage"><h3>Method</h3><br><h2>DeleteMessage(pEmail)</h2>
+<h3>Description</h3>
+<p>Runs pEmail's DeleteMessage.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pEmail</b><b> (CClientEmail)</b> - (May be passed by default with : operator)
+</ul>
+<hr><a name="GetExpirationTime"><h3>Method</h3><br><h2>GetExpirationTime(pEmail)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the email's expiration time, or nil if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pEmail</b><b> (CClientEmail)</b> - (May be passed by default with : operator)
+</ul>
+<hr><a name="GetIdStr"><h3>Method</h3><br><h2>GetIdStr()</h2>
+<hr><a name="GetMessageInfo"><h3>Method</h3><br><h2>GetMessageInfo(pEmail)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable of the email's info, or nil if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pEmail</b><b> (CClientEmail)</b> - (May be passed by default with : operator)
+</ul>
+<hr><a name="GetSenderType"><h3>Method</h3><br><h2>GetSenderType()</h2>
+<hr><a name="MarkAsRead"><h3>Method</h3><br><h2>MarkAsRead(pEmail)</h2>
+<h3>Description</h3>
+<p>Runs pEmail's MarkAsRead.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pEmail</b><b> (CClientEmail)</b> - (May be passed by default with : operator)
+</ul>
+<hr><a name="PayCoD"><h3>Method</h3><br><h2>PayCoD()</h2>
+<hr><a name="PrepareInfractionReport"><h3>Method</h3><br><h2>PrepareInfractionReport()</h2>
+<hr><a name="ReturnToSender"><h3>Method</h3><br><h2>ReturnToSender()</h2>
+<hr><a name="TakeAllAttachments"><h3>Method</h3><br><h2>TakeAllAttachments(pEmail)</h2>
+<h3>Description</h3>
+<p>Runs pEmail's TakeAllAttachments.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pEmail</b><b> (CClientEmail)</b> - (May be passed by default with : operator)
+</ul>
+<hr><a name="TakeAttachment"><h3>Method</h3><br><h2>TakeAttachment()</h2>
+<h3>Description</h3>
+<p>// Currently has no implementation</p>
+<hr><a name="TakeMoney"><h3>Method</h3><br><h2>TakeMoney()</h2>
+	</body>
+</html>

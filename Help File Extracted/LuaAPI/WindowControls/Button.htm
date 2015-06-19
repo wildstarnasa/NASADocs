@@ -1,0 +1,140 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Button	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="ButtonCheck"><h3>Event</h3><br><h2>ButtonCheck</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="ButtonDown"><h3>Event</h3><br><h2>ButtonDown</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="ButtonHoldBegin"><h3>Event</h3><br><h2>ButtonHoldBegin</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="ButtonSignal"><h3>Event</h3><br><h2>ButtonSignal</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="ButtonUncheck"><h3>Event</h3><br><h2>ButtonUncheck</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="ButtonUp"><h3>Event</h3><br><h2>ButtonUp</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="ButtonUpCancel"><h3>Event</h3><br><h2>ButtonUpCancel</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b> - The mouse button being clicked.
+</ul>
+<hr><a name="QueryBeginDragDrop"><h3>Event</h3><br><h2>QueryBeginDragDrop</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="AttachWindow"><h3>Method</h3><br><h2>AttachWindow()</h2>
+<hr><a name="ChangeArt"><h3>Method</h3><br><h2>ChangeArt(strButtonBase)</h2>
+<h3>Description</h3>
+<p>Updates the art of the button. The art is updated if a button is passed. The button's string is also updated with the passed parameter.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strButtonBase</b><b> (Varies - String or Button)</b>
+</ul>
+<hr><a name="GetContentId"><h3>Method</h3><br><h2>GetContentId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's content Id as an integer.</p>
+<hr><a name="GetContentType"><h3>Method</h3><br><h2>GetContentType()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the caller's content type as a string.</p>
+<hr><a name="IsChecked"><h3>Method</h3><br><h2>IsChecked()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the caller's IsChecked as a boolean.</p>
+<hr><a name="SetCheck"><h3>Method</h3><br><h2>SetCheck(bCheck)</h2>
+<h3>Description</h3>
+<p>Sets the caller's check to bCheck.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bCheck</b><b> (Bool)</b>
+</ul>
+<hr><a name="SetContentId"><h3>Method</h3><br><h2>SetContentId(nContentId)</h2>
+<h3>Description</h3>
+<p>Sets the caller's content id to uContentId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nContentId</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetContentType"><h3>Method</h3><br><h2>SetContentType(strContentType)</h2>
+<h3>Description</h3>
+<p>Sets the caller's content type to sContentType.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strContentType</b><b> (String)</b>
+</ul>
+<hr><a name="SetDisabledTextColor"><h3>Method</h3><br><h2>SetDisabledTextColor(clr)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_crStateText in the BS_Disabled state to clr.</p>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+<hr><a name="SetFlybyTextColor"><h3>Method</h3><br><h2>SetFlybyTextColor(clr)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_crStateText in the BS_Flyby state to clr.</p>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+<hr><a name="SetInnerMargin"><h3>Method</h3><br><h2>SetInnerMargin()</h2>
+<hr><a name="SetNormalTextColor"><h3>Method</h3><br><h2>SetNormalTextColor(clr)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_crStateText in the BS_Normal state to clr.</p>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+<hr><a name="SetPressedFlybyTextColor"><h3>Method</h3><br><h2>SetPressedFlybyTextColor(clr)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_crStateText in the BS_PressedFlyby state to clr.</p>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+<hr><a name="SetPressedTextColor"><h3>Method</h3><br><h2>SetPressedTextColor(clr)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_crStateText in the BS_Pressed state to clr.</p>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+	</body>
+</html>

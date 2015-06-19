@@ -1,0 +1,214 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Quest	</h1>
+<h3>Prefix: que</h3>
+<a name=">Functions"/>
+<hr><a name="GetActiveQuest"><h3>Function</h3><br><h2>GetActiveQuest()</h2>
+<hr><a name="GetCallbackList"><h3>Function</h3><br><h2>GetCallbackList()</h2>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="__gt"><h3>Method</h3><br><h2>__gt()</h2>
+<hr><a name="__lt"><h3>Method</h3><br><h2>__lt()</h2>
+<hr><a name="Abandon"><h3>Method</h3><br><h2>Abandon()</h2>
+<h3>Description</h3>
+<p>Runs the caller's AbandonQuest method.</p>
+<hr><a name="AcceptShare"><h3>Method</h3><br><h2>AcceptShare()</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's AcceptSharedQuest method with true.</p>
+<hr><a name="CalcRewardXP"><h3>Method</h3><br><h2>CalcRewardXP()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetXp.</p>
+<hr><a name="CanAbandon"><h3>Method</h3><br><h2>CanAbandon()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of IsInAbandonableState.</p>
+<hr><a name="CanCompleteObjective"><h3>Method</h3><br><h2>CanCompleteObjective(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_boolean of CanCompleteObjective specified by iReq.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="CanShare"><h3>Method</h3><br><h2>CanShare()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of CanShare.</p>
+<hr><a name="DisplayObjectiveProgressBar"><h3>Method</h3><br><h2>DisplayObjectiveProgressBar()</h2>
+<hr><a name="GetCategory"><h3>Method</h3><br><h2>GetCategory()</h2>
+<hr><a name="GetChatLinkString"><h3>Method</h3><br><h2>GetChatLinkString()</h2>
+<hr><a name="GetColoredDifficulty"><h3>Method</h3><br><h2>GetColoredDifficulty()</h2>
+<hr><a name="GetCompletedSummary"><h3>Method</h3><br><h2>GetCompletedSummary()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of the quest completed summary after a UCS2ToUTF8.</p>
+<hr><a name="GetCompletionObjectiveShortText"><h3>Method</h3><br><h2>GetCompletionObjectiveShortText()</h2>
+<hr><a name="GetCompletionObjectiveText"><h3>Method</h3><br><h2>GetCompletionObjectiveText()</h2>
+<hr><a name="GetConLevel"><h3>Method</h3><br><h2>GetConLevel()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of conLevel.</p>
+<hr><a name="GetContactInfo"><h3>Method</h3><br><h2>GetContactInfo()</h2>
+<h3>Description</h3>
+<p>Does several updates and lua pushes, including creatureId, IdName, and spriteName at the end.</p>
+<hr><a name="GetEpisode"><h3>Method</h3><br><h2>GetEpisode()</h2>
+<hr><a name="GetGroup"><h3>Method</h3><br><h2>GetGroup()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of the group name after a UCS2ToUTF8.</p>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the id.</p>
+<hr><a name="GetIntroductionText"><h3>Method</h3><br><h2>GetIntroductionText()</h2>
+<hr><a name="GetMapRegions"><h3>Method</h3><br><h2>GetMapRegions()</h2>
+<hr><a name="GetMinLevel"><h3>Method</h3><br><h2>GetMinLevel()</h2>
+<hr><a name="GetMoreInfoText"><h3>Method</h3><br><h2>GetMoreInfoText()</h2>
+<hr><a name="GetObjectiveCompleted"><h3>Method</h3><br><h2>GetObjectiveCompleted(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetNumCompleted specified by iReq, or 0 if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetObjectiveCount"><h3>Method</h3><br><h2>GetObjectiveCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetNumObjectives.</p>
+<hr><a name="GetObjectiveDescription"><h3>Method</h3><br><h2>GetObjectiveDescription(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of a UCS2ToUTF8 description specified by iReq, or empty string if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetObjectiveMaxTime"><h3>Method</h3><br><h2>GetObjectiveMaxTime()</h2>
+<hr><a name="GetObjectiveNeeded"><h3>Method</h3><br><h2>GetObjectiveNeeded(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetNumRequired specified by iReq, or 0 if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetObjectiveShortDescription"><h3>Method</h3><br><h2>GetObjectiveShortDescription()</h2>
+<hr><a name="GetObjectiveTimeRemaining"><h3>Method</h3><br><h2>GetObjectiveTimeRemaining(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of IsObjectiveTimed of an objective specified by iReq.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetPathQuestType"><h3>Method</h3><br><h2>GetPathQuestType()</h2>
+<hr><a name="GetQuestItemCount"><h3>Method</h3><br><h2>GetQuestItemCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the quest item count.</p>
+<hr><a name="GetQuestItemData"><h3>Method</h3><br><h2>GetQuestItemData(iIndex)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with item and num specified by iIndex.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iIndex</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetQuestTimeRemaining"><h3>Method</h3><br><h2>GetQuestTimeRemaining()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetQuestTimeRemaining.</p>
+<hr><a name="GetRewardData"><h3>Method</h3><br><h2>GetRewardData()</h2>
+<h3>Description</h3>
+<p>Does two lua_newtables describing fields relating to the reward and money of the quest.</p>
+<hr><a name="GetSpell"><h3>Method</h3><br><h2>GetSpell()</h2>
+<hr><a name="GetState"><h3>Method</h3><br><h2>GetState()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the quest state.</p>
+<hr><a name="GetSubType"><h3>Method</h3><br><h2>GetSubType()</h2>
+<hr><a name="GetSummary"><h3>Method</h3><br><h2>GetSummary()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of the quest summary after a UCS2ToUTF8.</p>
+<hr><a name="GetTitle"><h3>Method</h3><br><h2>GetTitle()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of the quest title after a UCS2ToUTF8.</p>
+<hr><a name="GetTrackBlinkTime"><h3>Method</h3><br><h2>GetTrackBlinkTime()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of blink time / 1000.0.</p>
+<hr><a name="GetTradeskillSchematicsRequired"><h3>Method</h3><br><h2>GetTradeskillSchematicsRequired()</h2>
+<hr><a name="GetType"><h3>Method</h3><br><h2>GetType()</h2>
+<hr><a name="GetVisibleObjectiveData"><h3>Method</h3><br><h2>GetVisibleObjectiveData()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with index, description, needed, completed, and isReward.</p>
+<hr><a name="IsAbleToAdvanceInRaid"><h3>Method</h3><br><h2>IsAbleToAdvanceInRaid()</h2>
+<hr><a name="IsActiveQuest"><h3>Method</h3><br><h2>IsActiveQuest()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if quest is active for the player and tracked.</p>
+<hr><a name="IsCommunicatorReceived"><h3>Method</h3><br><h2>IsCommunicatorReceived()</h2>
+<hr><a name="IsCommunicatorReceivedFromRec"><h3>Method</h3><br><h2>IsCommunicatorReceivedFromRec()</h2>
+<hr><a name="IsIgnored"><h3>Method</h3><br><h2>IsIgnored()</h2>
+<hr><a name="IsInactive"><h3>Method</h3><br><h2>IsInactive()</h2>
+<hr><a name="IsInLog"><h3>Method</h3><br><h2>IsInLog()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of IsVisibleInLog.</p>
+<hr><a name="IsKnown"><h3>Method</h3><br><h2>IsKnown()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if quest state is known.</p>
+<hr><a name="IsMentioned"><h3>Method</h3><br><h2>IsMentioned()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if quest data is mentioned.</p>
+<hr><a name="IsMoreInfoNonSequential"><h3>Method</h3><br><h2>IsMoreInfoNonSequential()</h2>
+<hr><a name="IsObjectiveTimed"><h3>Method</h3><br><h2>IsObjectiveTimed(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of IsObjectiveTimed of an objective specified by iReq.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="IsOptionalForEpisode"><h3>Method</h3><br><h2>IsOptionalForEpisode()</h2>
+<hr><a name="IsPathQuest"><h3>Method</h3><br><h2>IsPathQuest()</h2>
+<hr><a name="IsQuestTimed"><h3>Method</h3><br><h2>IsQuestTimed()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of IsQuestTimed.</p>
+<hr><a name="IsSelectedInLog"><h3>Method</h3><br><h2>IsSelectedInLog()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of IsSelectedInLog.</p>
+<hr><a name="IsTracked"><h3>Method</h3><br><h2>IsTracked()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if quest data is tracked.</p>
+<hr><a name="ObjectiveIsReward"><h3>Method</h3><br><h2>ObjectiveIsReward(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_boolean if iReq is &lt; 0 or equal to the number of objectives.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="ObjectiveIsVisible"><h3>Method</h3><br><h2>ObjectiveIsVisible(iReq)</h2>
+<h3>Description</h3>
+<p>Does a lua_boolean of IsObjectiveVisible specified by iReq, or empty string if null.</p>
+<h3>Params</h3>
+<ul>
+<li><b>iReq</b><b> (Integer)</b>
+</ul>
+<hr><a name="PulseTrackBlinkTime"><h3>Method</h3><br><h2>PulseTrackBlinkTime(uTime)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>uTime</b><b> (Float - that is immediately * 1000.0 and cast to a UINT32)</b>
+</ul>
+<hr><a name="RejectShare"><h3>Method</h3><br><h2>RejectShare()</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's AcceptSharedQuest method with false.</p>
+<hr><a name="SetActiveQuest"><h3>Method</h3><br><h2>SetActiveQuest(bActive)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>bActive</b><b> (Boolean)</b>
+</ul>
+<hr><a name="SetSelectedInLog"><h3>Method</h3><br><h2>SetSelectedInLog()</h2>
+<h3>Description</h3>
+<p>Runs the quest log's SetSelectedQuestId method with the caller.</p>
+<hr><a name="SetTracked"><h3>Method</h3><br><h2>SetTracked(bTracked)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>bTracked</b><b> (Boolean)</b>
+</ul>
+<hr><a name="Share"><h3>Method</h3><br><h2>Share()</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's ShareQuest with pLuaQuest's id.</p>
+<hr><a name="ShowHintArrow"><h3>Method</h3><br><h2>ShowHintArrow()</h2>
+<hr><a name="ToggleActiveQuest"><h3>Method</h3><br><h2>ToggleActiveQuest()</h2>
+<hr><a name="ToggleIgnored"><h3>Method</h3><br><h2>ToggleIgnored()</h2>
+<hr><a name="ToggleTracked"><h3>Method</h3><br><h2>ToggleTracked()</h2>
+	</body>
+</html>

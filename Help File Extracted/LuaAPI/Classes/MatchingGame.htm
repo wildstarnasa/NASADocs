@@ -1,0 +1,128 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		MatchingGame	</h1>
+<h3>Prefix: match</h3>
+<a name="Enums"/><hr><a name="MatchEndReason"><h3>Enum</h3><br><h2>MatchEndReason</h2>
+<ul>
+<li><b>Completed</b>
+<li><b>Forfeit</b>
+<li><b>TimeExpired</b>
+</ul>
+<hr><a name="MatchType"><h3>Enum</h3><br><h2>MatchType</h2>
+<ul>
+<li><b>Battleground</b>
+<li><b>Dungeon</b>
+<li><b>Adventure</b>
+<li><b>Arena</b>
+<li><b>Warplot</b>
+<li><b>RatedBattleground</b>
+<li><b>OpenArena</b>
+<li><b>Event</b>
+</ul>
+<hr><a name="PvpDeathReason"><h3>Enum</h3><br><h2>PvpDeathReason</h2>
+<ul>
+<li><b>KilledByPlayer</b>
+<li><b>KilledByCreature</b>
+<li><b>Falling</b>
+<li><b>Drowning</b>
+</ul>
+<hr><a name="PVPGameState"><h3>Enum</h3><br><h2>PVPGameState</h2>
+<ul>
+<li><b>Preparation</b>
+<li><b>InProgress</b>
+<li><b>Finished</b>
+</ul>
+<hr><a name="RatingType"><h3>Enum</h3><br><h2>RatingType</h2>
+<ul>
+<li><b>Arena2v2</b>
+<li><b>Arena3v3</b>
+<li><b>Arena5v5</b>
+<li><b>RatedBattleground</b>
+<li><b>Warplot</b>
+</ul>
+<hr><a name="Roles"><h3>Enum</h3><br><h2>Roles</h2>
+<ul>
+<li><b>Tank</b>
+<li><b>Healer</b>
+<li><b>DPS</b>
+</ul>
+<hr><a name="Rules"><h3>Enum</h3><br><h2>Rules</h2>
+<ul>
+<li><b>Default</b>
+<li><b>DeathmatchPool</b>
+<li><b>WaveRespawn</b>
+</ul>
+<hr><a name="Team"><h3>Enum</h3><br><h2>Team</h2>
+<ul>
+<li><b>Team1</b>
+<li><b>Team2</b>
+</ul>
+<hr><a name="Winner"><h3>Enum</h3><br><h2>Winner</h2>
+<ul>
+<li><b>Team1</b>
+<li><b>Team2</b>
+<li><b>Draw</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="CanLeaveQueueAsGroup"><h3>Function</h3><br><h2>CanLeaveQueueAsGroup()</h2>
+<hr><a name="CanLookForReplacements"><h3>Function</h3><br><h2>CanLookForReplacements()</h2>
+<hr><a name="CanQueueAsGroup"><h3>Function</h3><br><h2>CanQueueAsGroup()</h2>
+<hr><a name="CastVoteKick"><h3>Function</h3><br><h2>CastVoteKick()</h2>
+<hr><a name="CastVoteSurrender"><h3>Function</h3><br><h2>CastVoteSurrender()</h2>
+<hr><a name="ConfirmRole"><h3>Function</h3><br><h2>ConfirmRole()</h2>
+<hr><a name="DeclineRoleCheck"><h3>Function</h3><br><h2>DeclineRoleCheck()</h2>
+<hr><a name="DoesRequestWarplotInit"><h3>Function</h3><br><h2>DoesRequestWarplotInit()</h2>
+<hr><a name="GetAvailableMatchingGames"><h3>Function</h3><br><h2>GetAvailableMatchingGames()</h2>
+<hr><a name="GetAverageWaitTime"><h3>Function</h3><br><h2>GetAverageWaitTime()</h2>
+<hr><a name="GetEligibleRoles"><h3>Function</h3><br><h2>GetEligibleRoles()</h2>
+<hr><a name="GetPendingInfo"><h3>Function</h3><br><h2>GetPendingInfo()</h2>
+<hr><a name="GetPVPMatchState"><h3>Function</h3><br><h2>GetPVPMatchState()</h2>
+<hr><a name="GetPvpRating"><h3>Function</h3><br><h2>GetPvpRating()</h2>
+<hr><a name="GetSelectedRoles"><h3>Function</h3><br><h2>GetSelectedRoles()</h2>
+<h3>Remarks</h3>
+<p>Known Issue: The values returned from this function carry over to characters with the same name on the same realm and same account.  Because of this, the selected roles may be different than the roles the new character is eligible for.</p>
+<hr><a name="GetTimeInQueue"><h3>Function</h3><br><h2>GetTimeInQueue()</h2>
+<hr><a name="GetWarPlotBattleState"><h3>Function</h3><br><h2>GetWarPlotBattleState()</h2>
+<hr><a name="InitiateVoteToKick"><h3>Function</h3><br><h2>InitiateVoteToKick()</h2>
+<hr><a name="InitiateVoteToSurrender"><h3>Function</h3><br><h2>InitiateVoteToSurrender()</h2>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<hr><a name="IsGamePending"><h3>Function</h3><br><h2>IsGamePending()</h2>
+<hr><a name="IsInMatchingGame"><h3>Function</h3><br><h2>IsInMatchingGame()</h2>
+<hr><a name="IsInMatchingInstance"><h3>Function</h3><br><h2>IsInMatchingInstance()</h2>
+<hr><a name="IsInPVPGame"><h3>Function</h3><br><h2>IsInPVPGame()</h2>
+<hr><a name="IsLookingForReplacements"><h3>Function</h3><br><h2>IsLookingForReplacements()</h2>
+<hr><a name="IsMatchingGameFinished"><h3>Function</h3><br><h2>IsMatchingGameFinished()</h2>
+<hr><a name="IsQueuedAsGroup"><h3>Function</h3><br><h2>IsQueuedAsGroup()</h2>
+<hr><a name="IsQueuedForMatching"><h3>Function</h3><br><h2>IsQueuedForMatching()</h2>
+<hr><a name="IsQueuedForRealmOnly"><h3>Function</h3><br><h2>IsQueuedForRealmOnly()</h2>
+<hr><a name="IsRoleCheckActive"><h3>Function</h3><br><h2>IsRoleCheckActive()</h2>
+<hr><a name="IsVoteKickActive"><h3>Function</h3><br><h2>IsVoteKickActive()</h2>
+<hr><a name="IsVoteSurrenderActive"><h3>Function</h3><br><h2>IsVoteSurrenderActive()</h2>
+<hr><a name="IsWarpartyQueued"><h3>Function</h3><br><h2>IsWarpartyQueued()</h2>
+<hr><a name="LeaveMatchingGame"><h3>Function</h3><br><h2>LeaveMatchingGame()</h2>
+<hr><a name="LeaveMatchingQueue"><h3>Function</h3><br><h2>LeaveMatchingQueue()</h2>
+<hr><a name="LeaveMatchingQueueAsGroup"><h3>Function</h3><br><h2>LeaveMatchingQueueAsGroup()</h2>
+<hr><a name="LookForReplacements"><h3>Function</h3><br><h2>LookForReplacements()</h2>
+<hr><a name="Queue"><h3>Function</h3><br><h2>Queue()</h2>
+<hr><a name="QueueAsGroup"><h3>Function</h3><br><h2>QueueAsGroup()</h2>
+<hr><a name="SelectRole"><h3>Function</h3><br><h2>SelectRole()</h2>
+<hr><a name="StopLookingForReplacements"><h3>Function</h3><br><h2>StopLookingForReplacements()</h2>
+<hr><a name="TransferIntoMatchingGame"><h3>Function</h3><br><h2>TransferIntoMatchingGame()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="DoesGroupMeetRequirements"><h3>Method</h3><br><h2>DoesGroupMeetRequirements()</h2>
+<hr><a name="GetDescription"><h3>Method</h3><br><h2>GetDescription()</h2>
+<hr><a name="GetMaxLevel"><h3>Method</h3><br><h2>GetMaxLevel()</h2>
+<hr><a name="GetMinGearScore"><h3>Method</h3><br><h2>GetMinGearScore()</h2>
+<hr><a name="GetMinLevel"><h3>Method</h3><br><h2>GetMinLevel()</h2>
+<hr><a name="GetName"><h3>Method</h3><br><h2>GetName()</h2>
+<hr><a name="GetTeamSize"><h3>Method</h3><br><h2>GetTeamSize()</h2>
+<hr><a name="GetType"><h3>Method</h3><br><h2>GetType()</h2>
+<hr><a name="IsQueued"><h3>Method</h3><br><h2>IsQueued()</h2>
+<hr><a name="IsRandom"><h3>Method</h3><br><h2>IsRandom()</h2>
+	</body>
+</html>

@@ -1,0 +1,30 @@
+h1
+{
+color:5577bb;
+text-align:left;
+font-family:"Arial";
+font-size:18pt;
+margin-top:30px;
+}
+
+h2
+{
+color:5577bb;
+text-align:left;
+font-family:"Arial";
+font-size:11pt;
+margin-top:20px;
+}
+
+h3
+{
+color:5577bb;
+text-align:left;
+font-family:"Arial";
+font-size:10pt;
+margin-top:10px;
+}
+
+hr {color:sienna;}
+p {margin-left:20px;}
+body {font-size:9pt; font-family:"Arial"}

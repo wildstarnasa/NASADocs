@@ -1,0 +1,41 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		AbilityItemWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="AbilitySelected"><h3>Event</h3><br><h2>AbilitySelected</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="GetAbilityDescription"><h3>Method</h3><br><h2>GetAbilityDescription()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the ability's description from the tool tip id, or "" if the ability is not found.</p>
+<hr><a name="GetAbilityId"><h3>Method</h3><br><h2>GetAbilityId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's m_iSpellId.</p>
+<hr><a name="GetAbilityName"><h3>Method</h3><br><h2>GetAbilityName()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the ability's name from the name id, or "" if the ability is not found.</p>
+<hr><a name="GetAbilityTierId"><h3>Method</h3><br><h2>GetAbilityTierId()</h2>
+<hr><a name="SetAbilityId"><h3>Method</h3><br><h2>SetAbilityId(nSpellId)</h2>
+<h3>Description</h3>
+<p>Sets the caller's ability id to nSpellId.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nSpellId</b><b> (Integer)</b> - (Default value: -1)
+</ul>
+<hr><a name="SetSelected"><h3>Method</h3><br><h2>SetSelected(bSelected)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_bSelected boolean to bSelected.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bSelected</b><b> (Boolean)</b>
+</ul>
+	</body>
+</html>

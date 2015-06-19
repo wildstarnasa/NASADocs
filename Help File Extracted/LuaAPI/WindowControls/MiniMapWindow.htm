@@ -1,0 +1,99 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		MiniMapWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name=">Methods"/>
+<hr><a name="AddLine"><h3>Method</h3><br><h2>AddLine()</h2>
+<hr><a name="AddObject"><h3>Method</h3><br><h2>AddObject(eType, tLoc, strName, tInfo, tFlags, oUnit)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger describing the result of the AddObject call.</p>
+<h3>Params</h3>
+<ul>
+<li><b>eType</b><b> (Integer)</b>
+<li><b>tLoc</b><b> (Table)</b> - Contains the x, y, and z coordinates for the object to be placed
+<ul>
+<li><b>nX</b><b> (Integer)</b> - The X coordinate where the object will be placed
+<li><b>nY</b><b> (Integer)</b> - The Y coordinate where the object will be placed
+<li><b>nZ</b><b> (Integer)</b> - The Z coordinate where the object will be placed
+</ul>
+<li><b>strName</b><b> (String)</b> - The name of the object
+<li><b>tInfo</b><b> (MMODisplayInfo)</b> - Determines what the object will look like on the minimap
+<li><b>tFlags</b><b> (Table)</b> - A set of flags determining how the object should be drawn
+<li><b>oUnit</b><b> (Object)</b> - The game object that is tied to the object on the minimap
+</ul>
+<hr><a name="AddPathIndicator"><h3>Method</h3><br><h2>AddPathIndicator()</h2>
+<h3>Description</h3>
+<p>No implementation yet</p>
+<hr><a name="AddQuestIndicator"><h3>Method</h3><br><h2>AddQuestIndicator(pQuest, strNum, iInfo, tCheckFlag)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>pQuest</b><b> (LuaQuest)</b>
+<li><b>strNum</b><b> (String)</b> - (Default value: "")
+<li><b>iInfo</b><b> (MMODisplayInfo)</b>
+<li><b>tCheckFlag</b><b> (Used immediate in a CheckFlag call)</b>
+</ul>
+<hr><a name="AddUnit"><h3>Method</h3><br><h2>AddUnit(pUnit, iInfo, tCheckFlag)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger describing the result of the AddUnit call.</p>
+<h3>Params</h3>
+<ul>
+<li><b>pUnit</b><b> (CUnit)</b>
+<li><b>iInfo</b><b> (MMODisplayInfo)</b>
+<li><b>tCheckFlag</b><b> (Table)</b> - Used immediately in a CheckFlag call
+</ul>
+<hr><a name="ClientPointToWorldLoc"><h3>Method</h3><br><h2>ClientPointToWorldLoc(nPointX, nPointY)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with x, y, and z.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nPointX</b><b> (Integer)</b>
+<li><b>nPointY</b><b> (Integer)</b>
+</ul>
+<hr><a name="CreateOverlayType"><h3>Method</h3><br><h2>CreateOverlayType()</h2>
+<hr><a name="GetLineInfo"><h3>Method</h3><br><h2>GetLineInfo()</h2>
+<hr><a name="GetObjectsAtPoint"><h3>Method</h3><br><h2>GetObjectsAtPoint(nPointX, nPointY)</h2>
+<h3>Description</h3>
+<p>Returns the results of PushObjectsAtPoint nPointX and nPointY.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nPointX</b><b> (Integer)</b>
+<li><b>nPointY</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetZoomLevel"><h3>Method</h3><br><h2>GetZoomLevel()</h2>
+<hr><a name="HideObjectsByType"><h3>Method</h3><br><h2>HideObjectsByType()</h2>
+<hr><a name="HideObjectsByUserData"><h3>Method</h3><br><h2>HideObjectsByUserData()</h2>
+<hr><a name="RemoveAllLines"><h3>Method</h3><br><h2>RemoveAllLines()</h2>
+<hr><a name="RemoveAllObjects"><h3>Method</h3><br><h2>RemoveAllObjects()</h2>
+<hr><a name="RemoveLine"><h3>Method</h3><br><h2>RemoveLine()</h2>
+<hr><a name="RemoveObject"><h3>Method</h3><br><h2>RemoveObject(nObjectId)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nObjectId</b><b> (Integer)</b>
+</ul>
+<hr><a name="RemoveObjectsByType"><h3>Method</h3><br><h2>RemoveObjectsByType()</h2>
+<hr><a name="RemoveObjectsByUserData"><h3>Method</h3><br><h2>RemoveObjectsByUserData()</h2>
+<hr><a name="RemoveUnit"><h3>Method</h3><br><h2>RemoveUnit(pUnitHandle)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>pUnitHandle</b><b> (CUnitHandle)</b>
+</ul>
+<hr><a name="SetMapOrientation"><h3>Method</h3><br><h2>SetMapOrientation(nOrient)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nOrient</b><b> (EMiniMapOrientation)</b>
+</ul>
+<hr><a name="SetZoomLevel"><h3>Method</h3><br><h2>SetZoomLevel()</h2>
+<hr><a name="ShowObjectsByType"><h3>Method</h3><br><h2>ShowObjectsByType()</h2>
+<hr><a name="ShowObjectsByUserData"><h3>Method</h3><br><h2>ShowObjectsByUserData()</h2>
+<hr><a name="ZoomIn"><h3>Method</h3><br><h2>ZoomIn()</h2>
+<h3>Description</h3>
+<p>Runs the caller's Zoom In method.</p>
+<hr><a name="ZoomOut"><h3>Method</h3><br><h2>ZoomOut()</h2>
+<h3>Description</h3>
+<p>Runs the caller's Zoom Out method.</p>
+	</body>
+</html>

@@ -1,0 +1,229 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		ZoneMapWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Enums"/><hr><a name="CodeEnumDisplayMode"><h3>Enum</h3><br><h2>CodeEnumDisplayMode</h2>
+<ul>
+<li><b>SuperPanning</b>
+<li><b>Panning</b>
+<li><b>Scaled</b>
+<li><b>Continent</b>
+<li><b>World</b>
+<li><b>SolarSystem</b>
+</ul>
+<a name="Events"/><hr><a name="ZoneMapWindowChange"><h3>Event</h3><br><h2>ZoneMapWindowChange</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="ZoneMapWindowModeChange"><h3>Event</h3><br><h2>ZoneMapWindowModeChange</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="AddLine"><h3>Method</h3><br><h2>AddLine()</h2>
+<hr><a name="AddObject"><h3>Method</h3><br><h2>AddObject(tWorldLoc, strName, tInfo, tFlags)</h2>
+<h3>Description</h3>
+<p>works like MiniMapWindow:AddObject, returns an id to the object</p>
+<h3>Params</h3>
+<ul>
+<li><b>tWorldLoc</b><b> (WorldLocTable)</b> - World location to add the object
+<li><b>strName</b><b> (String)</b> - Name of the object
+<li><b>tInfo</b><b> (Table)</b>
+<li><b>tFlags</b><b> (Table)</b>
+</ul>
+<hr><a name="AddObjectByWorldLocId"><h3>Method</h3><br><h2>AddObjectByWorldLocId()</h2>
+<hr><a name="AddRegion"><h3>Method</h3><br><h2>AddRegion()</h2>
+<hr><a name="AddUnit"><h3>Method</h3><br><h2>AddUnit(unitId, tInfo, tFlags)</h2>
+<h3>Description</h3>
+<p>works like MiniMapWindow::AddUnit, returns an id to the object (which is different than the unitId)</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitId</b><b> (Integer)</b>
+<li><b>tInfo</b><b> (Table)</b>
+<li><b>tFlags</b><b> (Table)</b>
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - id to the object (which is different than the unitId)
+</ul>
+<hr><a name="CanZoomZone"><h3>Method</h3><br><h2>CanZoomZone()</h2>
+<hr><a name="CenterOnPlayer"><h3>Method</h3><br><h2>CenterOnPlayer()</h2>
+<hr><a name="CreateOverlayType"><h3>Method</h3><br><h2>CreateOverlayType()</h2>
+<hr><a name="GetAllLines"><h3>Method</h3><br><h2>GetAllLines()</h2>
+<hr><a name="GetAllNemesisRegionInfo"><h3>Method</h3><br><h2>GetAllNemesisRegionInfo()</h2>
+<hr><a name="GetAllSubZoneInfo"><h3>Method</h3><br><h2>GetAllSubZoneInfo()</h2>
+<hr><a name="GetAllZoneInfo"><h3>Method</h3><br><h2>GetAllZoneInfo()</h2>
+<hr><a name="GetContinentInfo"><h3>Method</h3><br><h2>GetContinentInfo(strContinent)</h2>
+<h3>Description</h3>
+<p>return information (including a list of zones) of the continent referred to by strContinent</p>
+<h3>Params</h3>
+<ul>
+<li><b>strContinent</b><b> (String)</b> - The name of the continent
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>Name</b><b> (String)</b> - The name of the continent
+<li><b>arZones</b><b> (Array of ZoneInfo)</b>
+</ul>
+</ul>
+<hr><a name="GetContinents"><h3>Method</h3><br><h2>GetContinents()</h2>
+<h3>Description</h3>
+<p>return an array of continents</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of String</b>
+</ul>
+<hr><a name="GetContinentZoneInfo"><h3>Method</h3><br><h2>GetContinentZoneInfo()</h2>
+<hr><a name="GetCurrentContinentIndex"><h3>Method</h3><br><h2>GetCurrentContinentIndex()</h2>
+<hr><a name="GetDisplayMode"><h3>Method</h3><br><h2>GetDisplayMode()</h2>
+<h3>Description</h3>
+<p>return the current display mode (1=Panning, 2=Scaled, 3=Continent)</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>EDisplayMode</b>
+</ul>
+<hr><a name="GetHexAtPoint"><h3>Method</h3><br><h2>GetHexAtPoint(x, y)</h2>
+<h3>Description</h3>
+<p>return the location of the hex in the given a point in the Window</p>
+<h3>Params</h3>
+<ul>
+<li><b>x</b><b> (Integer)</b> - X position in the window
+<li><b>y</b><b> (Integer)</b> - Y position in the window
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b> - x, y values for which hex is located at the specified point
+</ul>
+<hr><a name="GetHexGroupHexes"><h3>Method</h3><br><h2>GetHexGroupHexes()</h2>
+<hr><a name="GetLineInfo"><h3>Method</h3><br><h2>GetLineInfo()</h2>
+<hr><a name="GetLinesAt"><h3>Method</h3><br><h2>GetLinesAt()</h2>
+<hr><a name="GetNecessaryHexCount"><h3>Method</h3><br><h2>GetNecessaryHexCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's m_nCurrentNecessary.</p>
+<hr><a name="GetNemesisRegionInfo"><h3>Method</h3><br><h2>GetNemesisRegionInfo()</h2>
+<hr><a name="GetObjectRadius"><h3>Method</h3><br><h2>GetObjectRadius()</h2>
+<hr><a name="GetObjectsAt"><h3>Method</h3><br><h2>GetObjectsAt(nPointX, nPointY)</h2>
+<h3>Description</h3>
+<p>Returns the results of PushRegionsAt nPointX and nPointY.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nPointX</b><b> (Integer)</b>
+<li><b>nPointY</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetRegionsAt"><h3>Method</h3><br><h2>GetRegionsAt()</h2>
+<hr><a name="GetRevealedHexCount"><h3>Method</h3><br><h2>GetRevealedHexCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's m_nCurrentRevealed.</p>
+<hr><a name="GetWorldLocAtPoint"><h3>Method</h3><br><h2>GetWorldLocAtPoint(x, y)</h2>
+<h3>Description</h3>
+<p>return a table with x,y,z values for the world location at the point(x,y).  The y-component will be set to 0.0 and the z-component represents the North/South axis.</p>
+<h3>Params</h3>
+<ul>
+<li><b>x</b><b> (Integer)</b> - X position of a point in the window
+<li><b>y</b><b> (Integer)</b> - Y position of a point in the window
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>WorldLocTable</b> - The world location in x,y, z. The y-component will be set to 0.0 and the z-component represents the North/South axis.
+</ul>
+<hr><a name="GetZoneInfo"><h3>Method</h3><br><h2>GetZoneInfo(nZone)</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with the zone corresponding to nZone with its Name, Index, North, South, East, and West.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nZone</b><b> (Integer)</b>
+</ul>
+<hr><a name="HideObjectsByType"><h3>Method</h3><br><h2>HideObjectsByType()</h2>
+<hr><a name="HideObjectsByUserData"><h3>Method</h3><br><h2>HideObjectsByUserData()</h2>
+<hr><a name="HideRegionsByType"><h3>Method</h3><br><h2>HideRegionsByType()</h2>
+<hr><a name="HideRegionsByUserData"><h3>Method</h3><br><h2>HideRegionsByUserData()</h2>
+<hr><a name="HighlightRegionsByType"><h3>Method</h3><br><h2>HighlightRegionsByType()</h2>
+<hr><a name="HighlightRegionsByUserData"><h3>Method</h3><br><h2>HighlightRegionsByUserData()</h2>
+<hr><a name="IsShowingGhostWindow"><h3>Method</h3><br><h2>IsShowingGhostWindow()</h2>
+<hr><a name="IsShowLabelsOn"><h3>Method</h3><br><h2>IsShowLabelsOn()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if labels are on.</p>
+<hr><a name="IsShowPlayerOn"><h3>Method</h3><br><h2>IsShowPlayerOn()</h2>
+<hr><a name="IsZoneReady"><h3>Method</h3><br><h2>IsZoneReady()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the caller's zone is ready.</p>
+<hr><a name="RemoveAllLines"><h3>Method</h3><br><h2>RemoveAllLines()</h2>
+<hr><a name="RemoveAllObjects"><h3>Method</h3><br><h2>RemoveAllObjects()</h2>
+<h3>Description</h3>
+<p>Runs the caller's RemoveAllRegionsByType method on MapOverlay_UserDefined.</p>
+<hr><a name="RemoveAllRegions"><h3>Method</h3><br><h2>RemoveAllRegions()</h2>
+<hr><a name="RemoveLine"><h3>Method</h3><br><h2>RemoveLine()</h2>
+<hr><a name="RemoveObject"><h3>Method</h3><br><h2>RemoveObject(idObject)</h2>
+<h3>Description</h3>
+<p>will remove the object that matches the idObject (including a unit)</p>
+<h3>Params</h3>
+<ul>
+<li><b>idObject</b><b> (Integer)</b> - ID of the object
+</ul>
+<hr><a name="RemoveObjectsByType"><h3>Method</h3><br><h2>RemoveObjectsByType()</h2>
+<hr><a name="RemoveObjectsByUserData"><h3>Method</h3><br><h2>RemoveObjectsByUserData()</h2>
+<hr><a name="RemoveRegionByType"><h3>Method</h3><br><h2>RemoveRegionByType()</h2>
+<hr><a name="RemoveRegionByUserData"><h3>Method</h3><br><h2>RemoveRegionByUserData()</h2>
+<hr><a name="RemoveUnit"><h3>Method</h3><br><h2>RemoveUnit(idUnit)</h2>
+<h3>Description</h3>
+<p>remove the unit that matches the idUnit (could be redundant since you can store the idObject and use that to remove the unit)</p>
+<h3>Params</h3>
+<ul>
+<li><b>idUnit</b><b> (Integer)</b> - ID of the unit to be removed
+</ul>
+<hr><a name="SetActiveHexEdgeSprite"><h3>Method</h3><br><h2>SetActiveHexEdgeSprite()</h2>
+<hr><a name="SetActiveHexSprite"><h3>Method</h3><br><h2>SetActiveHexSprite()</h2>
+<hr><a name="SetDisplayMode"><h3>Method</h3><br><h2>SetDisplayMode(eMode)</h2>
+<h3>Description</h3>
+<p>set the display mode to eMode (1=Panning, 2=Scaled, 3=Continent)</p>
+<h3>Params</h3>
+<ul>
+<li><b>eMode</b><b> (EDisplayMode)</b> - The display mode to be changed to
+</ul>
+<hr><a name="SetGhostWindow"><h3>Method</h3><br><h2>SetGhostWindow()</h2>
+<hr><a name="SetInactiveHexEdgeSprite"><h3>Method</h3><br><h2>SetInactiveHexEdgeSprite()</h2>
+<hr><a name="SetInactiveHexSprite"><h3>Method</h3><br><h2>SetInactiveHexSprite()</h2>
+<hr><a name="SetLabelBackerSprite"><h3>Method</h3><br><h2>SetLabelBackerSprite()</h2>
+<hr><a name="SetLabelTextColor"><h3>Method</h3><br><h2>SetLabelTextColor()</h2>
+<hr><a name="SetLineColor"><h3>Method</h3><br><h2>SetLineColor()</h2>
+<hr><a name="SetMaxDisplayMode"><h3>Method</h3><br><h2>SetMaxDisplayMode()</h2>
+<hr><a name="SetMinDisplayMode"><h3>Method</h3><br><h2>SetMinDisplayMode()</h2>
+<hr><a name="SetObjectRadius"><h3>Method</h3><br><h2>SetObjectRadius()</h2>
+<hr><a name="SetObjectsVisibility"><h3>Method</h3><br><h2>SetObjectsVisibility()</h2>
+<hr><a name="SetOverlayTypeInfo"><h3>Method</h3><br><h2>SetOverlayTypeInfo()</h2>
+<hr><a name="SetPlayerArrowSprite"><h3>Method</h3><br><h2>SetPlayerArrowSprite(strSpriteName)</h2>
+<h3>Description</h3>
+<p>Sets the sprite used for representing the player on the map</p>
+<h3>Params</h3>
+<ul>
+<li><b>strSpriteName</b><b> (String)</b> - The name of the sprite to be used
+</ul>
+<hr><a name="SetZone"><h3>Method</h3><br><h2>SetZone(nZone)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nZone</b><b> (Integer)</b>
+</ul>
+<hr><a name="ShowLabels"><h3>Method</h3><br><h2>ShowLabels(bShowLabels)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>bShowLabels</b><b> (Boolean)</b>
+</ul>
+<hr><a name="ShowObjectsByType"><h3>Method</h3><br><h2>ShowObjectsByType()</h2>
+<hr><a name="ShowObjectsByUserData"><h3>Method</h3><br><h2>ShowObjectsByUserData()</h2>
+<hr><a name="ShowPlayer"><h3>Method</h3><br><h2>ShowPlayer()</h2>
+<hr><a name="ShowRegionsByType"><h3>Method</h3><br><h2>ShowRegionsByType()</h2>
+<hr><a name="ShowRegionsByUserData"><h3>Method</h3><br><h2>ShowRegionsByUserData()</h2>
+<hr><a name="UnhighlightRegionsByType"><h3>Method</h3><br><h2>UnhighlightRegionsByType()</h2>
+<hr><a name="UnhighlightRegionsByUserData"><h3>Method</h3><br><h2>UnhighlightRegionsByUserData()</h2>
+	</body>
+</html>

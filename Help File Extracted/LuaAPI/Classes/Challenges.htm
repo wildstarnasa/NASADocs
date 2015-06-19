@@ -1,0 +1,149 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Challenges	</h1>
+<h3>Prefix: chal</h3>
+<a name=">Functions"/>
+<hr><a name="is"><h3>Function</h3><br><h2>is(oVariable)</h2>
+<h3>Description</h3>
+<p>Determines if the variable is a Challenge or not</p>
+<h3>Params</h3>
+<ul>
+<li><b>oVariable</b> - The variable in question
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="GetAllTierCounts"><h3>Method</h3><br><h2>GetAllTierCounts()</h2>
+<h3>Description</h3>
+<p>Returns the goal number for each tier of the Challenge</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>nGoalCount</b><b> (Array of Integer)</b>
+</ul>
+</ul>
+<hr><a name="GetCompletionCount"><h3>Method</h3><br><h2>GetCompletionCount()</h2>
+<h3>Description</h3>
+<p>Returns the number of times this Challenge has been completed</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetCompletionTotal"><h3>Method</h3><br><h2>GetCompletionTotal()</h2>
+<h3>Description</h3>
+<p>Returns the number of times this Challenge can be completed</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<h3>Remarks</h3>
+<p>If the return value is -1, then the achievement can be completed an infinite number of times</p>
+<hr><a name="GetCurrentCount"><h3>Method</h3><br><h2>GetCurrentCount()</h2>
+<h3>Description</h3>
+<p>Returns the player's progress towards this Challenge</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetCurrentTier"><h3>Method</h3><br><h2>GetCurrentTier()</h2>
+<h3>Description</h3>
+<p>Returns the tier of this Challenge that the player is working towards</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetDescription"><h3>Method</h3><br><h2>GetDescription()</h2>
+<h3>Description</h3>
+<p>Returns the text description of this Challenge</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetDisplayTier"><h3>Method</h3><br><h2>GetDisplayTier()</h2>
+<h3>Description</h3>
+<p>Returns the current tier for the Challenge that the UI should display</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b>
+</ul>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<h3>Description</h3>
+<p>Returns the id number of the challenge</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetLastRewardTier"><h3>Method</h3><br><h2>GetLastRewardTier()</h2>
+<h3>Description</h3>
+<p>Returns the last tier of the Challenge that the player earned the reward for.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetMapLocation"><h3>Method</h3><br><h2>GetMapLocation()</h2>
+<h3>Description</h3>
+<p>Returns the coordinates where this Challenge can be started</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>x</b><b> (Float)</b> - The X coordinate
+<li><b>y</b><b> (Float)</b> - The Y coordinate
+<li><b>z</b><b> (Float)</b> - The Z coordinate
+</ul>
+</ul>
+<hr><a name="GetMapRegions"><h3>Method</h3><br><h2>GetMapRegions()</h2>
+<h3>Description</h3>
+<p>Returns the map data for the Challenge</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>tHexes</b><b> (Array of <a href="../Classes/Vector2.htm">Vector2</a>)</b> - A list of x/y coordinates for the hexes where the Challenge takes place
+<li><b>tIndicator</b><b> (<a href="../Classes/Vector3.htm">Vector3</a>)</b> - The x/y/z coordinates where the Challenge can be started
+</ul>
+</ul>
+<hr><a name="GetMapStartLocation"><h3>Method</h3><br><h2>GetMapStartLocation()</h2>
+<h3>Description</h3>
+<p>Returns the coordinates where the Challenge can be started</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>x</b><b> (Float)</b> - The X coordinate
+<li><b>y</b><b> (Float)</b> - The Y coordinate
+<li><b>z</b><b> (Float)</b> - The Z coordinate
+</ul>
+</ul>
+<hr><a name="GetMapStartRegions"><h3>Method</h3><br><h2>GetMapStartRegions()</h2>
+<h3>Description</h3>
+<p>Returns the coordinates for the hexes where the Challenge takes place</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of <a href="../Classes/Vector2.htm">Vector2</a></b>
+</ul>
+<hr><a name="GetName"><h3>Method</h3><br><h2>GetName()</h2>
+<hr><a name="GetStartLocationRestrictionId"><h3>Method</h3><br><h2>GetStartLocationRestrictionId()</h2>
+<hr><a name="GetTimeStr"><h3>Method</h3><br><h2>GetTimeStr()</h2>
+<hr><a name="GetTotalCount"><h3>Method</h3><br><h2>GetTotalCount()</h2>
+<hr><a name="GetType"><h3>Method</h3><br><h2>GetType()</h2>
+<hr><a name="GetZoneInfo"><h3>Method</h3><br><h2>GetZoneInfo()</h2>
+<hr><a name="GetZoneRestrictionInfo"><h3>Method</h3><br><h2>GetZoneRestrictionInfo()</h2>
+<hr><a name="IsActivated"><h3>Method</h3><br><h2>IsActivated()</h2>
+<hr><a name="IsFullyComplete"><h3>Method</h3><br><h2>IsFullyComplete()</h2>
+<hr><a name="IsInCooldown"><h3>Method</h3><br><h2>IsInCooldown()</h2>
+<hr><a name="IsTimeTiered"><h3>Method</h3><br><h2>IsTimeTiered()</h2>
+<hr><a name="NeedsHintArrow"><h3>Method</h3><br><h2>NeedsHintArrow()</h2>
+<hr><a name="ShouldCollectReward"><h3>Method</h3><br><h2>ShouldCollectReward()</h2>
+<hr><a name="ShouldDisplayPercentProgress"><h3>Method</h3><br><h2>ShouldDisplayPercentProgress()</h2>
+	</body>
+</html>

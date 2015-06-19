@@ -1,0 +1,2225 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Unit	</h1>
+<h3>Prefix: unit</h3>
+<h3>Description</h3>
+<p>Any character in game, including players, NPCs, Banks, summoned Pets and Mounts, Vendors, and Ability Vendors</p>
+<a name="Enums"/><hr><a name="CodeEnumArchetype"><h3>Enum</h3><br><h2>CodeEnumArchetype</h2>
+<ul>
+<li><b>EliteShields</b>
+<li><b>Iconic</b>
+<li><b>Townie</b>
+<li><b>EliteNoShields</b>
+</ul>
+<hr><a name="CodeEnumCastBarType"><h3>Enum</h3><br><h2>CodeEnumCastBarType</h2>
+<h3>Description</h3>
+<p>Represents the type of cast bar being shown</p>
+<ul>
+<li><b>None</b>
+<li><b>Normal</b>
+<li><b>Telegraph_Backlash</b>
+<li><b>Telegraph_Evade</b>
+</ul>
+<hr><a name="CodeEnumCCState"><h3>Enum</h3><br><h2>CodeEnumCCState</h2>
+<h3>Description</h3>
+<p>An enum representing the various crowd control effects, including Taunt</p>
+<ul>
+<li><b>Stun</b>
+<li><b>Sleep</b>
+<li><b>Root</b>
+<li><b>Disarm</b>
+<li><b>Silence</b>
+<li><b>Polymorph</b>
+<li><b>Fear</b>
+<li><b>Hold</b>
+<li><b>Knockdown</b>
+<li><b>Vulnerability</b>
+<li><b>VulnerabilityWithAct</b>
+<li><b>Disorient</b>
+<li><b>Disable</b>
+<li><b>Taunt</b>
+<li><b>Detaunt</b>
+<li><b>Blind</b>
+<li><b>Knockback</b>
+<li><b>Pushback</b>
+<li><b>Pull</b>
+<li><b>PositionSwitch</b>
+<li><b>Tether</b>
+<li><b>Snare</b>
+<li><b>Interrupt</b>
+<li><b>Daze</b>
+<li><b>Subdue</b>
+<li><b>Grounded</b>
+<li><b>DisableCinematic</b>
+<li><b>AbilityRestriction</b>
+</ul>
+<hr><a name="CodeEnumCCStateStunVictimGameplay"><h3>Enum</h3><br><h2>CodeEnumCCStateStunVictimGameplay</h2>
+<ul>
+<li><b>Forward</b>
+<li><b>Backward</b>
+<li><b>Left</b>
+<li><b>Right</b>
+</ul>
+<hr><a name="CodeEnumDisposition"><h3>Enum</h3><br><h2>CodeEnumDisposition</h2>
+<h3>Description</h3>
+<p>An NPC's disposition towards the player.<br>
+Hostile: Attacks when their target is within agro range<br>
+Neutral: Will only attack if they are attacked first     Friendly: The unit cannot attack or be attacked by the target</p>
+<ul>
+<li><b>Hostile</b>
+<li><b>Neutral</b>
+<li><b>Friendly</b>
+<li><b>Unknown</b>
+</ul>
+<hr><a name="CodeEnumEliteness"><h3>Enum</h3><br><h2>CodeEnumEliteness</h2>
+<h3>Description</h3>
+<p>An enum representing the estimated group size needed to kill the NPC.</p>
+<ul>
+<li><b>Solo</b>
+<li><b>Group</b>
+<li><b>SmallRaid</b>
+<li><b>LargeRaid</b>
+</ul>
+<hr><a name="CodeEnumFaction"><h3>Enum</h3><br><h2>CodeEnumFaction</h2>
+<h3>Description</h3>
+<p>An enum representing the different player factions</p>
+<ul>
+<li><b>DominionPlayer</b>
+<li><b>ExilesPlayer</b>
+</ul>
+<hr><a name="CodeEnumFlightPathType"><h3>Enum</h3><br><h2>CodeEnumFlightPathType</h2>
+<h3>Description</h3>
+<p>An enum representing different types of flight paths<br>
+Local: Traveling from one place to another within the same worldId<br>
+Transfer: Traveling from one worldId to another</p>
+<ul>
+<li><b>Local</b>
+<li><b>Transfer</b>
+</ul>
+<hr><a name="CodeEnumGender"><h3>Enum</h3><br><h2>CodeEnumGender</h2>
+<h3>Description</h3>
+<p>An enum representing a unit's gender.  For the sake of this enum, Chua are male.</p>
+<ul>
+<li><b>Male</b>
+<li><b>Female</b>
+<li><b>Uni</b>
+</ul>
+<hr><a name="CodeEnumLevelDifferentialAttribute"><h3>Enum</h3><br><h2>CodeEnumLevelDifferentialAttribute</h2>
+<h3>Description</h3>
+<p>An enum that contains the different colors used to show level difference between a unit and the player.  These are listed in ascending order.</p>
+<ul>
+<li><b>Grey</b>
+<li><b>Green</b>
+<li><b>Cyan</b>
+<li><b>Blue</b>
+<li><b>White</b>
+<li><b>Yellow</b>
+<li><b>Orange</b>
+<li><b>Red</b>
+<li><b>Magenta</b>
+</ul>
+<hr><a name="CodeEnumLootItemType"><h3>Enum</h3><br><h2>CodeEnumLootItemType</h2>
+<h3>Description</h3>
+<p>An enum representing the different types of loot that can drop off an NPC.  StaticItem: Your typical item loot.  Cash: Make money money...   <br>
+Virtual Item: Virtual items used for specific quests / challenges / dungeons / adventures<br>
+AdventureSpell: Drops that have an immediate effect on the player that picks them up</p>
+<ul>
+<li><b>StaticItem</b>
+<li><b>Cash</b>
+<li><b>VirtualItem</b>
+<li><b>AdventureSpell</b>
+</ul>
+<hr><a name="CodeEnumProperties"><h3>Enum</h3><br><h2>CodeEnumProperties</h2>
+<h3>Description</h3>
+<p>An enum representing various unit properties.  These properties are generally seen on the Character and Inspect screens in the default UI</p>
+<ul>
+<li><b>Strength</b>
+<li><b>Dexterity</b>
+<li><b>Technology</b>
+<li><b>Magic</b>
+<li><b>Wisdom</b>
+<li><b>BaseHealth</b>
+<li><b>ManaPerFiveSeconds</b>
+<li><b>HealthRegenMultiplier</b>
+<li><b>ResourceMax_0</b>
+<li><b>ResourceMax_1</b>
+<li><b>ResourceMax_2</b>
+<li><b>ResourceMax_3</b>
+<li><b>ResourceMax_4</b>
+<li><b>ResourceMax_5</b>
+<li><b>ResourceMax_6</b>
+<li><b>ResourceRegenMultiplier_0</b>
+<li><b>ResourceRegenMultiplier_1</b>
+<li><b>ResourceRegenMultiplier_2</b>
+<li><b>ResourceRegenMultiplier_3</b>
+<li><b>ResourceRegenMultiplier_4</b>
+<li><b>ResourceRegenMultiplier_5</b>
+<li><b>ResourceRegenMultiplier_6</b>
+<li><b>ResistPhysical</b>
+<li><b>ResistTech</b>
+<li><b>ResistMagic</b>
+<li><b>StalkerWoundMultiplier</b>
+<li><b>KillingSpreeOutOfCombatGracePeriodMS</b>
+<li><b>Rating_AvoidReduce</b>
+<li><b>Rating_AvoidIncrease</b>
+<li><b>MoveSpeedMultiplier</b>
+<li><b>Rating_CritChanceIncrease</b>
+<li><b>AssaultPower</b>
+<li><b>SupportPower</b>
+<li><b>ResourceMax_7</b>
+<li><b>ResourceRegenMultiplier_7</b>
+<li><b>Stamina</b>
+<li><b>ShieldCapacityMax</b>
+<li><b>Armor</b>
+<li><b>Rating_CritChanceDecrease</b>
+<li><b>InterruptArmor_Threshold</b>
+<li><b>InterruptArmor_RechargeTime</b>
+<li><b>InterruptArmor_RechargeCount</b>
+<li><b>RatingCritSeverityIncrease</b>
+<li><b>BaseAvoidChance</b>
+<li><b>BaseCritChance</b>
+<li><b>PvPPrestigeMultiplier</b>
+<li><b>PvPXPMultiplier</b>
+<li><b>BreathDecay</b>
+<li><b>CCPower</b>
+<li><b>CriticalHitSeverityMultiplier</b>
+<li><b>Health_Total_Multiplier</b>
+<li><b>JumpHeight</b>
+<li><b>GravityMultiplier</b>
+<li><b>XpMultiplier</b>
+<li><b>ThreatMultiplier</b>
+<li><b>AutoAttackDelayMultiplier</b>
+<li><b>FallingDamageMultiplier</b>
+<li><b>DamageDealtMultiplierMelee</b>
+<li><b>DamageDealtMultiplierRanged</b>
+<li><b>DamageDealtMultiplierSpell</b>
+<li><b>DamageDealtMultiplierPhysical</b>
+<li><b>DamageDealtMultiplierTech</b>
+<li><b>DamageDealtMultiplierMagic</b>
+<li><b>DamageTakenOffsetPhysical</b>
+<li><b>DamageTakenOffsetTech</b>
+<li><b>DamageTakenOffsetMagic</b>
+<li><b>DamageTakenMultiplierPhysical</b>
+<li><b>DamageTakenMultiplierTech</b>
+<li><b>DamageTakenMultiplierMagic</b>
+<li><b>HealingMultiplierOutgoing</b>
+<li><b>HealingMultiplierIncoming</b>
+<li><b>ExecutingEnergyRateMultiplier</b>
+<li><b>CCDurationModifier</b>
+<li><b>ResistPhysicalMitigationMultiplier</b>
+<li><b>ResistTechMitigationMultiplier</b>
+<li><b>ResistMagicMitigationMultiplier</b>
+<li><b>KillSpreeCCVMulitplier</b>
+<li><b>ManaFinalMultiplier</b>
+<li><b>ReputationMultiplier</b>
+<li><b>ShieldMitigationMax</b>
+<li><b>ShieldRegenPct</b>
+<li><b>ShieldDamageTypes</b>
+<li><b>SlowFallMultiplier</b>
+<li><b>PathXpMultiplier</b>
+<li><b>ScientistScanBotThoroughnessMultiplier</b>
+<li><b>ScientistScanBotScanTimeMultiplier</b>
+<li><b>ScientistScanBotRangeMultiplier</b>
+<li><b>ScientistScanBotHealthMultiplier</b>
+<li><b>ScientistScanBotSpeedMultiplier</b>
+<li><b>SettlerImprovementTimeMultiplier</b>
+<li><b>CreatureScientistScanMultiplier</b>
+<li><b>ManaBase</b>
+<li><b>InterruptArmor_AfterCCRechargeTime</b>
+<li><b>InterruptArmor_AfterCCRechargeCount</b>
+<li><b>PvPOffensiveRating</b>
+<li><b>PvPDefensiveRating</b>
+<li><b>DamageMitigationPctOffset</b>
+<li><b>BaseAvoidReduceChance</b>
+<li><b>BaseAvoidCritChance</b>
+<li><b>StealthDetectionModifier</b>
+<li><b>ManaRegenInCombat</b>
+<li><b>ManaRegenOutOfCombat</b>
+<li><b>SeeThroughStealth</b>
+<li><b>FrictionMax</b>
+<li><b>Deprecated1</b>
+<li><b>Deprecated2</b>
+<li><b>RenownGainMultiplier</b>
+<li><b>MoneyDropMultiplier</b>
+<li><b>SpellMechanicEnergyRegenOrDecayMultiplier</b>
+<li><b>SpellMechanicEnergyDecayOverdriveMultiplier</b>
+<li><b>ItemArmor</b>
+<li><b>ItemAssaultPower</b>
+<li><b>ItemSupportPower</b>
+<li><b>IgnoreArmorBase</b>
+<li><b>IgnoreShieldBase</b>
+<li><b>MaxThreatVsCreature</b>
+<li><b>ManaCostModifier</b>
+<li><b>CooldownReductionModifier</b>
+<li><b>BaseLifesteal</b>
+<li><b>DamageMitigationPctOffsetPhysical</b>
+<li><b>DamageMitigationPctOffsetTech</b>
+<li><b>DamageMitigationPctOffsetMagic</b>
+<li><b>PvPOffensePctOffset</b>
+<li><b>PvPDefensePctOffset</b>
+<li><b>ShieldTickTime</b>
+<li><b>ShieldRebootTime</b>
+<li><b>ScientistScanBotHealthRegenMultiplier</b>
+<li><b>ScientistScanBotCooldownMultiplier</b>
+<li><b>MountSpeedMultiplier</b>
+<li><b>MoneyQuestMultiplier</b>
+<li><b>XpQuestMultiplier</b>
+<li><b>ReputationQuestMultiplier</b>
+<li><b>PrestigeQuestMultiplier</b>
+</ul>
+<hr><a name="CodeEnumRank"><h3>Enum</h3><br><h2>CodeEnumRank</h2>
+<h3>Description</h3>
+<p>An enum representing the difficulty of an NPC in relation to other NPCs of the same level</p>
+<ul>
+<li><b>Fodder</b>
+<li><b>Minion</b>
+<li><b>Standard</b>
+<li><b>Champion</b>
+<li><b>Superior</b>
+<li><b>Elite</b>
+</ul>
+<hr><a name="CodeEnumResourceConversionType"><h3>Enum</h3><br><h2>CodeEnumResourceConversionType</h2>
+<h3>Description</h3>
+<p>An enum representing the various types of resource conversion.  Item2Item: One type of item for another type<br>
+Item2Rep: One type of item for reputation with a faction<br>
+Prereq2Rep: ???</p>
+<ul>
+<li><b>Item2Item</b>
+<li><b>Item2Rep</b>
+<li><b>Prereq2Rep</b>
+</ul>
+<hr><a name="CodeEnumSpellMechanic"><h3>Enum</h3><br><h2>CodeEnumSpellMechanic</h2>
+<h3>Description</h3>
+<p>An enum representing the spell mechanics of each class</p>
+<ul>
+<li><b>None</b>
+<li><b>Focus</b>
+<li><b>MedicCore</b>
+<li><b>Empathy</b>
+<li><b>SpellSurge</b>
+<li><b>Kinetic</b>
+<li><b>Volatility</b>
+</ul>
+<a name="Events"/><hr><a name="AttackMissed"><h3>Event</h3><br><h2>AttackMissed</h2>
+<h3>Description</h3>
+<p>An event that is fired when a unit dodges an attack from another unit</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitCaster</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that performed the attack
+<li><b>unitTarget</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that was the target of the attack
+<li><b>eMissType</b><b> (Integer)</b> - An enum that describes why the attack missed.  Uses the <br>
+GameLib.CodeEnumMissType enum list
+</ul>
+<hr><a name="DamageOrHealingDone"><h3>Event</h3><br><h2>DamageOrHealingDone</h2>
+<h3>Description</h3>
+<p>An event that gets fired whenever a unit takes damage or gets healed.  </p>
+<h3>Params</h3>
+<ul>
+<li><b>unitCaster</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit who used the spell that caused the damage/healing
+<li><b>unitTarget</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that received the damage/healing
+<li><b>eDamageType</b><b> (Integer)</b> - The type of damage done to the unit.  This enum corresponds with <br>
+GameLib.CodeEnumDamageType
+<li><b>nHealth</b><b> (Integer)</b> - The amount of damage or healing done to the target's health
+<li><b>nShields</b><b> (Integer)</b> - The amount of damage or healing done to the target's shields
+<li><b>nAbsorb</b><b> (Integer)</b> - The amount of damage or healing done to the target's absorption
+<li><b>bIsCritical</b><b> (Boolean)</b> - Whether or not the attack was a critical hit
+<li><b>splUsed</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - The spell that did the damage / healing to the target
+</ul>
+<hr><a name="ExperienceGained"><h3>Event</h3><br><h2>ExperienceGained</h2>
+<h3>Description</h3>
+<p>An event fired when a unit gains experience</p>
+<h3>Params</h3>
+<ul>
+<li><b>eReason</b><b> (Integer)</b>
+<li><b>unitTarget</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that gained the experience
+<li><b>strText</b><b> (String)</b> - A localized string containing the amount of XP gained and any relevant notes<br>
+on why the unit gained the XP.  Current modiefiers include "Bonus XP" for <br>
+killing clusters of NPCs, "Explorer's XP" for discovering new areas for the first<br>
+time, and Rested XP for XP gained while the user had the Rested bonus.
+<li><b>nDelay</b><b> (Integer)</b> - The delay before the unit gains XP from the event.  This is usually set for<br>
+some time during an NPC's death animation.
+</ul>
+<hr><a name="InteractiveUnitChanged"><h3>Event</h3><br><h2>InteractiveUnitChanged</h2>
+<h3>Description</h3>
+<p>This event is fired when the player targets an interactive unit, such as vendors, quest givers, and quest objective NPCs/props.</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitNewTarget</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The interactive unit that the player is now targeting
+<li><b>strContext</b><b> (String)</b> - A brief description of how the player can interact with the unit
+</ul>
+<hr><a name="LootedItem"><h3>Event</h3><br><h2>LootedItem</h2>
+<h3>Description</h3>
+<p>This event is fired when the player loots an item that was dropped by an NPC</p>
+<h3>Params</h3>
+<ul>
+<li><b>itemLoot</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item that was looted
+<li><b>nCount</b><b> (Integer)</b> - The number of items in the stack that was looted
+</ul>
+<hr><a name="LootedMoney"><h3>Event</h3><br><h2>LootedMoney</h2>
+<h3>Description</h3>
+<p>This event is fired when the player loots currency that was dropped by an NPC</p>
+<h3>Params</h3>
+<ul>
+<li><b>monLoot</b><b> (<a href="../Classes/Money.htm">Money</a>)</b> - The currency that the player looted
+</ul>
+<hr><a name="Mount"><h3>Event</h3><br><h2>Mount</h2>
+<h3>Description</h3>
+<p>An event that gets fired when the player mounts or dismounts</p>
+<h3>Params</h3>
+<ul>
+<li><b>bMounted</b><b> (Boolean)</b> - A boolean that states whether the player is mounting or dismounting
+</ul>
+<hr><a name="SpellCastFailed"><h3>Event</h3><br><h2>SpellCastFailed</h2>
+<h3>Description</h3>
+<p>An event that fires whenever a spell is canceled by any means</p>
+<h3>Params</h3>
+<ul>
+<li><b>eMessageType</b><b> (Integer)</b> - An enum representing how long it will be before the unit can cast again. <br>
+This value is currently set to ECombatMessageType, which is not available to <br>
+the Lua API at the moment.
+<li><b>eCastResult</b><b> (Integer)</b> - An enum representing why the cast failed.  This value uses the<br>
+ESpell4CastResult enum, which is not available to players at the moment.
+<li><b>unitTarget</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The target of the failed spell
+<li><b>unitSource</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The caster of the failed spell
+<li><b>strMessage</b><b> (String)</b> - A string describing why the spell failed
+<li><b>strSpellName</b><b> (string)</b> - The name of the spell that failed
+</ul>
+<hr><a name="TargetUnitChanged"><h3>Event</h3><br><h2>TargetUnitChanged</h2>
+<h3>Description</h3>
+<p>An event that is fired whenever the player changes their target</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitTarget</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit's new target
+</ul>
+<hr><a name="UnitActivationTypeChanged"><h3>Event</h3><br><h2>UnitActivationTypeChanged</h2>
+<h3>Description</h3>
+<p>An event that gets fired whenever the effect that happens when you interact with the object changes.</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitChanged</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit who has a new activation type
+</ul>
+<h3>Usage/Example</h3>
+<pre>Examples of when this event is fired include:
+- When a friendly player dies and can be revived by right clicking the corpse
+- When an object becomes interactive due to a quest or some other prerequisite
+- When an NPC offers a quest when they did not have one previously.
+</pre>
+<hr><a name="UnitCreated"><h3>Event</h3><br><h2>UnitCreated</h2>
+<h3>Description</h3>
+<p>An event that is fired whenever a unit is spawned or a player enters the world</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitSpawned</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The newly created unit
+</ul>
+<hr><a name="UnitDestroyed"><h3>Event</h3><br><h2>UnitDestroyed</h2>
+<h3>Description</h3>
+<p>An event that gets fired whenever a unit is despawned or a player leaves the game world</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitDestroyed</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that has left this world
+</ul>
+<hr><a name="UnitEnteredCombat"><h3>Event</h3><br><h2>UnitEnteredCombat</h2>
+<h3>Description</h3>
+<p>An event that gets fired whenever a unit enters or leaves combat</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitInCombat</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that just entered combat
+<li><b>bInCombat</b><b> (Boolean)</b> - A boolean stating whether or not the unit has entered or left combat
+</ul>
+<hr><a name="UnitMiniMapMarkerChanged"><h3>Event</h3><br><h2>UnitMiniMapMarkerChanged</h2>
+<h3>Description</h3>
+<p>An event that is fired whenever a player whose location shows on the map/minimap moves</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitMoving</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit who has changed position
+</ul>
+<hr><a name="UnitNameChanged"><h3>Event</h3><br><h2>UnitNameChanged</h2>
+<h3>Description</h3>
+<p>An event that gets fired whenever the unit's name gets changed</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitChanged</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit whose name was changed
+<li><b>strNewName</b><b> (String)</b> - The unit's new name
+</ul>
+<a name=">Functions"/>
+<hr><a name="GetVitalTable"><h3>Function</h3><br><h2>GetVitalTable()</h2>
+<h3>Description</h3>
+<p>A function that returns a list of several of the character's vital statistics.  This table is indexed by the CodeEnumVital enum.</p>
+<h3>Params</h3>
+<ul>
+<li><b>Table</b> - A table containing a list of the character's vitals, sorted by index, using the values from CodeEnumVitals as indexes
+<ul>
+<li><b>Integer</b> - Some of the values are integers
+<li><b>String</b> - Others are strings
+<li><b>Float</b> - And others are floats
+</ul>
+</ul>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="AddTextBubble"><h3>Method</h3><br><h2>AddTextBubble()</h2>
+<h3>Description</h3>
+<p>Adds a text bubble above the unit with the specified text</p>
+<h3>Params</h3>
+<ul>
+<li><b>String</b> - The text to put in the text bubble
+</ul>
+<hr><a name="CanBeHarvestedBy"><h3>Method</h3><br><h2>CanBeHarvestedBy(unitPlayer)</h2>
+<h3>Description</h3>
+<p>Returns whether or not the player can harvest the selected unit.  Returns false if the unit is not a harvestable unit.</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitPlayer</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The function checks against this unit's tradeskills to see if the calling unit is<br>
+harvestable
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the unit can be harvested by the unit that was passed in
+</ul>
+<hr><a name="CanUpgradeWarplotStructure"><h3>Method</h3><br><h2>CanUpgradeWarplotStructure()</h2>
+<h3>Description</h3>
+<p>Returns whether or not a character has permissions to upgrade a warplot structure during a match</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the player has permissions to upgrade structures
+</ul>
+<hr><a name="ClearTargetMarker"><h3>Method</h3><br><h2>ClearTargetMarker()</h2>
+<h3>Description</h3>
+<p>Removes a target marker from the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the function finished successfully 
+</ul>
+<hr><a name="ConvertResource"><h3>Method</h3><br><h2>ConvertResource(idConversion)</h2>
+<h3>Description</h3>
+<p>Perform this unit's resource conversion operation if it has one</p>
+<h3>Params</h3>
+<ul>
+<li><b>idConversion</b><b> (Integer)</b> - The id number for the resource conversion.  This value will generally come <br>
+from unit:GetResourceConversions()
+</ul>
+<hr><a name="FloatLootText"><h3>Method</h3><br><h2>FloatLootText(itemLooted, nCount)</h2>
+<h3>Description</h3>
+<p>Spawns a floating display for the items the character loots</p>
+<h3>Params</h3>
+<ul>
+<li><b>itemLooted</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item that was looted
+<li><b>nCount</b><b> (Integer)</b> - The number of items in the stack that was looted
+</ul>
+<hr><a name="GetAbsorptionMax"><h3>Method</h3><br><h2>GetAbsorptionMax()</h2>
+<h3>Description</h3>
+<p>Returns the current maximum absorption amount for the character.  <br>
+If the character has nothing giving them absorption, this returns 0.  <br>
+If the unit has no health bar, this returns nil.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The character's maximum absorption amount
+</ul>
+<hr><a name="GetAbsorptionValue"><h3>Method</h3><br><h2>GetAbsorptionValue()</h2>
+<h3>Description</h3>
+<p>Returns the character's current absorption value.  If the unit loses whatever effect gave them absorption, this will return any unused absorption even<br>
+though the max absorption value is 0.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The character's current absorption value.
+</ul>
+<hr><a name="GetActivationState"><h3>Method</h3><br><h2>GetActivationState()</h2>
+<h3>Description</h3>
+<p>Passes a table with information on whether a unit can be interacted with, as well as who can interact with them.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b> - This table is indexed by CUnit's s_ActivationInfo array
+<ul>
+<li><b>bActive</b><b> (Boolean)</b>
+<li><b>bCanInteract</b><b> (Boolean)</b> - Whether or not the player can interact with the unit
+<li><b>bUseableWhenDead</b><b> (Boolean)</b> - Whether or not the unit can be interacted with when dead.  This includes<br>
+dead players that can be revived
+<li><b>bUseableWhenHostile</b><b> (Boolean)</b> - Pretty self explanitory, really
+<li><b>bShowCallout</b><b> (Boolean)</b> - Whether the HUDAlert should be shown for the unit's interaction
+<li><b>bClickToMove</b><b> (Boolean)</b>
+<li><b>bIsHighlightable</b><b> (Boolean)</b>
+<li><b>bShowOverhead</b><b> (Boolean)</b>
+<li><b>bUsePlayerPath</b><b> (Boolean)</b> - The unit can only be interacted with by players with the appropriate path <br>
+if this is set to true
+</ul>
+</ul>
+<hr><a name="GetAffiliationName"><h3>Method</h3><br><h2>GetAffiliationName()</h2>
+<h3>Description</h3>
+<p>Returns the name of the faction that the character is affiliated with</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the faction that the unit is affiliated with
+</ul>
+<hr><a name="GetAlternateTarget"><h3>Method</h3><br><h2>GetAlternateTarget()</h2>
+<h3>Description</h3>
+<p>Gets the unit's current focus target</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The unit currently set as the player's focus target
+</ul>
+<hr><a name="GetArchetype"><h3>Method</h3><br><h2>GetArchetype()</h2>
+<h3>Description</h3>
+<p>Returns an NPC's archetype</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>idArchetype</b><b> (Integer)</b> - An enum representing the NPC's archetype
+<li><b>strIcon</b><b> (String)</b> - The name of the icon that corresponds with a particular archetype
+</ul>
+</ul>
+<hr><a name="GetAssaultAndSupportPowerSoftcap"><h3>Method</h3><br><h2>GetAssaultAndSupportPowerSoftcap()</h2>
+<h3>Description</h3>
+<p>Returns the softcap for Assault and Support power</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The current softcap for both Assault and Support power
+</ul>
+<hr><a name="GetAssaultPower"><h3>Method</h3><br><h2>GetAssaultPower()</h2>
+<h3>Description</h3>
+<p>Returns the player's current Assault Power</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The player's Assault Power
+</ul>
+<hr><a name="GetAttachmentPosition"><h3>Method</h3><br><h2>GetAttachmentPosition(nAttachmentIdx)</h2>
+<h3>Description</h3>
+<p>Gets the position of the selected attachment</p>
+<h3>Params</h3>
+<ul>
+<li><b>nAttachmentIdx</b><b> (Integer)</b> - The attachment you want to find the position for
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>bFound</b><b> (Boolean)</b> - Whether any attachment was found on the unit
+<li><b>tLocation</b><b> (Table)</b> - The location of the attachment in x, y, z coordinates
+<ul>
+<li><b>x</b><b> (Float)</b>
+<li><b>y</b><b> (Float)</b>
+<li><b>z</b><b> (Float)</b>
+</ul>
+</ul>
+</ul>
+<hr><a name="GetAuctionableItems"><h3>Method</h3><br><h2>GetAuctionableItems()</h2>
+<h3>Description</h3>
+<p>Gets a list of all the items the player can throw up on the Auction House</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of itemSellable</b> - An array of items that the player is able to sell on the Auction House
+</ul>
+<hr><a name="GetBaseLifesteal"><h3>Method</h3><br><h2>GetBaseLifesteal()</h2>
+<h3>Description</h3>
+<p>Gets the unit's base life-steal amount</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The base amount of life-steal the unit has
+</ul>
+<hr><a name="GetBasicStats"><h3>Method</h3><br><h2>GetBasicStats()</h2>
+<h3>Description</h3>
+<p>Returns a table containing a unit's most basic information</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>strName</b><b> (String)</b> - The unit's name
+<li><b>nLevel</b><b> (Integer)</b> - The unit's true level.  This value may be nil for some units
+<li><b>nEffectiveLevel</b><b> (Integer)</b> - The unit's effective level.  Effective level is only used when being leveled<br>
+down (mentoring) or leveled up (rallying).  This value will be nil for units<br>
+without a modified level.
+<li><b>nHealth</b><b> (Integer)</b> - The unit's current health.  This value is nil for simple units.
+<li><b>nMaxHealth</b><b> (Integer)</b> - The unit's max health.  This value is nil for simple units.
+<li><b>bShouldShowDeathPenalty</b><b> (Boolean)</b> - Whether or not the unit is affected by a death penalty timer
+<li><b>nPercentageOfDeathPenaltyTimer</b><b> (Integer)</b> - The percent of the death penalty timer that is remaining for the unit
+<li><b>nDeathPenaltyMinutes</b><b> (Integer)</b> - The minute value of the unit's remaining death penalty timer
+<li><b>nDeathPenaltySeconds</b><b> (Integer)</b> - The seconds value of the unit's remaining death penalty timer.  This value<br>
+only counts the seconds and only goes from 0-59
+<li><b>nResource0</b><b> (Integer)</b> - The unit's current amount of Resource0
+<li><b>nResource0min</b><b> (Integer)</b> - The minimum amount of Resource0 a unit can have
+<li><b>nResource0max</b><b> (Integer)</b> - The maximum amount of Resource0 a unit can have
+<li><b>nResource1</b><b> (Integer)</b> - The unit's current amount of Resource1
+<li><b>nResource1min</b><b> (Integer)</b> - The minimum amount of Resource1 a unit can have
+<li><b>nResource1max</b><b> (Integer)</b> - The maximum amount of Resource1 a unit can have
+<li><b>nResource2</b><b> (Integer)</b> - The unit's current amount of Resource2
+<li><b>nResource2min</b><b> (Integer)</b> - The minimum amount of Resource2 a unit can have
+<li><b>nResource2max</b><b> (Integer)</b> - The maximum amount of Resource2 a unit can have
+<li><b>nResource3</b><b> (Integer)</b> - The unit's current amount of Resource3
+<li><b>nResource3min</b><b> (Integer)</b> - The minimum amount of Resource3 a unit can have
+<li><b>nResource3max</b><b> (Integer)</b> - The maximum amount of Resource3 a unit can have
+<li><b>nResource4</b><b> (Integer)</b> - The unit's current amount of Resource4
+<li><b>nResource4min</b><b> (Integer)</b> - The minimum amount of Resource4 a unit can have
+<li><b>nResource4max</b><b> (Integer)</b> - The maximum amount of Resource4 a unit can have
+<li><b>nResource5</b><b> (Integer)</b> - The unit's current amount of Resource5
+<li><b>nResource5min</b><b> (Integer)</b> - The minimum amount of Resource5 a unit can have
+<li><b>nResource5max</b><b> (Integer)</b> - The maximum amount of Resource5 a unit can have
+<li><b>nResource6</b><b> (Integer)</b> - The unit's current amount of Resource6
+<li><b>nResource6min</b><b> (Integer)</b> - The minimum amount of Resource6 a unit can have
+<li><b>nResource6max</b><b> (Integer)</b> - The maximum amount of Resource6 a unit can have
+<li><b>nResource7</b><b> (Integer)</b> - The unit's current amount of Resource7
+<li><b>nResource7min</b><b> (Integer)</b> - The minimum amount of Resource7 a unit can have
+<li><b>nResource7max</b><b> (Integer)</b> - The maximum amount of Resource7 a unit can have
+</ul>
+</ul>
+<h3>Remarks</h3>
+<p>Resource0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+<br>
+Resource1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+Resource2 - 3 = Unused<br>
+Resource4 = Suit Power (stalkers)<br>
+Resource5-7 = Unused<br>
+</p>
+<hr><a name="GetBindPointString"><h3>Method</h3><br><h2>GetBindPointString()</h2>
+<h3>Description</h3>
+<p>Returns the name of the last place the character set their bind point.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the character's current bind point
+</ul>
+<hr><a name="GetBuffs"><h3>Method</h3><br><h2>GetBuffs()</h2>
+<h3>Description</h3>
+<p>Returns a table containing all of the positive and negative buffs on the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b> - A table containing information on all of the positive and negative buffs on the unit
+<ul>
+<li><b>arHarmful</b><b> (Array of Table)</b> - An array containing info on all of the debuffs on the unit
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>idBuff</b><b> (Integer)</b> - The id number for the buff itself.  This is not to be confused with the id number of the spell containing the buff's effect
+<li><b>splEffect</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - The spell containing the buff's effect.  
+<li><b>fTimeRemaining</b><b> (Float)</b> - The amount of time (in milliseconds) left before the buff ends
+<li><b>nCount</b><b> (Integer)</b> - The number of stacks of the buff on the player
+</ul>
+</ul>
+<li><b>arBeneficial</b><b> (Array of Table)</b> - An array containing info on all of the beneficial buffs on the unit
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>idBuff</b><b> (Integer)</b> - The id number for the buff.  This is not to be confused with the id number for the spell containing the buff's effect
+<li><b>splEffect</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - The spell containing the buff's effect
+<li><b>fTimeRemaining</b><b> (Float)</b> - The time remaining before the buff ends in milliseconds
+<li><b>nCount</b><b> (Integer)</b> - The number of stacks of a buff that are on the unit
+</ul>
+</ul>
+</ul>
+</ul>
+<hr><a name="GetBuybackItems"><h3>Method</h3><br><h2>GetBuybackItems()</h2>
+<h3>Description</h3>
+<p>Returns a list with info on the items that the players can buy back from a vendor</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>idUnique</b><b> (Integer)</b> - The unique ID of the item.  This ID belongs to this one instance of the item.
+<li><b>idItem</b><b> (Integer)</b> - The ID number of the item.  Every copy of this item has the same ID for this value.
+<li><b>nStackSize</b><b> (Integer)</b> - The number of instances of the item that can be bought back
+<li><b>nStockCount</b><b> (Integer)</b> - The number of an item that the vendor has on them
+<li><b>bMeetsPrereq</b><b> (Boolean)</b> - Whether or not the character can use the item
+<li><b>tPriceInfo</b><b> (Table)</b>
+<ul>
+<li><b>nAmount1</b><b> (Integer)</b> - The amount of the primary currency used to buy back the item
+<li><b>eCurrencyType1</b><b> (Integer)</b> - The type of the primary currency used to purchase an item
+<li><b>eAltType1</b><b> (Integer)</b> - The secondary type of currency that can be used to purchase the item
+<li><b>nAmount2</b><b> (Integer)</b> - The amount of the second type of currency used to purchase an item
+<li><b>eCurrencyType2</b><b> (Integer)</b> - The second type of currency used to purchase the item
+<li><b>eAltType2</b><b> (Integer)</b> - The alternat form of currency that can be used for the secondary cost of the item
+</ul>
+<li><b>itemData</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item that the player can buy back
+<li><b>arGlyphIds</b><b> (Array of Integer)</b> - An array of ID numbers for the glyphs on the item (if there are any)
+<li><b>itemGlyphData</b><b> (item)</b> - The glyph slots on the item, if any
+<li><b>itemModData</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - Modifications to the item (if any)
+<li><b>strIcon</b><b> (String)</b> - The string containing the icon name
+<li><b>strMaker</b><b> (String)</b> - The name of the player that made the item
+</ul>
+</ul>
+<hr><a name="GetCastBarType"><h3>Method</h3><br><h2>GetCastBarType()</h2>
+<h3>Description</h3>
+<p>Returns the player's current cast bar type from the Unit.CodeEnumCastBarType table</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The type of cast bar that should be displayed when the unit uses an ability
+</ul>
+<hr><a name="GetCastDuration"><h3>Method</h3><br><h2>GetCastDuration()</h2>
+<h3>Description</h3>
+<p>Returns the cast time of the spell that the unit is currently attempting to cast.  If no spell is being cast, this returns 0.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The cast time of the spell that the unit is currently attempting to cast (in milliseconds)
+</ul>
+<hr><a name="GetCastElapsed"><h3>Method</h3><br><h2>GetCastElapsed()</h2>
+<h3>Description</h3>
+<p>Returns the amount of time since the unit began to cast an ability.  If the unit is not currently casting an ability, this returns 0.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The amount of time since the the unit began to cast the ability (in milliseconds)
+</ul>
+<hr><a name="GetCastName"><h3>Method</h3><br><h2>GetCastName()</h2>
+<h3>Description</h3>
+<p>Returns the name of the spell that the unit is currently casting.  Returns an empty string if the character is not casting.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - Returns the name of the spell that the unit is casting.
+</ul>
+<hr><a name="GetCastTotalPercent"><h3>Method</h3><br><h2>GetCastTotalPercent()</h2>
+<h3>Description</h3>
+<p>Returns the percentage of the cast time that has elapsed for the spell that the unit is casting</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The percentage of the cast time that is completed
+</ul>
+<hr><a name="GetCCDurationModifier"><h3>Method</h3><br><h2>GetCCDurationModifier()</h2>
+<h3>Description</h3>
+<p>Returns any modifiers to Crowd Control duration on the player.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The crowd control duration modifier on the player
+</ul>
+<hr><a name="GetCCStateTimeRemaining"><h3>Method</h3><br><h2>GetCCStateTimeRemaining()</h2>
+<h3>Description</h3>
+<p>Returns the remaining time that the unit is under crowd control effects</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The remaining time the unit has to spend in a crowd control state (in milliseconds)
+</ul>
+<hr><a name="GetClassId"><h3>Method</h3><br><h2>GetClassId()</h2>
+<h3>Description</h3>
+<p>Returns the unit's class ID</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's class ID.  This value corresponds with the GameLib.CodeEnumClass enum.
+</ul>
+<hr><a name="GetClusterContributionValue"><h3>Method</h3><br><h2>GetClusterContributionValue()</h2>
+<hr><a name="GetClusterInformation"><h3>Method</h3><br><h2>GetClusterInformation()</h2>
+<h3>Description</h3>
+<p>Returns information on the cluster that the unit belongs to</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>eDifficulty</b><b> (Integer)</b> - The cluster's difficulty.  This corresponds with the XXX enum
+<li><b>nCount</b><b> (Integer)</b> - The number of units in the cluster
+<li><b>nIconCount</b><b> (Integer)</b> - The number of enemies in the cluster
+<li><b>tUnits</b><b> (Array of <a href="../Classes/Unit.htm">Unit</a>)</b> - The units in the cluster
+</ul>
+</ul>
+<hr><a name="GetClusterUnits"><h3>Method</h3><br><h2>GetClusterUnits()</h2>
+<h3>Description</h3>
+<p>Returns a list of units in the unit's cluster</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of <a href="../Classes/Unit.htm">Unit</a></b> - An array of the units in the cluster
+</ul>
+<hr><a name="GetCommodityItems"><h3>Method</h3><br><h2>GetCommodityItems()</h2>
+<h3>Description</h3>
+<p>Returns list of the player's commodity items.  This does not work for NPCs</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Item.htm">Item</a></b> - An array of commodity items in the player's inventory
+</ul>
+<hr><a name="GetConColor"><h3>Method</h3><br><h2>GetConColor()</h2>
+<h3>Description</h3>
+<p>Returns a color that corresponds with the unit's difficulty in relation to the player's.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/CColor.htm">CColor</a></b> - The color value representing the level difference between the player and the unit.
+</ul>
+<hr><a name="GetConValue"><h3>Method</h3><br><h2>GetConValue()</h2>
+<h3>Description</h3>
+<p>Returns the integer representing the level difference between the player and the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The integer representing the level difference between the player and the unit. <br>
+This value corresponds with the CodeEnumLevelDifferentialAttribute enum
+</ul>
+<hr><a name="GetCooldownReductionModifier"><h3>Method</h3><br><h2>GetCooldownReductionModifier()</h2>
+<h3>Description</h3>
+<p>The modifier that the unit's cooldowns are reduced by</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's cooldowns are reduced by this amount
+</ul>
+<hr><a name="GetCraftingStationTradeskills"><h3>Method</h3><br><h2>GetCraftingStationTradeskills()</h2>
+<h3>Description</h3>
+<p>Returns a list of tradeskills that can be used at this crafting station.  Returns nil if the unit is not a crafting station</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - This array will contain info on every tradeskill that can be used at this station
+<ul>
+<li><b>eTradeskillId</b><b> (Integer)</b> - The ID number of the tradeskill. This value corresponds with the <br>
+CraftingLib.CodeEnumTradeskill enum
+<li><b>strName</b><b> (String)</b> - The name of the tradeskill
+</ul>
+</ul>
+<hr><a name="GetCritChance"><h3>Method</h3><br><h2>GetCritChance()</h2>
+<h3>Description</h3>
+<p>Returns the chance that the unit's attacks will be a critical hit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The chance that the unit's attacks will be a critical hit
+</ul>
+<hr><a name="GetCritSeverity"><h3>Method</h3><br><h2>GetCritSeverity()</h2>
+<h3>Description</h3>
+<p>Returns how much extra damage is done when one of the unit's abilities lands a critical hit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The amount of extra damage that is done when the unit lands a critical hit
+</ul>
+<hr><a name="GetCurrentWarplotTier"><h3>Method</h3><br><h2>GetCurrentWarplotTier()</h2>
+<h3>Description</h3>
+<p>Returns the tier of a Warplot plug.  If this is called for any unit other than a Warplot plug, this returns nil.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The current tier of a Warplot plug
+</ul>
+<hr><a name="GetCurrentWarplotUpgradeCost"><h3>Method</h3><br><h2>GetCurrentWarplotUpgradeCost()</h2>
+<h3>Description</h3>
+<p>Returns the number of Nanopacks needed to upgrade the selected Warplot plug.  This returns nil if called from any unit that is not a Warplot plug.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The number of Nanopacks needed to upgrade the selected Warplot plug.
+</ul>
+<hr><a name="GetDeflectChance"><h3>Method</h3><br><h2>GetDeflectChance()</h2>
+<h3>Description</h3>
+<p>Returns the unit's chance to deflect attacks</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's chance to deflect attacks
+</ul>
+<hr><a name="GetDeflectCritChance"><h3>Method</h3><br><h2>GetDeflectCritChance()</h2>
+<h3>Description</h3>
+<p>The unit's chance to deflect critical hits</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's chance to deflect critical hits
+</ul>
+<hr><a name="GetDifficulty"><h3>Method</h3><br><h2>GetDifficulty()</h2>
+<h3>Description</h3>
+<p>Returns the difficulty of the cluster</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The cluster's difficulty.
+</ul>
+<hr><a name="GetDispositionTo"><h3>Method</h3><br><h2>GetDispositionTo()</h2>
+<h3>Description</h3>
+<p>Returns a unit's disposition to another unit</p>
+<h3>Params</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The unit that the calling unit is being compared to
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - A number representing the calling unit's disposition to another unit.  This number correlates to<br>
+CodeEnumDisposition.
+</ul>
+<hr><a name="GetEliteness"><h3>Method</h3><br><h2>GetEliteness()</h2>
+<h3>Description</h3>
+<p>Returns an enum representing the unit's eliteness level</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's eliteness level.  This number corresponds with CodeEnumEliteness
+</ul>
+<hr><a name="GetEquippedItems"><h3>Method</h3><br><h2>GetEquippedItems()</h2>
+<h3>Description</h3>
+<p>Returns an array containing all of the unit's equipped items.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of <a href="../Classes/Item.htm">Item</a></b> - An array of all of the items the unit has equipped
+</ul>
+<hr><a name="GetFacing"><h3>Method</h3><br><h2>GetFacing()</h2>
+<h3>Description</h3>
+<p>Returns the direction the unit is facing, in x,y,z coordinates.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>x</b><b> (Float)</b>
+<li><b>y</b><b> (Float)</b>
+<li><b>z</b><b> (Float)</b>
+</ul>
+</ul>
+<hr><a name="GetFaction"><h3>Method</h3><br><h2>GetFaction()</h2>
+<h3>Description</h3>
+<p>Returns the ID for the faction that the unit belongs to</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The ID for the faction that the unit belongs to
+</ul>
+<hr><a name="GetFlightPaths"><h3>Method</h3><br><h2>GetFlightPaths()</h2>
+<h3>Description</h3>
+<p>Returns a list of flight paths that are available from a Taxi NPC. Returns nil if the unit isn't a Taxi NPC</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - An array containing information for each of the Taxi's connections.
+<ul>
+<li><b>idNode</b><b> (Integer)</b> - The ID number for this flight path
+<li><b>eType</b><b> (Integer)</b> - The flight path's type.  This corresponds with the CodeEnumFlightPathType enum
+<li><b>strName</b><b> (String)</b> - The name of the flight path
+<li><b>tLocation</b><b> (Table)</b> - The destination's x, y, and z coordinates
+<ul>
+<li><b>x</b><b> (Float)</b>
+<li><b>y</b><b> (Float)</b>
+<li><b>z</b><b> (Float)</b>
+</ul>
+</ul>
+</ul>
+<hr><a name="GetFlightPathToPoint"><h3>Method</h3><br><h2>GetFlightPathToPoint()</h2>
+<h3>Description</h3>
+<p>Returns a table containing the price of the flight and each node that the path passes through</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>tPriceInfo</b><b> (Table)</b> - A table containing price information for the flight path
+<ul>
+<li><b>nAmount1</b><b> (Integer)</b> - The cost of the flight path
+<li><b>eCurrencyType1</b><b> (Integer)</b> - The primary currency type used to purchase the flight path.  This value corresponds with <br>
+Money.CodeEnumCurrencyType enum
+<li><b>eAltType1</b><b> (Integer)</b> - The alternate type of currency used to purchase the flight path.  This value <br>
+corresponds with the Money.CodeEnumCurrencyType enum
+<li><b>nAmount2</b><b> (Integer)</b> - The amount of alternate currency used to activate the flight path
+<li><b>eCurrencyType2</b><b> (Integer)</b> - The type of currency used as an alternate way to activate the flight path.<br>
+This value corresponds with the Money.CodeEnumCurrencyType enum
+<li><b>eAltType2</b><b> (Integer)</b> - The alternate type of currency used for the alternate purchase cost <br>
+for the flight path.  This corresponds with the Money.CodeEnumCurrencyType enum
+</ul>
+<li><b>tRoute</b><b> (Table)</b> - An array of node IDs that are accessible from the taxi
+<ul>
+<li><b>idNode</b><b> (Integer)</b> - The ID number of the flight path
+</ul>
+</ul>
+</ul>
+<hr><a name="GetGender"><h3>Method</h3><br><h2>GetGender()</h2>
+<h3>Description</h3>
+<p>Returns an integer representing the unit's gender.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - Returns an integer representing the unit's gender.  This corresponds with the CodeEnumGender enum
+</ul>
+<hr><a name="GetGroupValue"><h3>Method</h3><br><h2>GetGroupValue()</h2>
+<h3>Description</h3>
+<p>Returns the cluster's difficulty value</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetGuildName"><h3>Method</h3><br><h2>GetGuildName()</h2>
+<h3>Description</h3>
+<p>Returns the unit's guild's name.  Note that this will specifically get the guild and not other guild types such as warparties, circles, or arena teams.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the player's guild
+</ul>
+<hr><a name="GetGuildType"><h3>Method</h3><br><h2>GetGuildType()</h2>
+<h3>Description</h3>
+<p>Returns the unit's guild type</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b>
+</ul>
+<hr><a name="GetHarvestRequiredTradeskillName"><h3>Method</h3><br><h2>GetHarvestRequiredTradeskillName()</h2>
+<h3>Description</h3>
+<p>Returns the name of the tradeskill required to harvest a node.  Note, some units are labeled as "Harvestable", but do not require a tradeskill and generally <br>
+do not provide materials.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the tradeskill required to harvest the node.
+</ul>
+<hr><a name="GetHarvestRequiredTradeskillTier"><h3>Method</h3><br><h2>GetHarvestRequiredTradeskillTier()</h2>
+<h3>Description</h3>
+<p>Returns the tier of the tradeskill required to harvest a node.  Note that there are some nodes that are labeled as "Harvest", but do not require a tradeskill.<br>
+These nodes do not provide mats.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The tradeskill tier required to harvest the node
+</ul>
+<hr><a name="GetHeading"><h3>Method</h3><br><h2>GetHeading()</h2>
+<h3>Description</h3>
+<p>Returns the heading of the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The heading of the unit in degrees.
+</ul>
+<hr><a name="GetHealth"><h3>Method</h3><br><h2>GetHealth()</h2>
+<h3>Description</h3>
+<p>Returns the unit's current HP</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's current HP
+</ul>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<h3>Description</h3>
+<p>Returns the unit's ID</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's ID
+</ul>
+<hr><a name="GetIgnoreArmorBase"><h3>Method</h3><br><h2>GetIgnoreArmorBase()</h2>
+<h3>Description</h3>
+<p>Returns unit's armor penetration percent</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's armor penetration percent
+</ul>
+<hr><a name="GetIgnoreShieldBase"><h3>Method</h3><br><h2>GetIgnoreShieldBase()</h2>
+<h3>Description</h3>
+<p>Returns the unit's shield penetration percent</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's shield penetration percent
+</ul>
+<hr><a name="GetInfo"><h3>Method</h3><br><h2>GetInfo()</h2>
+<hr><a name="GetInstancePortalCompletionTime"><h3>Method</h3><br><h2>GetInstancePortalCompletionTime()</h2>
+<h3>Description</h3>
+<p>Returns the expected completion time of the instance inside an instance portal</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The expected completion time of the instance, in minutes
+</ul>
+<hr><a name="GetInstancePortalLevelRange"><h3>Method</h3><br><h2>GetInstancePortalLevelRange()</h2>
+<h3>Description</h3>
+<p>Returns the level range for an instance inside an instance portal.  Returns nil if the unit is not an instance portal.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>nMinLevel</b><b> (Integer)</b> - The minimum level for the instance
+<li><b>nMaxLevel</b><b> (Integer)</b> - The maximum level for the instance.  Players above this level will be <br>
+scaled to this level inside the instance
+</ul>
+</ul>
+<hr><a name="GetInstancePortalRemainingTime"><h3>Method</h3><br><h2>GetInstancePortalRemainingTime()</h2>
+<h3>Description</h3>
+<p>The group's remaining time to finish an instance.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The group's remaining time to finish an instance, in seconds
+</ul>
+<hr><a name="GetInterruptArmorMax"><h3>Method</h3><br><h2>GetInterruptArmorMax()</h2>
+<h3>Description</h3>
+<p>Returns the maximum amount of interrupt armor the unit can have</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The maximum amount of interrupt armor for the unit
+</ul>
+<hr><a name="GetInterruptArmorValue"><h3>Method</h3><br><h2>GetInterruptArmorValue()</h2>
+<h3>Description</h3>
+<p>The amount of interrupt armor currently on the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The amount of interrupt armor currently on the unit
+</ul>
+<hr><a name="GetInventoryItems"><h3>Method</h3><br><h2>GetInventoryItems()</h2>
+<h3>Description</h3>
+<p>Returns a list of the player's inventory items.  Calling this on anyone but the current player returns an empty table.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - An array containing player's items and the corresponding bag slot that they are found in
+<ul>
+<li><b>nBagSlot</b><b> (Integer)</b> - The bag slot where the item is found
+<li><b>itemInBag</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item in the player's inventory
+</ul>
+</ul>
+<hr><a name="GetLevel"><h3>Method</h3><br><h2>GetLevel()</h2>
+<h3>Description</h3>
+<p>Returns the unit's level</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's level
+</ul>
+<hr><a name="GetLevelDifferential"><h3>Method</h3><br><h2>GetLevelDifferential(unitTarget)</h2>
+<h3>Description</h3>
+<p>Returns an integer representing the unit's level differential with the specified unit</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitTarget</b><b> (unit)</b> - The unit that the source unit is being compared to
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - An integer representing the level differential between the source unit and the target.  This value<br>
+corresponds with the CodeEnumLevelDifferential enum
+</ul>
+<hr><a name="GetLevelString"><h3>Method</h3><br><h2>GetLevelString()</h2>
+<h3>Description</h3>
+<p>Returns a localized string that includes a label and the unit's effective level</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - A string containing a label ("Level: " in English) and the unit's effective level
+</ul>
+<hr><a name="GetLoot"><h3>Method</h3><br><h2>GetLoot()</h2>
+<h3>Description</h3>
+<p>Returns a list of dropped loot that belongs to the player</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - There are multiple combinations of variables found in the table.  Each combination is dependant on which <br>
+type 
+<ul>
+<li><b>Table</b> - This contains all of the variables for items that can be looted
+<ul>
+<li><b>nCount</b><b> (Integer)</b> - The amount of items looted in this indivudal drop
+<li><b>itemLoot</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item that was dropped
+<li><b>itemModData</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The mod data for the item that was dropped.  Note that not every item<br>
+will have this variable
+<li><b>itemSigilData</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The sigil data for the item that was dropped.  Note that not every item will<br>
+have sigil data.
+</ul>
+<li><b>Table</b> - This table contains all the variables for money loot drops
+<ul>
+<li><b>monCurrency</b><b> (<a href="../Classes/Money.htm">Money</a>)</b> - Currency that was dropped.
+</ul>
+<li><b>Table</b> - This table contains all the variables for virtual items that are looted
+<ul>
+<li><b>strName</b><b> (String)</b> - The name of the virtual item
+<li><b>strFlavor</b><b> (String)</b> - The flavor text for the virtual item
+<li><b>nCount</b><b> (Integer)</b> - The number of the virtual item that will be picked up in this individual drop
+<li><b>strIcon</b><b> (String)</b> - The string name for the icon used for the virtual item
+<li><b>eType</b><b> (Integer)</b> - The virtual item's type.  This value corresponds with the &gt;&gt;&gt;&gt; enum
+</ul>
+<li><b>Table</b> - This table contains all the variables for spell effects that are dropped, such as<br>
+from Scientist scans.
+<ul>
+<li><b>tAbility</b><b> (Table)</b> - Information on the skill that is picked up.
+<ul>
+<li><b>strName</b><b> (String)</b> - The name of the spell
+<li><b>strDescription</b><b> (String)</b> - The description of the spell
+<li><b>strButtonIcon</b><b> (String)</b> - The string for the spell's icon
+</ul>
+</ul>
+</ul>
+</ul>
+<hr><a name="GetMagicMitigation"><h3>Method</h3><br><h2>GetMagicMitigation()</h2>
+<h3>Description</h3>
+<p>Returns the unit's magic resistance</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percentage of magic abilities that are mitigated by the unit
+</ul>
+<hr><a name="GetMana"><h3>Method</h3><br><h2>GetMana()</h2>
+<h3>Description</h3>
+<p>Returns the unit's current amount of mana</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's current amount of mana
+</ul>
+<hr><a name="GetManaCostModifier"><h3>Method</h3><br><h2>GetManaCostModifier()</h2>
+<h3>Description</h3>
+<p>Returns the current modifier to the mana cost of the unit's abilities</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The modifier to the mana cost of the unit's abilities
+</ul>
+<hr><a name="GetManaRegenInCombat"><h3>Method</h3><br><h2>GetManaRegenInCombat()</h2>
+<h3>Description</h3>
+<p>Returns the amount of Focus the unit regens during combat</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The amount of Focus the unit regens in combat
+</ul>
+<hr><a name="GetManaRegenNonCombat"><h3>Method</h3><br><h2>GetManaRegenNonCombat()</h2>
+<h3>Description</h3>
+<p>The amount of Focus the unit regens outside of combat</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The amount of Focus the unit regens outside of combat
+</ul>
+<hr><a name="GetMaxHealth"><h3>Method</h3><br><h2>GetMaxHealth()</h2>
+<h3>Description</h3>
+<p>Returns the unit's maximum health</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's maximum health
+</ul>
+<hr><a name="GetMaxMana"><h3>Method</h3><br><h2>GetMaxMana()</h2>
+<h3>Description</h3>
+<p>Returns the unit's maximum Focus</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's maximum Focus
+</ul>
+<hr><a name="GetMaxResource"><h3>Method</h3><br><h2>GetMaxResource(iResource)</h2>
+<h3>Description</h3>
+<p>The maximum value for the specified resource</p>
+<h3>Params</h3>
+<ul>
+<li><b>iResource</b><b> (Integer)</b> - An integer representing the various resources.<br>
+<br>
+0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+<br>
+2 - 3 = Unused<br>
+<br>
+4 = Suit Power (stalkers) 5-7 = Unused<br>
+
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The maximum value for the specified resource
+</ul>
+<hr><a name="GetMiniMapMarkers"><h3>Method</h3><br><h2>GetMiniMapMarkers()</h2>
+<hr><a name="GetMinResource"><h3>Method</h3><br><h2>GetMinResource(iResource)</h2>
+<h3>Description</h3>
+<p>Returns the minimum amount of the given resource that the unit can have</p>
+<h3>Params</h3>
+<ul>
+<li><b>iResource</b><b> (Integer)</b> - An integer representing the various resources.<br>
+<br>
+0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+<br>
+2 - 3 = Unused<br>
+<br>
+4 = Suit Power (stalkers) 5-7 = Unused<br>
+
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The minimum amount of a given resource that the unit can have
+</ul>
+<hr><a name="GetMountHealth"><h3>Method</h3><br><h2>GetMountHealth()</h2>
+<h3>Description</h3>
+<p>Returns the current health of the mount that the unit is riding</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The current health of the omount that the unit is riding
+</ul>
+<hr><a name="GetMountMaxHealth"><h3>Method</h3><br><h2>GetMountMaxHealth()</h2>
+<h3>Description</h3>
+<p>The maximum health of the mount that the unit is riding</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The maximum health of the mount that the unit is riding
+</ul>
+<hr><a name="GetMouseOverType"><h3>Method</h3><br><h2>GetMouseOverType()</h2>
+<h3>Description</h3>
+<p>Returns a string describing the unit's target frame type</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - Returns "Simple" for units that have no HP and cannot be attacked or "Normal" for the rest
+</ul>
+<hr><a name="GetName"><h3>Method</h3><br><h2>GetName()</h2>
+<h3>Description</h3>
+<p>Returns the name of the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The unit's name
+</ul>
+<hr><a name="GetNameplateColor"><h3>Method</h3><br><h2>GetNameplateColor()</h2>
+<h3>Description</h3>
+<p>Returns an ApolloColor for the unit's nameplate</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/ApolloColor.htm">ApolloColor</a></b> - The current color of the unit's nameplate
+</ul>
+<hr><a name="GetOverheadAnchor"><h3>Method</h3><br><h2>GetOverheadAnchor()</h2>
+<h3>Description</h3>
+<p>Returns a table with the x, y, and z positions for the unit's nameplate (in relation to the model)</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b> - A table containing the x, y, and z positions for the unit's nameplate
+<ul>
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+<li><b>z</b><b> (Integer)</b>
+</ul>
+</ul>
+<hr><a name="GetPhysicalMitigation"><h3>Method</h3><br><h2>GetPhysicalMitigation()</h2>
+<h3>Description</h3>
+<p>Returns the unit's physical mitigation percent</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percent of physical damage that is mitigated by the unit
+</ul>
+<hr><a name="GetPlayerPathType"><h3>Method</h3><br><h2>GetPlayerPathType()</h2>
+<h3>Description</h3>
+<p>Returns the unit's path.  If the unit is not a player, returns nil.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - A number representing the unit's path.  This value corresponds with the <br>
+PlayerPathLib.PlayerPathType int constants.
+</ul>
+<hr><a name="GetPosition"><h3>Method</h3><br><h2>GetPosition()</h2>
+<h3>Description</h3>
+<p>Returns a table with the unit's position in x, y, and z coordinates</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b> - The unit's position in x, y, and z coordinates
+<ul>
+<li><b>x</b><b> (Float)</b>
+<li><b>y</b><b> (Float)</b>
+<li><b>z</b><b> (False)</b>
+</ul>
+</ul>
+<hr><a name="GetPrereqInfo"><h3>Method</h3><br><h2>GetPrereqInfo(idPrereq)</h2>
+<h3>Description</h3>
+<p>Validates that the player meets the prerequisites for an item and returns a table with the results</p>
+<h3>Params</h3>
+<ul>
+<li><b>idPrereq</b><b> (Integer)</b> - The ID number for the item whose prerequisites are being checked
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>bIsMet</b><b> (Boolean)</b> - Whether or not the unit meets the prerequisites
+<li><b>strText</b><b> (String)</b> - A string containing the prerequisite for the item
+</ul>
+</ul>
+<hr><a name="GetPvPDamageI"><h3>Method</h3><br><h2>GetPvPDamageI()</h2>
+<hr><a name="GetPvPDamageO"><h3>Method</h3><br><h2>GetPvPDamageO()</h2>
+<hr><a name="GetPvPDefenseI"><h3>Method</h3><br><h2>GetPvPDefenseI()</h2>
+<hr><a name="GetPvPDefenseO"><h3>Method</h3><br><h2>GetPvPDefenseO()</h2>
+<hr><a name="GetPvPDefensePercent"><h3>Method</h3><br><h2>GetPvPDefensePercent()</h2>
+<h3>Description</h3>
+<p>Returns the percent of damage that is mitigated during PvP</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percent of damage that is mitigated during PvP
+</ul>
+<hr><a name="GetPvPDefenseRating"><h3>Method</h3><br><h2>GetPvPDefenseRating()</h2>
+<h3>Description</h3>
+<p>Returns the unit's PvP Defense Rating</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's PvP Defense Rating
+</ul>
+<hr><a name="GetPvPHealingI"><h3>Method</h3><br><h2>GetPvPHealingI()</h2>
+<hr><a name="GetPvPHealingO"><h3>Method</h3><br><h2>GetPvPHealingO()</h2>
+<hr><a name="GetPvPOffensePercent"><h3>Method</h3><br><h2>GetPvPOffensePercent()</h2>
+<h3>Description</h3>
+<p>Returns the percent of extra damage the player does in PvP</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percent of extra damage the unit does in PvP
+</ul>
+<hr><a name="GetPvPOffenseRating"><h3>Method</h3><br><h2>GetPvPOffenseRating()</h2>
+<h3>Description</h3>
+<p>Returns the unit's PvP Offense Rating</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's PvP Offense Rating
+</ul>
+<hr><a name="GetRaceId"><h3>Method</h3><br><h2>GetRaceId()</h2>
+<h3>Description</h3>
+<p>Returns a number representing the unit's race</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - A number representing the unit's race.  This value corresponds with the GameLib.CodeEnumRace enum
+</ul>
+<hr><a name="GetRank"><h3>Method</h3><br><h2>GetRank()</h2>
+<h3>Description</h3>
+<p>Returns an integer representing the unit's difficulty rank</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - An integer representing the unit's difficulty rank.  This value corresponds with the <br>
+Unit.CodeEnumRank enum
+</ul>
+<hr><a name="GetRechargeableItems"><h3>Method</h3><br><h2>GetRechargeableItems()</h2>
+<hr><a name="GetRepairableItems"><h3>Method</h3><br><h2>GetRepairableItems()</h2>
+<h3>Description</h3>
+<p>Returns a list with information on the items that the unit owns that can be repaired</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>idLocation</b><b> (Integer)</b> - The item's location in the character's inventory or equipment
+<li><b>idItem</b><b> (Integer)</b> - The item's id number
+<li><b>nStackSize</b><b> (Integer)</b> - The number of items in the stack
+<li><b>nStockCount</b><b> (Integer)</b> - The number of the item the vendor has in stock
+<li><b>bMeetsPrereq</b><b> (Boolean)</b> - Whether or not the unit meets the prerequisites to equip the item.  For<br>
+the sake of this function, this value will always be true.
+<li><b>tPriceInfo</b><b> (Table)</b> - The cost of repairing the item
+<ul>
+<li><b>nAmount1</b><b> (Integer)</b> - The primary cost of repairing the item
+<li><b>eCurrencyType1</b><b> (Integer)</b> - The primary type of currency used to repair the item.  This value<br>
+corresponds with the Money.CodeEnumCurrencyType enum
+<li><b>eAltType1</b><b> (Integer)</b> - The primary alternate form of currency used for repairing the item.  This<br>
+value corresponds with the Money.CodeEnumCurrencyType enum
+<li><b>nAmount2</b><b> (Integer)</b> - The secondary cost of repairing the item
+<li><b>eCurrencyType2</b><b> (Integer)</b> - The secondary type of currency used to repair the item
+<li><b>eAltType2</b><b> (Integer)</b> - The secondary alternate form of currency used to repair the item.  This<br>
+value corresponds with the Money.CodeEnumCurrencyType enum
+</ul>
+<li><b>itemData</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item needing repairs
+<li><b>strIcon</b><b> (String)</b> - The name of the item's icon
+<li><b>strName</b><b> (String)</b> - The item's name
+</ul>
+</ul>
+<hr><a name="GetRepTurninItems"><h3>Method</h3><br><h2>GetRepTurninItems()</h2>
+<h3>Description</h3>
+<p>Returns information on what items the player is carrying that can count as reputation for the given unit's faction</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - An array containing information on each of the items that the player is holding that can be turned in for reputation
+<ul>
+<li><b>idRep</b><b> (Integer)</b> - The faction the player would gain reputation with
+<li><b>nRepAmount</b><b> (Integer)</b> - The amount of reputation the item is worth
+<li><b>itemRequired</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item that can be turned in for reputation
+</ul>
+</ul>
+<hr><a name="GetResource"><h3>Method</h3><br><h2>GetResource(nResource)</h2>
+<h3>Description</h3>
+<p>Returns the amount of the specified resource that the unit has</p>
+<h3>Params</h3>
+<ul>
+<li><b>nResource</b><b> (Integer)</b> - The Resource number that the player is polling
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The amount of the given resource that the unit has
+</ul>
+<h3>Remarks</h3>
+<p>Resource0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+<br>
+Resource1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+Resource2 - 3 = Unused<br>
+Resource4 = Suit Power (stalkers)<br>
+Resource5-7 = Unused<br>
+</p>
+<hr><a name="GetResourceConversions"><h3>Method</h3><br><h2>GetResourceConversions()</h2>
+<h3>Description</h3>
+<p>Returns a list of resource conversions that the unit is able to perform.  If the unit is not able to perform resource conversions, this returns nil.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - An array containing each of the conversions available through the NPC
+<ul>
+<li><b>idConversion</b><b> (Integer)</b> - The ID number for this conversion type
+<li><b>itemSource</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item the player needs to trade in this conversion.  This value does<br>
+not exist for conversions that do not require items
+<li><b>idSource</b><b> (Integer)</b> - The ID number for the object that can be converted into reputation.  This<br>
+value does not exist if the conversion requires items
+<li><b>nSourceCount</b><b> (Integer)</b> - The number of the object required for the conversion
+<li><b>nAvailableCount</b><b> (Integer)</b> - The number of the object required for the conversion that are in the player's inventory
+<li><b>eType</b><b> (Integer)</b> - The type of conversion.  This value corresponds with the <br>
+Unit.CodeEnumResourceConversionType enum
+<li><b>itemTarget</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item that is given to the player by the conversion.  This variable only exists if the conversion gives items
+<li><b>idTarget</b><b> (Integer)</b> - The ID number of the faction who the player gains reputation with through this conversion.  This value does not exist if the conversion does not grant reputation
+<li><b>strName</b><b> (String)</b> - The name of the faction that the player gains reputation with through the conversion.  This variable does not exist if the conversion does not grant reputation
+<li><b>nTargetCount</b><b> (Integer)</b> - The amount of the reward that is granted to the player through this conversion
+</ul>
+</ul>
+<hr><a name="GetResourceIcon"><h3>Method</h3><br><h2>GetResourceIcon(nResource)</h2>
+<h3>Description</h3>
+<p>Returns the name of a resource's icon</p>
+<h3>Params</h3>
+<ul>
+<li><b>nResource</b><b> (Integer)</b> - The Resource being polled.
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the given resource's icon.
+</ul>
+<h3>Remarks</h3>
+<p>Resource0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+<br>
+Resource1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+Resource2 - 3 = Unused<br>
+Resource4 = Suit Power (stalkers)<br>
+Resource5-7 = Unused<br>
+</p>
+<hr><a name="GetResourceTooltip"><h3>Method</h3><br><h2>GetResourceTooltip(nResource)</h2>
+<h3>Description</h3>
+<p>Returns the tooltip string for the given resource</p>
+<h3>Params</h3>
+<ul>
+<li><b>nResource</b><b> (Integer)</b> - The resource being polled for its tooltip
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The tooltip string for the given resource
+</ul>
+<h3>Remarks</h3>
+<p>Resource0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+<br>
+Resource1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+Resource2 - 3 = Unused<br>
+Resource4 = Suit Power (stalkers)<br>
+Resource5-7 = Unused<br>
+</p>
+<hr><a name="GetRewardInfo"><h3>Method</h3><br><h2>GetRewardInfo()</h2>
+<h3>Description</h3>
+<p>Returns a table containing information on all of the active quests, missions, challenges, and public events that this unit is the target of</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - An array containing information on each thing that the unit is the objective of.  Each type has its own variables.
+<ul>
+<li><b>Table</b> - If the unit is part of a mission objective, this table will be one of the ones returned
+<ul>
+<li><b>strType</b><b> (String)</b> - The type of objective contained in this table
+<li><b>idQuest</b><b> (Integer)</b> - The ID number of the quest that the unit is a target of
+<li><b>strTitle</b><b> (String)</b> - The name of the quest that the unit is a target of
+<li><b>nCompleted</b><b> (Integer)</b> - The number of the unit that has been killed for the quest or the percentage of completion that the player has reached
+<li><b>nNeeded</b><b> (Integer)</b> - The number of the unit that the player needs to interact with for the quest.  If nCompleted is a percent, then this value is 100.
+<li><b>splAbility</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - A spell granted for use in the quest
+<li><b>splObjective</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - A spell that needs to be used as one of the objectives of the quest
+<li><b>bShowCount</b><b> (Boolean)</b> - Whether or not the number interacted with and required should be shown
+</ul>
+<li><b>Table</b> - If the unit is part of a challenge, then the table will use these values
+<ul>
+<li><b>strType</b><b> (String)</b> - The type of objective.  In this case, the value is "Challenge"
+<li><b>idChallenge</b><b> (Integer)</b> - The ID number of the challenge that the unit is the target of
+<li><b>strTitle</b><b> (String)</b> - The name of the challenge targeting the unit
+<li><b>nCompleted</b><b> (Integer)</b> - The number of the unit that has been interacted with for the challenge
+<li><b>nNeeded</b><b> (Integer)</b> - The number of the unit that the player must interact with for the challenge
+</ul>
+<li><b>Table</b> - If the unit is the target of a public event, the table will look like this
+<ul>
+<li><b>strType</b><b> (String)</b> - The type of objective that the unit is a part of.  In this case, the value is "PublicEvent"
+<li><b>peoObjective</b><b> (Public Event Objective)</b> - The specific Public Event Objective that the unit is the target of
+</ul>
+<li><b>Table</b> - If the unit is the target of a path mission, the table will look like this
+<ul>
+<li><b>strType</b><b> (String)</b> - The type of mission that the unit is the target of.  This may be either "Scientist", "Soldier", or "Explorer" in this case
+<li><b>pmMission</b><b> (<a href="../Classes/PathMission.htm">PathMission</a>)</b> - The PathMission that the unit is the target of
+<li><b>splReward</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - Any spell tied to interacting with the unit, such as drops from scanning the unit with a Scientist or items tied to the mission that the player needs to use on the unit
+<li><b>bIsActivated</b><b> (Boolean)</b> - Whether or not the player has interacted with the object that starts the mission.  This value only exists for Soldier missions
+</ul>
+</ul>
+</ul>
+<hr><a name="GetSettlerImprovementInfo"><h3>Method</h3><br><h2>GetSettlerImprovementInfo()</h2>
+<h3>Description</h3>
+<p>Returns information on Settler Improvements.  Returns an empty table if the unit is not a Settler Improvment</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>arOwnerNames</b><b> (Array of String)</b> - A list of the people who help build and maintain this improvement
+<li><b>bIsInfiniteDuration</b><b> (Boolean)</b> - Whether or not the improvement lasts forever
+<li><b>nRemainingTime</b><b> (Integer)</b> - Returns the remaining duration on the improvement in seconds
+<li><b>arTiers</b><b> (Array of Table)</b> - A list of the various tiers of the improvement
+<ul>
+<li><b>strName</b><b> (String)</b> - The name of this tier of the improvement
+<li><b>nTier</b><b> (Integer)</b> - The tier number
+</ul>
+</ul>
+</ul>
+<hr><a name="GetSettlerRewardName"><h3>Method</h3><br><h2>GetSettlerRewardName()</h2>
+<hr><a name="GetShieldCapacity"><h3>Method</h3><br><h2>GetShieldCapacity()</h2>
+<h3>Description</h3>
+<p>Returns the unit's current shield value</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's current shield value
+</ul>
+<hr><a name="GetShieldCapacityMax"><h3>Method</h3><br><h2>GetShieldCapacityMax()</h2>
+<h3>Description</h3>
+<p>Returns the unit's maximum shield value</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's maximum shield value
+</ul>
+<hr><a name="GetShieldRebootTime"><h3>Method</h3><br><h2>GetShieldRebootTime()</h2>
+<h3>Description</h3>
+<p>Returns the amount of time the unit needs to go without taking damage before their shields start to regenerate</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The amount of time between shield regen tics
+</ul>
+<hr><a name="GetShieldRegenPct"><h3>Method</h3><br><h2>GetShieldRegenPct()</h2>
+<h3>Description</h3>
+<p>Returns the percent of the unit's maximum shields that are regenerated each tic</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percent of the unit's maximum shields that are regenerated each tic
+</ul>
+<hr><a name="GetShieldTickTime"><h3>Method</h3><br><h2>GetShieldTickTime()</h2>
+<h3>Description</h3>
+<p>Returns the intervals at which the unit's shields regenerate, in seconds</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The intervals at which the unit's shields regenerate, in seconds.
+</ul>
+<hr><a name="GetSpellMechanicId"><h3>Method</h3><br><h2>GetSpellMechanicId()</h2>
+<h3>Description</h3>
+<p>Returns the unit's spell mechanic ID number</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The unit's spell mechanic ID number
+</ul>
+<hr><a name="GetSpellMechanicPercentage"><h3>Method</h3><br><h2>GetSpellMechanicPercentage(nResource)</h2>
+<h3>Description</h3>
+<p>Returns the percentage of the given resource the unit has.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nResource</b><b> (Integer)</b> - The resource that is being polled
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percentage of the given resource the unit has
+</ul>
+<h3>Remarks</h3>
+<p>Resource0 = Endurance.  Endurance is the resource used while sprinting.<br>
+<br>
+<br>
+Resource1 = Kinetic Energy (Warriors), Volatility (Engineers), Psi Points (Esper), Power Cores (Medic), and is not used for stalkers<br>
+<br>
+Resource2 - 3 = Unused<br>
+Resource4 = Suit Power (stalkers)<br>
+Resource5-7 = Unused<br>
+</p>
+<hr><a name="GetStandState"><h3>Method</h3><br><h2>GetStandState()</h2>
+<h3>Description</h3>
+<p>Returns the unit's stand state</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The unit's stand state.
+</ul>
+<h3>Remarks</h3>
+<p>The states this function can return are "Stand", "Sit", "LyingDown", "State0", "State1", "State2", "Looting", "Emote", "StillPose", "DeathPose", "Burrowed", "State3", "Chair", "Mannequin"</p>
+<hr><a name="GetStrikethroughChance"><h3>Method</h3><br><h2>GetStrikethroughChance()</h2>
+<h3>Description</h3>
+<p>Returns the unit's strikethrough chance </p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percent chance the unit has to not have the target deflect the attack
+</ul>
+<hr><a name="GetSupplySatchelItems"><h3>Method</h3><br><h2>GetSupplySatchelItems()</h2>
+<h3>Description</h3>
+<p>Returns a list of items and information on the contents of the player's Supply Satchel.  Note, this returns an empty table if this is called on someone other than the player</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>idLocation</b><b> (Integer)</b> - The item's location in the Supply Satchel
+<li><b>itemMaterial</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item itself
+<li><b>nCount</b><b> (Integer)</b> - The amount of the item that the player owns
+</ul>
+</ul>
+<hr><a name="GetSupportPower"><h3>Method</h3><br><h2>GetSupportPower()</h2>
+<h3>Description</h3>
+<p>Returns the unit's support power</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The unit's support power
+</ul>
+<hr><a name="GetTarget"><h3>Method</h3><br><h2>GetTarget()</h2>
+<h3>Description</h3>
+<p>Returns the unit's current target</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The unit's current target
+</ul>
+<hr><a name="GetTargetMarker"><h3>Method</h3><br><h2>GetTargetMarker()</h2>
+<h3>Description</h3>
+<p>Returns a number representing the target marker on the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - A number representing the target marker on the unit
+</ul>
+<hr><a name="GetTargetOfTarget"><h3>Method</h3><br><h2>GetTargetOfTarget()</h2>
+<h3>Description</h3>
+<p>Returns the target of the unit being targeted by the calling unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The target of the unit being targeted by the calling unit
+</ul>
+<hr><a name="GetTechMitigation"><h3>Method</h3><br><h2>GetTechMitigation()</h2>
+<h3>Description</h3>
+<p>Returns the percent of tech damage that is mitigated by the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Float</b> - The percent of tech damage that is mitigated by the unit
+</ul>
+<hr><a name="GetTitle"><h3>Method</h3><br><h2>GetTitle()</h2>
+<h3>Description</h3>
+<p>Returns the title that the unit is displaying</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The title that the unit is displaying
+</ul>
+<hr><a name="GetTitleOrName"><h3>Method</h3><br><h2>GetTitleOrName()</h2>
+<h3>Description</h3>
+<p>If the unit has a title set, this returns it.  If it doesn't, this returns the name of the unit</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The title of the unit if it has one set.  The name of the unit if it doesn't.
+</ul>
+<hr><a name="GetTrainerTradeskills"><h3>Method</h3><br><h2>GetTrainerTradeskills()</h2>
+<h3>Description</h3>
+<p>Returns a list of tradeskills available at the trainer.  If the unit is not a tradeskill trainer, this returns nil.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b> - The name and ID of each tradeskill available
+<ul>
+<li><b>eTradeskillId</b><b> (Integer)</b> - The ID number of the tradeskill.  This number corresponds with the CraftingLib.CodeEnumTradeskill
+<li><b>strName</b><b> (String)</b> - The name of the tradeskill
+</ul>
+</ul>
+<hr><a name="GetTransferDestination"><h3>Method</h3><br><h2>GetTransferDestination()</h2>
+<h3>Description</h3>
+<p>Returns the destination of a taxi route that transfers the player to another zone</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The name of the destination
+</ul>
+<hr><a name="GetType"><h3>Method</h3><br><h2>GetType()</h2>
+<h3>Description</h3>
+<p>Returns the unit's type</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>String</b> - The unit's type
+</ul>
+<h3>Remarks</h3>
+<p>There are several possible values that can be returned here, such as<br>
+"NonPlayer",<br>
+"Chest",<br>
+"Destructible",<br>
+"Vehicle",<br>
+"Door",<br>
+"Harvest",<br>
+"Corpse",<br>
+"Mount",<br>
+"Collectible",<br>
+"Taxi",<br>
+"Simple",<br>
+"Platform",<br>
+"Mailbox",<br>
+"Turret",<br>
+"InstancePortal",<br>
+"Plug",<br>
+"Residence",<br>
+"StructuredPlug",<br>
+"PinataLoot",<br>
+"BindPoint",<br>
+"Player",<br>
+"HiddenSpell",<br>
+"Trigger",<br>
+"Ghost",<br>
+"Pet",<br>
+"Esper Pet",<br>
+"World object",<br>
+"Scanner",<br>
+"Camera",<br>
+"Trap",<br>
+"DestructibleDoor",<br>
+"Pickup",<br>
+"SimpleCollidable",<br>
+"HousingMannequin",<br>
+and "Unknown"</p>
+<hr><a name="GetUnitMount"><h3>Method</h3><br><h2>GetUnitMount()</h2>
+<h3>Description</h3>
+<p>Returns the unit's mount</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The unit's current mount
+</ul>
+<hr><a name="GetUnitOwner"><h3>Method</h3><br><h2>GetUnitOwner()</h2>
+<h3>Description</h3>
+<p>Returns the owner of a pet.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The unit who owns the pet
+</ul>
+<hr><a name="GetUnitProperties"><h3>Method</h3><br><h2>GetUnitProperties()</h2>
+<h3>Description</h3>
+<p>Returns a table with information on each of the unit's properties</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>idProperty</b><b> (Integer)</b> - The id number for the property
+<li><b>fValue</b><b> (Float)</b> - The value of the property for the unit
+<li><b>fBase</b><b> (Float)</b> - The unit's base value for the property
+<li><b>strDisplayName</b><b> (String)</b> - The name of the property
+<li><b>nTooltipDisplayOrder</b><b> (Integer)</b> - Where this property should be displayed in item tooltips, with lower numbers being towards the top of the tooltip
+</ul>
+</ul>
+<hr><a name="GetUnitProperty"><h3>Method</h3><br><h2>GetUnitProperty(eProperty)</h2>
+<h3>Description</h3>
+<p>Returns information on the specified property for the unit</p>
+<h3>Params</h3>
+<ul>
+<li><b>eProperty</b><b> (Integer)</b> - This value corresponds with the Unit.CodeEnumProperties table
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>idProperty</b><b> (Integer)</b> - The ID number of the property
+<li><b>fValue</b><b> (Float)</b> - The unit's current value for the property
+<li><b>fBase</b><b> (Float)</b> - The unit's base value for the property
+<li><b>strDisplayName</b><b> (String)</b> - The name of the property
+<li><b>nTooltipDisplayOrder</b><b> (Integer)</b> - Where this should be displayed on item tooltips.  Lower values should be shown towards the top
+</ul>
+</ul>
+<hr><a name="GetUnitRaceId"><h3>Method</h3><br><h2>GetUnitRaceId()</h2>
+<h3>Description</h3>
+<p>Returns the ID number for the unit's race</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The race's ID number.  This value corresponds with the GameLib.CodeEnumRace enum
+</ul>
+<hr><a name="GetVehicle"><h3>Method</h3><br><h2>GetVehicle()</h2>
+<h3>Description</h3>
+<p>Returns the vehicle the unit is currently riding</p>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../Classes/Unit.htm">Unit</a></b> - The vehicle that the unit is riding
+</ul>
+<hr><a name="GetVendorGroups"><h3>Method</h3><br><h2>GetVendorGroups()</h2>
+<h3>Description</h3>
+<p>Returns a table with item categories for a vendor.  If this unit is not a vendor, this table is empty</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>idGroup</b><b> (Integer)</b> - The group's ID number
+<li><b>strName</b><b> (String)</b> - The group's name
+</ul>
+</ul>
+<hr><a name="GetVendorItems"><h3>Method</h3><br><h2>GetVendorItems()</h2>
+<h3>Description</h3>
+<p>Returns an array containing information on each item the vendor sells</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Array of Table</b>
+<ul>
+<li><b>idUnique</b><b> (Integer)</b> - The unique ID for the item
+<li><b>idItem</b><b> (Integer)</b> - The static ID number for the item
+<li><b>eType</b><b> (Integer)</b> - The type of thing being purchased.  This value corresponds with the <br>
+CodeEnumLootItemType enum.
+<li><b>nStackSize</b><b> (Integer)</b> - The number of items that are purchased at once
+<li><b>nStockCount</b><b> (Integer)</b> - The number of the item that the vendor has in stock.  
+<li><b>bMeetsPrereq</b><b> (Boolean)</b> - Whether or not the player meets the prerequisites to use the item
+<li><b>idPrereq</b><b> (Integer)</b> - An id representing the set of prerequisites needed to use the item
+<li><b>idGroup</b><b> (Integer)</b> - The ID number of the group that the item belongs to.  This value lines<br>
+up with one of the groups from the GetVendorGroups function
+<li><b>bIsSpecial</b><b> (Boolean)</b> - Whether or not there is a special price for the item at the moment
+<li><b>bFutureStock</b><b> (Boolean)</b> - Whether or not the unit will have more of the item in stock in the future.
+<li><b>tPriceInfo</b><b> (Table)</b>
+<ul>
+<li><b>nAmount1</b><b> (Integer)</b> - The amount that the item costs
+<li><b>eCurrencyType1</b><b> (Integer)</b> - The primary currency type used to purchase the item
+<li><b>eAltType1</b><b> (Integer)</b> - The alternate type of currency used to purchase the item
+<li><b>nAmount2</b><b> (Integer)</b> - The amount the item costs of the secondary currency
+<li><b>eCurrencyType2</b><b> (Integer)</b> - The secondary currency used to purchase the item
+<li><b>eAltType2</b><b> (Integer)</b> - The secondary alternate type of currency used to purchase the item
+</ul>
+<li><b>itemData</b><b> (<a href="../Classes/Item.htm">Item</a>)</b> - The item being purchased
+<li><b>splData</b><b> (<a href="../Classes/Spell.htm">Spell</a>)</b> - A spell effect being purchased.
+<li><b>strName</b><b> (String)</b> - The name of the item
+</ul>
+</ul>
+<hr><a name="HasTextBubble"><h3>Method</h3><br><h2>HasTextBubble()</h2>
+<h3>Description</h3>
+<p>A function that determines whether or not the unit has a text bubble over their head</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the unit has a text bubble over their head
+</ul>
+<hr><a name="HasTitle"><h3>Method</h3><br><h2>HasTitle()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is displaying a title</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="Inspect"><h3>Method</h3><br><h2>Inspect()</h2>
+<h3>Description</h3>
+<p>Performs the Inspect action on the given unit.  This will cause the Inspect event to be fired</p>
+<hr><a name="InviteToGroup"><h3>Method</h3><br><h2>InviteToGroup()</h2>
+<h3>Description</h3>
+<p>Sends a group invitation request to the target player</p>
+<hr><a name="IsAccountFriend"><h3>Method</h3><br><h2>IsAccountFriend()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the specified unit is an Account Friend</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsACharacter"><h3>Method</h3><br><h2>IsACharacter()</h2>
+<h3>Description</h3>
+<p>Determines whether the unit is a player or not.</p>
+<hr><a name="IsCasting"><h3>Method</h3><br><h2>IsCasting()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is casting</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsCurrentBindPoint"><h3>Method</h3><br><h2>IsCurrentBindPoint()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the specified bind point is the user's current bind point.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsDead"><h3>Method</h3><br><h2>IsDead()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is dead or not</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsElite"><h3>Method</h3><br><h2>IsElite()</h2>
+<h3>Description</h3>
+<p>Not currently returning anything</p>
+<hr><a name="IsFriend"><h3>Method</h3><br><h2>IsFriend()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is a friend.  This does not include account level friends</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsFriendlyWarplotStructure"><h3>Method</h3><br><h2>IsFriendlyWarplotStructure()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the selected unit is both a warplot plug and if it's friendly</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Returns true if both the unit is a plug and if it is friendly
+</ul>
+<hr><a name="IsIgnored"><h3>Method</h3><br><h2>IsIgnored()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the selected player is ignored</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsInCCState"><h3>Method</h3><br><h2>IsInCCState()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is being affected by crowd control</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsInCombat"><h3>Method</h3><br><h2>IsInCombat()</h2>
+<hr><a name="IsInVehicle"><h3>Method</h3><br><h2>IsInVehicle()</h2>
+<hr><a name="IsInventorySlotLocked"><h3>Method</h3><br><h2>IsInventorySlotLocked(nLocation)</h2>
+<h3>Description</h3>
+<p>Determines whether or not the specified inventory slot is locked</p>
+<h3>Params</h3>
+<ul>
+<li><b>nLocation</b><b> (Integer)</b> - The inventory location of the item
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsInYourGroup"><h3>Method</h3><br><h2>IsInYourGroup()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the given unit is in the player's group</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsMentoring"><h3>Method</h3><br><h2>IsMentoring()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the selected unit is mentoring another player</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsMounted"><h3>Method</h3><br><h2>IsMounted()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is riding a mount</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsMyGhost"><h3>Method</h3><br><h2>IsMyGhost()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the selected unit is the player's own ghost</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsOccluded"><h3>Method</h3><br><h2>IsOccluded()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is currently hidden behind an object or terrain</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsPublicEventHub"><h3>Method</h3><br><h2>IsPublicEventHub()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is a Settler Infrastructure</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsPvpFlagged"><h3>Method</h3><br><h2>IsPvpFlagged()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is flagged for PvP</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsRallied"><h3>Method</h3><br><h2>IsRallied()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit's level has been fixed due to rallying</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsRival"><h3>Method</h3><br><h2>IsRival()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is a rival</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsScaled"><h3>Method</h3><br><h2>IsScaled()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is scaled to the player's level</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsSettlerImprovement"><h3>Method</h3><br><h2>IsSettlerImprovement()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is a settler improvement</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsSettlerReward"><h3>Method</h3><br><h2>IsSettlerReward()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is a settler improvement with a reward</p>
+<hr><a name="IsShieldOverloaded"><h3>Method</h3><br><h2>IsShieldOverloaded()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit's shields are overloaded</p>
+<hr><a name="IsSoftKill"><h3>Method</h3><br><h2>IsSoftKill()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is eligible for open tagging.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsTagged"><h3>Method</h3><br><h2>IsTagged()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit has been tagged</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsTaggedByMe"><h3>Method</h3><br><h2>IsTaggedByMe()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the current unit was tagged by the player</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsThePlayer"><h3>Method</h3><br><h2>IsThePlayer()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the targeted unit is the player</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsValid"><h3>Method</h3><br><h2>IsValid()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is valid.  Invalid units do not exist in the world.</p>
+<hr><a name="IsVisibleInstancePortal"><h3>Method</h3><br><h2>IsVisibleInstancePortal()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is an instance portal and if it is visible</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="IsVisibleOnCurrentZoneMinimap"><h3>Method</h3><br><h2>IsVisibleOnCurrentZoneMinimap()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit is currently in the same section of the map and in the same instance</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b>
+</ul>
+<hr><a name="LockInventorySlot"><h3>Method</h3><br><h2>LockInventorySlot(nLocation)</h2>
+<h3>Description</h3>
+<p>Locks the specified inventory slot for the current player</p>
+<h3>Params</h3>
+<ul>
+<li><b>nLocation</b><b> (Integer)</b> - The inventory slot that should be locked
+</ul>
+<hr><a name="PrepareInfractionReport"><h3>Method</h3><br><h2>PrepareInfractionReport()</h2>
+<hr><a name="PurchaseFlightPath"><h3>Method</h3><br><h2>PurchaseFlightPath(idDestination)</h2>
+<h3>Description</h3>
+<p>Purchases the flight path to the specified destination</p>
+<h3>Params</h3>
+<ul>
+<li><b>idDestination</b><b> (Integer)</b> - The ID number of the flight path's destination.
+</ul>
+<hr><a name="Resurrect"><h3>Method</h3><br><h2>Resurrect(nRezTypeChoice, nRezData)</h2>
+<h3>Description</h3>
+<p>Resurrect's the player based on the parameters passed </p>
+<h3>Params</h3>
+<ul>
+<li><b>nRezTypeChoice</b><b> (Integer)</b> - Where the player should be resurrected
+<li><b>nRezData</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetAlternateTarget"><h3>Method</h3><br><h2>SetAlternateTarget(unitNewFocus)</h2>
+<h3>Description</h3>
+<p>Changes the player's focus target to the specified unit.  Clear the focus target by passing in nil.</p>
+<h3>Params</h3>
+<ul>
+<li><b>unitNewFocus</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b> - The unit that is set as the new focus target.
+</ul>
+<hr><a name="SetTargetMarker"><h3>Method</h3><br><h2>SetTargetMarker(nMarker)</h2>
+<h3>Description</h3>
+<p>Places the specified target marker above the unit.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nMarker</b><b> (Integer)</b> - The integer representing which target marker to assign to the unit
+</ul>
+<hr><a name="ShouldDisplayMountHealth"><h3>Method</h3><br><h2>ShouldDisplayMountHealth()</h2>
+<hr><a name="ShouldShowBreathBar"><h3>Method</h3><br><h2>ShouldShowBreathBar()</h2>
+<h3>Description</h3>
+<p>Determines whether the player's breath bar should be shown.  This function will return false if it is called for any unit other than the current player.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the player's breath bar should be shown.
+</ul>
+<hr><a name="ShouldShowCastBar"><h3>Method</h3><br><h2>ShouldShowCastBar()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit's cast bar should be shown.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the unit's cast bar should be shown.
+</ul>
+<hr><a name="ShouldShowCraftingBar"><h3>Method</h3><br><h2>ShouldShowCraftingBar()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit's crafting progress bar should be shown.  This function returns false if called for any unit other than the current player.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Whether or not the unit's crafting progress bar should be shown
+</ul>
+<hr><a name="ShouldShowNamePlate"><h3>Method</h3><br><h2>ShouldShowNamePlate()</h2>
+<h3>Description</h3>
+<p>Determines whether or not the unit's nameplate should be shown.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Boolean</b> - Determines whether or not the unit's nameplate should be shown
+</ul>
+<hr><a name="ShowHintArrow"><h3>Method</h3><br><h2>ShowHintArrow()</h2>
+<h3>Description</h3>
+<p>Places a guide arrow above the player's head that points them in the direction of the unit that called the function.</p>
+<hr><a name="TakeShuttle"><h3>Method</h3><br><h2>TakeShuttle()</h2>
+<h3>Description</h3>
+<p>When called from a taxi NPC, this will summon the taxi for the player.</p>
+<hr><a name="UnlockAllInventorySlots"><h3>Method</h3><br><h2>UnlockAllInventorySlots()</h2>
+<h3>Description</h3>
+<p>Removes the locked state from all of the player's inventory slots.</p>
+<hr><a name="UnlockInventorySlot"><h3>Method</h3><br><h2>UnlockInventorySlot(nInventoryLocation)</h2>
+<h3>Description</h3>
+<p>Unlocks the specified inventory slot for the player.  </p>
+<h3>Params</h3>
+<ul>
+<li><b>nInventoryLocation</b><b> (Integer)</b> - The inventory slot number that should be unlocked
+</ul>
+	</body>
+</html>

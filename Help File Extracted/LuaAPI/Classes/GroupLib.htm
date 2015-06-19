@@ -1,0 +1,279 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		GroupLib	</h1>
+<a name="Enums"/><hr><a name="ActionResult"><h3>Enum</h3><br><h2>ActionResult</h2>
+<ul>
+<li><b>LeaveSuccess</b>
+<li><b>LeaveFailed</b>
+<li><b>DisbandSuccess</b>
+<li><b>DisbandFailed</b>
+<li><b>KickSuccess</b>
+<li><b>KickFailed</b>
+<li><b>PromoteSuccess</b>
+<li><b>PromoteFailed</b>
+<li><b>FlagsSuccess</b>
+<li><b>FlagsFailed</b>
+<li><b>MemberFlagsSuccess</b>
+<li><b>MemberFlagsFailed</b>
+<li><b>NotInGroup</b>
+<li><b>ChangeSettingsFailed</b>
+<li><b>ChangeSettingsSuccess</b>
+<li><b>MentoringInvalidMentor</b>
+<li><b>MentoringInvalidMentee</b>
+<li><b>InvalidGroup</b>
+<li><b>MentoringSelf</b>
+<li><b>ReadyCheckFailed</b>
+<li><b>MentoringNotAllowed</b>
+<li><b>MarkingNotPermitted</b>
+<li><b>InvalidMarkIndex</b>
+<li><b>InvalidMarkTarget</b>
+<li><b>MentoringInCombat</b>
+<li><b>MentoringLowestLevel</b>
+<li><b>MentoringNoAction</b>
+<li><b>OrderInvalidMember</b>
+<li><b>OrderFailedLeader</b>
+<li><b>AlreadyInGroupInstance</b>
+</ul>
+<hr><a name="Difficulty"><h3>Enum</h3><br><h2>Difficulty</h2>
+<ul>
+<li><b>Normal</b>
+<li><b>Veteran</b>
+<li><b>Count</b>
+</ul>
+<hr><a name="HarvestLootRule"><h3>Enum</h3><br><h2>HarvestLootRule</h2>
+<ul>
+<li><b>RoundRobin</b>
+<li><b>FirstTagger</b>
+</ul>
+<hr><a name="InvitationMethod"><h3>Enum</h3><br><h2>InvitationMethod</h2>
+<ul>
+<li><b>Open</b>
+<li><b>Neutral</b>
+<li><b>Closed</b>
+</ul>
+<hr><a name="LootRule"><h3>Enum</h3><br><h2>LootRule</h2>
+<ul>
+<li><b>FreeForAll</b>
+<li><b>RoundRobin</b>
+<li><b>NeedBeforeGreed</b>
+<li><b>Master</b>
+</ul>
+<hr><a name="LootThreshold"><h3>Enum</h3><br><h2>LootThreshold</h2>
+<ul>
+<li><b>Average</b>
+<li><b>Good</b>
+<li><b>Excellent</b>
+<li><b>Superb</b>
+<li><b>Legendary</b>
+<li><b>Inferior</b>
+<li><b>Artifact</b>
+</ul>
+<hr><a name="RemoveReason"><h3>Enum</h3><br><h2>RemoveReason</h2>
+<ul>
+<li><b>Left</b>
+<li><b>Kicked</b>
+<li><b>Disconnected</b>
+<li><b>Disband</b>
+<li><b>RemovedByServer</b>
+<li><b>VoteKicked</b>
+</ul>
+<hr><a name="Result"><h3>Enum</h3><br><h2>Result</h2>
+<ul>
+<li><b>PlayerNotFound</b>
+<li><b>RealmNotFound</b>
+<li><b>Sent</b>
+<li><b>Accepted</b>
+<li><b>Declined</b>
+<li><b>NoPermissions</b>
+<li><b>Grouped</b>
+<li><b>Pending</b>
+<li><b>ExpiredInviter</b>
+<li><b>IsInvited</b>
+<li><b>InvitedYou</b>
+<li><b>Full</b>
+<li><b>RoleFull</b>
+<li><b>NoInvitingSelf</b>
+<li><b>ExpiredInvitee</b>
+<li><b>ServerControlled</b>
+<li><b>GroupNotFound</b>
+<li><b>NotAcceptingRequests</b>
+<li><b>Busy</b>
+<li><b>SentToLeader</b>
+<li><b>LeaderOffline</b>
+<li><b>WrongFaction</b>
+<li><b>PrivilegeRestricted</b>
+</ul>
+<a name="Events"/><hr><a name="Group_AcceptInvite"><h3>Event</h3><br><h2>Group_AcceptInvite</h2>
+<hr><a name="Group_Changed"><h3>Event</h3><br><h2>Group_Changed</h2>
+<hr><a name="Group_DeclineInvite"><h3>Event</h3><br><h2>Group_DeclineInvite</h2>
+<hr><a name="Group_Disbanded"><h3>Event</h3><br><h2>Group_Disbanded</h2>
+<h3>Description</h3>
+<p>Handles the output of a group leave and if the group empties and disbands.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nReason</b><b> (Integer)</b> - The reason for the group leave. This can be a kick or a leave.
+<li><b>nGroupMemberIndex</b><b> (Integer)</b> - The affected group member's index in the group.
+<li><b>nGroupActorIndex</b><b> (Integer)</b> - The kicker actor member's index in the group.
+</ul>
+<hr><a name="Group_Invite_Declined"><h3>Event</h3><br><h2>Group_Invite_Declined</h2>
+<h3>Description</h3>
+<p>Outputs the refused invitation to a group invite.</p>
+<h3>Params</h3>
+<ul>
+<li><b>tTableRef</b><b> (Table)</b> - Table reference to the invited player from the current context.
+</ul>
+<hr><a name="Group_Invite_Result"><h3>Event</h3><br><h2>Group_Invite_Result</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<hr><a name="Group_Invited"><h3>Event</h3><br><h2>Group_Invited</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<hr><a name="Group_Other_Joined"><h3>Event</h3><br><h2>Group_Other_Joined</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<hr><a name="Group_Other_Left"><h3>Event</h3><br><h2>Group_Other_Left</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<hr><a name="Group_Other_Promoted"><h3>Event</h3><br><h2>Group_Other_Promoted</h2>
+<h3>Description</h3>
+<p>Outputs the promotion of a group member.</p>
+<h3>Params</h3>
+<ul>
+<li><b>tTableRef</b><b> (Table)</b> - Table reference to the player from the current context.
+</ul>
+<hr><a name="Group_Player_Joined"><h3>Event</h3><br><h2>Group_Player_Joined</h2>
+<hr><a name="Group_Player_Left"><h3>Event</h3><br><h2>Group_Player_Left</h2>
+<hr><a name="Group_Player_Promoted"><h3>Event</h3><br><h2>Group_Player_Promoted</h2>
+<hr><a name="Group_QuestList"><h3>Event</h3><br><h2>Group_QuestList</h2>
+<h3>Params</h3>
+<ul>
+<li><b>unitId</b><b> (<a href="../Classes/Unit.htm">Unit</a>)</b>
+<li><b>nTableRef</b><b> (Lua Table)</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="AcceptInvite"><h3>Function</h3><br><h2>AcceptInvite(strMessage)</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's AcceptInvite method with strMessage.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strMessage</b><b> (String)</b>
+</ul>
+<hr><a name="AcceptMentoring"><h3>Function</h3><br><h2>AcceptMentoring()</h2>
+<hr><a name="AcceptRequest"><h3>Function</h3><br><h2>AcceptRequest()</h2>
+<hr><a name="AmILeader"><h3>Function</h3><br><h2>AmILeader()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if CharacterUnit is the leader.</p>
+<hr><a name="CancelMentoring"><h3>Function</h3><br><h2>CancelMentoring()</h2>
+<hr><a name="CanGotoGroupInstance"><h3>Function</h3><br><h2>CanGotoGroupInstance()</h2>
+<hr><a name="CloseMentoringAOIDialog"><h3>Function</h3><br><h2>CloseMentoringAOIDialog()</h2>
+<hr><a name="CloseMentoringDialog"><h3>Function</h3><br><h2>CloseMentoringDialog()</h2>
+<hr><a name="ConvertToRaid"><h3>Function</h3><br><h2>ConvertToRaid()</h2>
+<hr><a name="DeclineInvite"><h3>Function</h3><br><h2>DeclineInvite()</h2>
+<hr><a name="DenyRequest"><h3>Function</h3><br><h2>DenyRequest()</h2>
+<hr><a name="DisbandGroup"><h3>Function</h3><br><h2>DisbandGroup(strMessage)</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's DisbandGroup method.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strMessage</b><b> (String)</b>
+</ul>
+<hr><a name="GetGroupMaxSize"><h3>Function</h3><br><h2>GetGroupMaxSize()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetGroupmaxSize.</p>
+<hr><a name="GetGroupMember"><h3>Function</h3><br><h2>GetGroupMember(nGroupIndex)</h2>
+<h3>Description</h3>
+<p>Does a PushGroupMemberToLua of the group member specified by nGroupIndex, else nil.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nGroupIndex</b><b> (Integer)</b>
+</ul>
+<hr><a name="GetInstanceDifficulty"><h3>Function</h3><br><h2>GetInstanceDifficulty()</h2>
+<hr><a name="GetInvite"><h3>Function</h3><br><h2>GetInvite()</h2>
+<hr><a name="GetJoinRequestMethod"><h3>Function</h3><br><h2>GetJoinRequestMethod()</h2>
+<hr><a name="GetLootRules"><h3>Function</h3><br><h2>GetLootRules()</h2>
+<hr><a name="GetMemberCount"><h3>Function</h3><br><h2>GetMemberCount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of GetMemberCounty.</p>
+<hr><a name="GetMemberVisibility"><h3>Function</h3><br><h2>GetMemberVisibility()</h2>
+<hr><a name="GetMentoringList"><h3>Function</h3><br><h2>GetMentoringList()</h2>
+<hr><a name="GetReferralMethod"><h3>Function</h3><br><h2>GetReferralMethod()</h2>
+<hr><a name="GetUnitForGroupMember"><h3>Function</h3><br><h2>GetUnitForGroupMember(nGroupIndex)</h2>
+<h3>Description</h3>
+<p>Returns a new unit that is a copy of the group member specified by nGroupIndex.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nGroupIndex</b><b> (Integer)</b>
+</ul>
+<hr><a name="GotoGroupInstance"><h3>Function</h3><br><h2>GotoGroupInstance()</h2>
+<hr><a name="InGroup"><h3>Function</h3><br><h2>InGroup()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of InGroup.</p>
+<hr><a name="InInstance"><h3>Function</h3><br><h2>InInstance()</h2>
+<hr><a name="InInstanceWithMember"><h3>Function</h3><br><h2>InInstanceWithMember()</h2>
+<hr><a name="InRaid"><h3>Function</h3><br><h2>InRaid()</h2>
+<hr><a name="Invite"><h3>Function</h3><br><h2>Invite(strPlayerName, strRealmName, strMessage)</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's Invite method with strPlayerName, strRealmName, and strMessage.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strPlayerName</b><b> (String)</b>
+<li><b>strRealmName</b><b> (String)</b>
+<li><b>strMessage</b><b> (String)</b>
+</ul>
+<hr><a name="IsMemberInGroupInstance"><h3>Function</h3><br><h2>IsMemberInGroupInstance()</h2>
+<hr><a name="IsReadyCheckOnCooldown"><h3>Function</h3><br><h2>IsReadyCheckOnCooldown()</h2>
+<hr><a name="Join"><h3>Function</h3><br><h2>Join()</h2>
+<hr><a name="Kick"><h3>Function</h3><br><h2>Kick(nIndex, strMessage)</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's Kick method specified by nIndex and with strMessage.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nIndex</b><b> (Integer)</b>
+<li><b>strMessage</b><b> (String)</b>
+</ul>
+<hr><a name="LeaveGroup"><h3>Function</h3><br><h2>LeaveGroup(strMessage)</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's DenyInvite method with strMessage.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strMessage</b><b> (String)</b>
+</ul>
+<hr><a name="PrepareInfractionReportInvite"><h3>Function</h3><br><h2>PrepareInfractionReportInvite()</h2>
+<hr><a name="Promote"><h3>Function</h3><br><h2>Promote(nIndex)</h2>
+<h3>Description</h3>
+<p>Runs m_clientGroup's Promote method specified by nIndex.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nIndex</b><b> (Integer)</b>
+</ul>
+<hr><a name="ReadyCheck"><h3>Function</h3><br><h2>ReadyCheck()</h2>
+<hr><a name="SetCanMark"><h3>Function</h3><br><h2>SetCanMark()</h2>
+<hr><a name="SetInstanceDifficulty"><h3>Function</h3><br><h2>SetInstanceDifficulty()</h2>
+<hr><a name="SetInvitePermission"><h3>Function</h3><br><h2>SetInvitePermission()</h2>
+<hr><a name="SetJoinRequestMethod"><h3>Function</h3><br><h2>SetJoinRequestMethod()</h2>
+<hr><a name="SetKickPermission"><h3>Function</h3><br><h2>SetKickPermission()</h2>
+<hr><a name="SetLootRules"><h3>Function</h3><br><h2>SetLootRules()</h2>
+<hr><a name="SetMainAssist"><h3>Function</h3><br><h2>SetMainAssist()</h2>
+<hr><a name="SetMainTank"><h3>Function</h3><br><h2>SetMainTank()</h2>
+<hr><a name="SetRaidAssistant"><h3>Function</h3><br><h2>SetRaidAssistant()</h2>
+<hr><a name="SetReady"><h3>Function</h3><br><h2>SetReady()</h2>
+<hr><a name="SetReferralMethod"><h3>Function</h3><br><h2>SetReferralMethod()</h2>
+<hr><a name="SetRoleDPS"><h3>Function</h3><br><h2>SetRoleDPS()</h2>
+<hr><a name="SetRoleHealer"><h3>Function</h3><br><h2>SetRoleHealer()</h2>
+<hr><a name="SetRoleLocked"><h3>Function</h3><br><h2>SetRoleLocked()</h2>
+<hr><a name="SetRoleTank"><h3>Function</h3><br><h2>SetRoleTank()</h2>
+<hr><a name="SwapOrder"><h3>Function</h3><br><h2>SwapOrder()</h2>
+	</body>
+</html>

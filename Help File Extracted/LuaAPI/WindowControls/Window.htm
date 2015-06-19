@@ -1,0 +1,889 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Window	</h1>
+<h3>Prefix: wnd</h3>
+<a name="Enums"/><hr><a name="CodeEnumArrangeOrigin"><h3>Enum</h3><br><h2>CodeEnumArrangeOrigin</h2>
+<ul>
+<li><b>LeftOrTop</b>
+<li><b>Middle</b>
+<li><b>RightOrBottom</b>
+</ul>
+<a name="Events"/><hr><a name="AnimEnded"><h3>Event</h3><br><h2>AnimEnded</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strAnimDataId</b><b> (String)</b>
+</ul>
+<hr><a name="AnimStarted"><h3>Event</h3><br><h2>AnimStarted</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strAnimDataId</b><b> (String)</b>
+</ul>
+<hr><a name="AnimStopped"><h3>Event</h3><br><h2>AnimStopped</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strAnimDataId</b><b> (String)</b>
+</ul>
+<hr><a name="DragDrop"><h3>Event</h3><br><h2>DragDrop</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+<li><b>wndSource</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+<li><b>bDragDropHasBeenReset</b><b> (Boolean)</b>
+</ul>
+<hr><a name="DragDropCancel"><h3>Event</h3><br><h2>DragDropCancel</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+<li><b>eReason</b><b> (EDragDropCancelReason)</b>
+<li><b>bDragDropHasBeenReset</b><b> (Boolean)</b>
+</ul>
+<hr><a name="DragDropClear"><h3>Event</h3><br><h2>DragDropClear</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="DragDropEnd"><h3>Event</h3><br><h2>DragDropEnd</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+<li><b>bDragDropHasBeenReset</b><b> (Boolean)</b>
+</ul>
+<hr><a name="DragDropNothingCursor"><h3>Event</h3><br><h2>DragDropNothingCursor</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+</ul>
+<hr><a name="DragDropTargetNotify"><h3>Event</h3><br><h2>DragDropTargetNotify</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>bMe</b><b> (Boolean)</b>
+</ul>
+<hr><a name="GenerateTooltip"><h3>Event</h3><br><h2>GenerateTooltip</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eToolTipType</b><b> (EToolTipType)</b>
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+</ul>
+<hr><a name="MouseButtonDown"><h3>Event</h3><br><h2>MouseButtonDown</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b>
+<li><b>nLastRelativeMouseX</b><b> (Integer)</b>
+<li><b>nLastRelativeMouseY</b><b> (Integer)</b>
+<li><b>bDoubleClick</b><b> (Boolean)</b>
+<li><b>bStopPropagation</b><b> (Boolean)</b>
+</ul>
+<hr><a name="MouseButtonUp"><h3>Event</h3><br><h2>MouseButtonUp</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>eMouseButton</b><b> (EMouseButton)</b>
+<li><b>nLastRelativeMouseX</b><b> (Integer)</b>
+<li><b>nLastRelativeMouseY</b><b> (Integer)</b>
+</ul>
+<hr><a name="MouseEnter"><h3>Event</h3><br><h2>MouseEnter</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+</ul>
+<hr><a name="MouseExit"><h3>Event</h3><br><h2>MouseExit</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+</ul>
+<hr><a name="MouseMove"><h3>Event</h3><br><h2>MouseMove</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>nLastRelativeMouseX</b><b> (Integer)</b>
+<li><b>nLastRelativeMouseY</b><b> (Integer)</b>
+</ul>
+<hr><a name="MouseWheel"><h3>Event</h3><br><h2>MouseWheel</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>nLastRelativeMouseX</b><b> (Integer)</b>
+<li><b>nLastRelativeMouseY</b><b> (Integer)</b>
+<li><b>fScrollAmount</b><b> (Float)</b>
+<li><b>bConsumeMouseWheel</b><b> (Boolean)</b>
+</ul>
+<hr><a name="QueryBeginClickStick"><h3>Event</h3><br><h2>QueryBeginClickStick</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+<li><b>bClickStickStarted</b><b> (Boolean)</b>
+</ul>
+<hr><a name="QueryBeginDragDrop"><h3>Event</h3><br><h2>QueryBeginDragDrop</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+<li><b>bDragDropStarted</b><b> (Boolean)</b>
+</ul>
+<hr><a name="QueryCursor"><h3>Event</h3><br><h2>QueryCursor</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="QueryDragDrop"><h3>Event</h3><br><h2>QueryDragDrop</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>x</b><b> (Integer)</b>
+<li><b>y</b><b> (Integer)</b>
+<li><b>wndSource</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+<li><b>strType</b><b> (String)</b>
+<li><b>iData</b><b> (Integer)</b>
+<li><b>eResult</b><b> (EDragDropQueryResult)</b>
+</ul>
+<hr><a name="TopLevelWindowMove"><h3>Event</h3><br><h2>TopLevelWindowMove</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="UDE"><h3>Event</h3><br><h2>UDE</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowClosed"><h3>Event</h3><br><h2>WindowClosed</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowHide"><h3>Event</h3><br><h2>WindowHide</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowKeyDown"><h3>Event</h3><br><h2>WindowKeyDown</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strKeyName</b><b> (String)</b>
+<li><b>nScanCode</b><b> (Integer)</b>
+<li><b>nMetakeys</b><b> (Integer)</b>
+</ul>
+<hr><a name="WindowKeyEscape"><h3>Event</h3><br><h2>WindowKeyEscape</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowKeyReturn"><h3>Event</h3><br><h2>WindowKeyReturn</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowKeyTab"><h3>Event</h3><br><h2>WindowKeyTab</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowLoad"><h3>Event</h3><br><h2>WindowLoad</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowMove"><h3>Event</h3><br><h2>WindowMove</h2>
+<h3>Description</h3>
+<p>When a window is moved</p>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>nOldLeft</b><b> (Integer)</b> - The left x position before the move
+<li><b>nOldTop</b><b> (Integer)</b> - The top y position before the move
+<li><b>nOldRight</b><b> (Integer)</b> - The right x position before the move
+<li><b>nOldBottom</b><b> (Integer)</b> - The bottome y position before the move
+</ul>
+<hr><a name="WindowShow"><h3>Event</h3><br><h2>WindowShow</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowSizeChanged"><h3>Event</h3><br><h2>WindowSizeChanged</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="WindowToFront"><h3>Event</h3><br><h2>WindowToFront</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>bOkToBringToFront</b><b> (Boolean)</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="AddEventHandler"><h3>Method</h3><br><h2>AddEventHandler()</h2>
+<hr><a name="AddPixie"><h3>Method</h3><br><h2>AddPixie(iLayer, bLine, bRestart, strText, strFont, flagsText, fWidth, strSprite, fRotation, loc, cr, crText)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>iLayer</b><b> (Integer)</b> - The pixie layer that the picie should be created at
+<li><b>bLine</b><b> (Boolean)</b> - Draws the pixie as a line
+<li><b>bRestart</b><b> (Boolean)</b>
+<li><b>strText</b><b> (String)</b> - The text to add to the pixie
+<li><b>strFont</b><b> (String)</b> - The font to use for the pixie
+<li><b>flagsText</b><b> (Table)</b> - The flags for the the text
+<li><b>fWidth</b><b> (Float)</b> - The width of the pixie.  This is only used if the pixie is drawn as a line.
+<li><b>strSprite</b><b> (String)</b> - The name of the sprite used for the pixie.  This is only used for pixies that aren't drawn as a line.
+<li><b>fRotation</b><b> (Float)</b> - The number of degrees the pixie is rotated.  This is only used for pixies that are not drawn as a line.
+<li><b>loc</b><b> (Table)</b> - The boundaries of the pixie.  This table contains the offsets and points for the boundary.
+<ul>
+<li><b>fPoints</b><b> (Array of Float)</b> - The points at the edges of the pixie.  Values are ordered as Left, Top, Right, Bottom.
+<li><b>nOffsets</b><b> (Array of Integer)</b> - The offsets for the pixie.  These are ordered as Left, Top, Right, Bottom.
+</ul>
+<li><b>cr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b> - The color of the pixie
+<li><b>crText</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b> - The color of the text in the pixie
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The pixie's ID number
+</ul>
+<hr><a name="AddStyle"><h3>Method</h3><br><h2>AddStyle(strStyle)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strStyle</b><b> (String)</b>
+</ul>
+<hr><a name="AddStyleEx"><h3>Method</h3><br><h2>AddStyleEx(strStyle)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strStyle</b><b> (String)</b>
+</ul>
+<hr><a name="ArrangeChildrenHorz"><h3>Method</h3><br><h2>ArrangeChildrenHorz(nOrigin)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nOrigin</b><b> (Integer)</b>
+</ul>
+<hr><a name="ArrangeChildrenTiles"><h3>Method</h3><br><h2>ArrangeChildrenTiles(nOrigin)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nOrigin</b><b> (Integer)</b>
+</ul>
+<hr><a name="ArrangeChildrenVert"><h3>Method</h3><br><h2>ArrangeChildrenVert(nOrigin)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nOrigin</b><b> (Integer)</b>
+</ul>
+<hr><a name="AttachAnim"><h3>Method</h3><br><h2>AttachAnim(strAnimDataId)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strAnimDataId</b><b> (String)</b>
+</ul>
+<hr><a name="BringChildToTop"><h3>Method</h3><br><h2>BringChildToTop(wndChild)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndChild</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+</ul>
+<hr><a name="ClearFocus"><h3>Method</h3><br><h2>ClearFocus()</h2>
+<h3>Description</h3>
+<p>Runs the caller's ClearFous method.</p>
+<hr><a name="ClientPointToWindowPoint"><h3>Method</h3><br><h2>ClientPointToWindowPoint(nPosX, nPosY)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nPosX</b><b> (Integer)</b>
+<li><b>nPosY</b><b> (Integer)</b>
+</ul>
+<hr><a name="Close"><h3>Method</h3><br><h2>Close()</h2>
+<h3>Description</h3>
+<p>Runs the caller's Close method.</p>
+<hr><a name="Contains"><h3>Method</h3><br><h2>Contains(nPosX, nPosY)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the caller contains the point at iPosX and iPosY.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nPosX</b><b> (Integer)</b>
+<li><b>nPosY</b><b> (Integer)</b>
+</ul>
+<hr><a name="ContainsMouse"><h3>Method</h3><br><h2>ContainsMouse()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the caller contains the point at the current mouse location.</p>
+<hr><a name="Destroy"><h3>Method</h3><br><h2>Destroy()</h2>
+<h3>Description</h3>
+<p>Calls Destroy() on the caller.</p>
+<hr><a name="DestroyAllPixies"><h3>Method</h3><br><h2>DestroyAllPixies()</h2>
+<hr><a name="DestroyChildren"><h3>Method</h3><br><h2>DestroyChildren()</h2>
+<h3>Description</h3>
+<p>Calls Destroy() on the caller's children.</p>
+<hr><a name="DestroyPixie"><h3>Method</h3><br><h2>DestroyPixie()</h2>
+<hr><a name="DetachAnim"><h3>Method</h3><br><h2>DetachAnim()</h2>
+<h3>Description</h3>
+<p>Runs the caller's release method on m_pAnimPlayer.</p>
+<hr><a name="Enable"><h3>Method</h3><br><h2>Enable(bEnable)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_bEnabled boolean to bEnable.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bEnable</b><b> (Boolean)</b>
+</ul>
+<hr><a name="EnsureChildVisible"><h3>Method</h3><br><h2>EnsureChildVisible(wndChild)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndChild</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+</ul>
+<hr><a name="FindChild"><h3>Method</h3><br><h2>FindChild(strName)</h2>
+<h3>Description</h3>
+<p>Search for the child window with the specified name</p>
+<h3>Params</h3>
+<ul>
+<li><b>strName</b><b> (String)</b> - The name of the child window
+</ul>
+<h3>Return Value</h3>
+<ul>
+<li><b><a href="../WindowControls/Window.htm">Window</a></b> - The child window with strName if found. Else return nil
+</ul>
+<h3>Usage/Example</h3>
+<pre>self.wndMain = Apollo.LoadForm("WindowForms.xml", "MainWindow", nil, self)
+self.wndChild = self.wndAbilities:FindChild("ChildWindow")
+self.wndChild:Show(false)</pre>
+<hr><a name="FindChildByUserData"><h3>Method</h3><br><h2>FindChildByUserData()</h2>
+<hr><a name="GetAnchorOffsets"><h3>Method</h3><br><h2>GetAnchorOffsets()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the Offset Anchor's Left, Top, Right, then Bottom.</p>
+<hr><a name="GetAnchorPoints"><h3>Method</h3><br><h2>GetAnchorPoints()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the Anchor's Left, Top, Right, then Bottom.</p>
+<hr><a name="GetAnimElapsedTime"><h3>Method</h3><br><h2>GetAnimElapsedTime()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the caller's ElapsedTime.</p>
+<hr><a name="GetBGColor"><h3>Method</h3><br><h2>GetBGColor()</h2>
+<h3>Description</h3>
+<p>Runs the caller's GetBGColor method in a CColor_new.</p>
+<hr><a name="GetBGOpacity"><h3>Method</h3><br><h2>GetBGOpacity()</h2>
+<hr><a name="GetChildren"><h3>Method</h3><br><h2>GetChildren()</h2>
+<hr><a name="GetClientRect"><h3>Method</h3><br><h2>GetClientRect()</h2>
+<hr><a name="GetData"><h3>Method</h3><br><h2>GetData()</h2>
+<h3>Description</h3>
+<p>Does a lua_rawgeti on the caller's m_iLuaDataRefId.</p>
+<hr><a name="GetFrame"><h3>Method</h3><br><h2>GetFrame()</h2>
+<hr><a name="GetGlobalRadioSel"><h3>Method</h3><br><h2>GetGlobalRadioSel(strRadio)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+</ul>
+<hr><a name="GetGlobalRadioSelButton"><h3>Method</h3><br><h2>GetGlobalRadioSelButton(strRadio)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+</ul>
+<hr><a name="GetHeight"><h3>Method</h3><br><h2>GetHeight()</h2>
+<h3>Description</h3>
+<p>Return the height of the window</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The height of the window in pixels
+</ul>
+<hr><a name="GetHScrollPos"><h3>Method</h3><br><h2>GetHScrollPos()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's HScrollPos.</p>
+<hr><a name="GetHScrollRange"><h3>Method</h3><br><h2>GetHScrollRange()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's m_sbHorz range.</p>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger on the caller's Id.</p>
+<hr><a name="GetLocation"><h3>Method</h3><br><h2>GetLocation()</h2>
+<h3>Description</h3>
+<p>Returns a new WindowLocation specified by the current window location.</p>
+<hr><a name="GetMouse"><h3>Method</h3><br><h2>GetMouse()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with the x and y value of the mouse.</p>
+<hr><a name="GetName"><h3>Method</h3><br><h2>GetName()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the caller's name, sending "" if null.</p>
+<hr><a name="GetNCOpacity"><h3>Method</h3><br><h2>GetNCOpacity()</h2>
+<hr><a name="GetOpacity"><h3>Method</h3><br><h2>GetOpacity()</h2>
+<h3>Description</h3>
+<p>Does a lua.PushDouble of the caller's opacity.</p>
+<hr><a name="GetOriginalLocation"><h3>Method</h3><br><h2>GetOriginalLocation()</h2>
+<hr><a name="GetParent"><h3>Method</h3><br><h2>GetParent()</h2>
+<h3>Description</h3>
+<p>Returns the caller's parent, or does a lua_pushnil if null.</p>
+<hr><a name="GetPixieInfo"><h3>Method</h3><br><h2>GetPixieInfo()</h2>
+<hr><a name="GetPos"><h3>Method</h3><br><h2>GetPos()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's min x and min y.</p>
+<hr><a name="GetRadioSel"><h3>Method</h3><br><h2>GetRadioSel(strRadio)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the radio selection corresponding to sRadio.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+</ul>
+<hr><a name="GetRadioSelButton"><h3>Method</h3><br><h2>GetRadioSelButton(strRadio)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+</ul>
+<hr><a name="GetRect"><h3>Method</h3><br><h2>GetRect()</h2>
+<h3>Description</h3>
+<p>Get the rect of the window</p>
+<h3>Usage/Example</h3>
+<pre>local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()</pre>
+<hr><a name="GetRotation"><h3>Method</h3><br><h2>GetRotation()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the caller's rotation after a RadiansToDegrees.</p>
+<hr><a name="GetScale"><h3>Method</h3><br><h2>GetScale()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of the caller's scale.</p>
+<hr><a name="GetSizingMaximum"><h3>Method</h3><br><h2>GetSizingMaximum()</h2>
+<hr><a name="GetSizingMinimum"><h3>Method</h3><br><h2>GetSizingMinimum()</h2>
+<hr><a name="GetSprite"><h3>Method</h3><br><h2>GetSprite()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the SpriteInfo's name, or "" if it is null.</p>
+<hr><a name="GetText"><h3>Method</h3><br><h2>GetText()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the caller's text.</p>
+<hr><a name="GetTextColor"><h3>Method</h3><br><h2>GetTextColor()</h2>
+<hr><a name="GetTransLocation"><h3>Method</h3><br><h2>GetTransLocation()</h2>
+<hr><a name="GetVScrollPos"><h3>Method</h3><br><h2>GetVScrollPos()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's VScrollPos.</p>
+<hr><a name="GetVScrollRange"><h3>Method</h3><br><h2>GetVScrollRange()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's m_sbVert range.</p>
+<hr><a name="GetWidth"><h3>Method</h3><br><h2>GetWidth()</h2>
+<h3>Description</h3>
+<p>Return the width of the window</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Integer</b> - The width of the window in pixels
+</ul>
+<hr><a name="GetWindowSubclass"><h3>Method</h3><br><h2>GetWindowSubclass()</h2>
+<hr><a name="HasTooltip"><h3>Method</h3><br><h2>HasTooltip()</h2>
+<hr><a name="HasTooltipSecondary"><h3>Method</h3><br><h2>HasTooltipSecondary()</h2>
+<hr><a name="Invoke"><h3>Method</h3><br><h2>Invoke()</h2>
+<hr><a name="IsAnimPlaying"><h3>Method</h3><br><h2>IsAnimPlaying()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the caller's IsPlaying boolean.</p>
+<hr><a name="IsChildOfMouseTarget"><h3>Method</h3><br><h2>IsChildOfMouseTarget()</h2>
+<hr><a name="IsEnabled"><h3>Method</h3><br><h2>IsEnabled()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the caller's enable boolean.</p>
+<hr><a name="IsMouseTarget"><h3>Method</h3><br><h2>IsMouseTarget()</h2>
+<hr><a name="IsParentOfMouseTarget"><h3>Method</h3><br><h2>IsParentOfMouseTarget()</h2>
+<hr><a name="IsShown"><h3>Method</h3><br><h2>IsShown()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the caller's IsShown boolean.</p>
+<hr><a name="IsStyleExOn"><h3>Method</h3><br><h2>IsStyleExOn()</h2>
+<hr><a name="IsStyleOn"><h3>Method</h3><br><h2>IsStyleOn()</h2>
+<hr><a name="IsValid"><h3>Method</h3><br><h2>IsValid()</h2>
+<hr><a name="IsVisible"><h3>Method</h3><br><h2>IsVisible()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the caller's IsVisible boolean.</p>
+<hr><a name="LoadTooltipForm"><h3>Method</h3><br><h2>LoadTooltipForm(strFile, strForm, tTable)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strFile</b><b> (String)</b>
+<li><b>strForm</b><b> (String)</b>
+<li><b>tTable</b><b> (LuaTable)</b> - (Optional)
+</ul>
+<hr><a name="LoadTooltipFormSecondary"><h3>Method</h3><br><h2>LoadTooltipFormSecondary(strFile, strForm, tTable)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strFile</b><b> (String)</b>
+<li><b>strForm</b><b> (String)</b>
+<li><b>tTable</b><b> (LuaTable)</b> - (Optional)
+</ul>
+<hr><a name="Move"><h3>Method</h3><br><h2>Move(nLeft, nTop, nWidth, nHeight)</h2>
+<h3>Description</h3>
+<p>Move and resize the window</p>
+<h3>Params</h3>
+<ul>
+<li><b>nLeft</b><b> (Integer)</b>
+<li><b>nTop</b><b> (Integer)</b>
+<li><b>nWidth</b><b> (Integer)</b>
+<li><b>nHeight</b><b> (Integer)</b>
+</ul>
+<hr><a name="MoveToLoc"><h3>Method</h3><br><h2>MoveToLoc()</h2>
+<h3>Description</h3>
+<p>Should be deprecated</p>
+<hr><a name="MoveToLocation"><h3>Method</h3><br><h2>MoveToLocation(wndLoc)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndLoc</b><b> (<a href="../WindowControls/WindowLocation.htm">WindowLocation</a>)</b>
+</ul>
+<hr><a name="PauseAnim"><h3>Method</h3><br><h2>PauseAnim()</h2>
+<h3>Description</h3>
+<p>Runs the caller's pause method on m_pAnimPlayer.</p>
+<hr><a name="PlayAnim"><h3>Method</h3><br><h2>PlayAnim(fDelay)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fDelay</b><b> (Float)</b>
+</ul>
+<hr><a name="RecalculateContentExtents"><h3>Method</h3><br><h2>RecalculateContentExtents()</h2>
+<hr><a name="RemoveEventHandler"><h3>Method</h3><br><h2>RemoveEventHandler()</h2>
+<hr><a name="RemoveStyle"><h3>Method</h3><br><h2>RemoveStyle(strStyle)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strStyle</b><b> (String)</b>
+</ul>
+<hr><a name="RemoveStyleEx"><h3>Method</h3><br><h2>RemoveStyleEx(strStyle)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strStyle</b><b> (String)</b>
+</ul>
+<hr><a name="Reposition"><h3>Method</h3><br><h2>Reposition()</h2>
+<h3>Description</h3>
+<p>Runs the caller's Reposition method.</p>
+<hr><a name="ResetSubclass"><h3>Method</h3><br><h2>ResetSubclass()</h2>
+<hr><a name="RestartPixieSprite"><h3>Method</h3><br><h2>RestartPixieSprite()</h2>
+<hr><a name="SendChildToBottom"><h3>Method</h3><br><h2>SendChildToBottom()</h2>
+<hr><a name="SetAnchorOffsets"><h3>Method</h3><br><h2>SetAnchorOffsets(nLeft, nTop, nRight, nBottom)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nLeft</b><b> (Integer)</b>
+<li><b>nTop</b><b> (Integer)</b>
+<li><b>nRight</b><b> (Integer)</b>
+<li><b>nBottom</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetAnchorPoints"><h3>Method</h3><br><h2>SetAnchorPoints(nLeft, nTop, nRight, nBottom)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nLeft</b><b> (Integer)</b>
+<li><b>nTop</b><b> (Integer)</b>
+<li><b>nRight</b><b> (Integer)</b>
+<li><b>nBottom</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetAnimElapsedTime"><h3>Method</h3><br><h2>SetAnimElapsedTime(fTime)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fTime</b><b> (Float)</b>
+</ul>
+<hr><a name="SetAnimPlaybackRate"><h3>Method</h3><br><h2>SetAnimPlaybackRate(fRate)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fRate</b><b> (Float)</b>
+</ul>
+<hr><a name="SetBGColor"><h3>Method</h3><br><h2>SetBGColor(clr)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+<hr><a name="SetBGOpacity"><h3>Method</h3><br><h2>SetBGOpacity()</h2>
+<hr><a name="SetCanResize"><h3>Method</h3><br><h2>SetCanResize()</h2>
+<hr><a name="SetClientSprite"><h3>Method</h3><br><h2>SetClientSprite(wndB)</h2>
+<h3>Description</h3>
+<p>Sets the caller's ClientSprite to wndB's ClientSprite.</p>
+<h3>Params</h3>
+<ul>
+<li><b>wndB</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+</ul>
+<hr><a name="SetData"><h3>Method</h3><br><h2>SetData(lData)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>lData</b><b> (LuaData)</b>
+</ul>
+<hr><a name="SetFocus"><h3>Method</h3><br><h2>SetFocus()</h2>
+<h3>Description</h3>
+<p>Runs the caller's SetFocus method.</p>
+<hr><a name="SetFont"><h3>Method</h3><br><h2>SetFont(strText)</h2>
+<h3>Description</h3>
+<p>Sets the font by alias on the caller after running a UTF8ToUCS2 on strText.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="SetGlobalRadioSel"><h3>Method</h3><br><h2>SetGlobalRadioSel(strRadio)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+</ul>
+<hr><a name="SetHScrollInfo"><h3>Method</h3><br><h2>SetHScrollInfo(nRange, nPageSize, nIncrement)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nRange</b><b> (Integer)</b>
+<li><b>nPageSize</b><b> (Integer)</b>
+<li><b>nIncrement</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetHScrollPos"><h3>Method</h3><br><h2>SetHScrollPos(nNewPos)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nNewPos</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetLoaded"><h3>Method</h3><br><h2>SetLoaded(bLoaded)</h2>
+<h3>Description</h3>
+<p>Sets the caller's m_bLoaded boolean to bLoaded.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bLoaded</b><b> (Boolean)</b>
+</ul>
+<hr><a name="SetName"><h3>Method</h3><br><h2>SetName(strName)</h2>
+<h3>Description</h3>
+<p>Sets the caller's name to sName.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strName</b><b> (String)</b>
+</ul>
+<hr><a name="SetNamedAnchor"><h3>Method</h3><br><h2>SetNamedAnchor(fPoint, nOffset, bOverwrite)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fPoint</b><b> (Float)</b>
+<li><b>nOffset</b><b> (Integer)</b>
+<li><b>bOverwrite</b><b> (Boolean)</b>
+</ul>
+<hr><a name="SetNCOpacity"><h3>Method</h3><br><h2>SetNCOpacity()</h2>
+<hr><a name="SetOpacity"><h3>Method</h3><br><h2>SetOpacity(fOpacity, fRate)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fOpacity</b><b> (Float)</b> - (Default value: 1.0)
+<li><b>fRate</b><b> (Float)</b> - (Default value: -1.0)
+</ul>
+<hr><a name="SetRadioSel"><h3>Method</h3><br><h2>SetRadioSel(strRadio, nSelection)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+<li><b>nSelection</b><b> (Integer)</b> - (Default value: 0)
+</ul>
+<hr><a name="SetRadioSelButton"><h3>Method</h3><br><h2>SetRadioSelButton(strRadio, bButton)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strRadio</b><b> (String)</b>
+<li><b>bButton</b><b> (<a href="../WindowControls/Button.htm">Button</a>)</b>
+</ul>
+<hr><a name="SetRotation"><h3>Method</h3><br><h2>SetRotation(fNewRotation)</h2>
+<h3>Description</h3>
+<p>Sets the caller's rotation to fNewRotation after a DegreesToRadians.</p>
+<h3>Params</h3>
+<ul>
+<li><b>fNewRotation</b><b> (Float)</b>
+</ul>
+<hr><a name="SetScale"><h3>Method</h3><br><h2>SetScale(fNewScale)</h2>
+<h3>Description</h3>
+<p>Sets the caller's scale.</p>
+<h3>Params</h3>
+<ul>
+<li><b>fNewScale</b><b> (Float)</b>
+</ul>
+<hr><a name="SetSelfAnchor"><h3>Method</h3><br><h2>SetSelfAnchor()</h2>
+<hr><a name="SetSizingMaximum"><h3>Method</h3><br><h2>SetSizingMaximum(nWidth, nHeight)</h2>
+<h3>Description</h3>
+<p>Sets the caller's sizing maximum to iWidth and iHeight.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nWidth</b><b> (Integer)</b>
+<li><b>nHeight</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetSizingMinimum"><h3>Method</h3><br><h2>SetSizingMinimum(nWidth, nHeight)</h2>
+<h3>Description</h3>
+<p>Sets the caller's sizing minimum to iWidth and iHeight.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nWidth</b><b> (Integer)</b>
+<li><b>nHeight</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetSprite"><h3>Method</h3><br><h2>SetSprite(strSprite)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strSprite</b><b> (String)</b>
+</ul>
+<hr><a name="SetSpriteProgress"><h3>Method</h3><br><h2>SetSpriteProgress(fTime)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fTime</b><b> (Float)</b>
+</ul>
+<hr><a name="SetSpriteRate"><h3>Method</h3><br><h2>SetSpriteRate(fTime)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fTime</b><b> (Float)</b>
+</ul>
+<hr><a name="SetSpriteTargetDuration"><h3>Method</h3><br><h2>SetSpriteTargetDuration(fTime)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fTime</b><b> (Float)</b>
+</ul>
+<hr><a name="SetSpriteTime"><h3>Method</h3><br><h2>SetSpriteTime(fTime)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fTime</b><b> (Float)</b>
+</ul>
+<hr><a name="SetStyle"><h3>Method</h3><br><h2>SetStyle(strText, bOn)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strText</b><b> (String)</b>
+<li><b>bOn</b><b> (Boolean)</b> - (Optional, Default to GetStyleBit on strText)
+</ul>
+<hr><a name="SetStyleEx"><h3>Method</h3><br><h2>SetStyleEx(strStyle)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strStyle</b><b> (String)</b>
+</ul>
+<hr><a name="SetText"><h3>Method</h3><br><h2>SetText(strNewText)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strNewText</b><b> (String)</b>
+</ul>
+<hr><a name="SetTextColor"><h3>Method</h3><br><h2>SetTextColor(clr)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+<hr><a name="SetTextFlags"><h3>Method</h3><br><h2>SetTextFlags(strText, bOn)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>strText</b><b> (String)</b>
+<li><b>bOn</b><b> (Boolean)</b> - (Optional, Skipped if strText does not yields a StyleBit)
+</ul>
+<hr><a name="SetTextRaw"><h3>Method</h3><br><h2>SetTextRaw()</h2>
+<hr><a name="SetTooltip"><h3>Method</h3><br><h2>SetTooltip(strTip)</h2>
+<h3>Description</h3>
+<p>Sets the tooltip on the caller after running a UTF8ToUCS2 on strTip.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strTip</b><b> (String)</b>
+</ul>
+<hr><a name="SetTooltipDoc"><h3>Method</h3><br><h2>SetTooltipDoc(pXml)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>pXml</b><b> (XmlDocumentRef)</b>
+</ul>
+<hr><a name="SetTooltipDocSecondary"><h3>Method</h3><br><h2>SetTooltipDocSecondary(pXml)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>pXml</b><b> (XmlDocumentRef)</b>
+</ul>
+<hr><a name="SetTooltipForm"><h3>Method</h3><br><h2>SetTooltipForm()</h2>
+<hr><a name="SetTooltipFormSecondary"><h3>Method</h3><br><h2>SetTooltipFormSecondary()</h2>
+<hr><a name="SetTooltipToWindow"><h3>Method</h3><br><h2>SetTooltipToWindow(wndB)</h2>
+<h3>Description</h3>
+<p>Sets the caller's tooltip doc and tooltip secondary doc to wndB's values.</p>
+<h3>Params</h3>
+<ul>
+<li><b>wndB</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b>
+</ul>
+<hr><a name="SetTooltipType"><h3>Method</h3><br><h2>SetTooltipType(nType)</h2>
+<h3>Description</h3>
+<p>Sets the tooltip type on the caller after casting nType to a ETooltipPositionType.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nType</b><b> (ETooltipPositionType)</b>
+</ul>
+<hr><a name="SetVScrollInfo"><h3>Method</h3><br><h2>SetVScrollInfo(nRange, nPageSize, nMinInc)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nRange</b><b> (Integer)</b>
+<li><b>nPageSize</b><b> (Integer)</b>
+<li><b>nMinInc</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetVScrollPos"><h3>Method</h3><br><h2>SetVScrollPos(nNewPos)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nNewPos</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetWindowSubclass"><h3>Method</h3><br><h2>SetWindowSubclass()</h2>
+<hr><a name="Show"><h3>Method</h3><br><h2>Show(bShow, bImmediate)</h2>
+<h3>Description</h3>
+<p>Runs the caller's show method with bShow and bImmediate.</p>
+<h3>Params</h3>
+<ul>
+<li><b>bShow</b><b> (Boolean)</b>
+<li><b>bImmediate</b><b> (Boolean)</b>
+</ul>
+<hr><a name="ToFront"><h3>Method</h3><br><h2>ToFront()</h2>
+<h3>Description</h3>
+<p>Runs the caller's BringWindowToFront method.</p>
+<hr><a name="TransitionMove"><h3>Method</h3><br><h2>TransitionMove(nMinX, nMinY, nOffX, nOffY, fRate, bContinuous)</h2>
+<h3>Description</h3>
+<p>Calls a transition move with pLocBegin null and pLocEnd specified by dMinX, dMinY, dMinX+dOffX, dMinY+dOffY, fRate, and bContinuous.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nMinX</b><b> (Double)</b>
+<li><b>nMinY</b><b> (Double)</b>
+<li><b>nOffX</b><b> (Double)</b>
+<li><b>nOffY</b><b> (Double)</b>
+<li><b>fRate</b><b> (Float)</b>
+<li><b>bContinuous</b><b> (Boolean)</b>
+</ul>
+<hr><a name="TransitionMoveFrom"><h3>Method</h3><br><h2>TransitionMoveFrom(nMinX, nMinY, nOffX, nOffY, fRate, bContinuous)</h2>
+<h3>Description</h3>
+<p>Calls a transition move with pLocEnd null and pLocBegin specified by dMinX, dMinY, dMinX+dOffX, dMinY+dOffY, fRate, and bContinuous.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nMinX</b><b> (Double)</b>
+<li><b>nMinY</b><b> (Double)</b>
+<li><b>nOffX</b><b> (Double)</b>
+<li><b>nOffY</b><b> (Double)</b>
+<li><b>fRate</b><b> (Float)</b>
+<li><b>bContinuous</b><b> (Boolean)</b>
+</ul>
+<hr><a name="TransitionPulse"><h3>Method</h3><br><h2>TransitionPulse(fScale, fRate, bContinuous)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>fScale</b><b> (Float)</b>
+<li><b>fRate</b><b> (Float)</b>
+<li><b>bContinuous</b><b> (Boolean)</b>
+</ul>
+<hr><a name="UnpauseAnim"><h3>Method</h3><br><h2>UnpauseAnim()</h2>
+<h3>Description</h3>
+<p>Runs the caller's unpause method on m_pAnimPlayer.</p>
+<hr><a name="UpdatePixie"><h3>Method</h3><br><h2>UpdatePixie()</h2>
+<hr><a name="WindowPointToClientPoint"><h3>Method</h3><br><h2>WindowPointToClientPoint(nPosX, nPosY)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nPosX</b><b> (Integer)</b>
+<li><b>nPosY</b><b> (Integer)</b>
+</ul>
+	</body>
+</html>

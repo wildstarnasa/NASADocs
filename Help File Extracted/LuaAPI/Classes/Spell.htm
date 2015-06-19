@@ -1,0 +1,739 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		Spell	</h1>
+<h3>Prefix: spl</h3>
+<a name="Enums"/><hr><a name="CodeEnumAOESelectionType"><h3>Enum</h3><br><h2>CodeEnumAOESelectionType</h2>
+<ul>
+<li><b>None</b>
+<li><b>Closest</b>
+<li><b>Furthest</b>
+<li><b>Random</b>
+<li><b>LowestAbsoluteHealth</b>
+<li><b>MissingMostHealth</b>
+</ul>
+<hr><a name="CodeEnumCastMethod"><h3>Enum</h3><br><h2>CodeEnumCastMethod</h2>
+<ul>
+<li><b>Normal</b>
+<li><b>Channeled</b>
+<li><b>ChanneledField</b>
+<li><b>ClientSideInteraction</b>
+<li><b>PressHold</b>
+<li><b>RapidTap</b>
+<li><b>ChargeRelease</b>
+<li><b>Multiphase</b>
+<li><b>Transactional</b>
+<li><b>UNUSED04</b>
+<li><b>Aura</b>
+</ul>
+<hr><a name="CodeEnumCastResult"><h3>Enum</h3><br><h2>CodeEnumCastResult</h2>
+<ul>
+<li><b>Ok</b>
+<li><b>UnableToCreateSpell</b>
+<li><b>MovingToCast</b>
+<li><b>PendingSpellCast</b>
+<li><b>SpellBad</b>
+<li><b>SpellCancelled</b>
+<li><b>SpellMaxChannel</b>
+<li><b>SpellRemoved</b>
+<li><b>SpellCountered</b>
+<li><b>SpellCastingInterrupts</b>
+<li><b>SpellInterrupted</b>
+<li><b>SpellCombatModeActiveCount</b>
+<li><b>SpellAlreadyCasting</b>
+<li><b>SpellGlobalCooldown</b>
+<li><b>SpellCooldown</b>
+<li><b>SpellGroupCooldown</b>
+<li><b>SpellPreRequisites</b>
+<li><b>ActionBarSetDisallows</b>
+<li><b>DamageInterrupts</b>
+<li><b>InvalidInventoryIndex</b>
+<li><b>ItemUnknown</b>
+<li><b>ItemBad</b>
+<li><b>ItemNoSpellId</b>
+<li><b>ItemUnEquipped</b>
+<li><b>ItemCharges</b>
+<li><b>ItemTooHighLevel</b>
+<li><b>ItemQuestRequirementsNotMet</b>
+<li><b>ItemObjectiveComplete</b>
+<li><b>CasterUnknown</b>
+<li><b>CasterMustHaveTarget</b>
+<li><b>CasterCannotBePrimaryTarget</b>
+<li><b>CasterNotIncontrolOfSelf</b>
+<li><b>CasterMovement</b>
+<li><b>CasterMaxCast</b>
+<li><b>CCStun</b>
+<li><b>CCSleep</b>
+<li><b>CCRoot</b>
+<li><b>CCDisarm</b>
+<li><b>CCSilence</b>
+<li><b>CCPolymorph</b>
+<li><b>CCFear</b>
+<li><b>CCHold</b>
+<li><b>CasterVitalCostHealth</b>
+<li><b>CasterVitalCostXp</b>
+<li><b>CasterVitalCostMoney</b>
+<li><b>CasterVitalCostCurrency1</b>
+<li><b>CasterVitalCostCurrency2</b>
+<li><b>CasterVitalCostCurrency3</b>
+<li><b>CasterVitalCostResource0</b>
+<li><b>CasterVitalCostResource1</b>
+<li><b>CasterVitalCostResource2</b>
+<li><b>CasterVitalCostResource3</b>
+<li><b>CasterVitalCostResource4</b>
+<li><b>CasterVitalCostResource5</b>
+<li><b>CasterVitalCostResource6</b>
+<li><b>Caster_CannotBeDead</b>
+<li><b>Caster_MustBeDead</b>
+<li><b>Caster_CannotBe_Moving</b>
+<li><b>Caster_MustBe_Moving</b>
+<li><b>Caster_CannotBe_Stealth</b>
+<li><b>Caster_MustBe_Stealth</b>
+<li><b>Caster_CannotBe_Piloting</b>
+<li><b>Caster_MustBe_Piloting</b>
+<li><b>Caster_CannotBe_Embarked</b>
+<li><b>Caster_MustBe_Embarked</b>
+<li><b>Caster_CannotBe_Taxi</b>
+<li><b>Caster_MustBe_Taxi</b>
+<li><b>Caster_CannotBe_Stun</b>
+<li><b>Caster_MustBe_Stun</b>
+<li><b>Caster_CannotBe_Sleep</b>
+<li><b>Caster_MustBe_Sleep</b>
+<li><b>Caster_CannotBe_Root</b>
+<li><b>Caster_MustBe_Root</b>
+<li><b>Caster_CannotBe_Disarm</b>
+<li><b>Caster_MustBe_Disarm</b>
+<li><b>Caster_CannotBe_Silence</b>
+<li><b>Caster_MustBe_Silence</b>
+<li><b>Caster_CannotBe_Pacify</b>
+<li><b>Caster_MustBe_Pacify</b>
+<li><b>Caster_CannotBe_Fear</b>
+<li><b>Caster_MustBe_Fear</b>
+<li><b>Caster_CannotBe_Confuse</b>
+<li><b>Caster_MustBe_Confuse</b>
+<li><b>TargetGroup</b>
+<li><b>TargetUnknown</b>
+<li><b>NoTarget</b>
+<li><b>Target_ImmuneToSpellType</b>
+<li><b>Target_ImmuneToSpell</b>
+<li><b>Target_ImmuneToSpellGroupList</b>
+<li><b>Target_ImmuneToSpellGroup</b>
+<li><b>Target_Invulnerable</b>
+<li><b>TargetMaxTarget</b>
+<li><b>TargetVital</b>
+<li><b>TargetFaction</b>
+<li><b>TargetIsNotUseable</b>
+<li><b>TargetOrientation</b>
+<li><b>TargetCannotBePlayer</b>
+<li><b>TargetCannotBeNpc</b>
+<li><b>TargetRangeMin</b>
+<li><b>TargetRangeMax</b>
+<li><b>Target_CannotBeDead</b>
+<li><b>Target_MustBeDead</b>
+<li><b>Target_CannotBe_Moving</b>
+<li><b>Target_MustBe_Moving</b>
+<li><b>Target_CannotBe_Stealth</b>
+<li><b>Target_MustBe_Stealth</b>
+<li><b>Target_CannotBe_Piloting</b>
+<li><b>Target_MustBe_Piloting</b>
+<li><b>Target_CannotBe_Embarked</b>
+<li><b>Target_MustBe_Embarked</b>
+<li><b>Target_CannotBe_Taxi</b>
+<li><b>Target_MustBe_Taxi</b>
+<li><b>Target_CannotBe_Stun</b>
+<li><b>Target_MustBe_Stun</b>
+<li><b>Target_CannotBe_Sleep</b>
+<li><b>Target_MustBe_Sleep</b>
+<li><b>Target_CannotBe_Root</b>
+<li><b>Target_MustBe_Root</b>
+<li><b>Target_CannotBe_Disarm</b>
+<li><b>Target_MustBe_Disarm</b>
+<li><b>Target_CannotBe_Silence</b>
+<li><b>Target_MustBe_Silence</b>
+<li><b>Target_CannotBe_Pacify</b>
+<li><b>Target_MustBe_Pacify</b>
+<li><b>Target_CannotBe_Fear</b>
+<li><b>Target_MustBe_Fear</b>
+<li><b>Target_CannotBe_Confuse</b>
+<li><b>Target_MustBe_Confuse</b>
+<li><b>Target_CannotBe_Swimming</b>
+<li><b>Target_MustBe_Swimming</b>
+<li><b>InWrongWorldZone</b>
+<li><b>DuelOver</b>
+<li><b>UNUSED142</b>
+<li><b>UNUSED143</b>
+<li><b>MissingResult</b>
+<li><b>IsP2PTrading</b>
+<li><b>ClientSideInteractionFail</b>
+<li><b>StackingRefreshExistingSpell</b>
+<li><b>StackingTargetHasMorePowerfulSpells</b>
+<li><b>StackingCasterHasMorePowerfulSpells</b>
+<li><b>StackingError</b>
+<li><b>Prereq_CasterCast</b>
+<li><b>CCKnockdown</b>
+<li><b>CCVulnerability</b>
+<li><b>Target_MustBe_Knockdown</b>
+<li><b>Target_MustBe_Vulnerability</b>
+<li><b>Caster_MustBe_Vulnerability</b>
+<li><b>Caster_MustBe_Knockdown</b>
+<li><b>Caster_CannotBe_Knockdown</b>
+<li><b>Caster_CannotBe_Vulnerability</b>
+<li><b>Target_CannotBe_Vulnerability</b>
+<li><b>Target_CannotBe_Knockdown</b>
+<li><b>MissingReagent_Item</b>
+<li><b>MissingReagent_ItemFamily</b>
+<li><b>MissingReagent_ItemCategory</b>
+<li><b>MissingReagent_ItemType</b>
+<li><b>Caster_Needs_LoS</b>
+<li><b>CasterVitalCostMana</b>
+<li><b>TargetImmuneToSpellEffect</b>
+<li><b>WeaponSlot</b>
+<li><b>Caster_MustBe_Jumping</b>
+<li><b>Caster_CannotBe_Jumping</b>
+<li><b>Target_CannotBe_Jumping</b>
+<li><b>Target_MustBe_Jumping</b>
+<li><b>InvalidPosition</b>
+<li><b>CasterVitalCost</b>
+<li><b>CasterVitalCostShieldCapacity</b>
+<li><b>CasterVitalCostResource7</b>
+<li><b>FailSpecialRestrictions</b>
+<li><b>NoValidActivateSpell</b>
+<li><b>SchematicAlreadyKnown</b>
+<li><b>TradeskillTier</b>
+<li><b>SpellNoCharges</b>
+<li><b>TargetRangeVertical</b>
+<li><b>StackingDuplicateDurationalSpell</b>
+<li><b>SpellMaxPhaseReached</b>
+<li><b>CCVulnerabilityWithAct</b>
+<li><b>CCDisorient</b>
+<li><b>CCDisable</b>
+<li><b>CCTaunt</b>
+<li><b>CCDeTaunt</b>
+<li><b>CCBlind</b>
+<li><b>CCKnockback</b>
+<li><b>CCPushback</b>
+<li><b>CCPull</b>
+<li><b>CCPositionSwitch</b>
+<li><b>CCTether</b>
+<li><b>CCSnare</b>
+<li><b>Caster_MustBe_Polymorph</b>
+<li><b>Target_MustBe_Polymorph</b>
+<li><b>Caster_CannotBe_Polymorph</b>
+<li><b>Target_CannotBe_Polymorph</b>
+<li><b>Caster_MustBe_Hold</b>
+<li><b>Target_MustBe_Hold</b>
+<li><b>Caster_CannotBe_Hold</b>
+<li><b>Target_CannotBe_Hold</b>
+<li><b>Caster_MustBe_Disorient</b>
+<li><b>Target_MustBe_Disorient</b>
+<li><b>Caster_CannotBe_Disorient</b>
+<li><b>Target_CannotBe_Disorient</b>
+<li><b>Caster_MustBe_Disable</b>
+<li><b>Target_MustBe_Disable</b>
+<li><b>Caster_CannotBe_Disable</b>
+<li><b>Target_CannotBe_Disable</b>
+<li><b>Caster_MustBe_Taunt</b>
+<li><b>Target_MustBe_Taunt</b>
+<li><b>Caster_CannotBe_Taunt</b>
+<li><b>Target_CannotBe_Taunt</b>
+<li><b>Caster_MustBe_DeTaunt</b>
+<li><b>Target_MustBe_DeTaunt</b>
+<li><b>Caster_CannotBe_DeTaunt</b>
+<li><b>Target_CannotBe_DeTaunt</b>
+<li><b>Caster_MustBe_Blind</b>
+<li><b>Target_MustBe_Blind</b>
+<li><b>Caster_CannotBe_Blind</b>
+<li><b>Target_CannotBe_Blind</b>
+<li><b>Caster_MustBe_Knockback</b>
+<li><b>Target_MustBe_Knockback</b>
+<li><b>Caster_CannotBe_Knockback</b>
+<li><b>Target_CannotBe_Knockback</b>
+<li><b>Caster_MustBe_Pushback</b>
+<li><b>Target_MustBe_Pushback</b>
+<li><b>Caster_CannotBe_Pushback</b>
+<li><b>Target_CannotBe_Pushback</b>
+<li><b>Caster_MustBe_Pull</b>
+<li><b>Target_MustBe_Pull</b>
+<li><b>Caster_CannotBe_Pull</b>
+<li><b>Target_CannotBe_Pull</b>
+<li><b>Caster_MustBe_PositionSwitch</b>
+<li><b>Target_MustBe_PositionSwitch</b>
+<li><b>Caster_CannotBe_PositionSwitch</b>
+<li><b>Target_CannotBe_PositionSwitch</b>
+<li><b>Caster_MustBe_Tether</b>
+<li><b>Target_MustBe_Tether</b>
+<li><b>Caster_CannotBe_Tether</b>
+<li><b>Target_CannotBe_Tether</b>
+<li><b>Caster_MustBe_Snare</b>
+<li><b>Target_MustBe_Snare</b>
+<li><b>Caster_CannotBe_Snare</b>
+<li><b>Target_CannotBe_Snare</b>
+<li><b>CasterVitalCostInterruptArmor</b>
+<li><b>CCNoAbilities</b>
+<li><b>Blacklisted</b>
+<li><b>TargetCannotBePickup</b>
+<li><b>CasterVitalCostAbsorption</b>
+<li><b>Target_MustBe_CastersPet</b>
+<li><b>Target_MustBe_CastersMaster</b>
+<li><b>CCInterrupt</b>
+<li><b>Caster_MustBe_Interrupt</b>
+<li><b>Target_MustBe_Interrupt</b>
+<li><b>Caster_CannotBe_Interrupt</b>
+<li><b>Target_CannotBe_Interrupt</b>
+<li><b>CSICooldown</b>
+<li><b>CCDaze</b>
+<li><b>Caster_MustBe_Daze</b>
+<li><b>Target_MustBe_Daze</b>
+<li><b>Caster_CannotBe_Daze</b>
+<li><b>Target_CannotBe_Daze</b>
+<li><b>CCSubdue</b>
+<li><b>Caster_MustBe_Subdue</b>
+<li><b>Target_MustBe_Subdue</b>
+<li><b>Caster_CannotBe_Subdue</b>
+<li><b>Target_CannotBe_Subdue</b>
+<li><b>Target_CannotBe_Evading</b>
+<li><b>Target_StructuredPlugBenefitRestricted</b>
+<li><b>CasterVitalCostPublicResource0</b>
+<li><b>CasterVitalCostPublicResource1</b>
+<li><b>CasterVitalCostPublicResource2</b>
+<li><b>InactiveInnateAbilitySpell</b>
+<li><b>Caster_CannotBe_Swimming</b>
+<li><b>Caster_MustBe_Swimming</b>
+<li><b>Prereq_TargetCast</b>
+<li><b>Prereq_CasterPersistence</b>
+<li><b>Prereq_TargetPersistence</b>
+<li><b>Prereq_Trap</b>
+<li><b>IllegalSpellCast</b>
+<li><b>TargetNotInSameGroup</b>
+<li><b>BossToken_Permission</b>
+<li><b>BossToken_NotReady</b>
+<li><b>CCGrounded</b>
+<li><b>Caster_MustBe_Grounded</b>
+<li><b>Target_MustBe_Grounded</b>
+<li><b>Caster_CannotBe_Grounded</b>
+<li><b>Target_CannotBe_Grounded</b>
+<li><b>SpellUnknown</b>
+<li><b>ItemAchievementComplete</b>
+<li><b>Caster_CannotBeInCombat</b>
+<li><b>Caster_MustBeInCombat</b>
+<li><b>Target_CannotBeInCombat</b>
+<li><b>Target_MustBeInCombat</b>
+<li><b>CCDisableCinematic</b>
+<li><b>Caster_MustBe_DisableCinematic</b>
+<li><b>Target_MustBe_DisableCinematic</b>
+<li><b>Caster_CannotBe_DisableCinematic</b>
+<li><b>Target_CannotBe_DisableCinematic</b>
+<li><b>CCAbilityRestriction</b>
+<li><b>Caster_MustBe_AbilityRestriction</b>
+<li><b>Target_MustBe_AbilityRestriction</b>
+<li><b>Caster_CannotBe_AbilityRestriction</b>
+<li><b>Target_CannotBe_AbilityRestriction</b>
+<li><b>Target_VehicleBenefitRestricted</b>
+<li><b>TargetCannotBePet</b>
+<li><b>Target_HostileInvulnerability</b>
+<li><b>Target_InvulnerableToOther</b>
+<li><b>Target_BeneficialInvulnerability</b>
+<li><b>Caster_MustBe_Falling</b>
+<li><b>Caster_CannotBe_Falling</b>
+<li><b>Target_CannotBe_Falling</b>
+<li><b>Target_MustBe_Falling</b>
+<li><b>Caster_MustBe_Sprinting</b>
+<li><b>Caster_CannotBe_Sprinting</b>
+<li><b>Target_CannotBe_Sprinting</b>
+<li><b>Target_MustBe_Sprinting</b>
+<li><b>Queued</b>
+<li><b>ItemWrongRace</b>
+<li><b>ItemWrongClass</b>
+<li><b>ItemAlreadyUnlocked</b>
+<li><b>PlayerSpellPending</b>
+<li><b>Target_MustBe_PvpFlagged</b>
+<li><b>Caster_MustBe_PvpFlagged</b>
+<li><b>Target_OutsideTelegraph</b>
+<li><b>ShieldsOverloaded</b>
+</ul>
+<hr><a name="CodeEnumComparison"><h3>Enum</h3><br><h2>CodeEnumComparison</h2>
+<ul>
+<li><b>Equals</b>
+<li><b>Greater</b>
+<li><b>GreaterThanEqualTo</b>
+<li><b>Less</b>
+<li><b>LessThanEqualTo</b>
+<li><b>Percent_Equals</b>
+<li><b>Percent_Greater</b>
+<li><b>Percent_GreaterThanEqualTo</b>
+<li><b>Percent_Less</b>
+<li><b>Percent_LessThanEqualTo</b>
+</ul>
+<hr><a name="CodeEnumReagentType"><h3>Enum</h3><br><h2>CodeEnumReagentType</h2>
+<ul>
+<li><b>Item</b>
+<li><b>ItemFamily</b>
+<li><b>ItemCategory</b>
+</ul>
+<hr><a name="CodeEnumSchool"><h3>Enum</h3><br><h2>CodeEnumSchool</h2>
+<ul>
+<li><b>Spell</b>
+<li><b>Melee</b>
+<li><b>Ranged</b>
+<li><b>Unarmed</b>
+</ul>
+<hr><a name="CodeEnumSpellClass"><h3>Enum</h3><br><h2>CodeEnumSpellClass</h2>
+<ul>
+<li><b>BuffDispellable</b>
+<li><b>BuffNonDispellable</b>
+<li><b>DebuffDispellable</b>
+<li><b>DebuffNonDispellable</b>
+<li><b>BuffNonDispelRightClickOk</b>
+</ul>
+<hr><a name="CodeEnumSpellEffectType"><h3>Enum</h3><br><h2>CodeEnumSpellEffectType</h2>
+<ul>
+<li><b>UnitPropertyModifier</b>
+<li><b>VitalModifier</b>
+<li><b>SpellCounter</b>
+<li><b>ForcedMove</b>
+<li><b>CCStateSet</b>
+<li><b>Transference</b>
+<li><b>SummonVehicle</b>
+<li><b>Activate</b>
+<li><b>Damage</b>
+<li><b>FactionSet</b>
+<li><b>Heal</b>
+<li><b>Harvest</b>
+<li><b>DistanceDependentDamage</b>
+<li><b>Script</b>
+<li><b>Proc</b>
+<li><b>UnitStateSet</b>
+<li><b>Resurrect</b>
+<li><b>Fluff</b>
+<li><b>Scale</b>
+<li><b>ProxyLinearAE</b>
+<li><b>SummonCreature</b>
+<li><b>HousingTeleport</b>
+<li><b>ActionBarSet</b>
+<li><b>ForcedAction</b>
+<li><b>ProxyChannel</b>
+<li><b>Proxy</b>
+<li><b>CCStateBreak</b>
+<li><b>ForceFacing</b>
+<li><b>Absorption</b>
+<li><b>SapVital</b>
+<li><b>Disguise</b>
+<li><b>SpellImmunity</b>
+<li><b>DistributedDamage</b>
+<li><b>ChangePhase</b>
+<li><b>NpcExecutionDelay</b>
+<li><b>SummonMount</b>
+<li><b>ReputationModify</b>
+<li><b>GiveSchematic</b>
+<li><b>ModifySchematic</b>
+<li><b>TradeSkillProfession</b>
+<li><b>QuestAdvanceObjective</b>
+<li><b>GiveItemToPlayer</b>
+<li><b>GiveLootTableToPlayer</b>
+<li><b>NpcLootTableModify</b>
+<li><b>ThreatModification</b>
+<li><b>ThreatTransfer</b>
+<li><b>WarplotTeleport</b>
+<li><b>CraftItem</b>
+<li><b>ItemBreakdown</b>
+<li><b>SpellForceRemoveChanneled</b>
+<li><b>ModifyInterruptArmor</b>
+<li><b>SpellDispel</b>
+<li><b>TradeSkillProfessionXp</b>
+<li><b>ModifySpell</b>
+<li><b>ModifySpellEffect</b>
+<li><b>AddSpell</b>
+<li><b>AddSpellEffect</b>
+<li><b>SuppressSpellEffect</b>
+<li><b>VacuumLoot</b>
+<li><b>ShieldOverload</b>
+<li><b>Teleport</b>
+<li><b>TitleGrant</b>
+<li><b>TitleRevoke</b>
+<li><b>VendorPriceModifier</b>
+<li><b>RechargeItemBatteries</b>
+<li><b>FacilityModification</b>
+<li><b>PetAIStanceSet</b>
+<li><b>ModifySpellCooldown</b>
+<li><b>FinishingMove</b>
+<li><b>ChangeIcon</b>
+<li><b>ItemVisualSwap</b>
+<li><b>AggroImmune</b>
+<li><b>SpellEffectImmunity</b>
+<li><b>SpellForceRemove</b>
+<li><b>RavelSignal</b>
+<li><b>ChangeDisplayName</b>
+<li><b>Stealth</b>
+<li><b>RemoveStealth</b>
+<li><b>PathActionExplorerDig</b>
+<li><b>HazardEnable</b>
+<li><b>HazardModify</b>
+<li><b>HazardSuspend</b>
+<li><b>NpcForceFacing</b>
+<li><b>AchievementAdvance</b>
+<li><b>PathXpModify</b>
+<li><b>ProxyChannelVariableTime</b>
+<li><b>FullScreenEffect</b>
+<li><b>ProxyRandomExclusive</b>
+<li><b>DespawnUnit</b>
+<li><b>SummonPet</b>
+<li><b>MimicDisplayName</b>
+<li><b>MimicDisguise</b>
+<li><b>GrantXP</b>
+<li><b>DatacubeUpdate</b>
+<li><b>DatacubeVolumeUpdate</b>
+<li><b>SettlerCampfire</b>
+<li><b>SummonTrap</b>
+<li><b>SetBusy</b>
+<li><b>CooldownReset</b>
+<li><b>RestedXpDecorBonus</b>
+<li><b>LearnDyeColor</b>
+<li><b>PetCastSpell</b>
+<li><b>DisguiseOutfit</b>
+<li><b>RewardBuffModifier</b>
+<li><b>HousingEscape</b>
+<li><b>NPCForceAIMovement</b>
+<li><b>HealShields</b>
+<li><b>PathMissionIncrement</b>
+<li><b>GrantLevelScaledXP</b>
+<li><b>DelayDeath</b>
+<li><b>GrantLevelScaledPrestige</b>
+<li><b>UnlockPetFlair</b>
+<li><b>WarplotPlugUpgrade</b>
+<li><b>SetMatchingEligibility</b>
+<li><b>UnlockActionBar</b>
+<li><b>UNUSED040</b>
+<li><b>ModifyCreatureFlags</b>
+<li><b>UNUSED061</b>
+<li><b>UNUSED063</b>
+<li><b>ApplyLASChanges</b>
+<li><b>GiveAbilityPointsToPlayer</b>
+<li><b>ModifyAbilityCharges</b>
+<li><b>UNUSED091</b>
+<li><b>UNUSED104</b>
+<li><b>UnlockMount</b>
+<li><b>UnlockInlaidAugment</b>
+<li><b>GiveAugmentPowerToPlayer</b>
+<li><b>TemporarilyUnflagPvp</b>
+<li><b>SupportStuck</b>
+<li><b>MiniMapIcon</b>
+<li><b>Disembark</b>
+<li><b>ChangePlane</b>
+<li><b>ModifyRestedXP</b>
+</ul>
+<hr><a name="CodeEnumSpellTag"><h3>Enum</h3><br><h2>CodeEnumSpellTag</h2>
+<ul>
+<li><b>Assault</b>
+<li><b>Support</b>
+<li><b>Path</b>
+<li><b>Misc</b>
+<li><b>Mount</b>
+<li><b>DoesNotUseSpecIndex</b>
+<li><b>Utility</b>
+<li><b>NotAutoActivated</b>
+</ul>
+<hr><a name="CombatMessageType"><h3>Enum</h3><br><h2>CombatMessageType</h2>
+<ul>
+<li><b>General</b>
+<li><b>Experience</b>
+<li><b>QuestUpdate</b>
+<li><b>LocationChange</b>
+<li><b>Combat_Damage_Done</b>
+<li><b>Combat_Damage_Done_Critical</b>
+<li><b>Combat_Damage_Taken</b>
+<li><b>Combat_Damage_Taken_Critical</b>
+<li><b>Combat_Healing_Done</b>
+<li><b>Combat_Healing_Done_Critical</b>
+<li><b>Combat_Healing_Taken</b>
+<li><b>Combat_Healing_Taken_Critical</b>
+<li><b>Combat_Block_Taken</b>
+<li><b>Combat_Block_Done</b>
+<li><b>Combat_Parry_Taken</b>
+<li><b>Combat_Parry_Done</b>
+<li><b>Combat_Dodge_Taken</b>
+<li><b>Combat_Dodge_Done</b>
+<li><b>Combat_NoEffect_Taken</b>
+<li><b>Combat_NoEffect_Done</b>
+<li><b>Combat_Shallow_Taken</b>
+<li><b>Combat_Shallow_Done</b>
+<li><b>Combat_Falling_Damage_Done</b>
+<li><b>Combat_Death</b>
+<li><b>Error</b>
+<li><b>SpellFailure</b>
+<li><b>UNUSED00</b>
+<li><b>UNUSED01</b>
+<li><b>Faction</b>
+<li><b>LootBase</b>
+<li><b>LootAverage</b>
+<li><b>LootGood</b>
+<li><b>LootExcellent</b>
+<li><b>LootSuperb</b>
+<li><b>LootLegendary</b>
+<li><b>LootQuestActivation</b>
+<li><b>Achievement</b>
+<li><b>Experience_KillCreature</b>
+<li><b>Experience_ClusterBonus</b>
+<li><b>Experience_Quest</b>
+<li><b>Absorption_Taken</b>
+<li><b>Absorption_Done</b>
+<li><b>Transference_Taken</b>
+<li><b>Transference_Done</b>
+<li><b>SpellFailure_Long</b>
+<li><b>SpellFailure_Medium</b>
+<li><b>SpellFailure_Short</b>
+<li><b>SpellFailure_Target_Head</b>
+<li><b>SpellFailure_Target_Feet</b>
+<li><b>Special_Done</b>
+<li><b>Special_Taken</b>
+<li><b>UNUSED02</b>
+<li><b>PlayerPath</b>
+<li><b>KillPerformanceReward</b>
+<li><b>MultiKillReward</b>
+<li><b>KillingSpreeReward</b>
+<li><b>LootInferior</b>
+<li><b>TelegraphEvadeReward</b>
+<li><b>TelegraphInterruptReward</b>
+<li><b>RestedReward</b>
+<li><b>UNUSED04</b>
+<li><b>UNUSED03</b>
+<li><b>LootArtifact</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="is"><h3>Function</h3><br><h2>is()</h2>
+<hr><a name="ShowFloater"><h3>Function</h3><br><h2>ShowFloater()</h2>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="GetAbilityCharges"><h3>Method</h3><br><h2>GetAbilityCharges()</h2>
+<hr><a name="GetAOETargetInfo"><h3>Method</h3><br><h2>GetAOETargetInfo()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable of eSelectionType if not aoe, otherwise many (10+) fields relating to the aoe data.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>eSelectionType</b><b> (Integer)</b>
+<li><b>idTarget</b><b> (Integer)</b>
+<li><b>fMinimumRange</b><b> (Float)</b>
+<li><b>fMaximumRange</b><b> (Float)</b>
+<li><b>fAngle</b><b> (Float)</b>
+<li><b>nTargetCount</b><b> (Integer)</b>
+<li><b>bCanAffectDead</b><b> (Boolean)</b>
+<li><b>bClusterOnly</b><b> (Boolean)</b>
+<li><b>bGroupOnly</b><b> (Boolean)</b>
+<li><b>bMustBeInCombat</b><b> (Boolean)</b>
+</ul>
+</ul>
+<hr><a name="GetBaseSpellId"><h3>Method</h3><br><h2>GetBaseSpellId()</h2>
+<hr><a name="GetCasterInnateCosts"><h3>Method</h3><br><h2>GetCasterInnateCosts()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index, eType, and nValue.</p>
+<hr><a name="GetCasterInnateRequirements"><h3>Method</h3><br><h2>GetCasterInnateRequirements()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index, eVital, nValue, and eEval.</p>
+<hr><a name="GetCastInfoString"><h3>Method</h3><br><h2>GetCastInfoString()</h2>
+<hr><a name="GetCastMethod"><h3>Method</h3><br><h2>GetCastMethod()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's castMethod.</p>
+<hr><a name="GetCastTime"><h3>Method</h3><br><h2>GetCastTime()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of pSpell's castTime * 0.001f, else 0.0f if null.</p>
+<hr><a name="GetCastTimeOverride"><h3>Method</h3><br><h2>GetCastTimeOverride()</h2>
+<hr><a name="GetChannelData"><h3>Method</h3><br><h2>GetChannelData()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with fMaxTime, fInitialDelay, and fPulseTime.</p>
+<hr><a name="GetClass"><h3>Method</h3><br><h2>GetClass()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's SpellClass.</p>
+<hr><a name="GetClassPower"><h3>Method</h3><br><h2>GetClassPower()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's power, 0 if pSpell's spellClass &lt;= 0.</p>
+<hr><a name="GetCombatMode"><h3>Method</h3><br><h2>GetCombatMode()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's combatModeId.</p>
+<hr><a name="GetCooldownRemaining"><h3>Method</h3><br><h2>GetCooldownRemaining()</h2>
+<hr><a name="GetCooldownTime"><h3>Method</h3><br><h2>GetCooldownTime()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of pSpell's spellCoolDown * 0.001f.</p>
+<hr><a name="GetFlavor"><h3>Method</h3><br><h2>GetFlavor()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of pSpell's localized ActionBarTooltip, or nil if null.</p>
+<hr><a name="GetGCDTime"><h3>Method</h3><br><h2>GetGCDTime()</h2>
+<hr><a name="GetIcon"><h3>Method</h3><br><h2>GetIcon()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of pSpell's iconPath, or nil if null.</p>
+<hr><a name="GetId"><h3>Method</h3><br><h2>GetId()</h2>
+<hr><a name="GetLasBonusEachTierDesc"><h3>Method</h3><br><h2>GetLasBonusEachTierDesc()</h2>
+<hr><a name="GetLasTierDesc"><h3>Method</h3><br><h2>GetLasTierDesc()</h2>
+<hr><a name="GetMaximumRange"><h3>Method</h3><br><h2>GetMaximumRange()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's targetMaximumRange, or 0.0f if null.</p>
+<hr><a name="GetMinimumRange"><h3>Method</h3><br><h2>GetMinimumRange()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's targetMinimumRange, or 0.0f if null.</p>
+<hr><a name="GetName"><h3>Method</h3><br><h2>GetName()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of pSpell's localized IdName, or nil if null.</p>
+<hr><a name="GetPrerequisites"><h3>Method</h3><br><h2>GetPrerequisites()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable of many (10+) fields relating to pSpell's preqrequisites.</p>
+<h3>Return Value</h3>
+<ul>
+<li><b>Table</b>
+<ul>
+<li><b>bTargetAvoided</b><b> (Boolean)</b>
+<li><b>bTargetBlocked</b><b> (Boolean)</b>
+<li><b>bTargetGlancing</b><b> (Boolean)</b>
+<li><b>bTargetFierce</b><b> (Boolean)</b>
+<li><b>bNOTUSED</b><b> (Boolean)</b>
+<li><b>bCasterAvoided</b><b> (Boolean)</b>
+<li><b>bCasterBlocked</b><b> (Boolean)</b>
+<li><b>bCasterGlancing</b><b> (Boolean)</b>
+<li><b>bCasterFierce</b><b> (Boolean)</b>
+<li><b>bNOTUSED1</b><b> (Boolean)</b>
+<li><b>bCasterSpellSuccess</b><b> (Boolean)</b>
+<li><b>bLastCasterSpellSuccess</b><b> (Boolean)</b>
+</ul>
+</ul>
+<hr><a name="GetPrice"><h3>Method</h3><br><h2>GetPrice()</h2>
+<h3>Description</h3>
+<p>Does a LuaGameTypes_Money::New of pSpell's price.</p>
+<hr><a name="GetProxyChannelData"><h3>Method</h3><br><h2>GetProxyChannelData()</h2>
+<hr><a name="GetReagents"><h3>Method</h3><br><h2>GetReagents()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index, nRequired, eType, and item relating to pSpell's reagents.</p>
+<hr><a name="GetRequiredLevel"><h3>Method</h3><br><h2>GetRequiredLevel()</h2>
+<hr><a name="GetRequiredWorldZone"><h3>Method</h3><br><h2>GetRequiredWorldZone()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of a localized pWorldZone's nameId if pSpell requires a specific world zone.</p>
+<hr><a name="GetSchool"><h3>Method</h3><br><h2>GetSchool()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's school.</p>
+<hr><a name="GetTargetAngle"><h3>Method</h3><br><h2>GetTargetAngle()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushnumber of pSpell's targetAngle.</p>
+<hr><a name="GetTargetInnateRequirements"><h3>Method</h3><br><h2>GetTargetInnateRequirements()</h2>
+<h3>Description</h3>
+<p>Does a lua_newtable with an index, eVital, nValue, and eEval of target inate requirements.</p>
+<hr><a name="GetThresholdTime"><h3>Method</h3><br><h2>GetThresholdTime()</h2>
+<hr><a name="GetTier"><h3>Method</h3><br><h2>GetTier()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of pSpell's tierIndex.</p>
+<hr><a name="GetTradeskillRequirements"><h3>Method</h3><br><h2>GetTradeskillRequirements()</h2>
+<hr><a name="IsBeneficial"><h3>Method</h3><br><h2>IsBeneficial()</h2>
+<hr><a name="IsFreeformTarget"><h3>Method</h3><br><h2>IsFreeformTarget()</h2>
+<hr><a name="IsMovingInterrupted"><h3>Method</h3><br><h2>IsMovingInterrupted()</h2>
+<hr><a name="IsNew"><h3>Method</h3><br><h2>IsNew()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of pSpell's IsNewItem.</p>
+<hr><a name="IsSelfSpell"><h3>Method</h3><br><h2>IsSelfSpell()</h2>
+<hr><a name="SetNewFlag"><h3>Method</h3><br><h2>SetNewFlag(bNew)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>bNew</b><b> (Boolean)</b> - (Default value: false)
+</ul>
+	</body>
+</html>

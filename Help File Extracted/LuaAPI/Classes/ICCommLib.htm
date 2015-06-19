@@ -1,0 +1,42 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		ICCommLib	</h1>
+<a name="Enums"/><hr><a name="ICCommJoinResult"><h3>Enum</h3><br><h2>ICCommJoinResult</h2>
+<ul>
+<li><b>NoGuild</b>
+<li><b>BadName</b>
+<li><b>Join</b>
+<li><b>TooManyChannels</b>
+<li><b>Left</b>
+<li><b>NoGroup</b>
+<li><b>MissingEntitlement</b>
+</ul>
+<a name=">Functions"/>
+<hr><a name="Is"><h3>Function</h3><br><h2>Is(userData)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean if the same metatable is on the stack.</p>
+<h3>Params</h3>
+<ul>
+<li><b>userData</b><b> (UserData)</b>
+</ul>
+<hr><a name="JoinChannel"><h3>Function</h3><br><h2>JoinChannel(strChannel, strFunction, nLuaEventHandler)</h2>
+<h3>Description</h3>
+<p>Runs JoinChannel with strChannel, strFunction, and nLuaEventHandler.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strChannel</b><b> (String)</b> - that gets prefixed with ICC.
+<li><b>strFunction</b><b> (String)</b>
+<li><b>nLuaEventHandler</b><b> (LuaTable)</b> - but the Id is immediately converted to an Integer
+</ul>
+<a name=">Methods"/>
+<hr><a name="__eq"><h3>Method</h3><br><h2>__eq()</h2>
+<hr><a name="__gc"><h3>Method</h3><br><h2>__gc()</h2>
+<hr><a name="SendMessage"><h3>Method</h3><br><h2>SendMessage()</h2>
+<hr><a name="SendPrivateMessage"><h3>Method</h3><br><h2>SendPrivateMessage()</h2>
+<hr><a name="SetControlFunction"><h3>Method</h3><br><h2>SetControlFunction()</h2>
+	</body>
+</html>

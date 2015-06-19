@@ -1,0 +1,220 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		TreeControl	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="QueryBeginClickStick"><h3>Event</h3><br><h2>QueryBeginClickStick</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="QueryBeginDragDrop"><h3>Event</h3><br><h2>QueryBeginDragDrop</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="TreeDoubleClick"><h3>Event</h3><br><h2>TreeDoubleClick</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>hNode</b><b> (Handle)</b>
+</ul>
+<hr><a name="TreeNodeCollapse"><h3>Event</h3><br><h2>TreeNodeCollapse</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>hNode</b><b> (Handle)</b>
+</ul>
+<hr><a name="TreeNodeExpand"><h3>Event</h3><br><h2>TreeNodeExpand</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>hNode</b><b> (Handle)</b>
+</ul>
+<hr><a name="TreeSelectionChanged"><h3>Event</h3><br><h2>TreeSelectionChanged</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>hSelected</b><b> (Handle)</b>
+<li><b>hPrevSelected</b><b> (Handle)</b>
+</ul>
+<hr><a name="TreeSelectionChanging"><h3>Event</h3><br><h2>TreeSelectionChanging</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>hNode</b><b> (Handle)</b>
+<li><b>hSelected</b><b> (Handle)</b>
+<li><b>bAllowed</b><b> (Boolean)</b>
+</ul>
+<a name=">Methods"/>
+<hr><a name="AddNode"><h3>Method</h3><br><h2>AddNode(hParentHandle, strText, strImage, newLuaData)</h2>
+<h3>Description</h3>
+<p>Adds a node to the caller. If newLuaData is set, this will push it on the stack and ref it as well.<br>
+Does a lua_pushinteger of the node's handle back on the stack as an integer.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hParentHandle</b><b> (Handle)</b>
+<li><b>strText</b><b> (String)</b>
+<li><b>strImage</b><b> (String)</b> - (Default value: "")
+<li><b>newLuaData</b><b> (LuaData)</b> - (Default value: LUA_NOREF)
+</ul>
+<hr><a name="CollapseNode"><h3>Method</h3><br><h2>CollapseNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Collapses the node in the caller corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="DeleteAll"><h3>Method</h3><br><h2>DeleteAll()</h2>
+<h3>Description</h3>
+<p>Deletes all of the caller's nodes.</p>
+<hr><a name="DeleteChildren"><h3>Method</h3><br><h2>DeleteChildren(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Deletes the children of the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="DeleteNode"><h3>Method</h3><br><h2>DeleteNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Deletes the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="ExpandNode"><h3>Method</h3><br><h2>ExpandNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Expands the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetColumnWidth"><h3>Method</h3><br><h2>GetColumnWidth()</h2>
+<hr><a name="GetFirstChildNode"><h3>Method</h3><br><h2>GetFirstChildNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the first child node's ID as an integer corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetFirstVisibleNode"><h3>Method</h3><br><h2>GetFirstVisibleNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the first visible node's ID as an integer corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetNextSibling"><h3>Method</h3><br><h2>GetNextSibling(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the next sibling node's ID as an integer corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetNextVisibleNode"><h3>Method</h3><br><h2>GetNextVisibleNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the next visible node's ID as an integer corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetNodeData"><h3>Method</h3><br><h2>GetNodeData(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_rawgeti of the node's data corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetNodeText"><h3>Method</h3><br><h2>GetNodeText(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushstring of the node's text corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetParentNode"><h3>Method</h3><br><h2>GetParentNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the parent node's ID as an integer corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+</ul>
+<hr><a name="GetSelectedNode"><h3>Method</h3><br><h2>GetSelectedNode()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the node's ID of the selected node.</p>
+<hr><a name="HitTest"><h3>Method</h3><br><h2>HitTest(nXpos, nYpos)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the node's ID at iXpos and iYpos as an integer.<br>
+Does a lua_pushboolean of the test's result if a button was hit as a boolean.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nXpos</b><b> (Integer)</b>
+<li><b>nYpos</b><b> (Integer)</b>
+</ul>
+<hr><a name="NodeHasChildren"><h3>Method</h3><br><h2>NodeHasChildren()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushboolean of the node's HasChildren corresponding to hNodeHandle.<br>
+Paramaters:<br>
+hNodeHandle: Integer</p>
+<hr><a name="SelectNode"><h3>Method</h3><br><h2>SelectNode(hNodeHandle)</h2>
+<h3>Description</h3>
+<p>Selects the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b> - (Default value: 0)
+</ul>
+<hr><a name="SetColumnWidth"><h3>Method</h3><br><h2>SetColumnWidth(nCol, nWidth)</h2>
+<h3>Description</h3>
+<p>Sets the caller's nWidth of the column corresponding to iCol.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nCol</b><b> (Integer)</b>
+<li><b>nWidth</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetHeaderImage"><h3>Method</h3><br><h2>SetHeaderImage()</h2>
+<hr><a name="SetHeaderText"><h3>Method</h3><br><h2>SetHeaderText()</h2>
+<hr><a name="SetHeaderTextColor"><h3>Method</h3><br><h2>SetHeaderTextColor()</h2>
+<hr><a name="SetMinimumNodeHeight"><h3>Method</h3><br><h2>SetMinimumNodeHeight(hNodeHandle, nMinHeight)</h2>
+<h3>Description</h3>
+<p>Sets the MinimumNodeHeight to iMinHeight of the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+<li><b>nMinHeight</b><b> (Handle)</b>
+</ul>
+<hr><a name="SetNodeImage"><h3>Method</h3><br><h2>SetNodeImage(hNodeHandle, strText)</h2>
+<h3>Description</h3>
+<p>Sets the Image to sText of the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="SetNodeText"><h3>Method</h3><br><h2>SetNodeText(hNodeHandle, strText)</h2>
+<h3>Description</h3>
+<p>Sets the Text to sText of the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="SetNodeTextColor"><h3>Method</h3><br><h2>SetNodeTextColor(hNodeHandle, clr)</h2>
+<h3>Description</h3>
+<p>Sets the color to clr of the node corresponding to hNodeHandle.</p>
+<h3>Params</h3>
+<ul>
+<li><b>hNodeHandle</b><b> (Handle)</b>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+</ul>
+	</body>
+</html>

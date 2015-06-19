@@ -1,0 +1,35 @@
+<html>
+	<HEAD>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</HEAD>
+	<body>
+		<h1>
+			Editing Forms and Controls</h1>
+		<h2>
+			Forms</h2>
+		<p>
+			Forms are the main .xml components of a UI; interface files may have one main form, as is the case with most persistent HUD elements, or several for things like the Target Frames.&nbsp;&nbsp;</p>
+		<h3>
+			Creating a Form</h3>
+		<p>
+			Forms are typically a normal-class window and are scaled large enough to encompass all controls they&rsquo;ll contain (though the NoClip attribute can correct this issue in special cases). Their position and size are determined by anchor points and offset, commonly using the screen&rsquo;s boundaries as the anchors: &nbsp;&nbsp;</p>
+		<p align="center">
+			<img alt="" src="FormPosition.jpg" /></p>
+		<p>
+			The screen space is measured by 0 &ndash; 1 in both dimensions (representing 0 &ndash; 100%), with any decimal in-between valid for use as an anchor point and offset measured in pixels (including negative). Given that the game can be played in multiple resolutions, this ensures the most accurate placement possible. Care needs to be taken when selecting which edge will be used as an anchor point; in the above example, all edges are based off of their axis&rsquo; 0. If one side was offset from 0 (the screen&rsquo;s left edge) and the other was offset from 1 (the screen&rsquo;s right edge), the form would scale if the game&rsquo;s resolution were to be increased. Basing both dimensional edges off of one anchor point ensures a form will not scale if the screen is enlarged. These values can be modified numerically on the properties window (4.4.1).</p>
+		<h3>
+			Moving and Scaling Forms</h3>
+		<p>
+			Forms can be moved in Houston by selecting them, then click-dragging the upper left-hand marker (which is red) or the form itself. On-canvas scaling is accomplished by click-dragging any of the other markers located around its perimeter.</p>
+		<h2>
+			Controls</h2>
+		<p>
+			Controls are the children of forms and make up the functional elements of an interface, including things like its background art and buttons.</p>
+		<h3>
+			Creating a Control</h3>
+		<p>
+			A control&rsquo;s class is determined by its intended use. Like forms, controls use anchor points and offset to determine their size and position, with the 0 -1 scale now representing their parent&rsquo;s boundaries rather than the screen borders. Here too, offsetting from different bounds will cause the control to stretch when its parent does and setting a control&rsquo;s edge beyond its parent&rsquo;s will cause it to occlude. Controls utilize the same bounding box as forms and can be modified in the same manner on the canvas.</p>
+		<p style="text-align: center;">
+			<img alt="" src="ControlPosition.jpg" /></p>
+	</body>
+</html>

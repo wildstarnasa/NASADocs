@@ -1,0 +1,40 @@
+<html>
+	<HEAD>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</HEAD>
+<body>
+		<h1>
+			Lua Script</h1>
+		<ul>
+			<li>
+				Lua scripts contains the logic that drives the Addon.</li>
+			<li>
+				Every Wildstar addon must consists of at least one Lua script.</li>
+			<li>
+				The script is run when the game world is loaded.</li>
+			<li>
+				May be edited with <a href="../Houston/Houston.htm">Houston</a>&#39;s <a href="../Houston/LuaScriptEditor.htm">Lua Editor</a> or with other text editors</li>
+		</ul>
+		<p>
+			Example:</p>
+		<p>
+			MyTestAddon.lua
+		<table border="1" cellpadding="10" cellspacing="0">
+			<tbody>
+				<tr>
+					<td>
+						<pre>
+
+-----------------------------------------------------------
+-- Client Lua Script for MyTestAddon
+-- Copyright (c) NCsoft. All rights reserved
+-----------------------------------------------------------
+
+function MyTestAddon:Init()
+    Apollo.RegisterAddon(self)
+end</pre>
+					</td>
+				</tr>
+			</tbody>
+		</table></p></body>
+</html>

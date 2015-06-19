@@ -1,0 +1,58 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		CashWindow	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="CashWindowAmountChanged"><h3>Event</h3><br><h2>CashWindowAmountChanged</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="GetAMLDocForAmount"><h3>Method</h3><br><h2>GetAMLDocForAmount(nAmount, bUseZeroes, clr, strFont)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the result of the caller's GenerateAMLDoc specified by nAmount, bUseZeroes, clr, and strFont.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nAmount</b><b> (Integer)</b>
+<li><b>bUseZeroes</b><b> (Boolean)</b>
+<li><b>clr</b><b> (<a href="../Classes/CColor.htm">CColor</a>)</b>
+<li><b>strFont</b><b> (String)</b>
+</ul>
+<hr><a name="GetAMLDocForPrice"><h3>Method</h3><br><h2>GetAMLDocForPrice(nAmount1, nCurrencyType1, nAmount2, nCurrencyType2, bDisabled, strFont)</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the result of the caller's GenerateAMLDoc specified by the parameters. The price is calculated with the first four integers.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nAmount1</b><b> (Integer)</b>
+<li><b>nCurrencyType1</b><b> (Integer)</b>
+<li><b>nAmount2</b><b> (Integer)</b>
+<li><b>nCurrencyType2</b><b> (Integer)</b>
+<li><b>bDisabled</b><b> (Boolean)</b>
+<li><b>strFont</b><b> (String)</b> - (Default value: "Default")
+</ul>
+<hr><a name="GetAmount"><h3>Method</h3><br><h2>GetAmount()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushinteger of the caller's amount.</p>
+<hr><a name="GetAmountLimit"><h3>Method</h3><br><h2>GetAmountLimit()</h2>
+<hr><a name="GetCurrency"><h3>Method</h3><br><h2>GetCurrency()</h2>
+<h3>Description</h3>
+<p>Returns a new LuaGameTypes_Money of the caller's value.</p>
+<hr><a name="SetAmount"><h3>Method</h3><br><h2>SetAmount(nAmount, bInstant)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nAmount</b><b> (Integer)</b>
+<li><b>bInstant</b><b> (Boolean)</b>
+</ul>
+<hr><a name="SetAmountLimit"><h3>Method</h3><br><h2>SetAmountLimit()</h2>
+<hr><a name="SetMoneySystem"><h3>Method</h3><br><h2>SetMoneySystem(nWhich)</h2>
+<h3>Params</h3>
+<ul>
+<li><b>nWhich</b><b> (ECurrencyType)</b>
+</ul>
+	</body>
+</html>

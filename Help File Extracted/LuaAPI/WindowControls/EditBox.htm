@@ -1,0 +1,99 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	</head>
+	<body>
+	<h1>
+		EditBox	</h1>
+<h3>Parent: <a href="../WindowControls/Window.htm">Window</a></h3>
+<a name="Events"/><hr><a name="EditBoxChanged"><h3>Event</h3><br><h2>EditBoxChanged</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strText</b><b> (String)</b> - The new text
+</ul>
+<hr><a name="EditBoxChanging"><h3>Event</h3><br><h2>EditBoxChanging</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strNewText</b><b> (String)</b>
+<li><b>strOldText</b><b> (String)</b>
+<li><b>bAllowed</b><b> (Boolean)</b>
+</ul>
+<hr><a name="EditBoxEscape"><h3>Event</h3><br><h2>EditBoxEscape</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<hr><a name="EditBoxReturn"><h3>Event</h3><br><h2>EditBoxReturn</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="EditBoxTab"><h3>Event</h3><br><h2>EditBoxTab</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+<li><b>strText</b><b> (String)</b>
+</ul>
+<hr><a name="EditBoxTextTooLarge"><h3>Event</h3><br><h2>EditBoxTextTooLarge</h2>
+<h3>Params</h3>
+<ul>
+<li><b>wndHandler</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window that fires the event
+<li><b>wndControl</b><b> (<a href="../WindowControls/Window.htm">Window</a>)</b> - The window control with the event happened
+</ul>
+<a name=">Methods"/>
+<hr><a name="AddHistoryString"><h3>Method</h3><br><h2>AddHistoryString(strHistoryString)</h2>
+<h3>Description</h3>
+<p>Adds to the caller's string list the parameter sHistoryString.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strHistoryString</b><b> (String)</b>
+</ul>
+<hr><a name="AddLink"><h3>Method</h3><br><h2>AddLink()</h2>
+<hr><a name="ClearHistoryStrings"><h3>Method</h3><br><h2>ClearHistoryStrings()</h2>
+<h3>Description</h3>
+<p>Clears the caller's string list.</p>
+<hr><a name="ClearText"><h3>Method</h3><br><h2>ClearText()</h2>
+<h3>Description</h3>
+<p>Sets the caller's text to null then collapses and moves the caller's window rectangle.</p>
+<hr><a name="GetAllLinks"><h3>Method</h3><br><h2>GetAllLinks()</h2>
+<hr><a name="GetHistoryStrings"><h3>Method</h3><br><h2>GetHistoryStrings()</h2>
+<h3>Description</h3>
+<p>Does a lua push of the caller's string list count number and string.</p>
+<hr><a name="GetMaxTextLength"><h3>Method</h3><br><h2>GetMaxTextLength()</h2>
+<hr><a name="GetSel"><h3>Method</h3><br><h2>GetSel()</h2>
+<hr><a name="GetText"><h3>Method</h3><br><h2>GetText()</h2>
+<h3>Description</h3>
+<p>Does a lua_pushwstring of the caller's m_pText as a string.</p>
+<hr><a name="HitTest"><h3>Method</h3><br><h2>HitTest()</h2>
+<hr><a name="InsertText"><h3>Method</h3><br><h2>InsertText()</h2>
+<hr><a name="PasteTextFromClipboard"><h3>Method</h3><br><h2>PasteTextFromClipboard()</h2>
+<h3>Description</h3>
+<p>Calls OnPaste() which pastes the clipboard's contents into the caller's text.</p>
+<hr><a name="RemoveLinks"><h3>Method</h3><br><h2>RemoveLinks()</h2>
+<hr><a name="SetMaxTextLength"><h3>Method</h3><br><h2>SetMaxTextLength()</h2>
+<hr><a name="SetPrompt"><h3>Method</h3><br><h2>SetPrompt()</h2>
+<hr><a name="SetSel"><h3>Method</h3><br><h2>SetSel(nBegin, nEnd)</h2>
+<h3>Description</h3>
+<p>Sets the caller's selection range starting with iBegin and ending with iEnd.</p>
+<h3>Params</h3>
+<ul>
+<li><b>nBegin</b><b> (Integer)</b>
+<li><b>nEnd</b><b> (Integer)</b>
+</ul>
+<hr><a name="SetText"><h3>Method</h3><br><h2>SetText(strText)</h2>
+<h3>Description</h3>
+<p>Sets the caller's text to sText.</p>
+<h3>Params</h3>
+<ul>
+<li><b>strText</b><b> (String)</b>
+</ul>
+	</body>
+</html>

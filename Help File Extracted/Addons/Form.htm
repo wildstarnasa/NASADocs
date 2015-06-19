@@ -1,0 +1,39 @@
+<html>
+	<HEAD>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</HEAD>
+<body>
+		<h1>
+			Form</h1>
+		<ul>
+			<li>
+				Forms define how an addon appear in the game and are consist of multiple <a href="WindowControls.htm">window controls</a> that output information and/or allow players to interact with the addon.</li>
+			<li>
+				Forms are defined in xml files and each xml form files can contain multiple forms to be loaded with Lua</li>
+			<li>
+				Also contains the Event mappings that allows the Lua code to respond to user interaction with the forms.</li>
+			<li>
+				Layout and properties of the window controls can be edited in the <a href="../Houston/FormEditor.htm">Form Editor</a> in <a href="../Houston/Houston.htm">Houston</a></li>
+			<li>
+				Besides the typical <a href="WindowControls.htm">windows controls</a>, there are also a set of <a href="GameSpecificControls.htm">game-specific controls</a> that do game specific functions.</li>
+		</ul>
+		<p>
+			Example:</p>
+		<p>
+			MyTestAddon.xml
+		
+		<table border="1" cellpadding="10" cellspacing="0">
+			<tbody>
+				<tr>
+					<td>
+						<pre>
+
+&lt;Form Class=&quot;Window&quot; LAnchorPoint=&quot;0&quot; LAnchorOffset=&quot;0&quot; &hellip;
+    &lt;Control Class=&quot;Window&quot; LAnchorPoint=&quot;0&quot; LAnchorOffset&hellip;
+    &lt;Event Name=&quot;MouseButtonUp&quot;  Function=&quot;OnListItem&hellip; 
+&lt;/Form&gt;</pre>
+					</td>
+				</tr>
+			</tbody>
+		</table></p></body>
+</html>

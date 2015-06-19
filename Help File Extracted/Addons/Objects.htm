@@ -1,0 +1,92 @@
+<html>
+	<HEAD>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</HEAD>
+<body>
+		<h1>
+			Objects</h1>
+		<ul>
+			<li>
+				An Object is a Lua type that has functions attached to it</li>
+			<li>
+				Functions on an object are called by using the colon (:) operator.</li>
+			<ul>
+			<li>
+				wnd:Show(false)</li>
+			<li>
+				unit:GetHealth()</li>
+			</ul>
+			<li>
+				In general, if there can be more than one of something, it is probably an object (windows, units, mail messages, items)</li>
+			<li>
+				Instances of Objects are generally returned from functions or sent via Lua Events.</li>
+		</ul>
+		<h2>
+			<br />
+			Examples:</h2>
+		<h2>
+			The Window Object</h2>
+		<ul>
+			<li>
+				Every interactive UI object in Apollo is a Window</li>
+			<ul>
+			<li>
+				Buttons, EditBoxes, ProgressBars, etc.&nbsp; All Window objects.</li>
+			<li>
+				This is, by far, the most common object you will use in Addon programming</li>
+			</ul>
+			<li>
+				When you load a form, the function will return a Window object</li>
+			<ul>
+			<li>
+				local wnd = Apollo.LoadForm(&quot;MyForms.xml&quot;, &quot;TestForm&quot;, nil, self)</li>
+			</ul>
+			<li>
+				You can call functions on this Window object by using the colon (:) operator</li>
+			<ul>
+			<li>
+				wnd:Show(true)</li>
+			<li>
+				wnd:SetText(&quot;Hi there&quot;)</li>
+			</ul>
+		</ul>
+		<h2>
+			The Unit Object</h2>
+		<ul>
+			<li>
+				The second most common Object used in Addons is probably the Unit object</li>
+			<li>
+				A Unit is any player, monster, or sometimes even props in the world that can be interacted with</li>
+			<li>
+				There are several GameLib functions that will return a Unit</li>
+			<ul>
+			<li>
+				GameLib.GetPlayerUnit()</li>
+			<li>
+				GameLib.GetTargetUnit()</li>
+			</ul>
+			<li>
+				There are several Events that will include a Unit as a parameter</li>
+			<ul>
+			<li>
+				DamageOrHealingDone(unitCaster, unitTarget, eType, nAmount&hellip;</li>
+			</ul>
+			<li>
+				Once you have a Unit object you can call several functions on it:</li>
+			<ul>
+			<li>
+				unit:GetHealth()</li>
+			<li>
+				unit:GetRaceId()</li>
+			<li>
+				unit:GetClassId()</li>
+			<li>
+				unit:IsDead()</li>
+			<li>
+				unit:Resurrect()</li>
+			<li>
+				unit:InviteToGroup()</li>
+			</ul>
+		</ul>
+	</body>
+</html>
